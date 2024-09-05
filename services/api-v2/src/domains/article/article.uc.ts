@@ -46,6 +46,7 @@ import ConfigController from '../config/config.controller'
 import ArticleStockController from '../article-stock/article-stock.controller'
 import Application from '../application/application.interface'
 import { roundNumber } from '../../utils/roundNumber'
+import VariantUC from '../variant/variant.uc'
 
 export default class ArticleUC {
 	database: string
@@ -477,23 +478,24 @@ export default class ArticleUC {
 			const variantType = await this.getVariantType()
 			const variantValue = await this.getVariantValue()
 
-			const count = data.reduce((acc, item) => {
-				acc[item.column2] = (acc[item.column2] || 0) + 1;
+			const groupedByCode = data.reduce((acc, item) => {
+				if (!acc[item.column2]) {
+					acc[item.column2] = [];
+				}
+				acc[item.column2].push(item);
 				return acc;
 			}, {});
+			for (const code in groupedByCode) {
+				const items = groupedByCode[code];
 
-			// Filtrar los objetos que tienen valores duplicados en column2
-			const items = data.filter(item => count[item.column2] > 1);
-
-			if (items.length) {
+				// Crear el artículo padre tomando los valores del primer item del grupo
 				let newArticle: Article = ArticleSchema.getInstance(this.database);
 				const values = [];
-			
 				for (const item of items) {
 					if (item.column29 !== '' && item.column30 !== '') {
 						const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
-						values.push({ 
-							type: variantType[item.column29], 
+						values.push({
+							type: variantType[item.column29],
 							value: variantValue[item.column30],
 							basePrice: calculatedSalePrice.basePrice,
 							taxes: calculatedSalePrice.tax,
@@ -501,50 +503,115 @@ export default class ArticleUC {
 							markupPercentage: calculatedSalePrice.markupPercentage,
 							markupPrice: calculatedSalePrice.markupPrice,
 							salePrice: calculatedSalePrice.salePrice,
-							// basePrice: number,
-							// salePrice: number,
 							weight: item.column16,
 							width: item.column17,
 							height: item.column18,
 							depth: item.column19,
-						//	articleId: string,
 						});
 					}
 				}
-
 				if (values.length > 0) {
-					newArticle = Object.assign(newArticle, {
-						order: items[0].column1,
-						code: items[0].column2,
-						barcode: items[0].column3,
-						make: makesObj[items[0].column4]?._id,
-						category: categoryObj[items[0].column6 === '' ? items[0].column5 : items[0].column6]?._id,
-						description: items[0].column7,
-						posDescription: items[0].column8.substring(0, 20),
-						unitOfMeasurement: unitOfMeasurementObj[items[0].column9]?._id,
-						printIn: printerObj[items[0].column10]?.name,
-						observation: items[0].column11,
-						weight: items[0].column16,
-						width: items[0].column17,
-						height: items[0].column18,
-						depth: items[0].column19,
-						allowPurchase: items[0].column20 === 'Si',
-						allowSale: items[0].column21 === 'Si',
-						allowStock: items[0].column22 === 'Si',
-						allowSaleWithoutStock: items[0].column23 === 'Si',
-						isWeigth: items[0].column24 === 'Si',
-						allowMeasure: items[0].column25 === 'Si',
-						posKitchen: items[0].column26 === 'Si',
-						m3: items[0].column27,
-						variants: values, 
-						codeProvider: items[0].column28
-					});
-			
-					const result = await new ArticleController(this.database).save(newArticle);
+					// Asignar propiedades al artículo padre usando el primer elemento del grupo
+					const firstItem = items[0];
+					if (!articlesObj[firstItem.column2]) {
+						newArticle = Object.assign(newArticle, {
+							order: firstItem.column1,
+							code: firstItem.column2,
+							barcode: firstItem.column3,
+							make: makesObj[firstItem.column4]?._id,
+							category: categoryObj[firstItem.column6 === '' ? firstItem.column5 : firstItem.column6]?._id,
+							description: firstItem.column7,
+							posDescription: firstItem.column8.substring(0, 20),
+							unitOfMeasurement: unitOfMeasurementObj[firstItem.column9]?._id,
+							printIn: printerObj[firstItem.column10]?.name,
+							basePrice: 1,
+							salePrice: 1,
+							observation: firstItem.column11,
+							weight: firstItem.column16,
+							width: firstItem.column17,
+							height: firstItem.column18,
+							depth: firstItem.column19,
+							allowPurchase: firstItem.column20 === 'Si',
+							allowSale: firstItem.column21 === 'Si',
+							allowStock: firstItem.column22 === 'Si',
+							allowSaleWithoutStock: firstItem.column23 === 'Si',
+							isWeigth: firstItem.column24 === 'Si',
+							allowMeasure: firstItem.column25 === 'Si',
+							posKitchen: firstItem.column26 === 'Si',
+							m3: firstItem.column27,
+							variants: values,
+							containsVariants: true,
+							updateVariants: false,
+							codeProvider: firstItem.column28
+						});
 
+						const result = await new ArticleController(this.database).save(newArticle);
 
+						await new VariantUC(this.database).createVariant(result.result._id, values);
+						data = data.filter(item => !(item.column29 !== '' && item.column30 !== '' && item.column2 === firstItem.column2))
+					}else{
+						// const article = articlesObj[firstItem.column2]
+						// const updatedVariants = items.map((newVariant: any) => {
+						// 	const existingVariant = article.variants.find((v: any) => v.type === newVariant.type && v.value === newVariant.value);
+							
+						// 	if (existingVariant) {
+						// 		// Si la variante ya existe, conservar propiedades originales si las nuevas están vacías
+						// 		return {
+						// 			type: newVariant.type,
+						// 			value: newVariant.value,
+						// 			basePrice: newVariant.basePrice !== '' ? newVariant.basePrice : existingVariant.basePrice,
+						// 			taxes: newVariant.taxes !== '' ? newVariant.taxes : existingVariant.taxes,
+						// 			costPrice: newVariant.costPrice !== '' ? newVariant.costPrice : existingVariant.costPrice,
+						// 			markupPercentage: newVariant.markupPercentage !== '' ? newVariant.markupPercentage : existingVariant.markupPercentage,
+						// 			markupPrice: newVariant.markupPrice !== '' ? newVariant.markupPrice : existingVariant.markupPrice,
+						// 			salePrice: newVariant.salePrice !== '' ? newVariant.salePrice : existingVariant.salePrice,
+						// 			weight: newVariant.weight !== '' ? newVariant.weight : existingVariant.weight,
+						// 			width: newVariant.width !== '' ? newVariant.width : existingVariant.width,
+						// 			height: newVariant.height !== '' ? newVariant.height : existingVariant.height,
+						// 			depth: newVariant.depth !== '' ? newVariant.depth : existingVariant.depth,
+						// 		};
+						// 	} else {
+						// 		// Si no existe, agregar la nueva variante directamente
+						// 		return newVariant;
+						// 	}
+						// });
+						//   await new ArticleController(this.database).update(
+						// 	article._id,
+						// 	{
+						// 	order: firstItem.column1 === "" ? article.order : firstItem.column1,
+						// 	code: firstItem.column2 === "" ? article.code : firstItem.column2,
+						// 	barcode: firstItem.column3 === "" ? article.barcode : firstItem.column3,
+						// 	make: makesObj[firstItem.column4] === "" ? article.make : makesObj[firstItem.column4]?._id ,
+						// 	category:categoryObj[firstItem.column6 === '' ? firstItem.column5 : firstItem.column6] === undefined ? article.category : categoryObj[firstItem.column6 === '' ? firstItem.column5 : firstItem.column6]?._id,
+						// 	description: firstItem.column7 === "" ? article.descripcion : firstItem.column7,
+						// 	posDescription: firstItem.column8 === "" ? article.posDescription : firstItem.column8.substring(0, 20),
+						// 	unitOfMeasurement: unitOfMeasurementObj[firstItem.column9] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[firstItem.column9]?._id,
+						// 	printIn: printerObj[firstItem.column10] === "" ? article.unitOfMeasurement : printerObj[firstItem.column10]?.name,
+						// 	basePrice: 1,
+						// 	salePrice: 1,
+						// 	observation: firstItem.column11 === "" ? article.observation : firstItem.column11,
+						// 	weight: firstItem.column16 === "" ? article.weight : firstItem.column16,
+						// 	width: firstItem.column17 === "" ? article.width : firstItem.column17,
+						// 	height: firstItem.column18 === "" ? article.height : firstItem.column18,
+						// 	depth: firstItem.column19 === "" ? article.depth : firstItem.column19,
+						// 	allowPurchase: firstItem.column20 === 'Si',
+						// 	allowSale: firstItem.column21 === 'Si',
+						// 	allowStock: firstItem.column22 === 'Si',
+						// 	allowSaleWithoutStock: firstItem.column23 === 'Si',
+						// 	isWeigth: firstItem.column24 === 'Si',
+						// 	allowMeasure: firstItem.column25 === 'Si',
+						// 	posKitchen: firstItem.column26 === 'Si',
+						// 	m3: firstItem.column27 === "" ? article.m3 : firstItem.column27,
+						// 	variants: updatedVariants.length > 0 ? updatedVariants : article.variants,
+						// 	containsVariants: true,
+						// 	updateVariants: false,
+						// 	codeProvider: firstItem.column28 == "" ? article.codeProvider : firstItem.column28
+						// 	}
+						// )
+					}
 				}
 			}
+
 
 			for (const item of data) {
 				const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
@@ -1287,14 +1354,14 @@ export default class ArticleUC {
 
 		for (const item of data) {
 			let name = item.column29
-		
+
 			if (!variantTypeObj[name]) {
 				if (name) {
 					let variantType: VariantType = VariantTypeSchema.getInstance(this.database)
 					variantType = Object.assign(variantType, {
 						name: name
 					})
-				    await new VariantTypeController(this.database).save(variantType);
+					await new VariantTypeController(this.database).save(variantType);
 					variantTypeObj[name] = variantType
 				}
 			}

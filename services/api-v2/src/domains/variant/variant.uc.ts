@@ -27,7 +27,7 @@ export default class VariantUC extends Controller {
         this.api = axios.defaults
     }
 
-    createVariant = async (articleParentId: string, variants: Variant[]) => {
+    createVariant = async (articleParentId: string, variants: any[]) => {
         try {
             const articleController = new ArticleController(this.database);
             const articleResponse = await articleController.getById(articleParentId);
@@ -37,7 +37,6 @@ export default class VariantUC extends Controller {
             }
 
             const article = articleResponse.result;
-
             // Organizar las variantes por tipo (por ejemplo, color, sexo, talle)
             let variantForType = variants.reduce((acc: any, variant: Variant) => {
                 if (!acc[variant.type.name]) {
@@ -66,11 +65,21 @@ export default class VariantUC extends Controller {
             // Crear los artículos hijos con sus respectivas combinaciones de variantes
             let results: any[] = [];
 
-            for (const combination of combinations) {
+            for (const [index, combination] of combinations.entries()) {
                 let child: any = {
                     ...article._doc,
                     type: 'Variante',
-                    description: `${article.description} ${combination.join(' / ')}`
+                    description: `${article.description} ${combination.join(' / ')}`,
+                    taxes: variants[index].taxes ?? article._doc.taxes,
+                    costPrice: variants[index].costPrice ?? article._doc.costPrice,
+                    markupPercentage: variants[index].markupPercentage ?? article._doc.markupPercentage,
+                    markupPrice: variants[index].markupPrice ?? article._doc.markupPrice,
+                    salePrice: variants[index].salePrice ?? article._doc.salePrice,
+                    basePrice: variants[index].basePrice ?? article._doc.basePrice,
+                    weight: variants[index].weight ?? article._doc.weight,
+                    width: variants[index].width ?? article._doc.width,
+                    height: variants[index].height ?? article._doc.height,
+                    depth: variants[index].depth ?? article._doc.depth,
                 };
 
                 // Guardar el artículo hijo y obtener el resultado
@@ -166,7 +175,7 @@ export default class VariantUC extends Controller {
             // Obtener detalles completos de los tipos y valores si solo se pasan los IDs
             const completeVariants = await this.getAllVariants(variants, variantTypeController, variantValueController);
 
-            // Organizar las variantes por tipo
+            // Organizar las variantes por tipo<
             const variantForType = this.organizeVariantsByType(completeVariants);
 
             // Generar todas las combinaciones posibles de variantes
