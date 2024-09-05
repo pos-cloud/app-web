@@ -167,6 +167,7 @@ export class ListArticlesPosComponent implements OnInit {
 
         // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
         let project = {
+            order: 1,
             type: 1,
             code: 1,
             barcode: 1,
@@ -204,7 +205,7 @@ export class ListArticlesPosComponent implements OnInit {
         this._articleService.getArticlesV2(
             project, // PROJECT
             match, // MATCH
-            { posDescription: 1, description: 1, favourite: -1 }, // SORT
+            { order: 1, posDescription: 1, description: 1, favourite: -1 }, // SORT
             {}, // GROUP
             0, // LIMIT
             0 // SKIP
