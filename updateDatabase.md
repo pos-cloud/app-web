@@ -1,3 +1,4 @@
+// update code to article stock
 db['article-stocks'].aggregate([
   {
     $lookup: {
@@ -22,14 +23,14 @@ db['article-stocks'].aggregate([
 
 
 // update variant
-
 db.articles.find({ type: "Final", operationType: { $ne: "D" } }).forEach(function(article) {
     let variants = [];
     
     variants = db.variants.find({ articleParent: article._id }).toArray().map(function(variant) {
         return {
             type: variant.type,
-            value: variant.value
+            value: variant.value,
+            articleId: variant.articleChild,
         };
     });
     
