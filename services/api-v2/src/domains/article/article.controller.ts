@@ -287,7 +287,7 @@ export default class ArticleController extends Controller {
         }
       }
 
-      const res = await new ArticleUC(request.database).importFromExcel(data)
+      const res = await new ArticleUC(request.database).importFromExcel(data, this.authToken)
 
       response.send(new Responser(200, res))
     } catch (error) {

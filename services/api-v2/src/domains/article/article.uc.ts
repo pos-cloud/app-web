@@ -446,9 +446,9 @@ export default class ArticleUC {
 		}
 	}
 
-	async importFromExcel(data: any[]) {
+	async importFromExcel(data: any[], token: string) {
 		return new Promise<{}>(async (resolve, reject) => {
-
+			this.authToken = token
 			const response = {
 				updateArticle: <any>[],
 				notUpdateArticle: <any>[],
@@ -549,69 +549,56 @@ export default class ArticleUC {
 
 						await new VariantUC(this.database).createVariant(result.result._id, values);
 						data = data.filter(item => !(item.column29 !== '' && item.column30 !== '' && item.column2 === firstItem.column2))
-					}else{
-						// const article = articlesObj[firstItem.column2]
-						// const updatedVariants = items.map((newVariant: any) => {
-						// 	const existingVariant = article.variants.find((v: any) => v.type === newVariant.type && v.value === newVariant.value);
-							
-						// 	if (existingVariant) {
-						// 		// Si la variante ya existe, conservar propiedades originales si las nuevas están vacías
-						// 		return {
-						// 			type: newVariant.type,
-						// 			value: newVariant.value,
-						// 			basePrice: newVariant.basePrice !== '' ? newVariant.basePrice : existingVariant.basePrice,
-						// 			taxes: newVariant.taxes !== '' ? newVariant.taxes : existingVariant.taxes,
-						// 			costPrice: newVariant.costPrice !== '' ? newVariant.costPrice : existingVariant.costPrice,
-						// 			markupPercentage: newVariant.markupPercentage !== '' ? newVariant.markupPercentage : existingVariant.markupPercentage,
-						// 			markupPrice: newVariant.markupPrice !== '' ? newVariant.markupPrice : existingVariant.markupPrice,
-						// 			salePrice: newVariant.salePrice !== '' ? newVariant.salePrice : existingVariant.salePrice,
-						// 			weight: newVariant.weight !== '' ? newVariant.weight : existingVariant.weight,
-						// 			width: newVariant.width !== '' ? newVariant.width : existingVariant.width,
-						// 			height: newVariant.height !== '' ? newVariant.height : existingVariant.height,
-						// 			depth: newVariant.depth !== '' ? newVariant.depth : existingVariant.depth,
-						// 		};
-						// 	} else {
-						// 		// Si no existe, agregar la nueva variante directamente
-						// 		return newVariant;
-						// 	}
-						// });
-						//   await new ArticleController(this.database).update(
-						// 	article._id,
-						// 	{
-						// 	order: firstItem.column1 === "" ? article.order : firstItem.column1,
-						// 	code: firstItem.column2 === "" ? article.code : firstItem.column2,
-						// 	barcode: firstItem.column3 === "" ? article.barcode : firstItem.column3,
-						// 	make: makesObj[firstItem.column4] === "" ? article.make : makesObj[firstItem.column4]?._id ,
-						// 	category:categoryObj[firstItem.column6 === '' ? firstItem.column5 : firstItem.column6] === undefined ? article.category : categoryObj[firstItem.column6 === '' ? firstItem.column5 : firstItem.column6]?._id,
-						// 	description: firstItem.column7 === "" ? article.descripcion : firstItem.column7,
-						// 	posDescription: firstItem.column8 === "" ? article.posDescription : firstItem.column8.substring(0, 20),
-						// 	unitOfMeasurement: unitOfMeasurementObj[firstItem.column9] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[firstItem.column9]?._id,
-						// 	printIn: printerObj[firstItem.column10] === "" ? article.unitOfMeasurement : printerObj[firstItem.column10]?.name,
-						// 	basePrice: 1,
-						// 	salePrice: 1,
-						// 	observation: firstItem.column11 === "" ? article.observation : firstItem.column11,
-						// 	weight: firstItem.column16 === "" ? article.weight : firstItem.column16,
-						// 	width: firstItem.column17 === "" ? article.width : firstItem.column17,
-						// 	height: firstItem.column18 === "" ? article.height : firstItem.column18,
-						// 	depth: firstItem.column19 === "" ? article.depth : firstItem.column19,
-						// 	allowPurchase: firstItem.column20 === 'Si',
-						// 	allowSale: firstItem.column21 === 'Si',
-						// 	allowStock: firstItem.column22 === 'Si',
-						// 	allowSaleWithoutStock: firstItem.column23 === 'Si',
-						// 	isWeigth: firstItem.column24 === 'Si',
-						// 	allowMeasure: firstItem.column25 === 'Si',
-						// 	posKitchen: firstItem.column26 === 'Si',
-						// 	m3: firstItem.column27 === "" ? article.m3 : firstItem.column27,
-						// 	variants: updatedVariants.length > 0 ? updatedVariants : article.variants,
-						// 	containsVariants: true,
-						// 	updateVariants: false,
-						// 	codeProvider: firstItem.column28 == "" ? article.codeProvider : firstItem.column28
-						// 	}
-						// )
+					} else {
+
+						const article = articlesObj[firstItem.column2]
+						const updatedVariants = await Promise.all(items.map(async (newVariant: any) => {
+							const existingVariant = article.variants.find((v: any) =>
+								v.type.toString() == variantType[newVariant.column29]._id.toString() &&
+								v.value.toString() == variantValue[newVariant.column30]._id.toString()
+							);
+							let calculatedSalePrice = await this.calculateSalePrice(newVariant.column12, newVariant.column14, newVariant.column15, newVariant.column13);
+							if (existingVariant) {
+								return {
+									type: existingVariant.type.toString(),
+									value: existingVariant.value.toString(),
+									basePrice: calculatedSalePrice.basePrice,
+									taxes: calculatedSalePrice.tax,
+									costPrice: calculatedSalePrice.costPrice,
+									markupPercentage: calculatedSalePrice.markupPercentage,
+									markupPrice: calculatedSalePrice.markupPrice,
+									salePrice: calculatedSalePrice.salePrice,
+									weight: newVariant.column16 === '' ? existingVariant.weight : newVariant.column16,
+									width: newVariant.column17 === '' ? existingVariant.width : newVariant.column17,
+									height: newVariant.column18 === '' ? existingVariant.height : newVariant.column18,
+									depth: newVariant.column19 === '' ? existingVariant.depth : newVariant.column19,
+								};
+							} else {
+								return {
+									type: variantType[newVariant.column29],
+									value: variantValue[newVariant.column30],
+									basePrice: calculatedSalePrice.basePrice,
+									taxes: calculatedSalePrice.tax,
+									costPrice: calculatedSalePrice.costPrice,
+									markupPercentage: calculatedSalePrice.markupPercentage,
+									markupPrice: calculatedSalePrice.markupPrice,
+									salePrice: calculatedSalePrice.salePrice,
+									weight: newVariant.column16,
+									width: newVariant.column17,
+									height: newVariant.column18,
+									depth: newVariant.column19,
+								}
+							}
+						}));
+						const variants = await this.getVariant(article._id);
+					
+						const articleParent: any = await new ArticleController(this.database).find({_id: variants[0].articleParent}, {})
+					
+						await new VariantUC(this.database).updateVariant(articleParent[0]._id, updatedVariants.length > 0 ? updatedVariants : article.variants, articleParent[0], this.authToken);
+						data = data.filter(item => !(item.column29 !== '' && item.column30 !== '' && item.column2 === firstItem.column2))
 					}
 				}
 			}
-
 
 			for (const item of data) {
 				const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
@@ -1709,7 +1696,10 @@ export default class ArticleUC {
 			},
 			match: {
 				operationType: { $ne: 'D' },
-				articleParent: { $oid: id },
+				$or: [
+					{ articleParent: { $oid: id } },
+					{ 'articleChild._id': { $oid: id } }
+				]
 			}
 		})
 		return variant.result

@@ -126,7 +126,7 @@ export default class VariantUC extends Controller {
         }
     };
 
-    updateVariant = async (articleParentId: string, variants: Variant[], articleOld: Article, token: string) => {
+    updateVariant = async (articleParentId: string, variants: any[], articleOld: Article, token: string) => {
         try {
             const articleController = new ArticleController(this.database);
             const variantController = new VariantController(this.database);
@@ -140,7 +140,6 @@ export default class VariantUC extends Controller {
                 throw new Error(`No se encontró el artículo padre con ID ${articleParentId}`);
             }
             const article = articleResponse.result.toObject();
-
             if (!variants.length) {
                 let variant = await variantController.find({ articleParent: articleParentId }, {})
 
@@ -156,7 +155,7 @@ export default class VariantUC extends Controller {
                 })
                 for (let child of articleChild.result) {
                     if (application.length && application[0].tiendaNube.token && application[0].tiendaNube.userId && article.tiendaNubeId && child.tiendaNubeId) {
-                      await axios.delete(`${config.TIENDANUBE_URL}/products/variant`, {
+                        await axios.delete(`${config.TIENDANUBE_URL}/products/variant`, {
                             headers: {
                                 Authorization: this.authToken
                             },
@@ -199,13 +198,23 @@ export default class VariantUC extends Controller {
     }
 
     getAllVariants = async (variants: Variant[], variantTypeController: any, variantValueController: any) => {
-        return await Promise.all(variants.map(async (variant: Variant) => {
+        return await Promise.all(variants.map(async (variant: any) => {
             if (typeof variant.type === 'string' || typeof variant.value === 'string') {
                 const typeResponse = await variantTypeController.getById(variant.type);
                 const valueResponse = await variantValueController.getById(variant.value);
                 return {
                     type: typeResponse.result,
-                    value: valueResponse.result
+                    value: valueResponse.result,
+                    basePrice: variant.basePrice,
+                    taxes: variant.taxes,
+                    costPrice: variant.costPrice,
+                    markupPercentage: variant.markupPercentage,
+                    markupPrice: variant.markupPrice,
+                    salePrice: variant.salePrice,
+                    weight: variant.weight,
+                    width: variant.width,
+                    height: variant.height,
+                    depth: variant.depth,
                 };
             } else {
                 return variant;
@@ -290,7 +299,7 @@ export default class VariantUC extends Controller {
             } else {
                 updatedChildrens = existingChildren
             }
-            for (const combination of combinations) {
+            for (const [index, combination] of combinations.entries()) {
                 let description: string;
                 let existingChild;
 
@@ -301,11 +310,27 @@ export default class VariantUC extends Controller {
                     description = `${article.description} ${combination.join(' / ')}`;
                     existingChild = updatedChildrens.find((child: any) => child.description === description);
                 }
-
                 if (existingChild) {
-
                     if (article.updateVariants) {
-                        let updatedChild = { ...article, description: description, type: 'Variante', picture: existingChild.picture, pictures: existingChild.pictures, tiendaNubeId: existingChild.tiendaNubeId };
+                        let updatedChild = {
+                            ...article,
+                            description: description,
+                            type: 'Variante',
+                            picture: existingChild.picture,
+                            pictures: existingChild.pictures,
+                            tiendaNubeId: existingChild.tiendaNubeId,
+                            basePrice: completeVariants[index].basePrice ?? existingChild.basePrice,
+                            taxes: completeVariants[index].taxes ?? existingChild.taxes,
+                            costPrice: completeVariants[index].costPrice ?? existingChild.costPrice,
+                            markupPercentage: completeVariants[index].markupPercentage ?? existingChild.markupPercentage,
+                            markupPrice: completeVariants[index].markupPrice ?? existingChild.markupPrice,
+                            salePrice: completeVariants[index].salePrice ?? existingChild.salePrice,
+                            weight: completeVariants[index].weight ?? existingChild.weight,
+                            width: completeVariants[index].width ?? existingChild.width,
+                            height: completeVariants[index].height ?? existingChild.height,
+                            depth: completeVariants[index].depth ?? existingChild.depth
+
+                        };
                         results.push(await articleController.update(existingChild._id, updatedChild));
                     } else {
                         let updatedChild = { description: description, type: 'Variante' };
