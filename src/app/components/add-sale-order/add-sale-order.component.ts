@@ -81,7 +81,7 @@ import {
   StockMovement,
   TransactionType,
   optionalAFIP,
-  PriceType,
+  PriceType
 } from '../transaction-type/transaction-type';
 import {DeleteTransactionComponent} from '../transaction/delete-transaction/delete-transaction.component';
 import {Transaction, TransactionState} from '../transaction/transaction';
@@ -733,6 +733,11 @@ export class AddSaleOrderComponent {
             this.containerMovementsOfArticles.nativeElement.scrollHeight;
           this.updateQuantity();
           this.updatePrices();
+
+          // esto para bardo solamente por que necesita que se haga la lectura de uno y se vuelva a crear automaticamente.
+          if(result.movementsOfArticles.length == 1 && this.transaction.type.name == 'Cierre de producción' && this.transaction.type.transactionMovement === TransactionMovement.Production){
+            this.finish()
+          }
         }
         this.loading = false;
       },
