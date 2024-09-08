@@ -101,7 +101,6 @@ export class ArticleComponent implements OnInit {
     ArticlePrintIn.Bar,
     ArticlePrintIn.Voucher,
   ];
-  alertMessage = '';
   userType: string;
   loading = false;
   focusEvent = new EventEmitter<boolean>();
@@ -117,7 +116,6 @@ export class ArticleComponent implements OnInit {
   filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
   lastPricePurchase: number = 0.0;
   lastDatePurchase: string;
-  orientation: string = 'horizontal';
   notes: string[];
   tags: string[];
   fileNamePrincipal: string;
@@ -183,7 +181,6 @@ export class ArticleComponent implements OnInit {
     },
   };
 
-  value;
   formErrors = {
     code: '',
     make: '',
@@ -326,12 +323,9 @@ export class ArticleComponent implements OnInit {
     public _variantTypeService: VariantTypeService,
     public _variantValueService: VariantValueService,
     public _userService: UserService,
-    config: NgbTypeaheadConfig
   ) {
     this.getVariantValues()
     this.getVariantTypes()
-    config.showHint = true;
-    if (window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
     this.notes = new Array();
     this.tags = new Array();
