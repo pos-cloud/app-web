@@ -662,8 +662,8 @@ export class ConfigComponent implements OnInit {
 
     // if(!this.config.tiendaNube.appID) this.config.tiendaNube.appID;
     // if(!this.config.tiendaNube.clientSecret) this.config.tiendaNube.clientSecret;
-    // if(!this.config.tiendaNube.token) this.config.tiendaNube.token;
-    // if(!this.config.tiendaNube.userID) this.config.tiendaNube.userID;
+    if(!this.config.tiendaNube.token) this.config.tiendaNube.token;
+    if(!this.config.tiendaNube.userID) this.config.tiendaNube.userID;
 
 
     let vatConfitionDefault;
@@ -735,8 +735,8 @@ export class ConfigComponent implements OnInit {
       // 'twilio.authToken': this.config.twilio.authToken,
       // 'tiendaNube.appID' : this.config.tiendaNube.appID,
       // 'tiendaNube.clientSecret' : this.config.tiendaNube.clientSecret,
-      // 'tiendaNube.token' : this.config.tiendaNube.token,
-      // 'tiendaNube.userID' : this.config.tiendaNube.userID,
+      'tiendaNube.token' : this.config.tiendaNube.token,
+      'tiendaNube.userID' : this.config.tiendaNube.userID,
 
     });
   }
