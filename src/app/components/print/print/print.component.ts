@@ -517,17 +517,17 @@ export class PrintComponent implements OnInit {
           if (this.printer.pageWidth < 150) {
             this.toPrintCashBox(undefined);
           } else if (this.printer.pageHigh > 150) {
-            this.toPrintCashBoxReport(undefined);
+            this.toPrintCashBox(undefined);
           } else {
-            this.toPrintCashBoxReport(undefined);
+            this.toPrintCashBox(undefined);
           }
         } else {
           if (this.printer.pageWidth < 150) {
             this.toPrintCashBox(result);
           } else if (this.printer.pageHigh > 150) {
-            this.toPrintCashBoxReport(result);
+            this.toPrintCashBox(result);
           } else {
-            this.toPrintCashBoxReport(result);
+            this.toPrintCashBox(result);
           }
         }
         this.loading = false;
@@ -1609,7 +1609,6 @@ export class PrintComponent implements OnInit {
   toPrintCashBox(close): void {
     this.loading = true;
     this.showMessage('Imprimiendo, Espere un momento...', 'info', false);
-    let decimalPipe = new CurrencyPipe('es-AR');
 
     //Cabecera del ticket
     let margin = 5;
@@ -1811,7 +1810,7 @@ export class PrintComponent implements OnInit {
     if (Object.keys(openingAmounts).length > 0) {
       for (let k of Object.keys(openingAmounts)) {
         this.doc.text('- ' + k, margin + 5, (row += 5));
-        this.doc.text('$ ' + openingAmounts[k].toLocaleString('de-DE'), 60, row);
+        this.doc.text('$ ' + openingAmounts[k].toLocaleString('de-DE'), 55, row);
         openCash += openingAmounts[k];
       }
     } else {
@@ -1821,7 +1820,7 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont('helvetica' , 'bold');
     this.doc.text('Total:', margin + 10, (row += 5));
-    this.doc.text('$ ' + openCash.toLocaleString('de-DE'), 60, row);
+    this.doc.text('$ ' + openCash.toLocaleString('de-DE'), 55, row);
     this.doc.setFont(undefined,'normal');
 
     this.doc.setFont('helvetica' , 'bold');
@@ -1830,7 +1829,7 @@ export class PrintComponent implements OnInit {
     if (Object.keys(inputAmounts).length > 0) {
       for (let k of Object.keys(inputAmounts)) {
         this.doc.text('- ' + k, margin + 5, (row += 5));
-        this.doc.text('$ ' + inputAmounts[k].toString(), 60, row);
+        this.doc.text('$ ' + inputAmounts[k].toString(), 55, row);
         input += inputAmounts[k];
         this.doc.setFont(undefined, 'italic');
         if (amountsInput[k] === 1) {
@@ -1847,7 +1846,7 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont('helvetica' , 'bold');
     this.doc.text('Total:', margin + 10, (row += 5));
-    this.doc.text('$ ' + input.toLocaleString('de-DE'), 60, row);
+    this.doc.text('$ ' + input.toLocaleString('de-DE'), 55, row);
     this.doc.setFont(undefined,'normal');
 
     this.doc.setFont('helvetica' , 'bold');
@@ -1856,7 +1855,7 @@ export class PrintComponent implements OnInit {
     if (Object.keys(outputAmounts).length > 0) {
       for (let k of Object.keys(outputAmounts)) {
         this.doc.text('- ' + k, margin + 5, (row += 5));
-        this.doc.text('$ ' + outputAmounts[k].toLocaleString('de-DE'), 60, row);
+        this.doc.text('$ ' + outputAmounts[k].toLocaleString('de-DE'), 55, row);
         output += outputAmounts[k];
         this.doc.setFont(undefined, 'italic');
         if (amountsOutput[k] === 1) {
@@ -1873,7 +1872,7 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont('helvetica' , 'bold');
     this.doc.text('Total:', margin + 10, (row += 5));
-    this.doc.text('$ ' + output.toLocaleString('de-DE'), 60, row);
+    this.doc.text('$ ' + output.toLocaleString('de-DE'), 55, row);
     this.doc.setFont(undefined,'normal');
 
     this.doc.setFont('helvetica' , 'bold');
@@ -1882,7 +1881,7 @@ export class PrintComponent implements OnInit {
     if (Object.keys(closingAmounts).length > 0) {
       for (let k of Object.keys(closingAmounts)) {
         this.doc.text('- ' + k, margin + 5, (row += 5));
-        this.doc.text('$ ' + closingAmounts[k].toLocaleString('de-DE'), 60, row);
+        this.doc.text('$ ' + closingAmounts[k].toLocaleString('de-DE'), 55, row);
         closeCash += closingAmounts[k];
       }
     } else {
@@ -1892,7 +1891,7 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont('helvetica' , 'bold');
     this.doc.text('Total:', margin + 10, (row += 5));
-    this.doc.text('$ ' + closeCash.toFixed(2).toLocaleString(), 60, row);
+    this.doc.text('$ ' + closeCash.toFixed(2).toLocaleString(), 55, row);
     this.doc.setFont(undefined,'normal');
 
     this.doc.setFont('helvetica' , 'bold');
@@ -1932,7 +1931,7 @@ export class PrintComponent implements OnInit {
             closingAmounts[k] -
             (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
           ).toLocaleString('de-DE'),
-          60,
+          55,
           row,
         );
       }
@@ -1941,21 +1940,21 @@ export class PrintComponent implements OnInit {
     this.doc.text('Total:', margin + 10, (row += 5));
     this.doc.text(
       '$ ' + (closeCash - (openCash + input - output)).toLocaleString('de-DE'),
-      60,
+      55,
       row,
     );
-    this.doc.setFont(undefined,'normal');
+    // this.doc.setFont(undefined,'normal');
 
-    // Pie de la impresión
-    this.doc.setFont(undefined,'normal');
-    this.doc.setTextColor(164, 164, 164);
-    this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text(
-      'Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.',
-      5,
-      290,
-    );
-    this.doc.setTextColor(0, 0, 0);
+    // // Pie de la impresión
+    // this.doc.setFont(undefined,'normal');
+    // this.doc.setTextColor(164, 164, 164);
+    // this.doc.setFontSize(this.fontSizes.normal);
+    // this.doc.text(
+    //   'Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.',
+    //   5,
+    //   290,
+    // );
+    // this.doc.setTextColor(0, 0, 0);
 
     this.finishImpression();
   }

@@ -192,6 +192,10 @@ export class ListCashBoxesComponent implements OnInit {
 		}
 	};
 
+	openListCashBox(cashBox: CashBox) {
+		this._router.navigateByUrl('report/list-box/' + cashBox._id);
+	}
+
 	public showMessage(message: string, type: string, dismissible: boolean): void {
 		this.alertMessage = message;
 		this.alertConfig.type = type;
