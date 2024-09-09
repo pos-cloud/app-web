@@ -492,45 +492,77 @@ export default class ArticleUC {
 				let newArticle: Article = ArticleSchema.getInstance(this.database);
 				const values = [];
 				for (const item of items) {
-					if (item.column29 !== '' && item.column30 !== '') {
-						const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
-						values.push({
-							type: variantType[item.column29],
-							value: variantValue[item.column30],
+					const calculatedSalePrice = await this.calculateSalePrice(item.column12.trim(), item.column14.trim(), item.column15.trim(), item.column13.trim());
+					if (item.column29.trim() !== '' && item.column30.trim() !== '') {
+					values.push({
+							type: variantType[item.column29.trim()],
+							value: variantValue[item.column30.trim()],
 							basePrice: calculatedSalePrice.basePrice,
 							taxes: calculatedSalePrice.tax,
 							costPrice: calculatedSalePrice.costPrice,
 							markupPercentage: calculatedSalePrice.markupPercentage,
 							markupPrice: calculatedSalePrice.markupPrice,
 							salePrice: calculatedSalePrice.salePrice,
-							weight: item.column16,
-							width: item.column17,
-							height: item.column18,
-							depth: item.column19,
+							weight: item.column16.trim(),
+							width: item.column17.trim(),
+							height: item.column18.trim(),
+							depth: item.column19.trim(),
 						});
 					}
+					// if (item.column31 !== '' && item.column32 !== '') {
+					// 	values.push({
+					// 		type: variantType[item.column31],
+					// 		value: variantValue[item.column32],
+					// 		basePrice: calculatedSalePrice.basePrice,
+					// 		taxes: calculatedSalePrice.tax,
+					// 		costPrice: calculatedSalePrice.costPrice,
+					// 		markupPercentage: calculatedSalePrice.markupPercentage,
+					// 		markupPrice: calculatedSalePrice.markupPrice,
+					// 		salePrice: calculatedSalePrice.salePrice,
+					// 		weight: item.column16,
+					// 		width: item.column17,
+					// 		height: item.column18,
+					// 		depth: item.column19,
+					// 	});
+					// }
+					// if (item.column33 !== '' && item.column34 !== '') {
+					// 	values.push({
+					// 		type: variantType[item.column33],
+					// 		value: variantValue[item.column34],
+					// 		basePrice: calculatedSalePrice.basePrice,
+					// 		taxes: calculatedSalePrice.tax,
+					// 		costPrice: calculatedSalePrice.costPrice,
+					// 		markupPercentage: calculatedSalePrice.markupPercentage,
+					// 		markupPrice: calculatedSalePrice.markupPrice,
+					// 		salePrice: calculatedSalePrice.salePrice,
+					// 		weight: item.column16,
+					// 		width: item.column17,
+					// 		height: item.column18,
+					// 		depth: item.column19,
+					// 	});
+					// }
 				}
 				if (values.length > 0) {
 					// Asignar propiedades al artículo padre usando el primer elemento del grupo
 					const firstItem = items[0];
-					if (!articlesObj[firstItem.column2]) {
+					if (!articlesObj[firstItem.column2.trim()]) {
 						newArticle = Object.assign(newArticle, {
-							order: firstItem.column1,
-							code: firstItem.column2,
-							barcode: firstItem.column3,
-							make: makesObj[firstItem.column4]?._id,
-							category: categoryObj[firstItem.column6 === '' ? firstItem.column5 : firstItem.column6]?._id,
-							description: firstItem.column7,
-							posDescription: firstItem.column8.substring(0, 20),
-							unitOfMeasurement: unitOfMeasurementObj[firstItem.column9]?._id,
-							printIn: printerObj[firstItem.column10]?.name,
+							order: firstItem.column1.trim(),
+							code: firstItem.column2.trim(),
+							barcode: firstItem.column3.trim(),
+							make: makesObj[firstItem.column4.trim()]?._id,
+							category: categoryObj[firstItem.column6.trim() === '' ? firstItem.column5.trim() : firstItem.column6.trim()]?._id,
+							description: firstItem.column7.trim(),
+							posDescription: firstItem.column8.trim().substring(0, 20),
+							unitOfMeasurement: unitOfMeasurementObj[firstItem.column9.trim()]?._id,
+							printIn: printerObj[firstItem.column10.trim()]?.name,
 							basePrice: 1,
 							salePrice: 1,
-							observation: firstItem.column11,
-							weight: firstItem.column16,
-							width: firstItem.column17,
-							height: firstItem.column18,
-							depth: firstItem.column19,
+							observation: firstItem.column11.trim(),
+							weight: firstItem.column16.trim(),
+							width: firstItem.column17.trim(),
+							height: firstItem.column18.trim(),
+							depth: firstItem.column19.trim(),
 							allowPurchase: firstItem.column20 === 'Si',
 							allowSale: firstItem.column21 === 'Si',
 							allowStock: firstItem.column22 === 'Si',
@@ -538,26 +570,26 @@ export default class ArticleUC {
 							isWeigth: firstItem.column24 === 'Si',
 							allowMeasure: firstItem.column25 === 'Si',
 							posKitchen: firstItem.column26 === 'Si',
-							m3: firstItem.column27,
+							m3: firstItem.column27.trim(),
 							variants: values,
 							containsVariants: true,
 							updateVariants: false,
-							codeProvider: firstItem.column28
+							codeProvider: firstItem.column28.trim()
 						});
 
 						const result = await new ArticleController(this.database).save(newArticle);
-
+						console.log(values)
 						await new VariantUC(this.database).createVariant(result.result._id, values);
-						data = data.filter(item => !(item.column29 !== '' && item.column30 !== '' && item.column2 === firstItem.column2))
+						data = data.filter(item => !(item.column29.trim() !== '' && item.column30.trim() !== '' && item.column2.trim() === firstItem.column2))
 					} else {
 
 						const article = articlesObj[firstItem.column2]
 						const updatedVariants = await Promise.all(items.map(async (newVariant: any) => {
 							const existingVariant = article.variants.find((v: any) =>
-								v.type.toString() == variantType[newVariant.column29]?._id.toString() &&
-								v.value.toString() == variantValue[newVariant.column30]?._id.toString()
+								v.type.toString() == variantType[newVariant.column29.trim()]?._id.toString() &&
+								v.value.toString() == variantValue[newVariant.column30.trim()]?._id.toString()
 							);
-							let calculatedSalePrice = await this.calculateSalePrice(newVariant.column12, newVariant.column14, newVariant.column15, newVariant.column13);
+							let calculatedSalePrice = await this.calculateSalePrice(newVariant.column12.trim(), newVariant.column14.trim(), newVariant.column15.trim(), newVariant.column13.trim() );
 							if (existingVariant) {
 								return {
 									type: existingVariant.type.toString(),
@@ -568,10 +600,10 @@ export default class ArticleUC {
 									markupPercentage: calculatedSalePrice.markupPercentage,
 									markupPrice: calculatedSalePrice.markupPrice,
 									salePrice: calculatedSalePrice.salePrice,
-									weight: newVariant.column16 === '' ? existingVariant.weight : newVariant.column16,
-									width: newVariant.column17 === '' ? existingVariant.width : newVariant.column17,
-									height: newVariant.column18 === '' ? existingVariant.height : newVariant.column18,
-									depth: newVariant.column19 === '' ? existingVariant.depth : newVariant.column19,
+									weight: newVariant.column16.trim() === '' ? existingVariant.weight : newVariant.column16.trim() ,
+									width: newVariant.column17.trim() === '' ? existingVariant.width : newVariant.column17.trim() ,
+									height: newVariant.column18.trim() === '' ? existingVariant.height : newVariant.column18.trim() ,
+									depth: newVariant.column19.trim() === '' ? existingVariant.depth : newVariant.column19.trim() ,
 								};
 							} else {
 								return {
@@ -595,7 +627,7 @@ export default class ArticleUC {
 						const articleParent: any = await new ArticleController(this.database).find({_id: variants[0].articleParent}, {})
 					
 						await new VariantUC(this.database).updateVariant(articleParent[0]._id, updatedVariants.length > 0 ? updatedVariants : article.variants, articleParent[0], this.authToken);
-						data = data.filter(item => !(item.column29 !== '' && item.column30 !== '' && item.column2 === firstItem.column2))
+						data = data.filter(item => !(item.column29.trim() !== '' && item.column30.trim() !== '' && item.column2.trim()=== firstItem.column2))
 					}
 				}
 			}
@@ -1319,6 +1351,44 @@ export default class ArticleUC {
 		return 200;
 	}
 
+	// async createVariantTypesExel(data: any) {
+	// 	const variantTypeObj: any = {};
+		
+	// 	// Obtener todos los tipos de variantes existentes
+	// 	const variantType = await new VariantTypeController(this.database).getAll({
+	// 		project: {
+	// 			name: 1,
+	// 			operationType: 1,
+	// 		},
+	// 		match: {
+	// 			name: { $exists: true, $ne: null },
+	// 			operationType: { $ne: 'D' },
+	// 		}
+	// 	});
+	
+	// 	// Mapear los tipos de variantes existentes a un objeto
+	// 	variantType.result.forEach((item: any) => {
+	// 		if (item.name) {
+	// 			variantTypeObj[item.name] = item;
+	// 		}
+	// 	});
+	
+	// 	for (const item of data) {
+	// 		const columns = [item.column29?.trim(), item.column31?.trim(), item.column33?.trim()];
+	
+	// 		for (const name of columns) {
+	// 			if (name && !variantTypeObj[name]) {
+	// 				let variantType: VariantType = VariantTypeSchema.getInstance(this.database);
+	// 				variantType = Object.assign(variantType, { name: name });
+	// 				await new VariantTypeController(this.database).save(variantType);
+	// 				variantTypeObj[name] = variantType;
+	// 			}
+	// 		}
+	// 	}
+	
+	// 	return 200;
+	// }
+	
 	async createVariantTypesExel(data: any) {
 		const variantTypeObj: any = {};
 		const variantType = await new VariantTypeController(this.database).getAll({
