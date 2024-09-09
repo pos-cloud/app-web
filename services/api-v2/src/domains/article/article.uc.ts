@@ -479,10 +479,10 @@ export default class ArticleUC {
 			const variantValue = await this.getVariantValue()
 
 			const groupedByCode = data.reduce((acc, item) => {
-				if (!acc[item.column2]) {
-					acc[item.column2] = [];
+				if (!acc[item.column2.trim()]) {
+					acc[item.column2.trim()] = [];
 				}
-				acc[item.column2].push(item);
+				acc[item.column2.trim()].push(item);
 				return acc;
 			}, {});
 			for (const code in groupedByCode) {
@@ -554,8 +554,8 @@ export default class ArticleUC {
 						const article = articlesObj[firstItem.column2]
 						const updatedVariants = await Promise.all(items.map(async (newVariant: any) => {
 							const existingVariant = article.variants.find((v: any) =>
-								v.type.toString() == variantType[newVariant.column29]._id.toString() &&
-								v.value.toString() == variantValue[newVariant.column30]._id.toString()
+								v.type.toString() == variantType[newVariant.column29]?._id.toString() &&
+								v.value.toString() == variantValue[newVariant.column30]?._id.toString()
 							);
 							let calculatedSalePrice = await this.calculateSalePrice(newVariant.column12, newVariant.column14, newVariant.column15, newVariant.column13);
 							if (existingVariant) {
@@ -601,26 +601,26 @@ export default class ArticleUC {
 			}
 
 			for (const item of data) {
-				const calculatedSalePrice = await this.calculateSalePrice(item.column12, item.column14, item.column15, item.column13);
+				const calculatedSalePrice = await this.calculateSalePrice(item.column12.trim(), item.column14.trim(), item.column15.trim(), item.column13.trim());
 
-				if (item.column2 === '') {
+				if (item.column2.trim() === '') {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
-				let code = item.column2;
+				let code = item.column2.trim();
 
 				if (articlesObj[code]) {
 					const article = articlesObj[code]
 					const result = await new ArticleController(this.database).update(
 						article._id,
 						{
-							order: item.column1 === "" ? article.order : item.column11,
-							code: item.column2,
-							barcode: item.column3 === "" ? article.barcode : item.column3,
-							make: makesObj[item.column4] === undefined ? article.make : makesObj[item.column4]._id,
-							category: categoryObj[item.column6 === '' ? item.column5 : item.column6] === undefined ? article.category : categoryObj[item.column6 === '' ? item.column5 : item.column6]?._id,
-							description: item.column7 === "" ? article.description : item.column7,
-							posDescription: item.column8 === "" ? article.posDescription : item.column8.substring(0, 20),
-							unitOfMeasurement: unitOfMeasurementObj[item.column9] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[item.column9]?._id,
+							order: item.column1.trim() === "" ? article.order : item.column1.trim(),
+							code: item.column2.trim(),
+							barcode: item.column3.trim() === "" ? article.barcode : item.column3.trim(),
+							make: makesObj[item.column4.trim()] === undefined ? article.make : makesObj[item.column4.trim()]._id,
+							category: categoryObj[item.column6.trim() === '' ? item.column5.trim() : item.column6.trim()] === undefined ? article.category : categoryObj[item.column6.trim() === '' ? item.column5.trim() : item.column6.trim()]?._id,
+							description: item.column7.trim() === "" ? article.description : item.column7.trim(),
+							posDescription: item.column8.trim() === "" ? article.posDescription : item.column8.substring(0, 20),
+							unitOfMeasurement: unitOfMeasurementObj[item.column9.trim()] === "" ? article.unitOfMeasurement : unitOfMeasurementObj[item.column9.trim()]?._id,
 							printIn: printerObj[item.column10] === "" ? article.unitOfMeasurement : printerObj[item.column10]?.name,
 							observation: item.column11 === "" ? article.observation : item.column11,
 							basePrice: calculatedSalePrice.basePrice,
@@ -641,7 +641,7 @@ export default class ArticleUC {
 							allowMeasure: item.column25 === 'Si',
 							posKitchen: item.column26 === 'Si',
 							m3: item.column27 === "" ? item.m3 : item.column27,
-							codeProvider: item.column27 === "" ? item.codeProvider : item.column28
+							codeProvider: item.column28 === "" ? item.codeProvider : item.column28
 						}
 					);
 
@@ -656,29 +656,28 @@ export default class ArticleUC {
 						}
 					}
 				} else {
-
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
 					newArticle = Object.assign(newArticle, {
-						order: item.column1,
-						code: item.column2,
-						barcode: item.column3,
-						make: makesObj[item.column4]?._id,
-						category: categoryObj[item.column6 === '' ? item.column5 : item.column6]?._id,
-						description: item.column7,
-						posDescription: item.column8.substring(0, 20),
+						order: item.column1.trim(),
+						code: item.column2.trim(),
+						barcode: item.column3.trim(),
+						make: makesObj[item.column4.trim()]?._id,
+						category: categoryObj[item.column6.trim() === '' ? item.column5.trim() : item.column6.trim()]?._id,
+						description: item.column7.trim(),
+						posDescription: item.column8 !== '' ? item.column8.substring(0, 20).trim() : item.column7.substring(0, 20).trim(),
 						unitOfMeasurement: unitOfMeasurementObj[item.column9]?._id,
-						printIn: printerObj[item.column10]?.name,
-						observation: item.column11,
+						printIn: printerObj[item.column10.trim()]?.name,
+						observation: item.column11.trim(),
 						basePrice: calculatedSalePrice.basePrice,
 						taxes: calculatedSalePrice.tax,
 						costPrice: calculatedSalePrice.costPrice,
 						markupPercentage: calculatedSalePrice.markupPercentage,
 						markupPrice: calculatedSalePrice.markupPrice,
 						salePrice: calculatedSalePrice.salePrice,
-						weight: item.column16,
-						width: item.column17,
-						height: item.column18,
-						depth: item.column19,
+						weight: item.column16.trim(),
+						width: item.column17.trim(),
+						height: item.column18.trim(),
+						depth: item.column19.trim(),
 						allowPurchase: item.column20 === 'Si',
 						allowSale: item.column21 === 'Si',
 						allowStock: item.column22 === 'Si',
@@ -686,8 +685,8 @@ export default class ArticleUC {
 						isWeigth: item.column24 === 'Si',
 						allowMeasure: item.column25 === 'Si',
 						posKitchen: item.column26 === 'Si',
-						m3: item.column27,
-						codeProvider: item.column28
+						m3: item.column27.trim(),
+						codeProvider: item.column28.trim()
 					})
 					const result = await new ArticleController(this.database).save(newArticle);
 
@@ -1245,8 +1244,8 @@ export default class ArticleUC {
 			}
 		});
 		for (const item of data) {
-			const descriptionParent = item.column5;
-			const description = item.column6;
+			const descriptionParent = item.column5.trim();
+			const description = item.column6.trim();
 
 			// Manejo de descriptionParent
 			if (descriptionParent && !categoriesObj[descriptionParent]) {
@@ -1269,8 +1268,8 @@ export default class ArticleUC {
 			}
 		}
 		for (const item of data) {
-			const descriptionParent = item.column5;
-			const description = item.column6;
+			const descriptionParent = item.column5.trim();
+			const description = item.column6.trim();
 
 			if (description && descriptionParent && categoriesObj[description]) {
 				// Actualizar la categoría existente con la referencia al parent
@@ -1340,7 +1339,7 @@ export default class ArticleUC {
 		});
 
 		for (const item of data) {
-			let name = item.column29
+			let name = item.column29.trim()
 
 			if (!variantTypeObj[name]) {
 				if (name) {
@@ -1374,12 +1373,12 @@ export default class ArticleUC {
 		});
 		const variantType = await this.getVariantType();
 		for (const item of data) {
-			let description = item.column30
+			let description = item.column30.trim()
 			if (!variantValueObj[description]) {
 				if (description) {
 					let variantValue: VariantValue = VariantValueSchema.getInstance(this.database)
 					variantValue = Object.assign(variantValue, {
-						type: variantType[item.column29],
+						type: variantType[item.column29.trim()],
 						description: description
 					})
 					await new VariantValueController(this.database).save(variantValue);
@@ -1548,12 +1547,14 @@ export default class ArticleUC {
 		});
 
 		for (const item of data) {
-			let descripcion = item.column4
+			let descripcion = item.column4.trim()
 			if (!makeObj[descripcion]) {
 				if (descripcion) {
 					let make: Make = MakeSchema.getInstance(this.database)
 					make = Object.assign(make, {
-						description: descripcion
+						description: descripcion,
+						visibleSale: false,
+
 					})
 					const result = await new MakeController(this.database).save(make);
 					makeObj[descripcion] = make

@@ -26,11 +26,11 @@ export default class ArticleStockUC {
         countNotUpdate: 0
       };
 
-      const articles = data.map((obj) => obj.column1);
+      const articles = data.map((obj) => obj.column1.trim());
 
       data.forEach((item) => {
-        articlesObject[item.column1] = item;
-        response.notUpdateArticle.push(item.column1);
+        articlesObject[item.column1.trim()] = item;
+        response.notUpdateArticle.push(item.column1.trim());
       });
 
       try {
@@ -57,9 +57,9 @@ export default class ArticleStockUC {
         );
 
         articlesStockByArticle.forEach((item: any) => {
-          item.realStock = articlesObject[item.code].column2;
-          item.minStock = articlesObject[item.code].column3;
-          item.maxStock = articlesObject[item.code].column4;
+          item.realStock = articlesObject[item.code].column2.trim();
+          item.minStock = articlesObject[item.code].column3.trim();
+          item.maxStock = articlesObject[item.code].column4.trim();
         });
 
         const updatePromises = articlesStockByArticle.map(async (item: any) => {
@@ -103,9 +103,9 @@ export default class ArticleStockUC {
             article: article._id,
             deposit: depositId,
             branch: branchId,
-            realStock: articleData.column2,
-            minStock: articleData.column3,
-            maxStock: articleData.column4,
+            realStock: articleData.column2.trim(),
+            minStock: articleData.column3.trim(),
+            maxStock: articleData.column4.trim(),
           });
 
           const result = await new ArticleStockController(this.database).save(articleStock);
