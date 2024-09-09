@@ -268,12 +268,20 @@ export default class VariantUC extends Controller {
                 project: {
                     _id: 1,
                     description: 1,
-                    salePrice: 1,
-                    costPrice: 1,
                     type: 1,
                     picture: 1,
                     pictures: 1,
-                    tiendaNubeId: 1
+                    tiendaNubeId: 1,
+                    basePrice: 1,
+                    taxes: 1,
+                    salePrice: 1,
+                    costPrice: 1,
+                    markupPercentage: 1,
+                    markupPrice: 1,
+                    weight: 1,
+                    width: 1,
+                    height: 1,
+                    depth: 1
                 },
                 match: {
                     _id: { $in: existingChildIds }
@@ -312,6 +320,7 @@ export default class VariantUC extends Controller {
                 }
                 if (existingChild) {
                     if (article.updateVariants) {
+                        console.log('acaa')
                         let updatedChild = {
                             ...article,
                             description: description,
@@ -319,16 +328,16 @@ export default class VariantUC extends Controller {
                             picture: existingChild.picture,
                             pictures: existingChild.pictures,
                             tiendaNubeId: existingChild.tiendaNubeId,
-                            basePrice: completeVariants[index].basePrice ?? existingChild.basePrice,
-                            taxes: completeVariants[index].taxes ?? existingChild.taxes,
-                            costPrice: completeVariants[index].costPrice ?? existingChild.costPrice,
-                            markupPercentage: completeVariants[index].markupPercentage ?? existingChild.markupPercentage,
-                            markupPrice: completeVariants[index].markupPrice ?? existingChild.markupPrice,
-                            salePrice: completeVariants[index].salePrice ?? existingChild.salePrice,
-                            weight: completeVariants[index].weight ?? existingChild.weight,
-                            width: completeVariants[index].width ?? existingChild.width,
-                            height: completeVariants[index].height ?? existingChild.height,
-                            depth: completeVariants[index].depth ?? existingChild.depth
+                            basePrice: completeVariants[index].basePrice ?? article.basePrice,
+                            taxes: completeVariants[index].taxes ?? article.taxes,
+                            costPrice: completeVariants[index].costPrice ?? article.costPrice,
+                            markupPercentage: completeVariants[index].markupPercentage ?? article.markupPercentage,
+                            markupPrice: completeVariants[index].markupPrice ?? article.markupPrice,
+                            salePrice: completeVariants[index].salePrice ?? article.salePrice,
+                            weight: completeVariants[index].weight ?? article.weight,
+                            width: completeVariants[index].width ?? article.width,
+                            height: completeVariants[index].height ?? article.height,
+                            depth: completeVariants[index].depth ?? article.depth
 
                         };
                         results.push(await articleController.update(existingChild._id, updatedChild));
