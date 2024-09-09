@@ -13,6 +13,7 @@ import { ListCashBoxesComponent } from '../list-cash-boxes/list-cash-boxes.compo
 import { CashBoxService } from 'app/components/cash-box/cash-box.service';
 import { Movements } from 'app/components/transaction-type/transaction-type';
 import { PrintComponent } from '../../print/print/print.component';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -22,7 +23,6 @@ import { PrintComponent } from '../../print/print/print.component';
 })
 export class ListCashBoxComponent implements OnInit {
 
-    @Input() cashBoxId: string;
     public cashBoxSelected: CashBox;
     public movementsOfCashes: MovementOfCash[] = new Array();
     public alertMessage: string = '';
@@ -64,6 +64,7 @@ export class ListCashBoxComponent implements OnInit {
     public filterPipe: FilterPipe = new FilterPipe();
 
     constructor(
+        private route: ActivatedRoute,
         public _movementOfCashService: MovementOfCashService,
         public _cashBoxService: CashBoxService,
         public _modalService: NgbModal,
@@ -78,7 +79,10 @@ export class ListCashBoxComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.openModal('cashBox')
+        this.route.params.subscribe(params => {
+            let cashBoxId = params['cashBoxId'];  // 'cashBoxId' debe coincidir con el nombre del parámetro en la ruta
+            this.getCashBox(cashBoxId);
+          });
     }
 
     public getCashBox(cashBoxId: string) {

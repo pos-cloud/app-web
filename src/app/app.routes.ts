@@ -400,7 +400,7 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
-    path: 'report/list-box',
+    path: 'report/list-box/:cashBoxId',
     component: ListCashBoxComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' }
