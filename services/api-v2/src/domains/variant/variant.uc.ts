@@ -320,7 +320,6 @@ export default class VariantUC extends Controller {
                 }
                 if (existingChild) {
                     if (article.updateVariants) {
-                        console.log('acaa')
                         let updatedChild = {
                             ...article,
                             description: description,
@@ -439,5 +438,138 @@ export default class VariantUC extends Controller {
             console.log(error)
             throw new Error(`Error al elimina el producto`);
         }
+    }
+
+    createVariantExel = async (articleParentId: string, variants: any) => {
+        const articleController = new ArticleController(this.database);
+        const articleResponse = await articleController.getById(articleParentId);
+
+        if (!articleResponse.result) {
+            throw new Error(`No se encontró el artículo padre con ID ${articleParentId}`);
+        }
+
+        const article = articleResponse.result;
+
+        // Crear un objeto para almacenar los valores de cada tipo
+        const typeValues: any = {};
+
+        // Recopilar los valores de los tipos presentes en las variantes
+        variants.forEach((variant: any) => {
+            for (const key in variant) {
+                if (key.startsWith('type')) {
+                    const typeName = variant[key].name;
+                    if (!typeValues[typeName]) {
+                        typeValues[typeName] = [];
+                    }
+                }
+            }
+            for (const key in variant) {
+                if (key.startsWith('value')) {
+                    const typeIndex = key.charAt(5); // Extraer el número del tipo
+                    const typeName = variant[`type${typeIndex}`].name;
+                    if (typeValues[typeName]) {
+                        typeValues[typeName].push(variant[key].description);
+                    }
+                }
+            }
+        });
+
+        // Crear un conjunto para almacenar combinaciones únicas
+        const uniqueCombinations = new Map<string, any>();
+
+        // Crear combinaciones basadas en las variantes presentes
+        variants.forEach((variant: any) => {
+            const description = [
+                variant.value1 ? variant.value1.description : '',
+                variant.value2 ? variant.value2.description : '',
+                variant.value3 ? variant.value3.description : ''
+            ].filter(desc => desc).join(' / ');
+
+            const combinationKey = `${article.description} ${description}`;
+
+            // Almacenar todas las propiedades de la variante en el Map
+            if (!uniqueCombinations.has(combinationKey)) {
+                uniqueCombinations.set(combinationKey, {
+                    ...variant,
+                    description: combinationKey
+                });
+            }
+        });
+
+        // Convertir el Map en un array y ordenarlo
+        const resultArray = Array.from(uniqueCombinations.values()).sort((a, b) => a.description.localeCompare(b.description));
+        for (const combination of resultArray) {
+
+            const child = {
+                ...article._doc,
+                type: 'Variante',
+                description: combination.description,
+                taxes: combination.taxes ?? article._doc.taxes,
+                costPrice: combination.costPrice ?? article._doc.costPrice,
+                markupPercentage: combination.markupPercentage ?? article._doc.markupPercentage,
+                markupPrice: combination.markupPrice ?? article._doc.markupPrice,
+                salePrice: combination.salePrice ?? article._doc.salePrice,
+                basePrice: combination.basePrice ?? article._doc.basePrice,
+                weight: combination.weight ?? article._doc.weight,
+                width: combination.width ?? article._doc.width,
+                height: combination.height ?? article._doc.height,
+                depth: combination.depth ?? article._doc.depth,
+            };
+
+            const savedArticleChild = await articleController.save(new this.model(child));
+
+            if (!savedArticleChild.result) {
+                throw new Error("No se pudo guardar el artículo hijo");
+            }
+
+            if (combination.type1 && combination.value1) {
+                let newVariant: Variant = VariantSchema.getInstance(this.database);
+                newVariant = Object.assign(newVariant, {
+                    type: combination.type1._id,
+                    value: combination.value1._id,
+                    articleParent: articleParentId,
+                    articleChild: savedArticleChild.result._id,
+                });
+
+                const resultVariant = await new VariantController(this.database).save(newVariant);
+
+                if (!resultVariant.result) {
+                    throw new Error("No se crearon las variantes correctamente");
+                }
+            }
+            if (combination.type2 && combination.value2) {
+                let newVariant: Variant = VariantSchema.getInstance(this.database);
+                newVariant = Object.assign(newVariant, {
+                    type: combination.type2._id,
+                    value: combination.value2._id,
+                    articleParent: articleParentId,
+                    articleChild: savedArticleChild.result._id,
+                });
+
+                const resultVariant = await new VariantController(this.database).save(newVariant);
+
+                if (!resultVariant.result) {
+                    throw new Error("No se crearon las variantes correctamente");
+                }
+
+            }
+            if (combination.type3 && combination.value3) {
+                let newVariant: Variant = VariantSchema.getInstance(this.database);
+                newVariant = Object.assign(newVariant, {
+                    type: combination.type3._id,
+                    value: combination.value3._id,
+                    articleParent: articleParentId,
+                    articleChild: savedArticleChild.result._id,
+                });
+
+                const resultVariant = await new VariantController(this.database).save(newVariant);
+
+                if (!resultVariant.result) {
+                    throw new Error("No se crearon las variantes correctamente");
+                }
+
+            }
+        }
+        return resultArray;
     }
 }

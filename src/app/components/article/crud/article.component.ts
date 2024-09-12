@@ -1399,13 +1399,7 @@ private deleteVariantFromFormArray(variant): void {
     if (this.articleForm.valid) {
       this.loadPosDescription();
       //this.loadURL();
-      const description = this.articleForm.get('description')?.value;
-
-      const alphanumericPattern = /^[a-zA-Z0-9\s\/áéíóúÁÉÍÓÚñÑ-]+$/;
-      if (!alphanumericPattern.test(description)) {
-        return this.showToast({ message: 'La descripción solo puede contener letras y números.' });
-
-      }
+  
       const salePrice = this.articleForm.get('salePrice')?.value;
       if (salePrice <= 0) { 
         return this.showToast({ message: salePrice < 0 ? 'El precio no puede ser negativo.' : 'El precio tiene que ser mayor a 0.' });
