@@ -1440,7 +1440,7 @@ export class AddSaleOrderComponent {
         );
       }
 
-      if (movementOfArticle.article && this.priceList) {
+      if (movementOfArticle.article && this.priceList && this.database !== 'sangenemi') {
         let increasePrice = 0;
 
         if (
@@ -1508,7 +1508,7 @@ export class AddSaleOrderComponent {
         }
       }
 
-      if (movementOfArticle.article && this.newPriceList) {
+      if (movementOfArticle.article && this.newPriceList && this.database !== 'sangenemi') {
         let increasePrice = 0;
 
         if (
@@ -1587,6 +1587,23 @@ export class AddSaleOrderComponent {
       movementOfArticle.unitPrice -= this.roundNumber.transform(
         movementOfArticle.discountAmount,
       );
+
+      //logic for sangenemi quiere que se updatee por lista de precios esto lo vamos a mejorar y agregar una funcion en apiv2
+      if(this.database === 'sangenemi' && (this.priceList || this.newPriceList)) {
+        let markupPrice = 0;
+        if(this.priceList){
+          markupPrice = this.priceList.percentage
+        }
+        if(this.newPriceList){
+          markupPrice = this.newPriceList.percentage
+        }
+        if(markupPrice){
+          movementOfArticle.unitPrice -= movementOfArticle.markupPrice;
+          let aux =  (movementOfArticle.unitPrice * markupPrice) / 100
+          movementOfArticle.unitPrice = movementOfArticle.unitPrice + aux
+        }
+      }
+
       movementOfArticle.salePrice = this.roundNumber.transform(
         movementOfArticle.unitPrice * movementOfArticle.amount,
       );
