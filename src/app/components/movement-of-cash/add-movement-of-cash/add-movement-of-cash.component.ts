@@ -1,13 +1,13 @@
 // ANGULAR
-import {Component, OnInit, Input, EventEmitter, ViewEncapsulation, HostListener} from '@angular/core';
-import {UntypedFormGroup, UntypedFormBuilder, Validators} from '@angular/forms';
+import { Component, OnInit, Input, EventEmitter, ViewEncapsulation, HostListener } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 
 // DE TERCEROS
-import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
 
 // MODELS
-import {Config} from 'app/app.config';
+import { Config } from 'app/app.config';
 
 // SERVICES
 
@@ -15,41 +15,41 @@ import {Config} from 'app/app.config';
 
 // COMPONENTS
 
-import {AccountSeatService} from 'app/components/account-seat/account-seat.service';
-import {Bank} from 'app/components/bank/bank';
-import {BankService} from 'app/components/bank/bank.service';
-import {CompanyService} from 'app/components/company/company.service';
-import {Currency} from 'app/components/currency/currency';
-import {CurrencyService} from 'app/components/currency/currency.service';
-import {Holiday} from 'app/components/holiday/holiday.model';
-import {HolidayService} from 'app/components/holiday/holiday.service';
-import {TranslateMePipe} from 'app/main/pipes/translate-me';
+import { AccountSeatService } from 'app/components/account-seat/account-seat.service';
+import { Bank } from 'app/components/bank/bank';
+import { BankService } from 'app/components/bank/bank.service';
+import { CompanyService } from 'app/components/company/company.service';
+import { Currency } from 'app/components/currency/currency';
+import { CurrencyService } from 'app/components/currency/currency.service';
+import { Holiday } from 'app/components/holiday/holiday.model';
+import { HolidayService } from 'app/components/holiday/holiday.service';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import Resulteable from 'app/util/Resulteable';
 import * as moment from 'moment';
-import {ToastrService} from 'ngx-toastr';
-import {Subscription, Observable, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import Keyboard from 'simple-keyboard';
 
-import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
-import {MovementOfArticle} from '../../movement-of-article/movement-of-article';
-import {MovementOfArticleService} from '../../movement-of-article/movement-of-article.service';
-import {PaymentMethod} from '../../payment-method/payment-method';
-import {PaymentMethodService} from '../../payment-method/payment-method.service';
-import {Tax} from '../../tax/tax';
-import {TaxService} from '../../tax/tax.service';
-import {Taxes} from '../../tax/taxes';
+import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
+import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
+import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
+import { PaymentMethod } from '../../payment-method/payment-method';
+import { PaymentMethodService } from '../../payment-method/payment-method.service';
+import { Tax } from '../../tax/tax';
+import { TaxService } from '../../tax/tax.service';
+import { Taxes } from '../../tax/taxes';
 import {
   CurrentAccount,
   Movements,
   TransactionMovement,
 } from '../../transaction-type/transaction-type';
-import {Transaction, TransactionState} from '../../transaction/transaction';
-import {TransactionService} from '../../transaction/transaction.service';
-import {DeleteMovementOfCashComponent} from '../delete-movement-of-cash/delete-movement-of-cash.component';
-import {MovementOfCash, StatusCheck} from '../movement-of-cash';
-import {MovementOfCashService} from '../movement-of-cash.service';
-import {SelectChecksComponent} from '../select-checks/select-checks.component';
+import { Transaction, TransactionState } from '../../transaction/transaction';
+import { TransactionService } from '../../transaction/transaction.service';
+import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
+import { MovementOfCash, StatusCheck } from '../movement-of-cash';
+import { MovementOfCashService } from '../movement-of-cash.service';
+import { SelectChecksComponent } from '../select-checks/select-checks.component';
 
 @Component({
   selector: 'app-add-movement-of-cash',
@@ -129,7 +129,7 @@ export class AddMovementOfCashComponent implements OnInit {
     observation: {},
     surcharge: {},
     CUIT: {},
-    number: {pattern: ' Ingrese solo números '},
+    number: { pattern: ' Ingrese solo números ' },
   };
   disableEnterKey: boolean = false;
 
@@ -210,8 +210,8 @@ export class AddMovementOfCashComponent implements OnInit {
   onChange = (input: string) => {
     !isNaN(parseFloat(input))
       ? (this.movementOfCashForm.value.amountToPay = this.roundNumber.transform(
-          parseFloat(input),
-        ))
+        parseFloat(input),
+      ))
       : (this.movementOfCashForm.value.amountToPay = 0);
     this.updateAmounts('amountToPay');
   };
@@ -457,13 +457,13 @@ export class AddMovementOfCashComponent implements OnInit {
         this.getBanks(
           term && term !== ''
             ? {
-                $or: [
-                  {name: {$regex: term, $options: 'i'}},
-                  {code: {$regex: term, $options: 'i'}},
-                  {account: {$regex: term, $options: 'i'}},
-                  {agency: {$regex: term, $options: 'i'}},
-                ],
-              }
+              $or: [
+                { name: { $regex: term, $options: 'i' } },
+                { code: { $regex: term, $options: 'i' } },
+                { account: { $regex: term, $options: 'i' } },
+                { agency: { $regex: term, $options: 'i' } },
+              ],
+            }
             : {},
         ).then((banks) => {
           return banks;
@@ -478,19 +478,19 @@ export class AddMovementOfCashComponent implements OnInit {
     this.loading = true;
 
     return new Promise<Bank[]>((resolve, reject) => {
-      match['operationType'] = {$ne: 'D'};
+      match['operationType'] = { $ne: 'D' };
       this.subscription.add(
         this._bankService
           .getAll({
             project: {
               _id: 1,
-              code: {$toString: '$code'},
+              code: { $toString: '$code' },
               name: 1,
               account: 1,
-              agency: {$toString: '$agency'},
+              agency: { $toString: '$agency' },
             },
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -539,8 +539,8 @@ export class AddMovementOfCashComponent implements OnInit {
             case 'Interés Simple':
               mov.interestAmount = this.roundNumber.transform(
                 (this.roundNumber.transform(amountToPayTemp) * this.interestPercentage) /
-                  100 /
-                  this.quotas,
+                100 /
+                this.quotas,
               );
               mov.taxAmount = this.roundNumber.transform(
                 (mov.interestAmount * this.movementOfCash.taxPercentage) / 100,
@@ -550,20 +550,6 @@ export class AddMovementOfCashComponent implements OnInit {
                 mov.capital + mov.interestAmount + mov.taxAmount,
               );
               amountTotal += mov.amountPaid;
-              if (i === this.quotas - 1) {
-                if (
-                  amountTotal !==
-                  amountToPayTemp + this.totalInterestAmount + this.totalTaxAmount
-                ) {
-                  mov.amountPaid = this.roundNumber.transform(
-                    mov.amountPaid -
-                      (amountTotal -
-                        (amountToPayTemp +
-                          this.totalInterestAmount +
-                          this.totalTaxAmount)),
-                  );
-                }
-              }
               break;
             case 'Francés':
               let tasa: number = 0.0000000001;
@@ -600,8 +586,8 @@ export class AddMovementOfCashComponent implements OnInit {
             default:
               mov.interestAmount = this.roundNumber.transform(
                 (this.roundNumber.transform(amountToPayTemp) * this.interestPercentage) /
-                  100 /
-                  this.quotas,
+                100 /
+                this.quotas,
               );
               mov.taxAmount = this.roundNumber.transform(
                 (mov.interestAmount * this.movementOfCash.taxPercentage) / 100,
@@ -618,10 +604,10 @@ export class AddMovementOfCashComponent implements OnInit {
                 ) {
                   mov.amountPaid = this.roundNumber.transform(
                     mov.amountPaid -
-                      (amountTotal -
-                        (amountToPayTemp +
-                          this.totalInterestAmount +
-                          this.totalTaxAmount)),
+                    (amountTotal -
+                      (amountToPayTemp +
+                        this.totalInterestAmount +
+                        this.totalTaxAmount)),
                   );
                 }
               }
@@ -631,6 +617,10 @@ export class AddMovementOfCashComponent implements OnInit {
           this.totalTaxAmount += mov.taxAmount;
           this.totalInterestAmount = this.roundNumber.transform(this.totalInterestAmount);
           this.totalTaxAmount = this.roundNumber.transform(this.totalTaxAmount);
+          if (mov.type.payFirstQuota && mov.quota == 1) {
+            mov.balanceCanceled = mov.amountPaid
+            mov.transaction.balance = mov.transaction.balance - mov.amountPaid
+          }
           this.movementsOfCashesToFinance.push(mov);
         }
         this.setValuesForm();
@@ -743,7 +733,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.movementsOfCashes[0].type.currency &&
         this.currencyNative &&
         this.movementsOfCashes[0].type.currency.toString() !==
-          this.currencyNative._id.toString()
+        this.currencyNative._id.toString()
       ) {
         let lastMovement: MovementOfCash = this.movementsOfCashes[0];
 
@@ -806,9 +796,9 @@ export class AddMovementOfCashComponent implements OnInit {
                       }
                       this.transaction.totalPrice = this.roundNumber.transform(
                         amountPaid -
-                          this.transaction.commissionAmount -
-                          this.transaction.administrativeExpenseAmount -
-                          this.transaction.otherExpenseAmount,
+                        this.transaction.commissionAmount -
+                        this.transaction.administrativeExpenseAmount -
+                        this.transaction.otherExpenseAmount,
                       );
                       await this.updateTransaction();
                     }
@@ -854,7 +844,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
     if (
       this.roundNumber.transform(amountPaid) >=
-        this.roundNumber.transform(this.transactionAmount) &&
+      this.roundNumber.transform(this.transactionAmount) &&
       this.transactionAmount !== 0
     ) {
       chargedFinished = true;
@@ -1011,7 +1001,8 @@ export class AddMovementOfCashComponent implements OnInit {
         this.transaction.administrativeExpenseAmount += mov.administrativeExpenseAmount;
         this.transaction.otherExpenseAmount += mov.otherExpenseAmount;
       }
-
+      console.log('paid', paid)
+      console.log(this.transaction.totalPrice)
       if (
         this.transaction.totalPrice === 0 ||
         this.transaction.commissionAmount > 0 ||
@@ -1020,9 +1011,9 @@ export class AddMovementOfCashComponent implements OnInit {
       ) {
         this.transaction.totalPrice = this.roundNumber.transform(
           paid -
-            this.transaction.commissionAmount -
-            this.transaction.administrativeExpenseAmount -
-            this.transaction.otherExpenseAmount,
+          this.transaction.commissionAmount -
+          this.transaction.administrativeExpenseAmount -
+          this.transaction.otherExpenseAmount,
         );
         await this.updateTransaction().then((transaction) => {
           if (transaction) {
@@ -1062,9 +1053,9 @@ export class AddMovementOfCashComponent implements OnInit {
           this.roundNumber.transform(totalPrice) ===
           this.roundNumber.transform(
             this.transaction.totalPrice +
-              this.transaction.commissionAmount +
-              this.transaction.administrativeExpenseAmount +
-              this.transaction.otherExpenseAmount,
+            this.transaction.commissionAmount +
+            this.transaction.administrativeExpenseAmount +
+            this.transaction.otherExpenseAmount,
           )
         )
       )
@@ -1075,9 +1066,9 @@ export class AddMovementOfCashComponent implements OnInit {
       if (totalPrice > 0 && this.transaction.totalPrice === 0) {
         this.transaction.totalPrice = this.roundNumber.transform(
           totalPrice -
-            this.transaction.commissionAmount -
-            this.transaction.administrativeExpenseAmount -
-            this.transaction.otherExpenseAmount,
+          this.transaction.commissionAmount -
+          this.transaction.administrativeExpenseAmount -
+          this.transaction.otherExpenseAmount,
         );
 
         if (this.transaction.type.finishState) {
@@ -1180,7 +1171,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
     let match = {};
 
-    match['operationType'] = {$ne: 'D'};
+    match['operationType'] = { $ne: 'D' };
 
     if (
       this.transaction.type &&
@@ -1190,7 +1181,7 @@ export class AddMovementOfCashComponent implements OnInit {
     ) {
       match['$or'] = new Array();
       this.transaction.type.paymentMethods.forEach((element) => {
-        match['$or'].push({_id: {$oid: element}});
+        match['$or'].push({ _id: { $oid: element } });
       });
     }
 
@@ -1199,7 +1190,7 @@ export class AddMovementOfCashComponent implements OnInit {
         .getAll({
           project: {},
           match: match,
-          sort: {order: 1},
+          sort: { order: 1 },
         })
         .subscribe(
           async (result) => {
@@ -1211,7 +1202,7 @@ export class AddMovementOfCashComponent implements OnInit {
                   await this._currencyService
                     .getAll({
                       match: {
-                        _id: {$oid: p.currency},
+                        _id: { $oid: p.currency },
                       },
                     })
                     .toPromise()
@@ -1358,15 +1349,15 @@ export class AddMovementOfCashComponent implements OnInit {
         if (
           this.transaction.totalPrice !== 0 &&
           this.roundNumber.transform(this.amountPaid + this.amountToPay) >
-            this.roundNumber.transform(
-              this.transactionAmount + this.totalInterestAmount + this.totalTaxAmount,
-            ) &&
+          this.roundNumber.transform(
+            this.transactionAmount + this.totalInterestAmount + this.totalTaxAmount,
+          ) &&
           !this.paymentMethodSelected.acceptReturned
         ) {
           throw new Error(
             'El medio de pago ' +
-              this.paymentMethodSelected.name +
-              ' no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.',
+            this.paymentMethodSelected.name +
+            ' no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.',
           );
         }
 
@@ -1374,18 +1365,18 @@ export class AddMovementOfCashComponent implements OnInit {
           this.movementOfCash.discount &&
           this.movementOfCash.discount > 0 &&
           this.amountToPay >
-            this.roundNumber.transform(
-              (this.transaction.totalPrice * this.movementOfCash.discount) / 100 +
-                this.transaction.totalPrice,
-            ) &&
+          this.roundNumber.transform(
+            (this.transaction.totalPrice * this.movementOfCash.discount) / 100 +
+            this.transaction.totalPrice,
+          ) &&
           !this.paymentMethodSelected.acceptReturned
         ) {
           throw new Error(
             'El monto ingresado no puede ser mayor a ' +
-              this.roundNumber.transform(
-                (this.transaction.totalPrice * this.movementOfCash.discount) / 100,
-              ) +
-              '.',
+            this.roundNumber.transform(
+              (this.transaction.totalPrice * this.movementOfCash.discount) / 100,
+            ) +
+            '.',
           );
         }
 
@@ -1393,19 +1384,19 @@ export class AddMovementOfCashComponent implements OnInit {
           this.movementOfCash.surcharge &&
           this.movementOfCash.surcharge > 0 &&
           this.amountToPay - 0.01 >
-            this.roundNumber.transform(
-              (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100 +
-                this.transaction.totalPrice,
-            ) &&
+          this.roundNumber.transform(
+            (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100 +
+            this.transaction.totalPrice,
+          ) &&
           !this.paymentMethodSelected.acceptReturned
         ) {
           throw new Error(
             'El monto ingresado no puede ser mayor a ' +
-              this.roundNumber.transform(
-                (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100 +
-                  this.transaction.totalPrice,
-              ) +
-              '.',
+            this.roundNumber.transform(
+              (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100 +
+              this.transaction.totalPrice,
+            ) +
+            '.',
           );
         }
 
@@ -1519,8 +1510,8 @@ export class AddMovementOfCashComponent implements OnInit {
       this.movementOfCash.commissionAmount = commissionAmount;
       this.percentageCommission = this.roundNumber.transform(
         100 *
-          (this.movementOfCash.commissionAmount /
-            (this.amountToPay * this.daysCommission)),
+        (this.movementOfCash.commissionAmount /
+          (this.amountToPay * this.daysCommission)),
       );
     } else {
       this.percentageCommission = this.movementOfCashForm.value.percentageCommission;
@@ -1531,8 +1522,8 @@ export class AddMovementOfCashComponent implements OnInit {
     if (this.movementOfCash.taxPercentage > 0)
       this.movementOfCash.commissionAmount = this.roundNumber.transform(
         this.movementOfCash.commissionAmount +
-          (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage) /
-            100,
+        (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage) /
+        100,
       );
     this.movementOfCashForm.patchValue({
       commissionAmount: this.movementOfCash.commissionAmount,
@@ -1559,9 +1550,9 @@ export class AddMovementOfCashComponent implements OnInit {
     if (this.movementOfCash.taxPercentage > 0)
       this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(
         this.movementOfCash.administrativeExpenseAmount +
-          (this.movementOfCash.administrativeExpenseAmount *
-            this.movementOfCash.taxPercentage) /
-            100,
+        (this.movementOfCash.administrativeExpenseAmount *
+          this.movementOfCash.taxPercentage) /
+        100,
       );
     this.movementOfCashForm.patchValue({
       administrativeExpenseAmount: this.movementOfCash.administrativeExpenseAmount,
@@ -1586,8 +1577,8 @@ export class AddMovementOfCashComponent implements OnInit {
     if (this.movementOfCash.taxPercentage > 0)
       this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(
         this.movementOfCash.otherExpenseAmount +
-          (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage) /
-            100,
+        (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage) /
+        100,
       );
     this.movementOfCashForm.patchValue({
       otherExpenseAmount: this.movementOfCash.otherExpenseAmount,
@@ -1607,7 +1598,7 @@ export class AddMovementOfCashComponent implements OnInit {
       if (this.paymentMethodSelected.administrativeExpense > 0)
         this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(
           this.movementOfCash.administrativeExpenseAmount /
-            (this.lastVatOfExpenses / 100 + 1),
+          (this.lastVatOfExpenses / 100 + 1),
         );
       if (this.paymentMethodSelected.otherExpense > 0)
         this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(
@@ -1618,21 +1609,21 @@ export class AddMovementOfCashComponent implements OnInit {
     if (this.paymentMethodSelected.commission > 0)
       this.movementOfCash.commissionAmount = this.roundNumber.transform(
         this.movementOfCash.commissionAmount +
-          (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage) /
-            100,
+        (this.movementOfCash.commissionAmount * this.movementOfCash.taxPercentage) /
+        100,
       );
     if (this.paymentMethodSelected.administrativeExpense > 0)
       this.movementOfCash.administrativeExpenseAmount = this.roundNumber.transform(
         this.movementOfCash.administrativeExpenseAmount +
-          (this.movementOfCash.administrativeExpenseAmount *
-            this.movementOfCash.taxPercentage) /
-            100,
+        (this.movementOfCash.administrativeExpenseAmount *
+          this.movementOfCash.taxPercentage) /
+        100,
       );
     if (this.paymentMethodSelected.otherExpense > 0)
       this.movementOfCash.otherExpenseAmount = this.roundNumber.transform(
         this.movementOfCash.otherExpenseAmount +
-          (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage) /
-            100,
+        (this.movementOfCash.otherExpenseAmount * this.movementOfCash.taxPercentage) /
+        100,
       );
     this.movementOfCashForm.patchValue({
       commissionAmount: this.movementOfCash.commissionAmount,
@@ -1648,7 +1639,7 @@ export class AddMovementOfCashComponent implements OnInit {
       this.subscription.add(
         this._holidayService
           .getAll({
-            match: {operationType: {$ne: 'D'}},
+            match: { operationType: { $ne: 'D' } },
           })
           .subscribe(
             (result) => {
@@ -1670,7 +1661,7 @@ export class AddMovementOfCashComponent implements OnInit {
     let endDateMoment = moment(endDate);
     let days = Math.round(
       startDateMoment.diff(endDateMoment, 'days') -
-        (startDateMoment.diff(endDateMoment, 'days') / 7) * 2,
+      (startDateMoment.diff(endDateMoment, 'days') / 7) * 2,
     );
 
     if (endDateMoment.day() === 6) {
@@ -1698,7 +1689,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
         if (
           this.roundNumber.transform(paid) >
-            this.roundNumber.transform(this.transactionAmount) &&
+          this.roundNumber.transform(this.transactionAmount) &&
           !this.transaction.type.allowZero
         ) {
           throw new Error(
@@ -1727,195 +1718,195 @@ export class AddMovementOfCashComponent implements OnInit {
     this.loading = true;
     this.disableEnterKey = true;
     try {
-        if (this.movementOfCashForm.valid) {
-          if (!this.fastPayment) {
-            if (await this.isValidAmount()) {
-              if (!this.paymentMethodSelected.allowToFinance) {
-                if (
-                  this.roundNumber.transform(this.amountPaid + this.amountToPay) >
-                  this.roundNumber.transform(this.transactionAmount)
-                ) {
-                  this.movementOfCash.amountPaid = this.roundNumber.transform(
-                    this.amountToPay -
-                      this.roundNumber.transform(
-                        parseFloat(this.movementOfCashForm.value.paymentChange),
-                      ),
-                  );
-                } else {
-                  this.movementOfCash.amountPaid = this.amountToPay;
-                }
-                this.movementOfCash.transaction = this.transaction;
-                this.movementOfCash.paymentChange =
-                  this.movementOfCashForm.value.paymentChange;
-                this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
-                this.movementOfCash.observation =
-                  this.movementOfCashForm.value.observation;
-                this.movementOfCash.expirationDate = moment(
-                  this.movementOfCash.expirationDate,
-                  'YYYY-MM-DD',
-                ).format('YYYY-MM-DDTHH:mm:ssZ');
-                this.movementOfCash.interestPercentage =
-                  this.movementOfCashForm.value.interestPercentage;
-
-                if (this.paymentMethodSelected.allowBank) {
-                  this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-                } else {
-                  this.movementOfCash.bank = null;
-                }
-
-                if (this.paymentMethodSelected.checkDetail) {
-                  this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
-                  this.movementOfCash.number = this.movementOfCashForm.value.number;
-                  this.movementOfCash.titular = this.movementOfCashForm.value.titular;
-                  this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-                  this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
-                  this.movementOfCash.deliveredBy =
-                    this.movementOfCashForm.value.deliveredBy;
-                  this.movementOfCash.statusCheck = StatusCheck.Closed;
-                } else {
-                  this.movementOfCash.receiver = '';
-                  this.movementOfCash.number = '';
-                  this.movementOfCash.titular = '';
-                  this.movementOfCash.CUIT = '';
-                  this.movementOfCash.deliveredBy = '';
-                  this.movementOfCash.statusCheck = StatusCheck.Closed;
-                }
-
-                if (
-                  this.paymentMethodSelected.inputAndOuput &&
-                  this.transaction.type.movement === Movements.Inflows
-                ) {
-                  this.movementOfCash.statusCheck = StatusCheck.Available;
-                }
-
-                if (await this.validateCredit()) {
-                  this.movementOfCash = await this.saveMovementOfCash();
-                  if (this.transactionAmount !== this.transaction.totalPrice) {
-                    this.transaction.totalPrice = this.transactionAmount;
-                    if (this.transaction.type.requestArticles) {
-                      this.addMovementOfArticle();
-                    } else {
-                      this.transaction = await this.updateTransaction();
-                      if (this.keyboard) this.keyboard.setInput('');
-                      this.getMovementOfCashesByTransaction();
-                    }
-                  } else {
-                    this.movementsOfCashes = new Array();
-                    this.movementsOfCashes.push(this.movementOfCash);
-                    if (!this.fastPayment) {
-                      this.getMovementOfCashesByTransaction();
-                    } else {
-                      if (this.amountDiscount && this.amountDiscount !== 0) {
-                        this.addMovementOfArticle();
-                      } else {
-                        this.getMovementOfCashesByTransaction();
-                      }
-                    }
-                  }
-                }
+      if (this.movementOfCashForm.valid) {
+        if (!this.fastPayment) {
+          if (await this.isValidAmount()) {
+            if (!this.paymentMethodSelected.allowToFinance) {
+              if (
+                this.roundNumber.transform(this.amountPaid + this.amountToPay) >
+                this.roundNumber.transform(this.transactionAmount)
+              ) {
+                this.movementOfCash.amountPaid = this.roundNumber.transform(
+                  this.amountToPay -
+                  this.roundNumber.transform(
+                    parseFloat(this.movementOfCashForm.value.paymentChange),
+                  ),
+                );
               } else {
-                if (
-                  this.totalInterestAmount + this.totalTaxAmount > 0 &&
-                  this.transaction.totalPrice !== 0
-                ) {
-                  this.transaction.totalPrice +=
-                    this.totalInterestAmount + this.totalTaxAmount;
-                  this.transaction = await this.updateTransaction();
-                }
-                for (let mov of this.movementsOfCashesToFinance) {
-                  mov.expirationDate = moment(mov.expirationDate, 'YYYY-MM-DD').format(
-                    'YYYY-MM-DDTHH:mm:ssZ',
-                  );
-                }
-                let movementsOfCashes: MovementOfCash[] =
-                  await this.saveMovementsOfCashes();
-
-                if (movementsOfCashes && movementsOfCashes.length > 0) {
-                  this.getMovementOfCashesByTransaction();
-                }
+                this.movementOfCash.amountPaid = this.amountToPay;
               }
-            } else {
-              this.fastPayment = null;
-            }
-          } else {
-            this.movementOfCash.transaction = this.transaction;
-            this.movementOfCash.type = this.fastPayment;
-            this.paymentMethodSelected = this.fastPayment;
-            this.movementOfCash.expirationDate = moment(
-              this.movementOfCash.expirationDate,
-              'YYYY-MM-DD',
-            ).format('YYYY-MM-DDTHH:mm:ssZ');
-            this.movementOfCash.receiver = '';
-            this.movementOfCash.number = '';
-            this.movementOfCash.titular = '';
-            this.movementOfCash.CUIT = '';
-            this.movementOfCash.deliveredBy = '';
-            this.movementOfCash.statusCheck == StatusCheck.Closed;
-            this.movementOfCash.discount = this.movementOfCash.type
-              ? this.movementOfCash.type.discount || 0
-              : 0;
-            this.movementOfCash.surcharge = this.movementOfCash.type.surcharge || 0;
-            this.movementOfCash.interestPercentage =
-              this.movementOfCashForm.value.interestPercentage;
-            if (this.fastPayment.observation) {
-              this.movementOfCash.observation = this.fastPayment.observation;
-            }
-            if (this.movementOfCash.discount && this.movementOfCash.discount !== 0) {
-              this.amountDiscount = -this.roundNumber.transform(
-                (this.transaction.totalPrice * this.movementOfCash.discount) / 100,
-              );
-            } else if (
-              this.movementOfCash.surcharge &&
-              this.movementOfCash.surcharge !== 0
-            ) {
-              this.amountDiscount = this.roundNumber.transform(
-                (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100,
-              );
-            }
-            this.transaction.totalPrice =
-              this.transaction.totalPrice + this.amountDiscount;
-            this.transactionAmount = this.transaction.totalPrice;
-            this.movementOfCash.amountPaid = this.transactionAmount;
+              this.movementOfCash.transaction = this.transaction;
+              this.movementOfCash.paymentChange =
+                this.movementOfCashForm.value.paymentChange;
+              this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+              this.movementOfCash.observation =
+                this.movementOfCashForm.value.observation;
+              this.movementOfCash.expirationDate = moment(
+                this.movementOfCash.expirationDate,
+                'YYYY-MM-DD',
+              ).format('YYYY-MM-DDTHH:mm:ssZ');
+              this.movementOfCash.interestPercentage =
+                this.movementOfCashForm.value.interestPercentage;
 
-            if ((await this.isValidAmount()) && (await this.validateCredit())) {
-              this.movementOfCash = await this.saveMovementOfCash();
-              if (this.transactionAmount !== this.transaction.totalPrice) {
-                this.transaction.totalPrice = this.transactionAmount;
-                if (this.transaction.type.requestArticles) {
-                  this.addMovementOfArticle();
-                } else {
-                  this.transaction = await this.updateTransaction();
-                  this.getMovementOfCashesByTransaction();
-                }
+              if (this.paymentMethodSelected.allowBank) {
+                this.movementOfCash.bank = this.movementOfCashForm.value.bank;
               } else {
-                this.movementsOfCashes = new Array();
-                this.movementsOfCashes.push(this.movementOfCash);
-                if (!this.fastPayment) {
-                  this.getMovementOfCashesByTransaction();
-                } else {
-                  if (this.amountDiscount && this.amountDiscount !== 0) {
+                this.movementOfCash.bank = null;
+              }
+
+              if (this.paymentMethodSelected.checkDetail) {
+                this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
+                this.movementOfCash.number = this.movementOfCashForm.value.number;
+                this.movementOfCash.titular = this.movementOfCashForm.value.titular;
+                this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+                this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
+                this.movementOfCash.deliveredBy =
+                  this.movementOfCashForm.value.deliveredBy;
+                this.movementOfCash.statusCheck = StatusCheck.Closed;
+              } else {
+                this.movementOfCash.receiver = '';
+                this.movementOfCash.number = '';
+                this.movementOfCash.titular = '';
+                this.movementOfCash.CUIT = '';
+                this.movementOfCash.deliveredBy = '';
+                this.movementOfCash.statusCheck = StatusCheck.Closed;
+              }
+
+              if (
+                this.paymentMethodSelected.inputAndOuput &&
+                this.transaction.type.movement === Movements.Inflows
+              ) {
+                this.movementOfCash.statusCheck = StatusCheck.Available;
+              }
+
+              if (await this.validateCredit()) {
+                this.movementOfCash = await this.saveMovementOfCash();
+                if (this.transactionAmount !== this.transaction.totalPrice) {
+                  this.transaction.totalPrice = this.transactionAmount;
+                  if (this.transaction.type.requestArticles) {
                     this.addMovementOfArticle();
                   } else {
+                    this.transaction = await this.updateTransaction();
+                    if (this.keyboard) this.keyboard.setInput('');
                     this.getMovementOfCashesByTransaction();
+                  }
+                } else {
+                  this.movementsOfCashes = new Array();
+                  this.movementsOfCashes.push(this.movementOfCash);
+                  if (!this.fastPayment) {
+                    this.getMovementOfCashesByTransaction();
+                  } else {
+                    if (this.amountDiscount && this.amountDiscount !== 0) {
+                      this.addMovementOfArticle();
+                    } else {
+                      this.getMovementOfCashesByTransaction();
+                    }
                   }
                 }
               }
             } else {
-              this.fastPayment = null;
+              if (
+                this.totalInterestAmount + this.totalTaxAmount > 0 &&
+                this.transaction.totalPrice !== 0
+              ) {
+                this.transaction.totalPrice +=
+                  this.totalInterestAmount + this.totalTaxAmount;
+                this.transaction = await this.updateTransaction();
+              }
+              for (let mov of this.movementsOfCashesToFinance) {
+                mov.expirationDate = moment(mov.expirationDate, 'YYYY-MM-DD').format(
+                  'YYYY-MM-DDTHH:mm:ssZ',
+                );
+              }
+              let movementsOfCashes: MovementOfCash[] =
+                await this.saveMovementsOfCashes();
+
+              if (movementsOfCashes && movementsOfCashes.length > 0) {
+                this.getMovementOfCashesByTransaction();
+              }
             }
+          } else {
+            this.fastPayment = null;
           }
         } else {
-          this.onValueChanged();
-          throw new Error('Verificar errores en el formulario');
+          this.movementOfCash.transaction = this.transaction;
+          this.movementOfCash.type = this.fastPayment;
+          this.paymentMethodSelected = this.fastPayment;
+          this.movementOfCash.expirationDate = moment(
+            this.movementOfCash.expirationDate,
+            'YYYY-MM-DD',
+          ).format('YYYY-MM-DDTHH:mm:ssZ');
+          this.movementOfCash.receiver = '';
+          this.movementOfCash.number = '';
+          this.movementOfCash.titular = '';
+          this.movementOfCash.CUIT = '';
+          this.movementOfCash.deliveredBy = '';
+          this.movementOfCash.statusCheck == StatusCheck.Closed;
+          this.movementOfCash.discount = this.movementOfCash.type
+            ? this.movementOfCash.type.discount || 0
+            : 0;
+          this.movementOfCash.surcharge = this.movementOfCash.type.surcharge || 0;
+          this.movementOfCash.interestPercentage =
+            this.movementOfCashForm.value.interestPercentage;
+          if (this.fastPayment.observation) {
+            this.movementOfCash.observation = this.fastPayment.observation;
+          }
+          if (this.movementOfCash.discount && this.movementOfCash.discount !== 0) {
+            this.amountDiscount = -this.roundNumber.transform(
+              (this.transaction.totalPrice * this.movementOfCash.discount) / 100,
+            );
+          } else if (
+            this.movementOfCash.surcharge &&
+            this.movementOfCash.surcharge !== 0
+          ) {
+            this.amountDiscount = this.roundNumber.transform(
+              (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100,
+            );
+          }
+          this.transaction.totalPrice =
+            this.transaction.totalPrice + this.amountDiscount;
+          this.transactionAmount = this.transaction.totalPrice;
+          this.movementOfCash.amountPaid = this.transactionAmount;
+
+          if ((await this.isValidAmount()) && (await this.validateCredit())) {
+            this.movementOfCash = await this.saveMovementOfCash();
+            if (this.transactionAmount !== this.transaction.totalPrice) {
+              this.transaction.totalPrice = this.transactionAmount;
+              if (this.transaction.type.requestArticles) {
+                this.addMovementOfArticle();
+              } else {
+                this.transaction = await this.updateTransaction();
+                this.getMovementOfCashesByTransaction();
+              }
+            } else {
+              this.movementsOfCashes = new Array();
+              this.movementsOfCashes.push(this.movementOfCash);
+              if (!this.fastPayment) {
+                this.getMovementOfCashesByTransaction();
+              } else {
+                if (this.amountDiscount && this.amountDiscount !== 0) {
+                  this.addMovementOfArticle();
+                } else {
+                  this.getMovementOfCashesByTransaction();
+                }
+              }
+            }
+          } else {
+            this.fastPayment = null;
+          }
         }
-      } catch (error) {
-        this.showToast(error);
-      } finally {
-        setTimeout(function(){
-          this.loading = false;
-          this.disableEnterKey = false;
-       }, 2000);
+      } else {
+        this.onValueChanged();
+        throw new Error('Verificar errores en el formulario');
       }
+    } catch (error) {
+      this.showToast(error);
+    } finally {
+      setTimeout(function () {
+        this.loading = false;
+        this.disableEnterKey = false;
+      }, 2000);
+    }
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -2092,7 +2083,7 @@ export class AddMovementOfCashComponent implements OnInit {
     let bank: Bank = oldMovementOfCash.bank ? oldMovementOfCash.bank : null;
 
     if (bank && !bank._id) {
-      await this.getBanks({_id: {$oid: bank}}).then((banks: Bank[]) => {
+      await this.getBanks({ _id: { $oid: bank } }).then((banks: Bank[]) => {
         if (banks && banks.length > 0) bank = banks[0];
       });
     }
@@ -2114,7 +2105,7 @@ export class AddMovementOfCashComponent implements OnInit {
               null,
               'info',
               'Debe configurar el impuesto IVA para el realizar el descuento/recargo con ' +
-                this.paymentMethodSelected.name,
+              this.paymentMethodSelected.name,
             );
             resolve(null);
           } else {

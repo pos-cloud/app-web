@@ -2453,10 +2453,11 @@ export class AddSaleOrderComponent {
               modalRef.componentInstance.fastPayment = fastPayment;
             }
             modalRef.result.then((result) => {
+              console.log(result.transaction)
               if (result != 'cancel') {
                 this.movementsOfCashes = result.movementsOfCashes;
-
                 if (this.movementsOfCashes) {
+
                   this.transaction = result.transaction;
 
                   if (result.movementOfArticle) {
