@@ -495,7 +495,65 @@ export default class ArticleUC {
 				const values2 = [];
 				const values3 = [];
 				for (const item of items) {
-					const calculatedSalePrice = await this.calculateSalePrice(item.column12.trim(), item.column14.trim(), item.column15.trim(), item.column13.trim());
+					let codeArt = item.column2.trim();
+					const article = articlesObj[codeArt]
+					let arg = {
+						basePrice: 0,
+						margen: 0,
+						salePrice: 0,
+						imp: '21',
+					}
+
+					let basePriceEXEL = parseInt(item.column12.trim())
+					let impEXEL = item.column11.trim();
+					let margenEXEL = parseInt(item.column14.trim())
+					let salePriceEXEL = parseInt(item.column15.trim())
+
+					if (impEXEL) arg.imp = impEXEL
+
+					//	if(basePriceEXEL == 0) arg.basePrice = article?.basePrice ?? 0;
+
+					if (basePriceEXEL && margenEXEL && !salePriceEXEL) {
+						arg.basePrice = basePriceEXEL
+						arg.margen = margenEXEL
+						arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+						// aca calculamos precio de venta
+					}
+
+					if (!basePriceEXEL && !margenEXEL && salePriceEXEL) {
+						arg.salePrice = salePriceEXEL;
+						arg.basePrice = article?.basePrice ?? 0
+						arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+						// aca calcula margen
+					}
+
+					if (basePriceEXEL && !margenEXEL && !salePriceEXEL) {
+						arg.basePrice = basePriceEXEL
+						arg.margen = article?.markupPercentage ?? 0
+						arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+						// aca calcular precio de venta
+					}
+
+					if (basePriceEXEL && !margenEXEL && salePriceEXEL) {
+						arg.basePrice = basePriceEXEL
+						arg.salePrice = salePriceEXEL
+						arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+						// aca calculamos margen
+					}
+
+					if (!basePriceEXEL && margenEXEL && !salePriceEXEL) {
+						arg.basePrice = article?.basePrice ?? 0
+						arg.margen = margenEXEL
+						arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+						// calculamos precio de venta
+					}
+					const calculatedSalePrice = await this.calculateSalePrice(arg.basePrice, arg.margen, arg.salePrice, arg.imp);
+
 					values.push({
 						type: variantType[item.column29.trim()],
 						value: variantValue[item.column30.trim()],
@@ -550,7 +608,7 @@ export default class ArticleUC {
 						});
 					}
 					if (item.column29.trim() !== '' && item.column30.trim() !== '' && item.column31 !== '' && item.column32 !== '' && item.column33 !== '' && item.column34 !== '') {
-						console.log('acaa etsoy')
+
 						values.push(
 							{ type: variantType[item.column29], value: variantValue[item.column30] },
 							{ type: variantType[item.column31], value: variantValue[item.column32] },
@@ -578,9 +636,67 @@ export default class ArticleUC {
 					}
 				}
 				// Asignar propiedades al artículo padre usando el primer elemento del grupo
-				const firstItem = items[0];
-				if (!articlesObj[firstItem.column2.trim()]) {
-					const calculatedSalePrice = await this.calculateSalePrice(firstItem.column12.trim(), firstItem.column14.trim(), firstItem.column15.trim(), firstItem.column13.trim());
+				const firstItem: any = items[0];
+				let codeArt: any = firstItem.column2.trim();
+				const article = articlesObj[codeArt]
+				let arg = {
+					basePrice: 0,
+					margen: 0,
+					salePrice: 0,
+					imp: '21',
+				}
+
+				let basePriceEXEL = parseInt(firstItem.column12.trim())
+				let impEXEL = firstItem.column11.trim();
+				let margenEXEL = parseInt(firstItem.column14.trim())
+				let salePriceEXEL = parseInt(firstItem.column15.trim())
+
+				if (impEXEL) arg.imp = impEXEL
+
+				//	if(basePriceEXEL == 0) arg.basePrice = article?.basePrice ?? 0;
+
+				if (basePriceEXEL && margenEXEL && !salePriceEXEL) {
+					arg.basePrice = basePriceEXEL
+					arg.margen = margenEXEL
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// aca calculamos precio de venta
+				}
+
+				if (!basePriceEXEL && !margenEXEL && salePriceEXEL) {
+					arg.salePrice = salePriceEXEL;
+					arg.basePrice = article?.basePrice ?? 0
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// aca calcula margen
+				}
+
+				if (basePriceEXEL && !margenEXEL && !salePriceEXEL) {
+					arg.basePrice = basePriceEXEL
+					arg.margen = article?.markupPercentage ?? 0
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// aca calcular precio de venta
+				}
+
+				if (basePriceEXEL && !margenEXEL && salePriceEXEL) {
+					arg.basePrice = basePriceEXEL
+					arg.salePrice = salePriceEXEL
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// aca calculamos margen
+				}
+
+				if (!basePriceEXEL && margenEXEL && !salePriceEXEL) {
+					arg.basePrice = article?.basePrice ?? 0
+					arg.margen = margenEXEL
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// calculamos precio de venta
+				}
+				const calculatedSalePrice = await this.calculateSalePrice(arg.basePrice, arg.margen, arg.salePrice, arg.imp);
+
+				if (!article) {
 					if (values1.length > 0) {
 						newArticle = Object.assign(newArticle, {
 							order: firstItem.column1.trim(),
@@ -618,7 +734,7 @@ export default class ArticleUC {
 						});
 
 						const result = await new ArticleController(this.database).save(newArticle);
-		
+
 						await new VariantUC(this.database).createVariant(result.result._id, values1);
 						if (result.status === 200) {
 							const code = result.result.code;
@@ -633,7 +749,6 @@ export default class ArticleUC {
 						data = data.filter(item => !(item.column29.trim() !== '' && item.column30.trim() !== '' && item.column2.trim() === firstItem.column2))
 					}
 					if (values2.length > 0) {
-						const calculatedSalePrice = await this.calculateSalePrice(firstItem.column12.trim(), firstItem.column14.trim(), firstItem.column15.trim(), firstItem.column13.trim());
 						const uniqueData = values.filter((item, index, self) =>
 							index === self.findIndex((t) => (
 								t.type._id === item.type._id && t.value._id === item.value._id
@@ -751,15 +866,76 @@ export default class ArticleUC {
 			}
 
 			for (const item of data) {
-				const calculatedSalePrice = await this.calculateSalePrice(item.column12.trim(), item.column14.trim(), item.column15.trim(), item.column13.trim());
-
 				if (item.column2.trim() === '') {
 					return reject(new Responser(500, null, "En el archivo Excel, hay códigos de productos que están incompletos."))
 				}
-				let code = item.column2.trim();
 
-				if (articlesObj[code]) {
-					const article = articlesObj[code]
+				let code = item.column2.trim();
+				const article = articlesObj[code]
+				let arg = {
+					basePrice: 0,
+					margen: 0,
+					salePrice: 0,
+					imp: '21',
+				}
+
+				let basePriceEXEL = parseInt(item.column12.trim())
+				let impEXEL = item.column11.trim();
+				let margenEXEL = parseInt(item.column14.trim())
+				let salePriceEXEL = parseInt(item.column15.trim())
+
+				if (impEXEL) arg.imp = impEXEL
+
+				//	if(basePriceEXEL == 0) arg.basePrice = article?.basePrice ?? 0;
+
+				if (basePriceEXEL && margenEXEL && !salePriceEXEL) {
+					arg.basePrice = basePriceEXEL
+					arg.margen = margenEXEL
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// aca calculamos precio de venta
+				}
+
+				if (!basePriceEXEL && !margenEXEL && salePriceEXEL) {
+					arg.salePrice = salePriceEXEL;
+					arg.basePrice = article?.basePrice ?? 0
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// aca calcula margen
+				}
+
+				if (basePriceEXEL && !margenEXEL && !salePriceEXEL) {
+					arg.basePrice = basePriceEXEL
+					arg.margen = article?.markupPercentage ?? 0
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// aca calcular precio de venta
+				}
+
+				if (basePriceEXEL && !margenEXEL && salePriceEXEL) {
+					arg.basePrice = basePriceEXEL
+					arg.salePrice = salePriceEXEL
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// aca calculamos margen
+				}
+
+				if (!basePriceEXEL && margenEXEL && !salePriceEXEL) {
+					arg.basePrice = article?.basePrice ?? 0
+					arg.margen = margenEXEL
+					arg.imp = article?.taxes[0]?.percentage ?? arg.imp
+
+					// calculamos precio de venta
+				}
+				const calculatedSalePrice = await this.calculateSalePrice(arg.basePrice, arg.margen, arg.salePrice, arg.imp);
+
+				console.log(arg)
+
+				if (article) {
+					//basePrice: string, markupPercentage: string, salePrice: string, percentageExel: string = '21'
+
+					// const calculatedSalePrice = await this.calculateSalePrice(item.column12.trim() == '' ? parseInt(article.basePrice) : item.column12.trim(), item.column14.trim() === '' ? parseInt(article.markupPercentage) : item.column14.trim(), item.column15.trim() === '' ? parseInt(article.salePrice) : item.column15.trim(), item.column13.trim() === '' ? (article.taxes.length > 0 ? parseInt(article.taxes[0].percentage) : '21') : item.column13.trim());
+
 					const result = await new ArticleController(this.database).update(
 						article._id,
 						{
@@ -806,6 +982,8 @@ export default class ArticleUC {
 						}
 					}
 				} else {
+					//	const calculatedSalePrice = await this.calculateSalePrice(item.column12.trim() == '' ? parseInt(article.basePrice) : item.column12.trim(), item.column14.trim() === '' ? parseInt(article.markupPercentage) : item.column14.trim(), item.column15.trim() === '' ? parseInt(article.salePrice) : item.column15.trim(), item.column13.trim() === '' ? (article.taxes.length > 0 ? parseInt(article.taxes[0].percentage) : '21') : item.column13.trim());
+
 					let newArticle: Article = ArticleSchema.getInstance(this.database)
 					newArticle = Object.assign(newArticle, {
 						order: item.column1.trim(),
@@ -1744,8 +1922,11 @@ export default class ArticleUC {
 		return categoryObj
 	}
 
-	async calculateSalePrice(basePrice: string, markupPercentage: string, salePrice: string, percentage: number = 21
+	async calculateSalePrice(basePrice: number, markupPercentage: number, salePrice: number, percentageExel: string
 	) {
+		//	console.log(basePrice, markupPercentage, salePrice, percentageExel)
+		const percentage = percentageExel ? percentageExel : '21';
+		//	console.log(percentage)
 		const price = {
 			basePrice: 0,
 			markupPercentage: 0,
@@ -1755,7 +1936,7 @@ export default class ArticleUC {
 			tax: [
 				{
 					tax: {},
-					percentage: 0,
+					percentage: '',
 					taxAmount: 0,
 					taxBase: 0,
 				},
@@ -1763,53 +1944,68 @@ export default class ArticleUC {
 		};
 
 		const taxObj = await this.getTax();
+		switch (true) {
+			case basePrice !== 0 && markupPercentage !== 0 && salePrice === 0:
+				// Calcular el precio de venta
+				price.basePrice = Number(basePrice);
+				price.markupPercentage = Number(markupPercentage);
+				price.tax[0].tax = taxObj[percentage];
+				price.tax[0].percentage = percentage;
+				price.tax[0].taxAmount = (price.basePrice * Number(percentage)) / 100;
+				price.tax[0].taxBase = price.basePrice;
+				price.costPrice = price.tax[0].taxAmount + price.basePrice;
+				price.markupPrice = (price.costPrice * price.markupPercentage) / 100;
+				price.salePrice = Number((price.costPrice + price.markupPrice).toFixed(2));
+				break;
 
-		if (basePrice !== "" && markupPercentage !== "" && salePrice === "") {
-			price.basePrice = Number(basePrice);
-			price.markupPercentage = Number(markupPercentage);
-			price.tax[0].tax = taxObj[percentage];
-			price.tax[0].percentage = percentage;
-			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
-			price.tax[0].taxBase = price.basePrice;
-			price.costPrice = price.tax[0].taxAmount + price.basePrice
-			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
-			price.salePrice = Number((price.costPrice + price.markupPrice).toFixed(2))
+			case basePrice !== 0 && markupPercentage === 0 && salePrice !== 0:
+				// Calcular el margen
+				price.basePrice = Number(basePrice);
+				price.salePrice = Number(salePrice);
+				price.tax[0].tax = taxObj[percentage];
+				price.tax[0].percentage = percentage;
+				price.tax[0].taxAmount = (price.basePrice * Number(percentage)) / 100;
+				price.tax[0].taxBase = price.basePrice;
+				price.costPrice = price.tax[0].taxAmount + price.basePrice;
+				price.markupPrice = price.salePrice - price.costPrice;
+				price.markupPercentage = Number((price.markupPrice / price.costPrice) * 100);
+				break;
 
-		} else if (basePrice === "" && markupPercentage === "" && salePrice !== "") {
-			price.basePrice = Number(basePrice);
-			price.markupPercentage = Number(markupPercentage);
-			price.tax[0].tax = taxObj[percentage];
-			price.tax[0].percentage = percentage;
-			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
-			price.tax[0].taxBase = price.basePrice;
-			price.costPrice = price.tax[0].taxAmount + price.basePrice
-			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
-			price.salePrice = Number(salePrice)
+			case basePrice !== 0 && markupPercentage === 0 && salePrice === 0:
 
-		} else if (basePrice !== "" && markupPercentage === "" && salePrice !== "") {
-			price.basePrice = Number(basePrice);
-			price.salePrice = Number(salePrice);
-			price.tax[0].tax = taxObj[percentage];
-			price.tax[0].percentage = percentage;
-			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
-			price.tax[0].taxBase = price.basePrice;
-			price.costPrice = price.tax[0].taxAmount + price.basePrice
-			price.markupPrice = price.salePrice - price.costPrice
-			price.markupPercentage = Number(
-				(price.markupPrice / price.costPrice) * 100,
-			)
+				price.basePrice = Number(basePrice);
+				price.markupPercentage = markupPercentage
+				price.tax[0].tax = taxObj[percentage];
+				price.tax[0].percentage = percentage;
+				price.tax[0].taxAmount = (price.basePrice * Number(percentage)) / 100;
+				price.tax[0].taxBase = price.basePrice;
+				price.costPrice = price.tax[0].taxAmount + price.basePrice
+				price.markupPrice = (price.costPrice * price.markupPercentage) / 100
+				price.salePrice = price.costPrice
+				break;
 
-		} else {
-			price.basePrice = Number(basePrice);
-			price.markupPercentage = 100
-			price.tax[0].tax = taxObj[percentage];
-			price.tax[0].percentage = percentage;
-			price.tax[0].taxAmount = (price.basePrice * percentage) / 100;
-			price.tax[0].taxBase = price.basePrice;
-			price.costPrice = price.tax[0].taxAmount + price.basePrice
-			price.markupPrice = (price.costPrice * price.markupPercentage) / 100
-			price.salePrice = Number(salePrice);
+			case basePrice === 0 && markupPercentage === 0 && salePrice !== 0:
+				price.basePrice = Number(basePrice);
+				price.markupPercentage = 100
+				price.tax[0].tax = taxObj[percentage];
+				price.tax[0].percentage = percentage;
+				price.tax[0].taxAmount = (price.basePrice * Number(percentage)) / 100;
+				price.tax[0].taxBase = price.basePrice;
+				price.costPrice = price.tax[0].taxAmount + price.basePrice
+				price.markupPrice = (price.costPrice * price.markupPercentage) / 100
+				price.salePrice = Number(salePrice);
+				break
 
+			default:
+				price.basePrice = Number(basePrice);
+				price.markupPercentage = markupPercentage
+				price.tax[0].tax = taxObj[percentage];
+				price.tax[0].percentage = percentage;
+				price.tax[0].taxAmount = (price.basePrice * Number(percentage)) / 100;
+				price.tax[0].taxBase = price.basePrice;
+				price.costPrice = price.tax[0].taxAmount + price.basePrice
+				price.markupPrice = (price.costPrice * price.markupPercentage) / 100
+				price.salePrice = Number(salePrice);
 		}
 
 		return price;
