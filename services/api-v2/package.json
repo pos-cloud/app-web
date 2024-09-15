@@ -68,8 +68,8 @@
 	},
 	"scripts": {
 		"start": "cross-env NODE_ENV=development nodemon ./src/server.ts",
-		"dev": "cross-env NODE_ENV=development API_URL=https://d-api-v1.poscloud.ar/api API_URL_FE_AR=https://d-fe-ar.poscloud.ar nodemon ./src/server.ts",
-		"prod": "cross-env NODE_ENV=production API_URL=https://api-v1.poscloud.ar/api API_URL_FE_AR=https://fe-ar.poscloud.ar nodemon ./src/server.ts",
+		"dev": "cross-env NODE_ENV=development API_URL=https://d-api-v1.poscloud.ar/api API_URL_FE_AR=https://d-fe-ar.poscloud.ar TIENDANUBE_URL=https://d-api-tiendanube.poscloud.ar nodemon ./src/server.ts",
+		"prod": "cross-env NODE_ENV=production API_URL=https://api-v1.poscloud.ar/api API_URL_FE_AR=https://fe-ar.poscloud.ar TIENDANUBE_URL=https://api-tiendanube.poscloud.ar nodemon ./src/server.ts",
 		"jacksonburgs": "cross-env NODE_ENV=production URL_SERVER=http://192.168.0.88 API_URL=http://192.168.0.88:300/api API_V8_URL=http://192.168.0.88:308 API_URL_FE_AR=https://fe-ar.poscloud.ar nodemon ./src/server.ts",
 		"granpaso": "cross-env NODE_ENV=production URL_SERVER=http://192.168.88.90 API_URL=http://192.168.88.90:300/api API_V8_URL=http://192.168.88.90:308 API_URL_FE_AR=https://fe-ar.poscloud.ar nodemon ./src/server.ts"	
 	},
