@@ -107,6 +107,7 @@ export class Article {
     public variants: [{
         value: VariantValue,
         type: VariantType,
+        articleId: string
     }];
     
     constructor() { }

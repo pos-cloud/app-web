@@ -61,7 +61,6 @@ export class ListArticlesPosComponent implements OnInit {
     orderTerm: string[] = ["description"];
     propertyTerm: string;
     areFiltersVisible: boolean = false;
-    apiURL = Config.apiURL;
     itemsPerPage = 10;
     roundNumber = new RoundNumberPipe();
     articleType: Type;
