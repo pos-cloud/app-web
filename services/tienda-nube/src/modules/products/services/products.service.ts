@@ -119,12 +119,12 @@ export class ProductsService {
               ? stockFound.realStock
               : 0
             : null,
-          price: foundArticle.salePrice || null,
-          sku: foundArticle.barcode || null,
-          weight: foundArticle.weight || null,
-          width: foundArticle.width || null,
-          height: foundArticle.height || null,
-          depth: foundArticle.depth || null,
+          price: foundArticle.salePrice ?? null,
+          sku: foundArticle.barcode ?? null,
+          weight: foundArticle.weight ?? null,
+          width: foundArticle.width ?? null,
+          height: foundArticle.height ?? null,
+          depth: foundArticle.depth ?? null,
         },
       );
       // Creacion de variantes
@@ -461,7 +461,7 @@ export class ProductsService {
               operationType: { $ne: 'D' },
               article: new ObjectId(variant.articleChild),
             });
-
+  
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,
@@ -469,16 +469,15 @@ export class ProductsService {
               variant.articleChildInfo.tiendaNubeId,
               {
                 stock: variant.articleChildInfo.allowSaleWithoutStock
-                  ? (stockFound && stockFound.realStock >= 0
+                  ?  null : (stockFound && stockFound.realStock > 0
                     ? stockFound.realStock
-                    : 0)
-                  : null,
+                    : 0),
                 price: variant.articleChildInfo.salePrice,
-                sku: variant.articleChildInfo.barcode || null,
-                weight: variant.articleChildInfo.weight || null,
-                width: variant.articleChildInfo.width || null,
-                height: variant.articleChildInfo.height || null,
-                depth: variant.articleChildInfo.depth || null,
+                sku: variant.articleChildInfo.barcode ?? null,
+                weight: variant.articleChildInfo.weight ?? null,
+                width: variant.articleChildInfo.width ?? null,
+                height: variant.articleChildInfo.height ?? null,
+                depth: variant.articleChildInfo.depth ?? null,
               },
             )
           } else {
@@ -522,10 +521,9 @@ export class ProductsService {
               {
                 values,
                 stock: variant.articleChildInfo.allowSaleWithoutStock
-                  ? (stockFound && stockFound.realStock >= 0
+                  ? null :  (stockFound && stockFound.realStock >= 0
                     ? stockFound.realStock
-                    : 0)
-                  : null,
+                    : 0),
                 price: variant.articleChildInfo.salePrice
               }
             )
@@ -557,16 +555,15 @@ export class ProductsService {
           result.variants[0].id,
           {
             stock: foundArticle.allowSaleWithoutStock
-              ? (stockFound && stockFound.realStock >= 0
+              ? null : (stockFound && stockFound.realStock >= 0
                 ? stockFound.realStock
-                : 0)
-              : null,
+                : 0),
             price: foundArticle.salePrice ? foundArticle.salePrice : null,
-            sku: foundArticle.barcode || null,
-            weight: foundArticle.weight || null,
-            width: foundArticle.width || null,
-            height: foundArticle.height || null,
-            depth: foundArticle.depth || null,
+            sku: foundArticle.barcode ?? null,
+            weight: foundArticle.weight ?? null,
+            width: foundArticle.width ?? null,
+            height: foundArticle.height ?? null,
+            depth: foundArticle.depth ?? null,
           },
         );
 
