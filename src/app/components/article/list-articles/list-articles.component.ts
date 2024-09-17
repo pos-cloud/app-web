@@ -82,7 +82,7 @@ export class ListArticlesComponent {
             title: 'Imprimir Etiqueta',
             class: 'btn btn-light btn-sm',
             icon: 'fa fa-barcode',
-            click: `this.emitEvent('price-lists', item, null)`
+            click: `this.emitEvent('print-label', item, null)`
           },
           {
             title: 'Historial de Cambios',
@@ -154,7 +154,7 @@ export class ListArticlesComponent {
             title: 'Imprimir Etiqueta',
             class: 'btn btn-light btn-sm',
             icon: 'fa fa-barcode',
-            click: `this.emitEvent('price-lists', item, null)`
+            click: `this.emitEvent('print-label', item, null)`
           },
           {
             title: 'Copiar',
@@ -248,29 +248,6 @@ export class ListArticlesComponent {
       case 'copy':
         this._router.navigateByUrl("admin/articles/copy/" + obj._id)
         break
-      case "price-lists":
-        if(!this.priceLists.length){
-          return this.openModal("print-label", obj, null);
-        }
-        modalRef = this._modalService.open(ListPriceListsComponent, {
-          size: "lg",
-          backdrop: "static",
-        });
-        modalRef.result.then(
-          (result) => {
-            if (result && result.priceList) {
-              this.priceListId = result.priceList;
-              this.openModal("print-label", obj, null);
-            } else {
-              this.openModal("print-label", obj, null);
-            }
-          },
-          (reason) => {
-            this.refresh()
-          }
-        );
-
-        break;
       case "update-prices":
         modalRef = this._modalService.open(UpdateArticlePriceComponent);
         modalRef.componentInstance.articles = items;

@@ -2141,10 +2141,14 @@ export class AddSaleOrderComponent {
         }
         break;
       case 'add-article':
-        window.open(
-          '/#/admin/article/add',
-          '_blank',
-        );
+        modalRef = this._modalService.open(ArticleComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.property = {
+          articleId:  null,
+          operation: 'add'
+        }
         break;
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, {

@@ -107,6 +107,7 @@ export class Article {
     public variants: [{
         value: VariantValue,
         type: VariantType,
+        articleId: string
     }];
     
     constructor() { }
@@ -634,6 +635,16 @@ export let attributes = [
         disabled: false,
         filter: true,
         datatype: 'number',
+        project: null,
+        align: 'left',
+        required: false,
+    },
+    {
+        name: '_id',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
         project: null,
         align: 'left',
         required: false,

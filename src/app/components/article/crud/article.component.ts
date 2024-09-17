@@ -1,7 +1,7 @@
 // Angular
 import { DecimalPipe } from '@angular/common';
 import { SlicePipe } from '@angular/common';
-import { Component, OnInit, EventEmitter, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewEncapsulation, ViewChild, Input } from '@angular/core';
 import {
   UntypedFormGroup,
   UntypedFormBuilder,
@@ -76,6 +76,10 @@ import { User } from 'app/components/user/user';
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleComponent implements OnInit {
+  @Input() property: {
+    articleId: string,
+    operation: string
+  };
   public articleId: string;
   public operation: string;
   public readonly: boolean;
@@ -106,7 +110,6 @@ export class ArticleComponent implements OnInit {
   focusEvent = new EventEmitter<boolean>();
   focusNoteEvent = new EventEmitter<boolean>();
   focusTagEvent = new EventEmitter<boolean>();
-  apiURL = Config.apiURL;
   filesToUpload: Array<File>;
   filesToArray: Array<File>;
   hasChanged = false;
@@ -357,6 +360,11 @@ export class ArticleComponent implements OnInit {
     this.pathUrl = this._router.url.split('/');
     this.operation = this.pathUrl[3];
     this.articleId = this.pathUrl[4];
+
+    if(this.property) {
+      this.operation = this.property.operation
+      this.articleId = this.property.articleId
+    }
 
     if (!this.variant) {
       this.variant = new Variant();
@@ -1083,10 +1091,14 @@ private deleteVariantFromFormArray(variant): void {
   }
 
   retrunTo() {
-    if (this.article.type === Type.Variant) {
-      return this._router.navigate(['/admin/variants']);
+    if(this.property){
+      this.activeModal.close()
+    } else {
+      if (this.article.type === Type.Variant) {
+        return this._router.navigate(['/admin/variants']);
+      }
+      return this._router.navigate(['/admin/articles']);
     }
-    return this._router.navigate(['/admin/articles']);
   }
 
   getUniqueVariants(variants: Variant[]): Variant[] {
@@ -1486,11 +1498,16 @@ private deleteVariantFromFormArray(variant): void {
             this.article = result.result;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
 
-            if (this.pathUrl[2] === "articles") {
-              this._router.navigate(['/admin/articles']);
+            if(this.property) {
+              this.activeModal.close('close');
             } else {
-              this._router.navigate(['/admin/variants']);
+              if (this.pathUrl[2] === "articles") {
+                this._router.navigate(['/admin/articles']);
+              } else {
+                this._router.navigate(['/admin/variants']);
+              }
             }
+           
             this.loading = false;
           }
         },
@@ -1527,11 +1544,17 @@ private deleteVariantFromFormArray(variant): void {
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
-            if (this.pathUrl[2] === "articles") {
-              this._router.navigate(['/admin/articles']);
+
+            if(this.property) {
+              this.activeModal.close('close');
             } else {
-              this._router.navigate(['/admin/variants']);
+              if (this.pathUrl[2] === "articles") {
+                this._router.navigate(['/admin/articles']);
+              } else {
+                this._router.navigate(['/admin/variants']);
+              }
             }
+
             this.loading = false
           }
         },

@@ -1496,12 +1496,10 @@ export class AddMovementOfArticleComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.articleId = this.movementOfArticle.article._id;
-        modalRef.componentInstance.operation = 'update';
-        modalRef.result.then(
-          (result) => {},
-          (reason) => {},
-        );
+        modalRef.componentInstance.property = {
+          articleId:  this.movementOfArticle.article._id,
+          operation: 'update'
+        }
         break;
       default:
     }
