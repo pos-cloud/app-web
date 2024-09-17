@@ -9,10 +9,8 @@ import {AccountSeat} from 'app/components/account-seat/account-seat';
 import {AccountSeatService} from 'app/components/account-seat/account-seat.service';
 import {Account} from 'app/components/account/account';
 import {AccountService} from 'app/components/account/account.service';
-import {PrintTransactionTypeComponent} from 'app/components/print/print-transaction-type/print-transaction-type.component';
-import {Printer, PrinterPrintIn} from 'app/components/printer/printer';
+import {Printer} from 'app/components/printer/printer';
 import {PrinterService} from 'app/components/printer/printer.service';
-import {User} from 'app/components/user/user';
 import {UserService} from 'app/components/user/user.service';
 import {TranslateMePipe} from 'app/main/pipes/translate-me';
 import {FormField} from 'app/util/formField.interface';
@@ -32,7 +30,6 @@ import {Transaction} from '../transaction';
 import {TransactionService} from '../transaction.service';
 
 import 'moment/locale/es';
-import { Article } from 'app/components/article/article';
 import * as printJS from 'print-js';
 
 @Component({
@@ -446,9 +443,10 @@ export class ViewTransactionComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.articleId = movement.article._id;
-        modalRef.componentInstance.readonly = true;
-        modalRef.componentInstance.operation = 'view';
+        modalRef.componentInstance.property = {
+          articleId:  movement.article._id,
+          operation: 'view'
+        }
         break;
       case 'view-company':
         modalRef = this._modalService.open(AddCompanyComponent, {
