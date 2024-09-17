@@ -114,11 +114,10 @@ export class ProductsService {
         result.id,
         result.variants[0].id,
         {
-          stock: !foundArticle.allowSaleWithoutStock
-            ? stockFound && stockFound.realStock >= 0
+          stock: foundArticle?.allowSaleWithoutStock ? null :
+            (stockFound && stockFound.realStock > 0
               ? stockFound.realStock
-              : 0
-            : null,
+              : 0 ),
           price: foundArticle.salePrice ?? null,
           sku: foundArticle.barcode ?? null,
           weight: foundArticle.weight ?? null,
@@ -468,8 +467,8 @@ export class ProductsService {
               foundArticle.tiendaNubeId,
               variant.articleChildInfo.tiendaNubeId,
               {
-                stock: variant.articleChildInfo.allowSaleWithoutStock
-                  ?  null : (stockFound && stockFound.realStock > 0
+                stock: variant?.articleChildInfo?.allowSaleWithoutStock
+                  ? null : (stockFound && stockFound.realStock > 0
                     ? stockFound.realStock
                     : 0),
                 price: variant.articleChildInfo.salePrice,
@@ -520,8 +519,8 @@ export class ProductsService {
               foundArticle.tiendaNubeId,
               {
                 values,
-                stock: variant.articleChildInfo.allowSaleWithoutStock
-                  ? null :  (stockFound && stockFound.realStock >= 0
+                stock: variant?.articleChildInfo?.allowSaleWithoutStock
+                  ? null :  (stockFound && stockFound.realStock > 0
                     ? stockFound.realStock
                     : 0),
                 price: variant.articleChildInfo.salePrice
@@ -554,8 +553,8 @@ export class ProductsService {
           result.id,
           result.variants[0].id,
           {
-            stock: foundArticle.allowSaleWithoutStock
-              ? null : (stockFound && stockFound.realStock >= 0
+            stock: foundArticle?.allowSaleWithoutStock
+              ? null : (stockFound && stockFound.realStock > 0
                 ? stockFound.realStock
                 : 0),
             price: foundArticle.salePrice ? foundArticle.salePrice : null,
