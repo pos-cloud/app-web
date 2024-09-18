@@ -67,6 +67,7 @@ import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { UserService } from 'app/components/user/user.service';
 import { User } from 'app/components/user/user';
+import { CompanyService } from 'app/components/company/company.service';
 
 @Component({
   selector: 'app-article',
@@ -135,7 +136,7 @@ export class ArticleComponent implements OnInit {
   creationUser: User
   updateUser: User
   typeSelect = []
-
+  company: Company[];
   filteredVariantTypes: any[] = [];
 
   public variantTypes: VariantType[];
@@ -302,6 +303,20 @@ export class ArticleComponent implements OnInit {
     return unitsOfMeasurement.name
   };
 
+  searchProvider = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      map(term => term.length < 0 ? []
+        : this.company.filter(v => v.name.toLowerCase().startsWith(term.toLocaleLowerCase())).slice(0, 10))
+    );
+
+  formatterProvider = (x: any) => {
+    let valueId = x._id === undefined ? x : x._id
+    const company = this.company.find((c: Company) => c._id === valueId);
+    return company.name
+  };
+
   @ViewChild(AddVariantComponent) addVariantComponent: AddVariantComponent;
 
   constructor(
@@ -312,6 +327,7 @@ export class ArticleComponent implements OnInit {
     private _makeService: MakeService,
     private _categoryService: CategoryService,
     private _classificationService: ClassificationService,
+    public _companyService: CompanyService,
     private _unitOfMeasurementService: UnitOfMeasurementService,
     private _applicationService: ApplicationService,
     private _accountService: AccountService,
@@ -339,6 +355,7 @@ export class ArticleComponent implements OnInit {
     this.getMake()
     this.getCategory()
     this.getUnitsOfMeasurement()
+    this.getCompany()
     this.getUsers()
 
     const pathLocation: string[] = this._router.url.split('/');
@@ -825,66 +842,66 @@ export class ArticleComponent implements OnInit {
   public deleteVariant(v) {
     // Verifica si solo hay un tipo con un valor en variantsByTypes
     if (this.variantsByTypes.length === 1 && this.variantsByTypes[0].value.length === 1 && this.operation !== 'add' ) {
-        this.showToast(null, 'info', "No se puede eliminar la única variante restante.");
-        return; // Sal del método si no se puede eliminar
+      this.showToast(null, 'info', "No se puede eliminar la única variante restante.");
+      return; // Sal del método si no se puede eliminar
     }
 
     // Procede con la eliminación
     let countvt: number = 0;
     for (let vt of this.variantsByTypes) {
-        let typeId = v.type;
-        if (v.type && v.type._id) {
-            typeId = v.type._id;
+      let typeId = v.type;
+      if (v.type && v.type._id) {
+        typeId = v.type._id;
+      }
+      if (vt.type._id === typeId) {
+        let countval: number = 0;
+        let delval: number = -1;
+        for (let val of vt.value) {
+          if (val._id == v._id) {
+            delval = countval;
+          }
+          countval++;
         }
-        if (vt.type._id === typeId) {
-            let countval: number = 0;
-            let delval: number = -1;
-            for (let val of vt.value) {
-                if (val._id == v._id) {
-                    delval = countval;
-                }
-                countval++;
-            }
-            if (delval !== -1) {
-                vt.value.splice(delval, 1);
-            }
-            if (vt.value.length === 0) {
-                this.variantsByTypes.splice(countvt, 1);
-            }
+        if (delval !== -1) {
+          vt.value.splice(delval, 1);
         }
-        countvt++;
+        if (vt.value.length === 0) {
+          this.variantsByTypes.splice(countvt, 1);
+        }
+      }
+      countvt++;
     }
 
     if (this.variants && this.variants.length > 0) {
-        let countvar: number = 0;
-        let delvar: number = -1;
-        for (let variantAux of this.variants) {
-            if (variantAux.value._id === v._id) {
-                delvar = countvar;
-            }
-            countvar++;
+      let countvar: number = 0;
+      let delvar: number = -1;
+      for (let variantAux of this.variants) {
+        if (variantAux.value._id === v._id) {
+          delvar = countvar;
         }
-        if (delvar !== -1) {
-            this.variants.splice(delvar, 1);
-        }
+        countvar++;
+      }
+      if (delvar !== -1) {
+        this.variants.splice(delvar, 1);
+      }
     }
 
     // Eliminar la variante del FormArray
     this.deleteVariantFromFormArray(v);
-}
+  }
 
-private deleteVariantFromFormArray(variant): void {
+  private deleteVariantFromFormArray(variant): void {
     const variantsArray = this.articleForm.get('variants') as FormArray;
-    
+
     for (let i = 0; i < variantsArray.length; i++) {
-        const variantGroup = variantsArray.at(i) as FormGroup;
-        const variantId = typeof variantGroup.value.value === 'string' ? variantGroup.value.value : variantGroup.value.value._id
-        if (variantId === variant._id) {
-            variantsArray.removeAt(i);
-            break;
-        }
+      const variantGroup = variantsArray.at(i) as FormGroup;
+      const variantId = typeof variantGroup.value.value === 'string' ? variantGroup.value.value : variantGroup.value.value._id
+      if (variantId === variant._id) {
+        variantsArray.removeAt(i);
+        break;
+      }
     }
-}
+  }
 
 
   public getVariantValues(): void {
@@ -1017,6 +1034,35 @@ private deleteVariantFromFormArray(variant): void {
         } else {
           this.loading = false;
           this.unitsOfMeasurement = result;
+        }
+      },
+      error => {
+        this.loading = false;
+      }
+    );
+  }
+
+  public getCompany(): void {
+    this.loading = true;
+
+    let project = {
+      "_id": 1,
+      "name": 1,
+      "operationType": 1,
+      "type": 1
+    };
+    let match = {
+      operationType: { $ne: 'D' },
+      'type': 'Proveedor'
+    }
+    this._companyService.getAll({project, match}).subscribe(
+      result => {
+        if (!result.result) {
+          this.loading = false;
+          this.company = new Array();
+        } else {
+          this.loading = false;
+          this.company = result.result;
         }
       },
       error => {
@@ -1344,83 +1390,87 @@ private deleteVariantFromFormArray(variant): void {
 
   setValuesForm(): void {
     const values = {
-        _id: this.article._id ?? '',
-        order: this.article.order ?? 1,
-        code: this.article.code ?? this.padString(1, this.config.article.code.validators.maxLength),
-        codeSAT: this.article.codeSAT ?? '',
-        currency: this.article.currency?._id ?? this.article.currency ?? null,
-        make: this.article.make ?? null,
-        description: this.article.description ?? '',
-        posDescription: this.article.posDescription ?? '',
-        basePrice: this.roundNumber.transform(this.article.basePrice ?? 0.0),
-        costPrice: this.roundNumber.transform(this.article.costPrice ?? 0.0),
-        costPrice2: this.roundNumber.transform(this.article.costPrice2 ?? 0.0),
-        markupPercentage: this.roundNumber.transform(this.article.markupPercentage ?? 0.0),
-        markupPrice: this.roundNumber.transform(this.article.markupPrice ?? 0.0, 3),
-        markupPriceWithoutVAT: this.roundNumber.transform(
-            (this.article.basePrice * this.article.markupPercentage) / 100
-        ),
-        salePrice: this.roundNumber.transform(this.article.salePrice ?? 0.0),
-        salePriceWithoutVAT: this.roundNumber.transform(
-            this.article.basePrice + this.markupPriceWithoutVAT
-        ),
-        category: this.article.category ?? null,
-        quantityPerMeasure: this.article.quantityPerMeasure ?? 1,
-        unitOfMeasurement: this.article.unitOfMeasurement ?? null,
-        observation: this.article.observation ?? '',
-        barcode: this.article.barcode ?? '',
-        printIn: this.article.printIn ?? ArticlePrintIn.Counter,
-        allowPurchase: this.article.allowPurchase ?? true,
-        allowSale: this.article.allowSale ?? true,
-        allowSaleWithoutStock: this.article.allowSaleWithoutStock ?? false,
-        isWeigth: this.article.isWeigth ?? false,
-        allowMeasure: this.article.allowMeasure ?? false,
-        ecommerceEnabled: this.article.ecommerceEnabled ?? false,
-        posKitchen: this.article.posKitchen ?? false,
-        favourite: this.article.favourite ?? false,
-        providers: this.article.provider?._id ?? this.article.provider ?? this.article.providers?.[0]?._id ?? this.article.providers ?? null,
-        provider: this.article.provider?._id ?? this.article.provider ?? null,
-        lastPricePurchase: this.lastPricePurchase ?? 0,
-        classification: this.article.classification?.[0]?._id ?? this.article.classification ?? null,
-        url: this.article.url ?? '',
-        forShipping: this.article.forShipping ?? false,
-        salesAccount: this.article.salesAccount ?? null,
-        purchaseAccount: this.article.purchaseAccount ?? null,
-        minStock: this.article.minStock ?? null,
-        maxStock: this.article.maxStock ?? null,
-        pointOfOrder: this.article.pointOfOrder ?? null,
-        codeProvider: this.article.codeProvider ?? null,
-        allowStock: this.article.allowStock ?? null,
-        wooId: this.article.wooId ?? null,
-        purchasePrice: this.article.purchasePrice ?? null,
-        m3: this.article.m3 ?? null,
-        weight: this.article.weight ?? null,
-        height: this.article.height ?? null,
-        width: this.article.width ?? null,
-        depth: this.article.depth ?? null,
-        showMenu: this.article.showMenu ?? '',
-        updateVariants: this.article.updateVariants ?? false,
-        tiendaNubeId: this.article.tiendaNubeId ?? null,
+      _id: this.article._id ?? '',
+      order: this.article.order ?? 1,
+      code: this.article.code ?? this.padString(1, this.config.article.code.validators.maxLength),
+      codeSAT: this.article.codeSAT ?? '',
+      currency: this.article.currency?._id ?? this.article.currency ?? null,
+      make: this.article.make ?? null,
+      description: this.article.description ?? '',
+      posDescription: this.article.posDescription ?? '',
+      basePrice: this.roundNumber.transform(this.article.basePrice ?? 0.0),
+      costPrice: this.roundNumber.transform(this.article.costPrice ?? 0.0),
+      costPrice2: this.roundNumber.transform(this.article.costPrice2 ?? 0.0),
+      markupPercentage: this.roundNumber.transform(this.article.markupPercentage ?? 0.0),
+      markupPrice: this.roundNumber.transform(this.article.markupPrice ?? 0.0, 3),
+      markupPriceWithoutVAT: this.roundNumber.transform(
+        (this.article.basePrice * this.article.markupPercentage) / 100
+      ),
+      salePrice: this.roundNumber.transform(this.article.salePrice ?? 0.0),
+      salePriceWithoutVAT: this.roundNumber.transform(
+        this.article.basePrice + this.markupPriceWithoutVAT
+      ),
+      category: this.article.category ?? null,
+      quantityPerMeasure: this.article.quantityPerMeasure ?? 1,
+      unitOfMeasurement: this.article.unitOfMeasurement ?? null,
+      observation: this.article.observation ?? '',
+      barcode: this.article.barcode ?? '',
+      printIn: this.article.printIn ?? ArticlePrintIn.Counter,
+      allowPurchase: this.article.allowPurchase ?? true,
+      allowSale: this.article.allowSale ?? true,
+      allowSaleWithoutStock: this.article.allowSaleWithoutStock ?? false,
+      isWeigth: this.article.isWeigth ?? false,
+      allowMeasure: this.article.allowMeasure ?? false,
+      ecommerceEnabled: this.article.ecommerceEnabled ?? false,
+      posKitchen: this.article.posKitchen ?? false,
+      favourite: this.article.favourite ?? false,
+      providers: this.article.provider?._id ?? this.article.provider ?? this.article.providers?.[0]?._id ?? this.article.providers ?? null,
+      provider: this.article.provider?._id ?? this.article.provider ?? null,
+      lastPricePurchase: this.lastPricePurchase ?? 0,
+      classification: this.article.classification?.[0]?._id ?? this.article.classification ?? null,
+      url: this.article.url ?? '',
+      forShipping: this.article.forShipping ?? false,
+      salesAccount: this.article.salesAccount ?? null,
+      purchaseAccount: this.article.purchaseAccount ?? null,
+      minStock: this.article.minStock ?? null,
+      maxStock: this.article.maxStock ?? null,
+      pointOfOrder: this.article.pointOfOrder ?? null,
+      codeProvider: this.article.codeProvider ?? null,
+      allowStock: this.article.allowStock ?? null,
+      wooId: this.article.wooId ?? null,
+      purchasePrice: this.article.purchasePrice ?? null,
+      m3: this.article.m3 ?? null,
+      weight: this.article.weight ?? null,
+      height: this.article.height ?? null,
+      width: this.article.width ?? null,
+      depth: this.article.depth ?? null,
+      showMenu: this.article.showMenu ?? '',
+      updateVariants: this.article.updateVariants ?? false,
+      tiendaNubeId: this.article.tiendaNubeId ?? null,
     };
 
     this.articleForm.patchValue(values);
-}
+  }
 
 
   addArticle(): void {
     if (this.articleForm.valid) {
       this.loadPosDescription();
       //this.loadURL();
-  
+
       const salePrice = this.articleForm.get('salePrice')?.value;
-      if (salePrice <= 0) { 
+      if (salePrice <= 0) {
         return this.showToast({ message: salePrice < 0 ? 'El precio no puede ser negativo.' : 'El precio tiene que ser mayor a 0.' });
-    }    
+      }
 
       this.article = Object.assign(this.article, this.articleForm.value);
-      
+
       if (this.article.make === null || this.article?.make?.toString() === '') {
         this.article.make = null;
+      }
+
+      if (this.article.provider === null || this.article?.provider?.toString() === '') {
+        this.article.provider = null;
       }
       if (this.article.category && this.article.category.toString() === '')
         this.article.category = null;
@@ -1507,7 +1557,7 @@ private deleteVariantFromFormArray(variant): void {
                 this._router.navigate(['/admin/variants']);
               }
             }
-           
+
             this.loading = false;
           }
         },
