@@ -52,7 +52,7 @@ import { Currency } from '../../currency/currency';
 import { CurrencyService } from '../../currency/currency.service';
 
 // Pipes
-import { TaxClassification } from '../../tax/tax';
+import { Tax, TaxClassification } from '../../tax/tax';
 import { UnitOfMeasurement } from '../../unit-of-measurement/unit-of-measurement.model';
 import { UnitOfMeasurementService } from '../../unit-of-measurement/unit-of-measurement.service';
 import { TranslateMePipe } from '../../../main/pipes/translate-me';
@@ -68,6 +68,7 @@ import { AddVariantComponent } from 'app/components/variant/add-variant/add-vari
 import { UserService } from 'app/components/user/user.service';
 import { User } from 'app/components/user/user';
 import { CompanyService } from 'app/components/company/company.service';
+import { TaxService } from 'app/components/tax/tax.service';
 
 @Component({
   selector: 'app-article',
@@ -99,7 +100,7 @@ export class ArticleComponent implements OnInit {
   categories: Category[] = new Array();
   variants: any = new Array();
   unitsOfMeasurement: UnitOfMeasurement[] = new Array();
-  taxes: Taxes[] = new Array();
+  taxes: any[] = new Array();
   printIns: ArticlePrintIn[] = [
     ArticlePrintIn.Counter,
     ArticlePrintIn.Kitchen,
@@ -138,6 +139,7 @@ export class ArticleComponent implements OnInit {
   typeSelect = []
   company: Company[];
   filteredVariantTypes: any[] = [];
+  tax: Tax[];
 
   public variantTypes: VariantType[];
   public variantType: VariantType[];
@@ -342,6 +344,7 @@ export class ArticleComponent implements OnInit {
     public _variantTypeService: VariantTypeService,
     public _variantValueService: VariantValueService,
     public _userService: UserService,
+    public _taxService: TaxService
   ) {
     this.getVariantValues()
     this.getVariantTypes()
@@ -357,6 +360,7 @@ export class ArticleComponent implements OnInit {
     this.getUnitsOfMeasurement()
     this.getCompany()
     this.getUsers()
+    this.getTax()
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -636,6 +640,8 @@ export class ArticleComponent implements OnInit {
           this.taxes = this.article.taxes;
           this.totalTaxes = 0;
           for (let tax of this.taxes) {
+            const taxes: any = typeof tax.tax === 'string' ? this.tax.find((app) => app._id === tax.tax) : tax.tax._id
+            tax.tax = taxes
             this.totalTaxes += tax.taxAmount;
           }
           this.imageURL = this.article.picture ?? './../../../assets/img/default.jpg'
@@ -1006,6 +1012,42 @@ export class ArticleComponent implements OnInit {
         } else {
           this.loading = false;
           this.makes = result;
+        }
+      },
+      error => {
+        this.loading = false;
+      }
+    );
+  }
+
+  public getTax(): void {
+    this.loading = true;
+
+    let project = {
+      "amount": 1,
+      "classification": 1,
+      "code": 1,
+      "creationDate": 1,
+      "lastNumber": 1,
+      "name": 1,
+      "operationType": 1,
+      "percentage": 1,
+      "taxBase": 1,
+      "type": 1,
+      "_id": 1,
+    };
+    let match = {
+      operationType: { $ne: 'D' }
+    }
+
+    this._taxService.getAll({project, match}).subscribe(
+      result => {
+        if (!result.result) {
+          this.loading = false;
+          this.tax = new Array();
+        } else {
+          this.loading = false;   
+          this.tax = result.result;
         }
       },
       error => {
@@ -1457,7 +1499,6 @@ export class ArticleComponent implements OnInit {
     if (this.articleForm.valid) {
       this.loadPosDescription();
       //this.loadURL();
-
       const salePrice = this.articleForm.get('salePrice')?.value;
       if (salePrice <= 0) {
         return this.showToast({ message: salePrice < 0 ? 'El precio no puede ser negativo.' : 'El precio tiene que ser mayor a 0.' });
