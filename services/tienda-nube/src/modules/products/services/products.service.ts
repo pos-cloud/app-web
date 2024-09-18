@@ -48,17 +48,17 @@ export class ProductsService {
         );
       }
 
-      // const pictureUrls = foundArticle.pictures.map(
-      //   (picture) => picture.picture,
-      // );
+      const pictureUrls = foundArticle.pictures.map(
+        (picture) => picture.picture,
+      );
 
       const dataNewProductTiendaNube = {
-        // images: [
-        //   {
-        //     src: foundArticle.picture,
-        //   },
-        //   ...pictureUrls.map((src) => ({ src })),
-        // ],
+        images: [
+          {
+            src: foundArticle.picture,
+          },
+          ...pictureUrls.map((src) => ({ src })),
+        ],
         name: {
           es: foundArticle.description,
         },
@@ -127,7 +127,7 @@ export class ProductsService {
         },
       );
       // Creacion de variantes
-      
+
       const foundCollectionV = await this.poolDatabase.getCollection(
         'variants',
         database,
@@ -141,34 +141,34 @@ export class ProductsService {
         operationType: { $ne: "D" },
         articleParent: new ObjectId(foundArticle._id.toString()),
       }).toArray();
-      
+
       if(variantProducts.length > 0){
-      await this.massCreactionOfProductVariants(
-        productId,
-        token,
-        userID,
-        result.id,
-        resultVariantName as string[],
-        database,
-      ).then((promise) => {
-        return Promise.all(promise);
-      }).then(async (result) => {
-        result.map(async (productVariante: any, index) => {
+        await this.massCreactionOfProductVariants(
+          productId,
+          token,
+          userID,
+          result.id,
+          resultVariantName as string[],
+          database,
+        ).then((promise) => {
+          return Promise.all(promise);
+        }).then(async (result) => {
+          result.map(async (productVariante: any, index) => {
           for(let variant of dataVarinat){
-            if (productVariante.values[0].es === variant.variants[0].value.description) {
-              await foundCollection.updateOne(
-                { _id: variant.articleChild },
-                {
-                  $set: {
-                    tiendaNubeId: productVariante.id,
+              if (productVariante.values[0].es === variant.variants[0].value.description) {
+                await foundCollection.updateOne(
+                  { _id: variant.articleChild },
+                  {
+                    $set: {
+                      tiendaNubeId: productVariante.id,
+                    },
                   },
-                },
-              );
+                );
+              }
             }
-          }
-        });
-      })
-    }
+          });
+        })
+      }
 
       await foundCollection.updateOne(
         { _id: foundArticle._id },
@@ -210,7 +210,7 @@ export class ProductsService {
     );
 
     const arrayCreateVariant = variantData.map((e) => {
-     return new Promise(async (resolve) => {
+      return new Promise(async (resolve) => {
         const resultResolve =
           await this.tiendaNubeService.createVarianteByProduct(
             tokenTiendaNube,
@@ -354,6 +354,10 @@ export class ProductsService {
         return this.create(database, productId);
       }
 
+      const pictureUrls = foundArticle.pictures.map(
+        (picture) => picture.picture,
+      );
+
       const dataUpdateProductTiendaNube = {
         name: {
           es: foundArticle.description,
@@ -388,6 +392,15 @@ export class ProductsService {
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
 
+      if (!foundArticle.picture.includes('default') && foundArticle.picture !== null && foundArticle.picture !== undefined) {
+        await this.tiendaNubeService.uploadImageOfProduct(
+          foundArticle.tiendaNubeId,
+          foundArticle.picture,
+          token,
+          userID,
+        );
+      }
+      
       // eliminacion de imagenee
       // try {
       // //  this.deleteAllImageVariant(result.variants, result.id, token, userID);
@@ -460,7 +473,7 @@ export class ProductsService {
               operationType: { $ne: 'D' },
               article: new ObjectId(variant.articleChild),
             });
-  
+
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,
