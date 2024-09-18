@@ -939,6 +939,15 @@ export class ArticleComponent implements OnInit {
     );
   }
 
+  onEnter() {
+    if (this.articleForm.valid && this.operation !== 'view' && this.operation !== 'delete') {
+      this.addArticle();
+    }
+    if(this.articleForm.valid && this.operation !== 'view' && this.operation !== 'create') {
+      this.deleteArticle();
+    }
+  }
+
   getVariantTypes(): void {
     let project = {
       "_id": 1,
