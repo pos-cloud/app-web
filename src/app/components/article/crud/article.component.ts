@@ -943,7 +943,7 @@ export class ArticleComponent implements OnInit {
     if (this.articleForm.valid && this.operation !== 'view' && this.operation !== 'delete') {
       this.addArticle();
     }
-    if(this.articleForm.valid && this.operation !== 'view' && this.operation !== 'create') {
+    if(this.articleForm.valid && this.operation === 'delete') {
       this.deleteArticle();
     }
   }
