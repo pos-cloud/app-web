@@ -263,6 +263,10 @@ export class ListArticlesPosComponent implements OnInit {
         increasePrice -= this.discountCompany;
         increasePrice -= this.discountCompanyGroup;
 
+        if(this.database == 'sangenemi'){
+            return this.roundNumber.transform(article.costPrice + (article.costPrice * increasePrice / 100));
+        }
+
         return this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice / 100));
 
     }
@@ -297,9 +301,9 @@ export class ListArticlesPosComponent implements OnInit {
                 async article => {
                     if (article) {
                         let increasePrice = 0;
-
+                        let priceList: PriceList;
                         if (this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client || this.transaction.priceList) {
-                            let priceList;
+                            
                             if (this.transaction && this.transaction.priceList) {
                                 priceList = await this.getPriceList(this.transaction.priceList._id)
                             } else {
@@ -409,6 +413,13 @@ export class ListArticlesPosComponent implements OnInit {
                                 movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice + (movementOfArticle.markupPrice * increasePrice / 100));
                                 movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice / 100));
                                 movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice + (movementOfArticle.salePrice * increasePrice / 100));
+                            }
+
+                            if(this.database == 'sangenemi' && priceList) {
+                                movementOfArticle.markupPrice = this.roundNumber.transform(priceList.percentage);
+                                let aux = (movementOfArticle.costPrice *  priceList.percentage) / 100
+                                movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + aux);
+                                movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice / movementOfArticle.amount);
                             }
 
                             if (this.transaction.type.requestTaxes) {
