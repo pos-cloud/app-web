@@ -12,7 +12,7 @@ import {
   FormGroup,
   UntypedFormControl,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Terceros
 import { NgbActiveModal, NgbModal, NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -339,6 +339,7 @@ export class ArticleComponent implements OnInit {
     public translatePipe: TranslateMePipe,
     public _fb: UntypedFormBuilder,
     public _router: Router,
+    private _route: ActivatedRoute,  // Asegúrate de incluir ActivatedRoute aquí
     public activeModal: NgbActiveModal,
     public _fileService: FileService,
     public _variantTypeService: VariantTypeService,
@@ -1187,17 +1188,27 @@ export class ArticleComponent implements OnInit {
     }
   }
 
-  retrunTo() {
-    if(this.property){
-      this.activeModal.close()
-    } else {
-      if (this.article.type === Type.Variant) {
-        return this._router.navigate(['/admin/variants']);
+  public returnTo(): void {
+    this._route.queryParams.subscribe(params => {
+      const returnUrl = params['returnURL'] ? decodeURIComponent(params['returnURL']) : null;
+  
+      if (this.property) {
+        this.activeModal.close();
+      } else {
+        if (returnUrl) {
+          // Si hay una returnURL, navegar a esa URL
+          this._router.navigateByUrl(returnUrl);
+        } else {
+          // Navegar a una ruta por defecto si no hay returnURL
+          if (this.article.type === Type.Variant) {
+            this._router.navigate(['/admin/variants']);
+          } else {
+            this._router.navigate(['/admin/articles']);
+          }
+        }
       }
-      return this._router.navigate(['/admin/articles']);
-    }
+    });
   }
-
   getUniqueVariants(variants: Variant[]): Variant[] {
     let variantsToReturn: Variant[] = new Array();
 
@@ -1648,11 +1659,19 @@ export class ArticleComponent implements OnInit {
             if(this.property) {
               this.activeModal.close('close');
             } else {
-              if (this.pathUrl[2] === "articles") {
-                this._router.navigate(['/admin/articles']);
-              } else {
-                this._router.navigate(['/admin/variants']);
-              }
+              this._route.queryParams.subscribe((params) => {
+                // Si hay un returnURL, navega a esa URL
+                if (params['returnURL']) {
+                  this._router.navigateByUrl(params['returnURL']);
+                } else {
+                  // Si no hay returnURL, navega a una ruta por defecto
+                  if (this.pathUrl[2] === 'articles') {
+                    this._router.navigate(['/admin/articles']);
+                  } else {
+                    this._router.navigate(['/admin/variants']);
+                  }
+                }
+              });
             }
 
             this.loading = false
