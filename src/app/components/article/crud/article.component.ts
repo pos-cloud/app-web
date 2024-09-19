@@ -108,7 +108,7 @@ export class ArticleComponent implements OnInit {
     ArticlePrintIn.Voucher,
   ];
   userType: string;
-  loading = false;
+  loading = true;
   focusEvent = new EventEmitter<boolean>();
   focusNoteEvent = new EventEmitter<boolean>();
   focusTagEvent = new EventEmitter<boolean>();
