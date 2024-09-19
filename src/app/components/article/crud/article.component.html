@@ -27,7 +27,7 @@
             </div>
         </div>
         <app-progressbar [loading]="loading"></app-progressbar>
-        <div class="card-body scroll" *ngIf="!loading">
+        <div class="card-body scroll">
             <form [formGroup]="articleForm" autocomplete="off" (keydown.enter)="onEnter()">
                 <div class="row">
                     <label class="form-group col-md-12">

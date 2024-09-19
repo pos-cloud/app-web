@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { NgbModal, NgbAlertConfig } from "@ng-bootstrap/ng-bootstrap";
-import { attributes } from "../article";
+import { attributesVariant } from "../article";
 import { IButton } from 'app/util/buttons.interface';
 import { ArticleService } from "../article.service";
 import { ImportComponent } from "../../import/import.component";
@@ -15,56 +15,32 @@ import { PriceListService } from "app/components/price-list/price-list.service";
 import { PriceList } from "app/components/price-list/price-list";
 
 @Component({
-  selector: "app-list-articles",
-  templateUrl: "./list-articles.component.html",
-  styleUrls: ["./list-articles.component.scss"],
+  selector: "app-list-variants",
+  templateUrl: "./list-variants.component.html",
   encapsulation: ViewEncapsulation.None
 })
-export class ListArticlesComponent {
+export class ListVariantsComponent {
 
-  public title: string = 'Productos'
+  public title: string = 'Variantes'
   public sort = { "code": 1 };
-  public columns = attributes
+  public columns = attributesVariant
   public pathLocation: string[]
   public priceListId: string;
   public loading: boolean = false;
-  public headerButtons: IButton[] = [{
-    title: 'add',
-    class: 'btn btn-light',
-    icon: 'fa fa-plus',
-    click: `this.emitEvent('add', null)`
-  }, {
-    title: 'import',
-    class: 'btn btn-light',
-    icon: 'fa fa-upload',
-    click: `this.emitEvent('uploadFile', null)`
-  },
-  {
-    title: 'Imprimir Etiquetas',
-    class: 'btn btn-light',
-    icon: 'fa fa-print',
-    click: `this.emitEvent('print-labels', null, items)`
-  },
-  {
-    title: 'Actualizar Precios',
-    class: 'btn btn-light',
-    icon: 'fa fa-edit',
-    click: `this.emitEvent('update-prices', null, items)`
-  },
-  {
-    title: ' Imprimir Lista',
-    class: 'btn btn-light',
-    icon: 'fa fa-print',
-    click: `this.emitEvent('print-list', null, items)`
-  },
-  {
-    title: 'refresh',
-    class: 'btn btn-light',
-    icon: 'fa fa-refresh',
-    click: `this.refresh()`
-  }
-  ];
-  public rowButtons: IButton[] = [
+  public headerButtons: IButton[] =  [
+    {
+      title: 'Imprimir Etiquetas',
+      class: 'btn btn-light',
+      icon: 'fa fa-print',
+      click: `this.emitEvent('print-labels', null, items)`
+    },
+    {
+      title: 'refresh',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.refresh()`
+    }];
+  public rowButtons: IButton[] =  [
     {
       title: 'view',
       class: 'btn btn-success btn-sm',
@@ -76,23 +52,12 @@ export class ListArticlesComponent {
       class: 'btn btn-primary btn-sm',
       icon: 'fa fa-pencil',
       click: `this.emitEvent('update', item, null)`
-    }, {
-      title: 'delete',
-      class: 'btn btn-danger btn-sm',
-      icon: 'fa fa-trash-o',
-      click: `this.emitEvent('delete', item, null)`
     },
     {
       title: 'Imprimir Etiqueta',
       class: 'btn btn-light btn-sm',
       icon: 'fa fa-barcode',
       click: `this.emitEvent('print-label', item, null)`
-    },
-    {
-      title: 'Copiar',
-      class: 'btn btn-light btn-sm',
-      icon: ' fa fa-copy',
-      click: `this.emitEvent('copy', item, null)`
     },
     {
       title: 'Historial de Cambios',
@@ -124,26 +89,20 @@ export class ListArticlesComponent {
     let currentUrl
     switch (op) {
       case 'view':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/articles/view', obj._id], {
-          queryParams: { returnURL: currentUrl }
-        });
-        break;
-      case 'add':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/articles/add'], {
+         currentUrl = encodeURIComponent(this._router.url);
+        this._router.navigate(['/admin/variants/view',obj._id], {
           queryParams: { returnURL: currentUrl }
         });
         break;
       case 'update':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/articles/update', obj._id], {
+         currentUrl = encodeURIComponent(this._router.url);
+        this._router.navigate(['/admin/variants/update',obj._id], {
           queryParams: { returnURL: currentUrl }
         });
         break;
       case 'delete':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/articles/delete', obj._id], {
+        this._router.navigate(['/admin/variants/delete',obj._id], {
           queryParams: { returnURL: currentUrl }
         });
         break;
@@ -166,7 +125,7 @@ export class ListArticlesComponent {
         break;
       case 'history':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/articles/history', obj._id], {
+        this._router.navigate(['/admin/variants/history',obj._id], {
           queryParams: { returnURL: currentUrl }
         });
         break;
@@ -185,12 +144,6 @@ export class ListArticlesComponent {
         printLabelsComponent.ngOnInit()
         this.loading = false
         break;
-      case 'copy':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/articles/copy', obj._id], {
-          queryParams: { returnURL: currentUrl }
-        });
-        break
       case "update-prices":
         modalRef = this._modalService.open(UpdateArticlePriceComponent);
         modalRef.componentInstance.articles = items;

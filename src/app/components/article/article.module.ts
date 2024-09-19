@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/main/pipes/pipes.module';
 import { NgxTinymceModule } from 'ngx-tinymce';
 import { ListArticlesComponent } from './list-articles/list-articles.component';
+import { ListVariantsComponent } from './list-variants/list-variants.component'
 import { ArticleService } from './article.service'
 import { ArticleComponent } from './crud/article.component';
 import { AddArticleTaxComponent } from './add-article-tax/add-article-tax.component';
@@ -59,7 +60,7 @@ const routes: Routes = [
   },
   {
     path: 'admin/variants',
-    component: ListArticlesComponent,
+    component: ListVariantsComponent,
     canActivate: [AuthGuard, LicenseGuard]
   },
   {
@@ -103,6 +104,7 @@ const routes: Routes = [
   ],
   declarations: [
     ListArticlesComponent,
+    ListVariantsComponent,
     ArticleComponent,
     AddArticleTaxComponent,
     PrintLabelComponent,

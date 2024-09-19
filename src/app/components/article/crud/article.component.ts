@@ -380,7 +380,8 @@ export class ArticleComponent implements OnInit {
 
   async ngOnInit() {
     this.pathUrl = this._router.url.split('/');
-    this.operation = this.pathUrl[3];
+   
+    this.operation = this.pathUrl[3].split('?')[0];
     this.articleId = this.pathUrl[4];
 
     if(this.property) {
@@ -1609,16 +1610,7 @@ export class ArticleComponent implements OnInit {
             this.article = result.result;
             this.showToast(null, 'success', 'El producto se ha añadido con éxito.');
 
-            if(this.property) {
-              this.activeModal.close('close');
-            } else {
-              if (this.pathUrl[2] === "articles") {
-                this._router.navigate(['/admin/articles']);
-              } else {
-                this._router.navigate(['/admin/variants']);
-              }
-            }
-
+            this.returnTo()
             this.loading = false;
           }
         },
@@ -1655,25 +1647,7 @@ export class ArticleComponent implements OnInit {
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
             this.showToast(null, 'success', 'Operación realizada con éxito');
-
-            if(this.property) {
-              this.activeModal.close('close');
-            } else {
-              this._route.queryParams.subscribe((params) => {
-                // Si hay un returnURL, navega a esa URL
-                if (params['returnURL']) {
-                  this._router.navigateByUrl(params['returnURL']);
-                } else {
-                  // Si no hay returnURL, navega a una ruta por defecto
-                  if (this.pathUrl[2] === 'articles') {
-                    this._router.navigate(['/admin/articles']);
-                  } else {
-                    this._router.navigate(['/admin/variants']);
-                  }
-                }
-              });
-            }
-
+            this.returnTo()
             this.loading = false
           }
         },
@@ -1691,11 +1665,7 @@ export class ArticleComponent implements OnInit {
       (result: Resulteable) => {
         if (result.status == 200) {
           this.showToast(null, 'success', 'El producto se ha eliminado con éxito.');
-          if (this.pathUrl[2] === "articles") {
-            this._router.navigate(['/admin/articles']);
-          } else {
-            this._router.navigate(['/admin/variants']);
-          }
+          this.returnTo()
           if (this.article.tiendaNubeId) {
             this.deleteArticleTiendaNube();
           }
