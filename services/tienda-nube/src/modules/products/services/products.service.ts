@@ -48,17 +48,17 @@ export class ProductsService {
         );
       }
 
-      const pictureUrls = foundArticle.pictures.map(
-        (picture) => picture.picture,
-      );
+      // const pictureUrls = foundArticle.pictures.map(
+      //   (picture) => picture.picture,
+      // );
 
       const dataNewProductTiendaNube = {
-        images: [
-          {
-            src: foundArticle.picture,
-          },
-          ...pictureUrls.map((src) => ({ src })),
-        ],
+        // images: [
+        //   {
+        //     src: foundArticle.picture,
+        //   },
+        //   ...pictureUrls.map((src) => ({ src })),
+        // ],
         name: {
           es: foundArticle.description,
         },
@@ -354,9 +354,9 @@ export class ProductsService {
         return this.create(database, productId);
       }
 
-      const pictureUrls = foundArticle.pictures.map(
-        (picture) => picture.picture,
-      );
+      // const pictureUrls = foundArticle.pictures.map(
+      //   (picture) => picture.picture,
+      // );
 
       const dataUpdateProductTiendaNube = {
         name: {
@@ -392,14 +392,14 @@ export class ProductsService {
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
 
-      if (!foundArticle.picture.includes('default') && foundArticle.picture !== null && foundArticle.picture !== undefined) {
-        await this.tiendaNubeService.uploadImageOfProduct(
-          foundArticle.tiendaNubeId,
-          foundArticle.picture,
-          token,
-          userID,
-        );
-      }
+      // if (!foundArticle.picture.includes('default') && foundArticle.picture !== null && foundArticle.picture !== undefined) {
+      //   await this.tiendaNubeService.uploadImageOfProduct(
+      //     foundArticle.tiendaNubeId,
+      //     foundArticle.picture,
+      //     token,
+      //     userID,
+      //   );
+      // }
       
       // eliminacion de imagenee
       // try {
