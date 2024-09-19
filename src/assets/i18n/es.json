@@ -74,6 +74,7 @@
     "article.taxes[2].percentage": "Porcentaje Imp",
     "article.unitOfMeasurement.abbreviation": "Un. de Medida",
     "article.purchasePrice": "Precio de Compra",
+    "article.allowStock": "Habilitado para stock",
     "auth.messageOPT": "Mensaje de Texto",
     "audit":"Auditoría",
     "auth.requireOPT": "Verifica teléfono al registrarse",

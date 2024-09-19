@@ -10,6 +10,7 @@ import * as printJS from "print-js";
 })
 export class PrintLabelComponent implements OnInit {
   @Input() articleId: string;
+  @Input() quantity: number = 1;
   public loading: boolean = false;
   public alertMessage: string = "";
 
@@ -24,7 +25,7 @@ export class PrintLabelComponent implements OnInit {
 
   public printArticle(articleId: string) {
     this.loading = true;
-    this._printerService.printArticle(articleId, 1,).subscribe(
+    this._printerService.printArticle(articleId, this.quantity).subscribe(
       (res: Blob) => {
         if (res) {
           const blobUrl = URL.createObjectURL(res);

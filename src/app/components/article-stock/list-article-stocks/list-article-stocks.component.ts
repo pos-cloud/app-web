@@ -36,6 +36,7 @@ import {UpdateArticleStockComponent} from '../update-article-stock/update-articl
 
 import {AddArticleStockComponent} from '../article-stock/add-article-stock.component';
 import { ImportComponent } from 'app/components/import/import.component';
+import { PrintLabelComponent } from 'app/components/article/actions/print-label/print-label.component';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -102,7 +103,6 @@ export class ListArticleStocksComponent implements OnInit {
     private _router: Router,
     private _toastr: ToastrService,
     private _printerService: PrinterService,
-    private _userService: UserService,
     private _branchService: BranchService,
     private _depositService: DepositService,
     private _modalService: NgbModal,
@@ -385,89 +385,16 @@ export class ListArticleStocksComponent implements OnInit {
         );
         break;
       case 'print-label':
-        let identity: User = JSON.parse(sessionStorage.getItem('user'));
-        let printer: Printer;
-
-        if (identity) {
-          this._userService.getUser(identity._id).subscribe(
-            async (result) => {
-              if (
-                result &&
-                result.user &&
-                result.user.printers &&
-                result.user.printers.length > 0
-              ) {
-                for (const element of result.user.printers) {
-                  if (
-                    element &&
-                    element.printer &&
-                    element.printer.printIn === PrinterPrintIn.Label
-                  ) {
-                    printer = element.printer;
-                  }
-                }
-              } else {
-                await this.getPrinters().then((printers) => {
-                  if (printers && printers.length > 0) {
-                    for (let printerAux of printers) {
-                      if (printerAux.printIn === PrinterPrintIn.Label) {
-                        printer = printerAux;
-                      }
-                    }
-                  }
-                });
-              }
-              if (printer) {
-                if (printer.fields && printer.fields.length > 0) {
-                  modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                  modalRef.componentInstance.articleId = articleStock.article._id;
-                  modalRef.componentInstance.quantity = articleStock.realStock;
-                  modalRef.componentInstance.printer = printer;
-                  if (this.priceListId) {
-                    modalRef.componentInstance.priceListId = this.priceListId;
-                  }
-                } else {
-                  this.showMessage(
-                    'Crear una diseño en la impresora de tipo etiqueta',
-                    'danger',
-                    false,
-                  );
-                }
-              } else {
-                this.showMessage(
-                  'Debe crear una impresora de tipo etiqueta',
-                  'danger',
-                  false,
-                );
-              }
-            },
-            (error) => {
-              this.showMessage(error._body, 'danger', false);
-            },
-          );
-        } else {
-          this.showMessage('Debe iniciar sesión', 'danger', false);
-        }
-
+        const printLabelComponent = new PrintLabelComponent(this._printerService, this.alertConfig);
+        printLabelComponent.articleId = articleStock.article._id;
+        printLabelComponent.quantity = articleStock.realStock;
+        printLabelComponent.ngOnInit()
         break;
       case 'price-lists':
-        modalRef = this._modalService.open(ListPriceListsComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.result.then(
-          (result) => {
-            if (result && result.priceList) {
-              this.priceListId = result.priceList;
-              this.openModal('print-label', articleStock);
-            } else {
-              this.openModal('print-label', articleStock);
-            }
-          },
-          (reason) => {
-            this.getItems();
-          },
-        );
+        const printLabelComponent2 = new PrintLabelComponent(this._printerService, this.alertConfig);
+        printLabelComponent2.articleId = articleStock.article._id;
+        printLabelComponent.quantity = articleStock.realStock;
+        printLabelComponent2.ngOnInit()
         break;
       case 'print-inventario':
         modalRef = this._modalService.open(PrintArticlesStockComponent);
