@@ -147,7 +147,6 @@ export class ArticleComponent implements OnInit {
   public variantValueSelected: VariantValue;
   public variantValues: VariantValue[];
   public orderByPipe: OrderByPipe = new OrderByPipe();
-  public pathUrl: string[]
 
   html = '';
 
@@ -379,15 +378,17 @@ export class ArticleComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.pathUrl = this._router.url.split('/');
-   
-    this.operation = this.pathUrl[3].split('?')[0];
-    this.articleId = this.pathUrl[4];
 
     if(this.property) {
       this.operation = this.property.operation
       this.articleId = this.property.articleId
+    } else {
+      const URL = this._router.url.split('/');
+      this.operation = URL[3].split('?')[0];
+      this.articleId = URL[4];
     }
+
+    if(this.operation === 'view') this.readonly = true
 
     if (!this.variant) {
       this.variant = new Variant();

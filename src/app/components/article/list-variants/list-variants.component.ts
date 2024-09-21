@@ -21,7 +21,7 @@ import { PriceList } from "app/components/price-list/price-list";
 })
 export class ListVariantsComponent {
 
-  public title: string = 'Variantes'
+  public title: string = 'variants'
   public sort = { "code": 1 };
   public columns = attributesVariant
   public pathLocation: string[]

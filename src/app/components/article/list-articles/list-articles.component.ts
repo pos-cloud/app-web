@@ -22,7 +22,7 @@ import { PriceList } from "app/components/price-list/price-list";
 })
 export class ListArticlesComponent {
 
-  public title: string = 'Productos'
+  public title: string = 'articles'
   public sort = { "code": 1 };
   public columns = attributes
   public pathLocation: string[]

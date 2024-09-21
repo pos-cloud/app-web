@@ -1,7 +1,7 @@
 <section class="container-fluid">
   <div class="card card-large">
     <div class="card-header">
-      <span style="color: #607D8B">{{title}}</span>
+      <span style="color: #607D8B">{{ title | translate | capitalize }}</span>
       <div class="pull-right">
         <button *ngFor="let button of headerButtons" [type]="'button'" [class]="button.class"
           (click)="runEvent(button.click, null, null)" [disabled]="loading"><i [class]="button.icon"></i><span>{{
