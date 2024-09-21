@@ -45,6 +45,7 @@ export class PrintPriceListComponent implements OnInit {
     public optionUpdate: string = "make";
     public dateFormat = new DateFormatPipe();
     public doc;
+    public database;
     public pdfURL;
     public articles: Article[];
     public config: Config;
@@ -96,6 +97,7 @@ export class PrintPriceListComponent implements OnInit {
     }
 
     async ngOnInit() {
+        this.database = localStorage.getItem('company');
 
         await this._configService.getConfigApi().subscribe(
             result => {
@@ -292,6 +294,7 @@ export class PrintPriceListComponent implements OnInit {
             code: 1,
             description: 1,
             salePrice: 1,
+            costPrice: 1,
             "category._id": 1,
             "category.description": 1,
             "make._id": 1,
@@ -557,6 +560,10 @@ export class PrintPriceListComponent implements OnInit {
         row += 5;
 
         let page = 1;
+        let priceList
+        if(this.printPriceListForm.value.priceList) {
+            priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
+        }
 
         // Detalle de productos
         if (this.articles && this.articles.length > 0) {
@@ -574,48 +581,51 @@ export class PrintPriceListComponent implements OnInit {
                     this.doc.text(this.articles[index].category.description.slice(0, 18), 145, row);
                 }
                 let increasePrice = 0;
-                if (this.printPriceListForm.value.priceList) {
-                    let priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
-                    if (priceList) {
-                        if (priceList.allowSpecialRules) {
-                            priceList.rules.forEach(rule => {
-                                if (rule) {
-                                    if (rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.category._id === this.articles[index].category._id && rule.make._id === this.articles[index].make._id) {
-                                        increasePrice = rule.percentage + priceList.percentage
-                                    }
-                                    if (rule.make && this.articles[index].make && rule.category == null && rule.make._id === this.articles[index].make._id) {
-                                        increasePrice = rule.percentage + priceList.percentage
-                                    }
-                                    if (rule.category && this.articles[index].category && rule.make == null && rule.category._id === this.articles[index].category._id) {
-                                        increasePrice = rule.percentage + priceList.percentage
-                                    }
-                                    if (rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.make._id !== this.articles[index].make._id && rule.category._id !== this.articles[index].category._id) {
-                                        increasePrice = priceList.percentage
-                                    }
+                    
+                if (priceList && this.database !== 'sangenemi') {
+                    if (priceList.allowSpecialRules) {
+                        priceList.rules.forEach(rule => {
+                            if (rule) {
+                                if (rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.category._id === this.articles[index].category._id && rule.make._id === this.articles[index].make._id) {
+                                    increasePrice = rule.percentage + priceList.percentage
                                 }
-                            });
-                        } else {
-                            increasePrice = priceList.percentage
-                        }
-
-                        if (priceList.exceptions && priceList.exceptions.length > 0) {
-                            priceList.exceptions.forEach(exception => {
-                                if (exception) {
-                                    if (this.articles[index] && exception.article && exception.article._id === this.articles[index]._id) {
-                                        increasePrice = exception.percentage
-                                    }
+                                if (rule.make && this.articles[index].make && rule.category == null && rule.make._id === this.articles[index].make._id) {
+                                    increasePrice = rule.percentage + priceList.percentage
                                 }
-                            })
-                        }
-
+                                if (rule.category && this.articles[index].category && rule.make == null && rule.category._id === this.articles[index].category._id) {
+                                    increasePrice = rule.percentage + priceList.percentage
+                                }
+                                if (rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.make._id !== this.articles[index].make._id && rule.category._id !== this.articles[index].category._id) {
+                                    increasePrice = priceList.percentage
+                                }
+                            }
+                        });
+                    } else {
+                        increasePrice = priceList.percentage
                     }
+
+                    if (priceList.exceptions && priceList.exceptions.length > 0) {
+                        priceList.exceptions.forEach(exception => {
+                            if (exception) {
+                                if (this.articles[index] && exception.article && exception.article._id === this.articles[index]._id) {
+                                    increasePrice = exception.percentage
+                                }
+                            }
+                        })
+                    }
+
                 }
+                
                 if (increasePrice != 0) {
                     this.articles[index].salePrice = this.articles[index].salePrice + (this.articles[index].salePrice * increasePrice / 100)
                 }
 
                 if (this.articles[index].currency && this.articles[index].currency.quotation) {
                     this.articles[index].salePrice = this.articles[index].salePrice * this.articles[index].currency.quotation
+                }
+
+                if(this.database === 'sangenemi' && priceList){
+                    this.articles[index].salePrice = this.articles[index].costPrice + ((this.articles[index].costPrice * priceList.percentage) / 100)
                 }
 
                 this.doc.text(190, row, "$" + (this.roundNumber.transform(this.articles[index].salePrice)).toString());
