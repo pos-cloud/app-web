@@ -762,16 +762,16 @@ export class ArticleComponent implements OnInit {
   }
 
   public updateAndRefresh() {
-    // if (this.article.variants && this.article.variants.length) {
-    //  const selectedTypeNames = this.articleForm.controls.variants.value.map(v => v.value.type.name);
-    //   if (!selectedTypeNames.length) {
-    //     this.filteredVariantTypes = this.variantTypes;
-    //   } else {
-    //     this.filteredVariantTypes = this.variantTypes.filter(type => selectedTypeNames.includes(type.name));
-    //   }
-    // } else {
+    if (this.article.variants && this.article.variants.length) {
+     const selectedTypeNames = this.articleForm.controls.variants.value.map(v => v.value.type.name);
+      if (!selectedTypeNames.length) {
+        this.filteredVariantTypes = this.variantTypes;
+      } else {
+        this.filteredVariantTypes = this.variantTypes.filter(type => selectedTypeNames.includes(type.name));
+      }
+    } else {
       this.filteredVariantTypes = this.variantTypes;
-    //}
+    }
 
   }
 
