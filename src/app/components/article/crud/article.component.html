@@ -369,7 +369,7 @@
                                     <label for="type" class="control-label">{{'type.variants' | translate |
                                         capitalize}}:</label>
                                     <select class="form-control" name="type" [(ngModel)]="variantTypeSelected"
-                                        (change)="refreshValues()" (focus)="updateAndRefresh()">
+                                        (change)="refreshValues()">
                                         <option value="null" [disabled]="readonly"></option>
                                         <option *ngFor="let type of filteredVariantTypes" [disabled]="readonly"
                                             [ngValue]="type">
