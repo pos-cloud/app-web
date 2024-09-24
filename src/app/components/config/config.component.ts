@@ -49,7 +49,6 @@ export class ConfigComponent implements OnInit {
   public currencies: Currency[];
   public config: Config;
   public loading: boolean = false;
-  public cert: boolean = false;
   public configFormEmail: UntypedFormGroup;
   public configFormCompany: UntypedFormGroup;
   public configFormSystem: UntypedFormGroup;
@@ -464,7 +463,6 @@ export class ConfigComponent implements OnInit {
   public generateCRS() {
 
     this.loading = true;
-    this.cert = true;
 
     this._configService.generateCRS(this.config['companyName'],this.config['companyIdentificationValue']).subscribe(
       (blob: Blob) => {
@@ -483,7 +481,6 @@ export class ConfigComponent implements OnInit {
       error => {
         this.showToast(error._body, "danger");
         this.loading = false;
-        this.cert = false
       }
     );
   }
