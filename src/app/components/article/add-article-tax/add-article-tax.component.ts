@@ -14,6 +14,8 @@ import { TaxService } from 'app/components/tax/tax.service';
 import { Transaction } from 'app/components/transaction/transaction';
 import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
 
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastrService } from 'ngx-toastr';
 import { Taxes } from '../../tax/taxes';
 
 @Component({
@@ -57,7 +59,9 @@ export class AddArticleTaxComponent implements OnInit {
     public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    private _toastr: ToastrService,
+    public translatePipe: TranslateMePipe
   ) {
     this.articleTax = new Taxes();
     this.taxes = new Array();
@@ -166,7 +170,7 @@ export class AddArticleTaxComponent implements OnInit {
           }
         },
         (error) => {
-          this.showMessage(error._body, 'danger', false);
+          this.showToast(error);
           resolve(null);
         }
       );
@@ -256,13 +260,6 @@ export class AddArticleTaxComponent implements OnInit {
     this.eventAddArticleTax.emit(this.articleTaxes);
   }
 
-  public TaxName(taxId) {
-    let taxe = this.taxes.filter(
-      (t) => t._id === (typeof taxId == 'string' ? taxId : taxId._id)
-    );
-    return taxe?.[0]?.name ?? '';
-  }
-
   public taxExists(): boolean {
     let exists: boolean = false;
 
@@ -270,14 +267,14 @@ export class AddArticleTaxComponent implements OnInit {
       for (let taxArticleAux of this.articleTaxes) {
         if (taxArticleAux.tax._id === this.articleTax.tax._id) {
           exists = true;
-          this.showMessage(
+          this.showToast(
+            null,
+            'info',
             'El impuesto ' +
               this.articleTax.tax.name +
               ' con porcentaje ' +
               this.articleTax.percentage +
-              ' ya existe',
-            'info',
-            true
+              ' ya existe'
           );
         }
       }
@@ -306,14 +303,53 @@ export class AddArticleTaxComponent implements OnInit {
     this.eventAddArticleTax.emit(this.articleTaxes);
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
+  // public showMessage(
+  //   message: string,
+  //   type: string,
+  //   dismissible: boolean
+  // ): void {
+  //   this.alertMessage = message;
+  //   this.alertConfig.type = type;
+  //   this.alertConfig.dismissible = dismissible;
+  // }
+
+  showToast(result, type?: string, title?: string, message?: string): void {
+    if (result) {
+      if (result.status === 200) {
+        type = 'success';
+        title = result.message;
+      } else if (result.status >= 400) {
+        type = 'danger';
+        title =
+          result.error && result.error.message
+            ? result.error.message
+            : result.message;
+      } else {
+        type = 'info';
+        title = result.message;
+      }
+    }
+    switch (type) {
+      case 'success':
+        this._toastr.success(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
+        break;
+      case 'danger':
+        this._toastr.error(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
+        break;
+      default:
+        this._toastr.info(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
+        break;
+    }
+    this.loading = false;
   }
 
   public hideMessage(): void {
