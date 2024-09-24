@@ -52,7 +52,7 @@ export class CurrencyService extends ModelService {
     query?: string
   ): Observable<any> {
 
-    const URL = `${environment.apiv2}currencies`;
+    const URL = `${environment.apiv2}/currencies`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

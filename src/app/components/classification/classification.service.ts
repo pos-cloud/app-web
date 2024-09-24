@@ -57,7 +57,7 @@ export class ClassificationService extends ModelService {
 		skip: number = 0
 	): Observable<any> {
 
-		const URL = `${environment.apiv2}classifications`;
+		const URL = `${environment.apiv2}/classifications`;
 
 		const headers = new HttpHeaders()
 			.set('Content-Type', 'application/json')
