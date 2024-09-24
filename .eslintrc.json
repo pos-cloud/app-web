@@ -1,0 +1,51 @@
+{
+  "root": true,
+  "ignorePatterns": ["projects/**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["tsconfig.json"],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "eslint:recommended",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript",
+        "prettier"
+      ],
+      "plugins": ["import"],
+      "rules": {
+        "no-unused-vars": "warn",
+        "no-redeclare": "error",
+        "@typescript-eslint/no-unused-vars": ["warn"],
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "prettier/prettier": ["error", { "singleQuote": true, "printWidth": 100 }],
+        "import/order": [
+          "warn", // Cambia a 'error' si prefieres que sea obligatorio
+          {
+            "groups": [
+              "builtin",
+              "external",
+              "internal",
+              "parent",
+              "sibling",
+              "index",
+              "object",
+              "type"
+            ],
+            "newlines-between": "always", // Insertar una nueva línea entre grupos
+            "alphabetize": { "order": "asc", "caseInsensitive": true } // Ordenar alfabéticamente
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "rules": {}
+    }
+  ]
+}
