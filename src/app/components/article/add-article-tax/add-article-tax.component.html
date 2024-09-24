@@ -1,16 +1,34 @@
- <div>
+<div>
   <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
+    <ngb-alert
+      [type]="alertConfig.type"
+      [dismissible]="alertConfig.dismissible"
+      (close)="alertMessage = ''"
+    >
+      {{ alertMessage }}
     </ngb-alert>
   </div>
-  <form [formGroup]="articleTaxForm" (ngSubmit)="addArticleTax()" autocomplete="off">
+  <form
+    [formGroup]="articleTaxForm"
+    (ngSubmit)="addArticleTax()"
+    autocomplete="off"
+  >
     <div>
       <div class="row">
         <div class="form-group col-md-4">
           <label for="tax" class="control-label">Impuesto:</label>
-          <select class="form-control" formControlName="tax" (change)="changeTax('tax')">
-            <option *ngFor="let tax of taxes" [ngValue]="tax"  [disabled]="readonly">{{tax.name}}</option>
+          <select
+            class="form-control"
+            formControlName="tax"
+            (change)="changeTax('tax')"
+          >
+            <option
+              *ngFor="let tax of taxes"
+              [ngValue]="tax"
+              [disabled]="readonly"
+            >
+              {{ tax.name }}
+            </option>
           </select>
           <div *ngIf="formErrors.tax" class="alert alert-danger">
             {{ formErrors.tax }}
@@ -19,8 +37,18 @@
         <div class="form-group col-md-3">
           <label for="percentage" class="control-label">Porcentaje:</label>
           <div class="input-group">
-            <input type="number" class="form-control" formControlName="percentage" name="percentage" id="percentage" step="1" (blur)="changeTax('percentage')"/>
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="percentage"
+              name="percentage"
+              id="percentage"
+              step="1"
+              (blur)="changeTax('percentage')"
+            />
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">%</span>
+            </div>
           </div>
           <div *ngIf="formErrors.percentage" class="alert alert-danger">
             {{ formErrors.percentage }}
@@ -29,8 +57,18 @@
         <div class="form-group col-md-3">
           <label for="taxAmount" class="control-label">Monto:</label>
           <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
-            <input type="number" class="form-control" formControlName="taxAmount" name="taxAmount" id="taxAmount" step="1" (blur)="changeTax('taxAmount')"/>
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">$</span>
+            </div>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="taxAmount"
+              name="taxAmount"
+              id="taxAmount"
+              step="1"
+              (blur)="changeTax('taxAmount')"
+            />
           </div>
           <div *ngIf="formErrors.taxAmount" class="alert alert-danger">
             {{ formErrors.taxAmount }}
@@ -39,11 +77,17 @@
         <div class="form-group col-md-2">
           <label for="value" class="control-label">Acción:</label>
           <div class="input-group">
-            <button type="submit" class="btn btn-success" [disabled]="!articleTaxForm?.valid || loading">Agregar</button>
+            <button
+              type="submit"
+              class="btn btn-success"
+              [disabled]="!articleTaxForm?.valid || loading"
+            >
+              Agregar
+            </button>
           </div>
         </div>
       </div>
-      <br>
+      <br />
       <div class="row">
         <table class="table table-striped">
           <thead>
@@ -58,24 +102,39 @@
           <tbody>
             <tr *ngFor="let articleTaxAux of articleTaxes">
               <td align="left" width="130">
-                <button 
-                  *ngIf="!transaction || (transaction && articleTaxAux.tax.classification.toString() !== 'Impuesto')"
-                  type="button" 
-                  class="btn btn-danger btn-sm" 
-                  title="Eliminar" 
-                  (click)="deleteArticleTax(articleTaxAux)">
+                <button
+                  *ngIf="
+                    !transaction ||
+                    (transaction &&
+                      articleTaxAux.tax.classification.toString() !==
+                        'Impuesto')
+                  "
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  title="Eliminar"
+                  (click)="deleteArticleTax(articleTaxAux)"
+                >
                   <i class="fa fa-trash-o"></i>
                 </button>
               </td>
-              <td class="flat">{{viewTakeName(articleTaxAux.tax)}}</td>
-              <td class="flat">{{articleTaxAux.taxBase | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-              <td class="flat">{{articleTaxAux.percentage}} %</td>
-              <td class="flat">{{articleTaxAux.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="flat">{{ TaxName(articleTaxAux.tax) }}</td>
+              <td class="flat">
+                {{
+                  articleTaxAux.taxBase
+                    | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                }}
+              </td>
+              <td class="flat">{{ articleTaxAux.percentage }} %</td>
+              <td class="flat">
+                {{
+                  articleTaxAux.taxAmount
+                    | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                }}
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
-      
     </div>
   </form>
 </div>
