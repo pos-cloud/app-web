@@ -74,7 +74,7 @@ import { TaxService } from 'app/components/tax/tax.service';
   selector: 'app-article',
   templateUrl: './article.component.html',
   styleUrls: ['./article.component.scss'],
-  providers: [ DecimalPipe, ApplicationService, TranslateMePipe, NgbTypeaheadConfig],
+  providers: [DecimalPipe, ApplicationService, TranslateMePipe, NgbTypeaheadConfig],
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleComponent implements OnInit {
@@ -89,7 +89,6 @@ export class ArticleComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   article: Article;
   articleStock: ArticleStock;
-  articles: Article[];
   config: Config;
   articleForm: UntypedFormGroup;
   public variantsByTypes: any[];
@@ -98,7 +97,7 @@ export class ArticleComponent implements OnInit {
   classifications: Classification[] = new Array();
   companies: Company[] = new Array();
   categories: Category[] = new Array();
-  variants: any = new Array();
+  variants: Variant[] = new Array();
   unitsOfMeasurement: UnitOfMeasurement[] = new Array();
   taxes: any[] = new Array();
   printIns: ArticlePrintIn[] = [
@@ -346,13 +345,9 @@ export class ArticleComponent implements OnInit {
     public _userService: UserService,
     public _taxService: TaxService
   ) {
-    this.getVariantValues()
-    this.getVariantTypes()
     this.article = new Article();
     this.notes = new Array();
     this.tags = new Array();
-    this.variantTypes = new Array();
-    this.variantsByTypes = new Array();
     this.getCurrencies();
     this.getArticleTypes();
     this.getMake()
@@ -370,7 +365,6 @@ export class ArticleComponent implements OnInit {
       this.readonly = false
 
       if (pathLocation[3] === 'view') this.readonly = true
-      if (pathLocation[3] === 'add') this.getVariantTypes()
     } else if (pathLocation[2] === 'variants') {
       this.readonly = true
       this.articleType = 'Variante';
@@ -379,7 +373,7 @@ export class ArticleComponent implements OnInit {
 
   async ngOnInit() {
 
-    if(this.property) {
+    if (this.property) {
       this.operation = this.property.operation
       this.articleId = this.property.articleId
     } else {
@@ -388,7 +382,7 @@ export class ArticleComponent implements OnInit {
       this.articleId = URL[4];
     }
 
-    if(this.operation === 'view') this.readonly = true
+    if (this.operation === 'view') this.readonly = true
 
     if (!this.variant) {
       this.variant = new Variant();
@@ -423,6 +417,8 @@ export class ArticleComponent implements OnInit {
         }
       })
       .catch((error: Resulteable) => this.showToast(error));
+    this.getVariantValues()
+    this.getVariantTypes()
     if (this.articleId && this.articleId !== '') {
       this.getArticle();
     } else {
@@ -431,7 +427,6 @@ export class ArticleComponent implements OnInit {
     if (this.operation === 'add' || this.operation === 'copy') {
       this.getLastArticle();
     }
-    this.filteredVariantTypes = this.variantTypes;
   }
 
   getArticleTypes() {
@@ -664,8 +659,15 @@ export class ArticleComponent implements OnInit {
 
           }
           this.creationUser = this.users.find((user: User) => user._id === (typeof this.article.creationUser === 'string' ? this.article.creationUser : (typeof this.article.creationUser !== 'undefined' ? this.article.creationUser._id : '')))
-          this.updateUser =   this.users.find((user: User) => user._id === (typeof this.article.updateUser === 'string' ? this.article.updateUser : (typeof this.article.updateUser !== 'undefined' ? this.article.updateUser._id : '')))
+          this.updateUser = this.users.find((user: User) => user._id === (typeof this.article.updateUser === 'string' ? this.article.updateUser : (typeof this.article.updateUser !== 'undefined' ? this.article.updateUser._id : '')))
+            if(this.article.variants){
+             const types = this.article.variants.map(item => item.type);
+             const uniqueTypes = [...new Set(types)];
+             console.log(uniqueTypes)
+             const filteredObjects = this.variantTypes.filter((item: any)=> uniqueTypes.includes(item._id));
 
+             this.variantTypes = filteredObjects
+            }
           this.setValuesForm();
           this.setValuesArray();
           this.setVariantByType(this.articleForm.controls.variants.value);
@@ -762,8 +764,8 @@ export class ArticleComponent implements OnInit {
   }
 
   public updateAndRefresh() {
-    if (this.article.variants && this.article.variants.length) {
-     const selectedTypeNames = this.articleForm.controls.variants.value.map(v => v.value.type.name);
+    if (this.operation !== 'add' && this.operation !== 'copy') {
+      const selectedTypeNames = this.articleForm.controls.variants.value.map(v => v.value.type.name);
       if (!selectedTypeNames.length) {
         this.filteredVariantTypes = this.variantTypes;
       } else {
@@ -801,7 +803,7 @@ export class ArticleComponent implements OnInit {
   }
 
   public addVariant(variantsForm: NgForm): void {
-    if (typeof variantsForm.value.type !== 'undefined' && typeof variantsForm.value.type !== null  && typeof variantsForm.value.value !== 'undefined' && typeof variantsForm.value.value !== null) {
+    if (typeof variantsForm.value.type !== 'undefined' && typeof variantsForm.value.type !== null && typeof variantsForm.value.value !== 'undefined' && typeof variantsForm.value.value !== null) {
       this.variant = variantsForm.value
       const uniqueIds = Array.from(new Set(this.typeSelect));
 
@@ -850,7 +852,7 @@ export class ArticleComponent implements OnInit {
 
   public deleteVariant(v) {
     // Verifica si solo hay un tipo con un valor en variantsByTypes
-    if (this.variantsByTypes.length === 1 && this.variantsByTypes[0].value.length === 1 && this.operation !== 'add' ) {
+    if (this.variantsByTypes.length === 1 && this.variantsByTypes[0].value.length === 1 && this.operation !== 'add') {
       this.showToast(null, 'info', "No se puede eliminar la única variante restante.");
       return; // Sal del método si no se puede eliminar
     }
@@ -946,7 +948,7 @@ export class ArticleComponent implements OnInit {
     if (this.articleForm.valid && this.operation !== 'view' && this.operation !== 'delete') {
       this.addArticle();
     }
-    if(this.articleForm.valid && this.operation === 'delete') {
+    if (this.articleForm.valid && this.operation === 'delete') {
       this.deleteArticle();
     }
   }
@@ -971,6 +973,7 @@ export class ArticleComponent implements OnInit {
         }
       },
       error => {
+        console.log(error)
         this.loading = false;
       }
     )
@@ -982,7 +985,8 @@ export class ArticleComponent implements OnInit {
     let project = {
       "_id": 1,
       "description": 1,
-      "parent": 1
+      "parent": 1,
+      "operationType": 1
     };
     let query = {
       operationType: { $ne: 'D' }
@@ -996,6 +1000,7 @@ export class ArticleComponent implements OnInit {
         } else {
           this.loading = false;
           this.categories = result;
+          
         }
       },
       error => {
@@ -1052,13 +1057,13 @@ export class ArticleComponent implements OnInit {
       operationType: { $ne: 'D' }
     }
 
-    this._taxService.getAll({project, match}).subscribe(
+    this._taxService.getAll({ project, match }).subscribe(
       result => {
         if (!result.result) {
           this.loading = false;
           this.tax = new Array();
         } else {
-          this.loading = false;   
+          this.loading = false;
           this.tax = result.result;
         }
       },
@@ -1109,7 +1114,7 @@ export class ArticleComponent implements OnInit {
       operationType: { $ne: 'D' },
       'type': 'Proveedor'
     }
-    this._companyService.getAll({project, match}).subscribe(
+    this._companyService.getAll({ project, match }).subscribe(
       result => {
         if (!result.result) {
           this.loading = false;
@@ -1193,7 +1198,7 @@ export class ArticleComponent implements OnInit {
   public returnTo(): void {
     this._route.queryParams.subscribe(params => {
       const returnUrl = params['returnURL'] ? decodeURIComponent(params['returnURL']) : null;
-  
+
       if (this.property) {
         this.activeModal.close();
       } else {
