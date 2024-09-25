@@ -414,6 +414,8 @@ export class ArticleComponent implements OnInit {
     this.tags = new Array();
     this.getCurrencies();
     this.getArticleTypes();
+    this.getVariantValues();
+    this.getVariantTypes();
     this.getMake();
     this.getCategory();
     this.getUnitsOfMeasurement();
@@ -482,8 +484,6 @@ export class ArticleComponent implements OnInit {
         }
       })
       .catch((error: Resulteable) => this.showToast(error));
-    this.getVariantValues();
-    this.getVariantTypes();
     if (this.articleId && this.articleId !== '') {
       this.getArticle();
     } else {
