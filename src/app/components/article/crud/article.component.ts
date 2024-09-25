@@ -455,9 +455,8 @@ export class ArticleComponent implements OnInit {
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
       // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
-      this.validationMessages.code[
-        'maxlength'
-      ] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
+      this.validationMessages.code['maxlength'] =
+        `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
       this.articleForm.controls['code'].setValidators([
         Validators.maxLength(this.config.article.code.validators.maxLength),
       ]);
@@ -735,8 +734,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.creationUser === 'string'
                 ? this.article.creationUser
                 : typeof this.article.creationUser !== 'undefined'
-                ? this.article.creationUser._id
-                : '')
+                  ? this.article.creationUser._id
+                  : '')
           );
           this.updateUser = this.users.find(
             (user: User) =>
@@ -744,8 +743,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.updateUser === 'string'
                 ? this.article.updateUser
                 : typeof this.article.updateUser !== 'undefined'
-                ? this.article.updateUser._id
-                : '')
+                  ? this.article.updateUser._id
+                  : '')
           );
           if (this.article.variants) {
             const types = this.article.variants.map((item) => item.type);
@@ -974,7 +973,8 @@ export class ArticleComponent implements OnInit {
     if (
       this.variantsByTypes.length === 1 &&
       this.variantsByTypes[0].value.length === 1 &&
-      this.operation !== 'add'
+      this.operation !== 'add' &&
+      this.article.tiendaNubeId
     ) {
       this.showToast(
         null,
@@ -1793,8 +1793,8 @@ export class ArticleComponent implements OnInit {
               result.error && result.error.message
                 ? result.error.message
                 : result.message
-                ? result.message
-                : ''
+                  ? result.message
+                  : ''
             );
           } else {
             this.hasChanged = true;
@@ -1833,8 +1833,8 @@ export class ArticleComponent implements OnInit {
               result.error && result.error.message
                 ? result.error.message
                 : result.message
-                ? result.message
-                : ''
+                  ? result.message
+                  : ''
             );
           } else {
             this.hasChanged = true;
@@ -1895,8 +1895,8 @@ export class ArticleComponent implements OnInit {
               result.error && result.error.message
                 ? result.error.message
                 : result.message
-                ? result.message
-                : ''
+                  ? result.message
+                  : ''
             );
           } else {
             this.showToast(
