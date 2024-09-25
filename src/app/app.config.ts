@@ -1,24 +1,21 @@
-import { VATCondition } from './components/vat-condition/vat-condition';
 import * as moment from 'moment';
-import { IdentificationType } from './components/identification-type/identification-type';
-import { Currency } from './components/currency/currency';
-import { IService } from './util/service.interface';
 import { Account } from './components/account/account';
+import { Currency } from './components/currency/currency';
+import { IdentificationType } from './components/identification-type/identification-type';
+import { VATCondition } from './components/vat-condition/vat-condition';
+import { IService } from './util/service.interface';
 
 export class Config {
-
   public _id: string;
   static database: string;
   static apiHost: string = 'localhost';
   static apiV8Host: string = 'localhost';
-  static apiPrintHost: string = 'localhost';
   static apiURL: string;
   static apiV8URL: string;
   static apiURL_FE_AR: string = 'libs/fe/ar/index.php';
   static apiURL_FE_MX: string = 'libs/fe/mx/01_CFDI_fe.php';
   static apiPort = 300;
   static apiV8Port = 308;
-  static apiPrintPort = 3001;
   static modules;
   static emailAccount: string;
   static emailPassword: string;
@@ -32,7 +29,9 @@ export class Config {
   static companyVatCondition: VATCondition;
   static companyIdentificationType: IdentificationType;
   static companyIdentificationValue: string;
-  static companyStartOfActivity: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  static companyStartOfActivity: string = moment().format(
+    'YYYY-MM-DDTHH:mm:ssZ'
+  );
   static companyGrossIncome: string;
   static companyPostalCode: string;
   static footerInvoice: string;
@@ -49,73 +48,73 @@ export class Config {
   public article: {
     code: {
       validators: {
-        maxLength: number
-      }
-    },
+        maxLength: number;
+      };
+    };
     isWeigth: {
-      default: boolean
-    },
+      default: boolean;
+    };
     allowSaleWithoutStock: {
-        default: boolean
-      },
+      default: boolean;
+    };
     salesAccount: {
-        default: Account
-    },
+      default: Account;
+    };
     purchaseAccount: {
-        default: Account
-    }
+      default: Account;
+    };
   };
   public company: {
     // allowCurrentAccount:{
     //   default: boolean
     // }
     allowCurrentAccountProvider: {
-      default: boolean
-    },
+      default: boolean;
+    };
     allowCurrentAccountClient: {
-      default: boolean
-    },
+      default: boolean;
+    };
     vatCondition: {
-      default: VATCondition
-    }, 
-    accountClient : {
-        default: Account
-    },
-    accountProvider : {
-        default: Account
-    }
+      default: VATCondition;
+    };
+    accountClient: {
+      default: Account;
+    };
+    accountProvider: {
+      default: Account;
+    };
   };
   public cashBox: {
-    perUser: boolean
+    perUser: boolean;
   };
   public reports: {
     summaryOfAccounts: {
-      detailsPaymentMethod: boolean,
-      invertedViewClient: boolean,
-      invertedViewProvider: boolean
-    }
+      detailsPaymentMethod: boolean;
+      invertedViewClient: boolean;
+      invertedViewProvider: boolean;
+    };
   };
   public tradeBalance: {
-    codePrefix: number,
-    numberOfCode: number,
-    numberOfQuantity: number,
-    numberOfIntegers: number,
-    numberOfDecimals: number
+    codePrefix: number;
+    numberOfCode: number;
+    numberOfQuantity: number;
+    numberOfIntegers: number;
+    numberOfDecimals: number;
   };
   public voucher: {
-    readingLimit: number,
-    minutesOfExpiration: number
+    readingLimit: number;
+    minutesOfExpiration: number;
   };
   public twilio: {
-    senderNumber: string,
-    accountSid: string,
-    authToken: string
+    senderNumber: string;
+    accountSid: string;
+    authToken: string;
   };
   public tiendaNube: {
-    token: string,
-		userID: string,
-		appID: string,
-		clientSecret: string 
+    token: string;
+    userID: string;
+    appID: string;
+    clientSecret: string;
   };
 
   constructor() {
