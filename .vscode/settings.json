@@ -5,7 +5,7 @@
   "eslint.validate": ["javascript", "typescript", "html"],
   "typescript.format.enable": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.organizeImports": true
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
   }
 }
