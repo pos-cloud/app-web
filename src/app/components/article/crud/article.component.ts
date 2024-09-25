@@ -746,7 +746,7 @@ export class ArticleComponent implements OnInit {
                   ? this.article.updateUser._id
                   : '')
           );
-          if (this.article.variants) {
+          if (this.article.variants.length > 0) {
             const types = this.article.variants.map((item) => item.type);
             const uniqueTypes = [...new Set(types)];
             const filteredObjects = this.variantTypes.filter((item: any) =>
