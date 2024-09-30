@@ -457,8 +457,9 @@ export class ArticleComponent implements OnInit {
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
       // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
-      this.validationMessages.code['maxlength'] =
-        `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
+      this.validationMessages.code[
+        'maxlength'
+      ] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
       this.articleForm.controls['code'].setValidators([
         Validators.maxLength(this.config.article.code.validators.maxLength),
       ]);
@@ -734,8 +735,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.creationUser === 'string'
                 ? this.article.creationUser
                 : typeof this.article.creationUser !== 'undefined'
-                  ? this.article.creationUser._id
-                  : '')
+                ? this.article.creationUser._id
+                : '')
           );
           this.updateUser = this.users.find(
             (user: User) =>
@@ -743,8 +744,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.updateUser === 'string'
                 ? this.article.updateUser
                 : typeof this.article.updateUser !== 'undefined'
-                  ? this.article.updateUser._id
-                  : '')
+                ? this.article.updateUser._id
+                : '')
           );
           if (this.article.variants.length > 0) {
             const types = this.article.variants.map((item) => item.type);
@@ -1845,9 +1846,6 @@ export class ArticleComponent implements OnInit {
         if (result.status == 200) {
           this.showToast(result);
           this.returnTo();
-          if (this.article.tiendaNubeId) {
-            this.deleteArticleTiendaNube();
-          }
         } else {
           this.showToast(result);
         }
@@ -1858,32 +1856,6 @@ export class ArticleComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  async deleteArticleTiendaNube() {
-    this.loading = true;
-
-    this._articleService
-      .deleteArticleTiendaNube(this.article.tiendaNubeId)
-      .subscribe(
-        (result) => {
-          if (result.error) {
-            this.showToast(result);
-          } else {
-            this.showToast(
-              null,
-              'success',
-              undefined,
-              'Producto eliminado con éxito en TiendaNube'
-            );
-          }
-          this.loading = false;
-        },
-        (error) => {
-          this.showToast(error);
-          this.loading = false;
-        }
-      );
   }
 
   getVariantsByArticleChild(id): Promise<any> {
