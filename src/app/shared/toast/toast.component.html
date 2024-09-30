@@ -1,0 +1,12 @@
+<ngb-toast
+  *ngFor="let toast of toastService.toasts"
+  [header]="toast.header ?? undefined"
+  [ngClass]="['toast-custom', toast.classname]"
+  [autohide]="true"
+  [delay]="toast.delay || 5000"
+  (hidden)="toastService.remove(toast)"
+  aria-atomic="true"
+  (click)="toastService.remove(toast)"
+>
+  {{ toast.textOrTpl }}
+</ngb-toast>

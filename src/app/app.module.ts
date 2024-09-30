@@ -257,6 +257,7 @@ import { AuthInterceptor } from './main/interceptors/auth.interceptor';
 import { PipesModule } from './main/pipes/pipes.module';
 import { SafePipe } from './main/pipes/safe.pipe';
 import { MeliService } from './main/services/meli.service';
+import { ToastComponent } from './shared/toast/toast.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -269,6 +270,7 @@ export function createTranslateLoader(http: HttpClient) {
 
 @NgModule({
   declarations: [
+    ToastComponent,
     AppComponent,
     HomeComponent,
     HeaderComponent,

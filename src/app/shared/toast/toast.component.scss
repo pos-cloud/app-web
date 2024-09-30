@@ -1,0 +1,21 @@
+/* toast.styles.scss */
+.toast-custom {
+  color: white; // Color del texto
+  border: none; // Sin borde
+  font-size: 1rem; // Tamaño de fuente
+  font-weight: bold;
+  cursor: pointer;
+}
+
+// Estilos específicos para los diferentes tipos de toast
+.bg-success {
+  background-color: #28a745 !important; // Verde
+}
+
+.bg-danger {
+  background-color: #dc3545 !important; // Rojo
+}
+
+.bg-info {
+  background-color: #17a2b8 !important; // Celeste
+}

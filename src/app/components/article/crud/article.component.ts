@@ -19,6 +19,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from 'app/shared/toast/toast.service';
 
 // Terceros
 import {
@@ -29,7 +30,6 @@ import {
 import * as $ from 'jquery';
 
 // Models
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -397,7 +397,7 @@ export class ArticleComponent implements OnInit {
     private _accountService: AccountService,
     private _currencyService: CurrencyService,
     private _configService: ConfigService,
-    private _toastr: ToastrService,
+    private _toastr: ToastService,
     public translatePipe: TranslateMePipe,
     public _fb: UntypedFormBuilder,
     public _router: Router,
@@ -922,6 +922,7 @@ export class ArticleComponent implements OnInit {
         return this.showToast(
           null,
           'info',
+          undefined,
           'No puedes agregar más de tres tipos de variantes diferentes.'
         );
       }
@@ -941,6 +942,7 @@ export class ArticleComponent implements OnInit {
         this.showToast(
           null,
           'info',
+          undefined,
           'La variante ' +
             this.variant.type.name +
             ' ' +
@@ -979,6 +981,7 @@ export class ArticleComponent implements OnInit {
       this.showToast(
         null,
         'info',
+        undefined,
         'No se puede eliminar la única variante restante.'
       );
       return; // Sal del método si no se puede eliminar
@@ -1787,23 +1790,11 @@ export class ArticleComponent implements OnInit {
       this._articleService.saveArticle(this.article).subscribe(
         (result) => {
           if (!result.result) {
-            this.showToast(
-              null,
-              'info',
-              result.error && result.error.message
-                ? result.error.message
-                : result.message
-                  ? result.message
-                  : ''
-            );
+            this.showToast(result);
           } else {
             this.hasChanged = true;
             this.article = result.result;
-            this.showToast(
-              null,
-              'success',
-              'El producto se ha añadido con éxito.'
-            );
+            this.showToast(result);
 
             this.returnTo();
             this.loading = false;
@@ -1827,22 +1818,14 @@ export class ArticleComponent implements OnInit {
       this._articleService.updateArticle(this.article).subscribe(
         async (result) => {
           if (!result.result) {
-            this.showToast(
-              null,
-              'info',
-              result.error && result.error.message
-                ? result.error.message
-                : result.message
-                  ? result.message
-                  : ''
-            );
+            this.showToast(result);
           } else {
             this.hasChanged = true;
             this.article = result.result;
             this.articleForm.patchValue({ meliId: this.article.meliId });
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
-            this.showToast(null, 'success', 'Operación realizada con éxito');
+            this.showToast(result);
             this.returnTo();
             this.loading = false;
           }
@@ -1860,17 +1843,13 @@ export class ArticleComponent implements OnInit {
     this._articleService.delete(this.article._id).subscribe(
       (result: Resulteable) => {
         if (result.status == 200) {
-          this.showToast(
-            null,
-            'success',
-            'El producto se ha eliminado con éxito.'
-          );
+          this.showToast(result);
           this.returnTo();
           if (this.article.tiendaNubeId) {
             this.deleteArticleTiendaNube();
           }
         } else {
-          this.showToast(result.error.message);
+          this.showToast(result);
         }
         this.loading = false;
       },
@@ -1889,19 +1868,12 @@ export class ArticleComponent implements OnInit {
       .subscribe(
         (result) => {
           if (result.error) {
-            this.showToast(
-              null,
-              'info',
-              result.error && result.error.message
-                ? result.error.message
-                : result.message
-                  ? result.message
-                  : ''
-            );
+            this.showToast(result);
           } else {
             this.showToast(
               null,
               'success',
+              undefined,
               'Producto eliminado con éxito en TiendaNube'
             );
           }
@@ -1989,6 +1961,7 @@ export class ArticleComponent implements OnInit {
               this.showToast(
                 null,
                 'danger',
+                undefined,
                 'Debe seleccionar una categoría valida'
               );
               resolve(false);
@@ -2141,18 +2114,16 @@ export class ArticleComponent implements OnInit {
     if (result) {
       if (result.status === 200) {
         type = 'success';
-        title = result.message;
+        message = result.message;
       } else if (result.status >= 400) {
         type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
+        message = result.error?.message || result.message;
       } else {
         type = 'info';
-        title = result.message;
+        message = result.message;
       }
     }
+
     switch (type) {
       case 'success':
         this._toastr.success(
@@ -2173,6 +2144,7 @@ export class ArticleComponent implements OnInit {
         );
         break;
     }
+
     this.loading = false;
   }
 
