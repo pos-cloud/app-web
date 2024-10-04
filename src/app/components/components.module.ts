@@ -19,6 +19,7 @@ import { MakeModule } from './make/make.module';
 import { PermissionModule } from './permission/permission.module';
 import { ReportModule } from './report/report.module';
 import { ReportsModule } from './reports/reports.module';
+import { ResourceModule } from './resource/resource.module';
 import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
 import { TransactionTypeModule } from './transaction-type/transaction-type.module';
 import { UnitOfMeasurementModule } from './unit-of-measurement/unit-of-measurement.module';
@@ -49,6 +50,7 @@ import { VariantValueModule } from './variant-value/variant-value.module';
     ArticleModule,
     MakeModule,
     GalleryModule,
+    ResourceModule,
   ],
   exports: [ArticleModule],
   declarations: [],

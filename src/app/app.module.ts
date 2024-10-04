@@ -185,9 +185,6 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
-import { ListResourcesComponent } from './components/resource/list-resources/list-resources.component';
-import { ResourceService } from './components/resource/resource.service';
-import { ResourceComponent } from './components/resource/resource/resource.component';
 import { ListRoomsComponent } from './components/room/list-rooms/list-rooms.component';
 import { RoomService } from './components/room/room.service';
 import { RoomComponent } from './components/room/room/room.component';
@@ -403,8 +400,7 @@ export function createTranslateLoader(http: HttpClient) {
     ListCurrencyValuesComponent,
     SelectCompanyComponent,
     SelectTableComponent,
-    ResourceComponent,
-    ListResourcesComponent,
+
     EmailTemplateComponent,
     ListEmailTemplatesComponent,
     SelectChecksComponent,
@@ -520,7 +516,6 @@ export function createTranslateLoader(http: HttpClient) {
     StructureService,
     ClassificationService,
     CurrencyValueService,
-    ResourceService,
     EmailTemplateService,
     PushNotificationsService,
     MercadopagoService,
