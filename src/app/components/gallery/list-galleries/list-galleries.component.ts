@@ -12,7 +12,7 @@ import { GalleryService } from '../gallery.service';
   styleUrls: ['./list-galleries.component.css'],
 })
 export class ListGalleriesComponent {
-  public title: string = 'gallery';
+  public title: string = 'Galería';
   public sort = { name: 1 };
   public columns = attributes;
   public pathLocation: string[];
