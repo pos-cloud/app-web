@@ -112,10 +112,6 @@ import { AddEmployeeComponent } from './components/employee/employee/add-employe
 import { ListEmployeesComponent } from './components/employee/list-employees/list-employees.component';
 import { SelectEmployeeComponent } from './components/employee/select-employee/select-employee.component';
 import { ExportersModule } from './components/export/exporters.module';
-import { GalleryService } from './components/gallery/gallery.service';
-import { GalleryComponent } from './components/gallery/gallery/gallery.component';
-import { ListGalleriesComponent } from './components/gallery/list-galleries/list-galleries.component';
-import { ViewGalleryComponent } from './components/gallery/view-gallery/view-gallery.component';
 import { IdentificationTypeService } from './components/identification-type/identification-type.service';
 import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
@@ -409,9 +405,6 @@ export function createTranslateLoader(http: HttpClient) {
     SelectTableComponent,
     ResourceComponent,
     ListResourcesComponent,
-    GalleryComponent,
-    ListGalleriesComponent,
-    ViewGalleryComponent,
     EmailTemplateComponent,
     ListEmailTemplatesComponent,
     SelectChecksComponent,
@@ -528,7 +521,6 @@ export function createTranslateLoader(http: HttpClient) {
     ClassificationService,
     CurrencyValueService,
     ResourceService,
-    GalleryService,
     EmailTemplateService,
     PushNotificationsService,
     MercadopagoService,

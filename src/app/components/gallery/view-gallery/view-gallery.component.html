@@ -1,34 +1,51 @@
-<button *ngIf="viewBotton" (click)="openFullscreen()"> fullscreen </button>
+<button *ngIf="viewBotton" (click)="openFullscreen()">fullscreen</button>
 
-<div class="barcode" *ngIf="gallery && gallery.barcode; else notBarcode">
-    <ngu-carousel *ngIf="loading" #myCarousel [inputs]="carouselBanner" id="mygallery" [dataSource]="images">
-        <div *nguCarouselDef="let item;" class="item">
-            <div class="tile" style="height:  80vh;"  [style.background-image]="'url('+ item +')'"></div>
-        </div>
-    </ngu-carousel>
-    <div class="row">
-        <div class="col-4">
-            <label> Ingrese codigo de barra </label>
-            <input type="text" class="form-control" [(ngModel)]="filterArticle" (keydown.enter)="getArticle()"
-                [focus]="focusEvent">
-        </div>
-        <div *ngIf="article" class="col-4">
-            <img *ngIf="makeImage"
-            [src]="apiURL + 'get-image-make/'+makeImage+'/'+database" height="350" width="400">
-            <img *ngIf="articleImage"
-                [src]="apiURL + 'get-image-article/'+articleImage+'/'+database" height="350" width="400">
-        </div>
-        <div *ngIf="article" class="col-4">
-            <h1>{{article.description}}</h1>
-            <h3>{{article.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</h3>
-            <p [innerHTML]="article?.observation"></p>
-        </div>
+<div class="barcode" *ngIf="gallery && gallery.barcode">
+  <ngb-carousel
+    class="barcode"
+    *ngIf="images?.length > 0"
+    [interval]="gallery.colddown"
+    [pauseOnHover]="false"
+    [showNavigationArrows]="false"
+  >
+    <ng-template ngbSlide *ngFor="let image of images; let i = index">
+      <div style="height: 80vh" class="picsum-img-wrapper">
+        <img [src]="image" [alt]="'Slide ' + (i + 1)" />
+      </div>
+    </ng-template>
+  </ngb-carousel>
+
+  <div class="row">
+    <div class="col-4">
+      <label> Ingrese codigo de barra </label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="filterArticle"
+        (keydown.enter)="getArticle()"
+        [focus]="focusEvent"
+      />
     </div>
+    <div *ngIf="article" class="col-4">
+      <img
+        *ngIf="makeImage"
+        [src]="apiURL + 'get-image-make/' + makeImage + '/' + database"
+        height="350"
+        width="400"
+      />
+      <img
+        *ngIf="articleImage"
+        [src]="apiURL + 'get-image-article/' + articleImage + '/' + database"
+        height="350"
+        width="400"
+      />
+    </div>
+    <div *ngIf="article" class="col-4">
+      <h1>{{ article.description }}</h1>
+      <h3>
+        {{ article.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+      </h3>
+      <p [innerHTML]="article?.observation"></p>
+    </div>
+  </div>
 </div>
-<ng-template #notBarcode>
-    <ngu-carousel *ngIf="loading" #myCarousel [inputs]="carouselBanner" id="mygallery" [dataSource]="images">
-        <div *nguCarouselDef="let item;" class="item">
-            <div class="tile"  style="height:  100vh;" [style.background-image]="'url('+ item +')'"></div>
-        </div>
-    </ngu-carousel>
-</ng-template>

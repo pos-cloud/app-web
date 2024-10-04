@@ -188,7 +188,7 @@
           identity?.permission?.menu?.production &&
           identity?.permission?.menu?.production &&
           config.modules.production &&
-            (config.modules.production.kitchen || config.modules.production.pos)
+          (config.modules.production.kitchen || config.modules.production.pos)
         "
         (click)="makeVisibleReport(false)"
       >
@@ -493,7 +493,7 @@
           <button
             *ngIf="identity?.permission?.menu?.content?.gallery"
             class="dropdown-item"
-            [routerLink]="['admin', 'galleries']"
+            [routerLink]="['admin', 'gallery']"
             [routerLinkActive]="['active']"
             (click)="closeNavbar()"
           >

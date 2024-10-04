@@ -9,7 +9,6 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 import { GalleryService } from 'app/components/gallery/gallery.service';
-import { Socket } from 'ngx-socket-io';
 
 import { Article } from 'app/components/article/article';
 import { ArticleService } from 'app/components/article/article.service';
@@ -31,6 +30,7 @@ export class ViewGalleryComponent implements OnInit {
   public gallery: Gallery;
   public loading = false;
   public images = [];
+  // images = [944, 1011, 984].map((n) => `https://picsum.photos/id/${n}/900/500`);
   public carouselBanner;
   public intervalSocket;
   public viewBotton = true;
@@ -50,72 +50,25 @@ export class ViewGalleryComponent implements OnInit {
     private _articleService: ArticleService,
     public alertConfig: NgbAlertConfig,
     private _toastr: ToastrService,
-    private socket: Socket,
     private elementRef: ElementRef,
     public translatePipe: TranslateMePipe
-  ) {
-    //this.initSocket();
-  }
+  ) {}
 
   ngOnInit() {
     this.database = Config.database;
     this.focusEvent.emit(true);
     this.elem = document.documentElement;
     this._route.params.subscribe((params) => {
-      if (params['name']) {
-        this.getGallery(params['name']);
+      if (params['id']) {
+        this.getGallery(params['id']);
       }
     });
-
-    /*  setInterval(() => {
-            this.article = null;
-            this.filterArticle = "";
-            this.focusEvent.emit(true);
-        }, 20000)*/
   }
 
-  private initSocket(): void {
-    /*  let identity: User = JSON.parse(sessionStorage.getItem('user'));
-  
-          if (identity && Config.database && Config.database !== '') {
-              if (!this.socket.ioSocket.connected) {*/
-
-    // INICIAMOS SOCKET
-    this.socket.emit('start', {
-      database: Config.database,
-      clientType: 'pos',
-    });
-    // ESCUCHAMOS SOCKET
-    this.socket.on('gallery', (mnj) => {
-      switch (mnj) {
-        case 'start':
-          this.loading = true;
-          break;
-        case 'stop':
-          this.loading = false;
-          break;
-        default:
-          break;
-      }
-    });
-
-    /*   if (this.intervalSocket) {
-               clearInterval(this.intervalSocket);
-           }
-       }
- 
-       // INICIAR CONTADOR PARA VERIFICAR CONEXION DE SOCKET
-       this.intervalSocket = setInterval(() => {
-           if (!this.socket.ioSocket.connected) {
-               this.initSocket();
-           }
-       }, 5000);
-   }*/
-  }
-
-  public getGallery(name: string): void {
+  public getGallery(id: string): void {
     // FILTRAMOS LA CONSULTA
-    let match = `{ "operationType": { "$ne": "D" }, "name" : "${name}" }`;
+
+    let match = `{ "operationType": { "$ne": "D" }, "_id": { "$oid": "${id}" } }`;
 
     match = JSON.parse(match);
 
@@ -154,7 +107,7 @@ export class ViewGalleryComponent implements OnInit {
           ) {
             this.gallery = result[0].galleries[0];
             this.gallery.resources.forEach((element) => {
-              this.src = `${Config.apiURL}get-resource?filename=${element['file']}&database=${Config.database}`;
+              this.src = `${element['file']}`;
               this.images.push(this.src);
             });
 
@@ -190,6 +143,7 @@ export class ViewGalleryComponent implements OnInit {
   }
 
   public getArticle(): void {
+    console.log(this.filterArticle);
     if (this.filterArticle) {
       this._articleService
         .getAll({
@@ -219,6 +173,7 @@ export class ViewGalleryComponent implements OnInit {
               result.result &&
               result.result.length > 0
             ) {
+              console.log(result.result[0]);
               this.article = result.result[0];
               this.filterArticle = '';
             } else {

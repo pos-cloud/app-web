@@ -1,21 +1,25 @@
-import {Component} from '@angular/core';
-import {Router, NavigationEnd} from '@angular/router';
-import {NgbModal, NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {TranslateService} from '@ngx-translate/core';
-import {environment} from 'environments/environment';
+import { Component } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import {
+  NgbActiveModal,
+  NgbAlertConfig,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
+import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'environments/environment';
 import * as moment from 'moment';
-import {ToastrService} from 'ngx-toastr';
-import {of as observableOf, merge as observableMerge} from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { merge as observableMerge, of as observableOf } from 'rxjs';
 
-import {Config} from './app.config';
-import {ConfigService} from './components/config/config.service';
-import {AuthService} from './components/login/auth.service';
+import { Config } from './app.config';
+import { ConfigService } from './components/config/config.service';
+import { AuthService } from './components/login/auth.service';
 
 import 'moment/locale/es';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html'
+  templateUrl: './app.component.html',
 })
 export class AppComponent {
   public config$: any;
@@ -60,7 +64,10 @@ export class AppComponent {
     this._router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const currentUrl = event.url;
-        if(currentUrl.includes('menu')) {
+        if (
+          currentUrl.includes('menu') ||
+          currentUrl.includes('view-gallery')
+        ) {
           this.showHeader = false;
         }
       }
@@ -83,7 +90,7 @@ export class AppComponent {
     if (this.config && this.config['expirationLicenseDate']) {
       let days = moment(
         moment(this.config['expirationLicenseDate']).format('YYYY-MM-DD'),
-        'YYYY-MM-DD',
+        'YYYY-MM-DD'
       ).diff(moment().format('YYYY-MM-DD'), 'days');
 
       days++;
@@ -132,7 +139,7 @@ export class AppComponent {
         },
         (error) => {
           resolve(null);
-        },
+        }
       );
     });
   }
@@ -158,7 +165,7 @@ export class AppComponent {
         config.companyIdentificationType,
         config.companyIdentificationValue,
         config.licenseCost,
-        config.companyPostalCode,
+        config.companyPostalCode
       );
     }
     if (config.showLicenseNotification !== undefined) {
@@ -175,7 +182,10 @@ export class AppComponent {
     let hostname = window.location.hostname;
     let subdominio = '';
 
-    if (hostname.includes('.poscloud.com.ar') || hostname.includes('.poscloud.ar')) {
+    if (
+      hostname.includes('.poscloud.com.ar') ||
+      hostname.includes('.poscloud.ar')
+    ) {
       if (hostname.includes('.poscloud.com.ar')) {
         subdominio = hostname.split('.poscloud.com.ar')[0];
       } else {
@@ -196,11 +206,17 @@ export class AppComponent {
       subdominio = 'jacksonburgs';
       isLocal = true;
     }
-    if (hostname.includes('192.168.2.108') || hostname.includes('eldesafioll.con-ip')) {
+    if (
+      hostname.includes('192.168.2.108') ||
+      hostname.includes('eldesafioll.con-ip')
+    ) {
       subdominio = 'eldesafio';
       isLocal = true;
     }
-    if (hostname.includes('192.168.88.90') || hostname.includes('186.127.35.89')) {
+    if (
+      hostname.includes('192.168.88.90') ||
+      hostname.includes('186.127.35.89')
+    ) {
       subdominio = 'granpaso';
       isLocal = true;
     }
@@ -218,12 +234,16 @@ export class AppComponent {
         Config.setApiV8Host(environment.apiv2); // TEST
       }
     } else {
-        Config.setApiHost(environment.api); // TEST
-        Config.setApiV8Host(environment.apiv2); // TEST
+      Config.setApiHost(environment.api); // TEST
+      Config.setApiV8Host(environment.apiv2); // TEST
     }
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

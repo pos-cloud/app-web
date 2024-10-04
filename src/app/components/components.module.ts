@@ -12,6 +12,7 @@ import { CompanyGroupModule } from './company-group/company-group.module';
 import { DatatableModule } from './datatable/datatable.module';
 import { EmployeeTypeModule } from './employee-type/employee-type.module';
 import { ExportersModule } from './export/exporters.module';
+import { GalleryModule } from './gallery/gallery.module';
 import { HistoryModule } from './history/history.module';
 import { HolidayModule } from './holiday/holiday.module';
 import { MakeModule } from './make/make.module';
@@ -47,6 +48,7 @@ import { VariantValueModule } from './variant-value/variant-value.module';
     ReportsModule,
     ArticleModule,
     MakeModule,
+    GalleryModule,
   ],
   exports: [ArticleModule],
   declarations: [],

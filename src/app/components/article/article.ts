@@ -1,20 +1,20 @@
-import { Make } from '../make/make';
+import { ArticleFields } from '../article-field/article-fields';
 import { Category } from '../category/category';
-import { Taxes } from '../tax/taxes';
 import { Deposit } from '../deposit/deposit';
 import { Location } from '../location/location';
-import { ArticleFields } from '../article-field/article-fields';
-import { User } from '../user/user';
+import { Make } from '../make/make';
+import { Taxes } from '../tax/taxes';
 import { UnitOfMeasurement } from '../unit-of-measurement/unit-of-measurement.model';
+import { User } from '../user/user';
 
 import * as moment from 'moment';
-import { Currency } from '../currency/currency';
-import { Company } from '../company/company';
-import { Classification } from '../classification/classification';
-import { Application } from '../application/application.model';
 import { Account } from '../account/account';
-import { VariantValue } from '../variant-value/variant-value';
+import { Application } from '../application/application.model';
+import { Classification } from '../classification/classification';
+import { Company } from '../company/company';
+import { Currency } from '../currency/currency';
 import { VariantType } from '../variant-type/variant-type';
+import { VariantValue } from '../variant-value/variant-value';
 
 export class Article {
 
