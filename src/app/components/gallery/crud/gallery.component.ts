@@ -326,7 +326,9 @@ export class GalleryComponent implements OnInit {
             this.showToast(result);
           }
         } else {
-          this.showToast(result);
+          this.showToast({
+            message: 'Galería eliminada con éxito',
+          });
           this.returnTo();
         }
       },
