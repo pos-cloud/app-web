@@ -78,6 +78,7 @@ import { VariantValue } from 'app/components/variant-value/variant-value';
 import { VariantValueService } from 'app/components/variant-value/variant-value.service';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
+import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { FileService } from 'app/services/file.service';
 import { ORIGINMEDIA } from 'app/types';
 import Resulteable from '../../../util/Resulteable';
@@ -89,7 +90,12 @@ import { UnitOfMeasurementService } from '../../unit-of-measurement/unit-of-meas
   selector: 'app-article',
   templateUrl: './article.component.html',
   styleUrls: ['./article.component.scss'],
-  providers: [DecimalPipe, ApplicationService, NgbTypeaheadConfig],
+  providers: [
+    DecimalPipe,
+    ApplicationService,
+    NgbTypeaheadConfig,
+    TranslateMePipe,
+  ],
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleComponent implements OnInit {
