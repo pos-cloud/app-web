@@ -6,11 +6,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { ResourceService } from '../resource.service';
-
 import { Resource } from '../resource';
-
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
@@ -292,26 +289,6 @@ export class ResourceComponent implements OnInit {
       this.typeSelectFile = reader.result.toString().substring(5, 10);
     };
   }
-
-  // public onUpload() {
-  //     this._resourceService.makeFileRequest(this.selectedFile)
-  //         .then(
-  //             (result) => {
-  //                 if (result['file']) {
-  //                     this.resource.type = result['file']['mimetype'].split('/')[0]
-  //                     this.resource.file = result['file']['filename']
-  //                     this.updateResource();
-  //                 } else {
-  //                     this.showMessage("Error al guardar el archivo", 'danger', false);
-  //                     this.loading = false;
-  //                 }
-  //             },
-  //             (error) => {
-  //                 this.showMessage(error._body, 'danger', false);
-  //                 this.loading = false;
-  //             }
-  //         );
-  // }
 
   public getFile(): void {
     if (this.resource.file) {

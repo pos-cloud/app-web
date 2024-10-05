@@ -80,7 +80,6 @@ import { AddVariantComponent } from 'app/components/variant/add-variant/add-vari
 import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
 import { FileService } from 'app/services/file.service';
 import { ORIGINMEDIA } from 'app/types';
-import { TranslateMePipe } from '../../../main/pipes/translate-me';
 import Resulteable from '../../../util/Resulteable';
 import { Tax, TaxClassification } from '../../tax/tax';
 import { UnitOfMeasurement } from '../../unit-of-measurement/unit-of-measurement.model';
@@ -90,12 +89,7 @@ import { UnitOfMeasurementService } from '../../unit-of-measurement/unit-of-meas
   selector: 'app-article',
   templateUrl: './article.component.html',
   styleUrls: ['./article.component.scss'],
-  providers: [
-    DecimalPipe,
-    ApplicationService,
-    TranslateMePipe,
-    NgbTypeaheadConfig,
-  ],
+  providers: [DecimalPipe, ApplicationService, NgbTypeaheadConfig],
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleComponent implements OnInit {
@@ -397,11 +391,10 @@ export class ArticleComponent implements OnInit {
     private _accountService: AccountService,
     private _currencyService: CurrencyService,
     private _configService: ConfigService,
-    private _toastr: ToastService,
-    public translatePipe: TranslateMePipe,
+    private _toastService: ToastService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
-    private _route: ActivatedRoute, // Asegúrate de incluir ActivatedRoute aquí
+    private _route: ActivatedRoute,
     public activeModal: NgbActiveModal,
     public _fileService: FileService,
     public _variantTypeService: VariantTypeService,
@@ -457,9 +450,8 @@ export class ArticleComponent implements OnInit {
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
       // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
-      this.validationMessages.code[
-        'maxlength'
-      ] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
+      this.validationMessages.code['maxlength'] =
+        `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
       this.articleForm.controls['code'].setValidators([
         Validators.maxLength(this.config.article.code.validators.maxLength),
       ]);
@@ -484,7 +476,7 @@ export class ArticleComponent implements OnInit {
           });
         }
       })
-      .catch((error: Resulteable) => this.showToast(error));
+      .catch((error: Resulteable) => this._toastService.showToast(error));
     if (this.articleId && this.articleId !== '') {
       this.getArticle();
     } else {
@@ -530,7 +522,7 @@ export class ArticleComponent implements OnInit {
             this.classifications = new Array();
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
   }
 
@@ -689,7 +681,7 @@ export class ArticleComponent implements OnInit {
           this.currencies = result.result;
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -697,7 +689,7 @@ export class ArticleComponent implements OnInit {
     this._articleService.getById(this.articleId).subscribe(
       (result: any) => {
         if (!result.result) {
-          this.showToast(result);
+          this._toastService.showToast(result);
         } else {
           this.article = result.result;
           this.notes = this.article.notes;
@@ -735,8 +727,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.creationUser === 'string'
                 ? this.article.creationUser
                 : typeof this.article.creationUser !== 'undefined'
-                ? this.article.creationUser._id
-                : '')
+                  ? this.article.creationUser._id
+                  : '')
           );
           this.updateUser = this.users.find(
             (user: User) =>
@@ -744,8 +736,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.updateUser === 'string'
                 ? this.article.updateUser
                 : typeof this.article.updateUser !== 'undefined'
-                ? this.article.updateUser._id
-                : '')
+                  ? this.article.updateUser._id
+                  : '')
           );
           if (this.article.variants.length > 0) {
             const types = this.article.variants.map((item) => item.type);
@@ -761,7 +753,7 @@ export class ArticleComponent implements OnInit {
           this.setVariantByType(this.articleForm.controls.variants.value);
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -920,7 +912,7 @@ export class ArticleComponent implements OnInit {
       } else if (uniqueIds.length < 3) {
         this.typeSelect.push(this.variant.type._id);
       } else {
-        return this.showToast(
+        return this._toastService.showToast(
           null,
           'info',
           undefined,
@@ -940,7 +932,7 @@ export class ArticleComponent implements OnInit {
         this.variant.value = variantValueAux;
         this.setValueVariants();
       } else {
-        this.showToast(
+        this._toastService.showToast(
           null,
           'info',
           undefined,
@@ -979,7 +971,7 @@ export class ArticleComponent implements OnInit {
       this.operation !== 'add' &&
       this.article.tiendaNubeId
     ) {
-      this.showToast(
+      this._toastService.showToast(
         null,
         'info',
         undefined,
@@ -1422,7 +1414,7 @@ export class ArticleComponent implements OnInit {
 
         this.setValuesForm();
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -1454,12 +1446,12 @@ export class ArticleComponent implements OnInit {
     this._articleStockService.saveArticleStock(this.articleStock).subscribe(
       (result) => {
         if (!result.articleStock) {
-          this.showToast(result);
+          this._toastService.showToast(result);
         } else {
           this.articleStock = result.articleStock;
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -1473,7 +1465,7 @@ export class ArticleComponent implements OnInit {
             resolve(result.categories);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
     });
   }
@@ -1707,7 +1699,7 @@ export class ArticleComponent implements OnInit {
       //this.loadURL();
       const salePrice = this.articleForm.get('salePrice')?.value;
       if (salePrice <= 0) {
-        return this.showToast({
+        return this._toastService.showToast({
           message:
             salePrice < 0
               ? 'El precio no puede ser negativo.'
@@ -1775,7 +1767,7 @@ export class ArticleComponent implements OnInit {
         this.updateArticle();
       }
     } else {
-      this.showToast({
+      this._toastService.showToast({
         message: 'Por favor, revisa los campos en rojo para continuar.',
       });
       this.onValueChanged();
@@ -1791,18 +1783,18 @@ export class ArticleComponent implements OnInit {
       this._articleService.saveArticle(this.article).subscribe(
         (result) => {
           if (!result.result) {
-            this.showToast(result);
+            this._toastService.showToast(result);
           } else {
             this.hasChanged = true;
             this.article = result.result;
-            this.showToast(result);
+            this._toastService.showToast(result);
 
             this.returnTo();
             this.loading = false;
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           this.loading = false;
         }
       );
@@ -1819,20 +1811,20 @@ export class ArticleComponent implements OnInit {
       this._articleService.updateArticle(this.article).subscribe(
         async (result) => {
           if (!result.result) {
-            this.showToast(result);
+            this._toastService.showToast(result);
           } else {
             this.hasChanged = true;
             this.article = result.result;
             this.articleForm.patchValue({ meliId: this.article.meliId });
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);
-            this.showToast(result);
+            this._toastService.showToast(result);
             this.returnTo();
             this.loading = false;
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           this.loading = false;
         }
       );
@@ -1844,15 +1836,15 @@ export class ArticleComponent implements OnInit {
     this._articleService.delete(this.article._id).subscribe(
       (result: Resulteable) => {
         if (result.status == 200) {
-          this.showToast(result);
+          this._toastService.showToast(result);
           this.returnTo();
         } else {
-          this.showToast(result);
+          this._toastService.showToast(result);
         }
         this.loading = false;
       },
       (error) => {
-        this.showToast(error);
+        this._toastService.showToast(error);
         this.loading = false;
       }
     );
@@ -1899,7 +1891,7 @@ export class ArticleComponent implements OnInit {
             this.imageURL = result;
             resolve(result);
           },
-          (error) => this.showToast(JSON.parse(error))
+          (error) => this._toastService.showToast(JSON.parse(error))
         );
     });
   }
@@ -1911,7 +1903,7 @@ export class ArticleComponent implements OnInit {
           resolve(true);
         },
         (error) => {
-          this.showToast(error.messge);
+          this._toastService.showToast(error.messge);
           resolve(true);
         }
       );
@@ -1930,7 +1922,7 @@ export class ArticleComponent implements OnInit {
         await this.getCategories(`where="parent": "${category}"`).then(
           (result) => {
             if (result && result.length > 0) {
-              this.showToast(
+              this._toastService.showToast(
                 null,
                 'danger',
                 undefined,
@@ -1944,7 +1936,7 @@ export class ArticleComponent implements OnInit {
       // if (this.article.applications.length > 0 && this.article.type === Type.Final) {
       //   await this.getArticleURL().then((result) => {
       //     if (result) {
-      //       this.showToast(null, 'danger', 'La URL ya esta en uso');
+      //       this._toastService.showToast(null, 'danger', 'La URL ya esta en uso');
       //       resolve(false);
       //     } else {
       //       resolve(true);
@@ -1996,7 +1988,7 @@ export class ArticleComponent implements OnInit {
         (result: string) => {
           this.addPictureArray(result);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
   }
 
@@ -2080,44 +2072,6 @@ export class ArticleComponent implements OnInit {
 
   manageVariants(variants: Variant[]): void {
     this.variants = variants;
-  }
-
-  showToast(result, type?: string, title?: string, message?: string): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        message = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        message = result.error?.message || result.message;
-      } else {
-        type = 'info';
-        message = result.message;
-      }
-    }
-
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-
-    this.loading = false;
   }
 
   async deletePicture(index: number, picture: string) {

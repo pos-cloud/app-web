@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-header">
       <span style="color: #607d8b" *ngIf="operation === 'add'">{{
-        'add-product' | translate | capitalize
+        'add-resource' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
         >{{ 'edit' | translate | capitalize }} {{ articleType }}
@@ -150,7 +150,7 @@
                   >
                   <label *ngIf="resource.creationDate" class="control-label">
                     <b>{{
-                      resource.creationDate | dateFormat : 'DD/MM/YYYY HH:mm:ss'
+                      resource.creationDate | dateFormat: 'DD/MM/YYYY HH:mm:ss'
                     }}</b></label
                   >
                 </div>
@@ -173,7 +173,7 @@
                   >
                   <label *ngIf="resource.updateDate" class="control-label"
                     ><b>{{
-                      resource.updateDate | dateFormat : 'DD/MM/YYYY HH:mm:ss'
+                      resource.updateDate | dateFormat: 'DD/MM/YYYY HH:mm:ss'
                     }}</b></label
                   >
                   <label *ngIf="!resource.updateDate" class="control-label"
