@@ -15,7 +15,32 @@
     </ng-template>
   </ngb-carousel>
 
-  <div class="row">
+  <div class="row align-items-center">
+    <div *ngIf="article" class="col-4">
+      <div class="text-center">
+        <img
+          *ngIf="articleImage"
+          [src]="articleImage"
+          class="img-fluid rounded shadow-lg"
+        />
+      </div>
+    </div>
+
+    <div *ngIf="article" class="col-6">
+      <h1 class="display-5 mb-3">{{ article.description }}</h1>
+      <h3>
+        {{ article.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+      </h3>
+      <p [innerHTML]="article?.observation"></p>
+
+      <h3 class="mt-4">Métodos de Pago</h3>
+      <h6 *ngFor="let option of paymentMethod">
+        {{ option.name }}
+      </h6>
+    </div>
+  </div>
+
+  <div class="row pl-3">
     <div class="col-4">
       <label> Ingrese codigo de barra </label>
       <input
@@ -25,27 +50,6 @@
         (keydown.enter)="getArticle()"
         [focus]="focusEvent"
       />
-    </div>
-    <div *ngIf="article" class="col-4">
-      <img
-        *ngIf="makeImage"
-        [src]="apiURL + 'get-image-make/' + makeImage + '/' + database"
-        height="350"
-        width="400"
-      />
-      <img
-        *ngIf="articleImage"
-        [src]="apiURL + 'get-image-article/' + articleImage + '/' + database"
-        height="350"
-        width="400"
-      />
-    </div>
-    <div *ngIf="article" class="col-4">
-      <h1>{{ article.description }}</h1>
-      <h3>
-        {{ article.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
-      </h3>
-      <p [innerHTML]="article?.observation"></p>
     </div>
   </div>
 </div>

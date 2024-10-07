@@ -26,7 +26,7 @@ export class GalleryComponent implements OnInit {
   @Input() readonly: boolean;
   public galleryId: string;
 
-  public gallery: Gallery;
+  public gallery: any;
   public galleryForm: UntypedFormGroup;
 
   public resourcesForm: UntypedFormArray;
@@ -92,7 +92,6 @@ export class GalleryComponent implements OnInit {
       _id: [this.gallery._id, []],
       name: [this.gallery.name, [Validators.required]],
       colddown: [this.gallery.colddown, []],
-      speed: [this.gallery.speed, []],
       barcode: [this.gallery.barcode, []],
       resources: this._fb.array([]),
     });
@@ -180,12 +179,27 @@ export class GalleryComponent implements OnInit {
 
     this._galleryService.getGallery(this.galleryId).subscribe(
       (result) => {
-        if (!result.gallery) {
-          if (result.message && result.message !== '') {
-            this.showToast(result);
-          }
+        if (!result.result) {
+          this.showToast(result);
         } else {
-          this.gallery = result.gallery;
+          this.gallery = result.result;
+          // let aa = this.gallery.resources.find(resource => resource.resource._id ===)
+          this.gallery.resources = this.gallery.resources.map(
+            (galleryResource) => {
+              // Buscar el recurso completo en resource.resources usando el ID
+              const completeResource = this.resources.find(
+                (res) => res._id === galleryResource.resource
+              );
+              if (completeResource) {
+                // Reemplazar el ID por el objeto completo
+                return {
+                  ...galleryResource,
+                  resource: completeResource, // Aquí reemplazamos el ID con el objeto completo
+                };
+              }
+              return galleryResource; // Si no se encuentra, se deja el recurso como está
+            }
+          );
           this.setValueForm();
         }
         this.loading = false;
@@ -207,15 +221,11 @@ export class GalleryComponent implements OnInit {
     if (!this.gallery.colddown) {
       this.gallery.colddown = 6000;
     }
-    if (!this.gallery.speed) {
-      this.gallery.speed = 400;
-    }
 
     const values = {
       _id: this.gallery._id,
       name: this.gallery.name,
       colddown: this.gallery.colddown,
-      speed: this.gallery.speed,
       barcode: this.gallery.barcode ? this.gallery.barcode : false,
     };
 
@@ -263,11 +273,9 @@ export class GalleryComponent implements OnInit {
     if (await this.isValid()) {
       this._galleryService.updateGallery(this.gallery).subscribe(
         (result) => {
-          if (!result.gallery) {
+          if (!result.result) {
             this.loading = false;
-            if (result.message && result.message !== '') {
-              this.showToast(result);
-            }
+            this.showToast(result);
           } else {
             this.loading = false;
             this.showToast(result);
@@ -292,11 +300,9 @@ export class GalleryComponent implements OnInit {
     if (await this.isValid()) {
       this._galleryService.saveGallery(this.gallery).subscribe(
         (result) => {
-          if (!result.gallery) {
+          if (!result.result) {
             this.loading = false;
-            if (result.message && result.message !== '') {
-              this.showToast(result);
-            }
+            this.showToast(result);
           } else {
             this.loading = false;
             this.showToast(result);
@@ -321,14 +327,10 @@ export class GalleryComponent implements OnInit {
     this._galleryService.deleteGallery(this.gallery._id).subscribe(
       (result) => {
         this.loading = false;
-        if (!result.gallery) {
-          if (result.message && result.message !== '') {
-            this.showToast(result);
-          }
+        if (!result.result) {
+          this.showToast(result);
         } else {
-          this.showToast({
-            message: 'Galería eliminada con éxito',
-          });
+          this.showToast(result);
           this.returnTo();
         }
       },

@@ -8,7 +8,6 @@ export class Gallery {
   public _id: string;
   public name: string = '';
   public colddown: number;
-  public speed: number;
   public barcode: boolean = false;
   public resources: [
     {
@@ -31,16 +30,6 @@ export let attributes = [
     datatype: 'string',
     project: null,
     align: 'left',
-    required: false,
-  },
-  {
-    name: 'speed',
-    visible: false,
-    disabled: false,
-    filter: true,
-    datatype: 'number',
-    project: null,
-    align: 'right',
     required: false,
   },
   {

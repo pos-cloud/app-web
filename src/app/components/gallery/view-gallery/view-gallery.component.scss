@@ -1,25 +1,40 @@
 app-view-gallery {
+  .row {
+    margin-right: 0px !important;
+  }
+  .tile {
+    /*min-height: 200px;*/
+    background-color: #ccc;
+    background-size: cover !important;
+    //height:  100vh;
+    display: flex;
+    background-position: center center;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
 
-    .row {
-        margin-right: 0px !important;
+  div {
+    text-align: center;
+    img {
+      image-rendering: auto;
     }
-    .tile {
-        /*min-height: 200px;*/
-        background-color: #ccc;
-        background-size: cover !important;
-        //height:  100vh;
-        display: flex;
-        background-position: center center;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    }
+  }
+  /* Estilo general */
+  .list-group-item {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 10px; /* Reduce el padding para hacer los elementos más pequeños */
+    margin-bottom: 5px; /* Ajusta el margen entre los elementos */
+    border-radius: 8px; /* Bordes un poco más redondeados */
+    font-size: 0.9rem; /* Ajusta el tamaño del texto para que sea más pequeño */
+    transition: transform 0.2s ease-in-out;
+  }
 
-    div {
-        text-align: center;
-        img {
-            image-rendering: auto;
-        }
-    }
-
+  .list-group-item:hover {
+    transform: scale(
+      1.03
+    ); /* Aumenta ligeramente el tamaño al pasar el mouse */
+    background-color: #e9ecef;
+  }
 }
