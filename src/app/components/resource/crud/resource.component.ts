@@ -6,13 +6,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ResourceService } from '../resource.service';
-import { Resource } from '../resource';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
+import { User } from 'app/components/user/user';
+import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
 import { ORIGINMEDIA } from 'app/types';
 import { ToastrService } from 'ngx-toastr';
+import { Resource } from '../resource';
+import { ResourceService } from '../resource.service';
 
 @Component({
   selector: 'app-resource',
@@ -42,6 +44,9 @@ export class ResourceComponent implements OnInit {
   public message: string;
   public src: any;
   public typeFile;
+  users: User[];
+  creationUser: User;
+  updateUser: User;
 
   public filesToUpload: Array<File>;
 
@@ -65,10 +70,12 @@ export class ResourceComponent implements OnInit {
     public _toastr: ToastrService,
     public translatePipe: TranslateMePipe,
     public _router: Router,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    public _userService: UserService
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.resource = new Resource();
+    this.getUsers();
   }
 
   ngOnInit() {
@@ -97,13 +104,32 @@ export class ResourceComponent implements OnInit {
 
     this._resourceService.getResource(this.resourceId).subscribe(
       (result) => {
-        if (!result.resource) {
-          if (result.message && result.message !== '') this.showToast(result);
+        if (!result.result) {
+          this.showToast(result);
         } else {
-          this.resource = result.resource;
+          this.resource = result.result;
           this.src = this.resource.file;
 
-          console.log(this.resource);
+          this.creationUser = this.users.find(
+            (user: User) =>
+              user._id ===
+              (typeof this.resource.creationUser === 'string'
+                ? this.resource.creationUser
+                : typeof this.resource.creationUser !== 'undefined'
+                ? this.resource.creationUser._id
+                : '')
+          );
+          if (this.resource.updateUser) {
+            this.updateUser = this.users.find(
+              (user: User) =>
+                user._id ===
+                (typeof this.resource.updateUser === 'string'
+                  ? this.resource.updateUser
+                  : typeof this.resource.updateUser !== 'undefined'
+                  ? this.resource.updateUser._id
+                  : '')
+            );
+          }
           this.setValueForm();
         }
         this.loading = false;
@@ -140,6 +166,32 @@ export class ResourceComponent implements OnInit {
       this.onValueChanged(data)
     );
     this.onValueChanged();
+  }
+
+  public getUsers() {
+    this.loading = true;
+    let project = {
+      _id: 1,
+      name: 1,
+      operationType: 1,
+    };
+    let match = {
+      operationType: { $ne: 'D' },
+    };
+    this._userService.getAll({ project, match }).subscribe(
+      (result) => {
+        if (!result) {
+          this.loading = false;
+          this.users = new Array();
+        } else {
+          this.loading = false;
+          this.users = result.result;
+        }
+      },
+      (error) => {
+        this.loading = false;
+      }
+    );
   }
 
   public onValueChanged(data?: any): void {
@@ -180,8 +232,6 @@ export class ResourceComponent implements OnInit {
 
   async updateResource() {
     this.loading = true;
-
-    console.log(this.resource);
 
     if (this.selectedFile) {
       this.resource.file = await this.uploadFile(this.resource.file);

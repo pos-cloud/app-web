@@ -141,7 +141,7 @@
                     >{{ 'creationUser.name' | translate | capitalize }}:</label
                   >
                   <label *ngIf="resource.creationUser" class="control-label"
-                    ><b>{{ resource.creationUser.name }}</b></label
+                    ><b>{{ creationUser.name }}</b></label
                   >
                 </div>
                 <div class="form-group col-md-6">
@@ -161,7 +161,7 @@
                     >{{ 'updateUser.name' | translate | capitalize }}:</label
                   >
                   <label *ngIf="resource.updateUser" class="control-label"
-                    ><b>{{ resource.updateUser.name }}</b></label
+                    ><b>{{ updateUser.name }}</b></label
                   >
                   <label *ngIf="!resource.updateUser" class="control-label"
                     ><b>-</b></label

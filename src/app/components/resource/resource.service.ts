@@ -105,18 +105,15 @@ export class ResourceService extends ModelService {
   }
 
   public getResource(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}resource`;
+    const URL = `${environment.apiv2}/resources`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('id', _id);
-
     return this._http
-      .get(URL, {
+      .get(`${URL}/${_id}`, {
         headers: headers,
-        params: params,
       })
       .pipe(
         map((res) => {
