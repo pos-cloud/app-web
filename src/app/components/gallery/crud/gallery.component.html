@@ -58,63 +58,50 @@
             </label>
           </div>
           <div class="row">
-            <div class="form-group col-md-12">
-              <div class="row">
-                <div class="form-group col-md-8">
-                  <label for="name" class="control-label">Nombre:</label>
-                  <div class="input-group">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="name"
-                      name="name"
-                      id="name"
-                      [focus]="focusEvent"
-                      [readonly]="readonly"
-                    />
-                  </div>
-                  <div *ngIf="formErrors.name" class="alert alert-danger">
-                    {{ formErrors.name }}
-                  </div>
-                </div>
-                <div class="form-group col-md-2">
-                  <label for="colddown" class="control-label">Intervalo:</label>
-                  <div class="input-group">
-                    <input
-                      type="number"
-                      class="form-control"
-                      formControlName="colddown"
-                      name="colddown"
-                      id="colddown"
-                      [focus]="focusEvent"
-                      [readonly]="readonly"
-                    />
-                  </div>
-                  <div *ngIf="formErrors.name" class="alert alert-danger">
-                    {{ formErrors.colddown }}
-                  </div>
-                </div>
+            <div class="form-group col-md-8">
+              <label for="name" class="control-label">Nombre:</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="name"
+                  name="name"
+                  id="name"
+                  [focus]="focusEvent"
+                  [readonly]="readonly"
+                />
               </div>
-              <div class="row">
-                <div class="form-group col-md-3">
-                  <label for="barcode" class="control-label"
-                    >Tiene Lector Codigo de Barra</label
-                  >
-                  <select class="form-control" formControlName="barcode">
-                    <option [ngValue]="true" [disabled]="readonly">Si</option>
-                    <option [ngValue]="false" [disabled]="readonly">No</option>
-                  </select>
-                </div>
+              <div *ngIf="formErrors.name" class="alert alert-danger">
+                {{ formErrors.name }}
               </div>
             </div>
+            <div class="form-group col-md-2">
+              <label for="colddown" class="control-label">Intervalo:</label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="colddown"
+                  name="colddown"
+                  id="colddown"
+                  [focus]="focusEvent"
+                  [readonly]="readonly"
+                />
+              </div>
+              <div *ngIf="formErrors.name" class="alert alert-danger">
+                {{ formErrors.colddown }}
+              </div>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="barcode" class="control-label"
+                >Tiene Codigo de Barra</label
+              >
+              <select class="form-control" formControlName="barcode">
+                <option [ngValue]="true" [disabled]="readonly">Si</option>
+                <option [ngValue]="false" [disabled]="readonly">No</option>
+              </select>
+            </div>
           </div>
-          <hr />
-          <div class="row">
-            <label class="form-group col-md-12">
-              <b>Recursos</b>
-            </label>
-          </div>
-
           <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm)">
             <div class="row">
               <div class="form-group col-md-5">

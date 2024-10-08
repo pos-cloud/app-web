@@ -43,7 +43,7 @@ export class GalleryComponent implements OnInit {
   public formErrors = {
     name: '',
     resource: '',
-    speed: '',
+    colddown: '',
   };
 
   public validationMessages = {
@@ -112,8 +112,6 @@ export class GalleryComponent implements OnInit {
           _id: null,
           resource: null,
           order: 0,
-          transition: 0,
-          colddown: 0,
         })
       );
     }
@@ -212,20 +210,10 @@ export class GalleryComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    if (!this.gallery._id) {
-      this.gallery._id = '';
-    }
-    if (!this.gallery.name) {
-      this.gallery.name = '';
-    }
-    if (!this.gallery.colddown) {
-      this.gallery.colddown = 6000;
-    }
-
     const values = {
-      _id: this.gallery._id,
-      name: this.gallery.name,
-      colddown: this.gallery.colddown,
+      _id: this.gallery?._id ?? '',
+      name: this.gallery?.name ?? '',
+      colddown: this.gallery?.colddown ?? 6000,
       barcode: this.gallery.barcode ? this.gallery.barcode : false,
     };
 

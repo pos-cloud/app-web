@@ -116,8 +116,8 @@ export class ResourceComponent implements OnInit {
               (typeof this.resource.creationUser === 'string'
                 ? this.resource.creationUser
                 : typeof this.resource.creationUser !== 'undefined'
-                ? this.resource.creationUser._id
-                : '')
+                  ? this.resource.creationUser._id
+                  : '')
           );
           if (this.resource.updateUser) {
             this.updateUser = this.users.find(
@@ -126,8 +126,8 @@ export class ResourceComponent implements OnInit {
                 (typeof this.resource.updateUser === 'string'
                   ? this.resource.updateUser
                   : typeof this.resource.updateUser !== 'undefined'
-                  ? this.resource.updateUser._id
-                  : '')
+                    ? this.resource.updateUser._id
+                    : '')
             );
           }
           this.setValueForm();
