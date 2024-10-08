@@ -42,7 +42,7 @@ export class ResourceComponent implements OnInit {
   public selectedFile: File = null;
   public typeSelectFile: string;
   public message: string;
-  public src: any;
+  public src: any = './../../../assets/img/default.jpg';
   public typeFile;
   users: User[];
   creationUser: User;
@@ -102,7 +102,7 @@ export class ResourceComponent implements OnInit {
   public getResource() {
     this.loading = true;
 
-    this._resourceService.getResource(this.resourceId).subscribe(
+    this._resourceService.getById(this.resourceId).subscribe(
       (result) => {
         if (!result.result) {
           this.showToast(result);
@@ -116,8 +116,8 @@ export class ResourceComponent implements OnInit {
               (typeof this.resource.creationUser === 'string'
                 ? this.resource.creationUser
                 : typeof this.resource.creationUser !== 'undefined'
-                  ? this.resource.creationUser._id
-                  : '')
+                ? this.resource.creationUser._id
+                : '')
           );
           if (this.resource.updateUser) {
             this.updateUser = this.users.find(
@@ -126,8 +126,8 @@ export class ResourceComponent implements OnInit {
                 (typeof this.resource.updateUser === 'string'
                   ? this.resource.updateUser
                   : typeof this.resource.updateUser !== 'undefined'
-                    ? this.resource.updateUser._id
-                    : '')
+                  ? this.resource.updateUser._id
+                  : '')
             );
           }
           this.setValueForm();
@@ -237,7 +237,7 @@ export class ResourceComponent implements OnInit {
       this.resource.file = await this.uploadFile(this.resource.file);
     }
 
-    this._resourceService.updateResource(this.resource).subscribe(
+    this._resourceService.update(this.resource).subscribe(
       (result) => {
         if (!result.result) {
           this.loading = false;
@@ -280,7 +280,7 @@ export class ResourceComponent implements OnInit {
       if (this.selectedFile)
         this.resource.file = await this.uploadFile(this.resource.file);
 
-      this._resourceService.addResource(this.resource).subscribe(
+      this._resourceService.save(this.resource).subscribe(
         (result) => {
           if (!result.result) {
             this.loading = false;
@@ -312,7 +312,7 @@ export class ResourceComponent implements OnInit {
 
     await this.deleteFile(this.resource.file);
 
-    this._resourceService.deleteResource(this.resource).subscribe(
+    this._resourceService.delete(this.resource._id).subscribe(
       (result) => {
         this.loading = false;
         if (!result.result) {
@@ -359,7 +359,7 @@ export class ResourceComponent implements OnInit {
       ) {
         await this.deleteFile(pictureDelete);
       }
-
+      console.log(ORIGINMEDIA.RESOURCES);
       this._resourceService
         .makeFileRequest(ORIGINMEDIA.RESOURCES, this.selectedFile)
         .then(

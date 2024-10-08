@@ -24,27 +24,27 @@ import { ResourceService } from './resource.service';
 
 const routes: Routes = [
   {
-    path: 'admin/resource',
+    path: 'admin/resources',
     component: ListResourcesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/resource/add',
+    path: 'admin/resources/add',
     component: ResourceComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/resource/view/:id',
+    path: 'admin/resources/view/:id',
     component: ResourceComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/resource/update/:id',
+    path: 'admin/resources/update/:id',
     component: ResourceComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/resource/delete/:id',
+    path: 'admin/resources/delete/:id',
     component: ResourceComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },

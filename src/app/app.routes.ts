@@ -60,7 +60,6 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
-import { ListResourcesComponent } from './components/resource/list-resources/list-resources.component';
 import { ListRoomsComponent } from './components/room/list-rooms/list-rooms.component';
 import { SendEmailComponent } from './components/send-email/send-email.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
@@ -550,11 +549,6 @@ export const _routes: Routes = [
   {
     path: 'admin/transports',
     component: ListTransportComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/resources',
-    component: ListResourcesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

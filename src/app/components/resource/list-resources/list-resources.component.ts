@@ -69,25 +69,25 @@ export class ListResourcesComponent {
     switch (op) {
       case 'view':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/resource/view', obj._id], {
+        this._router.navigate(['/admin/resources/view', obj._id], {
           queryParams: { returnURL: currentUrl },
         });
         break;
       case 'add':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/resource/add'], {
+        this._router.navigate(['/admin/resources/add'], {
           queryParams: { returnURL: currentUrl },
         });
         break;
       case 'update':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/resource/update', obj._id], {
+        this._router.navigate(['/admin/resources/update', obj._id], {
           queryParams: { returnURL: currentUrl },
         });
         break;
       case 'delete':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/resource/delete', obj._id], {
+        this._router.navigate(['/admin/resources/delete', obj._id], {
           queryParams: { returnURL: currentUrl },
         });
         break;

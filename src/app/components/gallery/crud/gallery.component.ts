@@ -42,14 +42,15 @@ export class GalleryComponent implements OnInit {
 
   public formErrors = {
     name: '',
-    resource: '',
     colddown: '',
+    resource: '',
   };
 
   public validationMessages = {
     name: {
       required: 'Este campo es requerido.',
     },
+    colddown: { required: 'Este campo es requerido.' },
   };
 
   constructor(
@@ -178,7 +179,7 @@ export class GalleryComponent implements OnInit {
     this._galleryService.getGallery(this.galleryId).subscribe(
       (result) => {
         if (!result.result) {
-          this.showToast(result);
+          this._toastr.showToast(result);
         } else {
           this.gallery = result.result;
           // let aa = this.gallery.resources.find(resource => resource.resource._id ===)
@@ -203,7 +204,7 @@ export class GalleryComponent implements OnInit {
         this.loading = false;
       },
       (error) => {
-        this.showToast(error);
+        this._toastr.showToast(error);
         this.loading = false;
       }
     );
@@ -263,15 +264,15 @@ export class GalleryComponent implements OnInit {
         (result) => {
           if (!result.result) {
             this.loading = false;
-            this.showToast(result);
+            this._toastr.showToast(result);
           } else {
             this.loading = false;
-            this.showToast(result);
+            this._toastr.showToast(result);
             this.returnTo();
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastr.showToast(error);
           this.loading = false;
         }
       );
@@ -290,17 +291,17 @@ export class GalleryComponent implements OnInit {
         (result) => {
           if (!result.result) {
             this.loading = false;
-            this.showToast(result);
+            this._toastr.showToast(result);
           } else {
             this.loading = false;
-            this.showToast(result);
+            this._toastr.showToast(result);
             this.gallery = new Gallery();
             this.buildForm();
             this.returnTo();
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastr.showToast(error);
           this.loading = false;
         }
       );
@@ -316,14 +317,14 @@ export class GalleryComponent implements OnInit {
       (result) => {
         this.loading = false;
         if (!result.result) {
-          this.showToast(result);
+          this._toastr.showToast(result);
         } else {
-          this.showToast(result);
+          this._toastr.showToast(result);
           this.returnTo();
         }
       },
       (error) => {
-        this.showToast(error);
+        this._toastr.showToast(error);
         this.loading = false;
       }
     );
@@ -349,7 +350,7 @@ export class GalleryComponent implements OnInit {
     };
 
     this._resourceService
-      .getResources(project, match, {}, group)
+      .getAll({ project, match, group })
       .subscribe((result) => {
         if (result && result[0] && result[0].resources) {
           this.loading = false;
@@ -370,9 +371,15 @@ export class GalleryComponent implements OnInit {
         this.gallery.colddown < 0 ||
         this.galleryForm.value.colddown < 0
       ) {
-        this.showToast({
-          message: 'El intervalo no puede ser 0 o negativo',
-        });
+        this._toastr.showToast(
+          null,
+          'info',
+          undefined,
+          'El intervalo no puede ser 0 o negativo'
+        );
+        // this.showToast({
+        //   message: 'El intervalo no puede ser 0 o negativo',
+        // });
         resolve(false);
       }
 
@@ -393,41 +400,41 @@ export class GalleryComponent implements OnInit {
     });
   }
 
-  showToast(result, type?: string, title?: string, message?: string): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        message = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        message = result.error?.message || result.message;
-      } else {
-        type = 'info';
-        message = result.message;
-      }
-    }
+  // showToast(result, type?: string, title?: string, message?: string): void {
+  //   if (result) {
+  //     if (result.status === 200) {
+  //       type = 'success';
+  //       message = result.message;
+  //     } else if (result.status >= 400) {
+  //       type = 'danger';
+  //       message = result.error?.message || result.message;
+  //     } else {
+  //       type = 'info';
+  //       message = result.message;
+  //     }
+  //   }
 
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
+  //   switch (type) {
+  //     case 'success':
+  //       this._toastr.success(
+  //         this.translatePipe.translateMe(message),
+  //         this.translatePipe.translateMe(title)
+  //       );
+  //       break;
+  //     case 'danger':
+  //       this._toastr.error(
+  //         this.translatePipe.translateMe(message),
+  //         this.translatePipe.translateMe(title)
+  //       );
+  //       break;
+  //     default:
+  //       this._toastr.info(
+  //         this.translatePipe.translateMe(message),
+  //         this.translatePipe.translateMe(title)
+  //       );
+  //       break;
+  //   }
 
-    this.loading = false;
-  }
+  //   this.loading = false;
+  // }
 }
