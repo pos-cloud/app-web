@@ -66,7 +66,7 @@ export class AppComponent {
         const currentUrl = event.url;
         if (
           currentUrl.includes('menu') ||
-          currentUrl.includes('view-gallery')
+          currentUrl.includes('view-galleries')
         ) {
           this.showHeader = false;
         }

@@ -30,12 +30,9 @@ export class GalleryComponent implements OnInit {
   public galleryForm: UntypedFormGroup;
 
   public resourcesForm: UntypedFormArray;
-  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public galleries: Gallery[];
-  public percentageSelected: number;
   public orientation: string = 'horizontal';
   public resources: Resource[];
   public selectedResource: string | null = null;
@@ -85,7 +82,9 @@ export class GalleryComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.focusEvent.emit(true);
+    setTimeout(() => {
+      this.focusEvent.emit(true);
+    });
   }
 
   public buildForm(): void {
@@ -176,7 +175,7 @@ export class GalleryComponent implements OnInit {
   public getGallery() {
     this.loading = true;
 
-    this._galleryService.getGallery(this.galleryId).subscribe(
+    this._galleryService.getById(this.galleryId).subscribe(
       (result) => {
         if (!result.result) {
           this._toastr.showToast(result);
@@ -260,7 +259,7 @@ export class GalleryComponent implements OnInit {
     this.gallery = this.galleryForm.value;
 
     if (await this.isValid()) {
-      this._galleryService.updateGallery(this.gallery).subscribe(
+      this._galleryService.update(this.gallery).subscribe(
         (result) => {
           if (!result.result) {
             this.loading = false;
@@ -287,7 +286,7 @@ export class GalleryComponent implements OnInit {
     this.gallery = this.galleryForm.value;
 
     if (await this.isValid()) {
-      this._galleryService.saveGallery(this.gallery).subscribe(
+      this._galleryService.save(this.gallery).subscribe(
         (result) => {
           if (!result.result) {
             this.loading = false;
@@ -313,7 +312,7 @@ export class GalleryComponent implements OnInit {
   public deleteGallery() {
     this.loading = true;
 
-    this._galleryService.deleteGallery(this.gallery._id).subscribe(
+    this._galleryService.delete(this.gallery._id).subscribe(
       (result) => {
         this.loading = false;
         if (!result.result) {
@@ -342,24 +341,15 @@ export class GalleryComponent implements OnInit {
       file: 1,
       operationType: 1,
     };
-
-    let group = {
-      _id: null,
-      count: { $sum: 1 },
-      resources: { $push: '$$ROOT' },
-    };
-
-    this._resourceService
-      .getAll({ project, match, group })
-      .subscribe((result) => {
-        if (result && result[0] && result[0].resources) {
-          this.loading = false;
-          this.resources = result[0].resources;
-        } else {
-          this.resources = new Array();
-          this.loading = false;
-        }
-      });
+    this._resourceService.getAll({ project, match }).subscribe((result) => {
+      if (result.result) {
+        this.loading = false;
+        this.resources = result.result;
+      } else {
+        this.resources = new Array();
+        this.loading = false;
+      }
+    });
   }
 
   public isValid(): Promise<boolean> {
@@ -377,64 +367,10 @@ export class GalleryComponent implements OnInit {
           undefined,
           'El intervalo no puede ser 0 o negativo'
         );
-        // this.showToast({
-        //   message: 'El intervalo no puede ser 0 o negativo',
-        // });
         resolve(false);
       }
-
-      // if (
-      //   this.galleryForm.value.speed === 0 ||
-      //   this.gallery.speed === 0 ||
-      //   this.gallery.speed === null ||
-      //   this.gallery.speed < 0 ||
-      //   this.galleryForm.value.speed < 0
-      // ) {
-      //   this.showToast({
-      //     message: 'La velocidad no puede ser 0 o negativo',
-      //   });
-      //   resolve(false);
-      // }
 
       resolve(true);
     });
   }
-
-  // showToast(result, type?: string, title?: string, message?: string): void {
-  //   if (result) {
-  //     if (result.status === 200) {
-  //       type = 'success';
-  //       message = result.message;
-  //     } else if (result.status >= 400) {
-  //       type = 'danger';
-  //       message = result.error?.message || result.message;
-  //     } else {
-  //       type = 'info';
-  //       message = result.message;
-  //     }
-  //   }
-
-  //   switch (type) {
-  //     case 'success':
-  //       this._toastr.success(
-  //         this.translatePipe.translateMe(message),
-  //         this.translatePipe.translateMe(title)
-  //       );
-  //       break;
-  //     case 'danger':
-  //       this._toastr.error(
-  //         this.translatePipe.translateMe(message),
-  //         this.translatePipe.translateMe(title)
-  //       );
-  //       break;
-  //     default:
-  //       this._toastr.info(
-  //         this.translatePipe.translateMe(message),
-  //         this.translatePipe.translateMe(title)
-  //       );
-  //       break;
-  //   }
-
-  //   this.loading = false;
-  // }
 }

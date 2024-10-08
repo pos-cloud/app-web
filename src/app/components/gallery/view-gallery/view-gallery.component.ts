@@ -16,10 +16,9 @@ import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
 import { Resource } from 'app/components/resource/resource';
 import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { ToastService } from 'app/shared/toast/toast.service';
 import 'hammerjs';
-import { ToastrService } from 'ngx-toastr';
 import { ResourceService } from '../../resource/resource.service';
-
 @Component({
   selector: 'app-view-gallery',
   templateUrl: './view-gallery.component.html',
@@ -55,7 +54,7 @@ export class ViewGalleryComponent implements OnInit {
     private _articleService: ArticleService,
     private _resourceService: ResourceService,
     public alertConfig: NgbAlertConfig,
-    private _toastr: ToastrService,
+    private _toastr: ToastService,
     public translatePipe: TranslateMePipe,
     public _paymentMethod: PaymentMethodService
   ) {
@@ -67,7 +66,7 @@ export class ViewGalleryComponent implements OnInit {
     this.focusEvent.emit(true);
     this.elem = document.documentElement;
     const URL = this._router.url.split('/');
-    this.galleryId = URL[4].split('?')[0];
+    this.galleryId = URL[3].split('?')[0];
     if (this.galleryId) {
       this.getGallery(this.galleryId);
     }
@@ -76,10 +75,10 @@ export class ViewGalleryComponent implements OnInit {
   public getGallery(galleryId: string) {
     this.loading = true;
 
-    this._galleryService.getGallery(galleryId).subscribe(
+    this._galleryService.getById(galleryId).subscribe(
       (result) => {
         if (!result.result) {
-          this.showToast(result);
+          this._toastr.showToast(result);
         } else {
           this.gallery = result.result;
           this.gallery.resources.forEach((element) => {
@@ -99,7 +98,7 @@ export class ViewGalleryComponent implements OnInit {
         this.loading = false;
       },
       (error) => {
-        this.showToast(error);
+        this._toastr.showToast(error);
         this.loading = false;
       }
     );
@@ -138,17 +137,19 @@ export class ViewGalleryComponent implements OnInit {
               this.filterArticle = '';
             }
 
-            if (
-              this.article !== null &&
-              (this.article.picture === 'default.jpg' || !this.article.picture)
-            ) {
-              if (this.article.make && this.article.make.picture) {
-                this.makeImage = this.article.make.picture;
+            if (this.article !== null) {
+              if (
+                this.article.picture === 'default.jpg' ||
+                !this.article.picture
+              ) {
+                if (this.article.make && this.article.make.picture) {
+                  this.makeImage = this.article.make.picture;
+                } else {
+                  this.articleImage = 'default.jpg';
+                }
               } else {
-                this.articleImage = 'default.jpg';
+                this.articleImage = this.article.picture;
               }
-            } else {
-              this.articleImage = this.article.picture;
             }
           },
           (error) => {
@@ -175,14 +176,14 @@ export class ViewGalleryComponent implements OnInit {
     this._paymentMethod.getAll({ project, match }).subscribe(
       (result) => {
         if (!result.result) {
-          this.showToast(result);
+          this._toastr.showToast(result);
         } else {
           this.paymentMethod = result.result;
         }
         this.loading = false;
       },
       (error) => {
-        this.showToast(error);
+        this._toastr.showToast(error);
         this.loading = false;
       }
     );
@@ -219,70 +220,16 @@ export class ViewGalleryComponent implements OnInit {
     this._resourceService.getAll({ project, match }).subscribe(
       (result) => {
         if (!result.result) {
-          this.showToast(result);
+          this._toastr.showToast(result);
         } else {
           this.resource = result.result;
         }
         this.loading = false;
       },
       (error) => {
-        this.showToast(error);
+        this._toastr.showToast(error);
         this.loading = false;
       }
     );
-  }
-
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

@@ -71,25 +71,25 @@ export class ListGalleriesComponent {
     switch (op) {
       case 'view':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/gallery/view', obj._id], {
+        this._router.navigate(['/admin/view-galleries', obj._id], {
           queryParams: { returnURL: currentUrl },
         });
         break;
       case 'add':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/gallery/add'], {
+        this._router.navigate(['/admin/galleries/add'], {
           queryParams: { returnURL: currentUrl },
         });
         break;
       case 'update':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/gallery/update', obj._id], {
+        this._router.navigate(['/admin/galleries/update', obj._id], {
           queryParams: { returnURL: currentUrl },
         });
         break;
       case 'delete':
         currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/admin/gallery/delete', obj._id], {
+        this._router.navigate(['/admin/galleries/delete', obj._id], {
           queryParams: { returnURL: currentUrl },
         });
         break;

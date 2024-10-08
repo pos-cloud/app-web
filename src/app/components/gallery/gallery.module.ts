@@ -25,27 +25,27 @@ import { ViewGalleryComponent } from './view-gallery/view-gallery.component';
 
 const routes: Routes = [
   {
-    path: 'admin/gallery',
+    path: 'admin/galleries',
     component: ListGalleriesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/gallery/add',
+    path: 'admin/galleries/add',
     component: GalleryComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/gallery/view/:id',
+    path: 'admin/view-galleries/:id',
     component: ViewGalleryComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/gallery/update/:id',
+    path: 'admin/galleries/update/:id',
     component: GalleryComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/gallery/delete/:id',
+    path: 'admin/galleries/delete/:id',
     component: GalleryComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },

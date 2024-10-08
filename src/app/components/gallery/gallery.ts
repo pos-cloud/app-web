@@ -7,7 +7,7 @@ import { Resource } from '../resource/resource';
 export class Gallery {
   public _id: string;
   public name: string = '';
-  public colddown: number;
+  public colddown: number = 6000;
   public barcode: boolean = false;
   public resources: [
     {
@@ -45,6 +45,16 @@ export let attributes = [
   {
     name: 'barcode',
     visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'boolean',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
+    name: '_id',
+    visible: false,
     disabled: false,
     filter: true,
     datatype: 'string',
