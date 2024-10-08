@@ -34,7 +34,6 @@ export class ResourceService extends ModelService {
       formData.append('origin', origin);
 
       xhr.onreadystatechange = function () {
-        console.log(xhr);
         if (xhr.readyState == 4) {
           if (xhr.status == 201) {
             resolve(xhr.response);
@@ -49,8 +48,6 @@ export class ResourceService extends ModelService {
   }
 
   public deleteImageGoogle(origin: string): Observable<any> {
-    console.log(origin);
-
     const URL = `${environment.apiStorage}/upload`;
 
     const headers = new HttpHeaders()
