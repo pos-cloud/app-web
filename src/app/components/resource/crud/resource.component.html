@@ -48,6 +48,7 @@
         </button>
       </div>
     </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
       <form [formGroup]="resourceForm" autocomplete="off">
         <div class="modal-body">
@@ -60,7 +61,9 @@
             <div class="form-group col-md-12">
               <div class="row">
                 <div class="form-group col-md-6">
-                  <label for="name" class="control-label">Nombre</label>
+                  <label for="name" class="control-label">{{
+                    'name' | translate | capitalize
+                  }}</label>
                   <div class="input-group">
                     <input
                       type="text"
