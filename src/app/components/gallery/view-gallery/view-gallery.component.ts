@@ -122,7 +122,10 @@ export class ViewGalleryComponent implements OnInit {
             picture: 1,
           },
           match: {
-            barcode: this.filterArticle,
+            $or: [
+              { barcode: this.filterArticle },
+              { code: this.filterArticle },
+            ],
             operationType: { $ne: 'D' },
           },
         })

@@ -4,7 +4,7 @@
   <ngb-carousel
     class="barcode"
     *ngIf="images?.length > 0"
-    [interval]="gallery.colddown"
+    [interval]="gallery.colddown * 1000"
     [pauseOnHover]="false"
     [showNavigationArrows]="false"
   >
@@ -33,10 +33,10 @@
       </h3>
       <p [innerHTML]="article?.observation"></p>
 
-      <h3 class="mt-4">Métodos de Pago</h3>
+      <!-- <h3 class="mt-4">Métodos de Pago</h3>
       <h6 *ngFor="let option of paymentMethod">
         {{ option.name }}
-      </h6>
+      </h6> -->
     </div>
   </div>
 

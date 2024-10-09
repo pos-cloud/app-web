@@ -7,7 +7,7 @@ import { Resource } from '../resource/resource';
 export class Gallery {
   public _id: string;
   public name: string = '';
-  public colddown: number = 6000;
+  public colddown: number = 6;
   public barcode: boolean = false;
   public resources: [
     {

@@ -49,17 +49,20 @@
         </button>
       </div>
     </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body">
       <form [formGroup]="galleryForm" autocomplete="off">
         <div class="modal-body">
           <div class="row">
             <label class="form-group col-md-12">
-              <b>Datos principales</b>
+              <b>{{ 'mainData' | translate | capitalize }}</b>
             </label>
           </div>
           <div class="row">
             <div class="form-group col-md-8">
-              <label for="name" class="control-label">Nombre:</label>
+              <label for="name" class="control-label"
+                >{{ 'name' | translate | capitalize }}:</label
+              >
               <div class="input-group">
                 <input
                   type="text"
@@ -82,8 +85,11 @@
                 {{ formErrors.name }}
               </div>
             </div>
+
             <div class="form-group col-md-2">
-              <label for="colddown" class="control-label">Intervalo:</label>
+              <label for="colddown" class="control-label"
+                >{{ 'colddown' | translate | capitalize }}:</label
+              >
               <div class="input-group">
                 <input
                   type="number"
@@ -92,9 +98,11 @@
                   name="colddown"
                   id="colddown"
                   value="colddown"
-                  [focus]="focusEvent"
                   [readonly]="readonly"
                 />
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">ms</span>
+                </div>
               </div>
               <div
                 class="invalid-feedback"
@@ -108,15 +116,21 @@
                 >Tiene Codigo de Barra</label
               >
               <select class="form-control" formControlName="barcode">
-                <option [ngValue]="true" [disabled]="readonly">Si</option>
-                <option [ngValue]="false" [disabled]="readonly">No</option>
+                <option [ngValue]="true" [disabled]="readonly">
+                  {{ 'true' | translate | capitalize }}
+                </option>
+                <option [ngValue]="false" [disabled]="readonly">
+                  {{ 'false' | translate | capitalize }}
+                </option>
               </select>
             </div>
           </div>
           <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm)">
             <div class="row">
               <div class="form-group col-md-5">
-                <label for="resource" class="control-label">Recurso:</label>
+                <label for="resource" class="control-label">
+                  {{ 'resource' | translate | capitalize }}:</label
+                >
                 <select
                   class="form-control"
                   [(ngModel)]="selectedResource"
@@ -136,7 +150,9 @@
                 </div>
               </div>
               <div class="form-group col-md-3">
-                <label for="order" class="control-label">Orden:</label>
+                <label for="order" class="control-label"
+                  >{{ 'order' | translate | capitalize }}:</label
+                >
                 <div class="input-group">
                   <input
                     type="number"
@@ -148,7 +164,9 @@
                 </div>
               </div>
               <div class="form-group col-md-2">
-                <label for="colddown" class="control-label">Agregar</label>
+                <label for="colddown" class="control-label">{{
+                  'add' | translate | capitalize
+                }}</label>
                 <div class="input-group">
                   <button type="summit" class="btn btn-success btn-sm especial">
                     <i class="fa fa-plus"></i>
@@ -160,8 +178,8 @@
           <table class="table table-striped">
             <thead>
               <tr class="separation">
-                <th>Recurso</th>
-                <th>Orden</th>
+                <th>{{ 'resource' | translate | capitalize }}</th>
+                <th>{{ 'order' | translate | capitalize }}</th>
               </tr>
             </thead>
             <tbody>

@@ -213,7 +213,7 @@ export class GalleryComponent implements OnInit {
     const values = {
       _id: this.gallery?._id ?? '',
       name: this.gallery?.name ?? '',
-      colddown: this.gallery?.colddown ?? 6000,
+      colddown: this.gallery?.colddown ?? 6,
       barcode: this.gallery.barcode ? this.gallery.barcode : false,
     };
 
