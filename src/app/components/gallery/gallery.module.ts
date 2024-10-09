@@ -8,7 +8,6 @@ import {
   NgbDropdownModule,
   NgbModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { NguCarouselModule } from '@ngu/carousel';
 import { TranslateModule } from '@ngx-translate/core';
 import { DirectivesModule } from 'app/main/directives/directives.module';
 import { AuthGuard } from 'app/main/guards/auth.guard';
@@ -67,7 +66,6 @@ const routes: Routes = [
     DatatableModule,
     NgxTinymceModule,
     NgbCarouselModule,
-    NguCarouselModule,
   ],
   declarations: [
     GalleryComponent,

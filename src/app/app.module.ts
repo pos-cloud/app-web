@@ -22,7 +22,6 @@ import {
   NgbModule,
   NgbNavModule,
 } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/1
-import { NguCarouselModule } from '@ngu/carousel';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -443,7 +442,6 @@ export function createTranslateLoader(http: HttpClient) {
     }),
     //SocketIoModule.forRoot(configSocket),
     ToastrModule.forRoot(),
-    NguCarouselModule,
     NgxTinymceModule.forRoot({
       //baseURL: '//cdn.bootcss.com/tinymce/4.7.13/',
       baseURL: '//cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.0/',

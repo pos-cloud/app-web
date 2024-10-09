@@ -3,12 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import {
-  NgbCarouselModule,
-  NgbDropdownModule,
-  NgbModule,
-} from '@ng-bootstrap/ng-bootstrap';
-import { NguCarouselModule } from '@ngu/carousel';
+import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DirectivesModule } from 'app/main/directives/directives.module';
 import { AuthGuard } from 'app/main/guards/auth.guard';
@@ -65,8 +60,6 @@ const routes: Routes = [
     NgbModule,
     DatatableModule,
     NgxTinymceModule,
-    NgbCarouselModule,
-    NguCarouselModule,
   ],
   declarations: [ResourceComponent, ListResourcesComponent],
   exports: [ResourceComponent, ListResourcesComponent],
