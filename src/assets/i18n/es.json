@@ -48,6 +48,7 @@
   "article.barcode": "Código de Barras",
   "article.basePrice": "Precio Base",
   "article.category.description": "Categoría",
+  "article.category.parent.description": "Categoría padre",
   "article.code": "Código",
   "article.codeProvider": "Cód. Proveedor",
   "article.containsStructure": "¿Tiene Estructura?",
