@@ -456,8 +456,9 @@ export class ArticleComponent implements OnInit {
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
       // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
-      this.validationMessages.code['maxlength'] =
-        `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
+      this.validationMessages.code[
+        'maxlength'
+      ] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
       this.articleForm.controls['code'].setValidators([
         Validators.maxLength(this.config.article.code.validators.maxLength),
       ]);
@@ -597,6 +598,7 @@ export class ArticleComponent implements OnInit {
       tiendaNubeId: [this.article.tiendaNubeId, []],
       updateVariants: [this.article.updateVariants, []],
       variants: this._fb.array([]),
+      salePriceTN: [this.article.salePriceTN, []],
     });
 
     this.articleForm.valueChanges.subscribe((data) =>
@@ -733,8 +735,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.creationUser === 'string'
                 ? this.article.creationUser
                 : typeof this.article.creationUser !== 'undefined'
-                  ? this.article.creationUser._id
-                  : '')
+                ? this.article.creationUser._id
+                : '')
           );
           this.updateUser = this.users.find(
             (user: User) =>
@@ -742,8 +744,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.updateUser === 'string'
                 ? this.article.updateUser
                 : typeof this.article.updateUser !== 'undefined'
-                  ? this.article.updateUser._id
-                  : '')
+                ? this.article.updateUser._id
+                : '')
           );
           if (this.article.variants.length > 0) {
             const types = this.article.variants.map((item) => item.type);
@@ -915,14 +917,14 @@ export class ArticleComponent implements OnInit {
       // Verificar si el nuevo ID ya está en el array
       if (uniqueIds.includes(this.variant.type._id)) {
         this.typeSelect.push(this.variant.type._id);
-      } else if (uniqueIds.length < 3) {
+      } else if (uniqueIds.length < 1) {
         this.typeSelect.push(this.variant.type._id);
       } else {
         return this._toastService.showToast(
           null,
           'info',
           undefined,
-          'No puedes agregar más de tres tipos de variantes diferentes.'
+          'No puedes agregar más de un tipo de variante diferente.'
         );
       }
       //Comprobamos que la variante no existe
@@ -1602,6 +1604,9 @@ export class ArticleComponent implements OnInit {
     this.articleForm.value.salePrice = this.roundNumber.transform(
       this.articleForm.value.salePrice
     );
+    this.articleForm.value.salePriceTN = this.roundNumber.transform(
+      this.articleForm.value.salePriceTN
+    );
     this.article = Object.assign(this.article, this.articleForm.value);
     this.setValuesForm();
   }
@@ -1694,6 +1699,7 @@ export class ArticleComponent implements OnInit {
       showMenu: this.article.showMenu ?? '',
       updateVariants: this.article.updateVariants ?? false,
       tiendaNubeId: this.article.tiendaNubeId ?? null,
+      salePriceTN: this.roundNumber.transform(this.article.salePriceTN ?? 0.0),
     };
 
     this.articleForm.patchValue(values);

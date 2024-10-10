@@ -1,19 +1,17 @@
+import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { CreateTiendaNubeDto } from '../dto/create-tienda-nube.dto';
-import { UpdateTiendaNubeDto } from '../dto/update-tienda-nube.dto';
-import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, map } from 'rxjs';
-import { CreateCategoryTiendaNubeDto } from '../dto/create-category-tienda-nube.dto';
-import { CreateProductTiendaNubeDTO } from '../dto/create-product-tienda-nube.dto';
-import { UpdateVariantTiendaNubeDto } from '../dto/update-variant-tienda-nube.dto';
-import { UpdateProductTiendaNubeDto } from '../dto/update-product-tienda-nube.dto';
 import { CancelOrderDto } from 'src/modules/orders/dtos/cancel-order.dto';
 import { FulFillOrderDto } from 'src/modules/orders/dtos/fulfill-order.dto';
+import { CreateCategoryTiendaNubeDto } from '../dto/create-category-tienda-nube.dto';
+import { CreateProductTiendaNubeDTO } from '../dto/create-product-tienda-nube.dto';
 import { UpdateCategoryTiendaNubeDto } from '../dto/update-category-tienda-nube.dto';
+import { UpdateProductTiendaNubeDto } from '../dto/update-product-tienda-nube.dto';
+import { UpdateVariantTiendaNubeDto } from '../dto/update-variant-tienda-nube.dto';
 
 @Injectable()
 export class TiendaNubeService {
@@ -63,14 +61,14 @@ export class TiendaNubeService {
         ),
       );
       return data;
-    } catch (err) { }
+    } catch (err) {}
   }
 
   async updateCategory(
     updateTiendaNubeDto: UpdateCategoryTiendaNubeDto,
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
-    categoryId: string
+    categoryId: string,
   ) {
     try {
       const data = await firstValueFrom(
@@ -86,7 +84,7 @@ export class TiendaNubeService {
           )
           .pipe(map((resp) => resp.data)),
       ).catch((er) => {
-      throw new Error('Error al crear categoria en tiendaNube');
+        throw new Error('Error al crear categoria en tiendaNube');
       });
       return data;
     } catch (err) {
@@ -136,15 +134,14 @@ export class TiendaNubeService {
               },
             },
           )
-          .pipe(map((resp) => resp.data))
-
+          .pipe(map((resp) => resp.data)),
       ).catch((err) => {
         throw err;
       });
 
       return data;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -213,7 +210,7 @@ export class TiendaNubeService {
             `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}/images`,
             {
               src: urlImage,
-            //  src:"https://oscloud.s3.sa-east-1.amazonaws.com/arterama/articles/1713850050045/1713850050045-descdfgdfgdfgarga1232134.png"
+              //  src:"https://oscloud.s3.sa-east-1.amazonaws.com/arterama/articles/1713850050045/1713850050045-descdfgdfgdfgarga1232134.png"
             },
             {
               headers: {
@@ -222,7 +219,7 @@ export class TiendaNubeService {
             },
           )
           .pipe(map((resp) => resp.data)),
-      ).catch(err=>console.log(err));
+      ).catch((err) => console.log(err));
       return data;
     } catch (err) {
       return null;
@@ -560,19 +557,18 @@ export class TiendaNubeService {
               },
             },
           )
-          .pipe(map((resp) => resp.data))
-
+          .pipe(map((resp) => resp.data)),
       ).catch((err) => {
         throw err;
       });
 
       return data;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-  async createVariant( 
+  async createVariant(
     tiendaNubeAccesstoken: string,
     tiendaNubeUserId: string,
     productId: string,
@@ -599,7 +595,7 @@ export class TiendaNubeService {
     tiendaNubeUserId: string,
     productId: string,
     variantId: string,
-  ){
+  ) {
     try {
       const data = await firstValueFrom(
         this.httpService
@@ -611,15 +607,14 @@ export class TiendaNubeService {
               },
             },
           )
-          .pipe(map((resp) => resp.data))
-
+          .pipe(map((resp) => resp.data)),
       ).catch((err) => {
         throw err;
       });
 
       return data;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 }

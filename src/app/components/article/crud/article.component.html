@@ -1,536 +1,1044 @@
 <section class="container-fluid">
-    <div class="card">
-        <div class="card-header">
-            <span style="color: #607D8B" *ngIf="operation==='add' || operation==='copy'">{{'add-product' | translate | capitalize}}</span>
-            <span style="color: #607D8B" *ngIf="operation==='update'">{{'edit' | translate | capitalize}} {{ articleType
-                }} {{article.code}} -
-                {{article.description}}</span>
-            <span style="color: #607D8B" *ngIf="operation==='view' || operation==='delete'">{{ articleType }}
-                {{article.code}} -
-                {{article.description}}</span>
-            <div class="pull-right">
-                <button type="button" class="btn" (click)="returnTo()"><i class="fa fa-arrow-left"></i><span>{{'return' | translate | capitalize}}</span></button>
-                <button type="button" class="btn" [disabled]="loading"
-                    *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addArticle()">
-                    <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-                    <span *ngIf="!loading"> {{'save' | translate | capitalize}}</span>
-                    <span *ngIf="loading"> {{'loading' | translate | capitalize}}</span>
-                </button>
-                <button type="button" class="btnStyle" *ngIf="operation === 'delete'" [disabled]="loading"
-                    (click)="deleteArticle()">
-                    <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
-                    <span *ngIf="!loading">{{'delete' | translate | capitalize}}</span>
-                    <span *ngIf="loading">{{'loading' | translate | capitalize}}</span>
-                </button>
-            </div>
+  <div class="card">
+    <div class="card-header">
+      <span
+        style="color: #607d8b"
+        *ngIf="operation === 'add' || operation === 'copy'"
+        >{{ 'add-product' | translate | capitalize }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ articleType }}
+        {{ article.code }} - {{ article.description }}</span
+      >
+      <span
+        style="color: #607d8b"
+        *ngIf="operation === 'view' || operation === 'delete'"
+        >{{ articleType }} {{ article.code }} - {{ article.description }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i
+          ><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="addArticle()"
+        >
+          <i
+            class="fa"
+            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
+          ></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btnStyle"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="deleteArticle()"
+        >
+          <i
+            class="fa"
+            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
+          ></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form
+        [formGroup]="articleForm"
+        autocomplete="off"
+        (keydown.enter)="onEnter()"
+      >
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
         </div>
-        <app-progressbar [loading]="loading"></app-progressbar>
-        <div class="card-body scroll">
-            <form [formGroup]="articleForm" autocomplete="off" (keydown.enter)="onEnter()">
-                <div class="row">
-                    <label class="form-group col-md-12">
-                        <b>{{'mainData' | translate | capitalize}}</b>
-                    </label>
+        <div class="row">
+          <div class="form-group col-md-8">
+            <div class="row">
+              <div class="form-group col-md-2">
+                <label type="button" for="order" class="control-label"
+                  >{{ 'order' | translate | capitalize }}:</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="order"
+                  name="order"
+                  id="order"
+                  [readonly]="readonly"
+                />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="code" class="control-label"
+                  >{{ 'article.code' | translate | capitalize }}:</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="code"
+                  name="code"
+                  id="code"
+                  [focus]="focusEvent"
+                  [ngClass]="{
+                    'is-invalid':
+                      !articleForm.get('code')?.valid && formErrors.code
+                  }"
+                  [readonly]="readonly"
+                />
+                <div
+                  class="invalid-feedback"
+                  [style.display]="formErrors.code ? 'block' : 'none'"
+                >
+                  {{ formErrors.code }}
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-8">
-                        <div class="row">
-                            <div class="form-group col-md-2">
-                                <label type="button" for="order" class="control-label">{{'order' | translate | capitalize}}:</label>
-                                <input type="number" class="form-control" formControlName="order" name="order"
-                                    id="order" [readonly]="readonly" />
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="code" class="control-label">{{'article.code' | translate | capitalize}}:</label>
-                                <input type="text" class="form-control" formControlName="code" name="code" id="code"
-                                    [focus]="focusEvent"
-                                    [ngClass]="{'is-invalid':!articleForm.get('code')?.valid && formErrors.code}"
-                                    [readonly]="readonly" />
-                                <div class="invalid-feedback" [style.display]="(formErrors.code)? 'block': 'none'">
-                                    {{ formErrors.code }}</div>
-                            </div>
-                            <div class="form-group col-md-5">
-                                <label for="barcode" class="control-label">{{'article.barcode' | translate |
-                                    capitalize}}:</label>
-                                <input type="text" class="form-control" formControlName="barcode" name="barcode"
-                                    id="barcode" [readonly]="operation==='view'" />
-                                <div *ngIf="formErrors.barcode" class="alert alert-danger">{{ formErrors.barcode }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-5">
-                                <ng-template #rtMakes let-r="result" let-t="term">
-                                    <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
-                                </ng-template>
-                                <label for="make">{{'article.make.description' | translate | capitalize}}:</label>
-                                <input id="make" type="text" class="form-control" formControlName="make" name="make"
-                                    [ngbTypeahead]="searchMakes" [resultTemplate]="rtMakes"
-                                    [inputFormatter]="formatterMakes" [readonly]="readonly" />
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="category">{{'category' | translate | capitalize}}:</label>
-                                <input id="category" type="text" class="form-control" formControlName="category"
-                                    name="category" [ngbTypeahead]="searchCategories"
-                                    [resultFormatter]="formatterCategories" [inputFormatter]="inputCategories"
-                                    (blur)="onValueChanged($event.target.id)"
-                                    [ngClass]="{'is-invalid':!articleForm.get('category')?.valid && formErrors.category}"
-                                    [readonly]="readonly" />
-                                <div class="invalid-feedback" [style.display]="(formErrors.category)? 'block': 'none'">
-                                    {{ formErrors.category }}</div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="description" class="control-label">{{'article.description' | translate | capitalize}}:</label>
-                                <input type="text" class="form-control" formControlName="description" name="description"
-                                    id="description" (blur)="loadPosDescription(); onValueChanged($event.target.id)"
-                                    [ngClass]="{'is-invalid':!articleForm.get('description')?.valid && formErrors.description}"
-                                    [readonly]="readonly" />
-                                <div class="invalid-feedback"
-                                    [style.display]="(formErrors.description)? 'block': 'none'">{{
-                                    formErrors.description }}</div>
-                            </div>
-                            <div class="form-group col-md-5">
-                                <label for="posDescription" class="control-label">{{'article.posDescription' | translate  | capitalize}}:</label>
-                                <input type="text" class="form-control" formControlName="posDescription"
-                                    name="posDescription" id="posDescription"
-                                    (blur)="loadPosDescription(); onValueChanged($event.target.id)"
-                                    [ngClass]="{'is-invalid':!articleForm.get('posDescription')?.valid && formErrors.posDescription}"
-                                    [readonly]="readonly" />
-                                <div class="invalid-feedback"
-                                    [style.display]="(formErrors.posDescription)? 'block': 'none'">{{
-                                    formErrors.posDescription }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-4 text-center">
-                        <div class="custom-file mt-4">
-                            <label *ngIf="operation !=='view'" class="custom-file-label btn btn-action"
-                                for="customFileLang">{{'article.picture' | translate | capitalize}}</label>
-                            <input *ngIf="operation !=='view'" type="file" class="custom-file-input" lang="es"
-                                placeholder="Buscar Imagen" accept="image/*" id="customFileLang"
-                                (change)="fileChangeEvent($event,false)" />
-                            <div class="mt-2">
-                                <img class="img-article" [src]="imageURL"
-                                    style="height: 150px; width: 150px; display: block; margin: auto;" />
-                            </div>
-                            <button class="btn btn-sm btn-danger mt-2" (click)="deletePicture(null, article.picture)"
-                                *ngIf="this.imageURL != './../../../assets/img/default.jpg' && operation != 'view'">
-                                <i class="fa fa-trash-o"></i> Eliminar
-                            </button>
-                        </div>
-                    </div>
+              </div>
+              <div class="form-group col-md-5">
+                <label for="barcode" class="control-label"
+                  >{{ 'article.barcode' | translate | capitalize }}:</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="barcode"
+                  name="barcode"
+                  id="barcode"
+                  [readonly]="operation === 'view'"
+                />
+                <div *ngIf="formErrors.barcode" class="alert alert-danger">
+                  {{ formErrors.barcode }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-5">
+                <ng-template #rtMakes let-r="result" let-t="term">
+                  <ngb-highlight
+                    [result]="r.description"
+                    [term]="t"
+                  ></ngb-highlight>
+                </ng-template>
+                <label for="make"
+                  >{{
+                    'article.make.description' | translate | capitalize
+                  }}:</label
+                >
+                <input
+                  id="make"
+                  type="text"
+                  class="form-control"
+                  formControlName="make"
+                  name="make"
+                  [ngbTypeahead]="searchMakes"
+                  [resultTemplate]="rtMakes"
+                  [inputFormatter]="formatterMakes"
+                  [readonly]="readonly"
+                />
+              </div>
+              <div class="form-group col-md-6">
+                <label for="category"
+                  >{{ 'category' | translate | capitalize }}:</label
+                >
+                <input
+                  id="category"
+                  type="text"
+                  class="form-control"
+                  formControlName="category"
+                  name="category"
+                  [ngbTypeahead]="searchCategories"
+                  [resultFormatter]="formatterCategories"
+                  [inputFormatter]="inputCategories"
+                  (blur)="onValueChanged($event.target.id)"
+                  [ngClass]="{
+                    'is-invalid':
+                      !articleForm.get('category')?.valid && formErrors.category
+                  }"
+                  [readonly]="readonly"
+                />
+                <div
+                  class="invalid-feedback"
+                  [style.display]="formErrors.category ? 'block' : 'none'"
+                >
+                  {{ formErrors.category }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="description" class="control-label"
+                  >{{ 'article.description' | translate | capitalize }}:</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="description"
+                  name="description"
+                  id="description"
+                  (blur)="
+                    loadPosDescription(); onValueChanged($event.target.id)
+                  "
+                  [ngClass]="{
+                    'is-invalid':
+                      !articleForm.get('description')?.valid &&
+                      formErrors.description
+                  }"
+                  [readonly]="readonly"
+                />
+                <div
+                  class="invalid-feedback"
+                  [style.display]="formErrors.description ? 'block' : 'none'"
+                >
+                  {{ formErrors.description }}
+                </div>
+              </div>
+              <div class="form-group col-md-5">
+                <label for="posDescription" class="control-label"
+                  >{{
+                    'article.posDescription' | translate | capitalize
+                  }}:</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="posDescription"
+                  name="posDescription"
+                  id="posDescription"
+                  (blur)="
+                    loadPosDescription(); onValueChanged($event.target.id)
+                  "
+                  [ngClass]="{
+                    'is-invalid':
+                      !articleForm.get('posDescription')?.valid &&
+                      formErrors.posDescription
+                  }"
+                  [readonly]="readonly"
+                />
+                <div
+                  class="invalid-feedback"
+                  [style.display]="formErrors.posDescription ? 'block' : 'none'"
+                >
+                  {{ formErrors.posDescription }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-4 text-center">
+            <div class="custom-file mt-4">
+              <label
+                *ngIf="operation !== 'view'"
+                class="custom-file-label btn btn-action"
+                for="customFileLang"
+                >{{ 'article.picture' | translate | capitalize }}</label
+              >
+              <input
+                *ngIf="operation !== 'view'"
+                type="file"
+                class="custom-file-input"
+                lang="es"
+                placeholder="Buscar Imagen"
+                accept="image/*"
+                id="customFileLang"
+                (change)="fileChangeEvent($event, false)"
+              />
+              <div class="mt-2">
+                <img
+                  class="img-article"
+                  [src]="imageURL"
+                  style="
+                    height: 150px;
+                    width: 150px;
+                    display: block;
+                    margin: auto;
+                  "
+                />
+              </div>
+              <button
+                class="btn btn-sm btn-danger mt-2"
+                (click)="deletePicture(null, article.picture)"
+                *ngIf="
+                  this.imageURL != './../../../assets/img/default.jpg' &&
+                  operation != 'view'
+                "
+              >
+                <i class="fa fa-trash-o"></i> Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <ng-template #result let-r="result" let-t="term">
+              <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+            </ng-template>
+            <label for="unitOfMeasurement"
+              >{{ 'unitOfMeasurement' | translate | capitalize }}:</label
+            >
+            <input
+              id="unitOfMeasurement"
+              type="text"
+              class="form-control"
+              formControlName="unitOfMeasurement"
+              name="unitOfMeasurement"
+              [ngbTypeahead]="searchUnitsOfMeasurement"
+              [resultTemplate]="result"
+              [inputFormatter]="formatterUnitsOfMeasurement"
+              [readonly]="readonly"
+            />
+            <div
+              class="invalid-feedback"
+              [style.display]="
+                formErrors['unitOfMeasurement'] ? 'block' : 'none'
+              "
+            >
+              {{ formErrors['unitOfMeasurement'] }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="printIn" class="control-label"
+              >{{ 'printIn' | translate | capitalize }}:</label
+            >
+            <select class="form-control" formControlName="printIn">
+              <option
+                *ngFor="let printIn of printIns"
+                [ngValue]="printIn"
+                [disabled]="
+                  readonly ||
+                  (article &&
+                    article.type &&
+                    article.type.toString() === 'Variante')
+                "
+              >
+                {{ printIn }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="favourite" class="control-label"
+              >{{ 'favourite' | translate | capitalize }}:</label
+            >
+            <select class="form-control" formControlName="favourite">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="observation" class="control-label">{{
+                  'observation' | translate | capitalize
+                }}</label>
+                <tinymce
+                  formControlName="observation"
+                  [config]="tinyMCEConfigBody"
+                ></tinymce>
+              </div>
+              <div class="form-group col-md-5">
+                <label for="note" class="control-label"
+                  >{{ 'notes' | translate | capitalize }}:</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  name="note"
+                  id="note"
+                  (keydown.enter)="addNote($event.target.value)"
+                  placeholder="Ingresar la nota y luego presionar enter por cada nota."
+                  [focus]="focusNoteEvent"
+                  [readonly]="readonly"
+                />
+                <div *ngIf="formErrorsNote" class="alert alert-danger">
+                  {{ formErrorsNote }}
+                </div>
+                <div class="row" style="margin-top: 10px">
+                  <div class="col-md-12">
+                    <span class="badge badge-light" *ngFor="let n of notes"
+                      >{{ n }}
+                      <span
+                        class="badge badge-danger pointer"
+                        (click)="deleteNote(n)"
+                        >X</span
+                      >
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="config['country'] === 'MX'" class="row">
+          <div class="form-group col-md-12">
+            <label for="codeSAT" class="control-label"
+              >{{ 'codeSAT' | translate | capitalize }}:</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="codeSAT"
+              name="codeSAT"
+              id="codeSAT"
+              [readonly]="readonly"
+            />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'prices' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-8">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="basePrice" class="control-label"
+                  >{{ 'article.basePrice' | translate | capitalize }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="basePrice"
+                    [readonly]="operation === 'view'"
+                    name="basePrice"
+                    id="basePrice"
+                    step="1"
+                    (blur)="
+                      updatePrices('basePrice');
+                      onValueChanged($event.target.id)
+                    "
+                    [ngClass]="{
+                      'is-invalid':
+                        !articleForm.get('basePrice')?.valid &&
+                        formErrors.basePrice
+                    }"
+                  />
+                </div>
+                <div
+                  class="invalid-feedback"
+                  [style.display]="formErrors.basePrice ? 'block' : 'none'"
+                >
+                  {{ formErrors.basePrice }}
+                </div>
+              </div>
+              <div *ngIf="!article.containsVariants" class="col-md-3">
+                <label class="control-label"
+                  >{{ 'lastPurchasePrice' | translate | capitalize }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="purchasePrice"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div *ngIf="!article.containsVariants" class="col-md-3">
+                <label class="control-label"
+                  >{{ 'priceCostStructure' | translate | capitalize }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="costPrice2"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <br />
+            <app-add-article-tax
+              (eventAddArticleTax)="addArticleTaxes($event)"
+              [article]="article"
+              [articleTaxes]="taxes"
+              [filtersTaxClassification]="filtersTaxClassification"
+              [readonly]="operation === 'view'"
+            >
+            </app-add-article-tax>
+            <br />
+            <div class="row">
+              <div class="form-group col-md-5">
+                <label for="costPrice" class="control-label"
+                  >{{ 'article.costPrice' | translate | capitalize }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="costPrice"
+                    name="costPrice"
+                    id="costPrice"
+                    step="1"
+                    (blur)="
+                      updatePrices('costPrice');
+                      onValueChanged($event.target.id)
+                    "
+                    readonly
+                  />
+                </div>
+                <div *ngIf="formErrors.costPrice" class="alert alert-danger">
+                  {{ formErrors.costPrice }}
+                </div>
+              </div>
+            </div>
 
+            <div class="row">
+              <div class="form-group col-md-4">
+                <label for="markupPercentage" class="control-label"
+                  >{{
+                    'article.markupPercentage' | translate | capitalize
+                  }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">%</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="markupPercentage"
+                    name="markupPercentage"
+                    id="markupPercentage"
+                    step="1"
+                    (blur)="
+                      updatePrices('markupPercentage');
+                      onValueChanged($event.target.id)
+                    "
+                    [readonly]="operation === 'view'"
+                    [ngClass]="{
+                      'is-invalid':
+                        !articleForm.get('markupPercentage')?.valid &&
+                        formErrors.markupPercentage
+                    }"
+                  />
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-4">
-                        <ng-template #result let-r="result" let-t="term">
-                            <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
-                        </ng-template>
-                        <label for="unitOfMeasurement">{{'unitOfMeasurement'| translate | capitalize}}:</label>
-                        <input id="unitOfMeasurement" type="text" class="form-control"
-                            formControlName="unitOfMeasurement" name="unitOfMeasurement"
-                            [ngbTypeahead]="searchUnitsOfMeasurement" [resultTemplate]="result"
-                            [inputFormatter]="formatterUnitsOfMeasurement" [readonly]="readonly" />
-                        <div class="invalid-feedback"
-                            [style.display]="(formErrors['unitOfMeasurement'])? 'block': 'none'">
-                            {{ formErrors['unitOfMeasurement'] }}
-                        </div>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="printIn" class="control-label">{{'printIn' | translate | capitalize}}:</label>
-                        <select class="form-control" formControlName="printIn">
-                            <option *ngFor="let printIn of printIns" [ngValue]="printIn"
-                                [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
-                                {{printIn}}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="favourite" class="control-label">{{'favourite' | translate | capitalize}}:</label>
-                        <select class="form-control" formControlName="favourite">
-                            <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                            <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                        </select>
-                    </div>
+                <div
+                  class="invalid-feedback"
+                  [style.display]="
+                    formErrors.markupPercentage ? 'block' : 'none'
+                  "
+                >
+                  {{ formErrors.markupPercentage }}
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="observation" class="control-label">{{'observation' | translate | capitalize}}</label>
-                                <tinymce formControlName="observation" [config]="tinyMCEConfigBody"></tinymce>
-                            </div>
-                            <div class="form-group col-md-5">
-                                <label for="note" class="control-label">{{'notes' | translate | capitalize}}:</label>
-                                <input type="text" class="form-control" name="note" id="note"
-                                    (keydown.enter)="addNote($event.target.value)"
-                                    placeholder="Ingresar la nota y luego presionar enter por cada nota."
-                                    [focus]="focusNoteEvent" [readonly]="readonly" />
-                                <div *ngIf="formErrorsNote" class="alert alert-danger">
-                                    {{ formErrorsNote }}
-                                </div>
-                                <div class="row" style="margin-top: 10px;">
-                                    <div class="col-md-12">
-                                        <span class="badge badge-light" *ngFor="let n of notes">{{n}}
-                                            <span class="badge badge-danger pointer" (click)="deleteNote(n)">X</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="markupPriceWithoutVAT" class="control-label"
+                  >{{
+                    'markupPriceWithoutVAT' | translate | capitalize
+                  }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="markupPriceWithoutVAT"
+                    name="markupPriceWithoutVAT"
+                    id="markupPriceWithoutVAT"
+                    step="1"
+                    [readonly]="true"
+                  />
                 </div>
-                <div *ngIf="config['country'] === 'MX'" class="row">
-                    <div class="form-group col-md-12">
-                        <label for="codeSAT" class="control-label">{{'codeSAT' | translate | capitalize}}:</label>
-                        <input type="text" class="form-control" formControlName="codeSAT" name="codeSAT" id="codeSAT"
-                            [readonly]="readonly" />
-                    </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="markupPrice" class="control-label"
+                  >{{ 'article.markupPrice' | translate | capitalize }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="markupPrice"
+                    name="markupPrice"
+                    id="markupPrice"
+                    step="1"
+                    [readonly]="operation === 'view'"
+                    (blur)="
+                      updatePrices('markupPrice');
+                      onValueChanged($event.target.id)
+                    "
+                    [ngClass]="{
+                      'is-invalid':
+                        !articleForm.get('markupPrice')?.valid &&
+                        formErrors.markupPrice
+                    }"
+                  />
                 </div>
-                <hr>
-                <div class="row">
-                    <label class="form-group col-md-12">
-                        <b>{{'prices' | translate | capitalize}}</b>
-                    </label>
+                <div
+                  class="invalid-feedback"
+                  [style.display]="formErrors.markupPrice ? 'block' : 'none'"
+                >
+                  {{ formErrors.markupPrice }}
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-8">
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="basePrice" class="control-label">{{'article.basePrice' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">$</span></div>
-                                    <input type="number" class="form-control" formControlName="basePrice"
-                                        [readonly]="operation==='view'" name="basePrice" id="basePrice" step="1"
-                                        (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
-                                        [ngClass]="{'is-invalid':!articleForm.get('basePrice')?.valid && formErrors.basePrice}" />
-                                </div>
-                                <div class="invalid-feedback" [style.display]="(formErrors.basePrice)? 'block': 'none'">
-                                    {{ formErrors.basePrice }}
-                                </div>
-                            </div>
-                            <div *ngIf="!article.containsVariants" class="col-md-3">
-                                <label class="control-label">{{'lastPurchasePrice' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">$</span></div>
-                                    <input type="number" class="form-control" formControlName="purchasePrice"
-                                        readonly />
-                                </div>
-                            </div>
-                            <div *ngIf="!article.containsVariants" class="col-md-3">
-                                <label class="control-label">{{'priceCostStructure' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">$</span></div>
-                                    <input type="number" class="form-control" formControlName="costPrice2" readonly />
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article"
-                            [articleTaxes]="taxes" [filtersTaxClassification]="filtersTaxClassification"
-                            [readonly]="operation==='view'">
-                        </app-add-article-tax>
-                        <br>
-                        <div class="row">
-                            <div class="form-group col-md-5">
-                                <label for="costPrice" class="control-label">{{'article.costPrice' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">$</span></div>
-                                    <input type="number" class="form-control" formControlName="costPrice"
-                                        name="costPrice" id="costPrice" step="1"
-                                        (blur)="updatePrices('costPrice'); onValueChanged($event.target.id)" readonly />
-                                </div>
-                                <div *ngIf="formErrors.costPrice" class="alert alert-danger">
-                                    {{ formErrors.costPrice }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="markupPercentage" class="control-label">{{'article.markupPercentage' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">%</span></div>
-                                    <input type="number" class="form-control" formControlName="markupPercentage"
-                                        name="markupPercentage" id="markupPercentage" step="1"
-                                        (blur)="updatePrices('markupPercentage'); onValueChanged($event.target.id)"
-                                        [readonly]="operation==='view'"
-                                        [ngClass]="{'is-invalid':!articleForm.get('markupPercentage')?.valid && formErrors.markupPercentage}" />
-                                </div>
-                                <div class="invalid-feedback"
-                                    [style.display]="(formErrors.markupPercentage)? 'block': 'none'">
-                                    {{ formErrors.markupPercentage }}
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="markupPriceWithoutVAT" class="control-label">{{'markupPriceWithoutVAT' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">$</span></div>
-                                    <input type="number" class="form-control" formControlName="markupPriceWithoutVAT"
-                                        name="markupPriceWithoutVAT" id="markupPriceWithoutVAT" step="1"
-                                        [readonly]="true" />
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="markupPrice" class="control-label">{{'article.markupPrice' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">$</span></div>
-                                    <input type="number" class="form-control" formControlName="markupPrice"
-                                        name="markupPrice" id="markupPrice" step="1" [readonly]="operation==='view'"
-                                        (blur)="updatePrices('markupPrice'); onValueChanged($event.target.id)"
-                                        [ngClass]="{'is-invalid':!articleForm.get('markupPrice')?.valid && formErrors.markupPrice}" />
-                                </div>
-                                <div class="invalid-feedback"
-                                    [style.display]="(formErrors.markupPrice)? 'block': 'none'">
-                                    {{ formErrors.markupPrice }}
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="salePriceWithoutVAT" class="control-label">{{'salePriceWithoutVAT' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">$</span></div>
-                                    <input type="number" class="form-control" formControlName="salePriceWithoutVAT"
-                                        name="salePriceWithoutVAT" id="salePriceWithoutVAT" step="1"
-                                        [readonly]="true" />
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="salePrice" class="control-label">{{'article.salePrice' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">$</span></div>
-                                    <input type="number" class="form-control" formControlName="salePrice"
-                                        name="salePrice" id="salePrice" step="1"
-                                        (blur)="updatePrices('salePrice'); onValueChanged($event.target.id)"
-                                        [readonly]="operation==='view'"
-                                        [ngClass]="{'is-invalid':!articleForm.get('salePrice')?.valid && formErrors.salePrice}" />
-                                </div>
-                                <div class="invalid-feedback" [style.display]="(formErrors.salePrice)? 'block': 'none'">
-                                    {{ formErrors.salePrice }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row" *ngIf="currencies && currencies.length > 0">
-                            <div class="form-group col-md-12">
-                                <label for="currency" class="control-label">{{'article.currency.name' | translate | capitalize}}:</label>
-                                <select class="form-control" formControlName="currency">
-                                    <option *ngFor="let currency of currencies" [selected]="(article.currency && article.currency._id && currency._id===article.currency._id) ||
-                                              (article.currency && currency._id===article.currency)"
-                                        [ngValue]="currency._id"
-                                        [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
-                                        {{currency.name}}</option>
-                                </select>
-                                <div *ngIf="formErrors.currency" class="alert alert-danger">
-                                    {{ formErrors.currency }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="salePriceWithoutVAT" class="control-label"
+                  >{{ 'salePriceWithoutVAT' | translate | capitalize }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="salePriceWithoutVAT"
+                    name="salePriceWithoutVAT"
+                    id="salePriceWithoutVAT"
+                    step="1"
+                    [readonly]="true"
+                  />
                 </div>
-                <hr>
-                <div class="row" *ngIf="articleType === 'Producto'">
-                    <label class='form-group col-md-5'>
-                        <b>{{'variant' | translate | capitalize}}</b>
-                    </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="salePrice" class="control-label"
+                  >{{ 'article.salePrice' | translate | capitalize }}:</label
+                >
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="salePrice"
+                    name="salePrice"
+                    id="salePrice"
+                    step="1"
+                    (blur)="
+                      updatePrices('salePrice');
+                      onValueChanged($event.target.id)
+                    "
+                    [readonly]="operation === 'view'"
+                    [ngClass]="{
+                      'is-invalid':
+                        !articleForm.get('salePrice')?.valid &&
+                        formErrors.salePrice
+                    }"
+                  />
                 </div>
-                <div class="row" *ngIf="articleType === 'Producto'">
-                    <div class="col-md-12">
-                        <form #variantsForm="ngForm" (ngSubmit)="addVariant(variantsForm)">
-                            <div class="row">
-                                <div class="form-group col-md-5">
-                                    <label for="type" class="control-label">{{'type.variants' | translate | capitalize}}:</label>
-                                    <select class="form-control" name="type" [(ngModel)]="variantTypeSelected"
-                                        (change)="refreshValues()">
-                                        <option value="null" [disabled]="readonly"></option>
-                                        <option *ngFor="let type of variantTypes" [disabled]="readonly"
-                                            [ngValue]="type">
-                                            {{ type.name }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-5">
-                                    <label for="value" class="control-label">{{'value' | translate | capitalize}}:</label>
-                                    <select class="form-control" name="value" [(ngModel)]="variantValueSelected"
-                                        id="value" [disabled]="!variantTypeSelected || variantTypeSelected === null">
-                                        <option value="null"></option>
-                                        <option *ngFor="let value of variantValues" [disabled]="readonly"
-                                            [ngValue]="value">
-                                            {{ value.description }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <div>{{'action' | translate | capitalize}}:</div>
-                                    <button type="submit" class="btn btn-success"
-                                        [disabled]="!variantsForm?.valid || loading || readonly">{{'add' | translate | capitalize}}</button>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="row table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>{{'resource.type' | translate | capitalize}}</th>
-                                        <th>{{'values' | translate | capitalize}}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let vt of variantsByTypes">
-                                        <td class="flat">{{vt.type.name}}</td>
-                                        <td class="flat">
-                                            <div class="btn-group" *ngFor="let v of vt.value">
-                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                    <label class="btn btn-sm">{{v.description}}</label>
-                                                    <label class="btn btn-sm btn-danger" (click)="deleteVariant(v)">
-                                                        <input type="radio" name="options" autocomplete="off">
-                                                        <i class="fa fa-trash-o"></i>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr align="center"
-                                        *ngIf="!variantsByTypes || variantsByTypes.length === 0 && !loading">
-                                        <td colspan="10">{{'variant-menssage' | translate | capitalize}}:</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div
+                  class="invalid-feedback"
+                  [style.display]="formErrors.salePrice ? 'block' : 'none'"
+                >
+                  {{ formErrors.salePrice }}
                 </div>
-                <hr>
-                <div class="row">
-                    <label class='form-group col-md-5'>
-                        <b>{{'applicationsName' | translate | capitalize}}</b>
-                    </label>
+              </div>
+            </div>
+            <div class="row" *ngIf="currencies && currencies.length > 0">
+              <div class="form-group col-md-12">
+                <label for="currency" class="control-label"
+                  >{{
+                    'article.currency.name' | translate | capitalize
+                  }}:</label
+                >
+                <select class="form-control" formControlName="currency">
+                  <option
+                    *ngFor="let currency of currencies"
+                    [selected]="
+                      (article.currency &&
+                        article.currency._id &&
+                        currency._id === article.currency._id) ||
+                      (article.currency && currency._id === article.currency)
+                    "
+                    [ngValue]="currency._id"
+                    [disabled]="
+                      readonly ||
+                      (article &&
+                        article.type &&
+                        article.type.toString() === 'Variante')
+                    "
+                  >
+                    {{ currency.name }}
+                  </option>
+                </select>
+                <div *ngIf="formErrors.currency" class="alert alert-danger">
+                  {{ formErrors.currency }}
                 </div>
-                <div class="row">
-                    <div formArrayName="applications"
-                        *ngFor="let appControl of articleForm.get('applications')['controls']; let i = index"
-                        class="col-md-3">
-                        <label>
-                            {{ applications[i].name }}
-                        </label>
-                        <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
-                            <option value="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                            <option value="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                        </select>
-                    </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row" *ngIf="articleType === 'Producto'">
+          <label class="form-group col-md-5">
+            <b>{{ 'variant' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row" *ngIf="articleType === 'Producto'">
+          <div class="col-md-12">
+            <form #variantsForm="ngForm" (ngSubmit)="addVariant(variantsForm)">
+              <div class="row">
+                <div class="form-group col-md-5">
+                  <label for="type" class="control-label"
+                    >{{ 'type.variants' | translate | capitalize }}:</label
+                  >
+                  <select
+                    class="form-control"
+                    name="type"
+                    [(ngModel)]="variantTypeSelected"
+                    (change)="refreshValues()"
+                  >
+                    <option value="null" [disabled]="readonly"></option>
+                    <option
+                      *ngFor="let type of variantTypes"
+                      [disabled]="readonly"
+                      [ngValue]="type"
+                    >
+                      {{ type.name }}
+                    </option>
+                  </select>
                 </div>
-                <br />
-                <div class='row'>
-                    <div class="form-group col-md-2">
-                        <label for="weight" class="control-label">{{'weight' | translate | capitalize}}:</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" formControlName="weight" name="weight" id="weight"
-                                aria-describedby="basic-addon1" [readonly]="operation==='view'" />
-                            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">Kg</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="width" class="control-label">{{'width' | translate | capitalize}}:</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" formControlName="width" name="width" id="width"
-                                aria-describedby="basic-addon1" [readonly]="operation==='view'" />
-                            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">cm</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="height" class="control-label">{{'height' | translate | capitalize}}:</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" formControlName="height" name="height" id="height"
-                                aria-describedby="basic-addon1" [readonly]="operation==='view'" />
-                            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">cm</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="depth" class="control-label">{{'depth' | translate | capitalize}}:</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" formControlName="depth" name="depth" id="depth"
-                                aria-describedby="basic-addon1" [readonly]="operation==='view'" />
-                            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">cm</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group col-md-5">
+                  <label for="value" class="control-label"
+                    >{{ 'value' | translate | capitalize }}:</label
+                  >
+                  <select
+                    class="form-control"
+                    name="value"
+                    [(ngModel)]="variantValueSelected"
+                    id="value"
+                    [disabled]="
+                      !variantTypeSelected || variantTypeSelected === null
+                    "
+                  >
+                    <option value="null"></option>
+                    <option
+                      *ngFor="let value of variantValues"
+                      [disabled]="readonly"
+                      [ngValue]="value"
+                    >
+                      {{ value.description }}
+                    </option>
+                  </select>
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-5">
-                        <label for="tag" class="control-label">{{'tags' | translate | capitalize}}:</label>
-                        <input type="text" class="form-control" name="tag" id="tag"
-                            (keydown.enter)="addTag($event.target.value)"
-                            placeholder="Ingresar el tag y luego presionar enter por cada tag." [focus]="focusTagEvent"
-                            [readonly]="readonly" />
-                        <div *ngIf="formErrorsTag" class="alert alert-danger">
-                            {{ formErrorsTag }}
-                        </div>
-                        <div class="row" style="margin-top: 10px;">
-                            <div class="col-md-12">
-                                <span class="badge badge-ligth" *ngFor="let n of tags">{{n}}
-                                    <span class="badge badge-danger pointer" (click)="deleteTag(n)">X</span></span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group col-md-2">
+                  <div>{{ 'action' | translate | capitalize }}:</div>
+                  <button
+                    type="submit"
+                    class="btn btn-success"
+                    [disabled]="!variantsForm?.valid || loading || readonly"
+                  >
+                    {{ 'add' | translate | capitalize }}
+                  </button>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <form (ngSubmit)="addPicture()">
-                            <div class="row">
-                                <div class="form-group col-md-10">
-                                    <label for="sel">{{'add-img' | translate | capitalize}}:</label>
-                                    <div class="custom-file">
-                                        <label class="custom-file-label btn btn-action"
-                                            for="customFileLang">{{fileNameArray?fileNameArray:'Buscar Imagen'}}</label>
-                                        <input type="file" class="custom-file-input" language="es" accept="image/*"
-                                            id="customFileLang" (change)="fileChangeEvent($event,true)" />
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <button type="summit" [disabled]="operation ==='view'"
-                                        class="btn btn-success btn-sm especial">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                        </form>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr class="separation">
-                                    <th>{{'uploaded Images' | translate | capitalize}}:</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="separation"
-                                    *ngFor="let picture of articleForm.get('pictures')['controls']; let i = index;">
-                                    <td>{{picture.value.picture.split('?')[0]}}</td>
-                                    <td align="right" width="10">
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                            (click)="deletePicture(i,picture.value.picture)">
-                                            <i class="fa fa-trash-o"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                            </tfoot>
-                        </table>
-                    </div>
+              </div>
+            </form>
+            <div class="row table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{{ 'resource.type' | translate | capitalize }}</th>
+                    <th>{{ 'values' | translate | capitalize }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let vt of variantsByTypes">
+                    <td class="flat">{{ vt.type.name }}</td>
+                    <td class="flat">
+                      <div class="btn-group" *ngFor="let v of vt.value">
+                        <div
+                          class="btn-group btn-group-toggle"
+                          data-toggle="buttons"
+                        >
+                          <label class="btn btn-sm">{{ v.description }}</label>
+                          <label
+                            class="btn btn-sm btn-danger"
+                            (click)="deleteVariant(v)"
+                          >
+                            <input
+                              type="radio"
+                              name="options"
+                              autocomplete="off"
+                            />
+                            <i class="fa fa-trash-o"></i>
+                          </label>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    align="center"
+                    *ngIf="
+                      !variantsByTypes ||
+                      (variantsByTypes.length === 0 && !loading)
+                    "
+                  >
+                    <td colspan="10">
+                      {{ 'variant-menssage' | translate | capitalize }}:
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-5">
+            <b>{{ 'applicationsName' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div
+            formArrayName="applications"
+            *ngFor="
+              let appControl of articleForm.get('applications')['controls'];
+              let i = index
+            "
+            class="col-md-3"
+          >
+            <label>
+              {{ applications[i].name }}
+            </label>
+            <select
+              class="form-control"
+              [formControl]="appControl"
+              (change)="onAppChange($event, i)"
+            >
+              <option value="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option value="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="salePriceTN" class="control-label"
+              >{{ 'salePriceTN' | translate | capitalize }}:</label
+            >
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="salePriceTN"
+                [readonly]="operation === 'view'"
+                name="salePriceTN"
+                id="salePriceTN"
+                (blur)="
+                  updatePrices('basePrice'); onValueChanged($event.target.id)
+                "
+              />
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="weight" class="control-label"
+              >{{ 'weight' | translate | capitalize }}:</label
+            >
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="weight"
+                name="weight"
+                id="weight"
+                aria-describedby="basic-addon1"
+                [readonly]="operation === 'view'"
+              />
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Kg</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="width" class="control-label"
+              >{{ 'width' | translate | capitalize }}:</label
+            >
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="width"
+                name="width"
+                id="width"
+                aria-describedby="basic-addon1"
+                [readonly]="operation === 'view'"
+              />
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">cm</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="height" class="control-label"
+              >{{ 'height' | translate | capitalize }}:</label
+            >
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="height"
+                name="height"
+                id="height"
+                aria-describedby="basic-addon1"
+                [readonly]="operation === 'view'"
+              />
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">cm</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="depth" class="control-label"
+              >{{ 'depth' | translate | capitalize }}:</label
+            >
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="depth"
+                name="depth"
+                id="depth"
+                aria-describedby="basic-addon1"
+                [readonly]="operation === 'view'"
+              />
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">cm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-5">
+            <label for="tag" class="control-label"
+              >{{ 'tags' | translate | capitalize }}:</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              name="tag"
+              id="tag"
+              (keydown.enter)="addTag($event.target.value)"
+              placeholder="Ingresar el tag y luego presionar enter por cada tag."
+              [focus]="focusTagEvent"
+              [readonly]="readonly"
+            />
+            <div *ngIf="formErrorsTag" class="alert alert-danger">
+              {{ formErrorsTag }}
+            </div>
+            <div class="row" style="margin-top: 10px">
+              <div class="col-md-12">
+                <span class="badge badge-ligth" *ngFor="let n of tags"
+                  >{{ n }}
+                  <span
+                    class="badge badge-danger pointer"
+                    (click)="deleteTag(n)"
+                    >X</span
+                  ></span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <form (ngSubmit)="addPicture()">
+              <div class="row">
+                <div class="form-group col-md-10">
+                  <label for="sel"
+                    >{{ 'add-img' | translate | capitalize }}:</label
+                  >
+                  <div class="custom-file">
+                    <label
+                      class="custom-file-label btn btn-action"
+                      for="customFileLang"
+                      >{{
+                        fileNameArray ? fileNameArray : 'Buscar Imagen'
+                      }}</label
+                    >
+                    <input
+                      type="file"
+                      class="custom-file-input"
+                      language="es"
+                      accept="image/*"
+                      id="customFileLang"
+                      (change)="fileChangeEvent($event, true)"
+                    />
+                  </div>
                 </div>
-                <hr>
-                <!-- <div class="row" *ngIf="articleForm?.value?.ecommerceEnabled">
+                <div class="form-group col-md-2">
+                  <button
+                    type="summit"
+                    [disabled]="operation === 'view'"
+                    class="btn btn-success btn-sm especial"
+                  >
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+            <table class="table table-striped">
+              <thead>
+                <tr class="separation">
+                  <th>{{ 'uploaded Images' | translate | capitalize }}:</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="separation"
+                  *ngFor="
+                    let picture of articleForm.get('pictures')['controls'];
+                    let i = index
+                  "
+                >
+                  <td>{{ picture.value.picture.split('?')[0] }}</td>
+                  <td align="right" width="10">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      (click)="deletePicture(i, picture.value.picture)"
+                    >
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot></tfoot>
+            </table>
+          </div>
+        </div>
+        <hr />
+        <!-- <div class="row" *ngIf="articleForm?.value?.ecommerceEnabled">
                     <div class="form-group col-md-12">
                         <h4>Integración con Woocommerce</h4>
                         <div class="row">
@@ -545,174 +1053,301 @@
                         </div>
                     </div>
                 </div> -->
-                <hr>
-                <div class="row">
-                    <label class='form-group col-md-5'>
-                        <b>{{'configs' | translate | capitalize}}</b>
-                    </label>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="allowPurchase" class="control-label">{{'allowPurchase' | translate | capitalize}}</label>
-                                <select class="form-control" formControlName="allowPurchase">
-                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="allowSale" class="control-label">{{'allowSale' | translate | capitalize}}</label>
-                                <select class="form-control" formControlName="allowSale">
-                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="allowStock" class="control-label">{{'allowStock' | translate | capitalize}}</label>
-                                <select class="form-control" formControlName="allowStock">
-                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="allowSaleWithoutStock" class="control-label">{{'allowSaleWithoutStock' | translate | capitalize}}</label>
-                                <select class="form-control" formControlName="allowSaleWithoutStock">
-                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="isWeigth" class="control-label">{{'isWeigth' | translate | capitalize}}</label>
-                                <select class="form-control" formControlName="isWeigth">
-                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="allowMeasure" class="control-label">{{'allowMeasure' | translate | capitalize}}</label>
-                                <select class="form-control" formControlName="allowMeasure">
-                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="posKitchen" class="control-label">{{'posKitchen' | translate | capitalize}}</label>
-                                <select class="form-control" formControlName="posKitchen">
-                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="classification" class="control-label">{{'classification' | translate | capitalize}}</label>
-                                <select class="form-control" formControlName="classification">
-                                    <option [ngValue]="null" [selected]="!article || !article.classification"
-                                        [disabled]="readonly"></option>
-                                    <option *ngFor="let classification of classifications"
-                                        [selected]="(article.classification && article.classification._id && classification._id===article.classification._id) ||
-                                                      (article.classification && classification._id===article.classification)" [ngValue]="classification._id"
-                                        [disabled]="readonly">
-                                        {{classification.name}}</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <ng-template #result let-r="result" let-t="term">
-                                    <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
-                                </ng-template>
-                                <label for="provider" class="control-label">{{'providersName' | translate | capitalize}}</label>
-                                <input id="provider" type="text" class="form-control" formControlName="provider"
-                                    name="provider" [ngbTypeahead]="searchProvider" [resultTemplate]="result"
-                                    [inputFormatter]="formatterProvider" [readonly]="readonly" />
-                            </div>
-                            <div class="invalid-feedback" [style.display]="(formErrors['provider'])? 'block': 'none'">
-                                {{ formErrors['provider'] }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="codeProvider" class="control-label">{{'article.codeProvider' | translate |
-                                    capitalize}}:</label>
-                                <input type="text" class="form-control" formControlName="codeProvider"
-                                    name="codeProvider" id="codeProvider" [readonly]="readonly" />
-                                <div *ngIf="formErrors.codeProvider" class="alert alert-danger">
-                                    {{ formErrors.codeProvider }}
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="m3" class="control-label">{{'m3' | translate | capitalize}}:</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" formControlName="m3" name="m3" id="m3"
-                                        aria-describedby="basic-addon1" [readonly]="readonly" />
-                                    <div class="input-group-prepend"><span class="input-group-text"
-                                            id="basic-addon1">m3</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="updateVariants" class="control-label">{{'updateVariants' | translate |
-                                    capitalize}}</label>
-                                <select class="form-control" formControlName="updateVariants">
-                                    <option [ngValue]="true" [disabled]="readonly">{{'true' | translate | capitalize}}</option>
-                                    <option [ngValue]="false" [disabled]="readonly">{{'false' | translate | capitalize}}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <label *ngIf="this.operation !== 'add'" class='form-group col-md-12'>
-                        <b>{{'audit' | translate | capitalize}}</b>
-                    </label>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label class="control-label">{{'creationUser.name' | translate | capitalize}}:</label>
-                                <label *ngIf="creationUser" class="control-label"><b>
-                                        {{creationUser.name}}</b></label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="control-label">{{'theDay' | translate | capitalize}}:</label>
-                                <label *ngIf="article.creationDate" class="control-label"><b>
-                                        {{article.creationDate | dateFormat:'DD/MM/YYYY
-                                        HH:mm:ss'}}</b></label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label class="control-label">{{'updateUser.name' | translate | capitalize}}:</label>
-                                <label *ngIf="updateUser" class="control-label"><b>{{updateUser.name}}</b></label>
-                                <label *ngIf="!article.updateUser" class="control-label"><b>-</b></label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="control-label">{{'theDay' | translate | capitalize}}:</label>
-                                <label *ngIf="article.updateDate" class="control-label"><b>{{article.updateDate
-                                        | dateFormat:'DD/MM/YYYY HH:mm:ss'}}</b></label>
-                                <label *ngIf="!article.updateDate" class="control-label"><b>-</b></label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label class="control-label">Id:</label>
-                                <label class="control-label"><b>{{article._id}}</b></label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-2">
-                                <label for="tiendaNubeId" class="control-label">{{'tiendaNubeId' | translate | capitalize}}: </label>
-                                <input type="number" class="form-control" formControlName="tiendaNubeId"
-                                    name="tiendaNubeId" id="tiendaNubeId" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-5">
+            <b>{{ 'configs' | translate | capitalize }}</b>
+          </label>
         </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-4">
+                <label for="allowPurchase" class="control-label">{{
+                  'allowPurchase' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="allowPurchase">
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="allowSale" class="control-label">{{
+                  'allowSale' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="allowSale">
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="allowStock" class="control-label">{{
+                  'allowStock' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="allowStock">
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4">
+                <label for="allowSaleWithoutStock" class="control-label">{{
+                  'allowSaleWithoutStock' | translate | capitalize
+                }}</label>
+                <select
+                  class="form-control"
+                  formControlName="allowSaleWithoutStock"
+                >
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="isWeigth" class="control-label">{{
+                  'isWeigth' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="isWeigth">
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="allowMeasure" class="control-label">{{
+                  'allowMeasure' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="allowMeasure">
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4">
+                <label for="posKitchen" class="control-label">{{
+                  'posKitchen' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="posKitchen">
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="classification" class="control-label">{{
+                  'classification' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="classification">
+                  <option
+                    [ngValue]="null"
+                    [selected]="!article || !article.classification"
+                    [disabled]="readonly"
+                  ></option>
+                  <option
+                    *ngFor="let classification of classifications"
+                    [selected]="
+                      (article.classification &&
+                        article.classification._id &&
+                        classification._id === article.classification._id) ||
+                      (article.classification &&
+                        classification._id === article.classification)
+                    "
+                    [ngValue]="classification._id"
+                    [disabled]="readonly"
+                  >
+                    {{ classification.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <ng-template #result let-r="result" let-t="term">
+                  <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                </ng-template>
+                <label for="provider" class="control-label">{{
+                  'providersName' | translate | capitalize
+                }}</label>
+                <input
+                  id="provider"
+                  type="text"
+                  class="form-control"
+                  formControlName="provider"
+                  name="provider"
+                  [ngbTypeahead]="searchProvider"
+                  [resultTemplate]="result"
+                  [inputFormatter]="formatterProvider"
+                  [readonly]="readonly"
+                />
+              </div>
+              <div
+                class="invalid-feedback"
+                [style.display]="formErrors['provider'] ? 'block' : 'none'"
+              >
+                {{ formErrors['provider'] }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4">
+                <label for="codeProvider" class="control-label"
+                  >{{ 'article.codeProvider' | translate | capitalize }}:</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="codeProvider"
+                  name="codeProvider"
+                  id="codeProvider"
+                  [readonly]="readonly"
+                />
+                <div *ngIf="formErrors.codeProvider" class="alert alert-danger">
+                  {{ formErrors.codeProvider }}
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="m3" class="control-label"
+                  >{{ 'm3' | translate | capitalize }}:</label
+                >
+                <div class="input-group">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="m3"
+                    name="m3"
+                    id="m3"
+                    aria-describedby="basic-addon1"
+                    [readonly]="readonly"
+                  />
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">m3</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="updateVariants" class="control-label">{{
+                  'updateVariants' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="updateVariants">
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label"
+                  >{{ 'creationUser.name' | translate | capitalize }}:</label
+                >
+                <label *ngIf="creationUser" class="control-label"
+                  ><b> {{ creationUser.name }}</b></label
+                >
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label"
+                  >{{ 'theDay' | translate | capitalize }}:</label
+                >
+                <label *ngIf="article.creationDate" class="control-label"
+                  ><b>
+                    {{
+                      article.creationDate
+                        | dateFormat
+                          : 'DD/MM/YYYY
+                                        HH:mm:ss'
+                    }}</b
+                  ></label
+                >
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label"
+                  >{{ 'updateUser.name' | translate | capitalize }}:</label
+                >
+                <label *ngIf="updateUser" class="control-label"
+                  ><b>{{ updateUser.name }}</b></label
+                >
+                <label *ngIf="!article.updateUser" class="control-label"
+                  ><b>-</b></label
+                >
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label"
+                  >{{ 'theDay' | translate | capitalize }}:</label
+                >
+                <label *ngIf="article.updateDate" class="control-label"
+                  ><b>{{
+                    article.updateDate | dateFormat : 'DD/MM/YYYY HH:mm:ss'
+                  }}</b></label
+                >
+                <label *ngIf="!article.updateDate" class="control-label"
+                  ><b>-</b></label
+                >
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">Id:</label>
+                <label class="control-label"
+                  ><b>{{ article._id }}</b></label
+                >
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-2">
+                <label for="tiendaNubeId" class="control-label"
+                  >{{ 'tiendaNubeId' | translate | capitalize }}:
+                </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="tiendaNubeId"
+                  name="tiendaNubeId"
+                  id="tiendaNubeId"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
+  </div>
 </section>

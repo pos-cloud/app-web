@@ -53,15 +53,16 @@ export interface ArticleChildInfo {
   salesAccount: null;
   purchaseAccount: null;
   meliId: null;
-  tiendaNubeId: any,
+  tiendaNubeId: any;
   creationUser: string;
   creationDate: Date | string;
   operationType: string;
   __v: number;
-  weight: string,
-  width: string,
-  height: string,
-  depth: string
+  weight: string;
+  width: string;
+  height: string;
+  depth: string;
+  salePriceTN: number;
 }
 
 export interface Variant {
