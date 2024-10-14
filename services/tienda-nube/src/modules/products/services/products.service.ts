@@ -118,7 +118,10 @@ export class ProductsService {
             : stockFound && stockFound.realStock > 0
               ? stockFound.realStock
               : 0,
-          price: 1,
+          price:
+            foundArticle.salePriceTN !== 0
+              ? foundArticle.salePriceTN
+              : foundArticle.salePrice,
           sku: foundArticle.barcode ?? null,
           weight: foundArticle.weight ?? null,
           width: foundArticle.width ?? null,
