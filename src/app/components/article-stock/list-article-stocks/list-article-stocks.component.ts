@@ -1,42 +1,38 @@
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {CurrencyPipe} from '@angular/common';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CurrencyPipe } from '@angular/common';
 import {
   Component,
+  EventEmitter,
   OnInit,
   Output,
-  EventEmitter,
-  ViewEncapsulation,
   ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
-import {Router} from '@angular/router';
-import {NgbModal, NgbAlertConfig} from '@ng-bootstrap/ng-bootstrap';
-import {Branch} from 'app/components/branch/branch';
-import {BranchService} from 'app/components/branch/branch.service';
-import {Deposit} from 'app/components/deposit/deposit';
-import {DepositService} from 'app/components/deposit/deposit.service';
-import {PriceList} from 'app/components/price-list/price-list';
-import {PriceListService} from 'app/components/price-list/price-list.service';
-import {User} from 'app/components/user/user';
-import {UserService} from 'app/components/user/user.service';
-import {RoundNumberPipe} from 'app/main/pipes/round-number.pipe';
+import { Router } from '@angular/router';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Branch } from 'app/components/branch/branch';
+import { BranchService } from 'app/components/branch/branch.service';
+import { Deposit } from 'app/components/deposit/deposit';
+import { DepositService } from 'app/components/deposit/deposit.service';
+import { PriceList } from 'app/components/price-list/price-list';
+import { PriceListService } from 'app/components/price-list/price-list.service';
+import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
 import Resulteable from 'app/util/Resulteable';
-import {ToastrService} from 'ngx-toastr';
-import {Subscription} from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 
-import {Config} from '../../../app.config';
-import {ExportExcelComponent} from '../../export/export-excel/export-excel.component';
-import {ListPriceListsComponent} from '../../price-list/list-price-lists/list-price-lists.component';
-import {PrintArticlesStockComponent} from '../../print/print-articles-stock/print-articles-stock.component';
-import {PrintTransactionTypeComponent} from '../../print/print-transaction-type/print-transaction-type.component';
-import {PrinterPrintIn, Printer} from '../../printer/printer';
-import {PrinterService} from '../../printer/printer.service';
-import {ArticleStock, attributes} from '../article-stock';
-import {ArticleStockService} from '../article-stock.service';
-import {UpdateArticleStockComponent} from '../update-article-stock/update-article-stock.component';
+import { Config } from '../../../app.config';
+import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
+import { PrintArticlesStockComponent } from '../../print/print-articles-stock/print-articles-stock.component';
+import { Printer } from '../../printer/printer';
+import { PrinterService } from '../../printer/printer.service';
+import { ArticleStock, attributes } from '../article-stock';
+import { ArticleStockService } from '../article-stock.service';
+import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 
-import {AddArticleStockComponent} from '../article-stock/add-article-stock.component';
-import { ImportComponent } from 'app/components/import/import.component';
 import { PrintLabelComponent } from 'app/components/article/actions/print-label/print-label.component';
+import { ImportComponent } from 'app/components/import/import.component';
+import { AddArticleStockComponent } from '../article-stock/add-article-stock.component';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -47,7 +43,8 @@ import { PrintLabelComponent } from 'app/components/article/actions/print-label/
 })
 export class ListArticleStocksComponent implements OnInit {
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
-  @Output() eventAddItem: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
+  @Output() eventAddItem: EventEmitter<ArticleStock> =
+    new EventEmitter<ArticleStock>();
 
   private subscription: Subscription = new Subscription();
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
@@ -59,7 +56,7 @@ export class ListArticleStocksComponent implements OnInit {
   items: any[] = new Array();
   itemsPerPage = 10;
   currentPage: number = 1;
-  sort = {realStock: -1};
+  sort = { realStock: -1 };
   columns = attributes;
   title = 'Inventario';
   articleStocks: ArticleStock[] = new Array();
@@ -106,7 +103,7 @@ export class ListArticleStocksComponent implements OnInit {
     private _branchService: BranchService,
     private _depositService: DepositService,
     private _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) {
     this.filters = new Array();
     for (let field of this.columns) {
@@ -189,18 +186,18 @@ export class ListArticleStocksComponent implements OnInit {
 
       if (this.branchesSelected && this.branchesSelected.length > 0) {
         this.branchesSelected.forEach((branch) => {
-          branchesAux.push({$oid: branch._id});
+          branchesAux.push({ $oid: branch._id });
         });
-        match['branch'] = {$in: branchesAux};
+        match['branch'] = { $in: branchesAux };
       }
 
       let depositsAux = [];
 
       if (this.depositsSelected && this.depositsSelected.length > 0) {
         this.depositsSelected.forEach((deposit) => {
-          depositsAux.push({$oid: deposit._id});
+          depositsAux.push({ $oid: deposit._id });
         });
-        match['deposit'] = {$in: depositsAux};
+        match['deposit'] = { $in: depositsAux };
       }
 
       // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -227,8 +224,8 @@ export class ListArticleStocksComponent implements OnInit {
       // AGRUPAMOS EL RESULTADO
       let group = {
         _id: null,
-        count: {$sum: 1},
-        items: {$push: '$$ROOT'},
+        count: { $sum: 1 },
+        items: { $push: '$$ROOT' },
       };
 
       let page = 0;
@@ -236,7 +233,9 @@ export class ListArticleStocksComponent implements OnInit {
       if (this.currentPage != 0) {
         page = this.currentPage - 1;
       }
-      let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
+      let skip = !isNaN(page * this.itemsPerPage)
+        ? page * this.itemsPerPage
+        : 0; // SKIP
       let limit = this.itemsPerPage;
 
       this.subscription.add(
@@ -247,7 +246,7 @@ export class ListArticleStocksComponent implements OnInit {
             this.sort, // SORT
             group, // GROUP
             limit, // LIMIT
-            skip, // SKIP
+            skip // SKIP
           )
           .subscribe(
             (result) => {
@@ -272,8 +271,8 @@ export class ListArticleStocksComponent implements OnInit {
               this.showMessage(error._body, 'danger', false);
               this.loading = false;
               this.totalItems = 0;
-            },
-          ),
+            }
+          )
       );
     } catch (error) {
       this.showToast(error, 'danger');
@@ -319,7 +318,7 @@ export class ListArticleStocksComponent implements OnInit {
             this.roundNumberPipe.transform(eval(val)),
             'USD',
             'symbol-narrow',
-            '1.2-2',
+            '1.2-2'
           );
           break;
         case 'percent':
@@ -353,19 +352,19 @@ export class ListArticleStocksComponent implements OnInit {
       case 'view':
         window.open(
           `/#/report/kardex-de-productos/?article=${articleStock.article._id}&branch=${articleStock.branch._id}&deposit=${articleStock.deposit._id}`,
-          '_blank',
+          '_blank'
         );
         break;
       case 'add':
         modalRef = this._modalService
-          .open(AddArticleStockComponent, {size: 'lg', backdrop: 'static'})
+          .open(AddArticleStockComponent, { size: 'lg', backdrop: 'static' })
           .result.then(
             (result) => {
               this.getItems();
             },
             (reason) => {
               this.getItems();
-            },
+            }
           );
         break;
       case 'update':
@@ -381,31 +380,39 @@ export class ListArticleStocksComponent implements OnInit {
               this.getItems();
             }
           },
-          (reason) => {},
+          (reason) => {}
         );
         break;
       case 'print-label':
-        const printLabelComponent = new PrintLabelComponent(this._printerService, this.alertConfig);
+        const printLabelComponent = new PrintLabelComponent(
+          this._printerService,
+          this.alertConfig
+        );
         printLabelComponent.articleId = articleStock.article._id;
         printLabelComponent.quantity = articleStock.realStock;
-        printLabelComponent.ngOnInit()
+        printLabelComponent.ngOnInit();
         break;
       case 'price-lists':
-        const printLabelComponent2 = new PrintLabelComponent(this._printerService, this.alertConfig);
+        const printLabelComponent2 = new PrintLabelComponent(
+          this._printerService,
+          this.alertConfig
+        );
         printLabelComponent2.articleId = articleStock.article._id;
         printLabelComponent.quantity = articleStock.realStock;
-        printLabelComponent2.ngOnInit()
+        printLabelComponent2.ngOnInit();
         break;
       case 'print-inventario':
         modalRef = this._modalService.open(PrintArticlesStockComponent);
         modalRef.componentInstance.branch = this.filters['branch.number'];
         modalRef.componentInstance.deposit = this.filters['deposit.name'];
-        modalRef.componentInstance.make = this.filters['article.make.description'];
+        modalRef.componentInstance.make =
+          this.filters['article.make.description'];
         modalRef.componentInstance.category =
           this.filters['article.category.description'];
         modalRef.componentInstance.code = this.filters['article.code'];
         modalRef.componentInstance.barcode = this.filters['article.barcode'];
-        modalRef.componentInstance.description = this.filters['article.description'];
+        modalRef.componentInstance.description =
+          this.filters['article.description'];
         break;
       case 'updateArticle':
         this.loading = true;
@@ -420,7 +427,7 @@ export class ListArticleStocksComponent implements OnInit {
             this.showToast(error._body, 'danger');
             this.loading = false;
             this.totalItems = 0;
-          },
+          }
         );
         break;
       case 'uploadFile':
@@ -428,19 +435,19 @@ export class ListArticleStocksComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.model = 'articles-stock'
-        modalRef.componentInstance.branches = this.branches
-        modalRef.componentInstance.allDeposits = this.allDeposits
-        modalRef.componentInstance.title = 'Importar stock'
+        modalRef.componentInstance.model = 'articles-stock';
+        modalRef.componentInstance.branches = this.branches;
+        modalRef.componentInstance.allDeposits = this.allDeposits;
+        modalRef.componentInstance.title = 'Importar stock';
         modalRef.result.then(
           (result) => {
             if (result === 'save_close') {
               this.getItems();
             }
           },
-          (reason) => {},
+          (reason) => {}
         );
-      
+
         break;
       default:
         break;
@@ -485,7 +492,7 @@ export class ListArticleStocksComponent implements OnInit {
           this.loading = false;
           this.showMessage(error._body, 'danger', false);
           resolve(null);
-        },
+        }
       );
     });
   }
@@ -501,40 +508,43 @@ export class ListArticleStocksComponent implements OnInit {
       },
       (error) => {
         this.showMessage(error._body, 'danger', false);
-      },
+      }
     );
   }
 
   public getBranches(): void {
-    this._branchService.getAll({match: {operationType: {$ne: 'D'}}}).subscribe(
-      (result: Resulteable) => {
-        if (result.status === 200){
-          this.branches = result.result
+    this._branchService
+      .getAll({ match: { operationType: { $ne: 'D' } } })
+      .subscribe(
+        (result: Resulteable) => {
+          if (result.status === 200) {
+            this.branches = result.result;
 
-          if (this.branches && this.branches.length > 0) {
-            this.branches.forEach(branch => {
-              this.getDeposits(branch._id);
-            });
+            if (this.branches && this.branches.length > 0) {
+              this.branches.forEach((branch) => {
+                this.getDeposits(branch._id);
+              });
+            }
           }
-        }
-      },
-      (error) => this.showToast(error),
-    );
+        },
+        (error) => this.showToast(error)
+      );
   }
 
   public getDeposits(branchId: string): void {
     this._depositService
-      .getAll({match: {branch: {$oid: branchId}, operationType: {$ne: 'D'}}})
+      .getAll({
+        match: { branch: { $oid: branchId }, operationType: { $ne: 'D' } },
+      })
       .subscribe(
         (result: Resulteable) => {
-          if (result.status === 200){
+          if (result.status === 200) {
             const depositsForBranch = result.result;
             this.deposits = depositsForBranch;
             this.allDeposits = this.allDeposits.concat(depositsForBranch);
           }
-
         },
-        (error) => this.showToast(error),
+        (error) => this.showToast(error)
       );
   }
 
@@ -542,7 +552,11 @@ export class ListArticleStocksComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
