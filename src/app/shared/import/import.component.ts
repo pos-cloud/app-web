@@ -1,14 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import {
+  FormsModule,
   ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from 'app/components/branch/branch';
 import { Deposit } from 'app/components/deposit/deposit';
+import { PipesModule } from 'app/main/pipes/pipes.module';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { TranslateMePipe } from '../../main/pipes/translate-me';
 import { ToastService } from '../toast/toast.service';
 import { ImportService } from './import.service';
@@ -17,7 +21,14 @@ import { ImportService } from './import.service';
   selector: 'add-import',
   templateUrl: './import.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    TranslateModule,
+    PipesModule,
+    NgMultiSelectDropDownModule,
+  ],
   providers: [NgbAlertConfig, TranslateMePipe, ImportService],
 })
 export class ImportComponent implements OnInit {
