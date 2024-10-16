@@ -31,7 +31,7 @@ import { ArticleStockService } from '../article-stock.service';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 
 import { PrintLabelComponent } from 'app/components/article/actions/print-label/print-label.component';
-import { ImportComponent } from 'app/components/import/import.component';
+import { ImportComponent } from 'app/shared/import/import.component';
 import { AddArticleStockComponent } from '../article-stock/add-article-stock.component';
 
 @Component({

@@ -27,7 +27,6 @@ import { ExportCitiComponent } from './components/export/export-citi/export-citi
 import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
-import { ImportComponent } from './components/import/import.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
 import { ListLocationsComponent } from './components/location/list-locations/list-locations.component';
@@ -352,11 +351,6 @@ export const _routes: Routes = [
   {
     path: 'admin/tipos-de-variantes',
     component: ListVariantTypesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/import',
-    component: ImportComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

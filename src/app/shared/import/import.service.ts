@@ -4,13 +4,16 @@ import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
+import { AuthService } from 'app/components/login/auth.service';
 import { environment } from 'environments/environment';
 import { Config } from '../../app.config';
-import { AuthService } from '../login/auth.service';
 
 @Injectable()
 export class ImportService {
-  constructor(public _http: HttpClient, public _authService: AuthService) {}
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {}
 
   public importStock(
     file: File,

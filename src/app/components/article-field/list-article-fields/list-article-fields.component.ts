@@ -1,26 +1,29 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ArticleField } from '../article-field';
 import { ArticleFieldService } from '../article-field.service';
 
 import { AddArticleFieldComponent } from '../article-field/add-article-field.component';
-import { UpdateArticleFieldComponent } from '../update-article-field/update-article-field.component';
 import { DeleteArticleFieldComponent } from '../delete-article-field/delete-article-field.component';
-import { ImportComponent } from '../../import/import.component';
+import { UpdateArticleFieldComponent } from '../update-article-field/update-article-field.component';
 
 @Component({
   selector: 'app-list-article-fields',
   templateUrl: './list-article-fields.component.html',
   styleUrls: ['./list-article-fields.component.scss'],
   providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class ListArticleFieldsComponent implements OnInit {
-
   public articleFields: ArticleField[] = new Array();
   public areArticleFieldsEmpty: boolean = true;
   public alertMessage: string = '';
@@ -29,7 +32,8 @@ export class ListArticleFieldsComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Output() eventAddItem: EventEmitter<ArticleField> = new EventEmitter<ArticleField>();
+  @Output() eventAddItem: EventEmitter<ArticleField> =
+    new EventEmitter<ArticleField>();
   public itemsPerPage = 10;
   public totalItems = 0;
 
@@ -38,45 +42,43 @@ export class ListArticleFieldsComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getArticleFields();
   }
 
   public getArticleFields(): void {
-
     this.loading = true;
 
     this._articleFieldService.getArticleFields().subscribe(
-        result => {
-          if (!result.articleFields) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            this.loading = false;
-            this.articleFields = new Array();
-            this.areArticleFieldsEmpty = true;
-          } else {
-            this.hideMessage();
-            this.loading = false;
-            this.articleFields = result.articleFields;
-            this.totalItems = this.articleFields.length;
-            this.areArticleFieldsEmpty = false;
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
+      (result) => {
+        if (!result.articleFields) {
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
           this.loading = false;
+          this.articleFields = new Array();
+          this.areArticleFieldsEmpty = true;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.articleFields = result.articleFields;
+          this.totalItems = this.articleFields.length;
+          this.areArticleFieldsEmpty = false;
         }
-      );
-   }
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
 
-  public orderBy (term: string, property?: string): void {
-
+  public orderBy(term: string, property?: string): void {
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;
+      this.orderTerm[0] = '-' + term;
     } else {
       this.orderTerm[0] = term;
     }
@@ -87,72 +89,79 @@ export class ListArticleFieldsComponent implements OnInit {
     this.getArticleFields();
   }
 
-  public openModal(op: string, articleField:ArticleField): void {
-
+  public openModal(op: string, articleField: ArticleField): void {
     let modalRef;
-    switch(op) {
+    switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateArticleFieldComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(UpdateArticleFieldComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.articleField = articleField;
         modalRef.componentInstance.readonly = true;
         break;
-      case 'add' :
-        modalRef = this._modalService.open(AddArticleFieldComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
-          this.getArticleFields();
-        }, (reason) => {
-          this.getArticleFields();
+      case 'add':
+        modalRef = this._modalService
+          .open(AddArticleFieldComponent, { size: 'lg', backdrop: 'static' })
+          .result.then(
+            (result) => {
+              this.getArticleFields();
+            },
+            (reason) => {
+              this.getArticleFields();
+            }
+          );
+        break;
+      case 'update':
+        modalRef = this._modalService.open(UpdateArticleFieldComponent, {
+          size: 'lg',
+          backdrop: 'static',
         });
-        break;
-      case 'update' :
-          modalRef = this._modalService.open(UpdateArticleFieldComponent, { size: 'lg', backdrop: 'static' });
-          modalRef.componentInstance.articleField = articleField;
-          modalRef.componentInstance.readonly = false;
-          modalRef.result.then((result) => {
+        modalRef.componentInstance.articleField = articleField;
+        modalRef.componentInstance.readonly = false;
+        modalRef.result.then(
+          (result) => {
             this.getArticleFields();
-          }, (reason) => {
+          },
+          (reason) => {
             this.getArticleFields();
-          });
+          }
+        );
         break;
-      case 'delete' :
-          modalRef = this._modalService.open(DeleteArticleFieldComponent, { size: 'lg', backdrop: 'static' })
-          modalRef.componentInstance.articleField = articleField;
-          modalRef.result.then((result) => {
+      case 'delete':
+        modalRef = this._modalService.open(DeleteArticleFieldComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.articleField = articleField;
+        modalRef.result.then(
+          (result) => {
             if (result === 'delete_close') {
               this.getArticleFields();
             }
-          }, (reason) => {
-
-          });
-          break;
-      case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
-        let model: any = new ArticleField();
-        model.model = "articleField";
-        model.primaryKey = "description";
-        modalRef.componentInstance.model = model;
-        modalRef.result.then((result) => {
-          if (result === 'import_close') {
-            this.getArticleFields();
-          }
-        }, (reason) => {
-
-        });
+          },
+          (reason) => {}
+        );
         break;
-      default : ;
+      default:
     }
-  };
+  }
 
   public addItem(articleFieldSelected) {
     this.eventAddItem.emit(articleFieldSelected);
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = '';
   }
 }

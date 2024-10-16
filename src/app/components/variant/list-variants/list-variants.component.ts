@@ -1,27 +1,30 @@
-import { Component, OnInit, Output, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Variant } from '../variant';
 import { Article } from '../../article/article';
+import { Variant } from '../variant';
 
 import { VariantService } from '../variant.service';
 
-import { AddVariantComponent } from '../add-variant/add-variant.component';
 import { DeleteVariantComponent } from '../delete-variant/delete-variant.component';
-import { ImportComponent } from '../../import/import.component';
 
 @Component({
   selector: 'app-list-variants',
   templateUrl: './list-variants.component.html',
   styleUrls: ['./list-variants.component.scss'],
   providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class ListVariantsComponent implements OnInit {
-
   @Input() variantsLocals: Variant[];
   public variants: Variant[];
   @Input() article: Article;
@@ -42,20 +45,22 @@ export class ListVariantsComponent implements OnInit {
     this.alertMessage = '';
     this.areVariantsEmpty = true;
 
-    if (!this.variantsLocals || (this.variantsLocals && this.variantsLocals.length > 0)) {
+    if (
+      !this.variantsLocals ||
+      (this.variantsLocals && this.variantsLocals.length > 0)
+    ) {
       this.variantsLocals = new Array();
     }
 
     if (!this.article) {
       this.article = new Article();
     }
-   }
+  }
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.user = pathLocation[1];
-    
+
     if (this.article && this.article._id && this.article._id !== '') {
       this.getVariantsByArticleParent();
     }
@@ -66,13 +71,12 @@ export class ListVariantsComponent implements OnInit {
   }
 
   public getVariantsByArticleParent(): void {
-
     this.loading = true;
 
-    let query = 'where="articleParent":"'+ this.article._id +'"';
+    let query = 'where="articleParent":"' + this.article._id + '"';
 
     this._variantService.getVariants(query).subscribe(
-      result => {
+      (result) => {
         if (!result.variants) {
           if (this.variantsLocals && this.variantsLocals.length > 0) {
             this.areVariantsEmpty = false;
@@ -86,15 +90,14 @@ export class ListVariantsComponent implements OnInit {
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
-  
+
   public getUniqueVariants(variants: Variant[]): Variant[] {
-    
     let variantsToReturn: Variant[] = new Array();
 
     for (let variant of variants) {
@@ -117,7 +120,6 @@ export class ListVariantsComponent implements OnInit {
   }
 
   public refresh(): void {
-    
     if (this.article && this.article._id && this.article._id !== '') {
       this.getVariantsByArticleParent();
     } else {
@@ -132,45 +134,56 @@ export class ListVariantsComponent implements OnInit {
   }
 
   public openModal(op: string, variant: Variant): void {
-
     let modalRef;
     switch (op) {
       case 'delete':
-        modalRef = this._modalService.open(DeleteVariantComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.variant = variant;
-        modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            if (this.article && this.article._id && this.article._id !== '') {
-              this.getVariantsByArticleParent();
-            }
-          }
-        }, (reason) => {
-
+        modalRef = this._modalService.open(DeleteVariantComponent, {
+          size: 'lg',
+          backdrop: 'static',
         });
+        modalRef.componentInstance.variant = variant;
+        modalRef.result.then(
+          (result) => {
+            if (result === 'delete_close') {
+              if (this.article && this.article._id && this.article._id !== '') {
+                this.getVariantsByArticleParent();
+              }
+            }
+          },
+          (reason) => {}
+        );
         break;
-      default: ;
+      default:
     }
-  };
+  }
 
   public addVariant(variant: Variant): void {
-    
     if (!this.variantExists(variant)) {
       this.variantsLocals.push(variant);
     }
-    
+
     this.refresh();
   }
 
   public variantExists(variant: Variant): boolean {
-
     let exists: boolean = false;
 
     if (this.variantsLocals && this.variantsLocals.length > 0) {
-      for(let variantAux of this.variantsLocals) {
-        if ( variantAux.type._id === variant.type._id &&
-            variantAux.value._id === variant.value._id) {
-              exists = true;
-              this.showMessage("La variante " + variant.type.name + " " + variant.value.description + " ya existe", 'info', true);
+      for (let variantAux of this.variantsLocals) {
+        if (
+          variantAux.type._id === variant.type._id &&
+          variantAux.value._id === variant.value._id
+        ) {
+          exists = true;
+          this.showMessage(
+            'La variante ' +
+              variant.type.name +
+              ' ' +
+              variant.value.description +
+              ' ya existe',
+            'info',
+            true
+          );
         }
       }
     }
@@ -178,10 +191,20 @@ export class ListVariantsComponent implements OnInit {
     if (!exists) {
       if (this.variants && this.variants.length > 0) {
         for (let variantAux of this.variants) {
-          if (variantAux.type._id === variant.type._id &&
-            variantAux.value._id === variant.value._id) {
+          if (
+            variantAux.type._id === variant.type._id &&
+            variantAux.value._id === variant.value._id
+          ) {
             exists = true;
-            this.showMessage("La variante " + variant.type.name + " " + variant.value.description + " ya existe", 'info', true);
+            this.showMessage(
+              'La variante ' +
+                variant.type.name +
+                ' ' +
+                variant.value.description +
+                ' ya existe',
+              'info',
+              true
+            );
           }
         }
       }
@@ -191,14 +214,15 @@ export class ListVariantsComponent implements OnInit {
   }
 
   public deleteVariantLocal(variant: Variant): void {
-
     let i: number = 0;
     let variantToDelete: number = -1;
 
     if (this.variantsLocals && this.variantsLocals.length > 0) {
       for (let variantAux of this.variantsLocals) {
-        if (variantAux.type._id === variant.type._id &&
-          variantAux.value._id === variant.value._id) {
+        if (
+          variantAux.type._id === variant.type._id &&
+          variantAux.value._id === variant.value._id
+        ) {
           variantToDelete = i;
         }
         i++;
@@ -213,10 +237,14 @@ export class ListVariantsComponent implements OnInit {
   }
 
   public deleteVariantDB(variant: Variant): void {
-    this.openModal("delete",variant);
+    this.openModal('delete', variant);
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

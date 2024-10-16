@@ -114,8 +114,6 @@ import { ExportersModule } from './components/export/exporters.module';
 import { IdentificationTypeService } from './components/identification-type/identification-type.service';
 import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
-import { ImportComponent } from './components/import/import.component';
-import { ImportService } from './components/import/import.service';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
 import { ListLocationsComponent } from './components/location/list-locations/list-locations.component';
@@ -290,7 +288,6 @@ export function createTranslateLoader(http: HttpClient) {
     PrinterComponent,
     ListPrintersComponent,
     AddMovementOfCashComponent,
-    ImportComponent,
     ConfigComponent,
     AddTransactionComponent,
     CurrentAccountComponent,
@@ -475,7 +472,6 @@ export function createTranslateLoader(http: HttpClient) {
     CompanyService,
     ClockService,
     PrinterService,
-    ImportService,
     ConfigService,
     PaymentMethodService,
     MovementOfCashService,

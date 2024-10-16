@@ -1,24 +1,27 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { PaymentMethod } from '../payment-method';
 import { PaymentMethodService } from '../payment-method.service';
 
 import { PaymentMethodComponent } from '../payment-method/payment-method.component';
-import { ImportComponent } from '../../import/import.component';
 
 @Component({
   selector: 'app-list-payment-methods',
   templateUrl: './list-payment-methods.component.html',
   styleUrls: ['./list-payment-methods.component.scss'],
   providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class ListPaymentMethodsComponent implements OnInit {
-
   public paymentMethods: PaymentMethod[] = new Array();
   public arePaymentMethodsEmpty: boolean = true;
   public alertMessage: string = '';
@@ -27,7 +30,8 @@ export class ListPaymentMethodsComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Output() eventAddItem: EventEmitter<PaymentMethod> = new EventEmitter<PaymentMethod>();
+  @Output() eventAddItem: EventEmitter<PaymentMethod> =
+    new EventEmitter<PaymentMethod>();
   public itemsPerPage = 10;
   public totalItems = 0;
 
@@ -36,23 +40,22 @@ export class ListPaymentMethodsComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getPaymentMethods();
   }
 
   public getPaymentMethods(): void {
-
     this.loading = true;
 
     this._paymentMethodService.getPaymentMethods().subscribe(
-      result => {
+      (result) => {
         if (!result.paymentMethods) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.paymentMethods = new Array();
           this.arePaymentMethodsEmpty = true;
@@ -64,7 +67,7 @@ export class ListPaymentMethodsComponent implements OnInit {
           this.arePaymentMethodsEmpty = false;
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -72,9 +75,8 @@ export class ListPaymentMethodsComponent implements OnInit {
   }
 
   public orderBy(term: string, property?: string): void {
-
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
+      this.orderTerm[0] = '-' + term;
     } else {
       this.orderTerm[0] = term;
     }
@@ -86,71 +88,79 @@ export class ListPaymentMethodsComponent implements OnInit {
   }
 
   public openModal(op: string, paymentMethod: PaymentMethod): void {
-
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(PaymentMethodComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.paymentMethodId = paymentMethod._id;
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.readonly = false;
-        modalRef.componentInstance.operation = "add";
-        modalRef.result.then((result) => {
-          this.getPaymentMethods();
-        }, (reason) => {
-            this.getPaymentMethods();
+        modalRef = this._modalService.open(PaymentMethodComponent, {
+          size: 'lg',
+          backdrop: 'static',
         });
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = 'add';
+        modalRef.result.then(
+          (result) => {
+            this.getPaymentMethods();
+          },
+          (reason) => {
+            this.getPaymentMethods();
+          }
+        );
         break;
       case 'update':
-        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(PaymentMethodComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.paymentMethodId = paymentMethod._id;
         modalRef.componentInstance.readonly = false;
-        modalRef.componentInstance.operation = "update";
-        modalRef.result.then((result) => {
-          this.getPaymentMethods();
-        }, (reason) => {
+        modalRef.componentInstance.operation = 'update';
+        modalRef.result.then(
+          (result) => {
             this.getPaymentMethods();
-        });
+          },
+          (reason) => {
+            this.getPaymentMethods();
+          }
+        );
         break;
       case 'delete':
-        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' })
+        modalRef = this._modalService.open(PaymentMethodComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.paymentMethodId = paymentMethod._id;
         modalRef.componentInstance.readonly = true;
-        modalRef.componentInstance.operation = "delete"
-        modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            this.getPaymentMethods();
-          }
-        }, (reason) => {
-
-        });
+        modalRef.componentInstance.operation = 'delete';
+        modalRef.result.then(
+          (result) => {
+            if (result === 'delete_close') {
+              this.getPaymentMethods();
+            }
+          },
+          (reason) => {}
+        );
         break;
-      case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
-        let model: any = new PaymentMethod();
-        model.model = "paymentMethod";
-        model.primaryKey = "description";
-        modalRef.componentInstance.model = model;
-        modalRef.result.then((result) => {
-          if (result === 'import_close') {
-            this.getPaymentMethods();
-          }
-        }, (reason) => {
-
-        });
-        break;
-      default: ;
+      default:
     }
-  };
+  }
 
   public addItem(paymentMethodSelected) {
     this.eventAddItem.emit(paymentMethodSelected);
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
