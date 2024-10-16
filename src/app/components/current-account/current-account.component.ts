@@ -160,7 +160,6 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public getSummary(): void {
-    console.log('entro');
     this.loading = true;
 
     let timezone = '-03:00';
@@ -258,8 +257,6 @@ export class CurrentAccountComponent implements OnInit {
               this.transactionTypes = result;
             }
           });
-
-          this.getSummary();
         }
       },
       (error) => {

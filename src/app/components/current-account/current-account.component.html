@@ -3,8 +3,12 @@
     <div class="card-header">
       Cuenta Corriente
       <div class="pull-right">
-        <!-- <app-point-of-sale [company]="companySelected" [totalPrice]="balance">
-        </app-point-of-sale> -->
+        <app-point-of-sale
+          (eventRefreshCurrentAccount)="refresh()"
+          [company]="companySelected"
+          [totalPrice]="balance"
+        >
+        </app-point-of-sale>
         <button
           [disabled]="loading"
           type="button"
