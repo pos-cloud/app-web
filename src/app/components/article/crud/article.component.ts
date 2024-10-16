@@ -917,7 +917,7 @@ export class ArticleComponent implements OnInit {
       // Verificar si el nuevo ID ya está en el array
       if (uniqueIds.includes(this.variant.type._id)) {
         this.typeSelect.push(this.variant.type._id);
-      } else if (uniqueIds.length < 1) {
+      } else if (uniqueIds.length < 2) {
         this.typeSelect.push(this.variant.type._id);
       } else {
         return this._toastService.showToast(
