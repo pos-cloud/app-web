@@ -1,5 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import {
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
@@ -7,15 +9,16 @@ import {
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Branch } from 'app/components/branch/branch';
 import { Deposit } from 'app/components/deposit/deposit';
-import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from '../../main/pipes/translate-me';
+import { ToastService } from '../toast/toast.service';
 import { ImportService } from './import.service';
 
 @Component({
   selector: 'add-import',
   templateUrl: './import.component.html',
-  styleUrls: ['./import.component.css'],
-  providers: [NgbAlertConfig, TranslateMePipe],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  providers: [NgbAlertConfig, TranslateMePipe, ImportService],
 })
 export class ImportComponent implements OnInit {
   @Input() branches: Branch[];
@@ -53,7 +56,7 @@ export class ImportComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService
+    private _toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -117,7 +120,7 @@ export class ImportComponent implements OnInit {
               this.update = response.result.updateArticle;
               this.loading = false;
             } else {
-              this.showToast(response.error, 'danger');
+              this._toastService.showToast(response.error);
               this.loading = false;
             }
           });
@@ -130,7 +133,7 @@ export class ImportComponent implements OnInit {
             this.update = response.result.updateArticle;
             this.loading = false;
           } else {
-            this.showToast(response.error, 'danger');
+            this._toastService.showToast(response.error);
             this.loading = false;
           }
         });
@@ -143,7 +146,7 @@ export class ImportComponent implements OnInit {
             this.update = response.result.updateCompany;
             this.loading = false;
           } else {
-            this.showToast(response.error, 'danger');
+            this._toastService.showToast(response.error);
             this.loading = false;
           }
         });
@@ -168,66 +171,5 @@ export class ImportComponent implements OnInit {
     } else {
       console.warn('No URL found for the specified model');
     }
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 0) {
-        type = 'info';
-        title =
-          'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
-      } else if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 500) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
-  }
-
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
   }
 }

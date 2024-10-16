@@ -1,9 +1,14 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ImportComponent } from '../../import/import.component';
 import { Tax } from '../tax';
 import { TaxService } from '../tax.service';
 import { TaxComponent } from '../tax/tax.component';
@@ -13,11 +18,9 @@ import { TaxComponent } from '../tax/tax.component';
   templateUrl: './list-taxes.component.html',
   styleUrls: ['./list-taxes.component.scss'],
   providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class ListTaxesComponent implements OnInit {
-
   public taxes: Tax[] = new Array();
   public areTaxesEmpty: boolean = true;
   public alertMessage: string = '';
@@ -35,23 +38,22 @@ export class ListTaxesComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getTaxes();
   }
 
   public getTaxes(): void {
-
     this.loading = true;
 
     this._taxService.getTaxes().subscribe(
-      result => {
+      (result) => {
         if (!result.taxes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.taxes = new Array();
           this.areTaxesEmpty = true;
@@ -63,7 +65,7 @@ export class ListTaxesComponent implements OnInit {
           this.areTaxesEmpty = false;
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -71,9 +73,8 @@ export class ListTaxesComponent implements OnInit {
   }
 
   public orderBy(term: string, property?: string): void {
-
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
+      this.orderTerm[0] = '-' + term;
     } else {
       this.orderTerm[0] = term;
     }
@@ -85,73 +86,80 @@ export class ListTaxesComponent implements OnInit {
   }
 
   public openModal(op: string, tax: Tax): void {
-
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(TaxComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(TaxComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.taxId = tax._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
         break;
       case 'add':
-        modalRef = this._modalService.open(TaxComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(TaxComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.operation = 'add';
-        modalRef.result.then((result) => {
-          this.getTaxes();
-        }, (reason) => {
-          this.getTaxes();
-        });
+        modalRef.result.then(
+          (result) => {
+            this.getTaxes();
+          },
+          (reason) => {
+            this.getTaxes();
+          }
+        );
         break;
       case 'update':
-        modalRef = this._modalService.open(TaxComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(TaxComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.taxId = tax._id;
         modalRef.componentInstance.operation = 'update';
         modalRef.componentInstance.readonly = false;
-        modalRef.result.then((result) => {
-          this.getTaxes();
-        }, (reason) => {
-          this.getTaxes();
-
-        });
+        modalRef.result.then(
+          (result) => {
+            this.getTaxes();
+          },
+          (reason) => {
+            this.getTaxes();
+          }
+        );
         break;
       case 'delete':
-        modalRef = this._modalService.open(TaxComponent, { size: 'lg', backdrop: 'static' })
+        modalRef = this._modalService.open(TaxComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.taxId = tax._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
-        modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            this.getTaxes();
-          }
-        }, (reason) => {
-
-        });
+        modalRef.result.then(
+          (result) => {
+            if (result === 'delete_close') {
+              this.getTaxes();
+            }
+          },
+          (reason) => {}
+        );
         break;
-      case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
-        let model: any = new Tax();
-        model.model = "tax";
-        model.primaryKey = "description";
-        modalRef.componentInstance.model = model;
-        modalRef.result.then((result) => {
-          if (result === 'import_close') {
-            this.getTaxes();
-          }
-        }, (reason) => {
-
-        });
-        break;
-      default: ;
+      default:
     }
-  };
+  }
 
   public addItem(taxSelected) {
     this.eventAddItem.emit(taxSelected);
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
