@@ -1,17 +1,17 @@
-import {HttpClient, HttpParams, HttpHeaders} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
-import {of, BehaviorSubject} from 'rxjs';
-import {Observable} from 'rxjs/Observable';
-import {map, catchError} from 'rxjs/operators';
+import { BehaviorSubject, of } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { catchError, map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
-import {Config} from '../../app.config';
-import {DatatableHistory} from '../datatable/datatable-history.interface';
-import {AuthService} from '../login/auth.service';
-import {ModelService} from '../model/model.service';
+import { Config } from '../../app.config';
+import { DatatableHistory } from '../datatable/datatable-history.interface';
+import { AuthService } from '../login/auth.service';
+import { ModelService } from '../model/model.service';
 
-import {Company} from './company';
+import { Company } from './company';
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
@@ -25,11 +25,14 @@ export class CompanyService extends ModelService {
   private provider: BehaviorSubject<DatatableHistory> =
     new BehaviorSubject<DatatableHistory>(null);
 
-  constructor(public _http: HttpClient, public _authService: AuthService) {
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
     super(
       `companies`, // PATH
       _http,
-      _authService,
+      _authService
     );
   }
 
@@ -70,7 +73,7 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -94,7 +97,7 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -104,7 +107,7 @@ export class CompanyService extends ModelService {
     sort: {},
     group: {},
     limit: number = 0,
-    skip: number = 0,
+    skip: number = 0
   ): Observable<any> {
     const URL = `${Config.apiURL}v2/companies`;
 
@@ -131,7 +134,7 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -152,7 +155,7 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -176,7 +179,7 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -200,14 +203,14 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
   public getQuantityOfCompaniesByType(
     type: string,
     startDate: string,
-    endDate: string,
+    endDate: string
   ): Observable<any> {
     let query =
       '{"type":"' +
@@ -237,7 +240,7 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -261,12 +264,43 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
-  public getSummaryOfAccountsByCompany(query: string): Observable<any> {
+  public getSummaryOfAccountsByCompany(
+    query: string
+    // page: number,
+    // itemsPerPage: number
+  ): Observable<any> {
     const URL = `${Config.apiURL}summary-of-accounts-by-company`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    // Agregar parámetros de paginación
+    const params = new HttpParams().set('query', query);
+    // .set('page', page.toString()) // Pasar el número de página
+    // .set('itemsPerPage', itemsPerPage.toString()); // Pasar la cantidad de ítems por página
+
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public getBalanceOfAccountsByCompany(query: string): Observable<any> {
+    const URL = `${Config.apiURL}balance-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -285,7 +319,7 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -309,7 +343,7 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -326,7 +360,7 @@ export class CompanyService extends ModelService {
         {},
         {
           headers: headers,
-        },
+        }
       )
       .pipe(
         map((res) => {
@@ -334,32 +368,45 @@ export class CompanyService extends ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
   public exportAsExcelFile(json: any[], excelFileName: string): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
-    const workbook: XLSX.WorkBook = {Sheets: {data: worksheet}, SheetNames: ['data']};
-    const excelBuffer: any = XLSX.write(workbook, {bookType: 'xlsx', type: 'array'});
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ['data'],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
 
     this.saveAsExcelFile(excelBuffer, excelFileName);
   }
 
-  public exportAsExcelFileMulti(json: any[], json2: any[], excelFileName: string): void {
+  public exportAsExcelFileMulti(
+    json: any[],
+    json2: any[],
+    excelFileName: string
+  ): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
     const worksheet2: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json2);
     const workbook: XLSX.WorkBook = {
-      Sheets: {data: worksheet, data2: worksheet2},
+      Sheets: { data: worksheet, data2: worksheet2 },
       SheetNames: ['data', 'data2'],
     };
-    const excelBuffer: any = XLSX.write(workbook, {bookType: 'xlsx', type: 'array'});
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
 
     this.saveAsExcelFile(excelBuffer, excelFileName);
   }
 
   private saveAsExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], {type: EXCEL_TYPE});
+    const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
 
     FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
   }
