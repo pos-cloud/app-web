@@ -76,6 +76,7 @@ export class CurrentAccountComponent implements OnInit {
   public selectedItems;
   public transactionTypes: TransactionType[];
   public transactionTypesSelect;
+  public query = {};
   public dropdownSettings = {
     singleSelection: false,
     defaultOpen: false,
@@ -180,8 +181,7 @@ export class CurrentAccountComponent implements OnInit {
         transactionTypes.push({ $oid: element._id });
       });
     }
-    let query: {};
-    query = {
+    this.query = {
       company: this.companySelected._id,
       startDate: this.startDate + ' 00:00:00' + timezone,
       endDate: this.endDate + ' 23:59:59' + timezone,
@@ -191,7 +191,7 @@ export class CurrentAccountComponent implements OnInit {
       transactionTypes: transactionTypes,
     };
     if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
-      query = {
+      this.query = {
         company: this.companySelected._id,
         startDate: this.startDate + ' 00:00:00' + timezone,
         endDate: this.endDate + ' 23:59:59' + timezone,
@@ -202,8 +202,12 @@ export class CurrentAccountComponent implements OnInit {
         transactionBalance: { $gt: 0 },
       };
     }
+
+    // primero traemos el total mientras se traen los detalles
+    this.getBalance();
+
     this._companyService
-      .getSummaryOfAccountsByCompany(JSON.stringify(query))
+      .getSummaryOfAccountsByCompany(JSON.stringify(this.query))
       .subscribe(
         (result) => {
           if (!result) {
@@ -224,7 +228,6 @@ export class CurrentAccountComponent implements OnInit {
                 .transform(this.totalItems / this.itemsPerPage + 0.5, 0)
                 .toFixed(0)
             );
-            this.getBalance();
             this.showPaymentMethod = this.detailsPaymentMethod;
           }
           this.loading = false;
@@ -278,24 +281,19 @@ export class CurrentAccountComponent implements OnInit {
     this.balance = 0;
     this.balanceDoc = 0;
 
-    for (let i = 0; i < this.items.length; i++) {
-      if (
-        this.items[i].isCurrentAccount ||
-        this.items[i].typeCurrentAccount !== 'No'
-      ) {
-        //SALDO
-        this.balance += this.items[i].debe;
-        this.balance -= this.items[i].haber;
-        this.items[i].balance = this.items[i].debe - this.items[i].haber;
-        if (this.items[i - 1]) {
-          this.items[i].balance += this.items[i - 1].balance;
+    this._companyService
+      .getBalanceOfAccountsByCompany(JSON.stringify(this.query))
+      .subscribe(
+        (result) => {
+          if (result) {
+            this.balance = result.balance;
+            this.balanceDoc = result.balanceDoc;
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
         }
-
-        //SALDO DOC
-        if (this.items[i].haber > 0) this.items[i].transactionBalance *= -1;
-        this.balanceDoc += this.items[i].transactionBalance;
-      }
-    }
+      );
   }
 
   async openModal(op: string, transactionId?: string) {
