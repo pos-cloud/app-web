@@ -136,7 +136,7 @@ export class ProductsService {
         database,
       );
 
-      const dataVarinat: ResponseVariantsDB[] =
+      const dataVariant: ResponseVariantsDB[] =
         await this.poolDatabase.getVariantDataByArticle(productId, database);
       const variantProducts = await foundCollectionV
         .find({
@@ -158,23 +158,43 @@ export class ProductsService {
             return Promise.all(promise);
           })
           .then(async (result) => {
-            result.map(async (productVariante: any, index) => {
-              for (let variant of dataVarinat) {
-                if (
-                  productVariante.values[0].es ===
-                  variant.variants[0].value.description
-                ) {
-                  await foundCollection.updateOne(
-                    { _id: variant.articleChild },
-                    {
-                      $set: {
-                        tiendaNubeId: productVariante.id,
-                      },
-                    },
+            await Promise.all(
+              dataVariant.map(async (variant) => {
+                // Extraemos los valores de todas las variantes dinámicamente
+                const variantValues = variant.variants.map(
+                  (v) => v.value.description.trim().toLowerCase(), // Normalizamos los valores
+                );
+                const description = variant.articleChildInfo.description;
+
+                // Encontrar el result que tiene las mismas variantes
+                const matchingResult: any = result.find((res: any) => {
+                  // Extraemos y normalizamos los valores de res
+                  const normalizedValues = res.values.map(
+                    (v: any) => v.es.trim().toLowerCase(), // Normalizamos los valores de los objetos
                   );
-                }
-              }
-            });
+
+                  // Verificamos si todos los valores de variantValues están en normalizedValues
+                  return variantValues.every((value) =>
+                    normalizedValues.includes(value),
+                  );
+                });
+
+                await foundCollection.updateOne(
+                  { _id: variant.articleChild }, // Supongo que tienes este campo en la colección
+                  {
+                    $set: {
+                      tiendaNubeId: matchingResult ? matchingResult.id : null, // Asignamos el ID del producto variante
+                    },
+                  },
+                );
+
+                return {
+                  description,
+                  values: variantValues, // Usamos un array dinámico de valores
+                  price: matchingResult ? matchingResult.price : 'N/A',
+                };
+              }),
+            );
           });
       }
 
