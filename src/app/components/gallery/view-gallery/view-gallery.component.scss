@@ -1,12 +1,26 @@
 app-view-gallery {
   .row {
     margin-right: 0px !important;
+    margin-left: 0px !important;
   }
+
+  .picsum-img-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Ocupa todo el espacio disponible */
+  }
+
+  .picsum-img-wrapper img {
+    width: 100%;
+    height: auto; /* Mantiene la proporción de la imagen */
+    object-fit: contain; /* Ajuste de imagen sin recortar */
+  }
+
   .tile {
-    /*min-height: 200px;*/
     background-color: #ccc;
     background-size: cover !important;
-    //height:  100vh;
+    height: 100vh;
     display: flex;
     background-position: center center;
     align-items: center;
@@ -14,27 +28,80 @@ app-view-gallery {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
 
-  div {
-    text-align: center;
-    img {
-      image-rendering: auto;
-    }
-  }
-  /* Estilo general */
-  .list-group-item {
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    padding: 10px; /* Reduce el padding para hacer los elementos más pequeños */
-    margin-bottom: 5px; /* Ajusta el margen entre los elementos */
-    border-radius: 8px; /* Bordes un poco más redondeados */
-    font-size: 0.9rem; /* Ajusta el tamaño del texto para que sea más pequeño */
-    transition: transform 0.2s ease-in-out;
+  .content img {
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 10px;
   }
 
-  .list-group-item:hover {
-    transform: scale(
-      1.03
-    ); /* Aumenta ligeramente el tamaño al pasar el mouse */
-    background-color: #e9ecef;
+  /* Estilos generales */
+  h1,
+  h3 {
+    font-size: 2.5rem;
+  }
+
+  .form-control {
+    height: 55px;
+    font-size: 1.5rem;
+  }
+
+  /* Estilos para pantallas grandes como el tótem o computadoras */
+  @media (min-width: 1200px) {
+    .picsum-img-wrapper img {
+      max-width: 90%;
+      max-height: 65vh;
+    }
+
+    h1,
+    h3 {
+      font-size: 3rem; /* Tamaño del texto más grande */
+    }
+  }
+
+  /* Estilos para pantallas medianas, como una computadora normal */
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .picsum-img-wrapper img {
+      max-width: 90%;
+      max-height: 60vh;
+    }
+
+    h1,
+    h3 {
+      font-size: 2rem; /* Tamaño del texto más pequeño */
+    }
+  }
+
+  /* Estilos para pantallas pequeñas como tablets o teléfonos */
+  @media (max-width: 767px) {
+    .picsum-img-wrapper img {
+      max-width: 100%; /* Asegura que la imagen use todo el ancho disponible */
+      max-height: 50vh; /* Ajusta el alto para pantallas pequeñas */
+    }
+
+    h1,
+    h3 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .article-details {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    text-align: center; /* Centra el texto */
+    height: 100%; /* Asegura que la altura ocupe el espacio disponible */
+  }
+
+  .article-details h1 {
+    font-size: 3rem; /* Ajusta el tamaño del precio */
+  }
+
+  .article-details h2 {
+    font-size: 2rem; /* Ajusta el tamaño de la descripción */
+    margin-bottom: 10px;
+  }
+
+  .article-details p {
+    margin-top: 10px; /* Añade un pequeño margen entre los elementos */
   }
 }
