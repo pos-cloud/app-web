@@ -146,10 +146,10 @@ Realizar PR a testing
 
 ```
  <type>: <short summary>
-	  │             │
-    │             └─⫸ Summary in present tense. Not capitalized. No period at the end
+	  │         │
+    │         └─⫸ Summary in present tense. Not capitalized. No period at the end
     │
-    └─⫸ Commit Type: build|docs|feat|fix|refactor|test
+    └─⫸ Commit Type: build|docs|feat|fix|perf|refactor|test|style
   
 ```
 
