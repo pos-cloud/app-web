@@ -112,8 +112,10 @@ export class Article {
   public showMenu: Boolean = false;
   public updateVariants: Boolean = true;
   public salePriceTN: number;
-  public typeVariant: string;
-  public valueVariant: string;
+  public variantType1: VariantType;
+  public variantValue1: VariantValue;
+  public variantType2: VariantType;
+  public variantValue2: VariantValue;
   public variants: [
     {
       value: VariantValue;
@@ -1104,7 +1106,7 @@ export let attributesVariant = [
     required: true,
   },
   {
-    name: 'typeVariant.name',
+    name: 'variantType1.name',
     visible: false,
     disabled: false,
     filter: true,
@@ -1114,7 +1116,7 @@ export let attributesVariant = [
     required: true,
   },
   {
-    name: 'valueVariant.description',
+    name: 'variantValue1.description',
     visible: false,
     disabled: false,
     filter: true,
