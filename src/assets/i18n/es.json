@@ -36,7 +36,7 @@
   "allowStock": "¿Habilitado para Stock?",
   "allowSaleWithoutStock": "¿Se vende sin stock disponible?",
   "allowZero": "Permite ingresar monto 0",
-  "allowDiscount": "Permite decuento",
+  "allowDiscount": "Permite descuento",
   "allowPayment": "Permite cobro",
   "amount": "Cantidad",
   "amountPaid": "Monto",
