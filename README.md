@@ -1,5 +1,6 @@
 
-![Logo Final](https://github.com/pos-cloud/system/assets/13305254/03378ed8-3699-4355-877a-e92c67f3db90)
+![Logo-Final](https://github.com/user-attachments/assets/2d32a3c6-11e9-4b01-a0af-f1696914bd6d)
+
 
 
 ###  Dependencias
@@ -35,7 +36,11 @@
   - apiStorage: https://d-api-storage.poscloud.ar
   - apiTiendaNube: https://d-api-tiendanube.poscloud.ar
 
-### Estructura
+### Flow
+<img width="809" alt="image" src="https://github.com/user-attachments/assets/7bc384db-18a1-4bb3-b02a-4d9332e80e91">
+
+
+### Estructura FRONT
 ```
 src/
 |-- app/
