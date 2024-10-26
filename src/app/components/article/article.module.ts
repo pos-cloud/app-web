@@ -13,76 +13,77 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/main/pipes/pipes.module';
 import { NgxTinymceModule } from 'ngx-tinymce';
 import { ListArticlesComponent } from './list-articles/list-articles.component';
-import { ListVariantsComponent } from './list-variants/list-variants.component'
-import { ArticleService } from './article.service'
+import { ListVariantsComponent } from './list-variants/list-variants.component';
+import { ArticleService } from './article.service';
 import { ArticleComponent } from './crud/article.component';
 import { AddArticleTaxComponent } from './add-article-tax/add-article-tax.component';
 import { LicenseGuard } from 'app/main/guards/license.guard';
-import { PrintLabelComponent } from './actions/print-label/print-label.component'
+import { PrintLabelComponent } from './actions/print-label/print-label.component';
 import { HistoryComponent } from './actions/history/history.component';
 import { PrintLabelsComponent } from './actions/print-labels/print-labels.component';
+import { UpdateArticlePriceComponent } from './actions/update-article-price/update-article-price.component';
 
 const routes: Routes = [
   {
     path: 'admin/articles',
     component: ListArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/articles/add',
     component: ArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/articles/view/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/articles/update/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  }, 
-   {
+    canActivate: [AuthGuard, LicenseGuard],
+  },
+  {
     path: 'admin/articles/copy/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/articles/history/:id',
     component: HistoryComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/articles/delete/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/variants',
     component: ListVariantsComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/variants/view/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/variants/update/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/variants/delete/:id',
     component: ArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard]
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/variants/history/:id',
     component: HistoryComponent,
-    canActivate: [AuthGuard, LicenseGuard]
-  }
+    canActivate: [AuthGuard, LicenseGuard],
+  },
 ];
 
 @NgModule({
@@ -100,7 +101,7 @@ const routes: Routes = [
     NgbDropdownModule,
     NgbModule,
     DatatableModule,
-    NgxTinymceModule
+    NgxTinymceModule,
   ],
   declarations: [
     ListArticlesComponent,
@@ -110,17 +111,15 @@ const routes: Routes = [
     PrintLabelComponent,
     HistoryComponent,
     PrintLabelsComponent,
-
+    UpdateArticlePriceComponent,
   ],
   exports: [
     ArticleComponent,
     AddArticleTaxComponent,
     PrintLabelComponent,
-    HistoryComponent
+    HistoryComponent,
+    UpdateArticlePriceComponent,
   ],
-  providers: [
-    ArticleService
-  ]
+  providers: [ArticleService],
 })
-
-export class ArticleModule { }
+export class ArticleModule {}

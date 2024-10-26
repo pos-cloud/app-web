@@ -47,7 +47,6 @@ import { AddArticleStockComponent } from './components/article-stock/article-sto
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
-import { UpdateArticlePriceComponent } from './components/article/update-article-price/update-article-price.component';
 import { BankService } from './components/bank/bank.service';
 import { BankComponent } from './components/bank/bank/bank.component';
 import { ListBankComponent } from './components/bank/list-bank/list-bank.component';
@@ -333,7 +332,6 @@ export function createTranslateLoader(http: HttpClient) {
     DeleteArticleFieldComponent,
     ListArticleFieldsComponent,
     ListSummaryOfAccountsComponent,
-    UpdateArticlePriceComponent,
     CompanyContactComponent,
     ListIdentificationTypesComponent,
     AddIdentificationTypeComponent,

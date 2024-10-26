@@ -3,7 +3,6 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { ListArticleFieldsComponent } from './components/article-field/list-article-fields/list-article-fields.component';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
-import { UpdateArticlePriceComponent } from './components/article/update-article-price/update-article-price.component';
 import { ListBankComponent } from './components/bank/list-bank/list-bank.component';
 import { BillingComponent } from './components/billing/billing.component';
 import { ListBranchComponent } from './components/branch/list-branches/list-branches.component';
@@ -519,11 +518,6 @@ export const _routes: Routes = [
     component: ListClassificationsComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale' },
-  },
-  {
-    path: 'admin/update-article-price',
-    component: UpdateArticlePriceComponent,
-    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/structures',

@@ -10,9 +10,9 @@ import { DatatableComponent } from '../../datatable/datatable.component';
 import { PrinterService } from '../../printer/printer.service';
 import { PrintLabelComponent } from '../actions/print-label/print-label.component';
 import { PrintLabelsComponent } from '../actions/print-labels/print-labels.component';
+import { UpdateArticlePriceComponent } from '../actions/update-article-price/update-article-price.component';
 import { attributes } from '../article';
 import { ArticleService } from '../article.service';
-import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
 
 @Component({
   selector: 'app-list-articles',

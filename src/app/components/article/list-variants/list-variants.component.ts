@@ -3,8 +3,6 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
-import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
-import { ImportComponent } from 'app/shared/import/import.component';
 import { IButton } from 'app/util/buttons.interface';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { PrinterService } from '../../printer/printer.service';
@@ -12,7 +10,6 @@ import { PrintLabelComponent } from '../actions/print-label/print-label.componen
 import { PrintLabelsComponent } from '../actions/print-labels/print-labels.component';
 import { attributesVariant } from '../article';
 import { ArticleService } from '../article.service';
-import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
 
 @Component({
   selector: 'app-list-variants',
@@ -84,7 +81,6 @@ export class ListVariantsComponent {
   }
 
   public async openModal(op: string, obj: any, items) {
-    let modalRef;
     let currentUrl;
     switch (op) {
       case 'view':
@@ -104,23 +100,6 @@ export class ListVariantsComponent {
         this._router.navigate(['/admin/variants/delete', obj._id], {
           queryParams: { returnURL: currentUrl },
         });
-        break;
-      case 'uploadFile':
-        modalRef = this._modalService.open(ImportComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.model = 'articles';
-        modalRef.componentInstance.title = 'Importar artículos';
-        modalRef.result.then(
-          (result) => {
-            if (result === 'save_close') {
-              this.refresh();
-            }
-          },
-          (reason) => {}
-        );
-
         break;
       case 'history':
         currentUrl = encodeURIComponent(this._router.url);
@@ -148,29 +127,6 @@ export class ListVariantsComponent {
         printLabelsComponent.articleIds = articlesIds;
         printLabelsComponent.ngOnInit();
         this.loading = false;
-        break;
-      case 'update-prices':
-        modalRef = this._modalService.open(UpdateArticlePriceComponent);
-        modalRef.componentInstance.articles = items;
-        modalRef.result.then(
-          (result) => {
-            this.refresh();
-          },
-          (reason) => {
-            this.refresh();
-          }
-        );
-        break;
-      case 'print-list':
-        modalRef = this._modalService.open(PrintPriceListComponent);
-        modalRef.result.then(
-          (result) => {
-            this.refresh();
-          },
-          (reason) => {
-            this.refresh();
-          }
-        );
         break;
       default:
     }
