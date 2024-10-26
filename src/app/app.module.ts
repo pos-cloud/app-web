@@ -123,7 +123,6 @@ import { LoginComponent } from './components/login/login.component';
 import { MakeService } from './components/make/make.service';
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuService } from './components/menu/menu.service';
-import { MercadopagoService } from './components/mercadopago/mercadopago.service';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { ListMovementsOfArticlesComponent } from './components/movement-of-article/list-movements-of-articles/list-movements-of-articles.component';
 import { MovementOfArticleService } from './components/movement-of-article/movement-of-article.service';
@@ -510,7 +509,6 @@ export function createTranslateLoader(http: HttpClient) {
     CurrencyValueService,
     EmailTemplateService,
     PushNotificationsService,
-    MercadopagoService,
     MeliService,
     MenuService,
   ],
