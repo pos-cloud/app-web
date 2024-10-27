@@ -1,42 +1,67 @@
- <section class="fondo-login center-content">
+<section class="fondo-login center-content">
   <div class="box-login" [ngClass]="{ 'box-login-max': alertMessage !== '' }">
     <div class="row" align="center">
       <div class="logo">
-        <img width="130" src="assets/img/logo.png">
+        <img width="130" src="assets/img/logo.png" />
       </div>
     </div>
-    <br>
+    <br />
     <div class="row center-content">
-      <h5 *ngIf="company !== 'syf'">Ingresa a tu cuenta</h5>
-      <h5 *ngIf="company === 'syf'">SyF Colchones y Sommiers</h5>
+      <h5>Ingresa a tu cuenta</h5>
     </div>
-    <hr>
+    <hr />
     <div class="row center-content" *ngIf="alertMessage !== ''">
       <div class="center-content">
-        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-          {{alertMessage}}
+        <ngb-alert
+          [type]="alertConfig.type"
+          [dismissible]="alertConfig.dismissible"
+          (close)="alertMessage = ''"
+        >
+          {{ alertMessage }}
         </ngb-alert>
       </div>
     </div>
     <form [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
       <div class="row">
         <div class="center-content">
-            <div class="row">
-              <div class="col-md-2"></div>
-              <div class="col-md-8">
-                <label for="company" class="control-label">Negocio:</label>
-                <input type="text" class="form-control" formControlName="company" name="company" id="company" [readonly]=checkLockInput [disabled]="company"/>
-                <input type="checkbox" class="position-absolute checklockinput" id="check" name="check" (click)="lockInput()" [checked]="company"/>
-                <div *ngIf="formErrors.company" class="alert alert-danger">
-                  {{ formErrors.company }}
-                </div>
+          <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+              <label for="company" class="control-label">Negocio:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="company"
+                name="company"
+                id="company"
+                [readonly]="checkLockInput"
+                [disabled]="company"
+              />
+              <input
+                type="checkbox"
+                class="position-absolute checklockinput"
+                id="check"
+                name="check"
+                (click)="lockInput()"
+                [checked]="company"
+              />
+              <div *ngIf="formErrors.company" class="alert alert-danger">
+                {{ formErrors.company }}
               </div>
             </div>
+          </div>
           <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
               <label for="user" class="control-label">Usuario o Email:</label>
-              <input type="text" class="form-control" formControlName="user" name="user" id="user" autofocus/>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="user"
+                name="user"
+                id="user"
+                autofocus
+              />
               <div *ngIf="formErrors.user" class="alert alert-danger">
                 {{ formErrors.user }}
               </div>
@@ -47,7 +72,13 @@
             <div class="col-md-8">
               <label for="password" class="control-label">Password:</label>
               <div class="input-group">
-                <input type="password" class="form-control" formControlName="password" name="password" id="password"/>
+                <input
+                  type="password"
+                  class="form-control"
+                  formControlName="password"
+                  name="password"
+                  id="password"
+                />
               </div>
               <div *ngIf="formErrors.password" class="alert alert-danger">
                 {{ formErrors.password }}
@@ -56,21 +87,30 @@
           </div>
         </div>
       </div>
-      <hr>
+      <hr />
       <div class="row">
         <div class="center-content">
           <div class="row">
             <div class="col-md-12" align="center">
-              <button type="submit" class="btn btn-primary" [disabled]="!loginForm?.valid || loading">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!loginForm?.valid || loading"
+              >
                 <span *ngIf="!loading">Iniciar sesión</span>
                 <span *ngIf="loading">Espere por favor</span>
               </button>
             </div>
           </div>
-          <br><br>
+          <br /><br />
           <div class="row">
             <div class="col-md-12" align="center">
-              <b>¿No tienes una cuenta?</b><a href="http://www.poscloud.com.ar/registro.html?tipo-negocio=ropa"> Crear una cuenta</a>
+              <b>¿No tienes una cuenta?</b
+              ><a
+                href="http://www.poscloud.com.ar/registro.html?tipo-negocio=ropa"
+              >
+                Crear una cuenta</a
+              >
             </div>
           </div>
         </div>
