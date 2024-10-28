@@ -14,7 +14,7 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CategoryService } from 'app/components/category/category.service';
 import { Make } from 'app/components/make/make';
 import { MakeService } from 'app/components/make/make.service';
-import { Category } from '../../../../../../services/tienda-nube/dist/modules/categories/entities/category.entity';
+import { Category } from '../../../category/category';
 import { Article } from '../../article';
 import { ArticleService } from '../../article.service';
 
