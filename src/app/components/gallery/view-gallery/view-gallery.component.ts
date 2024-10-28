@@ -92,6 +92,7 @@ export class ViewGalleryComponent implements OnInit {
           });
 
           if (this.gallery.barcode) {
+            console.log('aca');
             this.focusEvent.emit(true);
           }
         }
@@ -142,17 +143,19 @@ export class ViewGalleryComponent implements OnInit {
 
             if (this.article !== null) {
               if (
-                this.article.picture === 'default.jpg' ||
+                this.article.picture === './../../../assets/img/default.jpg' ||
                 !this.article.picture
               ) {
+                this.articleImage = null;
                 if (this.article.make && this.article.make.picture) {
                   this.makeImage = this.article.make.picture;
                 } else {
-                  this.articleImage = 'default.jpg';
+                  this.articleImage = null;
                 }
               } else {
                 this.articleImage = this.article.picture;
               }
+              console.log(this.articleImage);
             }
           },
           (error) => {

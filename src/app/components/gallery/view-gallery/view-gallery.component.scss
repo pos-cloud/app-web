@@ -49,7 +49,12 @@ app-view-gallery {
   @media (min-width: 1200px) {
     .picsum-img-wrapper img {
       max-width: 90%;
-      max-height: 65vh;
+      max-height: 50vh;
+    }
+
+    .imgProduct img {
+      max-width: 90%;
+      max-height: 33vh;
     }
 
     h1,
@@ -74,10 +79,13 @@ app-view-gallery {
   /* Estilos para pantallas pequeñas como tablets o teléfonos */
   @media (max-width: 767px) {
     .picsum-img-wrapper img {
-      max-width: 100%; /* Asegura que la imagen use todo el ancho disponible */
-      max-height: 50vh; /* Ajusta el alto para pantallas pequeñas */
+      max-width: 100%;
+      max-height: 50vh;
     }
-
+    .imgProduct img {
+      max-width: 90%;
+      max-height: 25vh;
+    }
     h1,
     h3 {
       font-size: 1.5rem;
@@ -86,8 +94,8 @@ app-view-gallery {
 
   .article-details {
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
+    justify-content: center;
+    align-items: center;
     text-align: center; /* Centra el texto */
     height: 100%; /* Asegura que la altura ocupe el espacio disponible */
   }
