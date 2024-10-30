@@ -86,3 +86,56 @@ db['articles']
       maxStock: 0,
     });
   });
+
+// update barcode laraherzig
+db.articles.find({ type: 'Variante' }).forEach((article) => {
+  let talle = '';
+  let color = '';
+
+  // Obtiene los documentos de variant-types y variant-values por ID
+  const variantType1 = db['variant-types'].findOne({
+    _id: article.variantType1,
+  });
+  const variantType2 = db['variant-types'].findOne({
+    _id: article.variantType2,
+  });
+  const variantValue1 = db['variant-values'].findOne({
+    _id: article.variantValue1,
+  });
+  const variantValue2 = db['variant-values'].findOne({
+    _id: article.variantValue2,
+  });
+
+  // Verifica si los tipos son Talle y asigna el valor correspondiente
+  if (variantType1 && variantType1.name === 'Talle') {
+    talle = variantValue1 ? variantValue1.description : '';
+  } else if (variantType2 && variantType2.name === 'Talle') {
+    talle = variantValue2 ? variantValue2.description : '';
+  }
+
+  // Verifica si los tipos son Color o Tela y asigna el valor correspondiente
+  if (
+    variantType1 &&
+    (variantType1.name === 'Color' || variantType1.name === 'Tela')
+  ) {
+    color = variantValue1 ? variantValue1.description : '';
+  } else if (
+    variantType2 &&
+    (variantType2.name === 'Color' || variantType2.name === 'Tela')
+  ) {
+    color = variantValue2 ? variantValue2.description : '';
+  }
+
+  // Elimina paréntesis y barras de `color` y genera el código con iniciales en mayúsculas
+  const sanitizedColor = color.replace(/[()\/]/g, '').trim(); // Elimina "(", ")", y "/"
+  const colorCode = sanitizedColor
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase())
+    .join('');
+
+  // Genera el barcode pegado: code + talle + colorCode
+  const barcode = article.code + talle + colorCode;
+
+  // Actualiza el documento de `articles` con el nuevo `barcode`
+  db.articles.updateOne({ _id: article._id }, { $set: { barcode: barcode } });
+});
