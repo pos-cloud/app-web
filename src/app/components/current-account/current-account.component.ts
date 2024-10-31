@@ -160,6 +160,11 @@ export class CurrentAccountComponent implements OnInit {
     });
   }
 
+  public pageChange(page): void {
+    this.currentPage = page;
+    this.getSummary();
+  }
+
   public getSummary(): void {
     this.loading = true;
 
@@ -181,53 +186,65 @@ export class CurrentAccountComponent implements OnInit {
         transactionTypes.push({ $oid: element._id });
       });
     }
+    let group = {
+      _id: null,
+      count: { $sum: 1 },
+      items: { $push: '$$ROOT' },
+    };
+
+    let page = 0;
+
+    if (this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
+    let limit = this.itemsPerPage;
+
     this.query = {
       company: this.companySelected._id,
       startDate: this.startDate + ' 00:00:00' + timezone,
       endDate: this.endDate + ' 23:59:59' + timezone,
       detailsPaymentMethod: this.detailsPaymentMethod,
-      transactionMovement: this.transactionMovement,
-      invertedView: this.invertedView,
       transactionTypes: transactionTypes,
+      group,
+      skip,
+      limit,
     };
+
     if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
       this.query = {
         company: this.companySelected._id,
         startDate: this.startDate + ' 00:00:00' + timezone,
         endDate: this.endDate + ' 23:59:59' + timezone,
         detailsPaymentMethod: this.detailsPaymentMethod,
-        transactionMovement: this.transactionMovement,
-        invertedView: this.invertedView,
         transactionTypes: transactionTypes,
-        transactionBalance: { $gt: 0 },
+        group,
+        skip,
+        limit,
       };
     }
 
     // primero traemos el total mientras se traen los detalles
-    this.getBalance();
+    // this.getBalance();
 
     this._companyService
       .getSummaryOfAccountsByCompany(JSON.stringify(this.query))
       .subscribe(
         (result) => {
-          if (!result) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+          if (!result.result.length) {
+            this.showMessage(result.message, 'info', true);
             this.items = new Array();
             this.totalItems = 0;
           } else {
             this.hideMessage();
-            this.items = result;
-            if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
-              this.items = result.filter((e) => e.debe > e.haber);
-            }
+            this.items = result.result[0].items;
+            console.log(this.items);
+            // if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
+            //   this.items = result.filter((e) => e.debe > e.haber);
+            // }
 
-            this.totalItems = this.items.length;
-            this.currentPage = parseFloat(
-              this.roundNumber
-                .transform(this.totalItems / this.itemsPerPage + 0.5, 0)
-                .toFixed(0)
-            );
+            this.totalItems = result.result[0].count;
+
             this.showPaymentMethod = this.detailsPaymentMethod;
           }
           this.loading = false;

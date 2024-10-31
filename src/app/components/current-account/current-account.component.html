@@ -315,20 +315,20 @@
             <tr
               *ngFor="
                 let item of items
-                  | filter: filterDate : 'transactionDate'
-                  | filter: filterType : 'transactionTypeName'
-                  | filter: filterOrigin : 'transactionOrigin'
-                  | filter: filterLetter : 'transactionLetter'
-                  | filter: filterNumber : 'transactionNumber'
-                  | filter: filterTotalPrice : 'transactionTotalPrice'
-                  | filter: filterPaymentMethodName : 'paymentMethodName'
-                  | filter: filterQuota : 'quota'
+                  | filter : filterDate : 'transactionDate'
+                  | filter : filterType : 'transactionTypeName'
+                  | filter : filterOrigin : 'transactionOrigin'
+                  | filter : filterLetter : 'transactionLetter'
+                  | filter : filterNumber : 'transactionNumber'
+                  | filter : filterTotalPrice : 'transactionTotalPrice'
+                  | filter : filterPaymentMethodName : 'paymentMethodName'
+                  | filter : filterQuota : 'quota'
                   | filter
                     : filterPaymentMethodExpirationDate
                     : 'paymentMethodExpirationDate'
-                  | filter: filterDebe : 'debe'
-                  | filter: filterHaber : 'haber'
-                  | filter: filterSaldo : 'saldo'
+                  | filter : filterDebe : 'debe'
+                  | filter : filterHaber : 'haber'
+                  | filter : filterSaldo : 'saldo'
                   | paginate
                     : {
                         itemsPerPage: itemsPerPage,
@@ -374,24 +374,23 @@
                   <i class="fa fa-envelope"></i>
                 </button>
               </td>
-              <td class="align-center" *ngIf="item.transactionEndDate">
-                {{ item.transactionEndDate | dateFormat: 'DD/MM/YYYY' }}
+              <td class="align-center" *ngIf="item.endDate">
+                {{ item.endDate | dateFormat : 'DD/MM/YYYY' }}
               </td>
-              <td class="align-center" *ngIf="!item.transactionEndDate">
-                {{ item.transactionStartDate | dateFormat: 'DD/MM/YYYY' }}
+              <td class="align-center" *ngIf="!item.startDate">
+                {{ item.startDate | dateFormat : 'DD/MM/YYYY' }}
               </td>
-              <td *ngIf="item.transactionTypeName">
-                {{ item.transactionTypeName }}
+              <td *ngIf="item.type.name">
+                {{ item.type.name }}
               </td>
               <td class="align-center" *ngIf="userCountry === 'AR'">
-                {{ item.transactionOrigin }}
+                {{ item.origin }}
               </td>
-              <td class="align-center">{{ item.transactionLetter }}</td>
-              <td class="align-center">{{ item.transactionNumber }}</td>
+              <td class="align-center">{{ item.letter }}</td>
+              <td class="align-center">{{ item.number }}</td>
               <td class="align-right">
                 {{
-                  item.transactionTotalPrice
-                    | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                  item.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </td>
               <td class="align-right" *ngIf="showPaymentMethod">
@@ -402,14 +401,14 @@
               </td>
               <td class="align-center" *ngIf="showPaymentMethod">
                 {{
-                  item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY'
+                  item.paymentMethodExpirationDate | dateFormat : 'DD/MM/YYYY'
                 }}
               </td>
               <td class="align-right" [ngClass]="{ credit: item.debe > 0 }">
-                {{ item.debe | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.debe | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" [ngClass]="{ debit: item.haber > 0 }">
-                {{ item.haber | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.haber | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <!-- <td class="align-right">
                 {{
@@ -422,7 +421,7 @@
               <td class="align-right" *ngIf="showBalanceOfTransactions">
                 {{
                   item.transactionBalance
-                    | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                    | currency : 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </td>
             </tr>
@@ -439,17 +438,17 @@
             </td>
             <td *ngIf="balance >= 0" class="align-right">
               <strong>{{
-                balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                balance | currency : 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
             <td *ngIf="balance < 0" class="align-right">
               <strong>{{
-                balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                balance | currency : 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
             <td *ngIf="showBalanceOfTransactions" class="align-right">
               <strong>{{
-                balanceDoc | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                balanceDoc | currency : 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
           </tfoot>
@@ -461,7 +460,7 @@
         <div class="col-md-10">
           <pagination-controls
             class="my-pagination"
-            (pageChange)="currentPage = $event"
+            (pageChange)="pageChange($event)"
             #api
             previousLabel="Ant."
             nextLabel="Sig."
@@ -470,7 +469,11 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage">
+          <select
+            class="form-control"
+            [(ngModel)]="itemsPerPage"
+            (change)="getSummary()"
+          >
             <option [value]="5">Mostrar 5 ítems</option>
             <option [value]="10">Mostrar 10 ítems</option>
             <option [value]="15">Mostrar 15 ítems</option>

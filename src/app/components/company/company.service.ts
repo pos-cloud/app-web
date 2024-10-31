@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment';
 import * as FileSaver from 'file-saver';
 import { BehaviorSubject, of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
@@ -25,10 +26,7 @@ export class CompanyService extends ModelService {
   private provider: BehaviorSubject<DatatableHistory> =
     new BehaviorSubject<DatatableHistory>(null);
 
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `companies`, // PATH
       _http,
@@ -273,21 +271,23 @@ export class CompanyService extends ModelService {
     // page: number,
     // itemsPerPage: number
   ): Observable<any> {
-    const URL = `${Config.apiURL}summary-of-accounts-by-company`;
+    const URL = `${environment.apiv2}/companies/summary-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
     // Agregar parámetros de paginación
-    const params = new HttpParams().set('query', query);
+    // const params = new HttpParams().set('query', query);
     // .set('page', page.toString()) // Pasar el número de página
     // .set('itemsPerPage', itemsPerPage.toString()); // Pasar la cantidad de ítems por página
+    const body = {
+      query: query,
+    };
 
     return this._http
-      .get(URL, {
+      .post(URL, body, {
         headers: headers,
-        params: params,
       })
       .pipe(
         map((res) => {
