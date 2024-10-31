@@ -410,14 +410,12 @@
               <td class="align-right" [ngClass]="{ debit: item.haber > 0 }">
                 {{ item.haber | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
-              <!-- <td class="align-right">
+              <td class="align-right">
                 {{
-                  (item.haber > 0
-                    ? item.transactionBalance * -1
-                    : item.transactionBalance
-                  ) | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                  (item.haber > 0 ? item.balance * -1 : item.balance)
+                    | currency : 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
-              </td> -->
+              </td>
               <td class="align-right" *ngIf="showBalanceOfTransactions">
                 {{
                   item.transactionBalance

@@ -227,33 +227,31 @@ export class CurrentAccountComponent implements OnInit {
     // primero traemos el total mientras se traen los detalles
     // this.getBalance();
 
-    this._companyService
-      .getSummaryOfAccountsByCompany(JSON.stringify(this.query))
-      .subscribe(
-        (result) => {
-          if (!result.result.length) {
-            this.showMessage(result.message, 'info', true);
-            this.items = new Array();
-            this.totalItems = 0;
-          } else {
-            this.hideMessage();
-            this.items = result.result[0].items;
-            console.log(this.items);
-            // if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
-            //   this.items = result.filter((e) => e.debe > e.haber);
-            // }
+    this._companyService.getSummaryOfAccountsByCompany(this.query).subscribe(
+      (result) => {
+        if (!result.result.length) {
+          this.showMessage(result.message, 'info', true);
+          this.items = new Array();
+          this.totalItems = 0;
+        } else {
+          this.hideMessage();
+          this.items = result.result[0].items;
+          console.log(this.items);
+          // if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
+          //   this.items = result.filter((e) => e.debe > e.haber);
+          // }
 
-            this.totalItems = result.result[0].count;
+          this.totalItems = result.result[0].count;
 
-            this.showPaymentMethod = this.detailsPaymentMethod;
-          }
-          this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+          this.showPaymentMethod = this.detailsPaymentMethod;
         }
-      );
+        this.loading = false;
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getCompany(companyId: string): void {

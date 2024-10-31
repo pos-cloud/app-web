@@ -267,26 +267,18 @@ export class CompanyService extends ModelService {
   }
 
   public getSummaryOfAccountsByCompany(
-    query: string
+    data: {}
     // page: number,
     // itemsPerPage: number
   ): Observable<any> {
-    const URL = `${environment.apiv2}/companies/summary-of-accounts-by-company`;
+    const URL = `${environment.apiv2}/companies/details-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    // Agregar parámetros de paginación
-    // const params = new HttpParams().set('query', query);
-    // .set('page', page.toString()) // Pasar el número de página
-    // .set('itemsPerPage', itemsPerPage.toString()); // Pasar la cantidad de ítems por página
-    const body = {
-      query: query,
-    };
-
     return this._http
-      .post(URL, body, {
+      .post(URL, data, {
         headers: headers,
       })
       .pipe(

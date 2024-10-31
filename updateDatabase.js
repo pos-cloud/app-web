@@ -139,3 +139,56 @@ db.articles.find({ type: 'Variante' }).forEach((article) => {
   // Actualiza el documento de `articles` con el nuevo `barcode`
   db.articles.updateOne({ _id: article._id }, { $set: { barcode: barcode } });
 });
+db.articles
+  .find({ type: 'Variante', operationType: { $ne: 'D' } })
+  .forEach(function (article) {
+    let variants = [];
+    variants = db.variants
+      .find({ articleChild: article._id, operationType: { $ne: 'D' } })
+      .toArray()
+      .map(function (variant) {
+        return {
+          type: variant?.type,
+          value: variant?.value,
+        };
+      });
+    db.articles.updateOne(
+      { _id: article._id },
+      {
+        $set: {
+          valueVariant: variants?.[0]?.value ?? null,
+          typeVariant: variants?.[0]?.type ?? null,
+          variantType1: variants?.[0]?.type ?? null,
+          variantValue1: variants?.[0]?.value ?? null,
+          variantType2: variants?.[1]?.type ?? null,
+          variantValue2: variants?.[1]?.value ?? null,
+        },
+      }
+    );
+  });
+
+//blanco
+db.article.updateOne(
+  { _id: new ObjectId('') },
+  {
+    $set: {
+      valueVariant: '65fb49bc4f765100286d8940',
+      typeVariant: '65fb491af7473400277a2fcb',
+      variantType1: '65fb491af7473400277a2fcb',
+      variantValue1: '65fb49bc4f765100286d8940',
+    },
+  }
+);
+
+//Ocre
+db.article.updateOne(
+  { _id: new ObjectId('') },
+  {
+    $set: {
+      valueVariant: '65fb49bc4f765100286d8940',
+      typeVariant: '65fb491af7473400277a2fcb',
+      variantType1: '65fb491af7473400277a2fcb',
+      variantValue1: '65fb49bc4f765100286d8940',
+    },
+  }
+);
