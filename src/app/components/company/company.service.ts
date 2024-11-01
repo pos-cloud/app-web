@@ -291,19 +291,16 @@ export class CompanyService extends ModelService {
       );
   }
 
-  public getBalanceOfAccountsByCompany(query: string): Observable<any> {
-    const URL = `${Config.apiURL}balance-of-accounts-by-company`;
+  public getBalanceOfAccountsByCompany(query: {}): Observable<any> {
+    const URL = `${environment.apiv2}/companies/total-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
-
     return this._http
-      .get(URL, {
+      .post(URL, query, {
         headers: headers,
-        params: params,
       })
       .pipe(
         map((res) => {

@@ -34,7 +34,7 @@
         </ngb-alert>
       </div>
       <div class="row container-filter">
-        <div class="col-md-2">
+        <!-- <div class="col-md-2">
           <label for="detailsPaymentMethod" class="control-label">
             <b>Detallar método de pago</b>
           </label>
@@ -46,7 +46,7 @@
             <option [ngValue]="true">Sí</option>
             <option [ngValue]="false">No</option>
           </select>
-        </div>
+        </div> -->
         <div class="col-md-2">
           <label for="showBalanceOfTransactions" class="control-label">
             <b>Muestra saldo</b>
@@ -210,12 +210,11 @@
               <th>Letra</th>
               <th>Número</th>
               <th>Importe</th>
-              <th *ngIf="showPaymentMethod">Método</th>
+              <!-- <th *ngIf="showPaymentMethod">Método</th>
               <th *ngIf="showPaymentMethod">Cuota</th>
-              <th *ngIf="showPaymentMethod">Vencimiento</th>
+              <th *ngIf="showPaymentMethod">Vencimiento</th> -->
               <th>Debe</th>
               <th>Haber</th>
-              <!-- <th>Saldo</th> -->
               <th *ngIf="showBalanceOfTransactions">Saldo Doc.</th>
             </tr>
             <tr class="filters">
@@ -302,7 +301,6 @@
                   placeholder="Haber..."
                 />
               </th>
-              <!-- <th></th> -->
               <th *ngIf="showBalanceOfTransactions"></th>
             </tr>
           </thead>
@@ -393,7 +391,7 @@
                   item.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </td>
-              <td class="align-right" *ngIf="showPaymentMethod">
+              <!-- <td class="align-right" *ngIf="showPaymentMethod">
                 {{ item.paymentMethodName }}
               </td>
               <td class="align-center" *ngIf="showPaymentMethod">
@@ -403,23 +401,16 @@
                 {{
                   item.paymentMethodExpirationDate | dateFormat : 'DD/MM/YYYY'
                 }}
-              </td>
+              </td> -->
               <td class="align-right" [ngClass]="{ credit: item.debe > 0 }">
                 {{ item.debe | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" [ngClass]="{ debit: item.haber > 0 }">
                 {{ item.haber | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
-              <td class="align-right">
-                {{
-                  (item.haber > 0 ? item.balance * -1 : item.balance)
-                    | currency : 'USD' : 'symbol-narrow' : '1.2-2'
-                }}
-              </td>
               <td class="align-right" *ngIf="showBalanceOfTransactions">
                 {{
-                  item.transactionBalance
-                    | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                  item.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </td>
             </tr>

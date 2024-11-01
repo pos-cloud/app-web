@@ -30,7 +30,6 @@ import {
 import { User } from 'app/components/user/user';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { first } from 'rxjs/operators';
-import { SelectCompanyComponent } from '../company/select-company/select-company.component';
 import { AuthService } from '../login/auth.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { Printer, PrinterPrintIn } from '../printer/printer';
@@ -123,8 +122,6 @@ export class CurrentAccountComponent implements OnInit {
       this.companyType = params['companyType'];
       if (params['companyId']) {
         this.getCompany(params['companyId']);
-      } else {
-        this.openModal('company');
       }
     });
   }
@@ -145,19 +142,6 @@ export class CurrentAccountComponent implements OnInit {
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-
-    await this._configService.getConfig.subscribe((config) => {
-      this.config = config;
-      this.detailsPaymentMethod =
-        this.config.reports.summaryOfAccounts.detailsPaymentMethod;
-      if (this.companyType === CompanyType.Client) {
-        this.invertedView =
-          this.config.reports.summaryOfAccounts.invertedViewClient;
-      } else {
-        this.invertedView =
-          this.config.reports.summaryOfAccounts.invertedViewProvider;
-      }
-    });
   }
 
   public pageChange(page): void {
@@ -205,7 +189,7 @@ export class CurrentAccountComponent implements OnInit {
       startDate: this.startDate + ' 00:00:00' + timezone,
       endDate: this.endDate + ' 23:59:59' + timezone,
       detailsPaymentMethod: this.detailsPaymentMethod,
-      transactionTypes: transactionTypes,
+      transactionType: transactionTypes,
       group,
       skip,
       limit,
@@ -217,15 +201,12 @@ export class CurrentAccountComponent implements OnInit {
         startDate: this.startDate + ' 00:00:00' + timezone,
         endDate: this.endDate + ' 23:59:59' + timezone,
         detailsPaymentMethod: this.detailsPaymentMethod,
-        transactionTypes: transactionTypes,
+        transactionType: transactionTypes,
         group,
         skip,
         limit,
       };
     }
-
-    // primero traemos el total mientras se traen los detalles
-    // this.getBalance();
 
     this._companyService.getSummaryOfAccountsByCompany(this.query).subscribe(
       (result) => {
@@ -236,13 +217,13 @@ export class CurrentAccountComponent implements OnInit {
         } else {
           this.hideMessage();
           this.items = result.result[0].items;
-          console.log(this.items);
-          // if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
-          //   this.items = result.filter((e) => e.debe > e.haber);
-          // }
+
+          if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
+            this.items = result.filter((e) => e.debe > e.haber);
+          }
 
           this.totalItems = result.result[0].count;
-
+          this.currentPage = Math.ceil(this.totalItems / this.itemsPerPage);
           this.showPaymentMethod = this.detailsPaymentMethod;
         }
         this.loading = false;
@@ -257,13 +238,12 @@ export class CurrentAccountComponent implements OnInit {
   public getCompany(companyId: string): void {
     this.loading = true;
 
-    this._companyService.getCompany(companyId).subscribe(
+    this._companyService.getById(companyId).subscribe(
       async (result) => {
-        if (!result.company) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+        if (!result.result) {
+          this.showMessage(result.message, 'info', true);
         } else {
-          this.companySelected = result.company;
+          this.companySelected = result.result;
           if (this.companySelected.type === CompanyType.Client) {
             this.transactionMovement = TransactionMovement.Sale;
           } else {
@@ -287,28 +267,27 @@ export class CurrentAccountComponent implements OnInit {
   public refresh(): void {
     if (this.companySelected) {
       this.getSummary();
+      this.getTotalBalance();
     } else {
       this.showMessage('Debe seleccionar una empresa.', 'info', true);
     }
   }
 
-  public getBalance(): void {
+  public getTotalBalance(): void {
     this.balance = 0;
     this.balanceDoc = 0;
 
-    this._companyService
-      .getBalanceOfAccountsByCompany(JSON.stringify(this.query))
-      .subscribe(
-        (result) => {
-          if (result) {
-            this.balance = result.balance;
-            this.balanceDoc = result.balanceDoc;
-          }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
+    this._companyService.getBalanceOfAccountsByCompany(this.query).subscribe(
+      (result) => {
+        if (result) {
+          this.balance = result.balance;
+          this.balanceDoc = result.balanceDoc;
         }
-      );
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+      }
+    );
   }
 
   async openModal(op: string, transactionId?: string) {
@@ -331,36 +310,6 @@ export class CurrentAccountComponent implements OnInit {
           (result) => {
             if (result.transaction) {
               // this.refresh();
-            }
-          },
-          (reason) => {}
-        );
-        break;
-      case 'company':
-        modalRef = this._modalService.open(SelectCompanyComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.type = this.companyType;
-        modalRef.result.then(
-          (result) => {
-            if (result.company) {
-              this.companySelected = result.company;
-              if (this.companyType === CompanyType.Client) {
-                this._router.navigate(['admin/cuentas-corrientes'], {
-                  queryParams: {
-                    companyId: this.companySelected._id,
-                    companyType: this.companySelected.type,
-                  },
-                });
-              } else {
-                this._router.navigate(['admin/cuentas-corrientes'], {
-                  queryParams: {
-                    companyId: this.companySelected._id,
-                    companyType: this.companySelected.type,
-                  },
-                });
-              }
             }
           },
           (reason) => {}
