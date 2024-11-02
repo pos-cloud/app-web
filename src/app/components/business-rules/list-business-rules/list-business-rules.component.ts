@@ -1,15 +1,15 @@
-import {Component, ViewEncapsulation, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {PrintComponent} from 'app/components/print/print/print.component';
-import {PrinterPrintIn} from 'app/components/printer/printer';
-import {PrinterService} from 'app/components/printer/printer.service';
-import {IButton} from 'app/util/buttons.interface';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PrintComponent } from 'app/components/print/print/print.component';
+import { PrinterPrintIn } from 'app/components/printer/printer';
+import { PrinterService } from 'app/components/printer/printer.service';
+import { IButton } from 'app/util/buttons.interface';
 import Resulteable from 'app/util/Resulteable';
 
-import {DatatableComponent} from '../../datatable/datatable.component';
-import {BusinessRuleService} from '../business-rule.service';
-import {BusinessRule} from '../business-rules';
+import { DatatableComponent } from '../../datatable/datatable.component';
+import { BusinessRuleService } from '../business-rule.service';
+import { BusinessRule } from '../business-rules';
 
 @Component({
   selector: 'app-list-business-rules',
@@ -19,7 +19,7 @@ import {BusinessRule} from '../business-rules';
 })
 export class ListBusinessRulesComponent {
   title: string = 'business-rules';
-  sort = {active: -1, endDate: -1};
+  sort = { active: -1, endDate: -1 };
   columns = BusinessRule.getAttributes();
   rowButtons: IButton[] = [
     {
@@ -69,7 +69,7 @@ export class ListBusinessRulesComponent {
     private _modalService: NgbModal,
     private _router: Router,
     public _service: BusinessRuleService,
-    private _printerService: PrinterService,
+    private _printerService: PrinterService
   ) {}
 
   async emitEvent(event) {
@@ -138,7 +138,7 @@ export class ListBusinessRulesComponent {
         },
         match: {
           printIn: PrinterPrintIn.Voucher,
-          url: ""
+          url: '',
         },
       })
       .toPromise();
@@ -146,12 +146,6 @@ export class ListBusinessRulesComponent {
     if (printerResponse.status === 200 && printerResponse.result.length > 0) {
       return printerResponse.result[0];
     } else {
-      this.datatableComponent.showToast(
-        null,
-        'danger',
-        'Debe crear la configuración para la impresora voucher',
-      );
-
       return;
     }
   }

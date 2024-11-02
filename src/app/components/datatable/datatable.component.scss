@@ -1,1 +1,10 @@
-app-datatable {}
+app-datatable {
+  .has-data {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+
+  th {
+    user-select: none;
+  }
+}

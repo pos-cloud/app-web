@@ -1,19 +1,15 @@
-import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
-import { CurrencyPipe } from '@angular/common';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CurrencyPipe } from '@angular/common';
 import { Config } from 'app/app.config';
+import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
 
 export class DatatableController {
-
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   public columns: any[];
   public service: any;
 
-  constructor(
-    service: any,
-    columns: any[],
-  ) {
+  constructor(service: any, columns: any[]) {
     this.columns = columns;
     this.service = service;
   }
@@ -34,7 +30,12 @@ export class DatatableController {
           value = this.roundNumberPipe.transform(eval(val));
           break;
         case 'currency':
-          value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+          value = this.currencyPipe.transform(
+            this.roundNumberPipe.transform(eval(val)),
+            'USD',
+            'symbol-narrow',
+            '1.2-2'
+          );
           break;
         case 'percent':
           value = this.roundNumberPipe.transform(eval(val)) + '%';
@@ -48,14 +49,14 @@ export class DatatableController {
   }
 
   public getItems(
-    filters: any[],
+    filters: any,
     currentPage: number,
     itemsPerPage: number,
     sort: {},
     group: {} = null
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      let timezone = "-03:00";
+      let timezone = '-03:00';
       if (Config.timezone && Config.timezone !== '') {
         timezone = Config.timezone.split('UTC')[1];
       }
@@ -65,7 +66,7 @@ export class DatatableController {
       for (let i = 0; i < this.columns.length; i++) {
         if (this.columns[i].visible || this.columns[i].required) {
           let value = filters[this.columns[i].name];
-          if (value != undefined && value != null && value != "") {
+          if (value != undefined && value != null && value != '') {
             if (this.columns[i].defaultFilter) {
               match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
             } else {
@@ -81,7 +82,8 @@ export class DatatableController {
           }
         }
       }
-      if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
+      if (match.charAt(match.length - 1) === ',')
+        match = match.substring(0, match.length - 1);
       match += `}`;
       match = JSON.parse(match);
 
@@ -95,11 +97,14 @@ export class DatatableController {
           }
           j++;
           if (!this.columns[i].project) {
-            if (this.columns[i].datatype !== 'string' && this.columns[i].datatype !== 'boolean') {
-              if (this.columns[i].datatype === "date") {
-                project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${timezone}" }}`
+            if (
+              this.columns[i].datatype !== 'string' &&
+              this.columns[i].datatype !== 'boolean'
+            ) {
+              if (this.columns[i].datatype === 'date') {
+                project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${timezone}" }}`;
               } else {
-                project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+                project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`;
               }
             } else {
               project += `"${this.columns[i].name}": 1`;
@@ -117,7 +122,7 @@ export class DatatableController {
         group = {
           _id: null,
           count: { $sum: 1 },
-          items: { $push: "$$ROOT" }
+          items: { $push: '$$ROOT' },
         };
       }
 
@@ -126,19 +131,21 @@ export class DatatableController {
         page = currentPage - 1;
       }
 
-      this.service.getAll({
-        project,
-        match,
-        sort,
-        group,
-        limit: itemsPerPage,
-        skip: !isNaN(page * itemsPerPage) ? (page * itemsPerPage) : 0
-      }).subscribe(
-        result => {
-          resolve(result);
-        },
-        error => reject(error)
-      );
+      this.service
+        .getAll({
+          project,
+          match,
+          sort,
+          group,
+          limit: itemsPerPage,
+          skip: !isNaN(page * itemsPerPage) ? page * itemsPerPage : 0,
+        })
+        .subscribe(
+          (result) => {
+            resolve(result);
+          },
+          (error) => reject(error)
+        );
     });
   }
 
