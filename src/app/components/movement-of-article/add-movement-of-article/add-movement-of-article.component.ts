@@ -180,7 +180,9 @@ export class AddMovementOfArticleComponent implements OnInit {
       this.movementOfArticle.unitPrice + this.movementOfArticle.discountAmount;
 
     if (this.movementOfArticle.article) {
-      this.containsVariants = this.movementOfArticle.article.containsVariants;
+      this.containsVariants =
+        this.movementOfArticle.article?.variants?.length > 0 ||
+        this.movementOfArticle.article.containsVariants;
       this.loadLocationAndStock();
       if (this.containsVariants) {
         this.getVariantsByArticleParent();
@@ -558,7 +560,10 @@ export class AddMovementOfArticleComponent implements OnInit {
       quantityMeasure: [this.movementOfArticle.quantityMeasure, []],
       stock: [this.stock, []],
       position: [this.position, []],
-      posDescription: [this.movementOfArticle.article.posDescription, []],
+      posDescription: [
+        this.movementOfArticle?.article?.posDescription ?? '',
+        [],
+      ],
     });
 
     this.movementOfArticleForm.valueChanges.subscribe((data) =>
@@ -646,8 +651,14 @@ export class AddMovementOfArticleComponent implements OnInit {
     if (this.variantTypes && this.variantTypes.length > 0) {
       for (let type of this.variantTypes) {
         let key = type.name;
-
         this.selectedVariants[key] = null;
+
+        // selecciona automaticamente el primero que encuentra
+        const variants = this.getVariantsByType(type);
+        if (variants && variants.length > 0) {
+          const firstVariant = variants[0].value;
+          this.selectVariant(type, firstVariant);
+        }
       }
     }
   }
@@ -727,6 +738,11 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   async selectVariant(type: VariantType, value: VariantValue) {
     let key = type.name;
+
+    // valida que no se puede deseleccionar uno
+    if (this.selectedVariants[type.name] === value.description) {
+      return;
+    }
 
     if (value && value.description === this.selectedVariants[key]) {
       this.selectedVariants[key] = null;
@@ -874,14 +890,14 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.movementOfArticleForm.value.notes = this.movementOfArticle.notes;
       }
 
-      if (this.containsVariants) {
-        this.movementOfArticle.article = this.getArticleBySelectedVariants();
-      }
+      // if (this.containsVariants) {
+      //   this.movementOfArticle.article = this.getArticleBySelectedVariants();
+      // }
 
       this.movementOfArticle.account = this.movementOfArticleForm.value.account;
 
       this.calculateUnitPrice();
-      if (this.containsVariants) {
+      if (false) {
         if (!this.isValidSelectedVariants()) {
           if (!this.variants || this.variants.length === 0) {
             if (await this.isValidMovementOfArticle(this.movementOfArticle)) {
@@ -1224,7 +1240,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.modifyStock = this.transaction.type.modifyStock;
     this.movementOfArticle.stockMovement = this.transaction.type.stockMovement;
     this.movementOfArticle.article = articleSelected;
-    this.movementOfArticle.code = articleSelected.code;
+    this.movementOfArticle.code = articleSelected?.code ?? '';
     this.movementOfArticle.codeSAT = articleSelected.codeSAT;
     this.movementOfArticle.description = articleSelected.description;
     this.movementOfArticle.observation = articleSelected.observation;
