@@ -10,8 +10,8 @@ import { PipesModule } from 'app/core/pipes/pipes.module';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { NgxTinymceModule } from 'ngx-tinymce';
+import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { ProgressbarModule } from '../progressbar/progressbar.module';
 import { MakeComponent } from './crud/make.component';
 import { ListMakesComponent } from './list-makes/list-makes.component';
 import { MakeService } from './make.service';

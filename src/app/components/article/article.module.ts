@@ -11,8 +11,8 @@ import { PipesModule } from 'app/core/pipes/pipes.module';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { NgxTinymceModule } from 'ngx-tinymce';
+import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { ProgressbarModule } from '../progressbar/progressbar.module';
 import { HistoryComponent } from './actions/history/history.component';
 import { PrintLabelComponent } from './actions/print-label/print-label.component';
 import { PrintLabelsComponent } from './actions/print-labels/print-labels.component';

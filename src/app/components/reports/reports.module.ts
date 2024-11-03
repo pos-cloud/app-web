@@ -8,8 +8,8 @@ import { AuthGuard } from 'app/core/guards/auth.guard';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { LicenseGuard } from '../../core/guards/license.guard';
+import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { ExportersModule } from '../export/exporters.module';
-import { ProgressbarModule } from '../progressbar/progressbar.module';
 
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { ListArticlesRequirementsByTransactionComponent } from './list-articles-requirements-by-transaction/list-articles-requirements-by-transaction.component';

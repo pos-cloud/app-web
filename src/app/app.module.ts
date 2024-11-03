@@ -166,7 +166,6 @@ import { PrintComponent } from './components/print/print/print.component';
 import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
 import { PrinterService } from './components/printer/printer.service';
 import { PrinterComponent } from './components/printer/printer/printer.component';
-import { ProgressbarModule } from './components/progressbar/progressbar.module';
 import { RegisterComponent } from './components/register/register.component';
 import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
 import { RelationTypeService } from './components/relation-type/relation-type.service';
@@ -242,6 +241,7 @@ import { ClaimComponent } from './layout/claim/claim.component';
 import { ClaimService } from './layout/claim/claim.service';
 import { HeaderComponent } from './layout/header/header.component';
 import { HomeComponent } from './layout/home/home.component';
+import { ProgressbarModule } from './shared/components/progressbar/progressbar.module';
 import { ToastComponent } from './shared/components/toast/toast.component';
 
 export function createTranslateLoader(http: HttpClient) {
