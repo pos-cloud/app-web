@@ -379,7 +379,7 @@
             >
               Resúmenes de Cuentas
             </button>
-            <button
+            <!-- <button
               *ngIf="identity?.permission?.menu?.companies?.clientAccount"
               class="dropdown-item"
               [routerLink]="['admin', 'cuentas-corrientes']"
@@ -387,7 +387,7 @@
               [routerLinkActive]="['active']"
             >
               Cuentas Corrientes
-            </button>
+            </button> -->
           </div>
           <div *ngIf="config.modules.purchase" class="dropdown-divider"></div>
 
@@ -406,7 +406,7 @@
           >
             Resúmenes de Cuentas
           </button>
-          <button
+          <!-- <button
             *ngIf="identity?.permission?.menu?.companies?.providerAccount"
             class="dropdown-item"
             [routerLink]="['admin', 'cuentas-corrientes']"
@@ -414,7 +414,7 @@
             [routerLinkActive]="['active']"
           >
             Cuentas Corrientes
-          </button>
+          </button> -->
           <div class="dropdown-divider"></div>
           <button
             *ngIf="identity?.permission?.menu?.companies?.group"

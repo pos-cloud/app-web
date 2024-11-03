@@ -313,20 +313,20 @@
             <tr
               *ngFor="
                 let item of items
-                  | filter : filterDate : 'transactionDate'
-                  | filter : filterType : 'transactionTypeName'
-                  | filter : filterOrigin : 'transactionOrigin'
-                  | filter : filterLetter : 'transactionLetter'
-                  | filter : filterNumber : 'transactionNumber'
-                  | filter : filterTotalPrice : 'transactionTotalPrice'
-                  | filter : filterPaymentMethodName : 'paymentMethodName'
-                  | filter : filterQuota : 'quota'
+                  | filter: filterDate : 'transactionDate'
+                  | filter: filterType : 'transactionTypeName'
+                  | filter: filterOrigin : 'transactionOrigin'
+                  | filter: filterLetter : 'transactionLetter'
+                  | filter: filterNumber : 'transactionNumber'
+                  | filter: filterTotalPrice : 'transactionTotalPrice'
+                  | filter: filterPaymentMethodName : 'paymentMethodName'
+                  | filter: filterQuota : 'quota'
                   | filter
                     : filterPaymentMethodExpirationDate
                     : 'paymentMethodExpirationDate'
-                  | filter : filterDebe : 'debe'
-                  | filter : filterHaber : 'haber'
-                  | filter : filterSaldo : 'saldo'
+                  | filter: filterDebe : 'debe'
+                  | filter: filterHaber : 'haber'
+                  | filter: filterSaldo : 'saldo'
                   | paginate
                     : {
                         itemsPerPage: itemsPerPage,
@@ -373,10 +373,10 @@
                 </button>
               </td>
               <td class="align-center" *ngIf="item.endDate">
-                {{ item.endDate | dateFormat : 'DD/MM/YYYY' }}
+                {{ item.endDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
               <td class="align-center" *ngIf="!item.startDate">
-                {{ item.startDate | dateFormat : 'DD/MM/YYYY' }}
+                {{ item.startDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
               <td *ngIf="item.type.name">
                 {{ item.type.name }}
@@ -388,7 +388,7 @@
               <td class="align-center">{{ item.number }}</td>
               <td class="align-right">
                 {{
-                  item.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                  item.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </td>
               <!-- <td class="align-right" *ngIf="showPaymentMethod">
@@ -403,15 +403,13 @@
                 }}
               </td> -->
               <td class="align-right" [ngClass]="{ credit: item.debe > 0 }">
-                {{ item.debe | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.debe | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" [ngClass]="{ debit: item.haber > 0 }">
-                {{ item.haber | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.haber | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" *ngIf="showBalanceOfTransactions">
-                {{
-                  item.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2'
-                }}
+                {{ item.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </tr>
             <tr align="center" *ngIf="items.length === 0 && !loading">
@@ -427,17 +425,17 @@
             </td>
             <td *ngIf="balance >= 0" class="align-right">
               <strong>{{
-                balance | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
             <td *ngIf="balance < 0" class="align-right">
               <strong>{{
-                balance | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
             <td *ngIf="showBalanceOfTransactions" class="align-right">
               <strong>{{
-                balanceDoc | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                balanceDoc | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
           </tfoot>

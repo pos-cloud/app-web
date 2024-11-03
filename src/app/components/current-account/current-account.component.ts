@@ -29,7 +29,6 @@ import {
 } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
-import { first } from 'rxjs/operators';
 import { AuthService } from '../login/auth.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { Printer, PrinterPrintIn } from '../printer/printer';
@@ -127,21 +126,10 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this._authService.getIdentity.pipe(first()).subscribe((identity) => {
-      this.identity = identity;
-    });
-
-    if (this.identity.permission && this.identity.permission.collections) {
-      this.identity.permission.collections.forEach((element) => {
-        if (element.name === 'transacciones') {
-          this.actions = element.actions;
-        }
-      });
-    }
-
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.refresh();
   }
 
   public pageChange(page): void {
@@ -170,11 +158,6 @@ export class CurrentAccountComponent implements OnInit {
         transactionTypes.push({ $oid: element._id });
       });
     }
-    let group = {
-      _id: null,
-      count: { $sum: 1 },
-      items: { $push: '$$ROOT' },
-    };
 
     let page = 0;
 
@@ -190,23 +173,10 @@ export class CurrentAccountComponent implements OnInit {
       endDate: this.endDate + ' 23:59:59' + timezone,
       detailsPaymentMethod: this.detailsPaymentMethod,
       transactionType: transactionTypes,
-      group,
+      transactionMovement: this.transactionMovement,
       skip,
       limit,
     };
-
-    if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
-      this.query = {
-        company: this.companySelected._id,
-        startDate: this.startDate + ' 00:00:00' + timezone,
-        endDate: this.endDate + ' 23:59:59' + timezone,
-        detailsPaymentMethod: this.detailsPaymentMethod,
-        transactionType: transactionTypes,
-        group,
-        skip,
-        limit,
-      };
-    }
 
     this._companyService.getSummaryOfAccountsByCompany(this.query).subscribe(
       (result) => {
@@ -217,14 +187,7 @@ export class CurrentAccountComponent implements OnInit {
         } else {
           this.hideMessage();
           this.items = result.result[0].items;
-
-          if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
-            this.items = result.filter((e) => e.debe > e.haber);
-          }
-
           this.totalItems = result.result[0].count;
-          this.currentPage = Math.ceil(this.totalItems / this.itemsPerPage);
-          this.showPaymentMethod = this.detailsPaymentMethod;
         }
         this.loading = false;
       },
@@ -280,8 +243,8 @@ export class CurrentAccountComponent implements OnInit {
     this._companyService.getBalanceOfAccountsByCompany(this.query).subscribe(
       (result) => {
         if (result) {
-          this.balance = result.balance;
-          this.balanceDoc = result.balanceDoc;
+          this.balance = result.totalPrice;
+          this.balanceDoc = result.balance;
         }
       },
       (error) => {
