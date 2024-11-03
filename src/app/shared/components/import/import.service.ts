@@ -6,7 +6,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { AuthService } from 'app/components/login/auth.service';
 import { environment } from 'environments/environment';
-import { Config } from '../../app.config';
 
 @Injectable()
 export class ImportService {
@@ -52,7 +51,7 @@ export class ImportService {
     objectToImport: {},
     transaccionId: string
   ): Observable<any> {
-    const URL = `${Config.apiURL}import-movement`;
+    const URL = `${environment.api}import-movement`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

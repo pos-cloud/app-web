@@ -5,10 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { DirectivesModule } from 'app/main/directives/directives.module';
-import { AuthGuard } from 'app/main/guards/auth.guard';
-import { LicenseGuard } from 'app/main/guards/license.guard';
-import { PipesModule } from 'app/main/pipes/pipes.module';
+import { AuthGuard } from 'app/core/guards/auth.guard';
+import { LicenseGuard } from 'app/core/guards/license.guard';
+import { PipesModule } from 'app/core/pipes/pipes.module';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { NgxTinymceModule } from 'ngx-tinymce';
 import { DatatableModule } from '../datatable/datatable.module';
@@ -51,7 +51,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     NgxPaginationModule,
-    DirectivesModule,
+    FocusDirective,
     DragDropModule,
     ProgressbarModule,
     PipesModule,

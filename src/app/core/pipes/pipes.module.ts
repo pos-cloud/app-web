@@ -2,37 +2,30 @@ import { NgModule } from '@angular/core';
 import { CapitalizePipe } from './capitalize';
 import { DateFormatPipe } from './date-format.pipe';
 import { FilterPipe } from './filter.pipe';
+import { JsonDiffPipe } from './json-diff';
 import { OrderByPipe } from './order-by.pipe';
 import { RoundNumberPipe } from './round-number.pipe';
-import { TotalPipe } from './total.pipe';
 import { TranslateMePipe } from './translate-me';
-import { JsonDiffPipe } from './json-diff';
 
 @NgModule({
-	declarations: [
-		CapitalizePipe,
-		DateFormatPipe,
-		FilterPipe,
+  declarations: [
+    CapitalizePipe,
+    DateFormatPipe,
+    FilterPipe,
     JsonDiffPipe,
     OrderByPipe,
-		RoundNumberPipe,
-    TotalPipe,
-    TranslateMePipe
-	],
-	exports: [
-		CapitalizePipe,
-		DateFormatPipe,
-		FilterPipe,
-    JsonDiffPipe,
-    OrderByPipe,
-		RoundNumberPipe,
-    TotalPipe,
-    TranslateMePipe
+    RoundNumberPipe,
+    TranslateMePipe,
   ],
-  providers: [
+  exports: [
+    CapitalizePipe,
+    DateFormatPipe,
+    FilterPipe,
     JsonDiffPipe,
-    RoundNumberPipe
-  ]
+    OrderByPipe,
+    RoundNumberPipe,
+    TranslateMePipe,
+  ],
+  providers: [JsonDiffPipe, RoundNumberPipe],
 })
-
-export class PipesModule { }
+export class PipesModule {}

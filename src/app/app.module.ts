@@ -233,19 +233,16 @@ import { VATConditionService } from './components/vat-condition/vat-condition.se
 import { VATConditionComponent } from './components/vat-condition/vat-condition/vat-condition.component';
 import { VoucherReaderComponent } from './components/voucher-reader/voucher-reader.component';
 import { VoucherService } from './components/voucher-reader/voucher.service';
+import { AuthGuard } from './core/guards/auth.guard';
+import { LicenseGuard } from './core/guards/license.guard';
+import { NotificationGuard } from './core/guards/notification.guard';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { PipesModule } from './core/pipes/pipes.module';
 import { ClaimComponent } from './layout/claim/claim.component';
 import { ClaimService } from './layout/claim/claim.service';
 import { HeaderComponent } from './layout/header/header.component';
 import { HomeComponent } from './layout/home/home.component';
-import { DirectivesModule } from './main/directives/directives.module';
-import { AuthGuard } from './main/guards/auth.guard';
-import { LicenseGuard } from './main/guards/license.guard';
-import { NotificationGuard } from './main/guards/notification.guard';
-import { AuthInterceptor } from './main/interceptors/auth.interceptor';
-import { PipesModule } from './main/pipes/pipes.module';
-import { SafePipe } from './main/pipes/safe.pipe';
-import { MeliService } from './main/services/meli.service';
-import { ToastComponent } from './shared/toast/toast.component';
+import { ToastComponent } from './shared/components/toast/toast.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -406,7 +403,6 @@ export function createTranslateLoader(http: HttpClient) {
     AbandonedCartsComponent,
     SelectPriceListComponent,
     KardexCheckComponent,
-    SafePipe,
     CancelComponent,
     FulfilledComponent,
     MenuComponent,
@@ -441,7 +437,6 @@ export function createTranslateLoader(http: HttpClient) {
       baseURL: '//cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.0/',
     }),
     ProgressbarModule,
-    DirectivesModule,
     PipesModule,
     ComponentsModule,
     ExportersModule,
@@ -509,7 +504,6 @@ export function createTranslateLoader(http: HttpClient) {
     CurrencyValueService,
     EmailTemplateService,
     PushNotificationsService,
-    MeliService,
     MenuService,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],

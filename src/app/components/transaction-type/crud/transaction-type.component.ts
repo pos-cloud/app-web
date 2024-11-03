@@ -1,51 +1,67 @@
-import {Component, OnInit, EventEmitter, ViewEncapsulation} from '@angular/core';
-import {UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray} from '@angular/forms';
-import {Title} from '@angular/platform-browser';
-import {Router} from '@angular/router';
-import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {TranslatePipe} from '@ngx-translate/core';
-import {Config} from 'app/app.config';
-import {Application} from 'app/components/application/application.model';
-import {ApplicationService} from 'app/components/application/application.service';
-import {Branch} from 'app/components/branch/branch';
-import {BranchService} from 'app/components/branch/branch.service';
-import {CashBoxType} from 'app/components/cash-box-type/cash-box-type.model';
-import {CashBoxTypeService} from 'app/components/cash-box-type/cash-box-type.service';
-import {Company, CompanyType} from 'app/components/company/company';
-import {CompanyService} from 'app/components/company/company.service';
-import {EmailTemplate} from 'app/components/email-template/email-template';
-import {EmailTemplateService} from 'app/components/email-template/email-template.service';
-import {EmployeeType} from 'app/components/employee-type/employee-type.model';
-import {EmployeeTypeService} from 'app/components/employee-type/employee-type.service';
-import {PaymentMethod} from 'app/components/payment-method/payment-method';
-import {PaymentMethodService} from 'app/components/payment-method/payment-method.service';
-import {Printer} from 'app/components/printer/printer';
-import {PrinterService} from 'app/components/printer/printer.service';
-import {ShipmentMethod} from 'app/components/shipment-method/shipment-method.model';
-import {ShipmentMethodService} from 'app/components/shipment-method/shipment-method.service';
-import {TransactionState} from 'app/components/transaction/transaction';
-import {CapitalizePipe} from 'app/main/pipes/capitalize';
-import {TranslateMePipe} from 'app/main/pipes/translate-me';
-import {FormField} from 'app/util/formField.interface';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Config } from 'app/app.config';
+import { Application } from 'app/components/application/application.model';
+import { ApplicationService } from 'app/components/application/application.service';
+import { Branch } from 'app/components/branch/branch';
+import { BranchService } from 'app/components/branch/branch.service';
+import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
+import { CashBoxTypeService } from 'app/components/cash-box-type/cash-box-type.service';
+import { Company, CompanyType } from 'app/components/company/company';
+import { CompanyService } from 'app/components/company/company.service';
+import { EmailTemplate } from 'app/components/email-template/email-template';
+import { EmailTemplateService } from 'app/components/email-template/email-template.service';
+import { EmployeeType } from 'app/components/employee-type/employee-type.model';
+import { EmployeeTypeService } from 'app/components/employee-type/employee-type.service';
+import { PaymentMethod } from 'app/components/payment-method/payment-method';
+import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
+import { Printer } from 'app/components/printer/printer';
+import { PrinterService } from 'app/components/printer/printer.service';
+import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
+import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
+import { TransactionState } from 'app/components/transaction/transaction';
+import { CapitalizePipe } from 'app/core/pipes/capitalize';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { FormField } from 'app/util/formField.interface';
 import Resulteable from 'app/util/Resulteable';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import {ToastrService} from 'ngx-toastr';
-import {Subscription, Subject, Observable, merge} from 'rxjs';
-import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject, Subscription, merge } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 
 import {
+  CurrentAccount,
+  DescriptionType,
+  EntryAmount,
+  Movements,
+  PriceType,
+  StockMovement,
   TransactionMovement,
   TransactionType,
-  CurrentAccount,
-  Movements,
-  EntryAmount,
-  PriceType,
-  DescriptionType,
-  StockMovement,
 } from '../transaction-type';
-import {TransactionTypeService} from '../transaction-type.service';
+import { TransactionTypeService } from '../transaction-type.service';
 
 @Component({
   selector: 'app-transaction-type',
@@ -78,163 +94,196 @@ export class TransactionTypeComponent implements OnInit {
   paymentMethods: PaymentMethod[];
 
   searchBranches = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['branch'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
 
         return await this.getBranches(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterBranches = (x: {name: string}) => x.name;
+  formatterBranches = (x: { name: string }) => x.name;
 
   searchApplications = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['application'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
 
         return await this.getApplications(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterApplications = (x: {name: string}) => x.name;
+  formatterApplications = (x: { name: string }) => x.name;
 
   searchEmployeeType = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['requestEmployee'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
         let match: {} =
-          term && term !== '' ? {description: {$regex: term, $options: 'i'}} : {};
+          term && term !== ''
+            ? { description: { $regex: term, $options: 'i' } }
+            : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
 
         return await this.getEmployeeType(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterEmployeeType = (x: {name: string}) => x.name;
+  formatterEmployeeType = (x: { name: string }) => x.name;
 
   searchPaymentMethods = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['fastPayment'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
 
         return await this.getPaymentMethods(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterPaymentMethods = (x: {name: string}) => x.name;
+  formatterPaymentMethods = (x: { name: string }) => x.name;
 
   searchEmailTemplates = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['defectEmailTemplate'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
 
         return await this.getEmailTemplates(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterEmailTemplates = (x: {name: string}) => x.name;
+  formatterEmailTemplates = (x: { name: string }) => x.name;
 
   searchShipmentMethods = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['defectShipmentMethod'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
 
         return await this.getShipmentMethods(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterShipmentMethods = (x: {name: string}) => x.name;
+  formatterShipmentMethods = (x: { name: string }) => x.name;
 
   searchPrinters = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['defectPrinter'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
 
         return await this.getPrinters(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterPrinters = (x: {name: string}) => x.name;
+  formatterPrinters = (x: { name: string }) => x.name;
 
   searchCompanies = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['company'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
         if (this.objForm.value.requestCompany !== null) {
           match['type'] = this.objForm.value.requestCompany;
         }
@@ -243,35 +292,42 @@ export class TransactionTypeComponent implements OnInit {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterCompanies = (x: {name: string}) => x.name;
+  formatterCompanies = (x: { name: string }) => x.name;
 
   searchCashBoxTypes = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['cashBoxType'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
 
         return await this.getCashBoxTypes(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterCashBoxType = (x: {name: string}) => x.name;
+  formatterCashBoxType = (x: { name: string }) => x.name;
 
   searchOptionalAFIP = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['optionalAFIP'];
 
     return merge(debouncedText$, inputFocus$).pipe(
@@ -281,11 +337,11 @@ export class TransactionTypeComponent implements OnInit {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterOptionalAFIP = (x: {name: string}) => x.name;
+  formatterOptionalAFIP = (x: { name: string }) => x.name;
 
   formFields: FormField[] = [
     {
@@ -326,7 +382,7 @@ export class TransactionTypeComponent implements OnInit {
         TransactionMovement.Purchase,
         TransactionMovement.Sale,
         TransactionMovement.Stock,
-        TransactionMovement.Production
+        TransactionMovement.Production,
       ],
       validators: [Validators.required],
       class: 'form-group col-md-3',
@@ -531,7 +587,7 @@ export class TransactionTypeComponent implements OnInit {
       name: 'requestCompany',
       tag: 'select',
       tagType: 'text',
-      values: [ CompanyType.None, CompanyType.Client, CompanyType.Provider],
+      values: [CompanyType.None, CompanyType.Client, CompanyType.Provider],
       class: 'form-group col-md-4',
     },
     {
@@ -606,7 +662,7 @@ export class TransactionTypeComponent implements OnInit {
         TransactionState.Pending,
         TransactionState.Preparing,
         TransactionState.Sent,
-        TransactionState.Produccion
+        TransactionState.Produccion,
       ],
       class: 'form-group col-md-2',
     },
@@ -993,7 +1049,7 @@ export class TransactionTypeComponent implements OnInit {
     public _printer: PrinterService,
     public _company: CompanyService,
     public translatePipe: TranslateMePipe,
-    private _router: Router,
+    private _router: Router
   ) {
     this.obj = new TransactionType();
     for (let field of this.formFields) {
@@ -1013,7 +1069,8 @@ export class TransactionTypeComponent implements OnInit {
     let pathUrl: string[] = this._router.url.split('/');
 
     this.operation = pathUrl[2];
-    if (this.operation !== 'add' && this.operation !== 'update') this.readonly = false;
+    if (this.operation !== 'add' && this.operation !== 'update')
+      this.readonly = false;
     this.title =
       this.translatePipe.transform(this.operation) +
       ' ' +
@@ -1118,8 +1175,8 @@ export class TransactionTypeComponent implements OnInit {
           .getAll({
             project: project,
             match: {
-              operationType: {$ne: 'D'},
-              _id: {$oid: this.objId},
+              operationType: { $ne: 'D' },
+              _id: { $oid: this.objId },
             },
           })
           .subscribe(
@@ -1131,32 +1188,32 @@ export class TransactionTypeComponent implements OnInit {
                   for (let code of this.obj.codes) {
                     switch (code.letter) {
                       case 'A':
-                        this.objForm.patchValue({codeA: code.code});
+                        this.objForm.patchValue({ codeA: code.code });
                         break;
                       case 'B':
-                        this.objForm.patchValue({codeB: code.code});
+                        this.objForm.patchValue({ codeB: code.code });
                         break;
                       case 'C':
-                        this.objForm.patchValue({codeC: code.code});
+                        this.objForm.patchValue({ codeC: code.code });
                         break;
                       case 'D':
-                        this.objForm.patchValue({codeD: code.code});
+                        this.objForm.patchValue({ codeD: code.code });
                         break;
                       case 'E':
-                        this.objForm.patchValue({codeE: code.code});
+                        this.objForm.patchValue({ codeE: code.code });
                         break;
                       case 'M':
-                        this.objForm.patchValue({codeM: code.code});
+                        this.objForm.patchValue({ codeM: code.code });
                         break;
                       case 'R':
-                        this.objForm.patchValue({codeR: code.code});
+                        this.objForm.patchValue({ codeR: code.code });
                         break;
                       case 'Z':
-                        this.objForm.patchValue({codeZ: code.code});
+                        this.objForm.patchValue({ codeZ: code.code });
                         break;
 
                       case 'T':
-                        this.objForm.patchValue({codeT: code.code});
+                        this.objForm.patchValue({ codeT: code.code });
                         break;
                     }
                   }
@@ -1166,8 +1223,8 @@ export class TransactionTypeComponent implements OnInit {
                 this.showToast(result);
               }
             },
-            (error) => this.showToast(error),
-          ),
+            (error) => this.showToast(error)
+          )
       );
     }
 
@@ -1276,7 +1333,10 @@ export class TransactionTypeComponent implements OnInit {
 
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
+            if (
+              eval(`this.obj${sumF}`) == null ||
+              eval(`this.obj${sumF}`) == undefined
+            ) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }
@@ -1311,20 +1371,28 @@ export class TransactionTypeComponent implements OnInit {
       this.paymentMethods.forEach((x) => {
         let exists: boolean = false;
 
-        if (this.obj && this.obj.paymentMethods && this.obj.paymentMethods.length > 0) {
+        if (
+          this.obj &&
+          this.obj.paymentMethods &&
+          this.obj.paymentMethods.length > 0
+        ) {
           this.obj.paymentMethods.forEach((y) => {
             if (x._id === y._id) {
               exists = true;
               const control = new UntypedFormControl(y);
 
-              (this.objForm.controls.paymentMethods as UntypedFormArray).push(control);
+              (this.objForm.controls.paymentMethods as UntypedFormArray).push(
+                control
+              );
             }
           });
         }
         if (!exists) {
           const control = new UntypedFormControl(false);
 
-          (this.objForm.controls.paymentMethods as UntypedFormArray).push(control);
+          (this.objForm.controls.paymentMethods as UntypedFormArray).push(
+            control
+          );
         }
       });
     }
@@ -1367,9 +1435,7 @@ export class TransactionTypeComponent implements OnInit {
               this.filesToUpload[field.name].length > 0
             ) {
               this.loading = true;
-              this._objService.deleteFile(
-                this.obj[field.name],
-              );
+              this._objService.deleteFile(this.obj[field.name]);
               if (
                 this.filesToUpload[field.name] &&
                 this.filesToUpload[field.name].length > 0
@@ -1385,10 +1451,7 @@ export class TransactionTypeComponent implements OnInit {
                 }
                 for (let file of this.filesToUpload[field.name]) {
                   await this._objService
-                    .uploadFile(
-                      null,
-                      file,
-                    )
+                    .uploadFile(null, file)
                     .then((result) => {
                       this.loading = false;
                       if (result['result']) {
@@ -1411,7 +1474,8 @@ export class TransactionTypeComponent implements OnInit {
               }
               this.loading = false;
             } else {
-              if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
+              if (this.oldFiles)
+                this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
           case 'boolean':
@@ -1482,7 +1546,8 @@ export class TransactionTypeComponent implements OnInit {
           ? this.objForm.value.optionalAFIP.name
           : null,
       value:
-        (this.objForm.value.optionalAFIP && this.objForm.value.optionalAFIP.value) ||
+        (this.objForm.value.optionalAFIP &&
+          this.objForm.value.optionalAFIP.value) ||
         this.objForm.value['optionalAFIP.value']
           ? this.objForm.value['optionalAFIP.value'] ||
             this.objForm.value.optionalAFIP.value
@@ -1504,45 +1569,45 @@ export class TransactionTypeComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast(null, 'info', 'Revise los errores marcados en el formulario');
+      this.showToast(
+        null,
+        'info',
+        'Revise los errores marcados en el formulario'
+      );
     }
   }
 
   public deleteFile(typeFile: string, fieldName: string, filename: string) {
-    this._objService
-      .deleteFile(
-        filename,
-      )
-      .subscribe(
-        (result) => {
-          if (result.status === 200) {
-            try {
-              eval(
-                'this.obj.' +
-                  fieldName +
-                  ' = this.obj.' +
-                  fieldName +
-                  '.filter(item => item !== filename)',
-              );
-            } catch (error) {
-              eval('this.obj.' + fieldName + ' = null');
-            }
-            this.loading = true;
-            this.subscription.add(
-              this._objService.update(this.obj).subscribe(
-                (result) => {
-                  this.showToast(result);
-                  this.setValuesForm();
-                },
-                (error) => this.showToast(error),
-              ),
+    this._objService.deleteFile(filename).subscribe(
+      (result) => {
+        if (result.status === 200) {
+          try {
+            eval(
+              'this.obj.' +
+                fieldName +
+                ' = this.obj.' +
+                fieldName +
+                '.filter(item => item !== filename)'
             );
-          } else {
-            this.showToast(result);
+          } catch (error) {
+            eval('this.obj.' + fieldName + ' = null');
           }
-        },
-        (error) => this.showToast(error),
-      );
+          this.loading = true;
+          this.subscription.add(
+            this._objService.update(this.obj).subscribe(
+              (result) => {
+                this.showToast(result);
+                this.setValuesForm();
+              },
+              (error) => this.showToast(error)
+            )
+          );
+        } else {
+          this.showToast(result);
+        }
+      },
+      (error) => this.showToast(error)
+    );
   }
 
   public saveObj() {
@@ -1551,10 +1616,11 @@ export class TransactionTypeComponent implements OnInit {
       this._objService.save(this.obj).subscribe(
         (result) => {
           this.showToast(result);
-          if (result.status === 200) this._router.navigate(['/transaction-types']);
+          if (result.status === 200)
+            this._router.navigate(['/transaction-types']);
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
@@ -1564,10 +1630,11 @@ export class TransactionTypeComponent implements OnInit {
       this._objService.update(this.obj).subscribe(
         (result) => {
           this.showToast(result);
-          if (result.status === 200) this._router.navigate(['/transaction-types']);
+          if (result.status === 200)
+            this._router.navigate(['/transaction-types']);
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
@@ -1581,8 +1648,8 @@ export class TransactionTypeComponent implements OnInit {
             this._router.navigate(['/transaction-types']);
           }
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
@@ -1592,7 +1659,7 @@ export class TransactionTypeComponent implements OnInit {
         this._branchService
           .getAll({
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1600,8 +1667,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1612,7 +1679,7 @@ export class TransactionTypeComponent implements OnInit {
         this._applicationService
           .getAll({
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1620,8 +1687,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1638,7 +1705,7 @@ export class TransactionTypeComponent implements OnInit {
           .getAll({
             project,
             match,
-            sort: {description: 1},
+            sort: { description: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1646,8 +1713,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1657,9 +1724,9 @@ export class TransactionTypeComponent implements OnInit {
       this.subscription.add(
         this._paymentMethod
           .getAll({
-            project: {name: 1, operationType: 1},
+            project: { name: 1, operationType: 1 },
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1667,8 +1734,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1678,9 +1745,9 @@ export class TransactionTypeComponent implements OnInit {
       this.subscription.add(
         this._emailTemplate
           .getAll({
-            project: {name: 1, operationType: 1},
+            project: { name: 1, operationType: 1 },
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1688,8 +1755,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1699,9 +1766,9 @@ export class TransactionTypeComponent implements OnInit {
       this.subscription.add(
         this._shipmentMethod
           .getAll({
-            project: {name: 1, operationType: 1},
+            project: { name: 1, operationType: 1 },
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1709,8 +1776,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1720,9 +1787,9 @@ export class TransactionTypeComponent implements OnInit {
       this.subscription.add(
         this._cashBoxType
           .getAll({
-            project: {name: 1, operationType: 1},
+            project: { name: 1, operationType: 1 },
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1730,8 +1797,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1741,7 +1808,7 @@ export class TransactionTypeComponent implements OnInit {
       this.subscription.add(
         this._objService.getJSON().subscribe((data) => {
           resolve(data);
-        }),
+        })
       );
     });
   }
@@ -1751,9 +1818,9 @@ export class TransactionTypeComponent implements OnInit {
       this.subscription.add(
         this._printer
           .getAll({
-            project: {name: 1, operationType: 1},
+            project: { name: 1, operationType: 1 },
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1761,8 +1828,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1772,9 +1839,9 @@ export class TransactionTypeComponent implements OnInit {
       this.subscription.add(
         this._company
           .getAll({
-            project: {name: 1, operationType: 1, type: 1},
+            project: { name: 1, operationType: 1, type: 1 },
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
             limit: 10,
           })
           .subscribe(
@@ -1782,8 +1849,8 @@ export class TransactionTypeComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -1793,21 +1860,26 @@ export class TransactionTypeComponent implements OnInit {
       this.subscription.add(
         this._paymentMethod
           .getAll({
-            match: {operationType: {$ne: 'D'}},
-            sort: {name: 1},
+            match: { operationType: { $ne: 'D' } },
+            sort: { name: 1 },
           })
           .subscribe(
             (result) => {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
 
-  public showToast(result, type?: string, title?: string, message?: string): void {
+  public showToast(
+    result,
+    type?: string,
+    title?: string,
+    message?: string
+  ): void {
     if (result) {
       if (result.status === 200) {
         type = 'success';
@@ -1815,7 +1887,9 @@ export class TransactionTypeComponent implements OnInit {
       } else if (result.status >= 400) {
         type = 'danger';
         title =
-          result.error && result.error.message ? result.error.message : result.message;
+          result.error && result.error.message
+            ? result.error.message
+            : result.message;
       } else {
         type = 'info';
         title = result.message;
@@ -1825,19 +1899,19 @@ export class TransactionTypeComponent implements OnInit {
       case 'success':
         this._toastr.success(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       case 'danger':
         this._toastr.error(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       default:
         this._toastr.info(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
     }

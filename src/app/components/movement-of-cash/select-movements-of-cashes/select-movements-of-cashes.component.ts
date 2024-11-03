@@ -1,30 +1,27 @@
-import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
-import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { CapitalizePipe } from 'app/main/pipes/capitalize';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Transaction } from 'app/components/transaction/transaction';
+import { CapitalizePipe } from 'app/core/pipes/capitalize';
+import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import Resulteable from 'app/util/Resulteable';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { TransactionService } from '../../transaction/transaction.service';
 import { MovementOfCash } from '../movement-of-cash';
 import { MovementOfCashService } from '../movement-of-cash.service';
-import { Transaction } from 'app/components/transaction/transaction';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 
 @Component({
   selector: 'app-select-movements-of-cashes',
   templateUrl: './select-movements-of-cashes.component.html',
   styleUrls: ['./select-movements-of-cashes.component.scss'],
-  providers: [
-    TranslateMePipe
-  ],
-  encapsulation: ViewEncapsulation.None
+  providers: [TranslateMePipe],
+  encapsulation: ViewEncapsulation.None,
 })
 export class SelectMovementsOfCashesComponent implements OnInit {
-
   @Input() transactionId: string;
   @Input() totalPrice: number;
   @Input() movementsOfCashes: MovementOfCash[] = new Array();
@@ -50,7 +47,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
   ) {
     this.filters = new Array();
     for (let field of ['name', 'amountPaid']) {
-      this.filters[field] = "";
+      this.filters[field] = '';
     }
   }
 
@@ -73,7 +70,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         this.balanceSelected += mov.balanceCanceled;
       } else if (this.forLiquidation && mov['liquidated']) {
         this.balanceSelected += mov.amountPaid;
-      };
+      }
     }
     this.roundNumberPipe.transform(this.balanceSelected);
   }
@@ -114,20 +111,26 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         _id: 1,
         quota: 1,
         expirationDate: 1,
-        "type._id": 1,
-        "type.name": 1,
+        'type._id': 1,
+        'type.name': 1,
         amountPaid: 1,
         transaction: 1,
         operationType: 1,
         balanceCanceled: 1,
       };
-      this.subscription.add(this._movementOfCashService.getMovementsOfCashesV2(project, match, sortAux, {}, 0, 0).subscribe(
-        (res) => {
-          this.loading = false;
-          (res.movementsOfCashes) ? resolve(res.movementsOfCashes) : resolve([]);
-        },
-        error => reject(error)
-      ));
+      this.subscription.add(
+        this._movementOfCashService
+          .getMovementsOfCashesV2(project, match, sortAux, {}, 0, 0)
+          .subscribe(
+            (res) => {
+              this.loading = false;
+              res.movementsOfCashes
+                ? resolve(res.movementsOfCashes)
+                : resolve([]);
+            },
+            (error) => reject(error)
+          )
+      );
     });
   }
 
@@ -136,7 +139,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
       this.movementsOfCashes = await this.getMovementOfCashes({
         operationType: { $ne: 'D' },
         transaction: { $oid: this.transactionId },
-        balanceCanceled: { $eq: 0 }
+        balanceCanceled: { $eq: 0 },
       });
     } else {
       //TRAER TODOS LOS CONTARTOS VIGENTES
@@ -147,23 +150,26 @@ export class SelectMovementsOfCashesComponent implements OnInit {
 
   async selectMovementOfCash(movementOfCashSelected: MovementOfCash) {
     if (!this.isMovementOfCashSelected(movementOfCashSelected)) {
-      movementOfCashSelected.balanceCanceled = movementOfCashSelected.amountPaid;
+      movementOfCashSelected.balanceCanceled =
+        movementOfCashSelected.amountPaid;
     } else {
       movementOfCashSelected.balanceCanceled = 0;
     }
     this.recalculateBalanceSelected();
   }
 
-  public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
+  public updateMovementOfCash(
+    movementOfCash: MovementOfCash
+  ): Promise<MovementOfCash> {
     return new Promise<MovementOfCash>((resolve, reject) => {
       this._movementOfCashService.update(movementOfCash).subscribe(
-        async result => {
+        async (result) => {
           if (result.status === 200) {
             resolve(result.result);
-          } else reject(result)
+          } else reject(result);
         },
-        error => reject(error)
-      )
+        (error) => reject(error)
+      );
     });
   }
 
@@ -178,33 +184,37 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         transactionType: 1,
         totalPrice: 1,
         balance: 1,
-      }
-      this.subscription.add(this._transactionService.getTransactionsV2(project, match, {}, {}, 1, 0).subscribe(
-        result => {
-          this.loading = false;
-          resolve(result.transactions[0]);
-        },
-        error => reject(error)
-      ));
-    })
+      };
+      this.subscription.add(
+        this._transactionService
+          .getTransactionsV2(project, match, {}, {}, 1, 0)
+          .subscribe(
+            (result) => {
+              this.loading = false;
+              resolve(result.transactions[0]);
+            },
+            (error) => reject(error)
+          )
+      );
+    });
   }
 
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(transaction).subscribe(
         (result: Resulteable) => {
-            if (result.status === 200) {
-                resolve(result.result);
-            } else {
-                this.showToast(result);
-                reject(result);
-            };
+          if (result.status === 200) {
+            resolve(result.result);
+          } else {
+            this.showToast(result);
+            reject(result);
+          }
         },
-        error => {
-            this.showToast(error)
-            reject(error);
+        (error) => {
+          this.showToast(error);
+          reject(error);
         }
-    );
+      );
     });
   }
 
@@ -216,7 +226,10 @@ export class SelectMovementsOfCashesComponent implements OnInit {
   }
 
   public calculateDaysUntilToday(endDate: string) {
-    return moment(moment(endDate).format('YYYY-MM-DD')).diff(moment().format('YYYY-MM-DD'), "days");
+    return moment(moment(endDate).format('YYYY-MM-DD')).diff(
+      moment().format('YYYY-MM-DD'),
+      'days'
+    );
   }
 
   public async finish() {
@@ -233,7 +246,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
       }
 
       await this.getTransaction({ _id: { $oid: this.transactionId } }).then(
-        async transaction => {
+        async (transaction) => {
           if (this.amountOfInterestCalculated > 0) {
             transaction.totalPrice = totalAmount;
             transaction = await this.updateTransaction(transaction);
@@ -242,9 +255,11 @@ export class SelectMovementsOfCashesComponent implements OnInit {
       );
 
       this.activeModal.close({
-        movementsOfCashes: this.movementsOfCashes
+        movementsOfCashes: this.movementsOfCashes,
       });
-    } catch (error) { this.showToast(error) }
+    } catch (error) {
+      this.showToast(error);
+    }
   }
 
   public ngOnDestroy(): void {
@@ -253,21 +268,29 @@ export class SelectMovementsOfCashesComponent implements OnInit {
 
   public orderBy(term: string): void {
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
+      this.orderTerm[0] = '-' + term;
     } else {
       this.orderTerm[0] = term;
     }
     this.loadMovementsOfCashes();
   }
 
-  public showToast(result, type?: string, title?: string, message?: string): void {
+  public showToast(
+    result,
+    type?: string,
+    title?: string,
+    message?: string
+  ): void {
     if (result) {
       if (result.status === 200) {
         type = 'success';
         title = result.message;
       } else if (result.status >= 400) {
         type = 'danger';
-        title = (result.error && result.error.message) ? result.error.message : result.message;
+        title =
+          result.error && result.error.message
+            ? result.error.message
+            : result.message;
       } else {
         type = 'info';
         title = result.message;
@@ -275,13 +298,22 @@ export class SelectMovementsOfCashesComponent implements OnInit {
     }
     switch (type) {
       case 'success':
-        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        this._toastr.success(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
         break;
       case 'danger':
-        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        this._toastr.error(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
         break;
       default:
-        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        this._toastr.info(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
         break;
     }
     this.loading = false;

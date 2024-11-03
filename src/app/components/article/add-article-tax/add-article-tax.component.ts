@@ -12,9 +12,9 @@ import { Article } from 'app/components/article/article';
 import { Tax, TaxBase, TaxClassification } from 'app/components/tax/tax';
 import { TaxService } from 'app/components/tax/tax.service';
 import { Transaction } from 'app/components/transaction/transaction';
-import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
+import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Taxes } from '../../tax/taxes';
 

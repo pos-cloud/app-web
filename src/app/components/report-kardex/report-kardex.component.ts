@@ -1,40 +1,38 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Article } from 'app/components/article/article';
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Router, ActivatedRoute } from '@angular/router';
+import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { ArticleService } from 'app/components/article/article.service';
-import { ListArticlesComponent } from '../article/list-articles/list-articles.component';
-import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
-import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
-import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
-import { Branch } from 'app/components/branch/branch';
-import { BranchService } from 'app/components/branch/branch.service';
-import { Config } from 'app/app.config';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
+import { Config } from 'app/app.config';
+import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
+import { ArticleService } from 'app/components/article/article.service';
+import { Branch } from 'app/components/branch/branch';
+import { BranchService } from 'app/components/branch/branch.service';
 import { Deposit } from 'app/components/deposit/deposit';
 import { DepositService } from 'app/components/deposit/deposit.service';
 import { AuthService } from 'app/components/login/auth.service';
-import { Subscription } from 'rxjs';
-import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
+import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
+import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { ArticleStock } from '../article-stock/article-stock';
+import { ListArticlesComponent } from '../article/list-articles/list-articles.component';
 import { TransactionState } from '../transaction/transaction';
+import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-report-kardex',
   templateUrl: './report-kardex.component.html',
-  styleUrls: ['./report-kardex.component.scss']
+  styleUrls: ['./report-kardex.component.scss'],
 })
-
 export class ReportKardexComponent implements OnInit {
-
   public articleSelected: Article;
   public articleSelectedId: string;
   public alertMessage: string = '';
@@ -56,7 +54,7 @@ export class ReportKardexComponent implements OnInit {
   public totalItems = 0;
   public items: any[];
   public balance: number = 0;
-  public sort = { "endDate": -1 };
+  public sort = { endDate: -1 };
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   public pathLocation: string[];
@@ -64,7 +62,7 @@ export class ReportKardexComponent implements OnInit {
   public filterValue: string;
   public startDate: string;
   public endDate: string;
-  public timezone: string = "-03:00";
+  public timezone: string = '-03:00';
   public articleStockId: string;
 
   constructor(
@@ -93,13 +91,12 @@ export class ReportKardexComponent implements OnInit {
       if (field.defaultFilter) {
         this.filters[field.name] = field.defaultFilter;
       } else {
-        this.filters[field.name] = "";
+        this.filters[field.name] = '';
       }
     }
   }
 
   public changeColumns() {
-
     this.columns = [
       {
         name: 'transaction.endDate',
@@ -109,7 +106,7 @@ export class ReportKardexComponent implements OnInit {
         project: null,
         datatype: 'date',
         align: 'left',
-        required: false
+        required: false,
       },
       {
         name: 'transaction.type.transactionMovement',
@@ -321,7 +318,7 @@ export class ReportKardexComponent implements OnInit {
         datatype: 'string',
         project: '"$transaction.endDate"',
         align: 'left',
-        required: true
+        required: true,
       },
       {
         name: 'modifyStock',
@@ -331,13 +328,13 @@ export class ReportKardexComponent implements OnInit {
         datatype: 'boolean',
         project: null,
         align: 'left',
-        required: true
-      }
+        required: true,
+      },
     ];
   }
 
   private processParams(): void {
-    this._route.queryParams.subscribe(params => {
+    this._route.queryParams.subscribe((params) => {
       if (params['article']) this.articleSelectedId = params['article'];
       if (params['branch']) this.branchSelectedId = params['branch'];
       if (params['deposit']) this.depositSelectedId = params['deposit'];
@@ -346,15 +343,13 @@ export class ReportKardexComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     if (Config.timezone && Config.timezone !== '') {
       this.timezone = Config.timezone.split('UTC')[1];
     }
 
-
     if (!this.branchSelectedId) {
       await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        async branches => {
+        async (branches) => {
           this.branches = branches;
           if (this.branches && this.branches.length > 1) {
             this.branchSelectedId = this.branches[0]._id;
@@ -363,28 +358,25 @@ export class ReportKardexComponent implements OnInit {
       );
     } else {
       await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        async branches => {
+        async (branches) => {
           this.branches = branches;
           this.allowChangeBranch = true;
-
         }
       );
     }
 
-    await this._authService.getIdentity.subscribe(
-      async identity => {
-        if (identity && identity.origin && identity.origin.branch) {
-          this.allowChangeBranch = false;
-          this.branchSelectedId = identity.origin.branch._id;
+    await this._authService.getIdentity.subscribe(async (identity) => {
+      if (identity && identity.origin && identity.origin.branch) {
+        this.allowChangeBranch = false;
+        this.branchSelectedId = identity.origin.branch._id;
+      } else {
+        if (this.branchSelectedId) {
+          this.allowChangeBranch = true;
         } else {
-          if (this.branchSelectedId) {
-            this.allowChangeBranch = true;
-          } else {
-            this.branchSelectedId = null;
-          }
+          this.branchSelectedId = null;
         }
       }
-    );
+    });
 
     let r = await this.getDepositsByBranch();
     if (r) {
@@ -427,7 +419,12 @@ export class ReportKardexComponent implements OnInit {
           value = this.roundNumberPipe.transform(eval(val));
           break;
         case 'currency':
-          value = this.currencyPipe.transform(this.roundNumberPipe.transform(eval(val)), 'USD', 'symbol-narrow', '1.2-2');
+          value = this.currencyPipe.transform(
+            this.roundNumberPipe.transform(eval(val)),
+            'USD',
+            'symbol-narrow',
+            '1.2-2'
+          );
           break;
         case 'percent':
           value = this.roundNumberPipe.transform(eval(val)) + '%';
@@ -441,107 +438,108 @@ export class ReportKardexComponent implements OnInit {
   }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
-
     return new Promise<Branch[]>((resolve, reject) => {
-
-      this._branchService.getBranches(
-        {}, // PROJECT
-        match, // MATCH
-        { number: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      ).subscribe(
-        result => {
-          if (result && result.branches) {
-            resolve(result.branches);
-          } else {
+      this._branchService
+        .getBranches(
+          {}, // PROJECT
+          match, // MATCH
+          { number: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+        )
+        .subscribe(
+          (result) => {
+            if (result && result.branches) {
+              resolve(result.branches);
+            } else {
+              resolve(null);
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
           }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 
   public async getDepositsByBranch() {
     return new Promise(async (resolve, reject) => {
       if (this.branches && this.branches.length > 0) {
-        if (!this.branchSelectedId) this.branchSelectedId = this.branches[0]._id;
-        let query = { branch: { $oid: this.branchSelectedId }, operationType: { $ne: 'D' } };
-        await this.getDeposits(query).then(
-          deposits => {
-            this.deposits = deposits;
-            if (this.deposits && this.deposits.length > 0) {
-              for (const deposit of this.deposits) {
-                if (this.depositSelectedId === deposit._id) {
-                  this.depositSelectedId = deposit._id
-                } else {
-                  this.depositSelectedId = this.deposits[0]._id;
-                }
+        if (!this.branchSelectedId)
+          this.branchSelectedId = this.branches[0]._id;
+        let query = {
+          branch: { $oid: this.branchSelectedId },
+          operationType: { $ne: 'D' },
+        };
+        await this.getDeposits(query).then((deposits) => {
+          this.deposits = deposits;
+          if (this.deposits && this.deposits.length > 0) {
+            for (const deposit of this.deposits) {
+              if (this.depositSelectedId === deposit._id) {
+                this.depositSelectedId = deposit._id;
+              } else {
+                this.depositSelectedId = this.deposits[0]._id;
               }
-              resolve(true);
-            } else {
-              resolve(false);
             }
+            resolve(true);
+          } else {
+            resolve(false);
           }
-        );
+        });
       }
     });
   }
 
   public getDeposits(match: {} = {}): Promise<Deposit[]> {
-
     return new Promise<Deposit[]>((resolve, reject) => {
-
-      this._depositService.getDepositsV2(
-        {}, // PROJECT
-        match, // MATCH
-        { name: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      ).subscribe(
-        result => {
-          if (result && result.deposits) {
-            resolve(result.deposits);
-          } else {
+      this._depositService
+        .getDepositsV2(
+          {}, // PROJECT
+          match, // MATCH
+          { name: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+        )
+        .subscribe(
+          (result) => {
+            if (result && result.deposits) {
+              resolve(result.deposits);
+            } else {
+              resolve(null);
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
           }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 
   public getArticle(id: string): void {
-
     this._articleService.getArticle(id).subscribe(
-      result => {
+      (result) => {
         if (!result.article) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
         } else {
           this.articleSelected = result.article;
           this.getItems();
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
       }
     );
   }
 
   public getItems(): void {
-
     this.loading = true;
 
-    let timezone = "-03:00";
+    let timezone = '-03:00';
     if (Config.timezone && Config.timezone !== '') {
       timezone = Config.timezone.split('UTC')[1];
     }
@@ -561,7 +559,7 @@ export class ReportKardexComponent implements OnInit {
     for (let i = 0; i < this.columns.length; i++) {
       if (this.columns[i].visible || this.columns[i].required) {
         let value = this.filters[this.columns[i].name];
-        if (value && value != "") {
+        if (value && value != '') {
           if (this.columns[i].defaultFilter) {
             match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
           } else {
@@ -574,19 +572,24 @@ export class ReportKardexComponent implements OnInit {
       }
     }
 
-    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',')
+      match = match.substring(0, match.length - 1);
 
     match += `}`;
 
     match = JSON.parse(match);
-    if (this.depositSelectedId) match['deposit._id'] = { $oid: this.depositSelectedId };
-    match['endDate'] = { $gte: { $date: this.startDate + 'T00:00:00' + timezone }, $lte: { $date: this.endDate + 'T23:59:59' + timezone } };
+    if (this.depositSelectedId)
+      match['deposit._id'] = { $oid: this.depositSelectedId };
+    match['endDate'] = {
+      $gte: { $date: this.startDate + 'T00:00:00' + timezone },
+      $lte: { $date: this.endDate + 'T23:59:59' + timezone },
+    };
     match['article._id'] = { $oid: this.articleSelected._id };
     match['$and'] = [
-      { "transaction.state": { $ne: TransactionState.Open } },
-      { "transaction.state": { $ne: TransactionState.Pending } },
-      { "transaction.state": { $ne: TransactionState.Canceled } },
-      { "transaction.state": { $ne: TransactionState.PaymentDeclined } }
+      { 'transaction.state': { $ne: TransactionState.Open } },
+      { 'transaction.state': { $ne: TransactionState.Pending } },
+      { 'transaction.state': { $ne: TransactionState.Canceled } },
+      { 'transaction.state': { $ne: TransactionState.PaymentDeclined } },
     ];
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -599,13 +602,13 @@ export class ReportKardexComponent implements OnInit {
         }
         j++;
         if (this.columns[i].project) {
-          project += `"${this.columns[i].name}" : ${this.columns[i].project} `
+          project += `"${this.columns[i].name}" : ${this.columns[i].project} `;
         } else {
-          if (this.columns[i].datatype !== "string") {
-            if (this.columns[i].datatype === "date") {
-              project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`
+          if (this.columns[i].datatype !== 'string') {
+            if (this.columns[i].datatype === 'date') {
+              project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`;
             } else {
-              project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`
+              project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`;
             }
           } else {
             project += `"${this.columns[i].name}": 1`;
@@ -620,52 +623,58 @@ export class ReportKardexComponent implements OnInit {
     let group = {
       _id: null,
       count: { $sum: 1 },
-      balance: { $sum: "$quantityForStock" },
-      items: { $push: "$$ROOT" }
+      balance: { $sum: '$quantityForStock' },
+      items: { $push: '$$ROOT' },
     };
 
     let page = 0;
     if (this.currentPage != 0) {
       page = this.currentPage - 1;
     }
-    let skip = !isNaN(page * this.itemsPerPage) ?
-      (page * this.itemsPerPage) :
-      0 // SKIP
+    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
     let limit = 0;
 
-    this.subscription.add(this._movementOfArticleService.getMovementsOfArticlesV2(
-      project, // PROJECT
-      match, // MATCH
-      sort, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
-    ).subscribe(
-      result => {
-        this.loading = false;
-        if (result && result[0] && result[0].items) {
-          this.items = result[0].items;
-          this.totalItems = result[0].count;
-          this.balance = result[0].balance;
-          this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
-          let stock = 0;
-          for (let mov of this.items) {
-            mov['Stock'] = stock + mov.quantityForStock;
-            stock += mov.quantityForStock;
+    this.subscription.add(
+      this._movementOfArticleService
+        .getMovementsOfArticlesV2(
+          project, // PROJECT
+          match, // MATCH
+          sort, // SORT
+          group, // GROUP
+          limit, // LIMIT
+          skip // SKIP
+        )
+        .subscribe(
+          (result) => {
+            this.loading = false;
+            if (result && result[0] && result[0].items) {
+              this.items = result[0].items;
+              this.totalItems = result[0].count;
+              this.balance = result[0].balance;
+              this.currentPage = parseFloat(
+                this.roundNumber
+                  .transform(this.totalItems / this.itemsPerPage + 0.5, 0)
+                  .toFixed(0)
+              );
+              let stock = 0;
+              for (let mov of this.items) {
+                mov['Stock'] = stock + mov.quantityForStock;
+                stock += mov.quantityForStock;
+              }
+            } else {
+              this.items = new Array();
+              this.totalItems = 0;
+              this.currentPage = 0;
+              this.balance = 0;
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+            this.totalItems = 0;
           }
-        } else {
-          this.items = new Array();
-          this.totalItems = 0;
-          this.currentPage = 0;
-          this.balance = 0;
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-        this.totalItems = 0;
-      }
-    ));
+        )
+    );
   }
 
   public getColumnsVisibles(): number {
@@ -682,20 +691,26 @@ export class ReportKardexComponent implements OnInit {
     if (this.articleSelected) {
       this.getItems();
     } else {
-      this.showMessage("Debe seleccionar un Producto", 'info', true);
+      this.showMessage('Debe seleccionar un Producto', 'info', true);
     }
   }
 
   public openModal(op: string, movementOfArticle?: MovementOfArticle): void {
-
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.transactionId = movementOfArticle.transaction._id;
+        modalRef = this._modalService.open(ViewTransactionComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.transactionId =
+          movementOfArticle.transaction._id;
         break;
       case 'article':
-        modalRef = this._modalService.open(ListArticlesComponent, { size: 'lg', backdrop: 'static' });
+        modalRef = this._modalService.open(ListArticlesComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
         modalRef.componentInstance.userType = 'report';
         modalRef.result.then(
           (result) => {
@@ -703,16 +718,15 @@ export class ReportKardexComponent implements OnInit {
               this.articleSelected = result.article;
               this.getItems();
             }
-          }, (reason) => {
-          }
+          },
+          (reason) => {}
         );
         break;
-      default: ;
+      default:
     }
   }
 
   public orderBy(term: string): void {
-
     if (this.sort[term]) {
       this.sort[term] *= -1;
     } else {
@@ -732,7 +746,6 @@ export class ReportKardexComponent implements OnInit {
   }
 
   public repairStock() {
-
     this.loading = true;
 
     let query = `where= "article": "${this.articleSelected._id}",
@@ -740,7 +753,7 @@ export class ReportKardexComponent implements OnInit {
                         "deposit": "${this.depositSelectedId}"`;
 
     this._articleStockService.getArticleStocks(query).subscribe(
-      result => {
+      (result) => {
         if (!result.articleStocks || result.articleStocks.length <= 0) {
           let articleStock = new ArticleStock();
           articleStock.article = this.articleSelected;
@@ -750,45 +763,59 @@ export class ReportKardexComponent implements OnInit {
           articleStock.deposit._id = this.depositSelectedId;
           articleStock.realStock = this.balance;
           this._articleStockService.saveArticleStock(articleStock).subscribe(
-            result => {
+            (result) => {
               this.loading = false;
               if (result && result.articleStock) {
-                this.showToast("El stock se actualizó correctamente.", 'success');
+                this.showToast(
+                  'El stock se actualizó correctamente.',
+                  'success'
+                );
               } else {
-                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                if (result.message && result.message !== '')
+                  this.showMessage(result.message, 'info', true);
               }
             },
-            error => {
+            (error) => {
               this.showToast(error._body, 'danger');
               this.loading = false;
             }
-          )
+          );
         } else {
           result.articleStocks[0].realStock = this.balance;
-          this._articleStockService.updateArticleStock(result.articleStocks[0]).subscribe(
-            result => {
-              this.loading = false;
-              if (result && result.articleStock) {
-                this.showToast("El stock se actualizó correctamente.", 'success');
-              } else {
-                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this._articleStockService
+            .updateArticleStock(result.articleStocks[0])
+            .subscribe(
+              (result) => {
+                this.loading = false;
+                if (result && result.articleStock) {
+                  this.showToast(
+                    'El stock se actualizó correctamente.',
+                    'success'
+                  );
+                } else {
+                  if (result.message && result.message !== '')
+                    this.showMessage(result.message, 'info', true);
+                }
+              },
+              (error) => {
+                this.showToast(error._body, 'danger');
+                this.loading = false;
               }
-            },
-            error => {
-              this.showToast(error._body, 'danger');
-              this.loading = false;
-            }
-          )
+            );
         }
       },
-      error => {
+      (error) => {
         this.showToast(error._body, 'danger');
         this.loading = false;
       }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

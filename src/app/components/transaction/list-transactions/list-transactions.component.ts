@@ -1,39 +1,43 @@
-import {moveItemInArray, CdkDragDrop} from '@angular/cdk/drag-drop';
-import {CurrencyPipe} from '@angular/common';
-import {Component, OnInit, ViewEncapsulation, ViewChild} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {NgbModal, NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Branch} from 'app/components/branch/branch';
-import {BranchService} from 'app/components/branch/branch.service';
-import {AuthService} from 'app/components/login/auth.service';
-import {PrintComponent} from 'app/components/print/print/print.component';
-import {TransactionTypeService} from 'app/components/transaction-type/transaction-type.service';
-import {User} from 'app/components/user/user';
-import {UserService} from 'app/components/user/user.service';
-import {DateFormatPipe} from 'app/main/pipes/date-format.pipe';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CurrencyPipe } from '@angular/common';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  NgbActiveModal,
+  NgbAlertConfig,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
+import { Branch } from 'app/components/branch/branch';
+import { BranchService } from 'app/components/branch/branch.service';
+import { AuthService } from 'app/components/login/auth.service';
+import { PrintComponent } from 'app/components/print/print/print.component';
+import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { User } from 'app/components/user/user';
+import { UserService } from 'app/components/user/user.service';
+import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import * as moment from 'moment';
-import {of as observableOf, Observable, Subscription, observable} from 'rxjs';
+import { Observable, Subscription, of as observableOf } from 'rxjs';
 
-import {Config} from '../../../app.config';
-import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
-import {ConfigService} from '../../config/config.service';
-import {ExportCitiComponent} from '../../export/export-citi/export-citi.component';
-import {ExportExcelComponent} from '../../export/export-excel/export-excel.component';
-import {ExportIvaComponent} from '../../export/export-iva/export-iva.component';
-import {PrintTransactionTypeComponent} from '../../print/print-transaction-type/print-transaction-type.component';
-import {Printer, PrinterPrintIn} from '../../printer/printer';
-import {PrinterService} from '../../printer/printer.service';
-import {SendEmailComponent} from '../../send-email/send-email.component';
+import * as printJS from 'print-js';
+import { Config } from '../../../app.config';
+import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { ConfigService } from '../../config/config.service';
+import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
+import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
+import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
+import { PrintTransactionTypeComponent } from '../../print/print-transaction-type/print-transaction-type.component';
+import { Printer, PrinterPrintIn } from '../../printer/printer';
+import { PrinterService } from '../../printer/printer.service';
+import { SendEmailComponent } from '../../send-email/send-email.component';
 import {
   TransactionMovement,
   TransactionType,
 } from '../../transaction-type/transaction-type';
-import {AddTransactionComponent} from '../add-transaction/add-transaction.component';
-import {DeleteTransactionComponent} from '../delete-transaction/delete-transaction.component';
-import {Transaction, attributes} from '../transaction';
-import {TransactionService} from '../transaction.service';
-import {ViewTransactionComponent} from '../view-transaction/view-transaction.component';
-import * as printJS from 'print-js';
+import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
+import { DeleteTransactionComponent } from '../delete-transaction/delete-transaction.component';
+import { Transaction, attributes } from '../transaction';
+import { TransactionService } from '../transaction.service';
+import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
 import 'moment/locale/es';
 
@@ -61,7 +65,7 @@ export class ListTransactionsComponent implements OnInit {
   loading: boolean = false;
   itemsPerPage = 10;
   currentPage: number = 1;
-  sort = {endDate: -1};
+  sort = { endDate: -1 };
   filters: any[];
   scrollY: number = 0;
   timezone: string = '-03:00';
@@ -109,7 +113,7 @@ export class ListTransactionsComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
     public _branchService: BranchService,
-    private _authService: AuthService,
+    private _authService: AuthService
   ) {
     this.transactionTypesSelect = new Array();
     this.filters = new Array();
@@ -131,13 +135,14 @@ export class ListTransactionsComponent implements OnInit {
     this.userCountry = Config.country;
     this.getPrinters();
 
-    await this.getBranches({operationType: {$ne: 'D'}}).then((branches) => {
+    await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
       this.branches = branches;
     });
 
     let pathLocation: string[] = this._router.url.split('/');
 
-    this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.listType =
+      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.modules = observableOf(Config.modules);
 
     if (this.listType === 'Compras') {
@@ -154,13 +159,17 @@ export class ListTransactionsComponent implements OnInit {
 
     this._authService.getIdentity.subscribe(async (identity) => {
       // get permision
-      
-      if (identity?.permission?.collections.some((collection) => collection.name === "transacciones")) {
+
+      if (
+        identity?.permission?.collections.some(
+          (collection) => collection.name === 'transacciones'
+        )
+      ) {
         // Encontrar el objeto con name igual a "transacciones"
         const transactionObject = identity.permission.collections.find(
-          (collection) => collection.name === "transacciones"
+          (collection) => collection.name === 'transacciones'
         );
-      
+
         // Guardar los valores de 'actions' en las variables correspondientes
         this.deleteTransaction = transactionObject.actions.delete;
         this.editTransaction = transactionObject.actions.edit;
@@ -172,7 +181,8 @@ export class ListTransactionsComponent implements OnInit {
 
         for (let index = 0; index < this.columns.length; index++) {
           if (this.columns[index].name === 'branchDestination') {
-            this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
+            this.columns[index].defaultFilter =
+              `{ "${identity.origin.branch._id}" }`;
           }
         }
       } else {
@@ -196,10 +206,10 @@ export class ListTransactionsComponent implements OnInit {
         .getBranches(
           {}, // PROJECT
           match, // MATCH
-          {number: 1}, // SORT
+          { number: 1 }, // SORT
           {}, // GROUP
           0, // LIMIT
-          0, // SKIP
+          0 // SKIP
         )
         .subscribe(
           (result) => {
@@ -212,7 +222,7 @@ export class ListTransactionsComponent implements OnInit {
           (error) => {
             this.showMessage(error._body, 'danger', false);
             resolve(null);
-          },
+          }
         );
     });
   }
@@ -223,7 +233,7 @@ export class ListTransactionsComponent implements OnInit {
 
       match = {
         transactionMovement: this.transactionMovement,
-        operationType: {$ne: 'D'},
+        operationType: { $ne: 'D' },
       };
 
       this._transactionTypeService
@@ -249,7 +259,7 @@ export class ListTransactionsComponent implements OnInit {
           (error) => {
             this.showMessage(error._body, 'danger', false);
             resolve(null);
-          },
+          }
         );
     });
   }
@@ -260,7 +270,8 @@ export class ListTransactionsComponent implements OnInit {
         this.employeeClosingId = params['employeeClosingId'];
         this.origin = params['origin'];
         let pathLocation: string[] = this._router.url.split('/');
-        let listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+        let listType =
+          pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
 
         this.modules = observableOf(Config.modules);
 
@@ -275,7 +286,7 @@ export class ListTransactionsComponent implements OnInit {
         } else if (this.listType === 'Fondos') {
           this.transactionMovement = TransactionMovement.Money;
         } else if (this.listType === 'Production') {
-          this.transactionMovement = TransactionMovement.Production
+          this.transactionMovement = TransactionMovement.Production;
         }
       }
     });
@@ -331,7 +342,7 @@ export class ListTransactionsComponent implements OnInit {
       (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-      },
+      }
     );
   }
 
@@ -397,9 +408,9 @@ export class ListTransactionsComponent implements OnInit {
 
     if (this.transactionTypesSelect && this.transactionTypesSelect.length > 0) {
       this.transactionTypesSelect.forEach((element) => {
-        transactionTypes.push({$oid: element._id});
+        transactionTypes.push({ $oid: element._id });
       });
-      match['type._id'] = {$in: transactionTypes};
+      match['type._id'] = { $in: transactionTypes };
     }
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -428,8 +439,8 @@ export class ListTransactionsComponent implements OnInit {
     // AGRUPAMOS EL RESULTADO
     let group = {
       _id: null,
-      count: {$sum: 1},
-      items: {$push: '$$ROOT'},
+      count: { $sum: 1 },
+      items: { $push: '$$ROOT' },
     };
 
     let page = 0;
@@ -448,7 +459,7 @@ export class ListTransactionsComponent implements OnInit {
           this.sort, // SORT
           group, // GROUP
           limit, // LIMIT
-          skip, // SKIP
+          skip // SKIP
         )
         .subscribe(
           (result) => {
@@ -472,8 +483,8 @@ export class ListTransactionsComponent implements OnInit {
             this.showMessage(error._body, 'danger', false);
             this.loading = false;
             this.totalItems = 0;
-          },
-        ),
+          }
+        )
     );
   }
 
@@ -498,7 +509,7 @@ export class ListTransactionsComponent implements OnInit {
             this.roundNumberPipe.transform(eval(val)),
             'USD',
             'symbol-narrow',
-            '1.2-2',
+            '1.2-2'
           );
           break;
         case 'percent':
@@ -570,13 +581,16 @@ export class ListTransactionsComponent implements OnInit {
               this.getItems();
             }
           },
-          (reason) => {},
+          (reason) => {}
         );
         break;
       case 'print':
         //this.printTransaction(transaction)
-        if(transaction.type.transactionMovement === TransactionMovement.Production) {
-          this.printTransaction(transaction)
+        if (
+          transaction.type.transactionMovement ===
+          TransactionMovement.Production
+        ) {
+          this.printTransaction(transaction);
         } else {
           if (
             transaction.type.expirationDate &&
@@ -589,7 +603,7 @@ export class ListTransactionsComponent implements OnInit {
               modalRef.componentInstance.transactionId = transaction._id;
             } else {
               let printer: Printer;
-  
+
               await this.getUser().then(async (user) => {
                 if (user && user.printers && user.printers.length > 0) {
                   for (const element of user.printers) {
@@ -615,20 +629,23 @@ export class ListTransactionsComponent implements OnInit {
                   }
                 }
               });
-  
+
               modalRef = this._modalService.open(PrintComponent);
               modalRef.componentInstance.company = transaction.company;
               modalRef.componentInstance.transactionId = transaction._id;
               modalRef.componentInstance.typePrint = 'invoice';
               modalRef.componentInstance.printer = printer;
-  
+
               modalRef.result.then(
                 (result) => {
                   if (transaction.taxes && transaction.taxes.length > 0) {
                     for (const tax of transaction.taxes) {
                       if (tax.tax.printer) {
-                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef = this._modalService.open(
+                          PrintTransactionTypeComponent
+                        );
+                        modalRef.componentInstance.transactionId =
+                          transaction._id;
                         modalRef.componentInstance.printerID = tax.tax.printer;
                       }
                     }
@@ -638,13 +655,16 @@ export class ListTransactionsComponent implements OnInit {
                   if (transaction.taxes && transaction.taxes.length > 0) {
                     for (const tax of transaction.taxes) {
                       if (tax.tax.printer) {
-                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef = this._modalService.open(
+                          PrintTransactionTypeComponent
+                        );
+                        modalRef.componentInstance.transactionId =
+                          transaction._id;
                         modalRef.componentInstance.printerID = tax.tax.printer;
                       }
                     }
                   }
-                },
+                }
               );
             }
           }
@@ -663,7 +683,7 @@ export class ListTransactionsComponent implements OnInit {
               this.getItems();
             }
           },
-          (reason) => {},
+          (reason) => {}
         );
         break;
       case 'send-email':
@@ -700,13 +720,13 @@ export class ListTransactionsComponent implements OnInit {
           modalRef.componentInstance.emails = transaction.company.emails;
         }
         let labelPrint = transaction.type.name;
-        
+
         if (transaction.type.labelPrint) {
           labelPrint = transaction.type.labelPrint;
         }
         modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(
           transaction.origin,
-          4,
+          4
         )}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
 
         if (transaction.type.electronics) {
@@ -742,7 +762,8 @@ export class ListTransactionsComponent implements OnInit {
         if (transaction.type.defectEmailTemplate) {
           if (transaction.type.electronics) {
             // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
+            modalRef.componentInstance.body =
+              transaction.type.defectEmailTemplate.design;
             attachments = [];
             attachments.push({
               filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
@@ -750,7 +771,8 @@ export class ListTransactionsComponent implements OnInit {
             });
           } else {
             // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
+            modalRef.componentInstance.body =
+              transaction.type.defectEmailTemplate.design;
             attachments = [];
             attachments.push({
               filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
@@ -810,7 +832,7 @@ export class ListTransactionsComponent implements OnInit {
           },
           (error) => {
             this.showMessage(error._body, 'danger', false);
-          },
+          }
         );
       }
     });
@@ -832,7 +854,7 @@ export class ListTransactionsComponent implements OnInit {
     modalRef.componentInstance.transactionMovement = this.transactionMovement;
     modalRef.result.then(
       (result) => {},
-      (reason) => {},
+      (reason) => {}
     );
   }
 
@@ -848,7 +870,7 @@ export class ListTransactionsComponent implements OnInit {
         if (result === 'export') {
         }
       },
-      (reason) => {},
+      (reason) => {}
     );
   }
 
@@ -856,7 +878,7 @@ export class ListTransactionsComponent implements OnInit {
     this.loading = true;
     this._printerService.printTransaction(transaction._id).subscribe(
       (res: Blob) => {
-        if (res) {     
+        if (res) {
           const blobUrl = URL.createObjectURL(res);
           printJS(blobUrl);
           this.loading = false;
@@ -870,7 +892,7 @@ export class ListTransactionsComponent implements OnInit {
         this.showMessage(error.message, 'danger', false);
       }
     );
-}
+  }
 
   public exportItems(): void {
     this.itemsPerPage = 0;
@@ -881,7 +903,11 @@ export class ListTransactionsComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

@@ -16,7 +16,7 @@ import { Deposit } from 'app/components/deposit/deposit';
 import { DepositService } from 'app/components/deposit/deposit.service';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
-import { RoundNumberPipe } from 'app/main/pipes/round-number.pipe';
+import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -31,7 +31,7 @@ import { ArticleStockService } from '../article-stock.service';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 
 import { PrintLabelComponent } from 'app/components/article/actions/print-label/print-label.component';
-import { ImportComponent } from 'app/shared/import/import.component';
+import { ImportComponent } from 'app/shared/components/import/import.component';
 import { AddArticleStockComponent } from '../article-stock/add-article-stock.component';
 
 @Component({

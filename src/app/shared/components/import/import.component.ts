@@ -11,9 +11,9 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from 'app/components/branch/branch';
 import { Deposit } from 'app/components/deposit/deposit';
-import { PipesModule } from 'app/main/pipes/pipes.module';
+import { PipesModule } from 'app/core/pipes/pipes.module';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { TranslateMePipe } from '../../main/pipes/translate-me';
 import { ToastService } from '../toast/toast.service';
 import { ImportService } from './import.service';
 

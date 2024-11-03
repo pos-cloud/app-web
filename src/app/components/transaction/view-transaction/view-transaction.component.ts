@@ -1,33 +1,46 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
-import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {TranslatePipe} from '@ngx-translate/core';
-import {Config} from 'app/app.config';
-import {AccountPeriod} from 'app/components/account-period/account-period';
-import {AccountPeriodService} from 'app/components/account-period/account-period.service';
-import {AccountSeat} from 'app/components/account-seat/account-seat';
-import {AccountSeatService} from 'app/components/account-seat/account-seat.service';
-import {Account} from 'app/components/account/account';
-import {AccountService} from 'app/components/account/account.service';
-import {Printer} from 'app/components/printer/printer';
-import {PrinterService} from 'app/components/printer/printer.service';
-import {UserService} from 'app/components/user/user.service';
-import {TranslateMePipe} from 'app/main/pipes/translate-me';
-import {FormField} from 'app/util/formField.interface';
+import { Component, Input, OnInit } from '@angular/core';
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+} from '@angular/forms';
+import {
+  NgbActiveModal,
+  NgbAlertConfig,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Config } from 'app/app.config';
+import { AccountPeriod } from 'app/components/account-period/account-period';
+import { AccountPeriodService } from 'app/components/account-period/account-period.service';
+import { AccountSeat } from 'app/components/account-seat/account-seat';
+import { AccountSeatService } from 'app/components/account-seat/account-seat.service';
+import { Account } from 'app/components/account/account';
+import { AccountService } from 'app/components/account/account.service';
+import { Printer } from 'app/components/printer/printer';
+import { PrinterService } from 'app/components/printer/printer.service';
+import { UserService } from 'app/components/user/user.service';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { FormField } from 'app/util/formField.interface';
 import * as moment from 'moment';
-import {ToastrService} from 'ngx-toastr';
-import {Observable, Subject, Subscription} from 'rxjs';
-import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject, Subscription } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 
-import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
-import {ArticleComponent} from '../../article/crud/article.component';
-import {AddCompanyComponent} from '../../company/company/add-company.component';
-import {MovementOfArticle} from '../../movement-of-article/movement-of-article';
-import {MovementOfArticleService} from '../../movement-of-article/movement-of-article.service';
-import {MovementOfCash} from '../../movement-of-cash/movement-of-cash';
-import {MovementOfCashService} from '../../movement-of-cash/movement-of-cash.service';
-import {Transaction} from '../transaction';
-import {TransactionService} from '../transaction.service';
+import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { ArticleComponent } from '../../article/crud/article.component';
+import { AddCompanyComponent } from '../../company/company/add-company.component';
+import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
+import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
+import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
+import { MovementOfCashService } from '../../movement-of-cash/movement-of-cash.service';
+import { Transaction } from '../transaction';
+import { TransactionService } from '../transaction.service';
 
 import 'moment/locale/es';
 import * as printJS from 'print-js';
@@ -73,7 +86,8 @@ export class ViewTransactionComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} = term && term !== '' ? {name: {$regex: term, $options: 'i'}} : {};
+        let match: {} =
+          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
         match['status'] = 'Abierto';
 
@@ -81,7 +95,7 @@ export class ViewTransactionComponent implements OnInit {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   formatterPeriods = (x: AccountPeriod) => {
     return x['name'];
@@ -102,7 +116,7 @@ export class ViewTransactionComponent implements OnInit {
     public _periodService: AccountPeriodService,
     public _fb: UntypedFormBuilder,
     public translatePipe: TranslateMePipe,
-    public _accountService: AccountService,
+    public _accountService: AccountService
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
     this.getAllAccounts2();
@@ -145,9 +159,9 @@ export class ViewTransactionComponent implements OnInit {
           .getAll({
             project: project,
             match: {
-              operationType: {$ne: 'D'},
+              operationType: { $ne: 'D' },
               // _id: { $oid: '611e4526fe611166bdf6f44e' }
-              transaction: {$oid: this.transactionId},
+              transaction: { $oid: this.transactionId },
             },
           })
           .subscribe(
@@ -160,8 +174,8 @@ export class ViewTransactionComponent implements OnInit {
                 this.showToast(result);
               }
             },
-            (error) => this.showToast(error),
-          ),
+            (error) => this.showToast(error)
+          )
       );
     }
   }
@@ -169,8 +183,8 @@ export class ViewTransactionComponent implements OnInit {
     this.subscription.add(
       this._accountService
         .getAll({
-          match: {operationType: {$ne: 'D'}},
-          sort: {description: 1},
+          match: { operationType: { $ne: 'D' } },
+          sort: { description: 1 },
         })
         .subscribe(
           (result) => {
@@ -178,11 +192,16 @@ export class ViewTransactionComponent implements OnInit {
           },
           (error) => {
             this.showToast(error, 'danger');
-          },
-        ),
+          }
+        )
     );
   }
-  public showToast(result, type?: string, title?: string, message?: string): void {
+  public showToast(
+    result,
+    type?: string,
+    title?: string,
+    message?: string
+  ): void {
     if (result) {
       if (result.status === 200) {
         type = 'success';
@@ -190,7 +209,9 @@ export class ViewTransactionComponent implements OnInit {
       } else if (result.status >= 400) {
         type = 'danger';
         title =
-          result.error && result.error.message ? result.error.message : result.message;
+          result.error && result.error.message
+            ? result.error.message
+            : result.message;
       } else {
         type = 'info';
         title = result.message;
@@ -200,19 +221,19 @@ export class ViewTransactionComponent implements OnInit {
       case 'success':
         this._toastr.success(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       case 'danger':
         this._toastr.error(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       default:
         this._toastr.info(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
     }
@@ -231,7 +252,10 @@ export class ViewTransactionComponent implements OnInit {
 
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
+            if (
+              eval(`this.obj${sumF}`) == null ||
+              eval(`this.obj${sumF}`) == undefined
+            ) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }
@@ -272,7 +296,7 @@ export class ViewTransactionComponent implements OnInit {
             account: x.account,
             debit: x.debit,
             credit: x.credit,
-          }),
+          })
         );
       });
     }
@@ -324,15 +348,15 @@ export class ViewTransactionComponent implements OnInit {
               status: 1,
             },
             match,
-            sort: {startDate: 1},
+            sort: { startDate: 1 },
           })
           .subscribe(
             (result) => {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -349,7 +373,7 @@ export class ViewTransactionComponent implements OnInit {
             this.hideMessage();
             this.transaction = result.transaction;
             this.transaction.totalPrice = this.roundNumber.transform(
-              this.transaction.totalPrice,
+              this.transaction.totalPrice
             );
             this.getMovementsOfArticlesByTransaction();
             this.getMovementsOfCashesByTransaction();
@@ -359,8 +383,8 @@ export class ViewTransactionComponent implements OnInit {
         (error) => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
-        },
-      ),
+        }
+      )
     );
   }
 
@@ -384,8 +408,8 @@ export class ViewTransactionComponent implements OnInit {
         (error) => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
-        },
-      ),
+        }
+      )
     );
   }
 
@@ -409,29 +433,31 @@ export class ViewTransactionComponent implements OnInit {
         (error) => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
-        },
-      ),
+        }
+      )
     );
   }
 
   public printArticle(movement: MovementOfArticle) {
     this.loading = true;
-    this._printerService.printArticle(movement.article._id, movement.amount).subscribe(
-      (res: Blob) => {
-        if (res) {     
-          const blobUrl = URL.createObjectURL(res);
-          printJS(blobUrl);
+    this._printerService
+      .printArticle(movement.article._id, movement.amount)
+      .subscribe(
+        (res: Blob) => {
+          if (res) {
+            const blobUrl = URL.createObjectURL(res);
+            printJS(blobUrl);
+            this.loading = false;
+          } else {
+            this.loading = false;
+            this.showMessage('Error al cargar el PDF', 'danger', false);
+          }
+        },
+        (error) => {
           this.loading = false;
-        } else {
-          this.loading = false;
-          this.showMessage('Error al cargar el PDF', 'danger', false);
+          this.showMessage(error.message, 'danger', false);
         }
-      },
-      (error) => {
-        this.loading = false;
-        this.showMessage(error.message, 'danger', false);
-      }
-    );
+      );
   }
 
   async openModal(op: string, movement?: MovementOfArticle) {
@@ -444,9 +470,9 @@ export class ViewTransactionComponent implements OnInit {
           backdrop: 'static',
         });
         modalRef.componentInstance.property = {
-          articleId:  movement.article._id,
-          operation: 'view'
-        }
+          articleId: movement.article._id,
+          operation: 'view',
+        };
         break;
       case 'view-company':
         modalRef = this._modalService.open(AddCompanyComponent, {
@@ -467,7 +493,7 @@ export class ViewTransactionComponent implements OnInit {
         modalRef.componentInstance.operation = 'update';
         break;
       case 'print-label':
-      this.printArticle(movement)
+        this.printArticle(movement);
         break;
       default:
         break;
@@ -493,7 +519,7 @@ export class ViewTransactionComponent implements OnInit {
           this.loading = false;
           this.showMessage(error._body, 'danger', false);
           resolve(null);
-        },
+        }
       );
     });
   }
@@ -516,7 +542,11 @@ export class ViewTransactionComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

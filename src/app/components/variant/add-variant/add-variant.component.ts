@@ -1,34 +1,42 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbActiveModal,
+  NgbAlertConfig,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
 
-import { Variant } from '../variant';
+import { Article } from '../../article/article';
 import { VariantType } from '../../variant-type/variant-type';
 import { VariantValue } from '../../variant-value/variant-value';
-import { Article } from '../../article/article';
+import { Variant } from '../variant';
 
-import { VariantService } from '../variant.service';
-import { VariantValueService } from '../../variant-value/variant-value.service';
+import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
 import { VariantTypeService } from '../../variant-type/variant-type.service';
-import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
+import { VariantValueService } from '../../variant-value/variant-value.service';
+import { VariantService } from '../variant.service';
 
 @Component({
   selector: 'app-add-variant',
   templateUrl: './add-variant.component.html',
   styleUrls: ['./add-variant.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class AddVariantComponent implements OnInit {
-
   public variant: Variant;
   @Input() variants: Variant[];
   public variantsByTypes: any[];
   @Input() operation: string;
   @Input() article: Article;
-  @Output() eventAddVariants: EventEmitter<Variant[]> = new EventEmitter<Variant[]>();
+  @Output() eventAddVariants: EventEmitter<Variant[]> = new EventEmitter<
+    Variant[]
+  >();
   public variantTypes: VariantType[];
   public variantTypeSelected: VariantType;
   public variantValues: VariantValue[];
@@ -41,19 +49,18 @@ export class AddVariantComponent implements OnInit {
   public lastVariant: Variant;
   public orderByPipe: OrderByPipe = new OrderByPipe();
 
-
   public formErrors = {
-    'type': '',
-    'value': ''
+    type: '',
+    value: '',
   };
 
   public validationMessages = {
-    'type': {
-      'required': 'Este campo es requerido.'
+    type: {
+      required: 'Este campo es requerido.',
     },
-    'value': {
-      'required': 'Este campo es requerido.'
-    }
+    value: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
@@ -71,7 +78,6 @@ export class AddVariantComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.user = pathLocation[1];
     if (!this.variant) {
@@ -87,27 +93,22 @@ export class AddVariantComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.variantForm = this._fb.group({
-      'type': [this.variant.type, [
-          Validators.required
-        ]
-      ],
-      'value': [this.variant.value, [
-          Validators.required
-        ]
-      ],
+      type: [this.variant.type, [Validators.required]],
+      value: [this.variant.value, [Validators.required]],
     });
 
-    this.variantForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.variantForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.variantForm) { return; }
+    if (!this.variantForm) {
+      return;
+    }
     const form = this.variantForm;
 
     for (const field in this.formErrors) {
@@ -126,13 +127,12 @@ export class AddVariantComponent implements OnInit {
   }
 
   public getVariantTypes(): void {
-
     this.loading = true;
 
     let query = 'sort="name":1,"order":1';
 
     this._variantTypeService.getVariantTypes(query).subscribe(
-      result => {
+      (result) => {
         if (!result.variantTypes) {
           this.loading = false;
           this.variantTypes = new Array();
@@ -140,14 +140,14 @@ export class AddVariantComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.variantTypes = result.variantTypes;
-          if(this.variants && this.variants.length > 0) {
-            for(let variant of this.variants) {
+          if (this.variants && this.variants.length > 0) {
+            for (let variant of this.variants) {
               this.setVariantByType(variant);
             }
           }
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -155,18 +155,16 @@ export class AddVariantComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
     if (!this.variant.type) this.variant.type = null;
     if (!this.variant.value) this.variant.value = null;
 
     this.variantForm.setValue({
-      'type': this.variant.type,
-      'value': this.variant.value
+      type: this.variant.type,
+      value: this.variant.value,
     });
   }
 
   public refreshValues(): void {
-
     if (this.variantTypeSelected) {
       this.variant.value = null;
       this.getVariantValuesByType(this.variantTypeSelected);
@@ -178,13 +176,13 @@ export class AddVariantComponent implements OnInit {
   }
 
   public getVariantValuesByType(variantType: VariantType): void {
-
     this.loading = true;
 
-    let query = 'where="type":"' + variantType._id + '"&sort="order":1,"description":1';
+    let query =
+      'where="type":"' + variantType._id + '"&sort="order":1,"description":1';
 
     this._variantValueService.getVariantValues(query).subscribe(
-      result => {
+      (result) => {
         if (!result.variantValues) {
           this.loading = false;
           this.variantValues = new Array();
@@ -194,7 +192,7 @@ export class AddVariantComponent implements OnInit {
           this.variantValues = result.variantValues;
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -202,13 +200,11 @@ export class AddVariantComponent implements OnInit {
   }
 
   public addVariant(): void {
-
     //Capturamos los valores del formulario de la variante a añadir
     this.variant = this.variantForm.value;
 
     //Comprobamos que la variante no existe
     if (!this.variantExists(this.variant)) {
-
       this.variant.articleParent = this.article;
       this.variants.push(this.variant);
       this.setVariantByType(this.variant);
@@ -219,16 +215,23 @@ export class AddVariantComponent implements OnInit {
       this.setValueForm();
       this.buildForm();
     } else {
-      this.showMessage("La variante " + this.variant.type.name + " " + this.variant.value.description + " ya existe", 'info', true);
+      this.showMessage(
+        'La variante ' +
+          this.variant.type.name +
+          ' ' +
+          this.variant.value.description +
+          ' ya existe',
+        'info',
+        true
+      );
     }
   }
 
   private setVariantByType(variant: Variant): void {
-
     let exist: boolean = false;
 
-    for(let v of this.variantsByTypes) {
-      if(v.type._id === variant.type._id) {
+    for (let v of this.variantsByTypes) {
+      if (v.type._id === variant.type._id) {
         exist = true;
         v.value.push(variant.value);
         v.value = this.orderByPipe.transform(v.value, ['description']);
@@ -236,18 +239,25 @@ export class AddVariantComponent implements OnInit {
       }
     }
 
-    if(!exist) {
+    if (!exist) {
       this.variantsByTypes.push({
         type: variant.type,
-        value: [variant.value]
+        value: [variant.value],
       });
-      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
-      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
+      this.variantsByTypes = this.orderByPipe.transform(
+        this.variantsByTypes,
+        ['type'],
+        'name'
+      );
+      this.variantsByTypes = this.orderByPipe.transform(
+        this.variantsByTypes,
+        ['type'],
+        'order'
+      );
     }
   }
 
   public deleteVariant(v) {
-
     let countvt: number = 0;
 
     for (let vt of this.variantsByTypes) {
@@ -258,17 +268,16 @@ export class AddVariantComponent implements OnInit {
       if (vt.type._id === typeId) {
         let countval: number = 0;
         let delval: number = -1;
-        for(let val of vt.value) {
+        for (let val of vt.value) {
           if (val._id == v._id) {
             delval = countval;
-
           }
           countval++;
         }
-        if(delval !== -1) {
+        if (delval !== -1) {
           vt.value.splice(delval, 1);
         }
-        if(vt.value.length === 0) {
+        if (vt.value.length === 0) {
           this.variantsByTypes.splice(countvt, 1);
         }
       }
@@ -292,13 +301,14 @@ export class AddVariantComponent implements OnInit {
   }
 
   public variantExists(variant: Variant): boolean {
-
     let exists: boolean = false;
 
     if (this.variants && this.variants.length > 0) {
       for (let variantAux of this.variants) {
-        if (variantAux.type._id === variant.type._id &&
-          variantAux.value._id === variant.value._id) {
+        if (
+          variantAux.type._id === variant.type._id &&
+          variantAux.value._id === variant.value._id
+        ) {
           exists = true;
         }
       }
@@ -307,7 +317,11 @@ export class AddVariantComponent implements OnInit {
     return exists;
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

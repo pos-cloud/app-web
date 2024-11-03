@@ -4,7 +4,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
-import { ImportComponent } from 'app/shared/import/import.component';
+import { ImportComponent } from 'app/shared/components/import/import.component';
 import { IButton } from 'app/util/buttons.interface';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { PrinterService } from '../../printer/printer.service';

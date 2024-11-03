@@ -1,19 +1,22 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //PIPES
-import { RoundNumberPipe } from '../../main/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
 
 @Component({
   selector: 'app-apply-discount',
   templateUrl: './apply-discount.component.html',
   styleUrls: ['./apply-discount.component.css'],
-  providers: [NgbAlertConfig, RoundNumberPipe]
+  providers: [NgbAlertConfig, RoundNumberPipe],
 })
 export class ApplyDiscountComponent implements OnInit {
-
   @Input() totalPrice: number = 0;
   @Input() amountToApply: number = 0;
   @Input() percentageToApply: number = 0;
@@ -26,50 +29,55 @@ export class ApplyDiscountComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'totalPrice': '',
-    'amountToApply': '',
-    'percentageToApply': '',
-    'totalAmount': ''
+    totalPrice: '',
+    amountToApply: '',
+    percentageToApply: '',
+    totalAmount: '',
   };
 
   public validationMessages = {
-    'totalPrice': {
-      'required': 'Este campo es requerido.'
+    totalPrice: {
+      required: 'Este campo es requerido.',
     },
-    'amountToApply': {
-      'required': 'Este campo es requerido.'
+    amountToApply: {
+      required: 'Este campo es requerido.',
     },
-    'percentageToApply': {
-      'required': 'Este campo es requerido.',
-      'max':'El descuento tiene que ser menor al 100%'
+    percentageToApply: {
+      required: 'Este campo es requerido.',
+      max: 'El descuento tiene que ser menor al 100%',
     },
-    'totalAmount': {
-      'required': 'Este campo es requerido.'
-    }
+    totalAmount: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-  ) { }
+    public alertConfig: NgbAlertConfig
+  ) {}
 
   ngOnInit() {
-
     this.percentageToApply -= this.percentageToApplyCompany;
     this.percentageToApply -= this.percentageToApplyCompanyGroup;
     this.totalPrice += this.amountToApply;
-    let discountCompany = this.roundNumber.transform(this.totalPrice * this.percentageToApplyCompany / 100);
-    let discountCompanyGroup = this.roundNumber.transform(this.totalPrice * this.percentageToApplyCompanyGroup / 100);
+    let discountCompany = this.roundNumber.transform(
+      (this.totalPrice * this.percentageToApplyCompany) / 100
+    );
+    let discountCompanyGroup = this.roundNumber.transform(
+      (this.totalPrice * this.percentageToApplyCompanyGroup) / 100
+    );
     this.totalPrice = this.roundNumber.transform(this.totalPrice);
     this.amountToApply -= discountCompany;
     this.amountToApply -= discountCompanyGroup;
     this.amountToApply = this.roundNumber.transform(this.amountToApply);
-    if (this.amountToApply &&
+    if (
+      this.amountToApply &&
       this.amountToApply !== 0 &&
       this.percentageToApply &&
-      this.percentageToApply === 0) {
-      this.percentageToApply = (this.amountToApply * 100 / this.totalPrice);
+      this.percentageToApply === 0
+    ) {
+      this.percentageToApply = (this.amountToApply * 100) / this.totalPrice;
     }
 
     this.buildForm();
@@ -80,25 +88,44 @@ export class ApplyDiscountComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.discountForm = this._fb.group({
-      'totalPrice': [this.roundNumber.transform(this.totalPrice, 6), [Validators.required]],
-      'amountToApply': [this.roundNumber.transform(this.amountToApply, 6), [Validators.required]],
-      'percentageToApply': [this.roundNumber.transform(this.percentageToApply, 6), [Validators.required, Validators.max(99)]],
-      'percentageToApplyCompany': [this.roundNumber.transform(this.percentageToApplyCompany, 6), [Validators.required]],
-      'percentageToApplyCompanyGroup': [this.roundNumber.transform(this.percentageToApplyCompanyGroup, 6), [Validators.required]],
-      'totalAmount': [this.roundNumber.transform(this.totalPrice - this.amountToApply, 6), [Validators.required]]
+      totalPrice: [
+        this.roundNumber.transform(this.totalPrice, 6),
+        [Validators.required],
+      ],
+      amountToApply: [
+        this.roundNumber.transform(this.amountToApply, 6),
+        [Validators.required],
+      ],
+      percentageToApply: [
+        this.roundNumber.transform(this.percentageToApply, 6),
+        [Validators.required, Validators.max(99)],
+      ],
+      percentageToApplyCompany: [
+        this.roundNumber.transform(this.percentageToApplyCompany, 6),
+        [Validators.required],
+      ],
+      percentageToApplyCompanyGroup: [
+        this.roundNumber.transform(this.percentageToApplyCompanyGroup, 6),
+        [Validators.required],
+      ],
+      totalAmount: [
+        this.roundNumber.transform(this.totalPrice - this.amountToApply, 6),
+        [Validators.required],
+      ],
     });
 
-    this.discountForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.discountForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.discountForm) { return; }
+    if (!this.discountForm) {
+      return;
+    }
     const form = this.discountForm;
 
     for (const field in this.formErrors) {
@@ -115,65 +142,105 @@ export class ApplyDiscountComponent implements OnInit {
   }
 
   public updateDiscounts(op: string): void {
-
     if (op === 'percentageToApply') {
       if (!(this.discountForm.value.percentageToApply >= 100)) {
-        this.amountToApply = this.roundNumber.transform((this.totalPrice * this.discountForm.value.percentageToApply / 100), 6);
-        this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 6);
+        this.amountToApply = this.roundNumber.transform(
+          (this.totalPrice * this.discountForm.value.percentageToApply) / 100,
+          6
+        );
+        this.percentageToApply = this.roundNumber.transform(
+          this.discountForm.value.percentageToApply,
+          6
+        );
       }
     } else if (op === 'amountToApply') {
-      this.percentageToApply = this.roundNumber.transform((this.discountForm.value.amountToApply * 100 / this.totalPrice), 6);
-      this.amountToApply = this.roundNumber.transform(this.discountForm.value.amountToApply, 6);
+      this.percentageToApply = this.roundNumber.transform(
+        (this.discountForm.value.amountToApply * 100) / this.totalPrice,
+        6
+      );
+      this.amountToApply = this.roundNumber.transform(
+        this.discountForm.value.amountToApply,
+        6
+      );
     }
 
     this.setValueForm();
   }
 
   public setValueForm(): void {
-
     if (!this.totalPrice) this.totalPrice = 0;
     if (!this.amountToApply) this.amountToApply = 0;
     if (!this.percentageToApply) this.percentageToApply = 0;
 
     let discount = {
-      'totalPrice': this.roundNumber.transform(this.totalPrice, 6),
-      'amountToApply': this.roundNumber.transform(this.amountToApply, 6),
-      'percentageToApply': this.roundNumber.transform(this.percentageToApply, 6),
-      'percentageToApplyCompany': this.roundNumber.transform(this.percentageToApplyCompany, 6),
-      'percentageToApplyCompanyGroup': this.roundNumber.transform(this.percentageToApplyCompanyGroup, 6),
-      'totalAmount': this.roundNumber.transform(this.totalPrice - this.amountToApply, 6)
+      totalPrice: this.roundNumber.transform(this.totalPrice, 6),
+      amountToApply: this.roundNumber.transform(this.amountToApply, 6),
+      percentageToApply: this.roundNumber.transform(this.percentageToApply, 6),
+      percentageToApplyCompany: this.roundNumber.transform(
+        this.percentageToApplyCompany,
+        6
+      ),
+      percentageToApplyCompanyGroup: this.roundNumber.transform(
+        this.percentageToApplyCompanyGroup,
+        6
+      ),
+      totalAmount: this.roundNumber.transform(
+        this.totalPrice - this.amountToApply,
+        6
+      ),
     };
     this.discountForm.setValue(discount);
   }
 
   public applyDiscount(): void {
-
-    if (this.discountForm.value.percentageToApply === 0 &&
-      this.discountForm.value.amountToApply !== 0) {
+    if (
+      this.discountForm.value.percentageToApply === 0 &&
+      this.discountForm.value.amountToApply !== 0
+    ) {
       this.amountToApply = this.discountForm.value.amountToApply;
-      this.percentageToApply = this.roundNumber.transform(this.amountToApply * 100 / this.totalPrice, 6);
-    } else if (this.discountForm.value.percentageToApply !== 0 &&
-      this.discountForm.value.amountToApply === 0) {
-      this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 6);
-      this.amountToApply = this.roundNumber.transform((this.totalPrice * this.percentageToApply / 100), 6);
-    } else if (this.discountForm.value.percentageToApply === 0 &&
-      this.discountForm.value.amountToApply === 0) {
+      this.percentageToApply = this.roundNumber.transform(
+        (this.amountToApply * 100) / this.totalPrice,
+        6
+      );
+    } else if (
+      this.discountForm.value.percentageToApply !== 0 &&
+      this.discountForm.value.amountToApply === 0
+    ) {
+      this.percentageToApply = this.roundNumber.transform(
+        this.discountForm.value.percentageToApply,
+        6
+      );
+      this.amountToApply = this.roundNumber.transform(
+        (this.totalPrice * this.percentageToApply) / 100,
+        6
+      );
+    } else if (
+      this.discountForm.value.percentageToApply === 0 &&
+      this.discountForm.value.amountToApply === 0
+    ) {
       this.amountToApply = 0;
       this.percentageToApply = 0;
     }
 
     let discount = {
-      'amountToApply': this.roundNumber.transform(this.amountToApply, 6),
-      'percentageToApply': this.roundNumber.transform(this.percentageToApply, 6),
-      'totalAmount': this.roundNumber.transform(this.totalPrice - this.amountToApply, 6)
+      amountToApply: this.roundNumber.transform(this.amountToApply, 6),
+      percentageToApply: this.roundNumber.transform(this.percentageToApply, 6),
+      totalAmount: this.roundNumber.transform(
+        this.totalPrice - this.amountToApply,
+        6
+      ),
     };
 
     this.activeModal.close({
-      'discount': discount
+      discount: discount,
     });
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

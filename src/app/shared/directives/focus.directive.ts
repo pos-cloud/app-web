@@ -1,26 +1,34 @@
-import { Directive, Input, EventEmitter, ElementRef, Inject, Renderer2 } from '@angular/core';
- 
-@Directive({
-  selector: '[focus]'
-})
+import {
+  Directive,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  Renderer2,
+} from '@angular/core';
 
+@Directive({
+  selector: '[focus]',
+  standalone: true,
+})
 export class FocusDirective {
-  
   public inputType: string;
   @Input('focus') focusEvent: EventEmitter<boolean>;
 
-  constructor(@Inject(ElementRef) public element: ElementRef, public renderer: Renderer2) {
-  }
- 
+  constructor(
+    @Inject(ElementRef) public element: ElementRef,
+    public renderer: Renderer2
+  ) {}
+
   ngOnInit() {
-    if(this.focusEvent) {
-      this.focusEvent.subscribe(event => {
-        if(this.element.nativeElement) {
+    if (this.focusEvent) {
+      this.focusEvent.subscribe((event) => {
+        if (this.element.nativeElement) {
           this.inputType = this.element.nativeElement.type;
-          if (this.inputType && this.inputType != "text") {
-            this.element.nativeElement.type = "text";
+          if (this.inputType && this.inputType != 'text') {
+            this.element.nativeElement.type = 'text';
           }
-          this.setSelectionRange(this.element.nativeElement,0,999);
+          this.setSelectionRange(this.element.nativeElement, 0, 999);
           this.element.nativeElement.focus();
         }
       });

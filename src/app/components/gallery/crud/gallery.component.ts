@@ -12,8 +12,8 @@ import { Gallery } from 'app/components/gallery/gallery';
 import { GalleryService } from 'app/components/gallery/gallery.service';
 import { Resource } from 'app/components/resource/resource';
 import { ResourceService } from 'app/components/resource/resource.service';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
-import { ToastService } from 'app/shared/toast/toast.service';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-gallery',

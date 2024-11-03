@@ -32,6 +32,7 @@ import { TransactionService } from '../transaction/transaction.service';
 import { EmailProps } from 'app/types';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { TranslateMePipe } from '../../core/pipes/translate-me';
 import Resulteable from '../../util/Resulteable';
 import { padNumber } from '../../util/functions/pad/padNumber';
 import { removeParam } from '../../util/functions/removeParam';
@@ -76,7 +77,6 @@ import { User } from './../../components/user/user';
 import { UserService } from './../../components/user/user.service';
 import { Claim, ClaimPriority, ClaimType } from './../../layout/claim/claim';
 import { ClaimService } from './../../layout/claim/claim.service';
-import { TranslateMePipe } from './../../main/pipes/translate-me';
 
 @Component({
   selector: 'app-point-of-sale',

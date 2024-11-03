@@ -14,14 +14,14 @@ import { TaxClassification } from 'app/components/tax/tax';
 import { UserService } from 'app/components/user/user.service';
 import { Voucher } from 'app/components/voucher-reader/voucher';
 import { VoucherService } from 'app/components/voucher-reader/voucher.service';
+import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { ClaimService } from 'app/layout/claim/claim.service';
-import { CapitalizePipe } from 'app/main/pipes/capitalize';
 import jsPDF from 'jspdf';
 import * as moment from 'moment';
 
 import { Config } from '../../../app.config';
-import { DateFormatPipe } from '../../../main/pipes/date-format.pipe';
-import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
+import { DateFormatPipe } from '../../../core/pipes/date-format.pipe';
+import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { Article } from '../../article/article';
 import { ArticleService } from '../../article/article.service';

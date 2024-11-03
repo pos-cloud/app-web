@@ -1,26 +1,29 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {CurrencyPipe } from '@angular/common';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CurrencyPipe } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { of as observableOf, Observable, Subscription } from 'rxjs';
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Branch } from 'app/components/branch/branch';
 import { BranchService } from 'app/components/branch/branch.service';
-import { attributes } from '../reports';
-import {RoundNumberPipe} from '../../../main/pipes/round-number.pipe';
-import * as moment from 'moment';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
-import { AuthService } from 'app/components/login/auth.service';
-import { Config } from '../../../app.config'
-import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
-import { ReportsService } from '../reports.service';
-import {DateFormatPipe} from 'app/main/pipes/date-format.pipe';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
+import { AuthService } from 'app/components/login/auth.service';
+import {
+  TransactionMovement,
+  TransactionType,
+} from 'app/components/transaction-type/transaction-type';
+import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
+import * as moment from 'moment';
+import { Observable, of as observableOf, Subscription } from 'rxjs';
+import { Config } from '../../../app.config';
+import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { attributes } from '../reports';
+import { ReportsService } from '../reports.service';
 
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
   templateUrl: './list-articles-requirements-by-transaction.component.html',
-  styleUrls: ['./list-articles-requirements-by-transaction.component.css']
+  styleUrls: ['./list-articles-requirements-by-transaction.component.css'],
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   private subscription: Subscription = new Subscription();
@@ -28,7 +31,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
 
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
-  title: string = 'Requerimientos de producción'
+  title: string = 'Requerimientos de producción';
   branches: Branch[];
   branchSelectedId: string;
   allowChangeBranch: boolean;
@@ -36,7 +39,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   loading: boolean = false;
   dateFormat = new DateFormatPipe();
   columns = attributes;
-  filters:{ [key: string]: string } = {};
+  filters: { [key: string]: string } = {};
   employeeClosingId: string;
   origin: any;
   listType: string = 'statistics';
@@ -65,7 +68,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   items: any[] = [];
   filterItems: any[] = [];
   totalItems: number = 0;
-  
+
   config: Config;
 
   deleteTransaction = true;
@@ -78,8 +81,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     private _authService: AuthService,
     public _router: Router,
-    public _reportsService: ReportsService,
-    
+    public _reportsService: ReportsService
   ) {
     this.transactionTypesSelect = new Array();
     this.filters = {};
@@ -96,14 +98,14 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
       this.branches = branches;
     });
 
     let pathLocation: string[] = this._router.url.split('/');
 
-    this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.listType =
+      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.modules = observableOf(Config.modules);
     if (this.listType === 'Compras') {
       this.transactionMovement = TransactionMovement.Purchase;
@@ -120,10 +122,14 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this._authService.getIdentity.subscribe(async (identity) => {
       // get permision
 
-      if (identity?.permission?.collections.some((collection) => collection.name === "transacciones")) {
+      if (
+        identity?.permission?.collections.some(
+          (collection) => collection.name === 'transacciones'
+        )
+      ) {
         // Encontrar el objeto con name igual a "transacciones"
         const transactionObject = identity.permission.collections.find(
-          (collection) => collection.name === "transacciones"
+          (collection) => collection.name === 'transacciones'
         );
 
         // Guardar los valores de 'actions' en las variables correspondientes
@@ -137,7 +143,8 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
         for (let index = 0; index < this.columns.length; index++) {
           if (this.columns[index].name === 'branchDestination') {
-            this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
+            this.columns[index].defaultFilter =
+              `{ "${identity.origin.branch._id}" }`;
           }
         }
       } else {
@@ -164,7 +171,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
           { number: 1 }, // SORT
           {}, // GROUP
           0, // LIMIT
-          0, // SKIP
+          0 // SKIP
         )
         .subscribe(
           (result) => {
@@ -177,7 +184,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
           (error) => {
             this.showMessage(error._body, 'danger', false);
             resolve(null);
-          },
+          }
         );
     });
   }
@@ -214,7 +221,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
           (error) => {
             this.showMessage(error._body, 'danger', false);
             resolve(null);
-          },
+          }
         );
     });
   }
@@ -224,34 +231,42 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
     this.items = [];
 
-    const transactionTypesId = this.transactionTypesSelect.map(id => id._id)
+    const transactionTypesId = this.transactionTypesSelect.map((id) => id._id);
 
     this.subscription.add(
-        this._reportsService.getRequirementByTransaction(this.startDate, this.endDate, [this.stateSelect], transactionTypesId.length > 0 ? transactionTypesId : [''], this.dateSelect, this.branchSelectedId)
-            .subscribe(
-                (result) => {
-                    this.loading = false;
-                    if (result.result.length) {
-                        if (this.itemsPerPage === 0) {
-                            this.itemsPerPage = 10;
-                            this.getItems();
-                        } else {
-                            this.items = result.result;
-                            this.filterItems = result.result;
-                            this.totalItems = result.result.length;
-                        }
-                    } else {
-                        this.items = new Array();
-                        this.filterItems = new Array();
-                        this.totalItems = 0;
-                    }
-                },
-                (error) => {
-                    this.showMessage(error._body, 'danger', false);
-                    this.loading = false;
-                    this.totalItems = 0;
-                },
-            ),
+      this._reportsService
+        .getRequirementByTransaction(
+          this.startDate,
+          this.endDate,
+          [this.stateSelect],
+          transactionTypesId.length > 0 ? transactionTypesId : [''],
+          this.dateSelect,
+          this.branchSelectedId
+        )
+        .subscribe(
+          (result) => {
+            this.loading = false;
+            if (result.result.length) {
+              if (this.itemsPerPage === 0) {
+                this.itemsPerPage = 10;
+                this.getItems();
+              } else {
+                this.items = result.result;
+                this.filterItems = result.result;
+                this.totalItems = result.result.length;
+              }
+            } else {
+              this.items = new Array();
+              this.filterItems = new Array();
+              this.totalItems = 0;
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+            this.totalItems = 0;
+          }
+        )
     );
   }
 
@@ -278,7 +293,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this.filterItems = filteredList;
     this.totalItems = filteredList.length;
   }
-  
+
   public getColumnsVisibles(): number {
     let count: number = 0;
 
@@ -291,8 +306,8 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     return count;
   }
 
-  public orderBy(value){
- console.log(value)
+  public orderBy(value) {
+    console.log(value);
   }
 
   public getValue(item, column): any {
@@ -315,7 +330,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
             this.roundNumberPipe.transform(eval(val)),
             'USD',
             'symbol-narrow',
-            '1.2-2',
+            '1.2-2'
           );
           break;
         case 'percent':
@@ -336,12 +351,11 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   public refresh(): void {
     this.getItems();
   }
-  
 
   public exportItems(): void {
     this.exportExcelComponent.items = this.items;
     this.exportExcelComponent.export();
-}
+  }
 
   public drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
@@ -351,7 +365,11 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this.currentPage = page;
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

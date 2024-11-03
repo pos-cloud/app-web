@@ -19,7 +19,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastService } from 'app/shared/toast/toast.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 
 // Terceros
 import {
@@ -40,7 +40,7 @@ import {
 } from 'rxjs/operators';
 
 import { Config } from '../../../app.config';
-import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { ArticleStockService } from '../../article-stock/article-stock.service';
 import { Category } from '../../category/category';
@@ -77,9 +77,9 @@ import { VariantTypeService } from 'app/components/variant-type/variant-type.ser
 import { VariantValue } from 'app/components/variant-value/variant-value';
 import { VariantValueService } from 'app/components/variant-value/variant-value.service';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
-import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
-import { FileService } from 'app/services/file.service';
+import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { FileService } from 'app/shared/services/file.service';
 import { ORIGINMEDIA } from 'app/types';
 import Resulteable from '../../../util/Resulteable';
 import { Tax, TaxClassification } from '../../tax/tax';
@@ -456,9 +456,8 @@ export class ArticleComponent implements OnInit {
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
       // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
-      this.validationMessages.code[
-        'maxlength'
-      ] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
+      this.validationMessages.code['maxlength'] =
+        `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
       this.articleForm.controls['code'].setValidators([
         Validators.maxLength(this.config.article.code.validators.maxLength),
       ]);
@@ -735,8 +734,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.creationUser === 'string'
                 ? this.article.creationUser
                 : typeof this.article.creationUser !== 'undefined'
-                ? this.article.creationUser._id
-                : '')
+                  ? this.article.creationUser._id
+                  : '')
           );
           this.updateUser = this.users.find(
             (user: User) =>
@@ -744,8 +743,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.updateUser === 'string'
                 ? this.article.updateUser
                 : typeof this.article.updateUser !== 'undefined'
-                ? this.article.updateUser._id
-                : '')
+                  ? this.article.updateUser._id
+                  : '')
           );
           if (this.article.variants.length > 0) {
             const types = this.article.variants.map((item) => item.type);

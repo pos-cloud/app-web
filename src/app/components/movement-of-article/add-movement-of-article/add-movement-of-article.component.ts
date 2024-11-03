@@ -27,8 +27,8 @@ import { PriceListService } from 'app/components/price-list/price-list.service';
 import { Structure, Utilization } from 'app/components/structure/structure';
 import { StructureService } from 'app/components/structure/structure.service';
 import { Transaction } from 'app/components/transaction/transaction';
-import { OrderByPipe } from 'app/main/pipes/order-by.pipe';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -41,7 +41,7 @@ import {
 import { AuthService } from 'app/components/login/auth.service';
 import { User } from 'app/components/user/user';
 import { Config } from '../../../app.config';
-import { RoundNumberPipe } from '../../../main/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { ArticleFieldType } from '../../article-field/article-field';
 import { ArticleFields } from '../../article-field/article-fields';
 import { ArticleStock } from '../../article-stock/article-stock';

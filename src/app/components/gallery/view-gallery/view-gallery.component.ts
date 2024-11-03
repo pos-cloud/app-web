@@ -15,8 +15,8 @@ import { Gallery } from 'app/components/gallery/gallery';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
 import { Resource } from 'app/components/resource/resource';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
-import { ToastService } from 'app/shared/toast/toast.service';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'hammerjs';
 import { ResourceService } from '../../resource/resource.service';
 @Component({

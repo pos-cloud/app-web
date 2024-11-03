@@ -1,27 +1,34 @@
-import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Make } from '../make';
 
-import { MakeService } from '../make.service';
 import { Config } from 'app/app.config';
-import { Subscription } from 'rxjs';
-import { TranslateMePipe } from 'app/main/pipes/translate-me';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { MakeService } from '../make.service';
 
 @Component({
   selector: 'app-make',
   templateUrl: './make.component.html',
   styleUrls: ['./make.component.scss'],
   providers: [NgbAlertConfig, TranslateMePipe],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class MakeComponent implements OnInit {
-
   public makeId: string;
   public operation: string;
   public readonly: boolean;
@@ -36,15 +43,15 @@ export class MakeComponent implements OnInit {
   public orientation: string = 'horizontal';
   private subscription: Subscription = new Subscription();
   public formErrors = {
-    'description': ''
+    description: '',
   };
 
   public validationMessages = {
-    'description': {
-      'required': 'Este campo es requerido.'
-    }
+    description: {
+      required: 'Este campo es requerido.',
+    },
   };
-  public pathUrl: string[]
+  public pathUrl: string[];
 
   constructor(
     public _makeService: MakeService,
@@ -53,7 +60,7 @@ export class MakeComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
+    private _toastr: ToastrService
   ) {
     this.make = new Make();
     if (window.screen.width < 1000) this.orientation = 'vertical';
@@ -68,8 +75,8 @@ export class MakeComponent implements OnInit {
     this.pathUrl = this._router.url.split('/');
     this.operation = this.pathUrl[3];
     this.makeId = this.pathUrl[4];
-    if(this.pathUrl[3] === 'view'){
-      this.readonly = true
+    if (this.pathUrl[3] === 'view') {
+      this.readonly = true;
     }
     if (this.makeId) {
       this.getMake();
@@ -80,14 +87,19 @@ export class MakeComponent implements OnInit {
 
   public getMake(): void {
     this._makeService.getById(this.makeId).subscribe(
-      result => {
+      (result) => {
         if (!result.result) {
           this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.make = result.result;
           if (this.make.picture && this.make.picture !== 'default.jpg') {
-            this.imageURL = Config.apiURL + 'get-image-make/' + this.make.picture + "/" + Config.database;
+            this.imageURL =
+              Config.apiURL +
+              'get-image-make/' +
+              this.make.picture +
+              '/' +
+              Config.database;
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
@@ -95,19 +107,18 @@ export class MakeComponent implements OnInit {
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
-    )
+    );
   }
 
   public setValueForm(): void {
-
     this.makeForm.patchValue({
-      '_id': this.make._id ?? '',
-      'description': this.make.description ?? null,
-      'visibleSale': this.make.visibleSale ?? false
+      _id: this.make._id ?? '',
+      description: this.make.description ?? null,
+      visibleSale: this.make.visibleSale ?? false,
     });
   }
 
@@ -116,11 +127,10 @@ export class MakeComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.makeForm = this._fb.group({
-      '_id': [this.make._id, []],
-      'description': [this.make.description, [Validators.required]],
-      'visibleSale': [this.make.visibleSale, []]
+      _id: [this.make._id, []],
+      description: [this.make.description, [Validators.required]],
+      visibleSale: [this.make.visibleSale, []],
     });
   }
 
@@ -142,7 +152,8 @@ export class MakeComponent implements OnInit {
                 this.validationMessages[field][key] &&
                 this.validationMessages[field][key] != 'undefined'
               ) {
-                this.formErrors[field] += this.validationMessages[field][key] + ' ';
+                this.formErrors[field] +=
+                  this.validationMessages[field][key] + ' ';
               }
             }
           }
@@ -172,37 +183,49 @@ export class MakeComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast({ message: 'Por favor, revisa los campos en rojo para continuar.' });
+      this.showToast({
+        message: 'Por favor, revisa los campos en rojo para continuar.',
+      });
       this.onValueChanged();
     }
-
-
   }
 
   public saveMake(): void {
-
     this.loading = true;
 
     this._makeService.saveMake(this.make).subscribe(
-      result => {
+      (result) => {
         if (!result.result) {
           this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.make = result.result;
           if (this.filesToUpload) {
-            this._makeService.makeFileRequest(this.make._id, this.filesToUpload)
+            this._makeService
+              .makeFileRequest(this.make._id, this.filesToUpload)
               .then(
                 (result) => {
                   let resultUpload;
                   resultUpload = result;
                   this.make.picture = resultUpload.make.picture;
-                  if (this.make.picture && this.make.picture !== 'default.jpg') {
-                    this.imageURL = Config.apiURL + 'get-image-make/' + this.make.picture + "/" + Config.database;
+                  if (
+                    this.make.picture &&
+                    this.make.picture !== 'default.jpg'
+                  ) {
+                    this.imageURL =
+                      Config.apiURL +
+                      'get-image-make/' +
+                      this.make.picture +
+                      '/' +
+                      Config.database;
                   } else {
                     this.imageURL = './../../../assets/img/default.jpg';
                   }
-                  this.showMessage("La marca se ha añadido con éxito.", 'success', false);
+                  this.showMessage(
+                    'La marca se ha añadido con éxito.',
+                    'success',
+                    false
+                  );
                   this.make = new Make();
                   this.filesToUpload = null;
                   this.buildForm();
@@ -216,12 +239,12 @@ export class MakeComponent implements OnInit {
             this.filesToUpload = null;
             this.showToast(result, 'success');
             this.buildForm();
-            return this.retrunTo()
+            return this.retrunTo();
           }
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -232,38 +255,51 @@ export class MakeComponent implements OnInit {
     this.loading = true;
 
     this._makeService.updateMake(this.make).subscribe(
-      result => {
+      (result) => {
         if (!result.result) {
           this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.make = result.result;
           if (this.filesToUpload) {
-            this._makeService.makeFileRequest(this.make._id, this.filesToUpload)
+            this._makeService
+              .makeFileRequest(this.make._id, this.filesToUpload)
               .then(
                 (result) => {
                   let resultUpload;
                   resultUpload = result;
                   this.make.picture = resultUpload.make.picture;
-                  if (this.make.picture && this.make.picture !== 'default.jpg') {
-                    this.imageURL = Config.apiURL + 'get-image-make/' + this.make.picture + "/" + Config.database;
+                  if (
+                    this.make.picture &&
+                    this.make.picture !== 'default.jpg'
+                  ) {
+                    this.imageURL =
+                      Config.apiURL +
+                      'get-image-make/' +
+                      this.make.picture +
+                      '/' +
+                      Config.database;
                   } else {
                     this.imageURL = './../../../assets/img/default.jpg';
                   }
-                  this.showMessage("La Marca se ha actualizado con éxito.", 'success', false);
+                  this.showMessage(
+                    'La Marca se ha actualizado con éxito.',
+                    'success',
+                    false
+                  );
                 },
                 (error) => {
                   this.showMessage(error, 'danger', false);
                 }
               );
           } else {
-            this.showToast( result, 'success');
-            return this.retrunTo()
+            this.showToast(result, 'success');
+            return this.retrunTo();
           }
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -274,8 +310,12 @@ export class MakeComponent implements OnInit {
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    console.log(message)
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
+    console.log(message);
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
@@ -289,25 +329,33 @@ export class MakeComponent implements OnInit {
     this.loading = true;
     this.subscription.add(
       this._makeService.delete(this.make._id).subscribe(
-        async result => {
+        async (result) => {
           this.showToast(result);
           if (result.status === 200) {
-           return this.retrunTo()
+            return this.retrunTo();
           }
         },
-        error => this.showToast(error)
+        (error) => this.showToast(error)
       )
     );
   }
 
-  public showToast(result, type?: string, title?: string, message?: string): void {
+  public showToast(
+    result,
+    type?: string,
+    title?: string,
+    message?: string
+  ): void {
     if (result) {
       if (result.status === 200) {
         type = 'success';
         title = result.message;
       } else if (result.status >= 400) {
         type = 'danger';
-        title = (result.error && result.error.message) ? result.error.message : result.message;
+        title =
+          result.error && result.error.message
+            ? result.error.message
+            : result.message;
       } else {
         type = 'info';
         title = result.message;
@@ -315,13 +363,22 @@ export class MakeComponent implements OnInit {
     }
     switch (type) {
       case 'success':
-        this._toastr.success(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        this._toastr.success(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
         break;
       case 'danger':
-        this._toastr.error(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        this._toastr.error(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
         break;
       default:
-        this._toastr.info(this.translatePipe.translateMe(message), this.translatePipe.translateMe(title));
+        this._toastr.info(
+          this.translatePipe.translateMe(message),
+          this.translatePipe.translateMe(title)
+        );
         break;
     }
     this.loading = false;

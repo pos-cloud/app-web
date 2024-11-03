@@ -1,11 +1,14 @@
-import {Component, ViewEncapsulation} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {NgbAlertConfig} from '@ng-bootstrap/ng-bootstrap';
-import {Transaction, TransactionState} from 'app/components/transaction/transaction';
-import {TransactionService} from 'app/components/transaction/transaction.service';
-import {TranslateMePipe} from 'app/main/pipes/translate-me';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import {
+  Transaction,
+  TransactionState,
+} from 'app/components/transaction/transaction';
+import { TransactionService } from 'app/components/transaction/transaction.service';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import Resulteable from 'app/util/Resulteable';
-import {ToastrService} from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-pos-client-view',
@@ -39,7 +42,7 @@ export class PosClientViewComponent {
     private _route: ActivatedRoute,
     private _transactionService: TransactionService,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
+    private _toastr: ToastrService
   ) {
     this.transactions = new Array();
   }
@@ -61,7 +64,8 @@ export class PosClientViewComponent {
   private processParams(): void {
     this._route.queryParams.subscribe((params) => {
       if (!this.loading) {
-        if (params['column'] && !isNaN(params['column'])) this.column = params['column'];
+        if (params['column'] && !isNaN(params['column']))
+          this.column = params['column'];
         if (params['fontSize'] && !isNaN(params['fontSize']))
           this.fontSize = params['fontSize'];
         if (params['limit'] && !isNaN(params['limit'])) {
@@ -103,15 +107,15 @@ export class PosClientViewComponent {
     let query = {};
 
     if (this.transactionStates) {
-      query['state'] = {$in: this.transactionStates};
+      query['state'] = { $in: this.transactionStates };
     }
 
     if (this.originsToFilter && this.originsToFilter.length > 0) {
-      query['origin'] = {$in: this.originsToFilter};
+      query['origin'] = { $in: this.originsToFilter };
     }
 
-    query['operationType'] = {$ne: 'D'};
-    query['shipmentMethod'] = {$ne: {$oid: '5e6fbdd32891ec64814aa95d'}};
+    query['operationType'] = { $ne: 'D' };
+    query['shipmentMethod'] = { $ne: { $oid: '5e6fbdd32891ec64814aa95d' } };
 
     this.transactions = await this.getTransactions(query);
     // CHANGE STATES PACKING TO PREPARING FOR VIEW
@@ -153,7 +157,7 @@ export class PosClientViewComponent {
         (error) => {
           this.showToast(error);
           reject(error);
-        },
+        }
       );
     });
   }
@@ -174,7 +178,7 @@ export class PosClientViewComponent {
         (error) => {
           this.loading = false;
           resolve(null);
-        },
+        }
       );
     });
   }
@@ -198,10 +202,10 @@ export class PosClientViewComponent {
         .getTransactionsV2(
           project, // PROJECT
           match, // MATCH
-          {startDate: 1}, // SORT
+          { startDate: 1 }, // SORT
           {}, // GROUP
           this.limit, // LIMIT
-          0, // SKIP
+          0 // SKIP
         )
         .subscribe(
           (result) => {
@@ -211,7 +215,7 @@ export class PosClientViewComponent {
           (error) => {
             this.loading = false;
             resolve([]);
-          },
+          }
         );
     });
   }
@@ -233,7 +237,12 @@ export class PosClientViewComponent {
     this.viewBotton = false;
   }
 
-  public showToast(result, type?: string, title?: string, message?: string): void {
+  public showToast(
+    result,
+    type?: string,
+    title?: string,
+    message?: string
+  ): void {
     if (result) {
       if (result.status === 200) {
         type = 'success';
@@ -241,7 +250,9 @@ export class PosClientViewComponent {
       } else if (result.status >= 400) {
         type = 'danger';
         title =
-          result.error && result.error.message ? result.error.message : result.message;
+          result.error && result.error.message
+            ? result.error.message
+            : result.message;
       } else {
         type = 'info';
         title = result.message;
@@ -251,19 +262,19 @@ export class PosClientViewComponent {
       case 'success':
         this._toastr.success(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       case 'danger':
         this._toastr.error(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       default:
         this._toastr.info(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
     }

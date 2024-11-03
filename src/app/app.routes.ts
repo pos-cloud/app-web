@@ -71,9 +71,9 @@ import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/l
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ListVariantTypesComponent } from './components/variant-type/list-variant-types/list-variant-types.component';
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
-import { AuthGuard } from './main/guards/auth.guard';
-import { LicenseGuard } from './main/guards/license.guard';
 
 export const _routes: Routes = [
   {

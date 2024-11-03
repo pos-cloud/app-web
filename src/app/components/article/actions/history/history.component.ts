@@ -1,17 +1,13 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
-import { Article, Type, attributes } from "../../article";
-import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Subscription } from "rxjs";
-import {
-  NgbModal,
-  NgbAlertConfig,
-  NgbActiveModal,
-} from "@ng-bootstrap/ng-bootstrap";
-import { ArticleService } from '../../article.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CurrencyPipe } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { RoundNumberPipe } from "../../../../main/pipes/round-number.pipe";
-import { CurrencyPipe } from "@angular/common";
+import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
+import { Subscription } from 'rxjs';
+import { RoundNumberPipe } from '../../../../core/pipes/round-number.pipe';
+import { Type, attributes } from '../../article';
+import { ArticleService } from '../../article.service';
 
 @Component({
   selector: 'app-history',
@@ -19,33 +15,32 @@ import { ExportExcelComponent } from 'app/components/export/export-excel/export-
   styleUrls: ['./history.component.css'],
   providers: [RoundNumberPipe],
 })
-
 export class HistoryComponent implements OnInit {
-  public title: string = 'Historial del producto'
+  public title: string = 'Historial del producto';
   public columns = attributes;
   public sort = { endDate: -1 };
   public filters: any[];
-  public loading: boolean = false
-  public userType: string = "";
+  public loading: boolean = false;
+  public userType: string = '';
   public articleType: Type;
   public currentPage: number = 0;
   public items: any[] = new Array();
-  public itemsPerPage = 10
+  public itemsPerPage = 10;
   private subscription: Subscription = new Subscription();
   public totalItems: number = 0;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public articleHistoryId: string;
-  public timezone = "-03:00";
+  public timezone = '-03:00';
   public pathLocation: string[];
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
-  private currencyPipe: CurrencyPipe = new CurrencyPipe("es-Ar");
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   @ViewChild(ExportExcelComponent)
   exportExcelComponent: ExportExcelComponent;
 
   constructor(
     public _router: Router,
     public alertConfig: NgbAlertConfig,
-    private _articleService: ArticleService,
+    private _articleService: ArticleService
   ) {
     this.filters = new Array();
     for (let field of this.columns) {
@@ -58,11 +53,11 @@ export class HistoryComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.pathLocation = this._router.url.split("/");
-    if (this.pathLocation[3] === "history") {
-      this.articleHistoryId = this.pathLocation[4]
+    this.pathLocation = this._router.url.split('/');
+    if (this.pathLocation[3] === 'history') {
+      this.articleHistoryId = this.pathLocation[4];
     }
-    this.getItems()
+    this.getItems();
   }
 
   public getItems() {
@@ -73,26 +68,26 @@ export class HistoryComponent implements OnInit {
     for (let i = 0; i < this.columns.length; i++) {
       if (this.columns[i].visible || this.columns[i].required) {
         let value = this.filters[this.columns[i].name];
-        if (value && value != "") {
+        if (value && value != '') {
           if (this.columns[i].defaultFilter) {
             match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
           } else {
             match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
           }
           if (i < this.columns.length - 1) {
-            match += ",";
+            match += ',';
           }
         }
       }
     }
 
-    if (match.charAt(match.length - 1) === ",")
+    if (match.charAt(match.length - 1) === ',')
       match = match.substring(0, match.length - 1);
     match += `}`;
     match = JSON.parse(match);
 
-    if (this.userType === "admin") {
-      match["type"] = this.articleType;
+    if (this.userType === 'admin') {
+      match['type'] = this.articleType;
     }
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -105,8 +100,8 @@ export class HistoryComponent implements OnInit {
         }
         j++;
         if (!this.columns[i].project) {
-          if (this.columns[i].datatype !== "string") {
-            if (this.columns[i].datatype === "date") {
+          if (this.columns[i].datatype !== 'string') {
+            if (this.columns[i].datatype === 'date') {
               project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${this.timezone}" }}`;
             } else {
               project += `"${this.columns[i].name}": { "$toString" : "$${this.columns[i].name}" }`;
@@ -127,7 +122,7 @@ export class HistoryComponent implements OnInit {
     let group = {
       _id: null,
       count: { $sum: 1 },
-      items: { $push: "$$ROOT" },
+      items: { $push: '$$ROOT' },
     };
 
     let page = 0;
@@ -142,11 +137,11 @@ export class HistoryComponent implements OnInit {
         .getHArticles(
           {
             ...project,
-            harticle: 1
+            harticle: 1,
           }, // PROJECT
           {
             ...match,
-            harticle: { $oid: this.articleHistoryId }
+            harticle: { $oid: this.articleHistoryId },
           }, // MATCH
           this.sort, // SORT
           group, // GROUP
@@ -170,16 +165,16 @@ export class HistoryComponent implements OnInit {
             }
           },
           (error) => {
-            this.showMessage(error._body, "danger", false);
+            this.showMessage(error._body, 'danger', false);
             this.loading = false;
             this.totalItems = 0;
           }
         )
     );
   }
-  
-  public return(){
-    if (this.pathLocation[2] === "articles") {
+
+  public return() {
+    if (this.pathLocation[2] === 'articles') {
       this._router.navigate(['/admin/articles']);
     } else {
       this._router.navigate(['/admin/variants']);
@@ -191,30 +186,30 @@ export class HistoryComponent implements OnInit {
   }
 
   public getValue(item, column): any {
-    let val: string = "item";
+    let val: string = 'item';
     let exists: boolean = true;
-    let value: any = "";
-    for (let a of column.name.split(".")) {
-      val += "." + a;
+    let value: any = '';
+    for (let a of column.name.split('.')) {
+      val += '.' + a;
       if (exists && !eval(val)) {
         exists = false;
       }
     }
     if (exists) {
       switch (column.datatype) {
-        case "number":
+        case 'number':
           value = this.roundNumberPipe.transform(eval(val));
           break;
-        case "currency":
+        case 'currency':
           value = this.currencyPipe.transform(
             this.roundNumberPipe.transform(eval(val)),
-            "USD",
-            "symbol-narrow",
-            "1.2-2"
+            'USD',
+            'symbol-narrow',
+            '1.2-2'
           );
           break;
-        case "percent":
-          value = this.roundNumberPipe.transform(eval(val)) + "%";
+        case 'percent':
+          value = this.roundNumberPipe.transform(eval(val)) + '%';
           break;
         default:
           value = eval(val);

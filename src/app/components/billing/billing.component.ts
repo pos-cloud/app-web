@@ -4,21 +4,19 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Router } from '@angular/router';
 
-import { Config } from './../../app.config';
-import { DateFormatPipe } from '../../main/pipes/date-format.pipe';
 import { ToastrService } from 'ngx-toastr';
+import { DateFormatPipe } from '../../core/pipes/date-format.pipe';
 import { ConfigService } from '../config/config.service';
+import { Config } from './../../app.config';
 
 @Component({
   selector: 'app-billing',
   templateUrl: './billing.component.html',
   styleUrls: ['./billing.component.scss'],
   providers: [NgbAlertConfig, DateFormatPipe],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class BillingComponent implements OnInit {
-
   public config: Config;
   public showTransferData: boolean = false;
   public showPaymentType: boolean = false;
@@ -29,34 +27,31 @@ export class BillingComponent implements OnInit {
     public _toastr: ToastrService,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
-  ) {
-  }
+  ) {}
 
   async ngOnInit() {
-    await this._configService.getConfig.subscribe(
-      config => {
-        this.config = config;
-      }
-    );
+    await this._configService.getConfig.subscribe((config) => {
+      this.config = config;
+    });
   }
 
   public paymentSelect(paymentType: string): void {
-
     switch (paymentType) {
       case 'mp':
         this.showTransferData = false;
         this._configService.generateLicensePayment().subscribe(
-          result => {
+          (result) => {
             if (!result.paymentLink) {
-              if (result.message && result.message !== "") this.showToast(result.message, "danger");
+              if (result.message && result.message !== '')
+                this.showToast(result.message, 'danger');
             } else {
-              window.open(result.paymentLink, '_blank')
+              window.open(result.paymentLink, '_blank');
             }
           },
-          error => {
+          (error) => {
             this.showToast(error.message, 'danger');
           }
-        )
+        );
         break;
       case 'tf':
         this.showTransferData = true;

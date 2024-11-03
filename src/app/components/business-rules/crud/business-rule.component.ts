@@ -1,37 +1,53 @@
-import {Component, OnInit, EventEmitter, ViewEncapsulation} from '@angular/core';
-import {UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray} from '@angular/forms';
-import {Title} from '@angular/platform-browser';
-import {Router} from '@angular/router';
-import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {TranslatePipe} from '@ngx-translate/core';
-import {Config} from 'app/app.config';
-import {Article} from 'app/components/article/article';
-import {ArticleService} from 'app/components/article/article.service';
-import {BranchService} from 'app/components/branch/branch.service';
-import {CompanyService} from 'app/components/company/company.service';
-import {EmailTemplateService} from 'app/components/email-template/email-template.service';
-import {EmployeeTypeService} from 'app/components/employee-type/employee-type.service';
-import {PaymentMethodService} from 'app/components/payment-method/payment-method.service';
-import {PrinterService} from 'app/components/printer/printer.service';
-import {ShipmentMethodService} from 'app/components/shipment-method/shipment-method.service';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Config } from 'app/app.config';
+import { Article } from 'app/components/article/article';
+import { ArticleService } from 'app/components/article/article.service';
+import { BranchService } from 'app/components/branch/branch.service';
+import { CompanyService } from 'app/components/company/company.service';
+import { EmailTemplateService } from 'app/components/email-template/email-template.service';
+import { EmployeeTypeService } from 'app/components/employee-type/employee-type.service';
+import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
+import { PrinterService } from 'app/components/printer/printer.service';
+import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
 import {
   TransactionMovement,
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
-import {TransactionTypeService} from 'app/components/transaction-type/transaction-type.service';
-import {CapitalizePipe} from 'app/main/pipes/capitalize';
-import {TranslateMePipe} from 'app/main/pipes/translate-me';
-import {FormField} from 'app/util/formField.interface';
+import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { CapitalizePipe } from 'app/core/pipes/capitalize';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import {IDropdownSettings} from 'ng-multiselect-dropdown';
-import {ToastrService} from 'ngx-toastr';
-import {Subscription, Subject, Observable, merge} from 'rxjs';
-import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
+import { IDropdownSettings } from 'ng-multiselect-dropdown';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject, Subscription, merge } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 
-import {BusinessRuleService} from '../business-rule.service';
-import {BusinessRule, Day} from '../business-rules';
+import { BusinessRuleService } from '../business-rule.service';
+import { BusinessRule, Day } from '../business-rules';
 
 @Component({
   selector: 'app-business-rules',
@@ -83,30 +99,33 @@ export class BusinessRuleComponent implements OnInit {
   ];
 
   searchItem = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['article'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
         if (term && term !== '') {
-          let match: {} = {description: {$regex: term, $options: 'i'}};
+          let match: {} = { description: { $regex: term, $options: 'i' } };
 
           if (this.operation === 'update' && this.obj._id) {
-            match['_id'] = {$ne: {$oid: this.obj._id}};
+            match['_id'] = { $ne: { $oid: this.obj._id } };
           }
-          match['operationType'] = {$ne: 'D'};
+          match['operationType'] = { $ne: 'D' };
 
           return await this.getAllArticles(match).then((result) => {
             return result;
           });
         }
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  formatterItem = (x: {name: string}) => x.name;
+  formatterItem = (x: { name: string }) => x.name;
 
   formFields: FormField[] = [
     {
@@ -286,7 +305,7 @@ export class BusinessRuleComponent implements OnInit {
     public _company: CompanyService,
     public translatePipe: TranslateMePipe,
     private _router: Router,
-    public _fb: UntypedFormBuilder,
+    public _fb: UntypedFormBuilder
   ) {
     this.obj = new BusinessRule();
     for (let field of this.formFields) {
@@ -306,7 +325,8 @@ export class BusinessRuleComponent implements OnInit {
     let pathUrl: string[] = this._router.url.split('/');
 
     this.operation = pathUrl[2];
-    if (this.operation !== 'add' && this.operation !== 'update') this.readonly = false;
+    if (this.operation !== 'add' && this.operation !== 'update')
+      this.readonly = false;
     this.title =
       this.translatePipe.transform(this.operation) +
       ' ' +
@@ -353,8 +373,8 @@ export class BusinessRuleComponent implements OnInit {
           .getAll({
             project: project,
             match: {
-              operationType: {$ne: 'D'},
-              _id: {$oid: this.objId},
+              operationType: { $ne: 'D' },
+              _id: { $oid: this.objId },
             },
           })
           .subscribe(
@@ -367,8 +387,8 @@ export class BusinessRuleComponent implements OnInit {
                 this.showToast(result);
               }
             },
-            (error) => this.showToast(error),
-          ),
+            (error) => this.showToast(error)
+          )
       );
     }
   }
@@ -464,7 +484,10 @@ export class BusinessRuleComponent implements OnInit {
 
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
+            if (
+              eval(`this.obj${sumF}`) == null ||
+              eval(`this.obj${sumF}`) == undefined
+            ) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }
@@ -528,9 +551,7 @@ export class BusinessRuleComponent implements OnInit {
               this.filesToUpload[field.name].length > 0
             ) {
               this.loading = true;
-              this._objService.deleteFile(
-                this.obj[field.name],
-              );
+              this._objService.deleteFile(this.obj[field.name]);
               if (
                 this.filesToUpload[field.name] &&
                 this.filesToUpload[field.name].length > 0
@@ -546,10 +567,7 @@ export class BusinessRuleComponent implements OnInit {
                 }
                 for (let file of this.filesToUpload[field.name]) {
                   await this._objService
-                    .uploadFile(
-                      null,
-                      file,
-                    )
+                    .uploadFile(null, file)
                     .then((result) => {
                       this.loading = false;
                       if (result['result']) {
@@ -572,7 +590,8 @@ export class BusinessRuleComponent implements OnInit {
               }
               this.loading = false;
             } else {
-              if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
+              if (this.oldFiles)
+                this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
           case 'boolean':
@@ -608,45 +627,45 @@ export class BusinessRuleComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast(null, 'info', 'Revise los errores marcados en el formulario');
+      this.showToast(
+        null,
+        'info',
+        'Revise los errores marcados en el formulario'
+      );
     }
   }
 
   deleteFile(typeFile: string, fieldName: string, filename: string) {
-    this._objService
-      .deleteFile(
-        filename,
-      )
-      .subscribe(
-        (result) => {
-          if (result.status === 200) {
-            try {
-              eval(
-                'this.obj.' +
-                  fieldName +
-                  ' = this.obj.' +
-                  fieldName +
-                  '.filter(item => item !== filename)',
-              );
-            } catch (error) {
-              eval('this.obj.' + fieldName + ' = null');
-            }
-            this.loading = true;
-            this.subscription.add(
-              this._objService.update(this.obj).subscribe(
-                (result) => {
-                  this.showToast(result);
-                  this.setValuesForm();
-                },
-                (error) => this.showToast(error),
-              ),
+    this._objService.deleteFile(filename).subscribe(
+      (result) => {
+        if (result.status === 200) {
+          try {
+            eval(
+              'this.obj.' +
+                fieldName +
+                ' = this.obj.' +
+                fieldName +
+                '.filter(item => item !== filename)'
             );
-          } else {
-            this.showToast(result);
+          } catch (error) {
+            eval('this.obj.' + fieldName + ' = null');
           }
-        },
-        (error) => this.showToast(error),
-      );
+          this.loading = true;
+          this.subscription.add(
+            this._objService.update(this.obj).subscribe(
+              (result) => {
+                this.showToast(result);
+                this.setValuesForm();
+              },
+              (error) => this.showToast(error)
+            )
+          );
+        } else {
+          this.showToast(result);
+        }
+      },
+      (error) => this.showToast(error)
+    );
   }
 
   saveObj() {
@@ -657,8 +676,8 @@ export class BusinessRuleComponent implements OnInit {
           this.showToast(result);
           if (result.status === 200) this._router.navigate(['/business-rules']);
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
@@ -670,8 +689,8 @@ export class BusinessRuleComponent implements OnInit {
           this.showToast(result);
           if (result.status === 200) this._router.navigate(['/business-rules']);
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
@@ -685,8 +704,8 @@ export class BusinessRuleComponent implements OnInit {
             this._router.navigate(['/business-rules']);
           }
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
@@ -701,7 +720,7 @@ export class BusinessRuleComponent implements OnInit {
               operationType: 1,
             },
             match,
-            sort: {description: 1},
+            sort: { description: 1 },
             limit: 10,
           })
           .subscribe(
@@ -709,8 +728,8 @@ export class BusinessRuleComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -721,7 +740,7 @@ export class BusinessRuleComponent implements OnInit {
 
       match = {
         transactionMovement: TransactionMovement.Sale,
-        operationType: {$ne: 'D'},
+        operationType: { $ne: 'D' },
       };
 
       this._transactionTypeService
@@ -735,7 +754,7 @@ export class BusinessRuleComponent implements OnInit {
             branch: 1,
           },
           match: match,
-          sort: {name: 1},
+          sort: { name: 1 },
         })
         .subscribe(
           (result) => {
@@ -748,7 +767,7 @@ export class BusinessRuleComponent implements OnInit {
           (error) => {
             this.showToast(error);
             resolve(null);
-          },
+          }
         );
     });
   }
@@ -761,7 +780,9 @@ export class BusinessRuleComponent implements OnInit {
       } else if (result.status >= 400) {
         type = 'danger';
         title =
-          result.error && result.error.message ? result.error.message : result.message;
+          result.error && result.error.message
+            ? result.error.message
+            : result.message;
       } else {
         type = 'info';
         title = result.message;
@@ -771,19 +792,19 @@ export class BusinessRuleComponent implements OnInit {
       case 'success':
         this._toastr.success(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       case 'danger':
         this._toastr.error(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       default:
         this._toastr.info(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
     }

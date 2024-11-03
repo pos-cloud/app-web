@@ -1,15 +1,15 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
-import { DirectivesModule } from 'app/main/directives/directives.module';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { TranslateModule } from '@ngx-translate/core';
-import { ProgressbarModule } from '../progressbar/progressbar.module';
-import { PipesModule } from 'app/main/pipes/pipes.module';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { DatatableComponent } from './datatable.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { PipesModule } from 'app/core/pipes/pipes.module';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { ExportersModule } from '../export/exporters.module';
+import { ProgressbarModule } from '../progressbar/progressbar.module';
+import { DatatableComponent } from './datatable.component';
 
 @NgModule({
   imports: [
@@ -17,22 +17,16 @@ import { ExportersModule } from '../export/exporters.module';
     FormsModule,
     ReactiveFormsModule,
     NgxPaginationModule,
-    DirectivesModule,
+    FocusDirective,
     ExportersModule,
     DragDropModule,
     TranslateModule,
     ProgressbarModule,
     PipesModule,
-    NgbDropdownModule
+    NgbDropdownModule,
   ],
-  exports: [
-    DatatableComponent
-  ],
-  declarations: [
-    DatatableComponent,
-  ],
-  providers: [
-  ]
+  exports: [DatatableComponent],
+  declarations: [DatatableComponent],
+  providers: [],
 })
-
-export class DatatableModule { }
+export class DatatableModule {}

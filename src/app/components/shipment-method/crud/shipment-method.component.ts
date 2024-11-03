@@ -1,25 +1,36 @@
-import {Component, OnInit, EventEmitter, Input} from '@angular/core';
-import {UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl, UntypedFormArray} from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import 'moment/locale/es';
 
-import {Title} from '@angular/platform-browser';
-import {NgbAlertConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {TranslatePipe} from '@ngx-translate/core';
-import {Application} from 'app/components/application/application.model';
-import {ApplicationService} from 'app/components/application/application.service';
-import {Article} from 'app/components/article/article';
-import {ArticleService} from 'app/components/article/article.service';
-import {CapitalizePipe} from 'app/main/pipes/capitalize';
-import {TranslateMePipe} from 'app/main/pipes/translate-me';
-import {FormField} from 'app/util/formField.interface';
+import { Title } from '@angular/platform-browser';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Application } from 'app/components/application/application.model';
+import { ApplicationService } from 'app/components/application/application.service';
+import { Article } from 'app/components/article/article';
+import { ArticleService } from 'app/components/article/article.service';
+import { CapitalizePipe } from 'app/core/pipes/capitalize';
+import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { FormField } from 'app/util/formField.interface';
 import Resulteable from 'app/util/Resulteable';
 import * as moment from 'moment';
-import {ToastrService} from 'ngx-toastr';
-import {Subscription, Subject, Observable, merge} from 'rxjs';
-import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject, Subscription, merge } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 
-import {ShipmentMethod, ZoneType} from '../shipment-method.model';
-import {ShipmentMethodService} from '../shipment-method.service';
+import { ShipmentMethod } from '../shipment-method.model';
+import { ShipmentMethodService } from '../shipment-method.service';
 declare const google: any;
 
 @Component({
@@ -49,27 +60,32 @@ export class ShipmentMethodComponent implements OnInit {
   public applications: Application[];
 
   public searchArticles = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
     const inputFocus$ = this.focus$['article'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
         let match: {} =
-          term && term !== '' ? {description: {$regex: term, $options: 'i'}} : {};
+          term && term !== ''
+            ? { description: { $regex: term, $options: 'i' } }
+            : {};
 
-        match['operationType'] = {$ne: 'D'};
+        match['operationType'] = { $ne: 'D' };
         match['type'] = 'Final';
 
         return await this.getArticles(match).then((result) => {
           return result;
         });
       }),
-      tap(() => (this.loading = false)),
+      tap(() => (this.loading = false))
     );
   };
 
-  public formatterArticles = (x: {description: string}) => x.description;
+  public formatterArticles = (x: { description: string }) => x.description;
 
   public formFields: FormField[] = [
     {
@@ -119,7 +135,7 @@ export class ShipmentMethodComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public translatePipe: TranslateMePipe,
-    private _applicationService: ApplicationService,
+    private _applicationService: ApplicationService
   ) {
     this.obj = new ShipmentMethod();
     for (let field of this.formFields) {
@@ -152,7 +168,7 @@ export class ShipmentMethodComponent implements OnInit {
               requireAddress: 1,
               zones: 1,
             },
-            match: {_id: {$oid: this.objId}},
+            match: { _id: { $oid: this.objId } },
           })
           .subscribe(
             (result) => {
@@ -162,8 +178,8 @@ export class ShipmentMethodComponent implements OnInit {
                 this.setValuesForm();
               } else this.showToast(result);
             },
-            (error) => this.showToast(error),
-          ),
+            (error) => this.showToast(error)
+          )
       );
     } else {
       if (this.operation !== 'add')
@@ -258,20 +274,28 @@ export class ShipmentMethodComponent implements OnInit {
       this.applications.forEach((x) => {
         let exists: boolean = false;
 
-        if (this.obj && this.obj.applications && this.obj.applications.length > 0) {
+        if (
+          this.obj &&
+          this.obj.applications &&
+          this.obj.applications.length > 0
+        ) {
           this.obj.applications.forEach((y) => {
             if (x._id === y._id) {
               exists = true;
               const control = new UntypedFormControl(y);
 
-              (this.objForm.controls.applications as UntypedFormArray).push(control);
+              (this.objForm.controls.applications as UntypedFormArray).push(
+                control
+              );
             }
           });
         }
         if (!exists) {
           const control = new UntypedFormControl(false);
 
-          (this.objForm.controls.applications as UntypedFormArray).push(control);
+          (this.objForm.controls.applications as UntypedFormArray).push(
+            control
+          );
         }
       });
     }
@@ -284,15 +308,15 @@ export class ShipmentMethodComponent implements OnInit {
         this._applicationService
           .getAll({
             match,
-            sort: {name: 1},
+            sort: { name: 1 },
           })
           .subscribe(
             (result) => {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
@@ -364,10 +388,10 @@ export class ShipmentMethodComponent implements OnInit {
       this._objService.save(this.obj).subscribe(
         (result) => {
           this.showToast(result);
-          if (result.status === 200) this.activeModal.close({obj: this.obj});
+          if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
@@ -377,10 +401,10 @@ export class ShipmentMethodComponent implements OnInit {
       this._objService.update(this.obj).subscribe(
         (result) => {
           this.showToast(result);
-          if (result.status === 200) this.activeModal.close({obj: this.obj});
+          if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
@@ -390,14 +414,19 @@ export class ShipmentMethodComponent implements OnInit {
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
           this.showToast(result);
-          if (result.status === 200) this.activeModal.close({obj: this.obj});
+          if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error),
-      ),
+        (error) => this.showToast(error)
+      )
     );
   }
 
-  public showToast(result, type?: string, title?: string, message?: string): void {
+  public showToast(
+    result,
+    type?: string,
+    title?: string,
+    message?: string
+  ): void {
     if (result) {
       if (result.status === 200) {
         type = 'success';
@@ -405,7 +434,9 @@ export class ShipmentMethodComponent implements OnInit {
       } else if (result.status >= 400) {
         type = 'danger';
         title =
-          result.error && result.error.message ? result.error.message : result.message;
+          result.error && result.error.message
+            ? result.error.message
+            : result.message;
       } else {
         type = 'info';
         title = result.message;
@@ -415,25 +446,24 @@ export class ShipmentMethodComponent implements OnInit {
       case 'success':
         this._toastr.success(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       case 'danger':
         this._toastr.error(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
       default:
         this._toastr.info(
           this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title),
+          this.translatePipe.translateMe(title)
         );
         break;
     }
     this.loading = false;
   }
-
 
   public getArticles(match: {}): Promise<Article[]> {
     return new Promise<Article[]>((resolve, reject) => {
@@ -447,7 +477,7 @@ export class ShipmentMethodComponent implements OnInit {
               operationType: 1,
             },
             match,
-            sort: {description: 1},
+            sort: { description: 1 },
             limit: 10,
           })
           .subscribe(
@@ -455,8 +485,8 @@ export class ShipmentMethodComponent implements OnInit {
               this.loading = false;
               result.status === 200 ? resolve(result.result) : reject(result);
             },
-            (error) => reject(error),
-          ),
+            (error) => reject(error)
+          )
       );
     });
   }
