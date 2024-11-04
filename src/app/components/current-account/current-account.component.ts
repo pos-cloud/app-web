@@ -257,6 +257,8 @@ export class CurrentAccountComponent implements OnInit {
               this.transactionTypes = result;
             }
           });
+
+          this.refresh();
         }
       },
       (error) => {
