@@ -126,14 +126,17 @@ export class DatatableComponent {
     }
 
     // Recupera currentPage e itemsPerPage desde localStorage
-    this.currentPage = parseInt(
-      localStorage.getItem(`${this.identifier}_currentPage`) || '0',
-      10
-    );
-    this.itemsPerPage = parseInt(
-      localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10',
-      10
-    );
+    // this.currentPage = parseInt(
+    //   localStorage.getItem(`${this.identifier}_currentPage`) || '0',
+    //   10
+    // );
+    // this.itemsPerPage = parseInt(
+    //   localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10',
+    //   10
+    // );
+
+    this.currentPage = 0;
+    this.itemsPerPage = 10;
 
     this.getItems();
   }
