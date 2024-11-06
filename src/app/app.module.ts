@@ -243,6 +243,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { HomeComponent } from './layout/home/home.component';
 import { ProgressbarModule } from './shared/components/progressbar/progressbar.module';
 import { ToastComponent } from './shared/components/toast/toast.component';
+import { FocusDirective } from './shared/directives/focus.directive';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -442,6 +443,7 @@ export function createTranslateLoader(http: HttpClient) {
     ExportersModule,
     NgMultiSelectDropDownModule.forRoot(),
     AddressModule,
+    FocusDirective,
   ],
   providers: [
     {
