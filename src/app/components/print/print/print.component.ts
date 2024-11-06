@@ -4486,7 +4486,8 @@ export class PrintComponent implements OnInit {
     } else {
       this.doc.text('N°:' + this.padString(this.transaction.number, 8), 45, 65);
     }
-    this.doc.text(this.transaction.endDate.split(' ')[0], 45, 70);
+    this.doc.text('FECHA: ' + this.transaction.endDate.split(' ')[0], 45, 69);
+    this.doc.text('CUIT: ' + Config.companyIdentificationValue, 45, 73);
 
     row += 3;
     this.doc.line(0, row, width, row);
