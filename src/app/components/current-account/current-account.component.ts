@@ -129,7 +129,6 @@ export class CurrentAccountComponent implements OnInit {
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.refresh();
   }
 
   public pageChange(page): void {
@@ -189,6 +188,7 @@ export class CurrentAccountComponent implements OnInit {
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
         }
+        console.log('acaaa', this.totalItems);
         this.loading = false;
       },
       (error) => {
@@ -219,6 +219,7 @@ export class CurrentAccountComponent implements OnInit {
             }
           });
         }
+        this.refresh();
       },
       (error) => {
         this.showMessage(error._body, 'danger', false);
@@ -243,8 +244,8 @@ export class CurrentAccountComponent implements OnInit {
     this._companyService.getBalanceOfAccountsByCompany(this.query).subscribe(
       (result) => {
         if (result) {
-          this.balance = result.totalPrice;
-          this.balanceDoc = result.balance;
+          this.balance = result[0].totalPrice;
+          this.balanceDoc = result[0].balance;
         }
       },
       (error) => {
