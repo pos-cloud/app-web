@@ -1,19 +1,38 @@
 <div class="modal-header">
-	<h4 class="modal-title">Eliminar Transacción</h4>
-	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-	<span aria-hidden="true">&times;</span>
-	</button>
+  <h4 class="modal-title">Eliminar Transacción</h4>
+  <button
+    type="button"
+    class="close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 <div class="modal-body">
-	<div class="center-content" *ngIf="alertMessage !== ''">
-		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-			{{alertMessage}}
-		</ngb-alert>
-  </div>
-	<p>¿Está seguro de eliminar la transacción <b>{{transaction?.type?.name}} Nro. {{transaction?.number}}</b>?</p>
-
+  <p>
+    ¿Está seguro de eliminar la transacción
+    <b
+      >{{ transaction?.type?.name || 'Unknown' }} Nro.
+      {{ transaction?.number || 'N/A' }}</b
+    >?
+  </p>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-light" (click)="activeModal.close('close_click')">Cancelar</button>
-  <button type="submit" class="btn btn-danger" (click)="deleteTransaction()" [focus]="focusEvent" [disabled]="loading">Eliminar</button>
+  <button
+    type="button"
+    class="btn btn-light"
+    (click)="activeModal.close('close_click')"
+    [disabled]="loading"
+  >
+    Cancelar
+  </button>
+  <button
+    type="button"
+    class="btn btn-danger"
+    (click)="deleteTransaction()"
+    [disabled]="loading"
+  >
+    Eliminar
+  </button>
 </div>

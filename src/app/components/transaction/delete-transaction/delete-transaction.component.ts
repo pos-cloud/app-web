@@ -1,45 +1,54 @@
-import { Component, EventEmitter, Input } from '@angular/core';
-import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
-import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
+
+import { AuthService } from 'app/components/login/auth.service';
+import { User } from 'app/components/user/user';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Transaction } from '../transaction';
 import { TransactionService } from '../transaction.service';
-
 @Component({
   selector: 'app-delete-transaction',
   templateUrl: './delete-transaction.component.html',
   styleUrls: ['./delete-transaction.component.css'],
-  providers: [NgbAlertConfig, TranslateMePipe],
 })
-export class DeleteTransactionComponent {
-  public transaction: Transaction;
+export class DeleteTransactionComponent implements OnInit, OnDestroy {
   @Input() transactionId: string;
-  public alertMessage: string = '';
-  public focusEvent = new EventEmitter<boolean>();
+  public transaction: Transaction;
   public loading: boolean = false;
 
-  constructor(
-    public _transactionService: TransactionService,
-    public _movementOfArticle: MovementOfArticleService,
-    public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    private _toastr: ToastrService,
-    public translatePipe: TranslateMePipe
-  ) {
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-    this.transaction = new Transaction();
-  }
+  private user: User;
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  constructor(
+    public activeModal: NgbActiveModal,
+    private _transactionService: TransactionService,
+    private _toast: ToastService,
+    private _authService: AuthService
+  ) {}
+
+  /**
+   * On init
+   */
   public ngOnInit(): void {
+    this._authService.getIdentity.subscribe((identity) => {
+      if (identity) {
+        this.user = identity;
+      }
+    });
+
     if (this.transactionId) {
       this.getTransaction();
     }
   }
 
-  public ngAfterViewInit(): void {
-    this.focusEvent.emit(true);
+  /**
+   * On destroy
+   */
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
   }
 
   public getTransaction(): void {
@@ -48,18 +57,26 @@ export class DeleteTransactionComponent {
     this._transactionService.getTransaction(this.transactionId).subscribe(
       (result) => {
         if (!result.transaction) {
-          this.showToast(null, 'info', result.message);
+          this._toast.showToast(null, 'info', result.message);
         } else {
           this.transaction = result.transaction;
         }
         this.loading = false;
       },
-      (error) => this.showToast(error)
+      (error) => this._toast.showToast(error)
     );
   }
 
   public deleteTransaction(): void {
     this.loading = true;
+
+    if (!this.canDeleteTransaction()) {
+      this._toast.showToast({
+        message: 'No tiene permisos para eliminar una transacción.',
+      });
+      this.loading = false;
+      return;
+    }
 
     if (
       !this.transaction.CAE &&
@@ -69,70 +86,28 @@ export class DeleteTransactionComponent {
     ) {
       this._transactionService.delete(this.transaction._id).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toast.showToast(result);
           if (result.status === 200) this.activeModal.close('delete_close');
+          this.loading = false;
         },
         (error) => {
-          this.showToast(error);
+          this._toast.showToast(error);
+          this.loading = false;
         }
       );
     } else {
-      this.showToast(
-        null,
-        'info',
-        'No se puede eliminar una transacción electrónica ya validada.'
-      );
+      this._toast.showToast({
+        message:
+          'No se puede eliminar una transacción electrónica ya validada.',
+      });
+      this.loading = false;
     }
   }
 
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 0) {
-        type = 'info';
-        title =
-          'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
-      } else if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 500) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
+  private canDeleteTransaction(): boolean {
+    const transactionCollection = this.user?.permission?.collections.find(
+      (collection) => collection.name === 'transacciones'
+    );
+    return transactionCollection?.actions?.delete !== false;
   }
 }
