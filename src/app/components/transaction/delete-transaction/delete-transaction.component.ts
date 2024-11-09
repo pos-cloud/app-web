@@ -11,7 +11,6 @@ import { TransactionService } from '../transaction.service';
 @Component({
   selector: 'app-delete-transaction',
   templateUrl: './delete-transaction.component.html',
-  styleUrls: ['./delete-transaction.component.css'],
 })
 export class DeleteTransactionComponent implements OnInit, OnDestroy {
   @Input() transactionId: string;
