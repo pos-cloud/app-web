@@ -461,6 +461,9 @@ export class ListCompaniesComponent implements OnInit {
             this.type
         );
         break;
+      case 'account2':
+        this._router.navigate(['reports/current-account', company._id]);
+        break;
       case 'uploadFile':
         modalRef = this._modalService.open(ImportComponent, {
           size: 'lg',

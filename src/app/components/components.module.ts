@@ -18,7 +18,6 @@ import { HolidayModule } from './holiday/holiday.module';
 import { MakeModule } from './make/make.module';
 import { PermissionModule } from './permission/permission.module';
 import { ReportModule } from './report/report.module';
-import { ReportsModule } from './reports/reports.module';
 import { ResourceModule } from './resource/resource.module';
 import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
 import { TransactionTypeModule } from './transaction-type/transaction-type.module';
@@ -46,7 +45,6 @@ import { VariantValueModule } from './variant-value/variant-value.module';
     VariantValueModule,
     ReportModule,
     BusinessRuleModule,
-    ReportsModule,
     ArticleModule,
     MakeModule,
     GalleryModule,

@@ -34,11 +34,11 @@ import {
   TransactionType,
 } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
-import { DeleteTransactionComponent } from '../delete-transaction/delete-transaction.component';
 import { Transaction, attributes } from '../transaction';
 import { TransactionService } from '../transaction.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
+import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import 'moment/locale/es';
 
 @Component({

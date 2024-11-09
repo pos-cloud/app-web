@@ -15,8 +15,8 @@ import { TransactionTypeService } from 'app/components/transaction-type/transact
 import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import * as moment from 'moment';
 import { Observable, of as observableOf, Subscription } from 'rxjs';
-import { Config } from '../../../app.config';
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { Config } from '../../app.config';
+import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
 import { attributes } from '../reports';
 import { ReportsService } from '../reports.service';
 

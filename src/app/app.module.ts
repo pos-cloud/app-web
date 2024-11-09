@@ -202,7 +202,6 @@ import { CancelComponent } from './components/tiendaNube/cancel/cancel.component
 import { DateFromToComponent } from './components/tiendaNube/date-from-to/date-from-to.component';
 import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
-import { DeleteTransactionComponent } from './components/transaction/delete-transaction/delete-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { TransactionService } from './components/transaction/transaction.service';
 import { ViewTransactionComponent } from './components/transaction/view-transaction/view-transaction.component';
@@ -241,6 +240,7 @@ import { ClaimComponent } from './layout/claim/claim.component';
 import { ClaimService } from './layout/claim/claim.service';
 import { HeaderComponent } from './layout/header/header.component';
 import { HomeComponent } from './layout/home/home.component';
+import { ReportsModule } from './reports/reports.module';
 import { ProgressbarModule } from './shared/components/progressbar/progressbar.module';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
@@ -267,7 +267,6 @@ export function createTranslateLoader(http: HttpClient) {
     ListCashBoxesComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
-    DeleteTransactionComponent,
     ListRoomsComponent,
     RoomComponent,
     ListVATConditionsComponent,
@@ -444,6 +443,7 @@ export function createTranslateLoader(http: HttpClient) {
     NgMultiSelectDropDownModule.forRoot(),
     AddressModule,
     FocusDirective,
+    ReportsModule,
   ],
   providers: [
     {
