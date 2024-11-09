@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { Subscription } from 'rxjs';
 import { Config } from '../../../app.config';
 import { User } from '../../../components/user/user';
@@ -20,7 +21,6 @@ import { DateFromToComponent } from '../../tiendaNube/date-from-to/date-from-to.
 import { FulfilledComponent } from '../../tiendaNube/fulfilled/fulfilled.component';
 import { TransactionMovement } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../../transaction/add-transaction/add-transaction.component';
-import { DeleteTransactionComponent } from '../../transaction/delete-transaction/delete-transaction.component';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { TransactionService } from '../../transaction/transaction.service';
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';

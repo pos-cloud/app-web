@@ -29,6 +29,7 @@ import { RoomService } from '../room/room.service';
 import { TransactionTypeService } from '../transaction-type/transaction-type.service';
 import { TransactionService } from '../transaction/transaction.service';
 
+import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { EmailProps } from 'app/types';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -55,7 +56,6 @@ import { EmailService } from '../send-email/send-email.service';
 import { CancelComponent } from '../tiendaNube/cancel/cancel.component';
 import { FulfilledComponent } from '../tiendaNube/fulfilled/fulfilled.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
-import { DeleteTransactionComponent } from '../transaction/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { Config } from './../../app.config';
 import { Branch } from './../../components/branch/branch';

@@ -38,7 +38,6 @@ import {
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
-import { DeleteTransactionComponent } from 'app/components/transaction/delete-transaction/delete-transaction.component';
 import {
   Transaction,
   TransactionState,
@@ -49,6 +48,7 @@ import { User } from 'app/components/user/user';
 import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ClaimService } from 'app/layout/claim/claim.service';
+import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 
