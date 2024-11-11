@@ -46,6 +46,8 @@
                   "maximumWarning": "6kb"
                 }
               ],
+              "serviceWorker": true,
+              "ngswConfigPath": "ngsw-config.json",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -67,6 +69,8 @@
                   "maximumWarning": "6kb"
                 }
               ],
+              "serviceWorker": true,
+              "ngswConfigPath": "ngsw-config.json",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -88,6 +92,8 @@
                   "maximumWarning": "6kb"
                 }
               ],
+              "serviceWorker": true,
+              "ngswConfigPath": "ngsw-config.json",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

@@ -30,6 +30,7 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 import { NgxTinymceModule } from 'ngx-tinymce';
 import { ToastrModule } from 'ngx-toastr';
 
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
@@ -444,6 +445,10 @@ export function createTranslateLoader(http: HttpClient) {
     AddressModule,
     FocusDirective,
     ReportsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: true,
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
   providers: [
     {

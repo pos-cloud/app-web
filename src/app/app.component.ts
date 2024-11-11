@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
+import { SwUpdate } from '@angular/service-worker';
 import { Config } from './app.config';
 import { ConfigService } from './components/config/config.service';
 import { AuthService } from './components/login/auth.service';
@@ -39,7 +40,8 @@ export class AppComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _router: Router,
-    private _translateService: TranslateService
+    private _translateService: TranslateService,
+    private swUpdate: SwUpdate
   ) {
     this._translateService.setDefaultLang('es');
     this.setApiConfigurationSettings();
@@ -47,6 +49,12 @@ export class AppComponent {
   }
 
   async ngOnInit() {
+    // if (this.swUpdate.isEnabled) {
+    //   this.swUpdate.versionUpdates.subscribe((update) => {
+    //     window.location.reload();
+    //   });
+    // }
+
     this._authService.getIdentity.subscribe(async (identity) => {
       if (identity) {
         await this.getConfigApi().then((config) => {
