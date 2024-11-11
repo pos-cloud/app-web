@@ -40,6 +40,7 @@ export class HomeComponent implements OnInit {
   }
 
   openUpdateModal() {
+    console.log('entro');
     const modalRef = this.modalService.open(UpdateModalContent);
     modalRef.componentInstance.onReload.subscribe(() =>
       window.location.reload()
