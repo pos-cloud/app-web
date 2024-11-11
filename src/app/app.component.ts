@@ -49,11 +49,13 @@ export class AppComponent {
   }
 
   async ngOnInit() {
-    // if (this.swUpdate.isEnabled) {
-    //   this.swUpdate.versionUpdates.subscribe((update) => {
-    //     window.location.reload();
-    //   });
-    // }
+    if (this.swUpdate.isEnabled) {
+      console.log('entro');
+      this.swUpdate.versionUpdates.subscribe((update) => {
+        console.log(update);
+        window.location.reload();
+      });
+    }
 
     this._authService.getIdentity.subscribe(async (identity) => {
       if (identity) {
