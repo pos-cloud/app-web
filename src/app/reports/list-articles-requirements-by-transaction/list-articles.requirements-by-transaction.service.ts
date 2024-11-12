@@ -1,15 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment';
 import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
-import { Config } from '../app.config';
-import { AuthService } from '../components/login/auth.service';
-import { ModelService } from '../components/model/model.service';
+import { AuthService } from '../../components/login/auth.service';
+import { ModelService } from '../../components/model/model.service';
 
 @Injectable()
-export class ReportsService extends ModelService {
+export class ListArticlesRequirementsByTransactionService extends ModelService {
   constructor(
     public _http: HttpClient,
     public _authService: AuthService
@@ -29,7 +29,7 @@ export class ReportsService extends ModelService {
     dateSelect: string,
     branch: string
   ): Observable<any> {
-    const URL = `${Config.apiV8URL}reports/article-requirements`;
+    const URL = `${environment.apiv2}reports/article-requirements`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -17,7 +17,7 @@ import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { CurrentAccountComponent } from './current-account/current-account.component';
 import { CurrentAccountService } from './current-account/current-account.service';
 import { ListArticlesRequirementsByTransactionComponent } from './list-articles-requirements-by-transaction/list-articles-requirements-by-transaction.component';
-import { ReportsService } from './reports.service';
+import { ListArticlesRequirementsByTransactionService } from './list-articles-requirements-by-transaction/list-articles.requirements-by-transaction.service';
 
 const routes: Routes = [
   {
@@ -50,6 +50,6 @@ const routes: Routes = [
     ListArticlesRequirementsByTransactionComponent,
     CurrentAccountComponent,
   ],
-  providers: [ReportsService, CurrentAccountService, CompanyService],
+  providers: [ListArticlesRequirementsByTransactionService, CurrentAccountService, CompanyService],
 })
 export class ReportsModule {}

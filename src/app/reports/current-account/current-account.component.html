@@ -3,12 +3,6 @@
     <div class="card-header">
       Cuenta Corriente
       <div class="pull-right">
-        <!-- <app-point-of-sale
-          (eventRefreshCurrentAccount)="refresh()"
-          [company]="companySelected"
-          [totalPrice]="balance"
-        >
-        </app-point-of-sale> -->
         <button
           [disabled]="loading"
           type="button"
@@ -34,19 +28,6 @@
         </ngb-alert>
       </div>
       <div class="row container-filter">
-        <!-- <div class="col-md-2">
-          <label for="detailsPaymentMethod" class="control-label">
-            <b>Detallar método de pago</b>
-          </label>
-          <select
-            class="form-control"
-            [(ngModel)]="detailsPaymentMethod"
-            [disabled]="loading"
-          >
-            <option [ngValue]="true">Sí</option>
-            <option [ngValue]="false">No</option>
-          </select>
-        </div> -->
         <div class="col-md-2">
           <label for="showBalanceOfTransactions" class="control-label">
             <b>Muestra saldo</b>
@@ -59,48 +40,7 @@
             <option [ngValue]="true">Sí</option>
             <option [ngValue]="false">No</option>
           </select>
-        </div>
-        <!-- <div class="col-md-1">
-            <label for="showBalanceOfCero" class="control-label">
-              <b>Mostrar saldo 0</b>
-            </label>
-            <select
-              class="form-control"
-              [(ngModel)]="showBalanceOfCero"
-              disabled="{{ !showBalanceOfTransactions }}"
-            >
-              <option *ngIf="showBalanceOfTransactions" [ngValue]="true">
-                Sí
-              </option>
-              <option [ngValue]="false">No</option>
-            </select>
-          </div> -->
-        <!-- <div class="col-md-2">
-          <label for="startDate" class="control-label">
-            <b>Fecha Desde:</b>
-          </label>
-          <input
-            [disabled]="loading"
-            type="date"
-            class="form-control"
-            name="startDate"
-            min="2000-01-01"
-            [(ngModel)]="startDate"
-          />
-        </div>
-        <div class="col-md-2">
-          <label for="endDate" class="control-label">
-            <b>Fecha Hasta:</b>
-          </label>
-          <input
-            [disabled]="loading"
-            type="date"
-            class="form-control"
-            name="endDate"
-            min="2000-01-01"
-            [(ngModel)]="endDate"
-          />
-        </div> -->
+        </div> 
         <div class="col-md-2">
           <label for="transactionType" class="control-label">
             <b>Tipo</b>
@@ -166,17 +106,6 @@
             readonly
           />
         </div>
-        <!-- <div class="col-md-2">
-            <label for="btn" class="control-label" *ngIf="companySelected"
-              >Acción:</label
-            >
-            <span
-              class="form-control cursor-pointer center-content"
-              (click)="openModal('company')"
-            >
-              Cambiar
-            </span>
-          </div> -->
       </div>
       <div class="row center-content">
         <table class="table table-striped">
@@ -208,99 +137,11 @@
               <th>Letra</th>
               <th>Número</th>
               <th>Importe</th>
-              <!-- <th *ngIf="showPaymentMethod">Método</th>
-                <th *ngIf="showPaymentMethod">Cuota</th>
-                <th *ngIf="showPaymentMethod">Vencimiento</th> -->
               <th>Debe</th>
               <th>Haber</th>
               <th *ngIf="showBalanceOfTransactions">Saldo Doc.</th>
             </tr>
-            <tr class="filters">
-              <th></th>
-              <th></th>
-              <th>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterType"
-                  placeholder="Tipo..."
-                />
-              </th>
-              <th>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterOrigin"
-                  placeholder="Punto de venta..."
-                  *ngIf="userCountry === 'AR'"
-                />
-              </th>
-              <th>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterLetter"
-                  placeholder="Letra..."
-                />
-              </th>
-              <th>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterNumber"
-                  placeholder="Número..."
-                />
-              </th>
-              <th>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterTotalPrice"
-                  placeholder="Importe..."
-                />
-              </th>
-              <th *ngIf="showPaymentMethod">
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterPaymentMethodName"
-                  placeholder="Método..."
-                />
-              </th>
-              <th *ngIf="showPaymentMethod">
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterQuota"
-                  placeholder="Cuota..."
-                />
-              </th>
-              <th *ngIf="showPaymentMethod">
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterPaymentMethodExpirationDate"
-                  placeholder="Vencimiento..."
-                />
-              </th>
-              <th>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterDebe"
-                  placeholder="Debe..."
-                />
-              </th>
-              <th>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="filterHaber"
-                  placeholder="Haber..."
-                />
-              </th>
-              <th *ngIf="showBalanceOfTransactions"></th>
-            </tr>
+       
           </thead>
           <tbody>
             <tr>
@@ -375,17 +216,6 @@
                   item.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </td>
-              <!-- <td class="align-right" *ngIf="showPaymentMethod">
-                  {{ item.paymentMethodName }}
-                </td>
-                <td class="align-center" *ngIf="showPaymentMethod">
-                  {{ item.quota }}
-                </td>
-                <td class="align-center" *ngIf="showPaymentMethod">
-                  {{
-                    item.paymentMethodExpirationDate | dateFormat : 'DD/MM/YYYY'
-                  }}
-                </td> -->
               <td class="align-right" [ngClass]="{ credit: item.debe > 0 }">
                 {{ item.debe | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>

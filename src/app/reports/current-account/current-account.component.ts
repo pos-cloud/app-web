@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 //Paquetes de terceros
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { Config } from 'app/app.config';
@@ -12,7 +11,6 @@ import { Company } from 'app/components/company/company';
 import { CompanyService } from 'app/components/company/company.service';
 import { ConfigService } from 'app/components/config/config.service';
 import { AuthService } from 'app/components/login/auth.service';
-import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { PrintComponent } from 'app/components/print/print/print.component';
@@ -41,12 +39,7 @@ export class CurrentAccountComponent implements OnInit {
   public transactions: Transaction[];
   public companySelected: Company;
   public companyType: CompanyType;
-  public movementsOfCashes: MovementOfCash[];
-  public areTransactionsEmpty: boolean = true;
   public alertMessage: string = '';
-  public userType: string;
-  public propertyTerm: string;
-  public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public loadingTotal: boolean = false;
   public itemsPerPage = 10;
@@ -56,33 +49,15 @@ export class CurrentAccountComponent implements OnInit {
   public balance: number = 0;
   public currentPage: number = 1;
   public roundNumber: RoundNumberPipe;
-  public startDate: string;
-  public endDate: string;
   public userCountry: string;
   public detailsPaymentMethod: boolean = false;
   public showPaymentMethod: boolean = false;
   public config: Config;
-  public invertedView: boolean = false;
   public transactionMovement: TransactionMovement;
   public showBalanceOfTransactions: boolean = false;
-  public showBalanceOfCero: boolean = false;
-  public selectedItems;
   public transactionTypes: TransactionType[];
   public transactionTypesSelect;
-  public query = {};
-  public filterTotalPrice;
-  public filterNumber;
-  public filterLetter;
-  public filterType;
-  public filterDate;
-  public filterOrigin;
-  public filterPaymentMethodName;
-  public filterQuota;
-  public filterPaymentMethodExpirationDate;
-  filterDebe;
-  filterHaber;
-  filterSaldo;
-
+  public data = {};
   public isFirstTime = true;
 
   public dropdownSettings = {
@@ -121,10 +96,7 @@ export class CurrentAccountComponent implements OnInit {
     private _toastService: ToastService
   ) {
     this.transactionTypesSelect = new Array();
-    this.movementsOfCashes = new Array();
     this.roundNumber = new RoundNumberPipe();
-    this.startDate = moment('1990-01-01').format('YYYY-MM-DD');
-    this.endDate = moment().format('YYYY-MM-DD');
   }
 
   async ngOnInit() {
@@ -178,7 +150,10 @@ export class CurrentAccountComponent implements OnInit {
       this.getTotalOfAccountsByCompany();
       this.getBalanceOfAccountsByCompany();
     } else {
-      //this.showMessage('Debe seleccionar una empresa.', 'info', true);
+      this._toastService.showToast({
+        message: 'Not found',
+        title: 'Debe seleccionar una empresa.',
+      });
     }
   }
 
@@ -186,7 +161,7 @@ export class CurrentAccountComponent implements OnInit {
     this.totalPrice = 0;
     this.loadingTotal = true;
 
-    this._service.getTotalOfAccountsByCompany(this.query).subscribe(
+    this._service.getTotalOfAccountsByCompany(this.data).subscribe(
       (result) => {
         if (result) {
           this.totalPrice = result[0].totalPrice;
@@ -194,7 +169,7 @@ export class CurrentAccountComponent implements OnInit {
         this.loadingTotal = false;
       },
       (error) => {
-        //this.showMessage(error._body, 'danger', false);
+        this._toastService.showToast(error);
         this.loadingTotal = true;
       }
     );
@@ -203,25 +178,20 @@ export class CurrentAccountComponent implements OnInit {
   public getBalanceOfAccountsByCompany(): void {
     this.balance = 0;
 
-    this._service.getBalanceOfAccountsByCompany(this.query).subscribe(
+    this._service.getBalanceOfAccountsByCompany(this.data).subscribe(
       (result) => {
         if (result) {
           this.balance = result[0].balance;
         }
       },
       (error) => {
-        //this.showMessage(error._body, 'danger', false);
+        this._toastService.showToast(error);
       }
     );
   }
 
   public getPaymentMethodOfAccountsByCompany(): void {
     this.loading = true;
-
-    let timezone = '-03:00';
-    if (Config.timezone && Config.timezone !== '') {
-      timezone = Config.timezone.split('UTC')[1];
-    }
 
     if (typeof this.detailsPaymentMethod !== 'boolean') {
       this.detailsPaymentMethod = Boolean(
@@ -245,32 +215,28 @@ export class CurrentAccountComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
     let limit = this.itemsPerPage;
 
-    this.query = {
+    this.data = {
       company: this.companySelected._id,
-      startDate: this.startDate + ' 00:00:00' + timezone,
-      endDate: this.endDate + ' 23:59:59' + timezone,
-      detailsPaymentMethod: this.detailsPaymentMethod,
       transactionType: transactionTypes,
       transactionMovement: this.transactionMovement,
       skip,
       limit,
     };
 
-    this._service.getPaymentMethodOfAccountsByCompany(this.query).subscribe(
+    this._service.getPaymentMethodOfAccountsByCompany(this.data).subscribe(
       (result) => {
         if (!result.result.length) {
-          //this.showMessage(result.message, 'info', true);
+          this._toastService.showToast(result);
           this.items = new Array();
           this.totalItems = 0;
         } else {
-          //this.hideMessage();
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
         }
         this.loading = false;
       },
       (error) => {
-        //this.showMessage(error._body, 'danger', false);
+        this._toastService.showToast(error);
         this.loading = false;
       }
     );
@@ -349,14 +315,14 @@ export class CurrentAccountComponent implements OnInit {
       this._transactionService.getTransaction(transactionId).subscribe(
         async (result) => {
           if (!result.transaction) {
-            //this.showMessage(result.message, 'danger', false);
+            this._toastService.showToast(result);
             resolve(null);
           } else {
             resolve(result.transaction);
           }
         },
         (error) => {
-          //this.showMessage(error._body, 'danger', false);
+          this._toastService.showToast(error);
           resolve(null);
         }
       );
@@ -411,7 +377,7 @@ export class CurrentAccountComponent implements OnInit {
             }
           },
           (error) => {
-            //this.showMessage(error._body, 'danger', false);
+            this._toastService.showToast(error);
             resolve(null);
           }
         );
@@ -425,11 +391,6 @@ export class CurrentAccountComponent implements OnInit {
 
   public getSummary(): void {
     this.loading = true;
-
-    let timezone = '-03:00';
-    if (Config.timezone && Config.timezone !== '') {
-      timezone = Config.timezone.split('UTC')[1];
-    }
 
     if (typeof this.detailsPaymentMethod !== 'boolean') {
       this.detailsPaymentMethod = Boolean(
@@ -453,25 +414,21 @@ export class CurrentAccountComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
     let limit = this.itemsPerPage;
 
-    this.query = {
+    this.data = {
       company: this.companySelected._id,
-      startDate: this.startDate + ' 00:00:00' + timezone,
-      endDate: this.endDate + ' 23:59:59' + timezone,
-      detailsPaymentMethod: this.detailsPaymentMethod,
       transactionType: transactionTypes,
       transactionMovement: this.transactionMovement,
       skip,
       limit,
     };
 
-    this._service.getSummaryOfAccountsByCompany(this.query).subscribe(
+    this._service.getSummaryOfAccountsByCompany(this.data).subscribe(
       (result) => {
         if (!result.result.length) {
-          //this.showMessage(result.message, 'info', true);
+          this._toastService.showToast(result);
           this.items = new Array();
           this.totalItems = 0;
         } else {
-          //this.hideMessage();
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
 
@@ -486,7 +443,7 @@ export class CurrentAccountComponent implements OnInit {
         this.loading = false;
       },
       (error) => {
-        //this.showMessage(error._body, 'danger', false);
+        this._toastService.showToast(error);
         this.loading = false;
       }
     );

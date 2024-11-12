@@ -17,8 +17,8 @@ import * as moment from 'moment';
 import { Observable, of as observableOf, Subscription } from 'rxjs';
 import { Config } from '../../app.config';
 import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
-import { attributes } from '../reports';
-import { ReportsService } from '../reports.service';
+import { attributes } from './list-articles.requirements-by-transaction';
+import { ListArticlesRequirementsByTransactionService } from './list-articles.requirements-by-transaction.service';
 
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
@@ -81,7 +81,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     private _authService: AuthService,
     public _router: Router,
-    public _reportsService: ReportsService
+    public _reportsService: ListArticlesRequirementsByTransactionService
   ) {
     this.transactionTypesSelect = new Array();
     this.filters = {};
@@ -246,7 +246,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
         .subscribe(
           (result) => {
             this.loading = false;
-            if (result.result.length) {
+            if (result.result) {
               if (this.itemsPerPage === 0) {
                 this.itemsPerPage = 10;
                 this.getItems();
