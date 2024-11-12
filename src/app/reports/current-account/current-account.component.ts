@@ -48,11 +48,12 @@ export class CurrentAccountComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
+  public loadingTotal: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
   public items: any[] = new Array();
+  public totalPrice: number = 0;
   public balance: number = 0;
-  public balanceDoc: number = 0;
   public currentPage: number = 1;
   public roundNumber: RoundNumberPipe;
   public startDate: string;
@@ -125,6 +126,7 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.userCountry = Config.country;
     const companyId = this._route.snapshot.paramMap.get('id');
 
     if (companyId) {
@@ -153,11 +155,12 @@ export class CurrentAccountComponent implements OnInit {
 
           this.loading = false;
 
-          // await this.getTransactionTypes().then((result) => {
-          //   if (result) {
-          //     this.transactionTypes = result;
-          //   }
-          // });
+          await this.getTransactionTypes().then((result) => {
+            if (result) {
+              this.transactionTypes = result;
+            }
+          });
+          this.refresh()
         }
       },
       (error) => {
@@ -170,25 +173,103 @@ export class CurrentAccountComponent implements OnInit {
   public refresh(): void {
     if (this.companySelected) {
       this.getSummary();
-      this.getTotalBalance();
+      this.getTotalOfAccountsByCompany();
+      this.getBalanceOfAccountsByCompany();
     } else {
       //this.showMessage('Debe seleccionar una empresa.', 'info', true);
     }
   }
 
-  public getTotalBalance(): void {
+  public getTotalOfAccountsByCompany(): void {
+    this.totalPrice = 0;
+    this.loadingTotal = true
+
+    this._service.getTotalOfAccountsByCompany(this.query).subscribe(
+      (result) => {
+        if (result) {
+          this.totalPrice = result[0].totalPrice;
+        }
+        this.loadingTotal = false
+      },
+      (error) => {
+        //this.showMessage(error._body, 'danger', false);
+        this.loadingTotal = true
+      }
+    );
+  }
+
+  public getBalanceOfAccountsByCompany():void {
     this.balance = 0;
-    this.balanceDoc = 0;
 
     this._service.getBalanceOfAccountsByCompany(this.query).subscribe(
       (result) => {
         if (result) {
-          this.balance = result[0].totalPrice;
-          this.balanceDoc = result[0].balance;
+          this.balance = result[0].balance;
         }
       },
       (error) => {
         //this.showMessage(error._body, 'danger', false);
+      }
+    );
+  }
+
+  public getPaymentMethodOfAccountsByCompany(): void{
+    this.loading = true;
+
+    let timezone = '-03:00';
+    if (Config.timezone && Config.timezone !== '') {
+      timezone = Config.timezone.split('UTC')[1];
+    }
+
+    if (typeof this.detailsPaymentMethod !== 'boolean') {
+      this.detailsPaymentMethod = Boolean(
+        JSON.parse(this.detailsPaymentMethod)
+      );
+    }
+
+    let transactionTypes = [];
+
+    if (this.transactionTypesSelect) {
+      this.transactionTypesSelect.forEach((element) => {
+        transactionTypes.push({ $oid: element._id });
+      });
+    }
+
+    let page = 0;
+
+    if (this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
+    let limit = this.itemsPerPage;
+
+    this.query = {
+      company: this.companySelected._id,
+      startDate: this.startDate + ' 00:00:00' + timezone,
+      endDate: this.endDate + ' 23:59:59' + timezone,
+      detailsPaymentMethod: this.detailsPaymentMethod,
+      transactionType: transactionTypes,
+      transactionMovement: this.transactionMovement,
+      skip,
+      limit,
+    };
+
+    this._service.getPaymentMethodOfAccountsByCompany(this.query).subscribe(
+      (result) => {
+        if (!result.result.length) {
+          //this.showMessage(result.message, 'info', true);
+          this.items = new Array();
+          this.totalItems = 0;
+        } else {
+          //this.hideMessage();
+          this.items = result.result[0].items;
+          this.totalItems = result.result[0].count;
+        }
+        this.loading = false;
+      },
+      (error) => {
+        //this.showMessage(error._body, 'danger', false);
+        this.loading = false;
       }
     );
   }
@@ -227,7 +308,7 @@ export class CurrentAccountComponent implements OnInit {
             detailsPaymentMethod: this.detailsPaymentMethod,
           };
           modalRef.componentInstance.typePrint = 'current-account';
-          modalRef.componentInstance.balance = this.balance;
+          modalRef.componentInstance.balance = this.totalPrice;
         } else {
           //this.showMessage('Debe seleccionar una empresa.', 'info', true);
         }
@@ -392,7 +473,6 @@ export class CurrentAccountComponent implements OnInit {
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
         }
-        console.log('acaaa', this.totalItems);
         this.loading = false;
       },
       (error) => {

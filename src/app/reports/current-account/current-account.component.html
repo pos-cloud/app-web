@@ -34,7 +34,7 @@
         </ngb-alert>
       </div>
       <div class="row container-filter">
-        <div class="col-md-2">
+        <!-- <div class="col-md-2">
           <label for="detailsPaymentMethod" class="control-label">
             <b>Detallar método de pago</b>
           </label>
@@ -46,7 +46,7 @@
             <option [ngValue]="true">Sí</option>
             <option [ngValue]="false">No</option>
           </select>
-        </div>
+        </div> -->
         <div class="col-md-2">
           <label for="showBalanceOfTransactions" class="control-label">
             <b>Muestra saldo</b>
@@ -75,7 +75,7 @@
               <option [ngValue]="false">No</option>
             </select>
           </div> -->
-        <div class="col-md-2">
+        <!-- <div class="col-md-2">
           <label for="startDate" class="control-label">
             <b>Fecha Desde:</b>
           </label>
@@ -100,7 +100,7 @@
             min="2000-01-01"
             [(ngModel)]="endDate"
           />
-        </div>
+        </div> -->
         <div class="col-md-2">
           <label for="transactionType" class="control-label">
             <b>Tipo</b>
@@ -357,7 +357,7 @@
                 </button>
               </td>
               <td class="align-center" *ngIf="item.endDate">
-                {{ item.endDate | dateFormat: 'DD/MM/YYYY' }}
+                 {{ item.endDate | dateFormat: 'DD/MM/YYYY' }} 
               </td>
               <td class="align-center" *ngIf="!item.startDate">
                 {{ item.startDate | dateFormat: 'DD/MM/YYYY' }}
@@ -394,32 +394,38 @@
               </td>
               <td class="align-right" *ngIf="showBalanceOfTransactions">
                 {{ item.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-              </td>
+              </td> 
             </tr>
             <tr align="center" *ngIf="items.length === 0 && !loading">
               <td colspan="13">No se encontraron movimientos</td>
             </tr>
           </tbody>
-          <tfoot [ngClass]="{ credit: balance > 0, debit: balance < 0 }">
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loadingTotal"></app-progressbar>
+            </tr>
+          <tfoot [ngClass]="{ credit: totalPrice > 0, debit: totalPrice < 0 }">
             <td colspan="11" class="align-right" *ngIf="showPaymentMethod">
               <strong>SALDO TOTAL</strong>
             </td>
             <td colspan="8" class="align-right" *ngIf="!showPaymentMethod">
               <strong>SALDO TOTAL</strong>
             </td>
-            <td *ngIf="balance >= 0" class="align-right">
+            <td *ngIf="totalPrice >= 0" class="align-right">
               <strong>{{
-                balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
+
+
             </td>
-            <td *ngIf="balance < 0" class="align-right">
+            <td *ngIf="totalPrice < 0" class="align-right">
               <strong>{{
-                balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
             <td *ngIf="showBalanceOfTransactions" class="align-right">
               <strong>{{
-                balanceDoc | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
           </tfoot>

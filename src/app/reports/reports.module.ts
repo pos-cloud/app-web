@@ -12,6 +12,7 @@ import { LicenseGuard } from '../core/guards/license.guard';
 import { ProgressbarModule } from '../shared/components/progressbar/progressbar.module';
 
 import { CompanyService } from 'app/components/company/company.service';
+import { PipesModule } from 'app/core/pipes/pipes.module';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { CurrentAccountComponent } from './current-account/current-account.component';
 import { CurrentAccountService } from './current-account/current-account.service';
@@ -39,6 +40,7 @@ const routes: Routes = [
     FocusDirective,
     ProgressbarModule,
     TranslateModule,
+    PipesModule,
     NgbModule,
     NgMultiSelectDropDownModule,
     NgxPaginationModule,

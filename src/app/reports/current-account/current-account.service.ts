@@ -40,7 +40,7 @@ export class CurrentAccountService {
       );
   }
 
-  public getBalanceOfAccountsByCompany(query: {}): Observable<any> {
+  public getTotalOfAccountsByCompany(data: {}): Observable<any> {
     const URL = `${environment.apiv2}/companies/total-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
@@ -48,7 +48,28 @@ export class CurrentAccountService {
       .set('Authorization', this._authService.getToken());
 
     return this._http
-      .post(URL, query, {
+      .post(URL, data, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public getBalanceOfAccountsByCompany(data: {}): Observable<any> {
+    const URL = `${environment.apiv2}/companies/balance-of-accounts-by-company`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, data,{
         headers: headers,
       })
       .pipe(
@@ -109,4 +130,26 @@ export class CurrentAccountService {
         })
       );
   }
+
+  public getPaymentMethodOfAccountsByCompany(data: {}) : Observable<any> {
+    const URL = `${environment.apiv2}/companies/payment-method-of-accounts-by-company`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, data, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+    }
+
 }
