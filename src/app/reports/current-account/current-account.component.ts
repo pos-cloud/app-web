@@ -83,6 +83,8 @@ export class CurrentAccountComponent implements OnInit {
   filterHaber;
   filterSaldo;
 
+  public isFirstTime = true;
+
   public dropdownSettings = {
     singleSelection: false,
     defaultOpen: false,
@@ -160,7 +162,7 @@ export class CurrentAccountComponent implements OnInit {
               this.transactionTypes = result;
             }
           });
-          this.refresh()
+          this.refresh();
         }
       },
       (error) => {
@@ -182,23 +184,23 @@ export class CurrentAccountComponent implements OnInit {
 
   public getTotalOfAccountsByCompany(): void {
     this.totalPrice = 0;
-    this.loadingTotal = true
+    this.loadingTotal = true;
 
     this._service.getTotalOfAccountsByCompany(this.query).subscribe(
       (result) => {
         if (result) {
           this.totalPrice = result[0].totalPrice;
         }
-        this.loadingTotal = false
+        this.loadingTotal = false;
       },
       (error) => {
         //this.showMessage(error._body, 'danger', false);
-        this.loadingTotal = true
+        this.loadingTotal = true;
       }
     );
   }
 
-  public getBalanceOfAccountsByCompany():void {
+  public getBalanceOfAccountsByCompany(): void {
     this.balance = 0;
 
     this._service.getBalanceOfAccountsByCompany(this.query).subscribe(
@@ -213,7 +215,7 @@ export class CurrentAccountComponent implements OnInit {
     );
   }
 
-  public getPaymentMethodOfAccountsByCompany(): void{
+  public getPaymentMethodOfAccountsByCompany(): void {
     this.loading = true;
 
     let timezone = '-03:00';
@@ -472,6 +474,14 @@ export class CurrentAccountComponent implements OnInit {
           //this.hideMessage();
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
+
+          if (this.isFirstTime) {
+            const totalPages = Math.ceil(this.totalItems / limit); // Número total de páginas
+            const lastPageSkip = (totalPages - 1) * limit;
+
+            this.pageChange(lastPageSkip);
+            this.isFirstTime = false;
+          }
         }
         this.loading = false;
       },
