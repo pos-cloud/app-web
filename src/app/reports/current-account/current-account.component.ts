@@ -145,7 +145,7 @@ export class CurrentAccountComponent implements OnInit {
       //this.getSummary();
       this.getPaymentMethodOfAccountsByCompany();
       this.getTotalOfAccountsByCompany();
-      //this.getBalanceOfAccountsByCompany();
+      this.getBalanceOfAccountsByCompany();
     } else {
       this._toastService.showToast({
         message: 'Not found',
