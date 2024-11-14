@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
 
-import { Config } from 'app/app.config';
 import { Company } from 'app/components/company/company';
 import { CompanyService } from 'app/components/company/company.service';
 import { ConfigService } from 'app/components/config/config.service';
@@ -49,10 +48,8 @@ export class CurrentAccountComponent implements OnInit {
   public balance: number = 0;
   public currentPage: number = 1;
   public roundNumber: RoundNumberPipe;
-  public userCountry: string;
   public detailsPaymentMethod: boolean = false;
   public showPaymentMethod: boolean = false;
-  public config: Config;
   public transactionMovement: TransactionMovement;
   public showBalanceOfTransactions: boolean = false;
   public transactionTypes: TransactionType[];
@@ -100,7 +97,6 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.userCountry = Config.country;
     const companyId = this._route.snapshot.paramMap.get('id');
 
     if (companyId) {
@@ -165,7 +161,7 @@ export class CurrentAccountComponent implements OnInit {
     this._service.getTotalOfAccountsByCompany(this.data).subscribe(
       (result) => {
         if (result) {
-          this.totalPrice = result[0].totalPrice;
+          this.totalPrice = result[0]?.totalPrice;
         }
         this.loadingTotal = false;
       },
@@ -182,7 +178,7 @@ export class CurrentAccountComponent implements OnInit {
     this._service.getBalanceOfAccountsByCompany(this.data).subscribe(
       (result) => {
         if (result) {
-          this.balance = result[0].balance;
+          this.balance = result[0]?.balance;
         }
       },
       (error) => {
@@ -233,7 +229,16 @@ export class CurrentAccountComponent implements OnInit {
         } else {
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
+
+          if (this.isFirstTime) {
+            const totalPages = Math.ceil(this.totalItems / limit); // Número total de páginas
+            const lastPageSkip = (totalPages - 1) * limit;
+
+            this.pageChange(lastPageSkip);
+            this.isFirstTime = false;
+          }
         }
+        
         this.loading = false;
       },
       (error) => {
@@ -387,7 +392,7 @@ export class CurrentAccountComponent implements OnInit {
 
   public pageChange(page): void {
     this.currentPage = page;
-    this.getSummary();
+    this.getPaymentMethodOfAccountsByCompany();
   }
 
   public getSummary(): void {

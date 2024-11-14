@@ -133,13 +133,13 @@
               <th><i class="fa fa-bars"></i></th>
               <th>Fecha</th>
               <th>Tipo</th>
-              <th *ngIf="userCountry === 'AR'">Punto de venta</th>
+              <th>Punto de venta</th>
               <th>Letra</th>
               <th>Número</th>
               <th>Importe</th>
               <th>Debe</th>
               <th>Haber</th>
-              <!-- <th *ngIf="showBalanceOfTransactions">Saldo Doc.</th> -->
+               <th *ngIf="showBalanceOfTransactions">Saldo</th> 
             </tr>
           </thead>
           <tbody>
@@ -199,13 +199,13 @@
               <td class="align-center" *ngIf="item.endDate">
                 {{ item.endDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
-              <!-- <td class="align-center" *ngIf="!item.startDate">
+               <td class="align-center" *ngIf="!item.startDate">
                 {{ item.startDate | dateFormat: 'DD/MM/YYYY' }}
-              </td> -->
+              </td> 
               <td *ngIf="item.transactionType">
                 {{ item.transactionType }}
               </td>
-              <td class="align-center" *ngIf="userCountry === 'AR'">
+              <td class="align-center">
                 {{ item.origin }}
               </td>
               <td class="align-center">{{ item.letter }}</td>
