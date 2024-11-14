@@ -1,0 +1,15 @@
+.navbar-nav .nav-item {
+  margin-right: 5px; /* Reduce el espacio entre los elementos */
+}
+
+.navbar-nav .nav-link {
+  font-size: 17px;
+  color: #000; /* Color de texto predeterminado */
+}
+
+.navbar-nav .nav-link.active {
+  font-size: 17px;
+  background-color: #fff; /* Fondo blanco al estar activo */
+  color: black; /* Cambia el color del texto cuando está activo */
+  border: 2px solid #007bff; /* Agrega un borde azul al botón activo */
+}

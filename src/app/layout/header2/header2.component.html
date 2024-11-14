@@ -1,0 +1,65 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <span class="navbar-brand btn" routerLink="/">
+    <img width="60" src="assets/img/logo.png" />
+  </span>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarNav"
+    aria-controls="navbarNav"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav" #navbarNav>
+    <ul class="navbar-nav nav-pills">
+      <li class="nav-item">
+        <a
+          class="nav-link btn btn-sm"
+          routerLink="/pos/mostrador/venta"
+          routerLinkActive="active"
+          (click)="closeNavbar()"
+          ><i class="fa fa-fax"></i> Ventas</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link btn btn-sm"
+          routerLink="/pos/mostrador/compra"
+          routerLinkActive="active"
+          (click)="closeNavbar()"
+          ><i class="fa fa-clipboard"></i> Compras</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link btn btn-sm"
+          routerLink="/pos/mostrador/stock"
+          routerLinkActive="active"
+          (click)="closeNavbar()"
+          ><i class="fa fa-dropbox"></i> Stock</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link btn btn-sm"
+          routerLink="/pos/mostrador/fondo"
+          routerLinkActive="active"
+          (click)="closeNavbar()"
+          ><i class="fa fa-money"></i> Fondos</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link btn btn-sm"
+          routerLink="/pos/mostrador/production"
+          routerLinkActive="active"
+          (click)="closeNavbar()"
+          ><i class="fa fa-paste"></i> Producción</a
+        >
+      </li>
+    </ul>
+  </div>
+</nav>

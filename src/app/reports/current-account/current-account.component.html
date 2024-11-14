@@ -3,7 +3,7 @@
     <div class="card-header">
       Cuenta Corriente
       <div class="pull-right">
-        <button
+        <!-- <button
           [disabled]="loading"
           type="button"
           class="btn btn-light btn-sm"
@@ -14,7 +14,7 @@
         </button>
         <button [disabled]="loading" class="btn" (click)="openModal('print')">
           <i class="fa fa-print"></i> Imprimir
-        </button>
+        </button> -->
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -40,7 +40,7 @@
             <option [ngValue]="true">Sí</option>
             <option [ngValue]="false">No</option>
           </select>
-        </div> 
+        </div>
         <div class="col-md-2">
           <label for="transactionType" class="control-label">
             <b>Tipo</b>
@@ -139,9 +139,8 @@
               <th>Importe</th>
               <th>Debe</th>
               <th>Haber</th>
-              <th *ngIf="showBalanceOfTransactions">Saldo Doc.</th>
+              <!-- <th *ngIf="showBalanceOfTransactions">Saldo Doc.</th> -->
             </tr>
-       
           </thead>
           <tbody>
             <tr>
@@ -164,7 +163,7 @@
                 <button
                   type="button"
                   class="btn btn-success btn-sm"
-                  (click)="openModal('view-transaction', item._id)"
+                  (click)="openModal('view-transaction', item.transaction._id)"
                   title="Ver"
                 >
                   <i class="fa fa-eye"></i>
@@ -175,7 +174,7 @@
                     actions && actions.edit && item.transactionTypeAllowEdit
                   "
                   class="btn btn-primary btn-sm"
-                  (click)="openModal('edit-transaction', item._id)"
+                  (click)="openModal('edit-transaction', item.transaction._id)"
                   title="Editar"
                 >
                   <i class="fa fa-pencil"></i>
@@ -183,7 +182,7 @@
                 <button
                   type="button"
                   class="btn btn-light btn-sm"
-                  (click)="openModal('print-transaction', item._id)"
+                  (click)="openModal('print-transaction', item.transaction._id)"
                   title="Imprimir"
                 >
                   <i class="fa fa-print"></i>
@@ -198,13 +197,13 @@
                 </button>
               </td>
               <td class="align-center" *ngIf="item.endDate">
-                 {{ item.endDate | dateFormat: 'DD/MM/YYYY' }} 
+                {{ item.endDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
-              <td class="align-center" *ngIf="!item.startDate">
+              <!-- <td class="align-center" *ngIf="!item.startDate">
                 {{ item.startDate | dateFormat: 'DD/MM/YYYY' }}
-              </td>
-              <td *ngIf="item.type.name">
-                {{ item.type.name }}
+              </td> -->
+              <td *ngIf="item.transactionType">
+                {{ item.transactionType }}
               </td>
               <td class="align-center" *ngIf="userCountry === 'AR'">
                 {{ item.origin }}
@@ -224,7 +223,7 @@
               </td>
               <td class="align-right" *ngIf="showBalanceOfTransactions">
                 {{ item.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-              </td> 
+              </td>
             </tr>
             <tr align="center" *ngIf="items.length === 0 && !loading">
               <td colspan="13">No se encontraron movimientos</td>
@@ -233,7 +232,8 @@
           <tr>
             <td colspan="99" style="padding: 0px">
               <app-progressbar [loading]="loadingTotal"></app-progressbar>
-            </tr>
+            </td>
+          </tr>
           <tfoot [ngClass]="{ credit: totalPrice > 0, debit: totalPrice < 0 }">
             <td colspan="11" class="align-right" *ngIf="showPaymentMethod">
               <strong>SALDO TOTAL</strong>
@@ -245,19 +245,17 @@
               <strong>{{
                 totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
-
-
             </td>
             <td *ngIf="totalPrice < 0" class="align-right">
               <strong>{{
                 totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
-            <td *ngIf="showBalanceOfTransactions" class="align-right">
+            <!-- <td *ngIf="showBalanceOfTransactions" class="align-right">
               <strong>{{
                 balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
-            </td>
+            </td> -->
           </tfoot>
         </table>
       </div>

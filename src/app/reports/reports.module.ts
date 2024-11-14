@@ -13,7 +13,6 @@ import { ProgressbarModule } from '../shared/components/progressbar/progressbar.
 
 import { CompanyService } from 'app/components/company/company.service';
 import { PipesModule } from 'app/core/pipes/pipes.module';
-import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { CurrentAccountComponent } from './current-account/current-account.component';
 import { CurrentAccountService } from './current-account/current-account.service';
 import { ListArticlesRequirementsByTransactionComponent } from './list-articles-requirements-by-transaction/list-articles-requirements-by-transaction.component';
@@ -21,12 +20,12 @@ import { ListArticlesRequirementsByTransactionService } from './list-articles-re
 
 const routes: Routes = [
   {
-    path: 'reports/production/requierements',
+    path: 'production/requierements',
     component: ListArticlesRequirementsByTransactionComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'reports/current-account/:id',
+    path: 'current-account/:id',
     component: CurrentAccountComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
@@ -37,7 +36,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     CommonModule,
     FormsModule,
-    FocusDirective,
     ProgressbarModule,
     TranslateModule,
     PipesModule,
@@ -50,6 +48,10 @@ const routes: Routes = [
     ListArticlesRequirementsByTransactionComponent,
     CurrentAccountComponent,
   ],
-  providers: [ListArticlesRequirementsByTransactionService, CurrentAccountService, CompanyService],
+  providers: [
+    ListArticlesRequirementsByTransactionService,
+    CurrentAccountService,
+    CompanyService,
+  ],
 })
 export class ReportsModule {}

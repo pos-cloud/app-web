@@ -1,5 +1,4 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
 import {
   HTTP_INTERCEPTORS,
   HttpClient,
@@ -240,8 +239,8 @@ import { PipesModule } from './core/pipes/pipes.module';
 import { ClaimComponent } from './layout/claim/claim.component';
 import { ClaimService } from './layout/claim/claim.service';
 import { HeaderComponent } from './layout/header/header.component';
+import { Header2Component } from './layout/header2/header2.component';
 import { HomeComponent } from './layout/home/home.component';
-import { ReportsModule } from './reports/reports.module';
 import { ProgressbarModule } from './shared/components/progressbar/progressbar.module';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
@@ -261,6 +260,7 @@ export function createTranslateLoader(http: HttpClient) {
     AppComponent,
     HomeComponent,
     HeaderComponent,
+    Header2Component,
     ListEmployeesComponent,
     AddEmployeeComponent,
     ListTablesComponent,
@@ -412,11 +412,10 @@ export function createTranslateLoader(http: HttpClient) {
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(_routes, { useHash: true }),
     BrowserAnimationsModule,
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(_routes, { useHash: true }),
     NgbModule,
     NgbCollapseModule,
     NgbNavModule,
@@ -444,7 +443,6 @@ export function createTranslateLoader(http: HttpClient) {
     NgMultiSelectDropDownModule.forRoot(),
     AddressModule,
     FocusDirective,
-    ReportsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: true,
       registrationStrategy: 'registerWhenStable:30000',

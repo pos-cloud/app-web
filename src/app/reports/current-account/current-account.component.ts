@@ -146,9 +146,10 @@ export class CurrentAccountComponent implements OnInit {
 
   public refresh(): void {
     if (this.companySelected) {
-      this.getSummary();
+      //this.getSummary();
+      this.getPaymentMethodOfAccountsByCompany();
       this.getTotalOfAccountsByCompany();
-      this.getBalanceOfAccountsByCompany();
+      //this.getBalanceOfAccountsByCompany();
     } else {
       this._toastService.showToast({
         message: 'Not found',
