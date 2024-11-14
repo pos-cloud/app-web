@@ -136,7 +136,6 @@ export class DatatableComponent {
     );
 
     this.currentPage = 0;
-    this.itemsPerPage = 10;
 
     this.getItems();
   }
