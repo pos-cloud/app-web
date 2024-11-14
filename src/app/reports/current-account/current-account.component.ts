@@ -16,10 +16,8 @@ import { PrintComponent } from 'app/components/print/print/print.component';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import { PrinterService } from 'app/components/printer/printer.service';
 import {
-  TransactionMovement,
-  TransactionType,
+  TransactionMovement
 } from 'app/components/transaction-type/transaction-type';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
 import { TransactionService } from 'app/components/transaction/transaction.service';
@@ -52,8 +50,6 @@ export class CurrentAccountComponent implements OnInit {
   public showPaymentMethod: boolean = false;
   public transactionMovement: TransactionMovement;
   public showBalanceOfTransactions: boolean = false;
-  public transactionTypes: TransactionType[];
-  public transactionTypesSelect;
   public data = {};
   public isFirstTime = true;
 
@@ -79,7 +75,6 @@ export class CurrentAccountComponent implements OnInit {
 
   constructor(
     public _transactionService: TransactionService,
-    public _transactionTypeService: TransactionTypeService,
     public _movementOfCashService: MovementOfCashService,
     public _service: CurrentAccountService,
     public _companyService: CompanyService,
@@ -92,7 +87,6 @@ export class CurrentAccountComponent implements OnInit {
     public _printerService: PrinterService,
     private _toastService: ToastService
   ) {
-    this.transactionTypesSelect = new Array();
     this.roundNumber = new RoundNumberPipe();
   }
 
@@ -125,11 +119,6 @@ export class CurrentAccountComponent implements OnInit {
 
           this.loading = false;
 
-          await this.getTransactionTypes().then((result) => {
-            if (result) {
-              this.transactionTypes = result;
-            }
-          });
           this.refresh();
         }
       },
@@ -196,14 +185,6 @@ export class CurrentAccountComponent implements OnInit {
       );
     }
 
-    let transactionTypes = [];
-
-    if (this.transactionTypesSelect) {
-      this.transactionTypesSelect.forEach((element) => {
-        transactionTypes.push({ $oid: element._id });
-      });
-    }
-
     let page = 0;
 
     if (this.currentPage != 0) {
@@ -214,7 +195,6 @@ export class CurrentAccountComponent implements OnInit {
 
     this.data = {
       company: this.companySelected._id,
-      transactionType: transactionTypes,
       transactionMovement: this.transactionMovement,
       skip,
       limit,
@@ -230,6 +210,8 @@ export class CurrentAccountComponent implements OnInit {
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
 
+          
+          console.log(this.isFirstTime)
           if (this.isFirstTime) {
             const totalPages = Math.ceil(this.totalItems / limit); // Número total de páginas
             const lastPageSkip = (totalPages - 1) * limit;
@@ -352,44 +334,6 @@ export class CurrentAccountComponent implements OnInit {
     });
   }
 
-  public getTransactionTypes(): Promise<TransactionType[]> {
-    return new Promise<TransactionType[]>((resolve, reject) => {
-      let match = {};
-
-      match = {
-        transactionMovement: this.transactionMovement,
-        $or: [{ currentAccount: 'Si' }, { currentAccount: 'Cobra' }],
-      };
-
-      this._transactionTypeService
-        .getAll({
-          project: {
-            _id: 1,
-            transactionMovement: 1,
-            operationType: 1,
-            name: 1,
-            currentAccount: 1,
-            branch: 1,
-          },
-          match: match,
-        })
-        .subscribe(
-          (result) => {
-            if (result) {
-              resolve(result.result);
-              this.transactionTypesSelect = result.result;
-            } else {
-              resolve(null);
-            }
-          },
-          (error) => {
-            this._toastService.showToast(error);
-            resolve(null);
-          }
-        );
-    });
-  }
-
   public pageChange(page): void {
     this.currentPage = page;
     this.getPaymentMethodOfAccountsByCompany();
@@ -404,14 +348,6 @@ export class CurrentAccountComponent implements OnInit {
       );
     }
 
-    let transactionTypes = [];
-
-    if (this.transactionTypesSelect) {
-      this.transactionTypesSelect.forEach((element) => {
-        transactionTypes.push({ $oid: element._id });
-      });
-    }
-
     let page = 0;
 
     if (this.currentPage != 0) {
@@ -422,7 +358,6 @@ export class CurrentAccountComponent implements OnInit {
 
     this.data = {
       company: this.companySelected._id,
-      transactionType: transactionTypes,
       transactionMovement: this.transactionMovement,
       skip,
       limit,
@@ -438,6 +373,7 @@ export class CurrentAccountComponent implements OnInit {
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
 
+          console.log(this.isFirstTime)
           if (this.isFirstTime) {
             const totalPages = Math.ceil(this.totalItems / limit); // Número total de páginas
             const lastPageSkip = (totalPages - 1) * limit;
