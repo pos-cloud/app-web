@@ -2202,7 +2202,12 @@ export class AddMovementOfCashComponent implements OnInit {
       movementOfArticle.transaction = this.transaction;
       movementOfArticle.modifyStock = this.transaction.type.modifyStock;
       movementOfArticle.stockMovement = this.transaction.type.stockMovement;
-
+      if (
+        this.paymentMethodSelected.surcharge > 0 &&
+        this.paymentMethodSelected.surchargeArticle
+      ) {
+        movementOfArticle.article = this.paymentMethodSelected.surchargeArticle;
+      }
       let taxes: Taxes[] = new Array();
       let tax: Taxes = new Taxes();
 
