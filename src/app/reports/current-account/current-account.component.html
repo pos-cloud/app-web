@@ -61,7 +61,7 @@
           <input
             type="text"
             class="form-control"
-            [value]="'Dirección: ' + companySelected.address + (companySelected.city ? ', Ciudad: ' + companySelected.city : '') + (companySelected.addressNumber ? ', N°: ' + companySelected.addressNumber : '') + (companySelected.floorNumber ? ', P: ' + companySelected.floorNumber : '') + (companySelected.flat ? ', D: ' + companySelected.flat : '') + (companySelected.zipCode ? ', CP: ' + companySelected.zipCode : '')"
+            [value]="(companySelected.address ? ' Dirección: ' + companySelected.address : '') + (companySelected.city ? ', Ciudad: ' + companySelected.city : '') + (companySelected.addressNumber ? ', N°: ' + companySelected.addressNumber : '') + (companySelected.floorNumber ? ', P: ' + companySelected.floorNumber : '') + (companySelected.flat ? ', D: ' + companySelected.flat : '') + (companySelected.zipCode ? ', CP: ' + companySelected.zipCode : '')"
             readonly
           />
         </div>
