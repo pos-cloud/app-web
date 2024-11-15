@@ -56,12 +56,12 @@
             readonly
           />
         </div>
-        <div class="form-group col-md-3" *ngIf="companySelected">
+        <div class="form-group col-md-4" *ngIf="companySelected">
           <label for="address" class="control-label">Dirección:</label>
           <input
             type="text"
             class="form-control"
-            [value]="companySelected.address"
+            [value]="'Dirección: ' + companySelected.address + (companySelected.city ? ', Ciudad: ' + companySelected.city : '') + (companySelected.addressNumber ? ', N°: ' + companySelected.addressNumber : '') + (companySelected.floorNumber ? ', P: ' + companySelected.floorNumber : '') + (companySelected.flat ? ', D: ' + companySelected.flat : '') + (companySelected.zipCode ? ', CP: ' + companySelected.zipCode : '')"
             readonly
           />
         </div>
