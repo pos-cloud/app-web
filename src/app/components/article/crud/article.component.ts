@@ -1933,27 +1933,27 @@ export class ArticleComponent implements OnInit {
 
   async isValid(): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
-      if (this.article.category) {
-        const category: any =
-          typeof this.article.category === 'string'
-            ? this.categories.find(
-                (category: any) => category._id === this.article.category
-              )._id
-            : this.article.category._id;
-        await this.getCategories(`where="parent": "${category}"`).then(
-          (result) => {
-            if (result && result.length > 0) {
-              this._toastService.showToast(
-                null,
-                'danger',
-                undefined,
-                'Debe seleccionar una categoría valida'
-              );
-              resolve(false);
-            }
-          }
-        );
-      }
+      // if (this.article.category) {
+      //   const category: any =
+      //     typeof this.article.category === 'string'
+      //       ? this.categories.find(
+      //           (category: any) => category._id === this.article.category
+      //         )._id
+      //       : this.article.category._id;
+      //   await this.getCategories(`where="parent": "${category}"`).then(
+      //     (result) => {
+      //       if (result && result.length > 0) {
+      //         this._toastService.showToast(
+      //           null,
+      //           'danger',
+      //           undefined,
+      //           'Debe seleccionar una categoría valida'
+      //         );
+      //         resolve(false);
+      //       }
+      //     }
+      //   );
+      // }
       // if (this.article.applications.length > 0 && this.article.type === Type.Final) {
       //   await this.getArticleURL().then((result) => {
       //     if (result) {
