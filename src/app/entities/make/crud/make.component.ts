@@ -6,20 +6,17 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-
 import { Make } from '../make.model';
 
-import { Config } from 'app/app.config';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subscription } from 'rxjs';
 import { MakeService } from '../make.service';
 
 @Component({
   selector: 'app-make',
   templateUrl: './make.component.html',
-  providers: [NgbAlertConfig, TranslateMePipe],
+  providers: [TranslateMePipe],
 })
 export class MakeComponent implements OnInit {
   public makeId: string;
@@ -31,8 +28,6 @@ export class MakeComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public filesToUpload: Array<File>;
-  public imageURL: string = './../../../assets/img/default.jpg';
   private subscription: Subscription = new Subscription();
   public formErrors = {
     description: '',
@@ -49,10 +44,8 @@ export class MakeComponent implements OnInit {
     public _makeService: MakeService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
-    public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService
+    private _toastService: ToastService,
   ) {
     this.make = new Make();
   }
@@ -77,26 +70,15 @@ export class MakeComponent implements OnInit {
     this._makeService.getById(this.makeId).subscribe(
       (result) => {
         if (!result.result) {
-          this.showMessage(result.message, 'info', true);
+          this._toastService.showToast(result)
         } else {
-          this.hideMessage();
           this.make = result.result;
-          if (this.make.picture && this.make.picture !== 'default.jpg') {
-            this.imageURL =
-              Config.apiURL +
-              'get-image-make/' +
-              this.make.picture +
-              '/' +
-              Config.database;
-          } else {
-            this.imageURL = './../../../assets/img/default.jpg';
-          }
           this.setValueForm();
         }
         this.loading = false;
       },
       (error) => {
-        this.showMessage(error._body, 'danger', false);
+        this._toastService.showToast(error)
         this.loading = false;
       }
     );
@@ -171,9 +153,9 @@ export class MakeComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast({
+      this._toastService.showToast({
         message: 'Por favor, revisa los campos en rojo para continuar.',
-      });
+      })
       this.onValueChanged();
     }
   }
@@ -181,59 +163,24 @@ export class MakeComponent implements OnInit {
   public saveMake(): void {
     this.loading = true;
 
-    this._makeService.saveMake(this.make).subscribe(
+    this._makeService.save(this.make).subscribe(
       (result) => {
         if (!result.result) {
-          this.showMessage(result.message, 'info', true);
+          this._toastService.showToast(result)
           this.loading = false;
         } else {
           this.make = result.result;
-          if (this.filesToUpload) {
-            this._makeService
-              .makeFileRequest(this.make._id, this.filesToUpload)
-              .then(
-                (result) => {
-                  let resultUpload;
-                  resultUpload = result;
-                  this.make.picture = resultUpload.make.picture;
-                  if (
-                    this.make.picture &&
-                    this.make.picture !== 'default.jpg'
-                  ) {
-                    this.imageURL =
-                      Config.apiURL +
-                      'get-image-make/' +
-                      this.make.picture +
-                      '/' +
-                      Config.database;
-                  } else {
-                    this.imageURL = './../../../assets/img/default.jpg';
-                  }
-                  this.showMessage(
-                    'La marca se ha añadido con éxito.',
-                    'success',
-                    false
-                  );
-                  this.make = new Make();
-                  this.filesToUpload = null;
-                  this.buildForm();
-                },
-                (error) => {
-                  this.showMessage(error, 'danger', false);
-                }
-              );
-          } else {
+         
             this.make = new Make();
-            this.filesToUpload = null;
-            this.showToast(result, 'success');
+            this._toastService.showToast(result)
             this.buildForm();
             return this.retrunTo();
-          }
+          
         }
         this.loading = false;
       },
       (error) => {
-        this.showMessage(error._body, 'danger', false);
+        this._toastService.showToast(error)
         this.loading = false;
       }
     );
@@ -242,75 +189,24 @@ export class MakeComponent implements OnInit {
   public updateMake(): void {
     this.loading = true;
 
-    this._makeService.updateMake(this.make).subscribe(
+    this._makeService.update(this.make).subscribe(
       (result) => {
         if (!result.result) {
-          this.showMessage(result.message, 'info', true);
+          this._toastService.showToast(result)
           this.loading = false;
         } else {
-          this.make = result.result;
-          if (this.filesToUpload) {
-            this._makeService
-              .makeFileRequest(this.make._id, this.filesToUpload)
-              .then(
-                (result) => {
-                  let resultUpload;
-                  resultUpload = result;
-                  this.make.picture = resultUpload.make.picture;
-                  if (
-                    this.make.picture &&
-                    this.make.picture !== 'default.jpg'
-                  ) {
-                    this.imageURL =
-                      Config.apiURL +
-                      'get-image-make/' +
-                      this.make.picture +
-                      '/' +
-                      Config.database;
-                  } else {
-                    this.imageURL = './../../../assets/img/default.jpg';
-                  }
-                  this.showMessage(
-                    'La Marca se ha actualizado con éxito.',
-                    'success',
-                    false
-                  );
-                },
-                (error) => {
-                  this.showMessage(error, 'danger', false);
-                }
-              );
-          } else {
-            this.showToast(result, 'success');
+          this.make = result.result; 
+          this._toastService.showToast(result)
             return this.retrunTo();
-          }
+      
         }
         this.loading = false;
       },
       (error) => {
-        this.showMessage(error._body, 'danger', false);
+        this._toastService.showToast(error)
         this.loading = false;
       }
     );
-  }
-
-  public fileChangeEvent(fileInput: any) {
-    this.filesToUpload = <Array<File>>fileInput.target.files;
-  }
-
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
-    console.log(message);
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage(): void {
-    this.alertMessage = '';
   }
 
   public deleteObj() {
@@ -318,57 +214,13 @@ export class MakeComponent implements OnInit {
     this.subscription.add(
       this._makeService.delete(this.make._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) {
             return this.retrunTo();
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }
