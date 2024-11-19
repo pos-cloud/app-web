@@ -25,18 +25,17 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import {
   NgbActiveModal,
   NgbModal,
+  NgbTypeahead,
   NgbTypeaheadConfig,
 } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from 'jquery';
 
 // Models
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
-  map,
-  switchMap,
-  tap,
+  map
 } from 'rxjs/operators';
 
 import { Config } from '../../../app.config';
@@ -81,6 +80,8 @@ import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { FileService } from 'app/shared/services/file.service';
 import { ORIGINMEDIA } from 'app/types';
+import { merge } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import Resulteable from '../../../util/Resulteable';
 import { Tax, TaxClassification } from '../../tax/tax';
 import { UnitOfMeasurement } from '../../unit-of-measurement/unit-of-measurement.model';
@@ -157,7 +158,6 @@ export class ArticleComponent implements OnInit {
   creationUser: User;
   updateUser: User;
   typeSelect = [];
-  company: Company[];
   filteredVariantTypes: any[] = [];
   tax: Tax[];
 
@@ -169,6 +169,19 @@ export class ArticleComponent implements OnInit {
   public orderByPipe: OrderByPipe = new OrderByPipe();
 
   html = '';
+  model: any;
+
+
+  @ViewChild('instance', { static: true }) instance: NgbTypeahead;
+
+  categoryFocus$ = new Subject<string>();
+  categoryClick$ = new Subject<string>();
+  makeFocus$ = new Subject<string>();
+  makeClick$ = new Subject<string>();
+  unitsOfMeasurementClick$ = new Subject<string>();
+  unitsOfMeasurementFocus$ = new Subject<string>();
+  companiesClick$ = new Subject<string>();
+  companiesFocus$ = new Subject<string>();
 
   tinyMCEConfigBody = {
     selector: 'textarea',
@@ -247,40 +260,50 @@ export class ArticleComponent implements OnInit {
     tag: {},
   };
 
-  searchCategories = (text$: Observable<string>) =>
-    text$.pipe(
+  searchCategories: OperatorFunction<string, readonly any[]> = (
+    text$: Observable<string>
+  ) => {
+    const debouncedText$ = text$.pipe(
       debounceTime(200),
-      distinctUntilChanged(),
+      distinctUntilChanged()
+    );
+    const clicksWithClosedPopup$ = this.categoryClick$.pipe(
+      filter(() => !this.instance.isPopupOpen())
+    );
+    const inputFocus$ = this.categoryFocus$;
+  
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
-        term.length < 0
-          ? []
-          : this.categories
-              .filter((v) =>
-                v.description.toLowerCase().startsWith(term.toLocaleLowerCase())
-              )
-              .slice(0, 10)
+        (term === ''
+          ? this.categories
+          : this.categories.filter((v) =>
+              v.description.toLowerCase().includes(term.toLowerCase())
+            )
+        ).slice()
       )
     );
+  };
 
-  formatterCategories = (value: any) => {
-    if (value.parent && value.parent) {
+  formatResult = (result: any) => {
+    if (result.parent && result.parent) {
       return (
-        value.description +
+        result.description +
         ' - ' +
-        this.categories.find((c: Category) => c._id === value.parent)
+        this.categories.find((c: Category) => c._id === result.parent)
           .description
       );
     }
-    return value.description;
+    return result.description;
   };
 
-  inputCategories = (value: any) => {
-    let valueId = value._id === undefined ? value : value._id;
+  formatInput = (result: any) =>{ 
+    let valueId = result._id === undefined ? result : result._id;
     const category: any = this.categories.find(
       (c: Category) => c._id === valueId
     );
 
     if (category.parent) {
+
       return (
         category.description +
         ' - ' +
@@ -290,68 +313,68 @@ export class ArticleComponent implements OnInit {
     }
 
     return category?.description;
-  };
+  }; 
 
-  searchMakes = (text$: Observable<string>) =>
-    text$.pipe(
+  searchMakes: OperatorFunction<string, readonly any[]> = (
+    text$: Observable<string>
+  ) => {
+    const debouncedText$ = text$.pipe(
       debounceTime(200),
-      distinctUntilChanged(),
+      distinctUntilChanged()
+    );
+    const clicksWithClosedPopup$ = this.makeClick$.pipe(
+      filter(() => !this.instance.isPopupOpen())
+    );
+    const inputFocus$ = this.makeFocus$;
+  
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
-        term.length < 0
-          ? []
-          : this.makes
-              .filter((v) =>
-                v.description.toLowerCase().startsWith(term.toLocaleLowerCase())
-              )
-              .slice(0, 10)
+        (term === ''
+          ? this.makes
+          : this.makes.filter((v) =>
+              v.description.toLowerCase().includes(term.toLowerCase())
+            )
+        ).slice()
       )
     );
+  };
 
   formatterMakes = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
     const make = this.makes.find((c: Make) => c._id === valueId);
-    return make.description;
+    return make?.description;
   };
 
-  searchAccounts = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => null),
-      switchMap(async (term) => {
-        let match: {} =
-          term && term !== ''
-            ? {
-                description: { $regex: term, $options: 'i' },
-                mode: 'Analitico',
-                operationType: { $ne: 'D' },
-              }
-            : {};
-
-        return await this.getAllAccounts(match).then((result) => {
-          return result;
-        });
-      }),
-      tap(() => null)
+  formatResultMakes= (x: any) => {
+    let valueId = x._id === undefined ? x : x._id;
+    const make = this.makes.find((c: Make) => c._id === valueId);
+    return make?.description;
+  };
+   
+  searchUnitsOfMeasurement: OperatorFunction<string, readonly any[]> = (
+    text$: Observable<string>
+  ) => {
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
     );
-  formatterAccounts = (x: Account) => {
-    return x.description;
-  };
-
-  searchUnitsOfMeasurement = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
+    const clicksWithClosedPopup$ = this.unitsOfMeasurementClick$.pipe(
+      filter(() => !this.instance.isPopupOpen())
+    );
+    const inputFocus$ = this.unitsOfMeasurementFocus$;
+  
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
-        term.length < 0
-          ? []
-          : this.unitsOfMeasurement
-              .filter((v) =>
-                v.name.toLowerCase().startsWith(term.toLocaleLowerCase())
-              )
-              .slice(0, 10)
+        (term === ''
+          ? this.unitsOfMeasurement
+          : this.unitsOfMeasurement.filter((v) =>
+              v.name.toLowerCase().includes(term.toLowerCase())
+            )
+        ).slice()
       )
     );
+  };
+ 
   formatterUnitsOfMeasurement = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
     const unitsOfMeasurement = this.unitsOfMeasurement.find(
@@ -360,24 +383,33 @@ export class ArticleComponent implements OnInit {
     return unitsOfMeasurement.name;
   };
 
-  searchProvider = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
+  searchProvider : OperatorFunction<string, readonly any[]> = (
+    text$: Observable<string>
+  ) => {
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
+    const clicksWithClosedPopup$ = this.companiesClick$.pipe(
+      filter(() => !this.instance.isPopupOpen())
+    );
+    const inputFocus$ = this.companiesFocus$;
+  
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
-        term.length < 0
-          ? []
-          : this.company
-              .filter((v) =>
-                v.name.toLowerCase().startsWith(term.toLocaleLowerCase())
-              )
-              .slice(0, 10)
+        (term === ''
+          ? this.companies
+          : this.companies.filter((v) =>
+              v.name.toLowerCase().includes(term.toLowerCase())
+            )
+        ).slice()
       )
     );
+  }
 
   formatterProvider = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
-    const company = this.company.find((c: Company) => c._id === valueId);
+    const company = this.companies.find((c: Company) => c._id === valueId);
     return company.name;
   };
 
@@ -1037,8 +1069,6 @@ export class ArticleComponent implements OnInit {
         return;
       }
     }
-
-    console.log(this.variantsByTypes); // Ver el estado actualizado
   }
 
   private deleteVariantFromFormArray(variant): void {
@@ -1262,10 +1292,10 @@ export class ArticleComponent implements OnInit {
       (result) => {
         if (!result.result) {
           this.loading = false;
-          this.company = new Array();
+          this.companies = new Array();
         } else {
           this.loading = false;
-          this.company = result.result;
+          this.companies = result.result;
         }
       },
       (error) => {
