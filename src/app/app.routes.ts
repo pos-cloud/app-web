@@ -678,6 +678,12 @@ export const _routes: Routes = [
       import('./reports/reports.module').then((m) => m.ReportsModule),
   },
   {
+    path: 'entities',
+    canActivate: [AuthGuard, LicenseGuard],
+    loadChildren: () =>
+      import('./entities/entities.module').then((m) => m.EntitiesModule),
+  },
+  {
     path: '**',
     pathMatch: 'full',
     redirectTo: '',
