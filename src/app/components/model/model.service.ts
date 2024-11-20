@@ -1,13 +1,13 @@
-import {HttpClient, HttpParams, HttpHeaders} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {of, BehaviorSubject} from 'rxjs';
-import {Observable} from 'rxjs/Observable';
-import {map, catchError} from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, of } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { catchError, map } from 'rxjs/operators';
 
-import {DatatableHistory} from '../datatable/datatable-history.interface';
-import {AuthService} from '../login/auth.service';
-import { environment } from 'environments/environment';
 import { ORIGINMEDIA } from 'app/types';
+import { environment } from 'environments/environment';
+import { DatatableHistory } from '../datatable/datatable-history.interface';
+import { AuthService } from '../login/auth.service';
 
 @Injectable()
 export class ModelService {
@@ -18,7 +18,7 @@ export class ModelService {
   constructor(
     public path: string,
     public _http: HttpClient,
-    public _authService: AuthService,
+    public _authService: AuthService
   ) {
     this.URL += path;
   }
@@ -46,7 +46,7 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -81,22 +81,18 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
-  public find({
-    project = {},
-    query = {}
-  }): Observable<any> {
+  public find({ project = {}, query = {} }): Observable<any> {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
     const params = new HttpParams()
       .set('project', JSON.stringify(project))
-      .set('query', JSON.stringify(query))
-
+      .set('query', JSON.stringify(query));
 
     return this._http
       .get(`${this.URL}/find`, {
@@ -109,8 +105,8 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
-      );  
+        })
+      );
   }
 
   public save(obj: any): Observable<any> {
@@ -128,7 +124,7 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -147,7 +143,7 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -169,7 +165,7 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
@@ -195,30 +191,24 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
   public uploadFile(origin: ORIGINMEDIA, file: File): Promise<any> {
-    if(origin) {
-      
+    if (origin) {
     }
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-    xhr.open(
-      "POST",
-      `${environment.apiStorage}/upload`,
-      true
-    );
-    xhr.setRequestHeader("Authorization", this._authService.getToken());
+    xhr.open('POST', `${environment.apiStorage}/upload`, true);
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
 
-     
-      formData.append("file", file, file.name);
+      formData.append('file', file, file.name);
 
-      formData.append('origin', origin)
+      formData.append('origin', origin);
 
       xhr.onreadystatechange = function () {
         console.log(xhr);
@@ -246,15 +236,15 @@ export class ModelService {
     const URL = `${environment.apiStorage}/upload`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
       .delete(URL, {
         headers: headers,
         body: {
-          origin: filename
-        }
+          origin: filename,
+        },
       })
       .pipe(
         map((res) => {
@@ -283,11 +273,11 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 
-  public deleteAll({where = {}}): Observable<any> {
+  public deleteAll({ where = {} }): Observable<any> {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
@@ -305,7 +295,7 @@ export class ModelService {
         }),
         catchError((err) => {
           return of(err);
-        }),
+        })
       );
   }
 }

@@ -35,7 +35,7 @@
         </button>
         <button
           type="button"
-          class="btnStyle"
+          class="btn btn-danger active"
           *ngIf="operation === 'delete'"
           [disabled]="loading"
           (click)="addMake()"
@@ -72,16 +72,19 @@
                   [focus]="focusEvent"
                   [ngClass]="{
                     'is-invalid':
-                      !makeForm.get('description')?.valid &&
-                      formErrors.description
+                      makeForm.get('description')?.touched &&
+                      makeForm.get('description')?.invalid
                   }"
                   [readonly]="readonly"
                 />
                 <div
                   class="invalid-feedback"
-                  [style.display]="formErrors.description ? 'block' : 'none'"
+                  *ngIf="
+                    makeForm.get('description')?.touched &&
+                    makeForm.get('description')?.hasError('required')
+                  "
                 >
-                  {{ formErrors.description }}
+                  Este campo es obligatorio.
                 </div>
               </div>
             </div>
