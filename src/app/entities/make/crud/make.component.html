@@ -7,12 +7,14 @@
         >{{ 'add-make' | translate | capitalize }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ make.description }}</span
+        >{{ 'edit' | translate | capitalize }}
+        {{ make?.description ?? '' }}</span
       >
       <span
         style="color: #607d8b"
         *ngIf="operation === 'view' || operation === 'delete'"
-        >{{ articleType }} {{ make.description }}</span
+      >
+        {{ make?.description ?? '' }}</span
       >
       <div class="pull-right">
         <button type="button" class="btn" (click)="retrunTo()">

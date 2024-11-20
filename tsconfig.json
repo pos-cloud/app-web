@@ -5,6 +5,9 @@
     "outDir": "./dist/out-tsc",
     "allowJs": true,
     "baseUrl": "src",
+    "paths": {
+      "@types/*": ["types/*"]
+    },
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -12,13 +15,9 @@
     "resolveJsonModule": true,
     "esModuleInterop": false,
     "target": "ES2022",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2016",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types", "src/@types"],
+    "types": [],
+    "lib": ["es2016", "dom"],
     "module": "es2020",
     "useDefineForClassFields": false
   },

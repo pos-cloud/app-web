@@ -6,8 +6,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Make } from '../make.model';
-
+import { Make } from '@types';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import Resulteable from 'app/util/Resulteable';
@@ -36,18 +35,21 @@ export class MakeComponent implements OnInit, OnDestroy {
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _toastService: ToastService
-  ) {
-    this.make = new Make();
-  }
+  ) {}
 
   async ngOnInit() {
-    this.buildForm();
     let pathUrl = this._router.url.split('/');
     this.operation = pathUrl[3];
     this.makeId = pathUrl[4];
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
-    if (this.makeId) this.getMake();
+    if (this.makeId) {
+      this.getMake();
+    } else {
+      // Inicializa make con valores predeterminados si es necesario
+      this.make = { _id: '', description: '', visibleSale: false };
+    }
+    this.buildForm();
   }
 
   ngOnDestroy(): void {
@@ -87,9 +89,9 @@ export class MakeComponent implements OnInit, OnDestroy {
 
   public buildForm(): void {
     this.makeForm = this._fb.group({
-      _id: [this.make._id, []],
-      description: [this.make.description, [Validators.required]],
-      visibleSale: [this.make.visibleSale, []],
+      _id: ['', []],
+      description: ['', [Validators.required]],
+      visibleSale: [true, []],
     });
   }
 
