@@ -674,6 +674,7 @@ export const _routes: Routes = [
   },
   {
     path: 'reports',
+    canActivate: [AuthGuard, LicenseGuard],
     loadChildren: () =>
       import('./reports/reports.module').then((m) => m.ReportsModule),
   },

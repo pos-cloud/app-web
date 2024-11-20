@@ -37,7 +37,7 @@ export class MakeComponent implements OnInit, OnDestroy {
     private _toastService: ToastService
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     let pathUrl = this._router.url.split('/');
     this.operation = pathUrl[3];
     this.makeId = pathUrl[4];
@@ -49,12 +49,16 @@ export class MakeComponent implements OnInit, OnDestroy {
     this.buildForm();
   }
 
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  public getMake(): void {
+  getMake(): void {
     this._makeService
       .getById(this.makeId)
       .pipe(takeUntil(this.destroy$))
@@ -72,7 +76,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       );
   }
 
-  public setValueForm(): void {
+  setValueForm(): void {
     this.makeForm.patchValue({
       _id: this.make._id ?? '',
       description: this.make.description ?? null,
@@ -80,11 +84,7 @@ export class MakeComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
-    this.focusEvent.emit(true);
-  }
-
-  public buildForm(): void {
+  buildForm(): void {
     this.makeForm = this._fb.group({
       _id: ['', []],
       description: ['', [Validators.required]],
@@ -96,7 +96,7 @@ export class MakeComponent implements OnInit, OnDestroy {
     return this._router.navigate(['/entities/makes']);
   }
 
-  public addMake(): void {
+  addMake(): void {
     this.loading = true;
     this.make = this.makeForm.value;
     if (this.makeForm.valid) {
@@ -108,7 +108,7 @@ export class MakeComponent implements OnInit, OnDestroy {
           this.updateMake();
           break;
         case 'delete':
-          this.deleteObj();
+          this.deleteMake();
         default:
           break;
       }
@@ -120,7 +120,7 @@ export class MakeComponent implements OnInit, OnDestroy {
     }
   }
 
-  public saveMake(): void {
+  saveMake(): void {
     this.loading = true;
 
     this._makeService
@@ -136,7 +136,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       );
   }
 
-  public updateMake(): void {
+  updateMake(): void {
     this.loading = true;
 
     this._makeService
@@ -152,7 +152,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       );
   }
 
-  public deleteObj() {
+  deleteMake() {
     this.loading = true;
     this._makeService
       .delete(this.make._id)
