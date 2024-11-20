@@ -45,9 +45,6 @@ export class MakeComponent implements OnInit, OnDestroy {
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
     if (this.makeId) {
       this.getMake();
-    } else {
-      // Inicializa make con valores predeterminados si es necesario
-      this.make = { _id: '', description: '', visibleSale: false };
     }
     this.buildForm();
   }
@@ -79,7 +76,7 @@ export class MakeComponent implements OnInit, OnDestroy {
     this.makeForm.patchValue({
       _id: this.make._id ?? '',
       description: this.make.description ?? null,
-      visibleSale: this.make.visibleSale ?? false,
+      visibleSale: this.make.visibleSale ?? true,
     });
   }
 
@@ -163,9 +160,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       .subscribe(
         (result: Resulteable) => {
           this._toastService.showToast(result);
-          if (result.status === 200) {
-            return this.retrunTo();
-          }
+          if (result.status === 200) return this.retrunTo();
         },
         (error) => this._toastService.showToast(error),
         () => (this.loading = false)
