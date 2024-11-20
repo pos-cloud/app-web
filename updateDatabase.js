@@ -139,3 +139,36 @@ db.articles.find({ type: 'Variante' }).forEach((article) => {
   // Actualiza el documento de `articles` con el nuevo `barcode`
   db.articles.updateOne({ _id: article._id }, { $set: { barcode: barcode } });
 });
+
+// ultimos codigo de barra
+
+db.articles.find({ type: 'Variante' }).forEach(function (article) {
+  // Convertir el código a número
+  const code = Number(article.code);
+
+  // Verificar que el código sea mayor a 401
+  if (code >= 401) {
+    // Reemplazar las barras '/' por espacios
+    const correctedDescription = article.description.replace(/\//g, ' ');
+
+    // Dividir la descripción en palabras
+    const descriptionWords = correctedDescription.split(' ');
+
+    // Obtener la última palabra completa
+    const lastWord = descriptionWords.pop(); // Extrae y guarda la última palabra
+
+    // Obtener las primeras letras de las palabras anteriores a la última palabra
+    const firstLetters = descriptionWords
+      .map((word) => word.charAt(0)) // Tomamos la primera letra de cada palabra
+      .join(''); // Unir las primeras letras
+
+    // Crear el código de barras
+    const barcode = article.code + firstLetters + lastWord;
+
+    // Actualizar el documento con el nuevo código de barras
+    db.articles.updateOne(
+      { _id: article._id }, // Usamos _id para identificar el artículo
+      { $set: { barcode: barcode } }
+    );
+  }
+});

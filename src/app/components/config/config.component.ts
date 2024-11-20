@@ -29,10 +29,10 @@ import { UserService } from '../user/user.service';
 import { VATConditionService } from '../vat-condition/vat-condition.service';
 import { ConfigService } from './config.service';
 
+import { MediaCategory } from '@types';
 import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/components/currency/currency.service';
 import { FileService } from 'app/shared/services/file.service';
-import { ORIGINMEDIA } from 'app/types';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -905,7 +905,7 @@ export class ConfigComponent implements OnInit {
       }
 
       this._fileService
-        .uploadImage(ORIGINMEDIA.COMPANY, this.filesToUpload)
+        .uploadImage(MediaCategory.CONFIG, this.filesToUpload)
         .then(
           (result: string) => {
             console.log(result);

@@ -1,4 +1,4 @@
-import { User } from './user.types';
+import { User } from './user.interface';
 
 export interface Make {
   _id: string;

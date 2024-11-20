@@ -29,8 +29,8 @@ import { RoomService } from '../room/room.service';
 import { TransactionTypeService } from '../transaction-type/transaction-type.service';
 import { TransactionService } from '../transaction/transaction.service';
 
+import { EmailProps } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
-import { EmailProps } from 'app/types';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { TranslateMePipe } from '../../core/pipes/translate-me';

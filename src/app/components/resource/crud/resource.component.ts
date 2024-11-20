@@ -7,11 +7,11 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { MediaCategory } from '@types';
 import { Config } from 'app/app.config';
 import { User } from 'app/components/user/user';
 import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { ORIGINMEDIA } from 'app/types';
 import { ToastrService } from 'ngx-toastr';
 import { Resource } from '../resource';
 import { ResourceService } from '../resource.service';
@@ -359,9 +359,9 @@ export class ResourceComponent implements OnInit {
       ) {
         await this.deleteFile(pictureDelete);
       }
-      console.log(ORIGINMEDIA.RESOURCES);
+      console.log(MediaCategory.RESOURCE);
       this._resourceService
-        .makeFileRequest(ORIGINMEDIA.RESOURCES, this.selectedFile)
+        .makeFileRequest(MediaCategory.RESOURCE, this.selectedFile)
         .then(
           (result: string) => {
             this.resource.file = result;

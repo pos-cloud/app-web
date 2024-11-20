@@ -32,11 +32,7 @@ import * as $ from 'jquery';
 
 // Models
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Config } from '../../../app.config';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
@@ -67,6 +63,7 @@ import { Currency } from '../../currency/currency';
 import { CurrencyService } from '../../currency/currency.service';
 
 // Pipes
+import { MediaCategory } from '@types';
 import { CompanyService } from 'app/components/company/company.service';
 import { TaxService } from 'app/components/tax/tax.service';
 import { User } from 'app/components/user/user';
@@ -79,7 +76,6 @@ import { AddVariantComponent } from 'app/components/variant/add-variant/add-vari
 import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { FileService } from 'app/shared/services/file.service';
-import { ORIGINMEDIA } from 'app/types';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import Resulteable from '../../../util/Resulteable';
@@ -170,7 +166,6 @@ export class ArticleComponent implements OnInit {
 
   html = '';
   model: any;
-
 
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;
 
@@ -271,7 +266,7 @@ export class ArticleComponent implements OnInit {
       filter(() => !this.instance.isPopupOpen())
     );
     const inputFocus$ = this.categoryFocus$;
-  
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
@@ -296,14 +291,13 @@ export class ArticleComponent implements OnInit {
     return result.description;
   };
 
-  formatInput = (result: any) =>{ 
+  formatInput = (result: any) => {
     let valueId = result._id === undefined ? result : result._id;
     const category: any = this.categories.find(
       (c: Category) => c._id === valueId
     );
 
     if (category.parent) {
-
       return (
         category.description +
         ' - ' +
@@ -313,7 +307,7 @@ export class ArticleComponent implements OnInit {
     }
 
     return category?.description;
-  }; 
+  };
 
   searchMakes: OperatorFunction<string, readonly any[]> = (
     text$: Observable<string>
@@ -326,7 +320,7 @@ export class ArticleComponent implements OnInit {
       filter(() => !this.instance.isPopupOpen())
     );
     const inputFocus$ = this.makeFocus$;
-  
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
@@ -345,12 +339,12 @@ export class ArticleComponent implements OnInit {
     return make?.description;
   };
 
-  formatResultMakes= (x: any) => {
+  formatResultMakes = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
     const make = this.makes.find((c: Make) => c._id === valueId);
     return make?.description;
   };
-   
+
   searchUnitsOfMeasurement: OperatorFunction<string, readonly any[]> = (
     text$: Observable<string>
   ) => {
@@ -362,7 +356,7 @@ export class ArticleComponent implements OnInit {
       filter(() => !this.instance.isPopupOpen())
     );
     const inputFocus$ = this.unitsOfMeasurementFocus$;
-  
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
@@ -374,7 +368,7 @@ export class ArticleComponent implements OnInit {
       )
     );
   };
- 
+
   formatterUnitsOfMeasurement = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
     const unitsOfMeasurement = this.unitsOfMeasurement.find(
@@ -383,7 +377,7 @@ export class ArticleComponent implements OnInit {
     return unitsOfMeasurement.name;
   };
 
-  searchProvider : OperatorFunction<string, readonly any[]> = (
+  searchProvider: OperatorFunction<string, readonly any[]> = (
     text$: Observable<string>
   ) => {
     const debouncedText$ = text$.pipe(
@@ -394,7 +388,7 @@ export class ArticleComponent implements OnInit {
       filter(() => !this.instance.isPopupOpen())
     );
     const inputFocus$ = this.companiesFocus$;
-  
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
@@ -405,7 +399,7 @@ export class ArticleComponent implements OnInit {
         ).slice()
       )
     );
-  }
+  };
 
   formatterProvider = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
@@ -1935,7 +1929,7 @@ export class ArticleComponent implements OnInit {
       }
 
       this._fileService
-        .uploadImage(ORIGINMEDIA.ARTICLES, this.filesToUpload)
+        .uploadImage(MediaCategory.ARTICLE, this.filesToUpload)
         .then(
           (result: string) => {
             this.article.picture = result;
@@ -2034,7 +2028,7 @@ export class ArticleComponent implements OnInit {
 
   addPicture(): void {
     this._articleService
-      .makeFileRequest(ORIGINMEDIA.ARTICLES, this.filesToArray)
+      .makeFileRequest(MediaCategory.ARTICLE, this.filesToArray)
       .then(
         (result: string) => {
           this.addPictureArray(result);

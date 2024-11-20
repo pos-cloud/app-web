@@ -6,10 +6,10 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Make } from '@types';
+import { ApiResponse, Make } from '@types';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import Resulteable from 'app/util/Resulteable';
+
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MakeService } from '../make.service';
@@ -59,7 +59,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       .getById(this.makeId)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (!result.result) {
             this._toastService.showToast(result);
           } else {
@@ -127,7 +127,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       .save(this.make)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           this._toastService.showToast(result);
           if (result.status == 200) return this.retrunTo();
         },
@@ -143,7 +143,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       .update(this.make)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           this._toastService.showToast(result);
           if (result.status == 200) return this.retrunTo();
         },
@@ -158,7 +158,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       .delete(this.make._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           this._toastService.showToast(result);
           if (result.status === 200) return this.retrunTo();
         },

@@ -4,7 +4,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
-import { ORIGINMEDIA } from 'app/types';
+import { MediaCategory } from '@types';
 import { environment } from 'environments/environment';
 import { DatatableHistory } from '../datatable/datatable-history.interface';
 import { AuthService } from '../login/auth.service';
@@ -195,7 +195,7 @@ export class ModelService {
       );
   }
 
-  public uploadFile(origin: ORIGINMEDIA, file: File): Promise<any> {
+  public uploadFile(origin: MediaCategory, file: File): Promise<any> {
     if (origin) {
     }
     let xhr: XMLHttpRequest = new XMLHttpRequest();

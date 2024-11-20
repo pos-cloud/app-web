@@ -18,12 +18,12 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
+import { MediaCategory } from '@types';
 import { Config } from 'app/app.config';
 import { Application } from 'app/components/application/application.model';
 import { ApplicationService } from 'app/components/application/application.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { ORIGINMEDIA } from 'app/types';
 import { FormField } from 'app/util/formField.interface';
 import Resulteable from 'app/util/Resulteable';
 import * as $ from 'jquery';
@@ -543,7 +543,7 @@ export class CategoryComponent implements OnInit {
                 }
                 for (let file of this.filesToUpload[field.name]) {
                   await this._objService
-                    .uploadFile(ORIGINMEDIA.CATEGORIES, file)
+                    .uploadFile(MediaCategory.CATEGORY, file)
                     .then((result) => {
                       this.loading = false;
                       if (result) {

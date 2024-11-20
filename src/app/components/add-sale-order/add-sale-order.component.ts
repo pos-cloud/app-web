@@ -90,8 +90,8 @@ import { TransactionService } from '../transaction/transaction.service';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
 import { UserService } from '../user/user.service';
 
+import { EmailProps } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
-import { EmailProps } from 'app/types';
 import { VariantService } from '../variant/variant.service';
 import { Config } from './../../app.config';
 
