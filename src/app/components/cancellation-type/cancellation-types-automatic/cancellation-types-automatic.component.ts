@@ -6,6 +6,7 @@ import { CancellationTypeService } from '../cancellation-type.service';
 import { CancellationType } from '../cancellation-type';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import { ArticleFieldType } from 'app/components/article-field/article-field';
 import { ArticleFields } from 'app/components/article-field/article-fields';
@@ -32,7 +33,6 @@ import {
 import { TransactionService } from 'app/components/transaction/transaction.service';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -310,7 +310,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(this.transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {
@@ -446,7 +446,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
   ): Promise<MovementOfCash> {
     return new Promise<MovementOfCash>((resolve, reject) => {
       this._movementOfCashService.update(movementOfCash).subscribe(
-        async (result: Resulteable) => {
+        async (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else reject(result);
@@ -689,7 +689,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
   public saveTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.save(transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

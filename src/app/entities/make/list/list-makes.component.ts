@@ -5,8 +5,8 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { MakeService } from '../make.service';
 
+import { IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
-import { IButton } from 'app/util/buttons.interface';
 import { attributes } from '../make.model';
 
 @Component({

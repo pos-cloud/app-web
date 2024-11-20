@@ -1,13 +1,13 @@
-import { IAttribute } from 'app/util/attribute.interface';
+import { IAttribute } from '@types';
 
 import { Article } from '../article/article';
 import { Category } from '../category/category';
+import { Company } from '../company/company';
 import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
-import { TransactionType } from '../transaction-type/transaction-type';
-import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { PaymentMethod } from '../payment-method/payment-method';
-import { Company } from '../company/company'
+import { ShipmentMethod } from '../shipment-method/shipment-method.model';
+import { TransactionType } from '../transaction-type/transaction-type';
 
 export class Application extends Model {
   order: number;
@@ -119,49 +119,48 @@ export class Application extends Model {
         template: EmailTemplate;
       };
     };
-
   };
   tiendaNube: {
-    userId: string,
-    token: string,
-    transactionType: TransactionType,
-    shipmentMethod: ShipmentMethod,
-    paymentMethod: PaymentMethod,
-    company: Company,
-    article: Article
-  }
+    userId: string;
+    token: string;
+    transactionType: TransactionType;
+    shipmentMethod: ShipmentMethod;
+    paymentMethod: PaymentMethod;
+    company: Company;
+    article: Article;
+  };
   menu: {
-    portain: string,
-    background: string
+    portain: string;
+    background: string;
     article: {
-      font: string,
-      size: number,
-      color: string,
-      style: string,
-      weight: string
-    },
+      font: string;
+      size: number;
+      color: string;
+      style: string;
+      weight: string;
+    };
     category: {
-      font: string,
-      size: number,
-      color: string,
-      style: string,
-      weight: string
-    },
+      font: string;
+      size: number;
+      color: string;
+      style: string;
+      weight: string;
+    };
     price: {
-      font: string,
-      size: number,
-      color: string,
-      style: string,
-      weight: string
-    },
+      font: string;
+      size: number;
+      color: string;
+      style: string;
+      weight: string;
+    };
     observation: {
-      font: string,
-      size: number,
-      color: string,
-      style: string,
-      weight: string
-    }
-  }
+      font: string;
+      size: number;
+      color: string;
+      style: string;
+      weight: string;
+    };
+  };
 
   constructor() {
     super();
@@ -223,5 +222,5 @@ export enum ApplicationType {
   Woocommerce = <any>'Woocommerce',
   MercadoLibre = <any>'MercadoLibre',
   TiendaNube = <any>'TiendaNube',
-  Menu = <any>'Carta digital'
+  Menu = <any>'Carta digital',
 }

@@ -10,6 +10,7 @@ import {
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
+import { FormField } from '@types';
 import { Config } from 'app/app.config';
 import { AccountPeriod } from 'app/components/account-period/account-period';
 import { AccountPeriodService } from 'app/components/account-period/account-period.service';
@@ -21,7 +22,6 @@ import { Printer } from 'app/components/printer/printer';
 import { PrinterService } from 'app/components/printer/printer.service';
 import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { FormField } from 'app/util/formField.interface';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';

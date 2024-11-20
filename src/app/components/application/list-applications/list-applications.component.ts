@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ApiResponse } from '@types';
 import { CompanyService } from 'app/components/company/company.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
@@ -21,7 +22,6 @@ import { TransactionType } from '../../transaction-type/transaction-type';
 import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
 import { Application, ApplicationType } from '../application.model';
 import { ApplicationService } from '../application.service';
-import Resulteable from './../../../util/Resulteable';
 
 @Component({
   selector: 'app-list-applications',
@@ -426,7 +426,7 @@ export class ListApplicationsComponent implements OnInit {
           this.tiendaNubeForm.value.token
         )
         .subscribe(
-          (result: Resulteable) => {
+          (result: ApiResponse) => {
             if (result.status == 200) {
               this.showToast(
                 null,

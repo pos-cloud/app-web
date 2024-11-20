@@ -2,10 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse } from '@types';
 import { ToastrService } from 'ngx-toastr';
 import { Config } from '../../../app.config';
 import { TranslateMePipe } from '../../../core/pipes/translate-me';
-import Resulteable from '../../../util/Resulteable';
 import { Transaction } from '../../transaction/transaction';
 import { TransactionService } from '../../transaction/transaction.service';
 
@@ -55,7 +55,7 @@ export class FulfilledComponent implements OnInit {
             this.state
           )
           .subscribe(
-            (result: Resulteable) => {
+            (result: ApiResponse) => {
               if (result.status === 201) {
                 resolve(result.result);
                 this.activeModal.close();

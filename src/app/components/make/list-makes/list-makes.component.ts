@@ -1,24 +1,24 @@
-import { Component, ViewChild, ViewEncapsulation } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { NgbAlertConfig } from "@ng-bootstrap/ng-bootstrap";
+import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { MakeService } from "../make.service";
+import { MakeService } from '../make.service';
 
-import { DatatableComponent } from "../../datatable/datatable.component";
-import { IButton } from "app/util/buttons.interface";
-import { attributes } from "../make";
+import { IButton } from '@types';
+import { DatatableComponent } from '../../datatable/datatable.component';
+import { attributes } from '../make';
 
 @Component({
-  selector: "app-list-makes",
-  templateUrl: "./list-makes.component.html",
-  styleUrls: ["./list-makes.component.scss"],
+  selector: 'app-list-makes',
+  templateUrl: './list-makes.component.html',
+  styleUrls: ['./list-makes.component.scss'],
   providers: [NgbAlertConfig],
   encapsulation: ViewEncapsulation.None,
 })
 export class ListMakesComponent {
   public title: string;
-  public sort = { "description": 1 };
+  public sort = { description: 1 };
   public columns = attributes;
   public pathLocation: string[];
   public priceListId: string;
@@ -30,43 +30,43 @@ export class ListMakesComponent {
 
   constructor(
     public _service: MakeService,
-    private _router: Router,
+    private _router: Router
   ) {
     this.rowButtons = [
       {
-        title: "view",
-        class: "btn btn-success btn-sm",
-        icon: "fa fa-eye",
+        title: 'view',
+        class: 'btn btn-success btn-sm',
+        icon: 'fa fa-eye',
         click: `this.emitEvent('view', item)`,
       },
       {
-        title: "update",
-        class: "btn btn-primary btn-sm",
-        icon: "fa fa-pencil",
+        title: 'update',
+        class: 'btn btn-primary btn-sm',
+        icon: 'fa fa-pencil',
         click: `this.emitEvent('update', item)`,
       },
       {
-        title: "delete",
-        class: "btn btn-danger btn-sm",
-        icon: "fa fa-trash-o",
+        title: 'delete',
+        class: 'btn btn-danger btn-sm',
+        icon: 'fa fa-trash-o',
         click: `this.emitEvent('delete', item)`,
       },
     ];
     this.headerButtons = [
       {
-        title: "add",
-        class: "btn btn-light",
-        icon: "fa fa-plus",
+        title: 'add',
+        class: 'btn btn-light',
+        icon: 'fa fa-plus',
         click: `this.emitEvent('add', null)`,
       },
       {
         title: 'refresh',
         class: 'btn btn-light',
         icon: 'fa fa-refresh',
-        click: `this.refresh()`
-      }
+        click: `this.refresh()`,
+      },
     ];
-    this.title = "Marcas";
+    this.title = 'Marcas';
   }
 
   public async emitEvent(event) {
@@ -75,17 +75,17 @@ export class ListMakesComponent {
 
   public async openModal(op: string, obj: any) {
     switch (op) {
-      case "view":
-        this._router.navigateByUrl("admin/makes/view/" + obj._id);
+      case 'view':
+        this._router.navigateByUrl('admin/makes/view/' + obj._id);
         break;
-      case "update":
-        this._router.navigateByUrl("admin/makes/update/" + obj._id);
+      case 'update':
+        this._router.navigateByUrl('admin/makes/update/' + obj._id);
         break;
-      case "delete":
-        this._router.navigateByUrl("admin/makes/delete/" + obj._id);
+      case 'delete':
+        this._router.navigateByUrl('admin/makes/delete/' + obj._id);
         break;
-      case "add":
-        this._router.navigateByUrl("admin/makes/add");
+      case 'add':
+        this._router.navigateByUrl('admin/makes/add');
         break;
     }
   }

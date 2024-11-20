@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { IButton } from 'app/util/buttons.interface';
+import { IButton } from '@types';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { attributes } from '../resource';
 import { ResourceService } from '../resource.service';

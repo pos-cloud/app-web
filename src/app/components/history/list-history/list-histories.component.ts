@@ -1,6 +1,6 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { IButton } from '@types';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { IButton } from 'app/util/buttons.interface';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { DatatableComponent } from '../../datatable/datatable.component';

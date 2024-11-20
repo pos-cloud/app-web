@@ -1,19 +1,19 @@
-import {IAttribute} from 'app/util/attribute.interface';
+import { IAttribute } from '@types';
 import * as moment from 'moment';
 
-import {Application} from '../application/application.model';
-import {Branch} from '../branch/branch';
-import {CashBoxType} from '../cash-box-type/cash-box-type.model';
-import {Company, CompanyType} from '../company/company';
-import {EmailTemplate} from '../email-template/email-template';
-import {EmployeeType} from '../employee-type/employee-type.model';
-import {Model} from '../model/model.model';
-import {PaymentMethod} from '../payment-method/payment-method';
-import {Printer} from '../printer/printer';
-import {ShipmentMethod} from '../shipment-method/shipment-method.model';
-import {TransactionState} from '../transaction/transaction';
-import {UseOfCFDI} from '../use-of-CFDI.component.ts/use-of-CFDI';
-import {User} from '../user/user';
+import { Application } from '../application/application.model';
+import { Branch } from '../branch/branch';
+import { CashBoxType } from '../cash-box-type/cash-box-type.model';
+import { Company, CompanyType } from '../company/company';
+import { EmailTemplate } from '../email-template/email-template';
+import { EmployeeType } from '../employee-type/employee-type.model';
+import { Model } from '../model/model.model';
+import { PaymentMethod } from '../payment-method/payment-method';
+import { Printer } from '../printer/printer';
+import { ShipmentMethod } from '../shipment-method/shipment-method.model';
+import { TransactionState } from '../transaction/transaction';
+import { UseOfCFDI } from '../use-of-CFDI.component.ts/use-of-CFDI';
+import { User } from '../user/user';
 
 export class TransactionType extends Model {
   _id: string;
@@ -545,7 +545,7 @@ export enum TransactionMovement {
   Purchase = <any>'Compra',
   Stock = <any>'Stock',
   Money = <any>'Fondos',
-  Production = <any>'Producción'
+  Production = <any>'Producción',
 }
 
 export enum EntryAmount {

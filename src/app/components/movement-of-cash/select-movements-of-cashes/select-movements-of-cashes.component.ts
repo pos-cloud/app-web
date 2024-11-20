@@ -1,11 +1,11 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';
@@ -202,7 +202,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

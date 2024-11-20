@@ -1,7 +1,7 @@
-import {IAttribute} from 'app/util/attribute.interface';
+import { IAttribute } from '@types';
 
-import {Article} from '../article/article';
-import {Model} from '../model/model.model';
+import { Article } from '../article/article';
+import { Model } from '../model/model.model';
 
 export class BusinessRule extends Model {
   _id: string;

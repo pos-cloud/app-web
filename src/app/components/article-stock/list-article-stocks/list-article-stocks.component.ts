@@ -17,7 +17,6 @@ import { DepositService } from 'app/components/deposit/deposit.service';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 
@@ -30,6 +29,7 @@ import { ArticleStock, attributes } from '../article-stock';
 import { ArticleStockService } from '../article-stock.service';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 
+import { ApiResponse } from '@types';
 import { PrintLabelComponent } from 'app/components/article/actions/print-label/print-label.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import { AddArticleStockComponent } from '../article-stock/add-article-stock.component';
@@ -516,7 +516,7 @@ export class ListArticleStocksComponent implements OnInit {
     this._branchService
       .getAll({ match: { operationType: { $ne: 'D' } } })
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             this.branches = result.result;
 
@@ -537,7 +537,7 @@ export class ListArticleStocksComponent implements OnInit {
         match: { branch: { $oid: branchId }, operationType: { $ne: 'D' } },
       })
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             const depositsForBranch = result.result;
             this.deposits = depositsForBranch;

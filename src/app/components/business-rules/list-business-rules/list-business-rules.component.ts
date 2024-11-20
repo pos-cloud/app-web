@@ -1,11 +1,10 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse, IButton } from '@types';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrinterPrintIn } from 'app/components/printer/printer';
 import { PrinterService } from 'app/components/printer/printer.service';
-import { IButton } from 'app/util/buttons.interface';
-import Resulteable from 'app/util/Resulteable';
 
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { BusinessRuleService } from '../business-rule.service';
@@ -118,7 +117,7 @@ export class ListBusinessRulesComponent {
   }
 
   async getVoucherPrinter() {
-    const printerResponse: Resulteable = await this._printerService
+    const printerResponse: ApiResponse = await this._printerService
       .getAll({
         project: {
           _id: 1,

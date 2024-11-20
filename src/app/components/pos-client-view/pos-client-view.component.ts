@@ -1,13 +1,13 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse } from '@types';
 import {
   Transaction,
   TransactionState,
 } from 'app/components/transaction/transaction';
 import { TransactionService } from 'app/components/transaction/transaction.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -146,7 +146,7 @@ export class PosClientViewComponent {
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

@@ -38,6 +38,7 @@ import { TransactionService } from '../../transaction/transaction.service';
 import { CashBoxService } from '../cash-box.service';
 
 //Componentes
+import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/components/config/config.service';
 import { CurrencyValue } from 'app/components/currency-value/currency-value';
@@ -48,7 +49,6 @@ import { TransactionTypeService } from 'app/components/transaction-type/transact
 import { User } from 'app/components/user/user';
 import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { PrintComponent } from '../../print/print/print.component';
 
@@ -724,7 +724,7 @@ export class CashBoxComponent implements OnInit {
         ? (this.transaction.madein = 'mostrador')
         : (this.transaction.madein = this.posType);
       this._transactionService.save(this.transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

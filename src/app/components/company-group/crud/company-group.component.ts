@@ -25,7 +25,7 @@ import { Subject, Subscription } from 'rxjs';
 import { CompanyGroup } from '../company-group';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { FormField } from 'app/util/formField.interface';
+import { FormField } from '@types';
 import { CompanyGroupService } from '../company-group.service';
 
 @Component({

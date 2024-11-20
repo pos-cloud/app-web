@@ -32,6 +32,7 @@ import { TransactionTypeService } from '../../transaction-type/transaction-type.
 import { TransactionService } from '../transaction.service';
 
 //Pipes
+import { ApiResponse } from '@types';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import {
@@ -56,7 +57,6 @@ import { MovementOfCancellation } from './../../../components/movement-of-cancel
 import { MovementOfCancellationService } from './../../../components/movement-of-cancellation/movement-of-cancellation.service';
 import { MovementOfCash } from './../../../components/movement-of-cash/movement-of-cash';
 import { UserService } from './../../../components/user/user.service';
-import Resulteable from './../../../util/Resulteable';
 
 @Component({
   selector: 'app-add-transaction',
@@ -566,7 +566,7 @@ export class AddTransactionComponent implements OnInit {
         this.transaction.state === TransactionState.Closed &&
         this.balanceTotal !== -1
       ) {
-        let result: Resulteable = await this._transactionService
+        let result: ApiResponse = await this._transactionService
           .updateBalance(this.transaction)
           .toPromise();
         if (result.status !== 200) throw result;
@@ -802,7 +802,7 @@ export class AddTransactionComponent implements OnInit {
   public updateTransaction(): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(this.transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

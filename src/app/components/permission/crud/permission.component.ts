@@ -19,13 +19,12 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ApiResponse, FormField } from '@types';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { FormField } from 'app/util/formField.interface';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { Permission } from '../permission.model';
@@ -366,7 +365,7 @@ export class PermissionComponent implements OnInit {
         this.transactionTypes = result;
         this.setValuesForm();
       })
-      .catch((error: Resulteable) => this.showToast(error));
+      .catch((error: ApiResponse) => this.showToast(error));
   }
 
   public ngAfterViewInit(): void {

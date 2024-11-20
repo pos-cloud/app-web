@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import {
   MovementOfArticle,
@@ -13,7 +14,6 @@ import {
 } from 'app/components/transaction/transaction';
 import { TransactionService } from 'app/components/transaction/transaction.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';
@@ -219,7 +219,7 @@ export class PosKitchenComponent {
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

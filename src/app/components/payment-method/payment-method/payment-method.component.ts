@@ -12,6 +12,7 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from 'jquery';
 import { CompanyType, PaymentMethod } from '../payment-method';
 
+import { ApiResponse } from '@types';
 import { Account } from 'app/components/account/account';
 import { AccountService } from 'app/components/account/account.service';
 import { Application } from 'app/components/application/application.model';
@@ -21,7 +22,6 @@ import { ArticleService } from 'app/components/article/article.service';
 import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/components/currency/currency.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
@@ -197,7 +197,7 @@ export class PaymentMethodComponent implements OnInit {
           this.setValuesArray();
         }
       })
-      .catch((error: Resulteable) => this.showToast(error));
+      .catch((error: ApiResponse) => this.showToast(error));
 
     if (this.paymentMethodId) {
       this.getPaymentMetod();

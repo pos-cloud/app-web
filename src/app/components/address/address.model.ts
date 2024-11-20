@@ -1,7 +1,7 @@
-import {IAttribute} from 'app/util/attribute.interface';
+import { IAttribute } from '@types';
 
-import {Company} from '../company/company';
-import {Model} from '../model/model.model';
+import { Company } from '../company/company';
+import { Model } from '../model/model.model';
 
 export class Address extends Model {
   public type: string;
@@ -137,7 +137,7 @@ export class Address extends Model {
 }
 
 export enum ShippingStatus {
-  Unpacked = <any>  'Desempaquetado',
-  Fulfilled = <any> 'Enviado' ,
-  Unfulfilled =  <any> 'No enviado'
+  Unpacked = <any>'Desempaquetado',
+  Fulfilled = <any>'Enviado',
+  Unfulfilled = <any>'No enviado',
 }

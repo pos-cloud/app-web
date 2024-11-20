@@ -1,7 +1,7 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IButton } from 'app/util/buttons.interface';
+import { IButton } from '@types';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { Category } from '../category';
 import { CategoryService } from '../category.service';

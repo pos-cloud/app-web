@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { Subscription } from 'rxjs';
 import { Config } from '../../../app.config';
 import { User } from '../../../components/user/user';
 import { TranslateMePipe } from '../../../core/pipes/translate-me';
-import Resulteable from '../../../util/Resulteable';
 import { ConfigService } from '../../config/config.service';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
@@ -213,7 +213,7 @@ export class WebTransactionsComponent implements OnInit {
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {
@@ -465,7 +465,7 @@ export class WebTransactionsComponent implements OnInit {
             state
           )
           .subscribe(
-            (result: Resulteable) => {
+            (result: ApiResponse) => {
               if (result.status === 201) {
                 this.refresh();
                 resolve(result.result);

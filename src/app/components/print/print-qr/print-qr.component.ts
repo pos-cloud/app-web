@@ -7,6 +7,7 @@ import jsPDF from 'jspdf';
 
 //modelos
 import { HttpClient } from '@angular/common/http';
+import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import { Application } from 'app/components/application/application.model';
 import { ApplicationService } from 'app/components/application/application.service';
@@ -21,7 +22,6 @@ import { Table } from 'app/components/table/table';
 import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 
 let splitRegex = /\r\n|\r|\n/g;
@@ -137,7 +137,7 @@ export class PrintQRComponent implements OnInit {
     await this._applicationService
       .getAll({ sort: { name: 1 } })
       .toPromise()
-      .then((result: Resulteable) => {
+      .then((result: ApiResponse) => {
         if (result.status === 200 && result.result.length > 0) {
           applications = result.result;
         } else this.showToast(result);

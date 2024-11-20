@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse } from '@types';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
@@ -14,7 +15,6 @@ import { User } from 'app/components/user/user';
 import { UserService } from 'app/components/user/user.service';
 import { JsonDiffPipe } from 'app/core/pipes/json-diff';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
@@ -511,7 +511,7 @@ export class PosPackingComponent {
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

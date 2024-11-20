@@ -1,7 +1,7 @@
-import {IAttribute} from 'app/util/attribute.interface';
+import { IAttribute } from '@types';
 import * as moment from 'moment';
 
-import {User} from '../user/user';
+import { User } from '../user/user';
 
 export class Model {
   public _id: string;

@@ -1,9 +1,9 @@
+import { IService } from '@types';
 import * as moment from 'moment';
 import { Account } from './components/account/account';
 import { Currency } from './components/currency/currency';
 import { IdentificationType } from './components/identification-type/identification-type';
 import { VATCondition } from './components/vat-condition/vat-condition';
-import { IService } from './util/service.interface';
 
 export class Config {
   public _id: string;

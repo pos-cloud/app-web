@@ -1,13 +1,14 @@
-import { IAttribute } from 'app/util/attribute.interface';
+import { IAttribute } from '@types';
 import { Model } from '../model/model.model';
 
 export class UnitOfMeasurement extends Model {
-
   public code: string = '1';
   public abbreviation: string = '';
   public name: string = '';
 
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
 
   static getAttributes(): IAttribute[] {
     return Model.getAttributes([
@@ -43,8 +44,7 @@ export class UnitOfMeasurement extends Model {
         project: null,
         align: 'left',
         required: false,
-      }
-    ])
+      },
+    ]);
   }
 }
-

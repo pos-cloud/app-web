@@ -29,12 +29,11 @@ import { RoomService } from '../room/room.service';
 import { TransactionTypeService } from '../transaction-type/transaction-type.service';
 import { TransactionService } from '../transaction/transaction.service';
 
-import { EmailProps } from '@types';
+import { ApiResponse, EmailProps } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { TranslateMePipe } from '../../core/pipes/translate-me';
-import Resulteable from '../../util/Resulteable';
 import { padNumber } from '../../util/functions/pad/padNumber';
 import { removeParam } from '../../util/functions/removeParam';
 import { SelectBranchComponent } from '../branch/select-branch/select-branch.component';
@@ -1859,7 +1858,7 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionService
       .validateElectronicTransactionAR(this.transaction, null)
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             let transactionResponse: Transaction = result.result;
             this.transaction.CAE = transactionResponse.CAE;
@@ -2035,7 +2034,7 @@ export class PointOfSaleComponent implements OnInit {
         }
       }
 
-      let result: Resulteable = await this._transactionService
+      let result: ApiResponse = await this._transactionService
         .updateBalance(this.transaction)
         .toPromise();
       if (result.status !== 200) throw result;
@@ -2360,7 +2359,7 @@ export class PointOfSaleComponent implements OnInit {
         ? (this.transaction.madein = 'mostrador')
         : (this.transaction.madein = this.posType);
       this._transactionService.save(this.transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {
@@ -2399,7 +2398,7 @@ export class PointOfSaleComponent implements OnInit {
   public updateTransaction(transaction: Transaction): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.update(transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {
@@ -2560,7 +2559,7 @@ export class PointOfSaleComponent implements OnInit {
             state
           )
           .subscribe(
-            (result: Resulteable) => {
+            (result: ApiResponse) => {
               if (result.status === 201) {
                 this.refresh();
                 resolve(result.result);

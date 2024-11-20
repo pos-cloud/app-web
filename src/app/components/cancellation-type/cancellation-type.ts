@@ -1,10 +1,9 @@
-import { IAttribute } from 'app/util/attribute.interface';
+import { IAttribute } from '@types';
 import { Model } from '../model/model.model';
 import { TransactionType } from '../transaction-type/transaction-type';
 import { TransactionState } from '../transaction/transaction';
 
 export class CancellationType extends Model {
-
   public origin: TransactionType;
   public destination: TransactionType;
   public automaticSelection: boolean = true;
@@ -15,7 +14,9 @@ export class CancellationType extends Model {
   public stateOrigin: TransactionState;
   public updatePrices: boolean = false;
 
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
 
   static getAttributes(): IAttribute[] {
     return Model.getAttributes([
@@ -40,7 +41,8 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }, {
+      },
+      {
         name: 'destination.transactionMovement',
         visible: true,
         disabled: false,
@@ -50,7 +52,8 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }, {
+      },
+      {
         name: 'destination.name',
         visible: true,
         disabled: false,
@@ -60,7 +63,8 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }, {
+      },
+      {
         name: 'automaticSelection',
         visible: true,
         disabled: false,
@@ -70,7 +74,8 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }, {
+      },
+      {
         name: 'modifyBalance',
         visible: true,
         disabled: false,
@@ -80,7 +85,8 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }, {
+      },
+      {
         name: 'requestAutomatic',
         visible: true,
         disabled: false,
@@ -90,7 +96,8 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }, {
+      },
+      {
         name: 'requestCompany',
         visible: true,
         disabled: false,
@@ -100,7 +107,8 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }, {
+      },
+      {
         name: 'requestStatusOrigin',
         visible: true,
         disabled: false,
@@ -110,7 +118,8 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }, {
+      },
+      {
         name: 'stateOrigin',
         visible: true,
         disabled: false,
@@ -120,8 +129,7 @@ export class CancellationType extends Model {
         project: null,
         align: 'left',
         required: false,
-      }
-    ])
+      },
+    ]);
   }
 }
-

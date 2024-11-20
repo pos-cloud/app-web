@@ -39,7 +39,6 @@ import { CurrencyService } from 'app/components/currency/currency.service';
 import { Holiday } from 'app/components/holiday/holiday.model';
 import { HolidayService } from 'app/components/holiday/holiday.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -51,6 +50,7 @@ import {
 } from 'rxjs/operators';
 import Keyboard from 'simple-keyboard';
 
+import { ApiResponse } from '@types';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
@@ -1318,7 +1318,7 @@ export class AddMovementOfCashComponent implements OnInit {
                       },
                     })
                     .toPromise()
-                    .then((result: Resulteable) => {
+                    .then((result: ApiResponse) => {
                       p.currency = result.result[0];
                     });
                 }
@@ -2341,7 +2341,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.transaction.totalPrice
       );
       this._transactionService.update(this.transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

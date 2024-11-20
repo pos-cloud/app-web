@@ -1,9 +1,10 @@
-import { IAttribute } from 'app/util/attribute.interface';
+import { IAttribute } from '@types';
 import { Model } from '../model/model.model';
 
 export class History extends Model {
-
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
 
   static getAttributes(): IAttribute[] {
     return Model.getAttributes([
@@ -84,6 +85,6 @@ export class History extends Model {
         align: 'left',
         required: false,
       },
-    ])
+    ]);
   }
 }

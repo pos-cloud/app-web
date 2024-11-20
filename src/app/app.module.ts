@@ -391,7 +391,6 @@ export function createTranslateLoader(http: HttpClient) {
     ListCurrencyValuesComponent,
     SelectCompanyComponent,
     SelectTableComponent,
-
     EmailTemplateComponent,
     ListEmailTemplatesComponent,
     SelectChecksComponent,

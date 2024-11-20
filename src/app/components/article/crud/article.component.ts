@@ -63,7 +63,7 @@ import { Currency } from '../../currency/currency';
 import { CurrencyService } from '../../currency/currency.service';
 
 // Pipes
-import { MediaCategory } from '@types';
+import { ApiResponse, MediaCategory } from '@types';
 import { CompanyService } from 'app/components/company/company.service';
 import { TaxService } from 'app/components/tax/tax.service';
 import { User } from 'app/components/user/user';
@@ -78,7 +78,6 @@ import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { FileService } from 'app/shared/services/file.service';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import Resulteable from '../../../util/Resulteable';
 import { Tax, TaxClassification } from '../../tax/tax';
 import { UnitOfMeasurement } from '../../unit-of-measurement/unit-of-measurement.model';
 import { UnitOfMeasurementService } from '../../unit-of-measurement/unit-of-measurement.service';
@@ -508,7 +507,7 @@ export class ArticleComponent implements OnInit {
           });
         }
       })
-      .catch((error: Resulteable) => this._toastService.showToast(error));
+      .catch((error: ApiResponse) => this._toastService.showToast(error));
     if (this.articleId && this.articleId !== '') {
       this.getArticle();
     } else {
@@ -1879,7 +1878,7 @@ export class ArticleComponent implements OnInit {
   async deleteArticle() {
     this.loading = true;
     this._articleService.delete(this.article._id).subscribe(
-      (result: Resulteable) => {
+      (result: ApiResponse) => {
         if (result.status == 200) {
           this._toastService.showToast(result);
           this.returnTo();

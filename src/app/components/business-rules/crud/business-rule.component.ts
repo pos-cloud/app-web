@@ -15,6 +15,7 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
+import { FormField } from '@types';
 import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
 import { ArticleService } from 'app/components/article/article.service';
@@ -32,7 +33,6 @@ import {
 import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { FormField } from 'app/util/formField.interface';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';

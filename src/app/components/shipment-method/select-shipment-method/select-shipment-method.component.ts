@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ApiResponse } from '@types';
 import { Address } from 'app/components/address/address.model';
 import { AddressService } from 'app/components/address/address.service';
 import { Company } from 'app/components/company/company';
 import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ShipmentMethod } from '../shipment-method.model';
@@ -59,7 +59,7 @@ export class SelectShipmentMethodComponent implements OnInit {
         },
       })
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             this.shipmentMethods = result.result;
           } else this.showToast(result);

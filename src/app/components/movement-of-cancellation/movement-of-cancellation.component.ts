@@ -23,6 +23,7 @@ import { MovementOfArticleService } from '../movement-of-article/movement-of-art
 import { TransactionService } from '../transaction/transaction.service';
 
 import { Router } from '@angular/router';
+import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import { ArticleFieldType } from 'app/components/article-field/article-field';
 import { ArticleFields } from 'app/components/article-field/article-fields';
@@ -35,7 +36,6 @@ import { MovementOfCashService } from 'app/components/movement-of-cash/movement-
 import { Taxes } from 'app/components/tax/taxes';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import { ToastrService } from 'ngx-toastr';
 import { Article } from '../article/article';
 import { ArticleService } from '../article/article.service';
@@ -929,7 +929,7 @@ export class MovementOfCancellationComponent implements OnInit {
             mov.transactionOrigin.administrativeExpenseAmount > 0 ||
             mov.transactionOrigin.otherExpenseAmount > 0
           ) {
-            let result: Resulteable = await this._movementOfCashService
+            let result: ApiResponse = await this._movementOfCashService
               .getAll({
                 project: {
                   _id: 1,
@@ -1276,7 +1276,7 @@ export class MovementOfCancellationComponent implements OnInit {
     return new Promise<Transaction>((resolve, reject) => {
       transaction.state = status;
       this._transactionService.update(transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {

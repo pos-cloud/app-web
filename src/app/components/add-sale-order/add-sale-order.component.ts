@@ -32,7 +32,6 @@ import { UseOfCFDIService } from 'app/components/use-of-CFDI.component.ts/use-of
 import { User } from 'app/components/user/user';
 import { JsonDiffPipe } from 'app/core/pipes/json-diff';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import Resulteable from 'app/util/Resulteable';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';
@@ -90,7 +89,7 @@ import { TransactionService } from '../transaction/transaction.service';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
 import { UserService } from '../user/user.service';
 
-import { EmailProps } from '@types';
+import { ApiResponse, EmailProps } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { VariantService } from '../variant/variant.service';
 import { Config } from './../../app.config';
@@ -402,7 +401,7 @@ export class AddSaleOrderComponent {
           },
         })
         .subscribe(
-          (result: Resulteable) => {
+          (result: ApiResponse) => {
             if (result.status === 200) {
               resolve(result.result);
             } else {
@@ -597,7 +596,7 @@ export class AddSaleOrderComponent {
         this.transaction.totalPrice
       );
       this._transactionService.update(this.transaction).subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             resolve(result.result);
           } else {
@@ -2123,7 +2122,7 @@ export class AddSaleOrderComponent {
         this.canceledTransactions
       )
       .subscribe(
-        (result: Resulteable) => {
+        (result: ApiResponse) => {
           if (result.status === 200) {
             let transactionResponse: Transaction = result.result;
 
@@ -3385,7 +3384,7 @@ export class AddSaleOrderComponent {
         await this.updateOrdenOfProduction(this.transaction._id);
       }
 
-      let result: Resulteable = await this._transactionService
+      let result: ApiResponse = await this._transactionService
         .updateBalance(this.transaction)
         .toPromise();
 
