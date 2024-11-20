@@ -1,4 +1,4 @@
-import { Branch } from "./branch.component";
+import { Branch } from "./branch.interface";
 import { User } from "./user.interface";
 
 export interface Deposit {

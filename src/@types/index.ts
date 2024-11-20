@@ -1,6 +1,6 @@
 // entities
 export { Article } from './entities/article.interface';
-export { Branch } from './entities/branch.component';
+export { Branch } from './entities/branch.interface';
 export { Category } from './entities/category.interface';
 export { Classification } from './entities/classification.interface';
 export { Deposit } from './entities/deposit.interface';
