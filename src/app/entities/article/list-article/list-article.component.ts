@@ -1,13 +1,13 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/components/price-list/price-list.service';
 import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
 import { PrinterService } from 'app/components/printer/printer.service';
 import { ImportComponent } from 'app/shared/components/import/import.component';
-import { IButton } from 'app/util/buttons.interface';
 import { PrintLabelComponent } from '../actions/print-label/print-label.component';
 import { PrintLabelsComponent } from '../actions/print-labels/print-labels.component';
 import { UpdateArticlePriceComponent } from '../actions/update-article-price.ts/update-article-price.component';
