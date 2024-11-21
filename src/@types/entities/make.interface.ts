@@ -1,11 +1,7 @@
-import { User } from './user.interface';
+import { Activity } from '@types';
 
-export interface Make {
+export interface Make extends Activity {
   _id: string;
   description: string;
   visibleSale: boolean;
-  creationUser?: User;
-  creationDate?: string;
-  updateUser?: User;
-  updateDate?: string;
 }

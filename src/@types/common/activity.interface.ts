@@ -1,13 +1,12 @@
 import { User } from '@types';
-
-export interface IAudit {
-  date: string;
-  user: User;
-}
-
-export interface IModel {
+export interface Activity {
   _id: string;
-  audits: IAudit[];
+  audits: [
+    {
+      date: string;
+      user: User;
+    },
+  ];
   creationDate: string;
   updateDate: string;
   creationUser: User;
