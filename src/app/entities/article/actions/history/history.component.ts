@@ -12,7 +12,6 @@ import { ArticleService } from '../../article.service';
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
-  styleUrls: ['./history.component.css'],
   providers: [RoundNumberPipe],
 })
 export class HistoryComponent implements OnInit {
