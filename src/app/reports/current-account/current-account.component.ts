@@ -205,11 +205,10 @@ export class CurrentAccountComponent implements OnInit {
           this.items = new Array();
           this.totalItems = 0;
         } else {
-          if (this.isFirstTime) {
+          if (this.isFirstTime && result?.result?.[0]?.count > 0) {
             const totalCount = result.result[0].count;
             const totalPages = Math.ceil(totalCount / limit);
             const lastPageSkip = (totalPages - 1) * limit;
-
             this.pageChange(lastPageSkip);
             this.isFirstTime = false;
           } else {
