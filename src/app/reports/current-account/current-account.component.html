@@ -5,9 +5,10 @@
       <div class="pull-right">
         <!-- <app-point-of-sale [company]="companySelected" [totalPrice]="balance">
         </app-point-of-sale> -->
-        <button class="btn btn-light" (click)="refresh()" [disabled]="loading"><i
-          class="fa fa-refresh"></i><span>Actualizar</span></button>
-        <button
+        <button class="btn btn-light" (click)="refresh()" [disabled]="loading">
+          <i class="fa fa-refresh"></i><span>Actualizar</span>
+        </button>
+        <!-- <button
           [disabled]="loading"
           type="button"
           class="btn btn-light btn-sm"
@@ -18,7 +19,7 @@
         </button>
         <button [disabled]="loading" class="btn" (click)="openModal('print')">
           <i class="fa fa-print"></i> Imprimir
-        </button>
+        </button> -->
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -61,7 +62,24 @@
           <input
             type="text"
             class="form-control"
-            [value]="(companySelected.address ? ' Dirección: ' + companySelected.address : '') + (companySelected.city ? ', Ciudad: ' + companySelected.city : '') + (companySelected.addressNumber ? ', N°: ' + companySelected.addressNumber : '') + (companySelected.floorNumber ? ', P: ' + companySelected.floorNumber : '') + (companySelected.flat ? ', D: ' + companySelected.flat : '') + (companySelected.zipCode ? ', CP: ' + companySelected.zipCode : '')"
+            [value]="
+              (companySelected.address
+                ? ' Dirección: ' + companySelected.address
+                : '') +
+              (companySelected.city
+                ? ', Ciudad: ' + companySelected.city
+                : '') +
+              (companySelected.addressNumber
+                ? ', N°: ' + companySelected.addressNumber
+                : '') +
+              (companySelected.floorNumber
+                ? ', P: ' + companySelected.floorNumber
+                : '') +
+              (companySelected.flat ? ', D: ' + companySelected.flat : '') +
+              (companySelected.zipCode
+                ? ', CP: ' + companySelected.zipCode
+                : '')
+            "
             readonly
           />
         </div>
@@ -192,7 +210,7 @@
               </td>
               <td class="align-center">{{ item.letter }}</td>
               <td class="align-center">{{ item.number }}</td>
-              <td class="align-right">
+              <td class="align-left">
                 {{ item.paymentMethodName }}
               </td>
               <td class="align-center">
@@ -247,11 +265,11 @@
                 totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
             </td>
-             <td *ngIf="showBalanceOfTransactions" class="align-right">
+            <td *ngIf="showBalanceOfTransactions" class="align-right">
               <strong>{{
                 balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
               }}</strong>
-            </td> 
+            </td>
           </tfoot>
         </table>
       </div>

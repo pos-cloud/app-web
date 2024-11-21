@@ -15,9 +15,7 @@ import { CompanyType } from 'app/components/payment-method/payment-method';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import { PrinterService } from 'app/components/printer/printer.service';
-import {
-  TransactionMovement
-} from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
 import { TransactionService } from 'app/components/transaction/transaction.service';
@@ -208,8 +206,10 @@ export class CurrentAccountComponent implements OnInit {
           this.totalItems = 0;
         } else {
           if (this.isFirstTime) {
-            const totalPages = Math.ceil(this.totalItems / limit); // Número total de páginas
+            const totalCount = result.result[0].count;
+            const totalPages = Math.ceil(totalCount / limit);
             const lastPageSkip = (totalPages - 1) * limit;
+
             this.pageChange(lastPageSkip);
             this.isFirstTime = false;
           } else {
@@ -368,7 +368,7 @@ export class CurrentAccountComponent implements OnInit {
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
 
-          console.log(this.isFirstTime)
+          console.log(this.isFirstTime);
           if (this.isFirstTime) {
             const totalPages = Math.ceil(this.totalItems / limit); // Número total de páginas
             const lastPageSkip = (totalPages - 1) * limit;

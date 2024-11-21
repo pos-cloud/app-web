@@ -14,11 +14,7 @@ export class CurrentAccountService {
     public _authService: AuthService
   ) {}
 
-  public getSummaryOfAccountsByCompany(
-    data: {}
-    // page: number,
-    // itemsPerPage: number
-  ): Observable<any> {
+  public getSummaryOfAccountsByCompany(data: {}): Observable<any> {
     const URL = `${environment.apiv2}/companies/details-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
@@ -68,7 +64,7 @@ export class CurrentAccountService {
       .set('Authorization', this._authService.getToken());
 
     return this._http
-      .post(URL, data,{
+      .post(URL, data, {
         headers: headers,
       })
       .pipe(
@@ -81,7 +77,7 @@ export class CurrentAccountService {
       );
   }
 
-  public getPaymentMethodOfAccountsByCompany(data: {}) : Observable<any> {
+  public getPaymentMethodOfAccountsByCompany(data: {}): Observable<any> {
     const URL = `${environment.apiv2}/companies/payment-method-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
@@ -101,5 +97,4 @@ export class CurrentAccountService {
         })
       );
   }
-
 }
