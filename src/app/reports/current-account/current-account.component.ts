@@ -12,8 +12,6 @@ import { ConfigService } from 'app/components/config/config.service';
 import { AuthService } from 'app/components/login/auth.service';
 import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
 import { CompanyType } from 'app/components/payment-method/payment-method';
-import { PrintComponent } from 'app/components/print/print/print.component';
-import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import { PrinterService } from 'app/components/printer/printer.service';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
@@ -211,6 +209,7 @@ export class CurrentAccountComponent implements OnInit {
             const lastPageSkip = (totalPages - 1) * limit;
             this.pageChange(lastPageSkip);
             this.isFirstTime = false;
+            this.loading = false;
           } else {
             this.items = result.result[0].items;
             this.totalItems = result.result[0].count;
@@ -250,42 +249,42 @@ export class CurrentAccountComponent implements OnInit {
         );
         break;
       case 'print':
-        if (this.companySelected) {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.items = this.items;
-          modalRef.componentInstance.company = this.companySelected;
-          modalRef.componentInstance.params = {
-            detailsPaymentMethod: this.detailsPaymentMethod,
-          };
-          modalRef.componentInstance.typePrint = 'current-account';
-          modalRef.componentInstance.balance = this.totalPrice;
-        } else {
-          //this.showMessage('Debe seleccionar una empresa.', 'info', true);
-        }
+        // if (this.companySelected) {
+        //   modalRef = this._modalService.open(PrintComponent);
+        //   modalRef.componentInstance.items = this.items;
+        //   modalRef.componentInstance.company = this.companySelected;
+        //   modalRef.componentInstance.params = {
+        //     detailsPaymentMethod: this.detailsPaymentMethod,
+        //   };
+        //   modalRef.componentInstance.typePrint = 'current-account';
+        //   modalRef.componentInstance.balance = this.totalPrice;
+        // } else {
+        //   //this.showMessage('Debe seleccionar una empresa.', 'info', true);
+        // }
         break;
       case 'print-transaction':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = transactionId;
-        modalRef.componentInstance.company = this.companySelected;
-        modalRef.componentInstance.typePrint = 'invoice';
-        await this.getTransaction(transactionId).then(async (transaction) => {
-          if (transaction) {
-            if (transaction.type.defectPrinter) {
-              modalRef.componentInstance.printer =
-                transaction.type.defectPrinter;
-            } else {
-              await this.getPrinters().then((printers) => {
-                if (printers) {
-                  for (let printer of printers) {
-                    if (printer.printIn === PrinterPrintIn.Counter) {
-                      modalRef.componentInstance.printer = printer;
-                    }
-                  }
-                }
-              });
-            }
-          }
-        });
+        // modalRef = this._modalService.open(PrintComponent);
+        // modalRef.componentInstance.transactionId = transactionId;
+        // modalRef.componentInstance.company = this.companySelected;
+        // modalRef.componentInstance.typePrint = 'invoice';
+        // await this.getTransaction(transactionId).then(async (transaction) => {
+        //   if (transaction) {
+        //     if (transaction.type.defectPrinter) {
+        //       modalRef.componentInstance.printer =
+        //         transaction.type.defectPrinter;
+        //     } else {
+        //       await this.getPrinters().then((printers) => {
+        //         if (printers) {
+        //           for (let printer of printers) {
+        //             if (printer.printIn === PrinterPrintIn.Counter) {
+        //               modalRef.componentInstance.printer = printer;
+        //             }
+        //           }
+        //         }
+        //       });
+        //     }
+        //   }
+        // });
         break;
 
       default:
@@ -305,23 +304,6 @@ export class CurrentAccountComponent implements OnInit {
         },
         (error) => {
           this._toastService.showToast(error);
-          resolve(null);
-        }
-      );
-    });
-  }
-
-  public getPrinters(): Promise<Printer[]> {
-    return new Promise<Printer[]>(async (resolve, reject) => {
-      this._printerService.getPrinters().subscribe(
-        (result) => {
-          if (!result.printers) {
-            resolve(null);
-          } else {
-            resolve(result.printers);
-          }
-        },
-        (error) => {
           resolve(null);
         }
       );
