@@ -32,23 +32,8 @@
           {{ alertMessage }}
         </ngb-alert>
       </div>
-      <div class="row container-filter">
-        <div class="col-md-2">
-          <label for="showBalanceOfTransactions" class="control-label">
-            <b>Muestra saldo</b>
-          </label>
-          <select
-            class="form-control"
-            [(ngModel)]="showBalanceOfTransactions"
-            [disabled]="loading"
-          >
-            <option [ngValue]="true">Sí</option>
-            <option [ngValue]="false">No</option>
-          </select>
-        </div>
-      </div>
       <div class="row">
-        <div class="form-group col-md-3" *ngIf="companySelected">
+        <div class="form-group col-md-4" *ngIf="companySelected">
           <label for="name" class="control-label">Nombre:</label>
           <input
             type="text"
@@ -57,7 +42,7 @@
             readonly
           />
         </div>
-        <div class="form-group col-md-4" *ngIf="companySelected">
+        <div class="form-group col-md-8" *ngIf="companySelected">
           <label for="address" class="control-label">Dirección:</label>
           <input
             type="text"
@@ -83,7 +68,18 @@
             readonly
           />
         </div>
-        <div class="form-group col-md-2" *ngIf="companySelected">
+      </div>
+      <div class="row">
+        <div class="form-group col-md-4" *ngIf="companySelected">
+          <label for="name" class="control-label">Nombre de Fantasía:</label>
+          <input
+            type="text"
+            class="form-control"
+            [value]="companySelected.fantasyName"
+            readonly
+          />
+        </div>
+        <div class="form-group col-md-4" *ngIf="companySelected">
           <label for="phones" class="control-label">Teléfono:</label>
           <input
             type="text"
@@ -92,7 +88,7 @@
             readonly
           />
         </div>
-        <div class="form-group col-md-2" *ngIf="companySelected">
+        <div class="form-group col-md-3" *ngIf="companySelected">
           <label for="emails" class="control-label">Email:</label>
           <input
             type="text"
@@ -101,13 +97,18 @@
             readonly
           />
         </div>
-        <div class="form-group col-md-10" *ngIf="!companySelected">
-          <input
-            type="text"
+        <div class="col-md-1">
+          <label for="showBalanceOfTransactions" class="control-label">
+            <b>Muestra saldo</b>
+          </label>
+          <select
             class="form-control"
-            value="Seleccione una empresa"
-            readonly
-          />
+            [(ngModel)]="showBalanceOfTransactions"
+            [disabled]="loading"
+          >
+            <option [ngValue]="true">Sí</option>
+            <option [ngValue]="false">No</option>
+          </select>
         </div>
       </div>
       <div class="row center-content">
