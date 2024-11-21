@@ -1,4 +1,4 @@
-import { IModel } from '@types';
+import { Activity } from '@types';
 import { Category } from './category.interface';
 import { Classification } from './classification.interface';
 import { Make } from './make.interface';
@@ -7,7 +7,7 @@ import { User } from './user.interface';
 import { VariantType } from './variant-type.interface';
 import { VariantValue } from './variant-value.interface';
 
-export interface Article extends IModel {
+export interface Article extends Activity {
   creationDate: string;
   creationUser: User;
   type: string;
