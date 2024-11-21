@@ -300,7 +300,7 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/rubros',
+    path: 'admin/categories',
     component: ListCategoriesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },

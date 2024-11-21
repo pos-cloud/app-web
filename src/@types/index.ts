@@ -19,4 +19,5 @@ export { IButton } from './common/buttons.interface';
 export { EmailProps } from './common/email-props.type';
 export { FormField } from './common/form-field.interface';
 export { MediaCategory } from './common/media-category.enum';
+export { IModel } from './common/model.interface';
 export { IService } from './common/service.interface';

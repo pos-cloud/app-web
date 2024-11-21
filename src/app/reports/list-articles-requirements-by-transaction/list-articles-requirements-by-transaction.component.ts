@@ -23,7 +23,6 @@ import { ListArticlesRequirementsByTransactionService } from './list-articles.re
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
   templateUrl: './list-articles-requirements-by-transaction.component.html',
-  styleUrls: ['./list-articles-requirements-by-transaction.component.css'],
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   private subscription: Subscription = new Subscription();

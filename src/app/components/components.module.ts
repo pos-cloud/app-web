@@ -15,7 +15,6 @@ import { ExportersModule } from './export/exporters.module';
 import { GalleryModule } from './gallery/gallery.module';
 import { HistoryModule } from './history/history.module';
 import { HolidayModule } from './holiday/holiday.module';
-import { MakeModule } from './make/make.module';
 import { PermissionModule } from './permission/permission.module';
 import { ReportModule } from './report/report.module';
 import { ResourceModule } from './resource/resource.module';
@@ -46,7 +45,6 @@ import { VariantValueModule } from './variant-value/variant-value.module';
     ReportModule,
     BusinessRuleModule,
     ArticleModule,
-    MakeModule,
     GalleryModule,
     ResourceModule,
   ],
