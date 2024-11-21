@@ -5,9 +5,8 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { MakeService } from '../make.service';
 
-import { IButton } from '@types';
+import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
-import { attributes } from '../make.model';
 
 @Component({
   selector: 'app-list-makes',
@@ -18,7 +17,7 @@ import { attributes } from '../make.model';
 export class ListMakesComponent {
   public title: string;
   public sort = { description: 1 };
-  public columns = attributes;
+  public columns: IAttribute[];
   public pathLocation: string[];
   public priceListId: string;
   public loading: boolean = false;
@@ -31,6 +30,59 @@ export class ListMakesComponent {
     public _service: MakeService,
     private _router: Router
   ) {
+    this.columns = [
+      {
+        name: 'description',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'visibleSale',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: true,
+      },
+      {
+        name: 'creationDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'date',
+        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updateDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
+      },
+    ];
     this.rowButtons = [
       {
         title: 'view',
