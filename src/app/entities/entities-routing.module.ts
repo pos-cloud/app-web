@@ -9,6 +9,11 @@ const routes: Routes = [
     loadChildren: () => import('./make/make.module').then((m) => m.MakeModule), // Lazy load MakeModule
     canActivate: [AuthGuard, LicenseGuard], // Protege las rutas con guardias si es necesario
   },
+  {
+    path: 'articles',
+    loadChildren:  () => import('./article/article.module').then((m) => m.ArticleModule), 
+    canActivate: [AuthGuard, LicenseGuard], 
+  }
   // Otras rutas específicas de Entities si las tienes
 ];
 
