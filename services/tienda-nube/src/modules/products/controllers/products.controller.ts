@@ -10,15 +10,15 @@ import {
   Put,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
-import { TiendaNubeService } from '../../../services/tienda-nube/services/tienda-nube.service'
+import { TiendaNubeService } from '../../../services/tienda-nube/services/tienda-nube.service';
 import CustomRequest from 'src/common/interfaces/request.interface';
 
 @Controller('products')
 export class ProductsController {
   constructor(
-     private readonly productsService: ProductsService,
-     private  readonly tiendaNubeService: TiendaNubeService
-    ) {}
+    private readonly productsService: ProductsService,
+    private readonly tiendaNubeService: TiendaNubeService,
+  ) {}
 
   @Post()
   create(
@@ -33,10 +33,7 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(
-    @Request() request: CustomRequest,
-    @Body('page') page: string
-  ) {
+  findAll(@Request() request: CustomRequest, @Body('page') page: string) {
     return this.productsService.findAll(request.database, page);
   }
 
@@ -58,7 +55,6 @@ export class ProductsController {
     @Body('tiendaNubeIds') tiendaNubeIds: string[],
     @Request() request: CustomRequest,
   ) {
-    console.log(tiendaNubeIds)
     return this.productsService.massiveUpdate(request.database, tiendaNubeIds);
   }
 
@@ -67,8 +63,12 @@ export class ProductsController {
     @Body('productTn') productTn: string,
     @Body('variantTn') variantTn: string,
     @Request() request: CustomRequest,
-  ){
-    return this.productsService.removeVariant(request.database, productTn, variantTn)
+  ) {
+    return this.productsService.removeVariant(
+      request.database,
+      productTn,
+      variantTn,
+    );
   }
 
   @Delete(':tiendaNubeId')

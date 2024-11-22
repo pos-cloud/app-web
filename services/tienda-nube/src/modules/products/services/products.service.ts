@@ -216,16 +216,16 @@ export class ProductsService {
       database,
     );
 
-    const arrayCreateVariant = []
+    const arrayCreateVariant = [];
 
-    for(let variant of variantData){
-      const response =await this.tiendaNubeService.createVarianteByProduct(
+    for (let variant of variantData) {
+      const response = await this.tiendaNubeService.createVarianteByProduct(
         tokenTiendaNube,
         userIdTiendaNube,
         productTiendaNube,
         variant,
       );
-   arrayCreateVariant.push(response)
+      arrayCreateVariant.push(response);
     }
     return arrayCreateVariant;
   }
@@ -261,7 +261,6 @@ export class ProductsService {
           // }
           for (let attribute of attributes) {
             for (let variantValue of element.variants) {
-              console.log('axxa',variantValue?.value?.description)
               if (
                 attribute ==
                 variantValue.type.name.toLocaleLowerCase().replace(/ /g, '_')
@@ -392,7 +391,7 @@ export class ProductsService {
           ];
         }
       }
-// console.log(foundArticle)
+
       const result = await this.tiendaNubeService.updateProduct(
         token,
         userID,
@@ -439,7 +438,6 @@ export class ProductsService {
 
       const dataVarinat: ResponseVariantsDB[] =
         await this.poolDatabase.getVariantDataByArticle(productId, database);
-console.log(JSON.stringify(dataVarinat))
       const variantProducts = await historiesCollection
         .find({
           'doc.articleParent': new ObjectId(foundArticle._id.toString()),
@@ -480,7 +478,6 @@ console.log(JSON.stringify(dataVarinat))
               operationType: { $ne: 'D' },
               article: new ObjectId(variant.articleChild),
             });
-console.log(variant?.articleChildInfo?.description)
             await this.tiendaNubeService.updateVarinat(
               token,
               userID,

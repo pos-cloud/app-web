@@ -78,7 +78,6 @@ export class DatabaseService {
   async getCredentialsTiendaNube() {
     const itemCollection = this.getCollection('configs');
 
-    // console.log(itemCollection)
     const documents = await itemCollection.find({}).toArray();
 
     const { token, userID } = documents[0].tiendaNube;
@@ -95,7 +94,7 @@ export class DatabaseService {
       .aggregate([
         {
           $match: {
-            operationType: { $ne: "D" },
+            operationType: { $ne: 'D' },
             articleParent: new ObjectId(productParent),
           },
         },

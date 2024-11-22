@@ -807,12 +807,6 @@ export class ArticleComponent implements OnInit {
 
         if (!valueExists) {
           existingValues.push(variant.value);
-          // existing.value = this.orderByPipe.transform(existingValues, [
-          //   'description',
-          // ]);
-          // existing.value = this.orderByPipe.transform(existing.value, [
-          //   'order',
-          // ]);
         }
       } else {
         // Si el tipo no existe, agregar un nuevo tipo con su valor
@@ -822,19 +816,8 @@ export class ArticleComponent implements OnInit {
         });
       }
     }
-
     // Convertir el mapa a un array y ordenar
-     this.variantsByTypes = Array.from(typeMap.values());
-    // this.variantsByTypes = this.orderByPipe.transform(
-    //   this.variantsByTypes,
-    //   ['type'],
-    //   'name'
-    // );
-    // this.variantsByTypes = this.orderByPipe.transform(
-    //   this.variantsByTypes,
-    //   ['type'],
-    //   'order'
-    // );
+    this.variantsByTypes = Array.from(typeMap.values());
   }
 
   public getVariantValuesByType(variantType: VariantType): void {
@@ -1740,7 +1723,6 @@ export class ArticleComponent implements OnInit {
   addArticle(): void {
     if (this.articleForm.valid) {
       this.loadPosDescription();
-      //this.loadURL();
       const salePrice = this.articleForm.get('salePrice')?.value;
       if (salePrice <= 0) {
         return this._toastService.showToast({
