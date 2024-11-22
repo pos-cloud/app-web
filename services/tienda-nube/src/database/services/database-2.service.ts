@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { MongoClient, Db, Collection, ObjectId } from 'mongodb';
+import { Collection, MongoClient, ObjectId } from 'mongodb';
 import { ResponseVariantsDB } from 'src/common/interfaces/ResponseVariantDb.interface';
 
 @Injectable()
@@ -161,6 +161,9 @@ export class PoolDatabase {
             },
             articleChildInfo: { $first: '$articleChildInfo' },
           },
+        },
+        {
+          $sort: { 'articleChildInfo.index': 1 },
         },
         {
           $project: {

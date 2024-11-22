@@ -63,6 +63,7 @@ export interface ArticleChildInfo {
   height: string;
   depth: string;
   salePriceTN: number;
+  index: number
 }
 
 export interface Variant {
