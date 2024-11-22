@@ -7,18 +7,18 @@ import {
 import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
-import { GalleryService } from 'app/components/gallery/gallery.service';
+import { GalleryService } from '../gallery.service';
 
+import { Resource } from '@types';
 import { Article } from 'app/components/article/article';
 import { ArticleService } from 'app/components/article/article.service';
 import { Gallery } from 'app/components/gallery/gallery';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
-import { Resource } from 'app/components/resource/resource';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'hammerjs';
-import { ResourceService } from '../../resource/resource.service';
+import { ResourceService } from '../../../components/resource/resource.service';
 @Component({
   selector: 'app-view-gallery',
   templateUrl: './view-gallery.component.html',
@@ -33,7 +33,6 @@ export class ViewGalleryComponent implements OnInit {
   public galleryId: string;
   public loading = false;
   public images = [];
-  // images = [944, 1011, 984].map((n) => `https://picsum.photos/id/${n}/900/500`);
   public carouselBanner;
   public intervalSocket;
   public viewBotton = true;
@@ -92,7 +91,6 @@ export class ViewGalleryComponent implements OnInit {
           });
 
           if (this.gallery.barcode) {
-            console.log('aca');
             this.focusEvent.emit(true);
           }
         }

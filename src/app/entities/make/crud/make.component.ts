@@ -92,7 +92,7 @@ export class MakeComponent implements OnInit, OnDestroy {
     });
   }
 
-  retrunTo() {
+  returnTo() {
     return this._router.navigate(['/entities/makes']);
   }
 
@@ -129,7 +129,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       .subscribe(
         (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.retrunTo();
+          if (result.status == 200) return this.returnTo();
         },
         (error) => this._toastService.showToast(error),
         () => (this.loading = false)
@@ -145,7 +145,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       .subscribe(
         (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.retrunTo();
+          if (result.status == 200) return this.returnTo();
         },
         (error) => this._toastService.showToast(error),
         () => (this.loading = false)
@@ -160,7 +160,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       .subscribe(
         (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status === 200) return this.retrunTo();
+          if (result.status === 200) return this.returnTo();
         },
         (error) => this._toastService.showToast(error),
         () => (this.loading = false)

@@ -13,8 +13,17 @@ const routes: Routes = [
     path: 'articles',
     loadChildren:  () => import('./article/article.module').then((m) => m.ArticleModule), 
     canActivate: [AuthGuard, LicenseGuard], 
+  },
+  {
+    path: 'galleries',
+    loadChildren:  () => import('./gallery/gallery.module').then((m) => m.GalleryModule), 
+    canActivate: [AuthGuard, LicenseGuard], 
+  },
+  {
+    path: 'resources',
+    loadChildren:  () => import('./resource/resource.module').then((m) => m.ResourceModule), 
+    canActivate: [AuthGuard, LicenseGuard], 
   }
-  // Otras rutas específicas de Entities si las tienes
 ];
 
 @NgModule({

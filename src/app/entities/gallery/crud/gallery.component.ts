@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import {
   NgForm,
   UntypedFormArray,
@@ -7,48 +7,35 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Gallery } from 'app/components/gallery/gallery';
-import { GalleryService } from 'app/components/gallery/gallery.service';
-import { Resource } from 'app/components/resource/resource';
+import { ApiResponse, Resource } from '@types';
 import { ResourceService } from 'app/components/resource/resource.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { GalleryService } from '../gallery.service';
 
 @Component({
   selector: 'app-gallery',
   templateUrl: './gallery.component.html',
-  styleUrls: ['./gallery.component.css'],
   providers: [TranslateMePipe],
 })
 export class GalleryComponent implements OnInit {
   public operation: string;
-  @Input() readonly: boolean;
-  public galleryId: string;
-
-  public gallery: any;
-  public galleryForm: UntypedFormGroup;
-
-  public resourcesForm: UntypedFormArray;
+  public readonly: boolean;
   public userType: string;
   public loading: boolean = false;
-  public focusEvent = new EventEmitter<boolean>();
-  public orientation: string = 'horizontal';
+
+  public galleryId: string;
+  public gallery: any;
+  public galleryForm: UntypedFormGroup;
+  public resourcesForm: UntypedFormArray;
   public resources: Resource[];
   public selectedResource: string | null = null;
 
-  public formErrors = {
-    name: '',
-    colddown: '',
-    resource: '',
-  };
+  public focusEvent = new EventEmitter<boolean>();
+  private destroy$ = new Subject<void>();
 
-  public validationMessages = {
-    name: {
-      required: 'Este campo es requerido.',
-    },
-    colddown: { required: 'Este campo es requerido.' },
-  };
 
   constructor(
     public _galleryService: GalleryService,
@@ -56,12 +43,9 @@ export class GalleryComponent implements OnInit {
     public _fb: UntypedFormBuilder,
     public _router: Router,
     private _route: ActivatedRoute,
-    public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
     private _toastr: ToastService,
     public translatePipe: TranslateMePipe
   ) {
-    if (window.screen.width < 1000) this.orientation = 'vertical';
     this.getResources();
   }
 
@@ -73,7 +57,7 @@ export class GalleryComponent implements OnInit {
     if (this.operation !== 'add') {
       this.galleryId = URL[4].split('?')[0];
     }
-    this.gallery = new Gallery();
+    
     this.buildForm();
 
     if (this.galleryId) {
@@ -87,37 +71,22 @@ export class GalleryComponent implements OnInit {
     });
   }
 
-  public buildForm(): void {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+   buildForm(): void {
     this.galleryForm = this._fb.group({
-      _id: [this.gallery._id, []],
-      name: [this.gallery.name, [Validators.required]],
-      colddown: [this.gallery.colddown, []],
-      barcode: [this.gallery.barcode, []],
+      _id: ['', []],
+      name: ['', [Validators.required]],
+      colddown: ['', []],
+      barcode: ['', []],
       resources: this._fb.array([]),
     });
-
-    this.galleryForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
-
-    this.onValueChanged();
-    this.focusEvent.emit(true);
   }
 
-  public addNewResource(e: any): void {
-    if (this.galleryForm.value.resources.lenght <= 0 && e) {
-      const resources = this.galleryForm.controls.resources as UntypedFormArray;
-      resources.push(
-        this._fb.group({
-          _id: null,
-          resource: null,
-          order: 0,
-        })
-      );
-    }
-  }
-
-  public addResource(resourceForm: NgForm): void {
+   addResource(resourceForm: NgForm): void {
     let valid = true;
     const resources = this.galleryForm.controls.resources as UntypedFormArray;
     if (valid) {
@@ -132,64 +101,24 @@ export class GalleryComponent implements OnInit {
     }
   }
 
-  public returnTo(): void {
-    this._route.queryParams.subscribe((params) => {
-      const returnUrl = params['returnURL']
-        ? decodeURIComponent(params['returnURL'])
-        : null;
-
-      if (returnUrl) {
-        // Si hay una returnURL, navegar a esa URL
-        this._router.navigateByUrl(returnUrl);
-      } else {
-        // Navegar a una ruta por defecto si no hay returnURL
-        this._router.navigate(['/admin/gallery']);
-      }
-    });
-  }
-
-  deleteResource(index) {
-    let control = <UntypedFormArray>this.galleryForm.controls.resources;
-    control.removeAt(index);
-  }
-
-  public onValueChanged(data?: any): void {
-    if (!this.galleryForm) {
-      return;
-    }
-    const form = this.galleryForm;
-
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
-        }
-      }
-    }
-  }
-
-  public getGallery() {
+  getGallery() {
     this.loading = true;
 
-    this._galleryService.getById(this.galleryId).subscribe(
-      (result) => {
+    this._galleryService
+    .getById(this.galleryId)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(
+      (result: ApiResponse) => {
         if (!result.result) {
           this._toastr.showToast(result);
         } else {
           this.gallery = result.result;
-          // let aa = this.gallery.resources.find(resource => resource.resource._id ===)
           this.gallery.resources = this.gallery.resources.map(
             (galleryResource) => {
-              // Buscar el recurso completo en resource.resources usando el ID
               const completeResource = this.resources.find(
                 (res) => res._id === galleryResource.resource
               );
               if (completeResource) {
-                // Reemplazar el ID por el objeto completo
                 return {
                   ...galleryResource,
                   resource: completeResource, // Aquí reemplazamos el ID con el objeto completo
@@ -200,16 +129,14 @@ export class GalleryComponent implements OnInit {
           );
           this.setValueForm();
         }
-        this.loading = false;
+     
       },
-      (error) => {
-        this._toastr.showToast(error);
-        this.loading = false;
-      }
+        (error) => this._toastr.showToast(error),
+        () => (this.loading = false)
     );
   }
 
-  public setValueForm(): void {
+  setValueForm(): void {
     const values = {
       _id: this.gallery?._id ?? '',
       name: this.gallery?.name ?? '',
@@ -238,7 +165,23 @@ export class GalleryComponent implements OnInit {
     this.galleryForm.patchValue(values);
   }
 
-  public addGallery() {
+  returnTo(): void {
+    this._route.queryParams.subscribe((params) => {
+      const returnUrl = params['returnURL']
+        ? decodeURIComponent(params['returnURL'])
+        : null;
+
+      if (returnUrl) {
+        // Si hay una returnURL, navegar a esa URL
+        this._router.navigateByUrl(returnUrl);
+      } else {
+        // Navegar a una ruta por defecto si no hay returnURL
+        this._router.navigate(['/admin/gallery']);
+      }
+    });
+  }
+
+  addGallery() {
     switch (this.operation) {
       case 'add':
         this.saveGallery();
@@ -253,63 +196,61 @@ export class GalleryComponent implements OnInit {
     }
   }
 
-  async updateGallery() {
-    this.loading = true;
-
-    this.gallery = this.galleryForm.value;
-
-    if (await this.isValid()) {
-      this._galleryService.update(this.gallery).subscribe(
-        (result) => {
-          if (!result.result) {
-            this.loading = false;
-            this._toastr.showToast(result);
-          } else {
-            this.loading = false;
-            this._toastr.showToast(result);
-            this.returnTo();
-          }
-        },
-        (error) => {
-          this._toastr.showToast(error);
-          this.loading = false;
-        }
-      );
-    } else {
-      this.loading = false;
-    }
-  }
-
   async saveGallery() {
     this.loading = true;
 
     this.gallery = this.galleryForm.value;
 
     if (await this.isValid()) {
-      this._galleryService.save(this.gallery).subscribe(
-        (result) => {
+      this._galleryService
+      .save(this.gallery)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (result: ApiResponse) => {
           if (!result.result) {
-            this.loading = false;
             this._toastr.showToast(result);
           } else {
-            this.loading = false;
             this._toastr.showToast(result);
-            this.gallery = new Gallery();
-            this.buildForm();
-            this.returnTo();
+            if (result.status == 200) return this.returnTo();
           }
         },
-        (error) => {
-          this._toastr.showToast(error);
-          this.loading = false;
-        }
+        (error) =>  this._toastr.showToast(error),
+        () => (this.loading = false)
+        
       );
     } else {
       this.loading = false;
     }
   }
 
-  public deleteGallery() {
+  async updateGallery() {
+    this.loading = true;
+
+    this.gallery = this.galleryForm.value;
+
+    if (await this.isValid()) {
+      this._galleryService
+      .update(this.gallery)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (result: ApiResponse) => {
+          if (!result.result) {
+            this._toastr.showToast(result);
+          } else {
+            this._toastr.showToast(result);
+            if (result.status == 200) return this.returnTo();
+          }
+        },
+        (error) =>  this._toastr.showToast(error),
+        () => (this.loading = false)
+        
+      );
+    } else {
+      this.loading = false;
+    }
+  }
+
+  deleteGallery() {
     this.loading = true;
 
     this._galleryService.delete(this.gallery._id).subscribe(
@@ -319,17 +260,15 @@ export class GalleryComponent implements OnInit {
           this._toastr.showToast(result);
         } else {
           this._toastr.showToast(result);
-          this.returnTo();
+          if (result.status == 200) return this.returnTo();
         }
       },
-      (error) => {
-        this._toastr.showToast(error);
-        this.loading = false;
-      }
+      (error) =>  this._toastr.showToast(error),
+        () => (this.loading = false)
     );
   }
 
-  public getResources(): void {
+  getResources(): void {
     let match = `{ "operationType": { "$ne": "D" } }`;
 
     match = JSON.parse(match);
@@ -341,15 +280,24 @@ export class GalleryComponent implements OnInit {
       file: 1,
       operationType: 1,
     };
-    this._resourceService.getAll({ project, match }).subscribe((result) => {
-      if (result.result) {
-        this.loading = false;
-        this.resources = result.result;
+    this._resourceService
+    .getAll({ project, match })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((result: ApiResponse) => {
+      if (!result.result) {
+        this._toastr.showToast(result);
       } else {
-        this.resources = new Array();
-        this.loading = false;
+        this.resources = result.result;
       }
-    });
+    },
+    (error) => this._toastr.showToast(error),
+    () => (this.loading = false)
+  );
+  }
+
+  deleteResource(index) {
+    let control = <UntypedFormArray>this.galleryForm.controls.resources;
+    control.removeAt(index);
   }
 
   public isValid(): Promise<boolean> {

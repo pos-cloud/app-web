@@ -484,7 +484,7 @@
           <button
             *ngIf="identity?.permission?.menu?.content?.resource"
             class="dropdown-item"
-            [routerLink]="['admin', 'resources']"
+            [routerLink]="['entities', 'resources']"
             [routerLinkActive]="['active']"
             (click)="closeNavbar()"
           >
@@ -493,7 +493,7 @@
           <button
             *ngIf="identity?.permission?.menu?.content?.gallery"
             class="dropdown-item"
-            [routerLink]="['admin', 'galleries']"
+            [routerLink]="['entities', 'galleries']"
             [routerLinkActive]="['active']"
             (click)="closeNavbar()"
           >
