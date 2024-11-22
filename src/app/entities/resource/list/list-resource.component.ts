@@ -12,7 +12,7 @@ import { ResourceService } from '../resource.service';
 export class ListResourcesComponent {
   public title: string = 'Recursos';
   public sort = { name: 1 };
-  public columns:IAttribute[];;
+  public columns: IAttribute[];
   public pathLocation: string[];
   public loading: boolean = false;
   public headerButtons: IButton[] = [
@@ -58,122 +58,108 @@ export class ListResourcesComponent {
     public _alertConfig: NgbAlertConfig
   ) {
     this.columns = [
-        {
-          name: 'name',
-          visible: true,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: null,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'file',
-          visible: true,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: null,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'creationDate',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'date',
-          project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'updateDate',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'operationType',
-          visible: false,
-          disabled: true,
-          filter: false,
-          datatype: 'string',
-          defaultFilter: `{ "$ne": "D" }`,
-          project: null,
-          align: 'left',
-          required: true,
-        },
-        {
-          name: 'creationUser.name',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: null,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'updateUser.name',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: null,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: '_id',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: null,
-          align: 'left',
-          required: false,
-        },
-      ];
+      {
+        name: 'name',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'file',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'creationDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'date',
+        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updateDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
+      },
+      {
+        name: 'creationUser.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updateUser.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: '_id',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+    ];
   }
 
   public async emitEvent(event) {
-    this.openModal(event.op, event.obj, event.items);
+    this.redirect(event.op, event.obj);
   }
 
-  public async openModal(op: string, obj: any, items) {
-    let currentUrl;
+  public async redirect(op: string, obj: any) {
     switch (op) {
       case 'view':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/resources/view', obj._id], {
-          queryParams: { returnURL: currentUrl },
-        });
-        break;
-      case 'add':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/resources/add'], {
-          queryParams: { returnURL: currentUrl },
-        });
+        this._router.navigateByUrl('entities/resources/view/' + obj._id);
         break;
       case 'update':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/resources/update', obj._id], {
-          queryParams: { returnURL: currentUrl },
-        });
+        this._router.navigateByUrl('entities/resources/update/' + obj._id);
         break;
       case 'delete':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/resources/delete', obj._id], {
-          queryParams: { returnURL: currentUrl },
-        });
+        this._router.navigateByUrl('entities/resources/delete/' + obj._id);
         break;
-      default:
+      case 'add':
+        this._router.navigateByUrl('entities/resources/add');
+        break;
     }
   }
 

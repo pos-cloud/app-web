@@ -9,16 +9,15 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 import { GalleryService } from '../gallery.service';
 
-import { Resource } from '@types';
+import { Gallery, Resource } from '@types';
 import { Article } from 'app/components/article/article';
 import { ArticleService } from 'app/components/article/article.service';
-import { Gallery } from 'app/components/gallery/gallery';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ResourceService } from 'app/entities/resource/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'hammerjs';
-import { ResourceService } from '../../../components/resource/resource.service';
 @Component({
   selector: 'app-view-gallery',
   templateUrl: './view-gallery.component.html',
@@ -27,10 +26,8 @@ import { ResourceService } from '../../../components/resource/resource.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class ViewGalleryComponent implements OnInit {
-  public alertMessage: string = '';
   public src: string;
   public gallery: Gallery;
-  public galleryId: string;
   public loading = false;
   public images = [];
   public carouselBanner;
@@ -61,13 +58,11 @@ export class ViewGalleryComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.database = Config.database;
-    this.focusEvent.emit(true);
+    const pathUrl = this._router.url.split('/');
+    const galleryId = pathUrl[4];
     this.elem = document.documentElement;
-    const URL = this._router.url.split('/');
-    this.galleryId = URL[3].split('?')[0];
-    if (this.galleryId) {
-      this.getGallery(this.galleryId);
+    if (galleryId) {
+      this.getGallery(galleryId);
     }
   }
 

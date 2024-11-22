@@ -7,7 +7,7 @@ import { GalleryService } from '../gallery.service';
 
 @Component({
   selector: 'app-list-galleries',
-  templateUrl: './list-galleries.component.html'
+  templateUrl: './list-galleries.component.html',
 })
 export class ListGalleriesComponent {
   public title: string = 'Galería';
@@ -58,113 +58,98 @@ export class ListGalleriesComponent {
     public _alertConfig: NgbAlertConfig
   ) {
     this.columns = [
-        {
-          name: 'name',
-          visible: true,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: null,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'colddown',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'number',
-          project: null,
-          align: 'right',
-          required: false,
-        },
-        {
-          name: 'barcode',
-          visible: true,
-          disabled: false,
-          filter: true,
-          datatype: 'boolean',
-          project: null,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: '_id',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: null,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'creationDate',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'date',
-          project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'updateDate',
-          visible: false,
-          disabled: false,
-          filter: true,
-          datatype: 'string',
-          project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-          align: 'left',
-          required: false,
-        },
-        {
-          name: 'operationType',
-          visible: false,
-          disabled: true,
-          filter: false,
-          datatype: 'string',
-          defaultFilter: `{ "$ne": "D" }`,
-          project: null,
-          align: 'left',
-          required: true,
-        },
-      ];
-      
+      {
+        name: 'name',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'colddown',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'number',
+        project: null,
+        align: 'right',
+        required: false,
+      },
+      {
+        name: 'barcode',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: '_id',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'creationDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'date',
+        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updateDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
+      },
+    ];
   }
 
   public async emitEvent(event) {
-    this.openModal(event.op, event.obj, event.items);
+    this.redirect(event.op, event.obj);
   }
 
-  public async openModal(op: string, obj: any, items) {
-    let currentUrl;
+  public async redirect(op: string, obj: any) {
     switch (op) {
       case 'view':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/view-galleries', obj._id], {
-          queryParams: { returnURL: currentUrl },
-        });
-        break;
-      case 'add':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/galleries/add'], {
-          queryParams: { returnURL: currentUrl },
-        });
+        this._router.navigateByUrl('entities/galleries/view/' + obj._id);
         break;
       case 'update':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/galleries/update', obj._id], {
-          queryParams: { returnURL: currentUrl },
-        });
+        this._router.navigateByUrl('entities/galleries/update/' + obj._id);
         break;
       case 'delete':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/galleries/delete', obj._id], {
-          queryParams: { returnURL: currentUrl },
-        });
+        this._router.navigateByUrl('entities/galleries/delete/' + obj._id);
         break;
-      default:
+      case 'add':
+        this._router.navigateByUrl('entities/galleries/add');
+        break;
     }
   }
 

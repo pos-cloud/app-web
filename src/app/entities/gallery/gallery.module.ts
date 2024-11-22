@@ -11,13 +11,17 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { ResourceService } from '../resource/resource.service';
 import { GalleryComponent } from './crud/gallery.component';
-import { GalleryRoutingModule } from './gallery-routing.module'; // Asegúrate de importar las rutas del módulo
+import { GalleryRoutingModule } from './gallery-routing.module';
 import { GalleryService } from './gallery.service';
 import { ListGalleriesComponent } from './list-galleries/list-galleries.component';
 import { ViewGalleryComponent } from './view-gallery/view-gallery.component';
 
 @NgModule({
-  declarations: [GalleryComponent, ListGalleriesComponent,ViewGalleryComponent], // Declara los componentes que forman parte del módulo
+  declarations: [
+    GalleryComponent,
+    ListGalleriesComponent,
+    ViewGalleryComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -31,8 +35,8 @@ import { ViewGalleryComponent } from './view-gallery/view-gallery.component';
     NgbDropdownModule,
     NgbModule,
     DatatableModule,
-    GalleryRoutingModule, // Importa MakeRoutingModule para que las rutas sean reconocidas
+    GalleryRoutingModule,
   ],
-  providers: [GalleryService, ResourceService], // El servicio MakeService
+  providers: [GalleryService, ResourceService],
 })
 export class GalleryModule {}
