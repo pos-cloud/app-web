@@ -513,6 +513,12 @@ export class TransactionType extends Model {
         datatype: 'string',
         align: 'left',
       },
+      {
+        name: 'allowAccounting',
+        filter: true,
+        datatype: 'string',
+        align: 'left',
+      },
     ]);
   }
 }
