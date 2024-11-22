@@ -50,7 +50,6 @@ import { ListArticlesPosComponent } from './components/article/list-articles-pos
 import { BankService } from './components/bank/bank.service';
 import { BankComponent } from './components/bank/bank/bank.component';
 import { ListBankComponent } from './components/bank/list-bank/list-bank.component';
-import { BillingComponent } from './components/billing/billing.component';
 import { BranchService } from './components/branch/branch.service';
 import { BranchComponent } from './components/branch/branch/branch.component';
 import { ListBranchComponent } from './components/branch/list-branches/list-branches.component';
@@ -399,7 +398,6 @@ export function createTranslateLoader(http: HttpClient) {
     ReportTransactionTypeComponent,
     PrintQRComponent,
     SelectMovementsOfCashesComponent,
-    BillingComponent,
     AbandonedCartsComponent,
     SelectPriceListComponent,
     KardexCheckComponent,
