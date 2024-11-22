@@ -225,13 +225,6 @@ export class ModelService {
     });
   }
 
-  public progressFunction(evt) {
-    if (evt.lengthComputable) {
-      let percentage: number = Math.round((evt.loaded / evt.total) * 100);
-      // document.getElementsByClassName('labelFile')[0].innerHTML = percentage + "%";
-    }
-  }
-
   public deleteFile(filename: string): Observable<any> {
     const URL = `${environment.apiStorage}/upload`;
 

@@ -1,8 +1,8 @@
+import { Make } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Category } from '../category/category';
 import { Deposit } from '../deposit/deposit';
 import { Location } from '../location/location';
-import { Make } from '../make/make';
 import { Taxes } from '../tax/taxes';
 import { UnitOfMeasurement } from '../unit-of-measurement/unit-of-measurement.model';
 import { User } from '../user/user';
@@ -49,27 +49,27 @@ export class Article {
       _id: string;
       deposit: Deposit;
       capacity: number;
-    }
+    },
   ];
   public locations: [
     {
       _id: string;
       location: Location;
-    }
+    },
   ];
   public children: [
     {
       _id: string;
       article: Article;
       quantity: number;
-    }
+    },
   ];
   public pictures: [
     {
       _id: string;
       picture: string;
       meliId: string;
-    }
+    },
   ];
   public url: string;
   public category: Category;
@@ -120,7 +120,7 @@ export class Article {
     {
       value: VariantValue;
       type: VariantType;
-    }
+    },
   ];
 
   constructor() {}

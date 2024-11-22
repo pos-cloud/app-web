@@ -1,15 +1,15 @@
 import * as moment from 'moment';
 
-import {Account} from '../account/account';
-import {ArticleFields} from '../article-field/article-fields';
-import {Article, ArticlePrintIn} from '../article/article';
-import {Category} from '../category/category';
-import {Deposit} from '../deposit/deposit';
-import {Make} from '../make/make';
-import {Taxes} from '../tax/taxes';
-import {StockMovement} from '../transaction-type/transaction-type';
-import {Transaction} from '../transaction/transaction';
-import {User} from '../user/user';
+import { Make } from '@types';
+import { Account } from '../account/account';
+import { ArticleFields } from '../article-field/article-fields';
+import { Article, ArticlePrintIn } from '../article/article';
+import { Category } from '../category/category';
+import { Deposit } from '../deposit/deposit';
+import { Taxes } from '../tax/taxes';
+import { StockMovement } from '../transaction-type/transaction-type';
+import { Transaction } from '../transaction/transaction';
+import { User } from '../user/user';
 
 export class MovementOfArticle {
   _id: string;

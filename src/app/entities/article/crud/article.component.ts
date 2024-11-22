@@ -32,18 +32,14 @@ import * as $ from 'jquery';
 
 // Models
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
+import { Make } from '@types';
 import { ArticleStock } from 'app/components/article-stock/article-stock';
 import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
 import { Category } from 'app/components/category/category';
 import { CategoryService } from 'app/components/category/category.service';
 import { Company } from 'app/components/company/company';
-import { Make } from 'app/components/make/make';
 import { Taxes } from 'app/components/tax/taxes';
 import { Variant } from 'app/components/variant/variant';
 import { VariantService } from 'app/components/variant/variant.service';
@@ -170,7 +166,6 @@ export class ArticleComponent implements OnInit {
   html = '';
   model: any;
 
-
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;
 
   categoryFocus$ = new Subject<string>();
@@ -270,7 +265,7 @@ export class ArticleComponent implements OnInit {
       filter(() => !this.instance.isPopupOpen())
     );
     const inputFocus$ = this.categoryFocus$;
-  
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
@@ -295,14 +290,13 @@ export class ArticleComponent implements OnInit {
     return result.description;
   };
 
-  formatInput = (result: any) =>{ 
+  formatInput = (result: any) => {
     let valueId = result._id === undefined ? result : result._id;
     const category: any = this.categories.find(
       (c: Category) => c._id === valueId
     );
 
     if (category.parent) {
-
       return (
         category.description +
         ' - ' +
@@ -312,7 +306,7 @@ export class ArticleComponent implements OnInit {
     }
 
     return category?.description;
-  }; 
+  };
 
   searchMakes: OperatorFunction<string, readonly any[]> = (
     text$: Observable<string>
@@ -325,7 +319,7 @@ export class ArticleComponent implements OnInit {
       filter(() => !this.instance.isPopupOpen())
     );
     const inputFocus$ = this.makeFocus$;
-  
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
@@ -344,12 +338,12 @@ export class ArticleComponent implements OnInit {
     return make?.description;
   };
 
-  formatResultMakes= (x: any) => {
+  formatResultMakes = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
     const make = this.makes.find((c: Make) => c._id === valueId);
     return make?.description;
   };
-   
+
   searchUnitsOfMeasurement: OperatorFunction<string, readonly any[]> = (
     text$: Observable<string>
   ) => {
@@ -361,7 +355,7 @@ export class ArticleComponent implements OnInit {
       filter(() => !this.instance.isPopupOpen())
     );
     const inputFocus$ = this.unitsOfMeasurementFocus$;
-  
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
@@ -373,7 +367,7 @@ export class ArticleComponent implements OnInit {
       )
     );
   };
- 
+
   formatterUnitsOfMeasurement = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
     const unitsOfMeasurement = this.unitsOfMeasurement.find(
@@ -382,7 +376,7 @@ export class ArticleComponent implements OnInit {
     return unitsOfMeasurement.name;
   };
 
-  searchProvider : OperatorFunction<string, readonly any[]> = (
+  searchProvider: OperatorFunction<string, readonly any[]> = (
     text$: Observable<string>
   ) => {
     const debouncedText$ = text$.pipe(
@@ -393,7 +387,7 @@ export class ArticleComponent implements OnInit {
       filter(() => !this.instance.isPopupOpen())
     );
     const inputFocus$ = this.companiesFocus$;
-  
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
@@ -404,7 +398,7 @@ export class ArticleComponent implements OnInit {
         ).slice()
       )
     );
-  }
+  };
 
   formatterProvider = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;

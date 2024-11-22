@@ -1,18 +1,17 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { of } from "rxjs";
-import { Observable } from "rxjs/Observable";
-import { map, catchError } from "rxjs/operators";
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { catchError, map } from 'rxjs/operators';
 
-import { Make } from './make';
+import { Make } from '@types';
+import { environment } from 'environments/environment';
 import { Config } from '../../app.config';
 import { AuthService } from '../login/auth.service';
 import { ModelService } from '../model/model.service';
-import { environment } from "environments/environment";
 
 @Injectable()
 export class MakeService extends ModelService {
-
   constructor(
     public _http: HttpClient,
     public _authService: AuthService
@@ -25,53 +24,51 @@ export class MakeService extends ModelService {
   }
 
   public getMake(_id: string): Observable<any> {
-
     const URL = `${Config.apiURL}make`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams()
-      .set('id', _id);
+    const params = new HttpParams().set('id', _id);
 
-    return this._http.get(URL, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
       })
-    );
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
   }
 
-  public getMakes(
-    query?: string
-  ): Observable<any> {
-
+  public getMakes(query?: string): Observable<any> {
     const URL = `${Config.apiURL}makes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams()
-      .set('query', query);
+    const params = new HttpParams().set('query', query);
 
-    return this._http.get(URL, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
       })
-    );
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
   }
 
   public getMakesV2(
@@ -82,7 +79,6 @@ export class MakeService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-
     const URL = `${Config.apiURL}v2/makes`;
 
     const headers = new HttpHeaders()
@@ -97,63 +93,64 @@ export class MakeService extends ModelService {
       .set('limit', limit.toString())
       .set('skip', skip.toString());
 
-    return this._http.get(URL, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
       })
-    );
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
   }
 
-  public getSalesByMake(
-    query?: string
-  ): Observable<any> {
-
+  public getSalesByMake(query?: string): Observable<any> {
     const URL = `${Config.apiURL}sales-by-make`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams()
-      .set('query', query);
+    const params = new HttpParams().set('query', query);
 
-    return this._http.get(URL, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
       })
-    );
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
   }
 
   public saveMake(make: Make): Observable<any> {
-
     const URL = `${environment.apiv2}/makes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    return this._http.post(URL, make, {
-      headers: headers
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
+    return this._http
+      .post(URL, make, {
+        headers: headers,
       })
-    );
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
   }
 
   public updateMake(make: Make): Observable<any> {
@@ -163,46 +160,47 @@ export class MakeService extends ModelService {
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    return this._http.put(`${URL}/${ make._id}`, make, {
-      headers: headers,
-    }).pipe(
-      map(res => {
-        console.log(res)
-        return res;
-      }),
-      catchError((err) => {
-        console.log(err)
-        return of(err);
+    return this._http
+      .put(`${URL}/${make._id}`, make, {
+        headers: headers,
       })
-    );
+      .pipe(
+        map((res) => {
+          console.log(res);
+          return res;
+        }),
+        catchError((err) => {
+          console.log(err);
+          return of(err);
+        })
+      );
   }
 
   public deleteMake(_id: string): Observable<any> {
-
     const URL = `${Config.apiURL}make`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams()
-      .set('id', _id);
+    const params = new HttpParams().set('id', _id);
 
-    return this._http.delete(URL, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
+    return this._http
+      .delete(URL, {
+        headers: headers,
+        params: params,
       })
-    );
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
   }
 
   public makeFileRequest(idMake: String, files: Array<File>) {
-
     let xhr: XMLHttpRequest = new XMLHttpRequest();
     xhr.open('POST', Config.apiURL + 'upload-image-make/' + idMake, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
@@ -224,7 +222,7 @@ export class MakeService extends ModelService {
             reject(xhr.response);
           }
         }
-      }
+      };
 
       xhr.send(formData);
     });

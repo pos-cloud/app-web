@@ -34,6 +34,7 @@ import * as $ from 'jquery';
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
+import { Make } from '@types';
 import { Config } from '../../../app.config';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { ArticleStock } from '../../article-stock/article-stock';
@@ -41,7 +42,6 @@ import { ArticleStockService } from '../../article-stock/article-stock.service';
 import { Category } from '../../category/category';
 import { CategoryService } from '../../category/category.service';
 import { Company } from '../../company/company';
-import { Make } from '../../make/make';
 import { MakeService } from '../../make/make.service';
 import { Taxes } from '../../tax/taxes';
 import { Variant } from '../../variant/variant';

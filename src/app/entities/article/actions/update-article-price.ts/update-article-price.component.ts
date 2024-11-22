@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import {
-    UntypedFormBuilder,
-    UntypedFormGroup,
-    Validators,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -11,9 +11,9 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 //model
 
 //service
+import { Make } from '@types';
 import { Category } from 'app/components/category/category';
 import { CategoryService } from 'app/components/category/category.service';
-import { Make } from 'app/components/make/make';
 import { MakeService } from 'app/components/make/make.service';
 import { Article } from '../../article.model';
 import { ArticleService } from '../../article.service';

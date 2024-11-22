@@ -10,8 +10,8 @@ import { DateFormatPipe } from '../../../core/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 
 //model
+import { Make } from '@types';
 import { Category } from '../../category/category';
-import { Make } from '../../make/make';
 
 //service
 import { Config } from 'app/app.config';
