@@ -11,27 +11,27 @@ import {
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Branch } from 'app/components/branch/branch';
-import { BranchService } from 'app/components/branch/branch.service';
 import { Classification } from 'app/components/classification/classification';
-import { ClassificationService } from 'app/components/classification/classification.service';
 import { PrintVatBookComponent } from 'app/components/print/print-vat-book/print-vat-book.component';
 import { State } from 'app/components/state/state';
-import { StateService } from 'app/components/state/state.service';
 import { Tax, TaxClassification } from 'app/components/tax/tax';
-import { TaxService } from 'app/components/tax/tax.service';
 import { Taxes } from 'app/components/tax/taxes';
 import {
   Movements,
   TransactionMovement,
 } from 'app/components/transaction-type/transaction-type';
 import { VATCondition } from 'app/components/vat-condition/vat-condition';
-import { VATConditionService } from 'app/components/vat-condition/vat-condition.service';
 import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { BranchService } from 'app/core/services/branch.service';
+import { ClassificationService } from 'app/core/services/classification.service';
+import { StateService } from 'app/core/services/state.service';
+import { TaxService } from 'app/core/services/tax.service';
+import { VATConditionService } from 'app/core/services/vat-condition.service';
 import * as moment from 'moment';
 
-import { CompanyService } from '../../company/company.service';
-import { TransactionService } from '../../transaction/transaction.service';
+import { CompanyService } from '../../../core/services/company.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 
 import 'moment/locale/es';
 

@@ -12,7 +12,6 @@ import { ProgressbarModule } from '../../shared/components/progressbar/progressb
 import { ResourceComponent } from './crud/resource.component';
 import { ListResourcesComponent } from './list/list-resource.component';
 import { ResourceRoutingModule } from './resource.routing.module';
-import { ResourceService } from './resource.service';
 
 @NgModule({
   declarations: [ResourceComponent, ListResourcesComponent], // Declara los componentes que forman parte del módulo
@@ -31,6 +30,6 @@ import { ResourceService } from './resource.service';
     DatatableModule,
     ResourceRoutingModule, // Importa MakeRoutingModule para que las rutas sean reconocidas
   ],
-  providers: [ResourceService], // El servicio MakeService
+  providers: [], // El servicio MakeService
 })
 export class ResourceModule {}

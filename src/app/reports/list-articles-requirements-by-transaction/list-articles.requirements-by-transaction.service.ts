@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
-import { AuthService } from '../../components/login/auth.service';
-import { ModelService } from '../../components/model/model.service';
+import { ModelService } from 'app/core/services/model.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Injectable()
 export class ListArticlesRequirementsByTransactionService extends ModelService {

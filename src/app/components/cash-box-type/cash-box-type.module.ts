@@ -11,7 +11,6 @@ import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { CashBoxTypeService } from './cash-box-type.service';
 import { CashBoxTypeComponent } from './crud/cash-box-type.component';
 import { ListCashBoxTypesComponent } from './list-cash-box-types/list-cash-box-types.component';
 
@@ -41,6 +40,6 @@ const routes: Routes = [
   ],
   declarations: [ListCashBoxTypesComponent, CashBoxTypeComponent],
   exports: [CashBoxTypeComponent],
-  providers: [CashBoxTypeService],
+  providers: [],
 })
 export class CashBoxTypeModule {}

@@ -2,9 +2,9 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { AccountPeriodService } from '../../../core/services/account-period.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { AccountPeriod } from '../account-period';
-import { AccountPeriodService } from '../account-period.service';
 
 @Component({
   selector: 'app-list-account-periods',

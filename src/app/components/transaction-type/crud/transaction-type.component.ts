@@ -18,26 +18,26 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ApiResponse, FormField } from '@types';
 import { Config } from 'app/app.config';
 import { Application } from 'app/components/application/application.model';
-import { ApplicationService } from 'app/components/application/application.service';
 import { Branch } from 'app/components/branch/branch';
-import { BranchService } from 'app/components/branch/branch.service';
 import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
-import { CashBoxTypeService } from 'app/components/cash-box-type/cash-box-type.service';
 import { Company, CompanyType } from 'app/components/company/company';
-import { CompanyService } from 'app/components/company/company.service';
 import { EmailTemplate } from 'app/components/email-template/email-template';
-import { EmailTemplateService } from 'app/components/email-template/email-template.service';
 import { EmployeeType } from 'app/components/employee-type/employee-type.model';
-import { EmployeeTypeService } from 'app/components/employee-type/employee-type.service';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
 import { Printer } from 'app/components/printer/printer';
-import { PrinterService } from 'app/components/printer/printer.service';
 import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
-import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ApplicationService } from 'app/core/services/application.service';
+import { BranchService } from 'app/core/services/branch.service';
+import { CashBoxTypeService } from 'app/core/services/cash-box-type.service';
+import { CompanyService } from 'app/core/services/company.service';
+import { EmailTemplateService } from 'app/core/services/email-template.service';
+import { EmployeeTypeService } from 'app/core/services/employee-type.service';
+import { PaymentMethodService } from 'app/core/services/payment-method.service';
+import { PrinterService } from 'app/core/services/printer.service';
+import { ShipmentMethodService } from 'app/core/services/shipment-method.service';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -50,6 +50,7 @@ import {
   tap,
 } from 'rxjs/operators';
 
+import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 import {
   CurrentAccount,
   DescriptionType,
@@ -60,7 +61,6 @@ import {
   TransactionMovement,
   TransactionType,
 } from '../transaction-type';
-import { TransactionTypeService } from '../transaction-type.service';
 
 @Component({
   selector: 'app-transaction-type',

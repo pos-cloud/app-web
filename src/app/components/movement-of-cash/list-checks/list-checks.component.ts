@@ -18,16 +18,16 @@ import {
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
 import { Branch } from 'app/components/branch/branch';
-import { BranchService } from 'app/components/branch/branch.service';
-import { AuthService } from 'app/components/login/auth.service';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { AuthService } from 'app/core/services/auth.service';
+import { BranchService } from 'app/core/services/branch.service';
 import { Subscription } from 'rxjs';
+import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
 import { MovementOfCash } from '../movement-of-cash';
-import { MovementOfCashService } from '../movement-of-cash.service';
 
 @Component({
   selector: 'app-list-checks',

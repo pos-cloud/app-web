@@ -1,20 +1,34 @@
 import {
   Component,
-  OnInit,
   EventEmitter,
   Input,
+  OnInit,
   ViewEncapsulation,
-  Output,
 } from '@angular/core';
-import {UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, NgForm} from '@angular/forms';
-import {Router} from '@angular/router';
-import {NgbAlertConfig, NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ConfigService} from 'app/components/config/config.service';
+import {
+  NgForm,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import {
+  NgbActiveModal,
+  NgbAlertConfig,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
+import { ConfigService } from 'app/core/services/config.service';
 
-import {PrintTransactionTypeComponent} from '../../print/print-transaction-type/print-transaction-type.component';
-import {Printer, PrinterType, PrinterPrintIn, PositionPrint} from '../printer';
-import {PrinterService} from '../printer.service';
 import jsPDF from 'jspdf';
+import { PrinterService } from '../../../core/services/printer.service';
+import { PrintTransactionTypeComponent } from '../../print/print-transaction-type/print-transaction-type.component';
+import {
+  PositionPrint,
+  Printer,
+  PrinterPrintIn,
+  PrinterType,
+} from '../printer';
 
 @Component({
   selector: 'app-add-printer',
@@ -47,10 +61,15 @@ export class PrinterComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public pageSizes: string[] = ['A4', 'Etiqueta', 'Roll Paper', 'Personalizado'];
+  public pageSizes: string[] = [
+    'A4',
+    'Etiqueta',
+    'Roll Paper',
+    'Personalizado',
+  ];
   public pdfURL;
   public doc;
- 
+
   fontList = {}; // La lista de fuentes
   selectedFontName = 'default'; // Fuente seleccionada
   selectedFontStyle = 'normal'; // Variante de fuente seleccionada
@@ -59,7 +78,7 @@ export class PrinterComponent implements OnInit {
   // valores del add
   public position;
   public type;
-  public collection; 
+  public collection;
   public value;
   public font = 'default';
   public fontType = 'normal';
@@ -98,7 +117,7 @@ export class PrinterComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) {
     this.documents = new Array();
   }
@@ -111,7 +130,7 @@ export class PrinterComponent implements OnInit {
     this.buildForm();
     this.updatePageSize();
 
-    if(this.fontList){
+    if (this.fontList) {
       this.getFontList();
     }
 
@@ -123,22 +142,26 @@ export class PrinterComponent implements OnInit {
   getFontList(): void {
     const pdf = new jsPDF();
     this.fontList = pdf.getFontList();
-  
-    this.fontList = Object.keys(this.fontList).reduce((filteredFonts, fontName) => {
-  
-      if (/^[A-Z]/.test(fontName)) { 
-        filteredFonts[fontName] = this.fontList[fontName];
-      }
-      return filteredFonts;
-    }, {});
+
+    this.fontList = Object.keys(this.fontList).reduce(
+      (filteredFonts, fontName) => {
+        if (/^[A-Z]/.test(fontName)) {
+          filteredFonts[fontName] = this.fontList[fontName];
+        }
+        return filteredFonts;
+      },
+      {}
+    );
     const removeFonts = ['ZapfDingbats', 'Symbol'];
- 
+
     for (const removeFont of removeFonts) {
       delete this.fontList[removeFont];
     }
 
     for (const font in this.fontList) {
-    this.fontList[font] = this.fontList[font].filter(fontStyle => fontStyle !== '');
+      this.fontList[font] = this.fontList[font].filter(
+        (fontStyle) => fontStyle !== ''
+      );
     }
 
     this.fontListKeys = Object.keys(this.fontList);
@@ -170,7 +193,7 @@ export class PrinterComponent implements OnInit {
           this.documents = result.model;
         }
       },
-      (error) => {},
+      (error) => {}
     );
   }
 
@@ -198,7 +221,7 @@ export class PrinterComponent implements OnInit {
       (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-      },
+      }
     );
   }
 
@@ -225,7 +248,9 @@ export class PrinterComponent implements OnInit {
       fields: this._fb.array([]),
     });
 
-    this.printerForm.valueChanges.subscribe((data) => this.onValueChanged(data));
+    this.printerForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
     this.focusEvent.emit(true);
@@ -382,7 +407,7 @@ export class PrinterComponent implements OnInit {
             splitting: x.splitting,
             colour: x.colour,
             position: x.position,
-          }),
+          })
         );
       });
     }
@@ -416,7 +441,11 @@ export class PrinterComponent implements OnInit {
             this.showMessage(result.message, 'info', true);
         } else {
           this.printer = result.printer;
-          this.showMessage('La impresora se ha añadido con éxito.', 'success', true);
+          this.showMessage(
+            'La impresora se ha añadido con éxito.',
+            'success',
+            true
+          );
           this.printer = new Printer();
           this.buildForm();
         }
@@ -425,7 +454,7 @@ export class PrinterComponent implements OnInit {
       (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-      },
+      }
     );
   }
 
@@ -439,7 +468,11 @@ export class PrinterComponent implements OnInit {
             this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.showMessage('La impresora se ha actualizado con éxito.', 'success', true);
+          this.showMessage(
+            'La impresora se ha actualizado con éxito.',
+            'success',
+            true
+          );
           this.loading = false;
         }
         this.loading = false;
@@ -447,7 +480,7 @@ export class PrinterComponent implements OnInit {
       (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-      },
+      }
     );
   }
 
@@ -461,11 +494,15 @@ export class PrinterComponent implements OnInit {
       (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-      },
+      }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

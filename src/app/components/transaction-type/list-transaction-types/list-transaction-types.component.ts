@@ -1,9 +1,9 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { IButton } from '@types';
+import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { TransactionType } from '../transaction-type';
-import { TransactionTypeService } from '../transaction-type.service';
 
 @Component({
   selector: 'app-list-transaction-types',

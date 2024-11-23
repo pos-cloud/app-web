@@ -4,15 +4,18 @@ import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
-import { AuthService } from 'app/components/login/auth.service';
-import { ModelService } from 'app/components/model/model.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
 
 @Injectable()
 export class ResourceService extends ModelService {
   public routeParams: any;
 
-  constructor(public _http: HttpClient, public _authService: AuthService) {
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
     super(
       `resources`, // PATH
       _http,

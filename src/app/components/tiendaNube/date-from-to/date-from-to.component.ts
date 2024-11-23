@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from '../../../core/pipes/translate-me';
-import { TransactionService } from '../../transaction/transaction.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 
 @Component({
   selector: 'app-date-from-to',

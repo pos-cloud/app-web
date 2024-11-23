@@ -4,10 +4,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse, IButton } from '@types';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrinterPrintIn } from 'app/components/printer/printer';
-import { PrinterService } from 'app/components/printer/printer.service';
+import { PrinterService } from 'app/core/services/printer.service';
 
+import { BusinessRuleService } from '../../../core/services/business-rule.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
-import { BusinessRuleService } from '../business-rule.service';
 import { BusinessRule } from '../business-rules';
 
 @Component({

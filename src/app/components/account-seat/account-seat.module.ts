@@ -13,7 +13,6 @@ import { NgxTinymceModule } from 'ngx-tinymce';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
 import { ExportersModule } from '../export/exporters.module';
-import { AccountSeatService } from './account-seat.service';
 import { AccountSeatComponent } from './crud/account-seat.component';
 import { ListAccountSeatsComponent } from './list-account-seats/list-account-seats.component';
 import { ReportDetailsLedgerComponent } from './report-details-ledger/report-details-ledger.component';
@@ -87,6 +86,6 @@ const routes: Routes = [
     ReportDetailsLedgerComponent,
   ],
   exports: [AccountSeatComponent],
-  providers: [AccountSeatService],
+  providers: [],
 })
 export class AccountSeatModule {}

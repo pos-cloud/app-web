@@ -6,8 +6,8 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
-import { CancellationTypeService } from '../cancellation-type.service';
+import { CancellationTypeService } from '../../../core/services/cancellation-type.service';
+import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 
 import { TransactionType } from '../../transaction-type/transaction-type';
 import { CancellationType } from '../cancellation-type';

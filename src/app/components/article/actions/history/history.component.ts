@@ -6,8 +6,8 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { Subscription } from 'rxjs';
 import { RoundNumberPipe } from '../../../../core/pipes/round-number.pipe';
+import { ArticleService } from '../../../../core/services/article.service';
 import { Type, attributes } from '../../article';
-import { ArticleService } from '../../article.service';
 
 @Component({
   selector: 'app-history',

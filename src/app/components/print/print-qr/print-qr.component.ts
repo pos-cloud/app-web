@@ -10,9 +10,6 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import { Application } from 'app/components/application/application.model';
-import { ApplicationService } from 'app/components/application/application.service';
-import { ConfigService } from 'app/components/config/config.service';
-import { PrintService } from 'app/components/print/print.service';
 import {
   Printer,
   PrinterPrintIn,
@@ -22,6 +19,9 @@ import { Table } from 'app/components/table/table';
 import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ApplicationService } from 'app/core/services/application.service';
+import { ConfigService } from 'app/core/services/config.service';
+import { PrintService } from 'app/core/services/print.service';
 import { ToastrService } from 'ngx-toastr';
 
 let splitRegex = /\r\n|\r|\n/g;

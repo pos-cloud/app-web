@@ -10,11 +10,11 @@ import { PipesModule } from 'app/core/pipes/pipes.module';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { NgxTinymceModule } from 'ngx-tinymce';
+import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
 import { TransactionTypeComponent } from './crud/transaction-type.component';
 import { ListTransactionTypesComponent } from './list-transaction-types/list-transaction-types.component';
-import { TransactionTypeService } from './transaction-type.service';
 
 const routes: Routes = [
   {

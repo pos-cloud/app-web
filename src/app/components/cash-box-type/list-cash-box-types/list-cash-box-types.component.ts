@@ -1,9 +1,9 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { CashBoxTypeService } from '../../../core/services/cash-box-type.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { CashBoxType } from '../cash-box-type.model';
-import { CashBoxTypeService } from '../cash-box-type.service';
 import { CashBoxTypeComponent } from '../crud/cash-box-type.component';
 
 @Component({

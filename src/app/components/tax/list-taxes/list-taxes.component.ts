@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { TaxService } from '../../../core/services/tax.service';
 import { Tax } from '../tax';
-import { TaxService } from '../tax.service';
 import { TaxComponent } from '../tax/tax.component';
 
 @Component({

@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { RelationTypeService } from '../../../core/services/relation-type.service';
 import { RelationType } from '../relation-type';
-import { RelationTypeService } from '../relation-type.service';
 
 import { RelationTypeComponent } from '../relation-type/relation-type.component';
 

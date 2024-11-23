@@ -1,9 +1,9 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { ShipmentMethod } from '../shipment-method.model';
-import { ShipmentMethodService } from '../shipment-method.service';
 import { ShipmentMethodComponent } from './../crud/shipment-method.component';
 
 @Component({

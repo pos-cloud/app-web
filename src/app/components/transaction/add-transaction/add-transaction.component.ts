@@ -26,10 +26,10 @@ import {
 import { Transaction, TransactionState } from '../transaction';
 
 //Services
-import { CompanyService } from '../../company/company.service';
-import { EmployeeService } from '../../employee/employee.service';
-import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
-import { TransactionService } from '../transaction.service';
+import { CompanyService } from '../../../core/services/company.service';
+import { EmployeeService } from '../../../core/services/employee.service';
+import { TransactionTypeService } from '../../../core/services/transaction-type.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 
 //Pipes
 import { ApiResponse } from '@types';
@@ -44,19 +44,19 @@ import {
 import { DateFormatPipe } from '../../../core/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { TranslateMePipe } from '../../../core/pipes/translate-me';
+import { AccountService } from '../../../core/services/account.service';
+import { CancellationTypeService } from '../../../core/services/cancellation-type.service';
+import { CashBoxService } from '../../../core/services/cash-box.service';
+import { MovementOfCancellationService } from '../../../core/services/movement-of-cancellation.service';
+import { UserService } from '../../../core/services/user.service';
 import { SelectCompanyComponent } from '../../company/select-company/select-company.component';
 import { Employee } from '../../employee/employee';
 import { MovementOfCancellationComponent } from '../../movement-of-cancellation/movement-of-cancellation.component';
 import { TaxBase, TaxClassification } from '../../tax/tax';
 import { Config } from './../../../app.config';
 import { Account } from './../../../components/account/account';
-import { AccountService } from './../../../components/account/account.service';
-import { CancellationTypeService } from './../../../components/cancellation-type/cancellation-type.service';
-import { CashBoxService } from './../../../components/cash-box/cash-box.service';
 import { MovementOfCancellation } from './../../../components/movement-of-cancellation/movement-of-cancellation';
-import { MovementOfCancellationService } from './../../../components/movement-of-cancellation/movement-of-cancellation.service';
 import { MovementOfCash } from './../../../components/movement-of-cash/movement-of-cash';
-import { UserService } from './../../../components/user/user.service';
 
 @Component({
   selector: 'app-add-transaction',

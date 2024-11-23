@@ -21,9 +21,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ApiResponse, FormField, MediaCategory } from '@types';
 import { Config } from 'app/app.config';
 import { Application } from 'app/components/application/application.model';
-import { ApplicationService } from 'app/components/application/application.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ApplicationService } from 'app/core/services/application.service';
 import * as $ from 'jquery';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
@@ -33,8 +33,8 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
+import { CategoryService } from '../../../core/services/category.service';
 import { Category } from '../category';
-import { CategoryService } from '../category.service';
 
 @Component({
   selector: 'app-category',

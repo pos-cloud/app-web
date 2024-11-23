@@ -1,26 +1,24 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { EmployeeService } from '../employee/employee.service';
 import { Config } from 'app/app.config';
 import { Branch } from 'app/components/branch/branch';
-import { AuthService } from 'app/components/login/auth.service';
-import { BranchService } from 'app/components/branch/branch.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { BranchService } from 'app/core/services/branch.service';
 import { Subscription } from 'rxjs';
+import { EmployeeService } from '../../core/services/employee.service';
 
 @Component({
   selector: 'app-report-sales-by-employee',
   templateUrl: './report-sales-by-employee.component.html',
   styleUrls: ['./report-sales-by-employee.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class ReportSalesByEmployeeComponent implements OnInit {
-
   public items: any[] = new Array();
   public areEmployeesEmpty: boolean = true;
   public alertMessage: string = '';
@@ -33,10 +31,10 @@ export class ReportSalesByEmployeeComponent implements OnInit {
   @Input() endTime: string;
   @Input() limit: number = 0;
   public listType: string = 'statistics';
-  public itemsPerPage: string = "5";
+  public itemsPerPage: string = '5';
   public currentPage: number = 1;
   public totalItems = 0;
-  public sort = { "count": -1 };
+  public sort = { count: -1 };
   public transactionMovement: string;
   public totalItem;
   public totalAmount;
@@ -62,114 +60,113 @@ export class ReportSalesByEmployeeComponent implements OnInit {
   }
 
   async ngOnInit() {
-
-    if(!this.branchSelectedId) {
+    if (!this.branchSelectedId) {
       await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        branches => {
+        (branches) => {
           this.branches = branches;
-          if(this.branches && this.branches.length > 1) {
+          if (this.branches && this.branches.length > 1) {
             this.branchSelectedId = this.branches[0]._id;
           }
         }
       );
-      this._authService.getIdentity.subscribe(
-        async identity => {
-          if(identity && identity.origin) {
-            this.allowChangeBranch = false;
-            this.branchSelectedId = identity.origin.branch._id;
-          } else {
-            this.allowChangeBranch = true;
-            this.branchSelectedId = null;
-          }
+      this._authService.getIdentity.subscribe(async (identity) => {
+        if (identity && identity.origin) {
+          this.allowChangeBranch = false;
+          this.branchSelectedId = identity.origin.branch._id;
+        } else {
+          this.allowChangeBranch = true;
+          this.branchSelectedId = null;
         }
-      );
+      });
     }
 
     this.getSalesByEmployee();
   }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
-
     return new Promise<Branch[]>((resolve, reject) => {
-  
-      this._branchService.getBranches(
+      this._branchService
+        .getBranches(
           {}, // PROJECT
           match, // MATCH
           { number: 1 }, // SORT
           {}, // GROUP
           0, // LIMIT
           0 // SKIP
-      ).subscribe(
-        result => {
-          if (result && result.branches) {
-            resolve(result.branches);
-          } else {
+        )
+        .subscribe(
+          (result) => {
+            if (result && result.branches) {
+              resolve(result.branches);
+            } else {
+              resolve(null);
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
           }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 
   public getSalesByEmployee(): void {
-
     this.loading = true;
     let pathLocation: string[] = this._router.url.split('/');
-    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.transactionMovement =
+      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.listType = pathLocation[3];
 
     let movement;
-    if (this.transactionMovement === "Venta") {
-      movement = "Entrada";
-    } else if (this.transactionMovement === "Compra") {
-      movement = "Salida";
+    if (this.transactionMovement === 'Venta') {
+      movement = 'Entrada';
+    } else if (this.transactionMovement === 'Compra') {
+      movement = 'Salida';
     }
 
-    let timezone = "-03:00";
-    if(Config.timezone && Config.timezone !== '') {
-      timezone =  Config.timezone.split('UTC')[1];
+    let timezone = '-03:00';
+    if (Config.timezone && Config.timezone !== '') {
+      timezone = Config.timezone.split('UTC')[1];
     }
 
     let query = {
       type: this.transactionMovement,
       movement: movement,
-      currentAccount: "Si",
+      currentAccount: 'Si',
       modifyStock: true,
-      startDate: this.startDate + " " + this.startTime + timezone,
-      endDate: this.endDate + " " + this.endTime + timezone,
+      startDate: this.startDate + ' ' + this.startTime + timezone,
+      endDate: this.endDate + ' ' + this.endTime + timezone,
       sort: this.sort,
       limit: this.limit,
-      branch: this.branchSelectedId
-    }
+      branch: this.branchSelectedId,
+    };
 
-    this.subscription.add(this._employeeService.getSalesByEmployee(JSON.stringify(query)).subscribe(
-      result => {
-        if (!result || result.length <= 0) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+    this.subscription.add(
+      this._employeeService.getSalesByEmployee(JSON.stringify(query)).subscribe(
+        (result) => {
+          if (!result || result.length <= 0) {
+            if (result.message && result.message !== '')
+              this.showMessage(result.message, 'info', true);
+            this.loading = false;
+            this.items = new Array();
+            this.areEmployeesEmpty = true;
+          } else {
+            this.hideMessage();
+            this.loading = false;
+            this.items = result;
+            this.areEmployeesEmpty = false;
+            this.calculateTotal();
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
-          this.items = new Array();
-          this.areEmployeesEmpty = true;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.items = result;
-          this.areEmployeesEmpty = false;
-          this.calculateTotal();
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    ));
+      )
+    );
   }
 
-  public calculateTotal() : void {
-
+  public calculateTotal(): void {
     this.totalItem = 0;
     this.totalAmount = 0;
 
@@ -180,7 +177,6 @@ export class ReportSalesByEmployeeComponent implements OnInit {
   }
 
   public orderBy(term: string): void {
-
     if (this.sort[term]) {
       this.sort[term] *= -1;
     } else {
@@ -195,10 +191,14 @@ export class ReportSalesByEmployeeComponent implements OnInit {
   }
 
   public ngOnDestroy(): void {
-	  this.subscription.unsubscribe();
-	}
+    this.subscription.unsubscribe();
+  }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

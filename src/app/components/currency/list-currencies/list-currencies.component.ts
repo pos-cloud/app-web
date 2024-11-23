@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { CurrencyService } from '../../../core/services/currency.service';
 import { Currency } from '../currency';
-import { CurrencyService } from '../currency.service';
 
 import { CurrencyComponent } from '../currency/currency.component';
 

@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { IdentificationTypeService } from '../../../core/services/identification-type.service';
 import { IdentificationType } from '../identification-type';
-import { IdentificationTypeService } from '../identification-type.service';
 
 import { AddIdentificationTypeComponent } from '../identification-type/add-identification-type.component';
 

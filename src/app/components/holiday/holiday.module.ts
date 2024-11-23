@@ -13,7 +13,6 @@ import { NgxTinymceModule } from 'ngx-tinymce';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
 import { HolidayComponent } from './crud/holiday.component';
-import { HolidayService } from './holiday.service';
 import { ListHolidaysComponent } from './list-holidays/list-holidays.component';
 
 const routes: Routes = [
@@ -63,6 +62,6 @@ const routes: Routes = [
   ],
   declarations: [ListHolidaysComponent, HolidayComponent],
   exports: [HolidayComponent],
-  providers: [HolidayService],
+  providers: [],
 })
 export class HolidayModule {}

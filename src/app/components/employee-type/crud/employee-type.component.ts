@@ -16,8 +16,8 @@ import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
+import { EmployeeTypeService } from '../../../core/services/employee-type.service';
 import { EmployeeType } from '../employee-type.model';
-import { EmployeeTypeService } from '../employee-type.service';
 
 @Component({
   selector: 'app-employee-type',

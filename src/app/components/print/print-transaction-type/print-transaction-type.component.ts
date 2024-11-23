@@ -4,27 +4,27 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import jsPDF from 'jspdf';
 
 //servicios
-import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
-import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
-import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
-import { TransactionService } from 'app/components/transaction/transaction.service';
+import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
+import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
+import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { TransactionService } from 'app/core/services/transaction.service';
 
 //modelos
 import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
-import { ArticleService } from 'app/components/article/article.service';
 import { Company } from 'app/components/company/company';
-import { ConfigService } from 'app/components/config/config.service';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PriceList } from 'app/components/price-list/price-list';
-import { PriceListService } from 'app/components/price-list/price-list.service';
-import { PrintService } from 'app/components/print/print.service';
 import { PositionPrint, Printer } from 'app/components/printer/printer';
-import { PrinterService } from 'app/components/printer/printer.service';
 import { Transaction } from 'app/components/transaction/transaction';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { ArticleService } from 'app/core/services/article.service';
+import { ConfigService } from 'app/core/services/config.service';
+import { PriceListService } from 'app/core/services/price-list.service';
+import { PrintService } from 'app/core/services/print.service';
+import { PrinterService } from 'app/core/services/printer.service';
 
 @Component({
   selector: 'app-print-transaction-type',

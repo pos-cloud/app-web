@@ -22,17 +22,17 @@ import { VATCondition } from 'app/components/vat-condition/vat-condition';
 import { Config } from './../../app.config';
 
 import { IdentificationType } from 'app/components/identification-type/identification-type';
-import { IdentificationTypeService } from 'app/components/identification-type/identification-type.service';
-import { AuthService } from 'app/components/login/auth.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { IdentificationTypeService } from 'app/core/services/identification-type.service';
 import { DateFormatPipe } from '../../core/pipes/date-format.pipe';
-import { UserService } from '../user/user.service';
-import { VATConditionService } from '../vat-condition/vat-condition.service';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../../core/services/config.service';
+import { UserService } from '../../core/services/user.service';
+import { VATConditionService } from '../../core/services/vat-condition.service';
 
 import { MediaCategory } from '@types';
 import { Currency } from 'app/components/currency/currency';
-import { CurrencyService } from 'app/components/currency/currency.service';
-import { FileService } from 'app/shared/services/file.service';
+import { CurrencyService } from 'app/core/services/currency.service';
+import { FileService } from 'app/core/services/file.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -42,8 +42,8 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
+import { AccountService } from '../../core/services/account.service';
 import { Account } from '../account/account';
-import { AccountService } from '../account/account.service';
 
 @Component({
   selector: 'app-config',

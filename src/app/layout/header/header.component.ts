@@ -24,14 +24,14 @@ import {
 import { User } from '../../components/user/user';
 
 // SERVICES
-import { ConfigService } from 'app/components/config/config.service';
-import { AuthService } from 'app/components/login/auth.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { ConfigService } from 'app/core/services/config.service';
 import { ToastrService } from 'ngx-toastr';
 import { AddUserComponent } from '../../components/user/user/add-user.component';
 import { ClaimComponent } from '../claim/claim.component';
 //import { Socket } from 'ngx-socket-io';
-import { PushNotificationsService } from 'app/components/notification/notification.service';
-import { UserService } from 'app/components/user/user.service';
+import { PushNotificationsService } from 'app/core/services/notification.service';
+import { UserService } from 'app/core/services/user.service';
 import { CurrentAccountDetailsComponent } from '../../components/print/current-account-details/current-account-details.component';
 
 @Component({

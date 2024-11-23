@@ -6,10 +6,10 @@ import { ExportExcelComponent } from 'app/components/export/export-excel/export-
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
+import { ReportService } from '../../../core/services/report.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { ParamsReportComponent } from '../params-report/params-report.component';
 import { Report } from '../report.model';
-import { ReportService } from '../report.service';
 
 @Component({
   selector: 'app-view-report',

@@ -13,20 +13,20 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Company } from 'app/components/company/company';
-import { CompanyService } from 'app/components/company/company.service';
 import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { CompanyService } from 'app/core/services/company.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { AddressService } from '../../../core/services/address.service';
 import { Address } from '../address.model';
-import { AddressService } from '../address.service';
 
 @Component({
   selector: 'app-address',
   templateUrl: './address.component.html',
   styleUrls: ['./address.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  providers: [AddressService, TranslateMePipe],
+  providers: [TranslateMePipe],
 })
 export class AddressComponent {
   public addressForm: UntypedFormGroup;

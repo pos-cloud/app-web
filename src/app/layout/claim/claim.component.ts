@@ -1,62 +1,73 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ClaimService } from 'app/layout/claim/claim.service';
-import { ClaimPriority, ClaimType, Claim } from 'app/layout/claim/claim';
-import { AuthService } from '../../components/login/auth.service';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
+import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
+import { ClaimService } from 'app/layout/claim/claim.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-claim',
   templateUrl: './claim.component.html',
   styleUrls: ['./claim.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
-export class ClaimComponent  implements OnInit {
-
+export class ClaimComponent implements OnInit {
   public claimForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public claim: Claim;
-  public filesToUpload : Array<File>;
-  public priorities: ClaimPriority[] = [ ClaimPriority.Low, ClaimPriority.Half, ClaimPriority.High ];
-  public types: ClaimType[] = [ ClaimType.Suggestion, ClaimType.Improvement, ClaimType.Err, ClaimType.Implementation ];
+  public filesToUpload: Array<File>;
+  public priorities: ClaimPriority[] = [
+    ClaimPriority.Low,
+    ClaimPriority.Half,
+    ClaimPriority.High,
+  ];
+  public types: ClaimType[] = [
+    ClaimType.Suggestion,
+    ClaimType.Improvement,
+    ClaimType.Err,
+    ClaimType.Implementation,
+  ];
   public file;
   public fileName;
 
   public formErrors = {
-    'name': '',
-    'description': '',
-    'priority': '',
-    'type': '',
-    'author': '',
-    'email': ''
+    name: '',
+    description: '',
+    priority: '',
+    type: '',
+    author: '',
+    email: '',
   };
 
   public validationMessages = {
-    'name': {
-      'required': 'Este campo es requerido.',
+    name: {
+      required: 'Este campo es requerido.',
     },
-    'description': {
-      'required': 'Este campo es requerido.',
+    description: {
+      required: 'Este campo es requerido.',
     },
-    'priority': {
-      'required': 'Este campo es requerido.',
+    priority: {
+      required: 'Este campo es requerido.',
     },
-    'type': {
-      'required': 'Este campo es requerido.',
+    type: {
+      required: 'Este campo es requerido.',
     },
-    'author': {
-      'required': 'Este campo es requerido.',
+    author: {
+      required: 'Este campo es requerido.',
     },
-    'email': {
-      'required': 'Este campo es requerido.',
-    }
+    email: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
@@ -65,21 +76,18 @@ export class ClaimComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    private _authService: AuthService,
+    private _authService: AuthService
   ) {
     this.claim = new Claim();
-    this._authService.getIdentity.subscribe(
-      identity => {
-        if(identity && identity.employee) {
-          this.claim.author = identity.employee.name;
-        }
-      },
-    );
+    this._authService.getIdentity.subscribe((identity) => {
+      if (identity && identity.employee) {
+        this.claim.author = identity.employee.name;
+      }
+    });
     this.claim.email = Config.emailAccount;
   }
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
@@ -90,44 +98,25 @@ export class ClaimComponent  implements OnInit {
   }
 
   public buildForm(): void {
-
     this.claimForm = this._fb.group({
-      'name': [this.claim.name, [
-          Validators.required
-        ]
-      ],
-      'description': [this.claim.description, [
-          Validators.required
-        ]
-      ],
-      'priority': [this.claim.priority, [
-          Validators.required
-        ]
-      ],
-      'type': [this.claim.type, [
-          Validators.required
-        ]
-      ],
-      'author': [this.claim.author, [
-          Validators.required
-        ]
-      ],
-      'email': [this.claim.email, [
-          Validators.required
-        ]
-      ],
+      name: [this.claim.name, [Validators.required]],
+      description: [this.claim.description, [Validators.required]],
+      priority: [this.claim.priority, [Validators.required]],
+      type: [this.claim.type, [Validators.required]],
+      author: [this.claim.author, [Validators.required]],
+      email: [this.claim.email, [Validators.required]],
     });
 
-    this.claimForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.claimForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
     this.focusEvent.emit(true);
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.claimForm) { return; }
+    if (!this.claimForm) {
+      return;
+    }
     const form = this.claimForm;
 
     for (const field in this.formErrors) {
@@ -146,38 +135,40 @@ export class ClaimComponent  implements OnInit {
   public addClaim(): void {
     this.loading = true;
     this.claim = this.claimForm.value;
-    this.claim.file = this.file
+    this.claim.file = this.file;
     this.saveClaim();
   }
 
   public saveClaim(): void {
-    
     this.loading = true;
 
     this._claimService.saveClaim(this.claim).subscribe(
-      result => {
+      (result) => {
         this.loading = false;
         if (!result.claim) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
         } else {
           this.claim = result.claim;
-          this.showMessage(`El informe ha sido recibido correctamente, se lo contactará vía email informando el estado del Ticket ${this.claim._id}.`, 'success', false);
+          this.showMessage(
+            `El informe ha sido recibido correctamente, se lo contactará vía email informando el estado del Ticket ${this.claim._id}.`,
+            'success',
+            false
+          );
           this.fileName = null;
           this.file = null;
           this.claim = new Claim();
-          this._authService.getIdentity.subscribe(
-            identity => {
-              if(identity && identity.employee) {
-                this.claim.author = identity.employee.name;
-              }
-            },
-          );
+          this._authService.getIdentity.subscribe((identity) => {
+            if (identity && identity.employee) {
+              this.claim.author = identity.employee.name;
+            }
+          });
           this.claim.email = Config.emailAccount;
           this.focusEvent.emit(true);
           this.buildForm();
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -185,48 +176,49 @@ export class ClaimComponent  implements OnInit {
   }
 
   public fileChangeEvent(fileInput: any): void {
-
     this.fileName = fileInput.target.files[0].name;
 
     this.filesToUpload = <Array<File>>fileInput.target.files;
 
     this._claimService.makeFileRequest(this.filesToUpload).then(
-      result =>{
-        if(result) {
+      (result) => {
+        if (result) {
           this.file = result['file'];
-          this.showMessage("El archivo se guardo correctamente", 'info', false);
+          this.showMessage('El archivo se guardo correctamente', 'info', false);
         }
       },
-      error =>{
+      (error) => {
         this.showMessage(error._body, 'danger', false);
       }
-    )
+    );
   }
 
   public deleteFile(): void {
-
     this._claimService.deleteFile(this.file).subscribe(
-      result =>{
-        if(result) {
+      (result) => {
+        if (result) {
           this.showMessage(result.message, 'info', false);
           this.fileName = null;
           this.file = null;
         }
       },
-      error => {
-        this.showMessage(error, 'danget', false);      
+      (error) => {
+        this.showMessage(error, 'danget', false);
       }
     );
-     
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = '';
   }
 }

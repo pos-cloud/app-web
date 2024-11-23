@@ -19,21 +19,21 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
 import { Config } from 'app/app.config';
 import { Branch } from 'app/components/branch/branch';
-import { BranchService } from 'app/components/branch/branch.service';
-import { AuthService } from 'app/components/login/auth.service';
 import {
   Movements,
   TransactionMovement,
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { AuthService } from 'app/core/services/auth.service';
+import { BranchService } from 'app/core/services/branch.service';
 import { Subscription } from 'rxjs';
-import { ArticleService } from '../article/article.service';
+import { ArticleService } from '../../core/services/article.service';
+import { CategoryService } from '../../core/services/category.service';
+import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
+import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { Category } from '../category/category';
-import { CategoryService } from '../category/category.service';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
-import { MovementOfArticleService } from '../movement-of-article/movement-of-article.service';
-import { TransactionTypeService } from '../transaction-type/transaction-type.service';
 
 @Component({
   selector: 'app-report-best-selling-article',

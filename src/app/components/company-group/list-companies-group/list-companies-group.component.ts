@@ -7,7 +7,7 @@ import { DatatableComponent } from 'app/components/datatable/datatable.component
 
 import { CompanyGroup } from '../company-group';
 
-import { CompanyGroupService } from '../company-group.service';
+import { CompanyGroupService } from '../../../core/services/company-group.service';
 
 @Component({
   selector: 'app-list-companies-group',

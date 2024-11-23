@@ -10,13 +10,13 @@ import { PipesModule } from 'app/core/pipes/pipes.module';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { NgxTinymceModule } from 'ngx-tinymce';
+import { ReportService } from '../../core/services/report.service';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
 import { ExportersModule } from '../export/exporters.module';
 import { ReportComponent } from './crud/report.component';
 import { ListReportsComponent } from './list-reports/list-reports.component';
 import { ParamsReportComponent } from './params-report/params-report.component';
-import { ReportService } from './report.service';
 import { ViewReportComponent } from './view-report/view-report.component';
 
 const routes: Routes = [

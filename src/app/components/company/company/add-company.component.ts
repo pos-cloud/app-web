@@ -17,29 +17,29 @@ import { CompanyFields } from '../company-fields';
 import * as moment from 'moment';
 
 //SERVICE
-import { CompanyGroupService } from '../../company-group/company-group.service';
-import { EmployeeService } from '../../employee/employee.service';
-import { VATConditionService } from '../../vat-condition/vat-condition.service';
-import { CompanyService } from '../company.service';
+import { CompanyGroupService } from '../../../core/services/company-group.service';
+import { CompanyService } from '../../../core/services/company.service';
+import { EmployeeService } from '../../../core/services/employee.service';
+import { VATConditionService } from '../../../core/services/vat-condition.service';
 
 //PIPE
 import { Config } from 'app/app.config';
 import { Account } from 'app/components/account/account';
-import { AccountService } from 'app/components/account/account.service';
 import { Address } from 'app/components/address/address.model';
-import { AddressService } from 'app/components/address/address.service';
-import { ConfigService } from 'app/components/config/config.service';
-import { CountryService } from 'app/components/country/country.service';
 import { Employee } from 'app/components/employee/employee';
 import { IdentificationType } from 'app/components/identification-type/identification-type';
-import { IdentificationTypeService } from 'app/components/identification-type/identification-type.service';
 import { PriceList } from 'app/components/price-list/price-list';
-import { PriceListService } from 'app/components/price-list/price-list.service';
 import { State } from 'app/components/state/state';
-import { StateService } from 'app/components/state/state.service';
 import { Transport } from 'app/components/transport/transport';
-import { TransportService } from 'app/components/transport/transport.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { AccountService } from 'app/core/services/account.service';
+import { AddressService } from 'app/core/services/address.service';
+import { ConfigService } from 'app/core/services/config.service';
+import { CountryService } from 'app/core/services/country.service';
+import { IdentificationTypeService } from 'app/core/services/identification-type.service';
+import { PriceListService } from 'app/core/services/price-list.service';
+import { StateService } from 'app/core/services/state.service';
+import { TransportService } from 'app/core/services/transport.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {

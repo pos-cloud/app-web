@@ -3,18 +3,18 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
-import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
-import { PrinterService } from 'app/components/printer/printer.service';
 import {
   Transaction,
   TransactionState,
 } from 'app/components/transaction/transaction';
-import { TransactionService } from 'app/components/transaction/transaction.service';
 import { User } from 'app/components/user/user';
-import { UserService } from 'app/components/user/user.service';
 import { JsonDiffPipe } from 'app/core/pipes/json-diff';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
+import { PrinterService } from 'app/core/services/printer.service';
+import { TransactionService } from 'app/core/services/transaction.service';
+import { UserService } from 'app/core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';

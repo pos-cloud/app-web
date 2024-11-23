@@ -1,19 +1,22 @@
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Config } from "app/app.config";
-import { environment } from "environments/environment";
-import { of } from "rxjs";
-import { Observable } from "rxjs/Observable";
-import { catchError, map } from "rxjs/operators";
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Config } from 'app/app.config';
+import { environment } from 'environments/environment';
+import { of } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { catchError, map } from 'rxjs/operators';
 
-import { AuthService } from "app/components/login/auth.service";
-import { ModelService } from "app/components/model/model.service";
-import { PriceType } from "app/components/transaction-type/transaction-type";
-import { Article } from "./article.model";
+import { PriceType } from 'app/components/transaction-type/transaction-type';
+import { AuthService } from 'app/core/services/auth.service';
+import { ModelService } from 'app/core/services/model.service';
+import { Article } from './article.model';
 
 @Injectable()
 export class ArticleService extends ModelService {
-  constructor(public _http: HttpClient, public _authService: AuthService) {
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
     super(
       `articles`, // PATH
       _http,
@@ -25,10 +28,10 @@ export class ArticleService extends ModelService {
     const URL = `${Config.apiURL}article`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set("id", _id);
+    const params = new HttpParams().set('id', _id);
 
     return this._http
       .get(URL, {
@@ -49,10 +52,10 @@ export class ArticleService extends ModelService {
     const URL = `${Config.apiURL}articles`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set("query", query);
+    const params = new HttpParams().set('query', query);
 
     return this._http
       .get(URL, {
@@ -69,12 +72,12 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public getLasCode(): Observable<any>{
+  public getLasCode(): Observable<any> {
     const URL = `${Config.apiV8URL}articles/last-code`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
       .get(URL, {
@@ -101,16 +104,16 @@ export class ArticleService extends ModelService {
     const URL = `${Config.apiURL}v2/articles`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     const params = new HttpParams()
-      .set("project", JSON.stringify(project))
-      .set("match", JSON.stringify(match))
-      .set("sort", JSON.stringify(sort))
-      .set("group", JSON.stringify(group))
-      .set("limit", limit.toString())
-      .set("skip", skip.toString());
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
 
     return this._http
       .get(URL, {
@@ -138,16 +141,16 @@ export class ArticleService extends ModelService {
     const URL = `${Config.apiURL}v2/histories`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     const params = new HttpParams()
-      .set("project", JSON.stringify(project))
-      .set("match", JSON.stringify(match))
-      .set("sort", JSON.stringify(sort))
-      .set("group", JSON.stringify(group))
-      .set("limit", limit.toString())
-      .set("skip", skip.toString());
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
 
     return this._http
       .get(URL, {
@@ -168,16 +171,13 @@ export class ArticleService extends ModelService {
     const URL = `${Config.apiV8URL}articles`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
-      .post(
-        URL,article,
-        {
-          headers: headers,
-        }
-      )
+      .post(URL, article, {
+        headers: headers,
+      })
       .pipe(
         map((res) => {
           return res;
@@ -192,14 +192,13 @@ export class ArticleService extends ModelService {
     const URL = `${environment.apiv2}/articles`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
       .put(`${URL}/${article._id}`, article, {
-          headers: headers,
-        }
-      )
+        headers: headers,
+      })
       .pipe(
         map((res) => {
           return res;
@@ -210,20 +209,25 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public updatePrices(articlesCode: string[], field: PriceType, decimal: number, percentage: number): Observable<any> {
+  public updatePrices(
+    articlesCode: string[],
+    field: PriceType,
+    decimal: number,
+    percentage: number
+  ): Observable<any> {
     const URL = `${Config.apiV8URL}articles/update-prices`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
-    .post(
-      URL,
-      { articlesCode, field, decimal, percentage },
-      {
-        headers: headers,
-      }
+      .post(
+        URL,
+        { articlesCode, field, decimal, percentage },
+        {
+          headers: headers,
+        }
       )
       .pipe(
         map((res) => {
@@ -238,23 +242,19 @@ export class ArticleService extends ModelService {
   public makeFileRequest(origin: string, files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-    xhr.open(
-      "POST",
-      `${environment.apiStorage}/upload`,
-      true
-    );
-    xhr.setRequestHeader("Authorization", this._authService.getToken());
+    xhr.open('POST', `${environment.apiStorage}/upload`, true);
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
 
       if (files && files.length > 0) {
         for (let i: number = 0; i < files.length; i++) {
-          formData.append("file", files[i], files[i].name);
+          formData.append('file', files[i], files[i].name);
         }
       }
 
-      formData.append('origin', origin)
+      formData.append('origin', origin);
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
@@ -273,15 +273,15 @@ export class ArticleService extends ModelService {
   public makeFileRequestArray(files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-    xhr.open("POST", Config.apiURL + "upload-image-article/", true);
-    xhr.setRequestHeader("Authorization", this._authService.getToken());
+    xhr.open('POST', Config.apiURL + 'upload-image-article/', true);
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
 
       if (files && files.length > 0) {
         for (let i: number = 0; i < files.length; i++) {
-          formData.append("image", files[i], files[i].name);
+          formData.append('image', files[i], files[i].name);
         }
       }
 
@@ -303,10 +303,10 @@ export class ArticleService extends ModelService {
     const URL = `${Config.apiURL}delete-image-article`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set("picture", picture);
+    const params = new HttpParams().set('picture', picture);
 
     return this._http
       .delete(URL, {
@@ -327,15 +327,15 @@ export class ArticleService extends ModelService {
     const URL = `${environment.apiStorage}/upload`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
       .delete(URL, {
         headers: headers,
         body: {
-          origin: origin
-        }
+          origin: origin,
+        },
       })
       .pipe(
         map((res) => {
@@ -350,11 +350,11 @@ export class ArticleService extends ModelService {
   public getPicture(picture: string): Observable<any> {
     const URL = `${Config.apiURL}get-image-base64-article`;
 
-    const params = new HttpParams().set("picture", picture);
+    const params = new HttpParams().set('picture', picture);
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
       .get(URL, {
@@ -375,14 +375,13 @@ export class ArticleService extends ModelService {
     const URL = `${environment.apiv2}/articles/articles-tiendanube`;
 
     const headers = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("Authorization", this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     return this._http
-      .get(URL,
-        {
-          headers: headers,
-        })
+      .get(URL, {
+        headers: headers,
+      })
       .pipe(
         map((res) => {
           return res;
@@ -397,32 +396,28 @@ export class ArticleService extends ModelService {
     const URL = `${environment.apiTiendaNube}/products/${id}`;
 
     const headers = new HttpHeaders()
-    .set("Content-Type", "application/json")
-    .set("Authorization", this._authService.getToken());
-   
-    return this._http
-      .patch(URL, {}, { headers: headers })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.patch(URL, {}, { headers: headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
   }
 
   public updateArticlesTiendaNube(tiendaNubeIds: string[]): Observable<any> {
     const URL = `${environment.apiTiendaNube}/products/massive`;
 
     const headers = new HttpHeaders()
-    .set("Content-Type", "application/json")
-    .set("Authorization", this._authService.getToken());
-   
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
     return this._http
-      .put(URL, 
-        { tiendaNubeIds: tiendaNubeIds }, 
-        { headers: headers })
+      .put(URL, { tiendaNubeIds: tiendaNubeIds }, { headers: headers })
       .pipe(
         map((res) => {
           return res;
@@ -437,21 +432,18 @@ export class ArticleService extends ModelService {
     const URL = `${environment.apiTiendaNube}/products/${tiendaNubeId}`;
 
     const headers = new HttpHeaders()
-    .set('Content-Type', 'application/json')
-    .set('Authorization', this._authService.getToken());
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-  const params = new HttpParams().set('tiendaNubeId', tiendaNubeId);
+    const params = new HttpParams().set('tiendaNubeId', tiendaNubeId);
 
-  return this._http
-    .delete(URL, { headers: headers })
-    .pipe(
+    return this._http.delete(URL, { headers: headers }).pipe(
       map((res) => {
         return res;
       }),
       catchError((err) => {
         return of(err);
-      }),
+      })
     );
   }
 }
-

@@ -12,7 +12,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MakeService } from '../make.service';
+import { MakeService } from '../../../core/services/make.service';
 
 @Component({
   selector: 'app-make',

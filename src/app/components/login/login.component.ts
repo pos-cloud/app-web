@@ -1,22 +1,30 @@
 // ANGULAR
-import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // TERCEROS
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // MODELS
 import { Config } from 'app/app.config';
 
 // SERVICES
-import { UserService } from '../user/user.service';
-import { EmployeeService } from '../employee/employee.service';
-import { TableService } from '../table/table.service';
-import { AuthService } from 'app/components/login/auth.service';
-import { ConfigService } from 'app/components/config/config.service';
-import { User } from 'app/components/user/user';
+import { AuthService } from 'app/core/services/auth.service';
+import { ConfigService } from 'app/core/services/config.service';
 import { ToastrService } from 'ngx-toastr';
+import { EmployeeService } from '../../core/services/employee.service';
+import { TableService } from '../../core/services/table.service';
+import { UserService } from '../../core/services/user.service';
 //import { Socket } from 'ngx-socket-io';
 import { Employee } from '../employee/employee';
 
@@ -25,9 +33,8 @@ import { Employee } from '../employee/employee';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class LoginComponent implements OnInit {
   public loginForm: UntypedFormGroup;
   public alertMessage: string;
@@ -40,21 +47,21 @@ export class LoginComponent implements OnInit {
   public checkLockInput: boolean = false;
 
   public formErrors = {
-    'company': '',
-    'user': '',
-    'password': ''
+    company: '',
+    user: '',
+    password: '',
   };
 
   public validationMessages = {
-    'company': {
-      'required': 'Este campo es requerido.'
+    company: {
+      required: 'Este campo es requerido.',
     },
-    'user': {
-      'required': 'Este campo es requerido.'
+    user: {
+      required: 'Este campo es requerido.',
     },
-    'password': {
-      'required': 'Este campo es requerido.'
-    }
+    password: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
@@ -69,7 +76,7 @@ export class LoginComponent implements OnInit {
     private _configService: ConfigService,
     private _route: ActivatedRoute,
     //private socket: Socket,
-    private _toastr: ToastrService,
+    private _toastr: ToastrService
   ) {
     this.alertMessage = '';
   }
@@ -84,11 +91,13 @@ export class LoginComponent implements OnInit {
   }
 
   async lockInput() {
-    this.checkLockInput ? this.checkLockInput = false : this.checkLockInput = true;
+    this.checkLockInput
+      ? (this.checkLockInput = false)
+      : (this.checkLockInput = true);
   }
 
   private processParams(): void {
-    this._route.queryParams.subscribe(params => {
+    this._route.queryParams.subscribe((params) => {
       if (params['negocio']) {
         this.company = params['negocio'];
         Config.setDatabase(this.company);
@@ -99,26 +108,28 @@ export class LoginComponent implements OnInit {
   }
 
   public buildForm(): void {
-    this.company = localStorage.getItem("company");
+    this.company = localStorage.getItem('company');
 
     if (this.company) {
-      this.checkLockInput = true
+      this.checkLockInput = true;
     } else {
-      this.checkLockInput = false
+      this.checkLockInput = false;
     }
 
     this.loginForm = this._fb.group({
-      'company': [this.company, [Validators.required]],
-      'user': [this.user, [Validators.required]],
-      'password': [this.password, [Validators.required]]
+      company: [this.company, [Validators.required]],
+      user: [this.user, [Validators.required]],
+      password: [this.password, [Validators.required]],
     });
 
-    this.loginForm.valueChanges.subscribe(data => this.onValueChanged(data));
+    this.loginForm.valueChanges.subscribe((data) => this.onValueChanged(data));
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-    if (!this.loginForm) { return; }
+    if (!this.loginForm) {
+      return;
+    }
     const form = this.loginForm;
 
     for (const field in this.formErrors) {
@@ -135,45 +146,57 @@ export class LoginComponent implements OnInit {
   }
 
   async login() {
-    this.company = this.loginForm.value.company.trim()
-    this.user = this.loginForm.value.user
-    this.password = this.loginForm.value.password
+    this.company = this.loginForm.value.company.trim();
+    this.user = this.loginForm.value.user;
+    this.password = this.loginForm.value.password;
 
     if (!this.company.match(/^[a-z0-9]+$/)) {
-      this.showToast("El negocio ingresado no fue encontrado.", "danger");
+      this.showToast('El negocio ingresado no fue encontrado.', 'danger');
     } else {
-      this.showMessage("Comprobando usuario...", 'info', false);
+      this.showMessage('Comprobando usuario...', 'info', false);
       this.loading = true;
-      this._authService.login(this.company, this.user, this.password).subscribe(async result => {
+      this._authService.login(this.company, this.user, this.password).subscribe(
+        async (result) => {
           this.loading = false;
           if (!result.user) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '')
+              this.showMessage(result.message, 'info', true);
           } else {
             if (result.user.employee) {
-              this.showMessage("Ingresando...", 'success', false);
+              this.showMessage('Ingresando...', 'success', false);
 
               this._authService.loginStorage(result.user);
               //this.initSocket();
-  
-              await this.getConfigApi().then(config => {
+
+              await this.getConfigApi().then((config) => {
                 if (config) {
                   this._configService.setConfig(config);
                   this.setConfigurationSettings(config);
                 }
               });
               Config.setDatabase(this.company);
-              localStorage.setItem("company", this.company);
-  
-              this._route.queryParams.subscribe(params => params['return'] || '/');
+              localStorage.setItem('company', this.company);
+
+              this._route.queryParams.subscribe(
+                (params) => params['return'] || '/'
+              );
               this._router.navigateByUrl('/');
-             } else {
-              this.showMessage('El usuario y/o contraseña son incorrectos', 'info', true);
+            } else {
+              this.showMessage(
+                'El usuario y/o contraseña son incorrectos',
+                'info',
+                true
+              );
             }
           }
         },
-        error => {
+        (error) => {
           if (error.status === 0) {
-            this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
+            this.showMessage(
+              'Error de conexión con el servidor. Comunicarse con Soporte.',
+              'danger',
+              false
+            );
           } else {
             this.showMessage(error._body, 'danger', false);
           }
@@ -202,14 +225,14 @@ export class LoginComponent implements OnInit {
   public getConfigApi(): Promise<Config> {
     return new Promise<Config>((resolve, reject) => {
       this._configService.getConfigApi().subscribe(
-        result => {
+        (result) => {
           if (!result.configs) {
             resolve(null);
           } else {
             resolve(result.configs[0]);
           }
         },
-        error => {
+        (error) => {
           resolve(null);
         }
       );
@@ -217,7 +240,9 @@ export class LoginComponent implements OnInit {
   }
 
   public setConfigurationSettings(config) {
-    if (config.emailAccount) { Config.setConfigEmail(config.emailAccount, config.emailPassword) }
+    if (config.emailAccount) {
+      Config.setConfigEmail(config.emailAccount, config.emailPassword);
+    }
     if (config.companyName) {
       Config.setConfigCompany(
         config.companyPicture,
@@ -235,7 +260,8 @@ export class LoginComponent implements OnInit {
         config.companyIdentificationType,
         config.companyIdentificationValue,
         config.licenseCost,
-        config.companyPostalCode);
+        config.companyPostalCode
+      );
     }
     if (config.showLicenseNotification !== undefined) {
       Config.setConfigs(config.showLicenseNotification);
@@ -245,7 +271,11 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

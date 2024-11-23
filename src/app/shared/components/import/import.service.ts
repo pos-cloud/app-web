@@ -1,10 +1,10 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
-import { AuthService } from 'app/components/login/auth.service';
+import { AuthService } from 'app/core/services/auth.service';
 import { environment } from 'environments/environment';
 
 @Injectable()
@@ -35,32 +35,6 @@ export class ImportService {
 
     return this._http
       .post(URL, formData, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public importMovement(
-    objectToImport: {},
-    transaccionId: string
-  ): Observable<any> {
-    const URL = `${environment.api}import-movement`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('transaccion', transaccionId);
-
-    return this._http
-      .post(URL, objectToImport, {
         headers: headers,
       })
       .pipe(

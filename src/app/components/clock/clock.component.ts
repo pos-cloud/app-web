@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Subscription } from "rxjs";
-import {ClockService} from "./clock.service";
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ClockService } from '../../core/services/clock.service';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -8,19 +8,15 @@ import 'moment/locale/es';
 @Component({
   selector: 'app-clock',
   templateUrl: './clock.component.html',
-  styleUrls: ['./clock.component.css']
 })
 export class ClockComponent implements OnInit, OnDestroy {
-
   public _clockSubscription: Subscription;
   @Input() startTime: string;
   @Input() endTime: string;
   @Input() format: string;
   public difference: any;
 
-  constructor(
-    public clockSubscription: ClockService
-  ) {
+  constructor(public clockSubscription: ClockService) {
     if (!this.startTime) {
       this.startTime = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     }
@@ -30,12 +26,12 @@ export class ClockComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._clockSubscription = this.clockSubscription.getClock().subscribe(
-      time => {
+    this._clockSubscription = this.clockSubscription
+      .getClock()
+      .subscribe((time) => {
         this.endTime = time;
         this.calculateDiff();
-      }
-    );
+      });
   }
 
   ngOnDestroy(): void {
@@ -43,7 +39,7 @@ export class ClockComponent implements OnInit, OnDestroy {
   }
 
   public calculateDiff() {
-    let secs = moment(this.endTime).diff(this.startTime, "seconds");
-    this.difference = moment.utc(secs*1000).format(this.format);
+    let secs = moment(this.endTime).diff(this.startTime, 'seconds');
+    this.difference = moment.utc(secs * 1000).format(this.format);
   }
 }

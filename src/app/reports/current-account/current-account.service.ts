@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
-import { AuthService } from 'app/components/login/auth.service';
+import { AuthService } from 'app/core/services/auth.service';
 
 @Injectable()
 export class CurrentAccountService {

@@ -6,15 +6,15 @@ import {
   NgbAlertConfig,
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
-import { BranchService } from 'app/components/branch/branch.service';
 import { BusinessRule } from 'app/components/business-rules/business-rules';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
-import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
 import { TaxClassification } from 'app/components/tax/tax';
-import { UserService } from 'app/components/user/user.service';
 import { Voucher } from 'app/components/voucher-reader/voucher';
-import { VoucherService } from 'app/components/voucher-reader/voucher.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
+import { BranchService } from 'app/core/services/branch.service';
+import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
+import { UserService } from 'app/core/services/user.service';
+import { VoucherService } from 'app/core/services/voucher.service';
 import { ClaimService } from 'app/layout/claim/claim.service';
 import jsPDF from 'jspdf';
 import * as moment from 'moment';
@@ -22,19 +22,19 @@ import * as moment from 'moment';
 import { Config } from '../../../app.config';
 import { DateFormatPipe } from '../../../core/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { ArticleService } from '../../../core/services/article.service';
+import { CashBoxService } from '../../../core/services/cash-box.service';
+import { ConfigService } from '../../../core/services/config.service';
+import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
+import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
+import { PrinterService } from '../../../core/services/printer.service';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { Article } from '../../article/article';
-import { ArticleService } from '../../article/article.service';
 import { CashBox } from '../../cash-box/cash-box';
-import { CashBoxService } from '../../cash-box/cash-box.service';
 import { Company } from '../../company/company';
-import { ConfigService } from '../../config/config.service';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
-import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
-import { MovementOfCashService } from '../../movement-of-cash/movement-of-cash.service';
 import { Printer, PrinterPrintIn, PrinterType } from '../../printer/printer';
-import { PrinterService } from '../../printer/printer.service';
 import {
   DescriptionType,
   TransactionMovement,
@@ -44,11 +44,11 @@ import {
 //Paquetes de terceros
 
 //Servicios
-import { StructureService } from 'app/components/structure/structure.service';
-import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
+import { StructureService } from 'app/core/services/structure.service';
+import { PrintService } from '../../../core/services/print.service';
+import { TransactionTypeService } from '../../../core/services/transaction-type.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 import { Transaction } from '../../transaction/transaction';
-import { TransactionService } from '../../transaction/transaction.service';
-import { PrintService } from '../print.service';
 
 //Pipes
 

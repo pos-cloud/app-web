@@ -3,16 +3,16 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
 import { PriceList } from 'app/components/price-list/price-list';
-import { PriceListService } from 'app/components/price-list/price-list.service';
 import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
+import { PriceListService } from 'app/core/services/price-list.service';
 import { ImportComponent } from 'app/shared/components/import/import.component';
+import { ArticleService } from '../../../core/services/article.service';
+import { PrinterService } from '../../../core/services/printer.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
-import { PrinterService } from '../../printer/printer.service';
 import { PrintLabelComponent } from '../actions/print-label/print-label.component';
 import { PrintLabelsComponent } from '../actions/print-labels/print-labels.component';
 import { UpdateArticlePriceComponent } from '../actions/update-article-price/update-article-price.component';
 import { attributes } from '../article';
-import { ArticleService } from '../article.service';
 
 @Component({
   selector: 'app-list-articles',

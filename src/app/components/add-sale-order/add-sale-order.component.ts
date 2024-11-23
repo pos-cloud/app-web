@@ -11,43 +11,50 @@ import {
   NgbAlertConfig,
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
-import { ArticleService } from 'app/components/article/article.service';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
-import { CancellationTypeService } from 'app/components/cancellation-type/cancellation-type.service';
-import { ConfigService } from 'app/components/config/config.service';
 import { Currency } from 'app/components/currency/currency';
-import { MovementOfCancellationService } from 'app/components/movement-of-cancellation/movement-of-cancellation.service';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { PriceList } from 'app/components/price-list/price-list';
-import { PriceListService } from 'app/components/price-list/price-list.service';
 import { RelationType } from 'app/components/relation-type/relation-type';
-import { RelationTypeService } from 'app/components/relation-type/relation-type.service';
-import { StructureService } from 'app/components/structure/structure.service';
 import { SelectTableComponent } from 'app/components/table/select-table/select-table.component';
 import { Transport } from 'app/components/transport/transport';
-import { TransportService } from 'app/components/transport/transport.service';
 import { UseOfCFDI } from 'app/components/use-of-CFDI.component.ts/use-of-CFDI';
-import { UseOfCFDIService } from 'app/components/use-of-CFDI.component.ts/use-of-CFDI.service';
 import { User } from 'app/components/user/user';
 import { JsonDiffPipe } from 'app/core/pipes/json-diff';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ArticleService } from 'app/core/services/article.service';
+import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
+import { ConfigService } from 'app/core/services/config.service';
+import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
+import { PriceListService } from 'app/core/services/price-list.service';
+import { RelationTypeService } from 'app/core/services/relation-type.service';
+import { StructureService } from 'app/core/services/structure.service';
+import { TransportService } from 'app/core/services/transport.service';
+import { UseOfCFDIService } from 'app/core/services/use-of-CFDI.service';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';
 
 import { DateFormatPipe } from '../../core/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
-import { AccountSeatService } from '../account-seat/account-seat.service';
+import { AccountSeatService } from '../../core/services/account-seat.service';
+import { ArticleStockService } from '../../core/services/article-stock.service';
+import { BusinessRuleService } from '../../core/services/business-rule.service';
+import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
+import { PrinterService } from '../../core/services/printer.service';
+import { EmailService } from '../../core/services/send-email.service';
+import { TableService } from '../../core/services/table.service';
+import { TaxService } from '../../core/services/tax.service';
+import { TransactionService } from '../../core/services/transaction.service';
+import { UserService } from '../../core/services/user.service';
 import { ApplyDiscountComponent } from '../apply-discount/apply-discount.component';
 import { ArticleFieldType } from '../article-field/article-field';
 import { ArticleFields } from '../article-field/article-fields';
 import { ArticleStock } from '../article-stock/article-stock';
-import { ArticleStockService } from '../article-stock/article-stock.service';
 import { Article, ArticlePrintIn, Type } from '../article/article';
 import { ArticleComponent } from '../article/crud/article.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
-import { BusinessRuleService } from '../business-rules/business-rule.service';
 import { BusinessRule } from '../business-rules/business-rules';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { Category } from '../category/category';
@@ -60,7 +67,6 @@ import {
   MovementOfArticle,
   MovementOfArticleStatus,
 } from '../movement-of-article/movement-of-article';
-import { MovementOfArticleService } from '../movement-of-article/movement-of-article.service';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
@@ -69,13 +75,9 @@ import { Print } from '../print/print';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
 import { Printer, PrinterPrintIn, PrinterType } from '../printer/printer';
-import { PrinterService } from '../printer/printer.service';
-import { EmailService } from '../send-email/send-email.service';
 import { SelectShipmentMethodComponent } from '../shipment-method/select-shipment-method/select-shipment-method.component';
 import { Table, TableState } from '../table/table';
-import { TableService } from '../table/table.service';
 import { TaxBase, TaxClassification } from '../tax/tax';
-import { TaxService } from '../tax/tax.service';
 import { Taxes } from '../tax/taxes';
 import {
   optionalAFIP,
@@ -85,13 +87,11 @@ import {
   TransactionType,
 } from '../transaction-type/transaction-type';
 import { Transaction, TransactionState } from '../transaction/transaction';
-import { TransactionService } from '../transaction/transaction.service';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
-import { UserService } from '../user/user.service';
 
 import { ApiResponse, EmailProps } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
-import { VariantService } from '../variant/variant.service';
+import { VariantService } from '../../core/services/variant.service';
 import { Config } from './../../app.config';
 
 @Component({

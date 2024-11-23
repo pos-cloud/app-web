@@ -26,7 +26,7 @@ import { CompanyGroup } from '../company-group';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from '@types';
-import { CompanyGroupService } from '../company-group.service';
+import { CompanyGroupService } from '../../../core/services/company-group.service';
 
 @Component({
   selector: 'app-company-group',

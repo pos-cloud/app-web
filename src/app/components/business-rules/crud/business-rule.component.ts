@@ -18,21 +18,21 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from '@types';
 import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
-import { ArticleService } from 'app/components/article/article.service';
-import { BranchService } from 'app/components/branch/branch.service';
-import { CompanyService } from 'app/components/company/company.service';
-import { EmailTemplateService } from 'app/components/email-template/email-template.service';
-import { EmployeeTypeService } from 'app/components/employee-type/employee-type.service';
-import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
-import { PrinterService } from 'app/components/printer/printer.service';
-import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
 import {
   TransactionMovement,
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ArticleService } from 'app/core/services/article.service';
+import { BranchService } from 'app/core/services/branch.service';
+import { CompanyService } from 'app/core/services/company.service';
+import { EmailTemplateService } from 'app/core/services/email-template.service';
+import { EmployeeTypeService } from 'app/core/services/employee-type.service';
+import { PaymentMethodService } from 'app/core/services/payment-method.service';
+import { PrinterService } from 'app/core/services/printer.service';
+import { ShipmentMethodService } from 'app/core/services/shipment-method.service';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -46,7 +46,7 @@ import {
   tap,
 } from 'rxjs/operators';
 
-import { BusinessRuleService } from '../business-rule.service';
+import { BusinessRuleService } from '../../../core/services/business-rule.service';
 import { BusinessRule, Day } from '../business-rules';
 
 @Component({

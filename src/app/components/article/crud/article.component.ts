@@ -37,61 +37,56 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Make } from '@types';
 import { Config } from '../../../app.config';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { ArticleStockService } from '../../../core/services/article-stock.service';
+import { ArticleService } from '../../../core/services/article.service';
+import { CategoryService } from '../../../core/services/category.service';
+import { VariantService } from '../../../core/services/variant.service';
 import { ArticleStock } from '../../article-stock/article-stock';
-import { ArticleStockService } from '../../article-stock/article-stock.service';
 import { Category } from '../../category/category';
-import { CategoryService } from '../../category/category.service';
 import { Company } from '../../company/company';
-import { MakeService } from '../../make/make.service';
 import { Taxes } from '../../tax/taxes';
 import { Variant } from '../../variant/variant';
-import { VariantService } from '../../variant/variant.service';
 import { Article, ArticlePrintIn, Type } from '../article';
-import { ArticleService } from '../article.service';
 
+import { AccountService } from '../../../core/services/account.service';
+import { ApplicationService } from '../../../core/services/application.service';
+import { ClassificationService } from '../../../core/services/classification.service';
+import { ConfigService } from '../../../core/services/config.service';
 import { Account } from '../../account/account';
-import { AccountService } from '../../account/account.service';
 import { Application } from '../../application/application.model';
-import { ApplicationService } from '../../application/application.service';
 import { Classification } from '../../classification/classification';
-import { ClassificationService } from '../../classification/classification.service';
-import { ConfigService } from '../../config/config.service';
 import { Currency } from '../../currency/currency';
 
 // Services
 
-import { CurrencyService } from '../../currency/currency.service';
+import { CurrencyService } from '../../../core/services/currency.service';
 
 // Pipes
 import { ApiResponse, MediaCategory } from '@types';
-import { CompanyService } from 'app/components/company/company.service';
-import { TaxService } from 'app/components/tax/tax.service';
 import { User } from 'app/components/user/user';
-import { UserService } from 'app/components/user/user.service';
 import { VariantType } from 'app/components/variant-type/variant-type';
-import { VariantTypeService } from 'app/components/variant-type/variant-type.service';
 import { VariantValue } from 'app/components/variant-value/variant-value';
-import { VariantValueService } from 'app/components/variant-value/variant-value.service';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { FileService } from 'app/shared/services/file.service';
+import { CompanyService } from 'app/core/services/company.service';
+import { FileService } from 'app/core/services/file.service';
+import { MakeService } from 'app/core/services/make.service';
+import { TaxService } from 'app/core/services/tax.service';
+import { UserService } from 'app/core/services/user.service';
+import { VariantTypeService } from 'app/core/services/variant-type.service';
+import { VariantValueService } from 'app/core/services/variant-value.service';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { UnitOfMeasurementService } from '../../../core/services/unit-of-measurement.service';
 import { Tax, TaxClassification } from '../../tax/tax';
 import { UnitOfMeasurement } from '../../unit-of-measurement/unit-of-measurement.model';
-import { UnitOfMeasurementService } from '../../unit-of-measurement/unit-of-measurement.service';
 
 @Component({
   selector: 'app-article',
   templateUrl: './article.component.html',
   styleUrls: ['./article.component.scss'],
-  providers: [
-    DecimalPipe,
-    ApplicationService,
-    NgbTypeaheadConfig,
-    TranslateMePipe,
-  ],
+  providers: [DecimalPipe, NgbTypeaheadConfig, TranslateMePipe],
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleComponent implements OnInit {

@@ -13,15 +13,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from '@types';
 import { Config } from 'app/app.config';
 import { AccountPeriod } from 'app/components/account-period/account-period';
-import { AccountPeriodService } from 'app/components/account-period/account-period.service';
 import { AccountSeat } from 'app/components/account-seat/account-seat';
-import { AccountSeatService } from 'app/components/account-seat/account-seat.service';
 import { Account } from 'app/components/account/account';
-import { AccountService } from 'app/components/account/account.service';
 import { Printer } from 'app/components/printer/printer';
-import { PrinterService } from 'app/components/printer/printer.service';
-import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { AccountPeriodService } from 'app/core/services/account-period.service';
+import { AccountSeatService } from 'app/core/services/account-seat.service';
+import { AccountService } from 'app/core/services/account.service';
+import { PrinterService } from 'app/core/services/printer.service';
+import { UserService } from 'app/core/services/user.service';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -33,14 +33,14 @@ import {
 } from 'rxjs/operators';
 
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
+import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 import { ArticleComponent } from '../../article/crud/article.component';
 import { AddCompanyComponent } from '../../company/company/add-company.component';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
-import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
-import { MovementOfCashService } from '../../movement-of-cash/movement-of-cash.service';
 import { Transaction } from '../transaction';
-import { TransactionService } from '../transaction.service';
 
 import 'moment/locale/es';
 import * as printJS from 'print-js';

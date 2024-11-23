@@ -35,50 +35,36 @@ import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { AddressModule } from './components/address/address.module';
-import { AddressService } from './components/address/address.service';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
-import { ArticleFieldService } from './components/article-field/article-field.service';
 import { AddArticleFieldComponent } from './components/article-field/article-field/add-article-field.component';
 import { DeleteArticleFieldComponent } from './components/article-field/delete-article-field/delete-article-field.component';
 import { ListArticleFieldsComponent } from './components/article-field/list-article-fields/list-article-fields.component';
 import { UpdateArticleFieldComponent } from './components/article-field/update-article-field/update-article-field.component';
-import { ArticleStockService } from './components/article-stock/article-stock.service';
 import { AddArticleStockComponent } from './components/article-stock/article-stock/add-article-stock.component';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
-import { BankService } from './components/bank/bank.service';
 import { BankComponent } from './components/bank/bank/bank.component';
 import { ListBankComponent } from './components/bank/list-bank/list-bank.component';
-import { BranchService } from './components/branch/branch.service';
 import { BranchComponent } from './components/branch/branch/branch.component';
 import { ListBranchComponent } from './components/branch/list-branches/list-branches.component';
 import { SelectBranchComponent } from './components/branch/select-branch/select-branch.component';
-import { CancellationTypeService } from './components/cancellation-type/cancellation-type.service';
 import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type/cancellation-type.component';
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
-import { CashBoxService } from './components/cash-box/cash-box.service';
 import { CashBoxComponent } from './components/cash-box/cash-box/cash-box.component';
 import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-cash-box.component';
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
-import { CategoryService } from './components/category/category.service';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
-import { ClassificationService } from './components/classification/classification.service';
 import { ClassificationComponent } from './components/classification/classification/classification.component';
 import { ListClassificationsComponent } from './components/classification/list-classifications/list-classifications.component';
 import { ClockComponent } from './components/clock/clock.component';
-import { ClockService } from './components/clock/clock.service';
 import { AddCompanyFieldComponent } from './components/company-field/add-company-field.component';
-import { CompanyFieldService } from './components/company-field/company-field.service';
 import { DeleteCompanyFieldComponent } from './components/company-field/delete-company-field/delete-company-field.component';
 import { UpdateCompanyFieldComponent } from './components/company-field/update-company-field/update-company-field.component';
 import { AddCompanyFieldsComponent } from './components/company/add-company-fields/add-company-fields.component';
-import { CompanyContactService } from './components/company/company-contact.service';
 import { CompanyContactComponent } from './components/company/company-contact/company-contact.component';
-import { CompanyNewsService } from './components/company/company-news.service';
 import { CompanyNewsComponent } from './components/company/company-news/company-news.component';
-import { CompanyService } from './components/company/company.service';
 import { AddCompanyComponent } from './components/company/company/add-company.component';
 import { DeleteCompanyComponent } from './components/company/delete-company/delete-company.component';
 import { ListCompaniesComponent } from './components/company/list-companies/list-companies.component';
@@ -86,63 +72,45 @@ import { ListCompanyFieldsComponent } from './components/company/list-company-fi
 import { SelectCompanyComponent } from './components/company/select-company/select-company.component';
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
-import { ConfigService } from './components/config/config.service';
-import { CountryService } from './components/country/country.service';
 import { CountryComponent } from './components/country/country/country.component';
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
-import { CurrencyValueService } from './components/currency-value/currency-value.service';
 import { CurrencyValueComponent } from './components/currency-value/currency-value/currency-value.component';
 import { ListCurrencyValuesComponent } from './components/currency-value/list-currency-values/list-currency-values.component';
-import { CurrencyService } from './components/currency/currency.service';
 import { CurrencyComponent } from './components/currency/currency/currency.component';
 import { ListCurrenciesComponent } from './components/currency/list-currencies/list-currencies.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { DepositService } from './components/deposit/deposit.service';
 import { DepositComponent } from './components/deposit/deposit/deposit.component';
 import { ListDepositsComponent } from './components/deposit/list-deposits/list-deposits.component';
 import { SelectDepositComponent } from './components/deposit/select-deposit/select-deposit.component';
-import { EmailTemplateService } from './components/email-template/email-template.service';
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
-import { EmployeeService } from './components/employee/employee.service';
 import { AddEmployeeComponent } from './components/employee/employee/add-employee.component';
 import { ListEmployeesComponent } from './components/employee/list-employees/list-employees.component';
 import { SelectEmployeeComponent } from './components/employee/select-employee/select-employee.component';
 import { ExportersModule } from './components/export/exporters.module';
-import { IdentificationTypeService } from './components/identification-type/identification-type.service';
 import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
 import { ListLocationsComponent } from './components/location/list-locations/list-locations.component';
-import { LocationService } from './components/location/location.service';
 import { LocationComponent } from './components/location/location/location.component';
-import { AuthService } from './components/login/auth.service';
 import { LoginComponent } from './components/login/login.component';
-import { MakeService } from './components/make/make.service';
 import { MenuComponent } from './components/menu/menu.component';
-import { MenuService } from './components/menu/menu.service';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { ListMovementsOfArticlesComponent } from './components/movement-of-article/list-movements-of-articles/list-movements-of-articles.component';
-import { MovementOfArticleService } from './components/movement-of-article/movement-of-article.service';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { MovementOfCancellationComponent } from './components/movement-of-cancellation/movement-of-cancellation.component';
-import { MovementOfCancellationService } from './components/movement-of-cancellation/movement-of-cancellation.service';
 import { AddMovementOfCashComponent } from './components/movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { DeleteMovementOfCashComponent } from './components/movement-of-cash/delete-movement-of-cash/delete-movement-of-cash.component';
 import { EditCheckComponent } from './components/movement-of-cash/edit-check/edit-check.component';
 import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
 import { ListMovementOfCashesComponent } from './components/movement-of-cash/list-movements-of-cashes/list-movements-of-cashes.component';
-import { MovementOfCashService } from './components/movement-of-cash/movement-of-cash.service';
 import { SelectChecksComponent } from './components/movement-of-cash/select-checks/select-checks.component';
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
-import { PushNotificationsService } from './components/notification/notification.service';
 import { ListOriginsComponent } from './components/origin/list-origins/list-origins.component';
-import { OriginService } from './components/origin/origin.service';
 import { OriginComponent } from './components/origin/origin/origin.component';
 import { SelectOriginComponent } from './components/origin/select-origin/select-origin.component';
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
-import { PaymentMethodService } from './components/payment-method/payment-method.service';
 import { PaymentMethodComponent } from './components/payment-method/payment-method/payment-method.component';
 import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
@@ -151,7 +119,6 @@ import { PosClientViewComponent } from './components/pos-client-view/pos-client-
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
 import { ListPriceListsComponent } from './components/price-list/list-price-lists/list-price-lists.component';
-import { PriceListService } from './components/price-list/price-list.service';
 import { PriceListComponent } from './components/price-list/price-list/price-list.component';
 import { SelectPriceListComponent } from './components/price-list/select-price-list/select-price-list.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
@@ -160,14 +127,11 @@ import { PrintPriceListComponent } from './components/print/print-price-list/pri
 import { PrintQRComponent } from './components/print/print-qr/print-qr.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
 import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
-import { PrintService } from './components/print/print.service';
 import { PrintComponent } from './components/print/print/print.component';
 import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
-import { PrinterService } from './components/printer/printer.service';
 import { PrinterComponent } from './components/printer/printer/printer.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
-import { RelationTypeService } from './components/relation-type/relation-type.service';
 import { RelationTypeComponent } from './components/relation-type/relation-type/relation-type.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
@@ -179,57 +143,43 @@ import { ReportSalesByMakeComponent } from './components/report-sales-by-make/re
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 import { ListRoomsComponent } from './components/room/list-rooms/list-rooms.component';
-import { RoomService } from './components/room/room.service';
 import { RoomComponent } from './components/room/room/room.component';
 import { SendEmailComponent } from './components/send-email/send-email.component';
-import { EmailService } from './components/send-email/send-email.service';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
-import { StateService } from './components/state/state.service';
 import { StateComponent } from './components/state/state/state.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListStructureComponent } from './components/structure/list-structure/list-structure.component';
-import { StructureService } from './components/structure/structure.service';
 import { StructureComponent } from './components/structure/structure/structure.component';
 import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
-import { TableService } from './components/table/table.service';
 import { TableComponent } from './components/table/table/table.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
-import { TaxService } from './components/tax/tax.service';
 import { TaxComponent } from './components/tax/tax/tax.component';
 import { CancelComponent } from './components/tiendaNube/cancel/cancel.component';
 import { DateFromToComponent } from './components/tiendaNube/date-from-to/date-from-to.component';
 import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
-import { TransactionService } from './components/transaction/transaction.service';
 import { ViewTransactionComponent } from './components/transaction/view-transaction/view-transaction.component';
 import { ListTransportComponent } from './components/transport/list-transports/list-transports.component';
 import { SelectTransportComponent } from './components/transport/select-transport/select-transport.component';
-import { TransportService } from './components/transport/transport.service';
 import { TransportComponent } from './components/transport/transport/transport.component';
 import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
-import { UseOfCFDIService } from './components/use-of-CFDI.component.ts/use-of-CFDI.service';
 import { AddUseOfCFDIComponent } from './components/use-of-CFDI.component.ts/use-of-CFDI/add-use-of-CFDI.component';
 import { DeleteUserComponent } from './components/user/delete-user/delete-user.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ShortcutComponent } from './components/user/shortcut/shortcut.component';
-import { UserService } from './components/user/user.service';
 import { AddUserComponent } from './components/user/user/add-user.component';
 import { DeleteVariantTypeComponent } from './components/variant-type/delete-variant-type/delete-variant-type.component';
 import { ListVariantTypesComponent } from './components/variant-type/list-variant-types/list-variant-types.component';
 import { UpdateVariantTypeComponent } from './components/variant-type/update-variant-type/update-variant-type.component';
-import { VariantTypeService } from './components/variant-type/variant-type.service';
 import { AddVariantTypeComponent } from './components/variant-type/variant-type/add-variant-type.component';
 import { AddVariantComponent } from './components/variant/add-variant/add-variant.component';
 import { DeleteVariantComponent } from './components/variant/delete-variant/delete-variant.component';
 import { ListVariantsComponent } from './components/variant/list-variants/list-variants.component';
-import { VariantService } from './components/variant/variant.service';
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
-import { VATConditionService } from './components/vat-condition/vat-condition.service';
 import { VATConditionComponent } from './components/vat-condition/vat-condition/vat-condition.component';
 import { VoucherReaderComponent } from './components/voucher-reader/voucher-reader.component';
-import { VoucherService } from './components/voucher-reader/voucher.service';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { NotificationGuard } from './core/guards/notification.guard';
@@ -451,62 +401,12 @@ export function createTranslateLoader(http: HttpClient) {
       useClass: AuthInterceptor,
       multi: true,
     },
-    AddressService,
     NgbActiveModal,
     NgbAlertConfig,
-    EmployeeService,
-    TableService,
-    CashBoxService,
-    TransactionService,
-    MovementOfArticleService,
-    UserService,
-    RoomService,
-    MakeService,
-    CategoryService,
-    CompanyService,
-    ClockService,
-    PrinterService,
-    ConfigService,
-    PaymentMethodService,
-    MovementOfCashService,
-    PrintService,
-    VoucherService,
-    EmailService,
-    VATConditionService,
-    ArticleStockService,
-    VariantTypeService,
-    VariantService,
-    TaxService,
-    DepositService,
-    LocationService,
-    CompanyNewsService,
-    ArticleFieldService,
-    CompanyContactService,
-    IdentificationTypeService,
-    UseOfCFDIService,
-    RelationTypeService,
-    CompanyFieldService,
-    CancellationTypeService,
-    MovementOfCancellationService,
-    CurrencyService,
-    StateService,
-    CountryService,
-    BankService,
-    BranchService,
     AuthGuard,
     NotificationGuard,
     LicenseGuard,
-    AuthService,
-    OriginService,
     ClaimService,
-    TransportService,
-    PriceListService,
-    StructureService,
-    ClassificationService,
-    CurrencyValueService,
-    EmailTemplateService,
-    PushNotificationsService,
-    MenuService,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent],

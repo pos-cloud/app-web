@@ -2,9 +2,9 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { VariantValueService } from '../../../core/services/variant-value.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { VariantValue } from '../variant-value';
-import { VariantValueService } from '../variant-value.service';
 
 @Component({
   selector: 'app-list-variant-values',

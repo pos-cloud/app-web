@@ -2,9 +2,9 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { CompanyNewService } from '../../../core/services/company-new.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { CompanyNew } from '../company-new';
-import { CompanyNewService } from '../company-new.service';
 
 @Component({
   selector: 'app-list-company-news',

@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { PaymentMethodService } from '../../../core/services/payment-method.service';
 import { PaymentMethod } from '../payment-method';
-import { PaymentMethodService } from '../payment-method.service';
 
 import { PaymentMethodComponent } from '../payment-method/payment-method.component';
 

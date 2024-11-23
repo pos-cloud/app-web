@@ -12,7 +12,6 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 import { NgxTinymceModule } from 'ngx-tinymce';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { CompanyGroupService } from './company-group.service';
 import { CompanyGroupComponent } from './crud/company-group.component';
 import { ListCompaniesGroupComponent } from './list-companies-group/list-companies-group.component';
 
@@ -63,6 +62,6 @@ const routes: Routes = [
   ],
   declarations: [ListCompaniesGroupComponent, CompanyGroupComponent],
   exports: [CompanyGroupComponent],
-  providers: [CompanyGroupService],
+  providers: [],
 })
 export class CompanyGroupModule {}

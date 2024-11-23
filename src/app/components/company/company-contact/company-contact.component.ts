@@ -1,27 +1,25 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { CompanyContact } from '../company-contact';
+import { CompanyContactService } from '../../../core/services/company-contact.service';
 import { Company } from '../company';
-import { CompanyContactService } from '../company-contact.service';
+import { CompanyContact } from '../company-contact';
 
 @Component({
   selector: 'app-company-contact',
   templateUrl: './company-contact.component.html',
   styleUrls: ['./company-contact.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class CompanyContactComponent implements OnInit {
-
   public companiesContacts: CompanyContact[] = new Array();
   public companyContact: CompanyContact;
   public areCompaniesContactEmpty: boolean = true;
   @Input() company: Company;
-  
+
   public contactForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
@@ -34,13 +32,13 @@ export class CompanyContactComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'name': ''
+    name: '',
   };
 
   public validationMessages = {
-    'name': {
-      'required':       'Este campo es requerido.'
-    }
+    name: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
@@ -48,12 +46,11 @@ export class CompanyContactComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    this.companyContact =  new CompanyContact();
+  ) {
+    this.companyContact = new CompanyContact();
   }
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getCompaniesContacts();
@@ -64,15 +61,15 @@ export class CompanyContactComponent implements OnInit {
   }
 
   public getCompaniesContacts(): void {
-
     this.loading = true;
 
     let query: string = 'where="company":"' + this.company._id + '"';
 
     this._companyContactService.getCompaniesContacts(query).subscribe(
-      result => {
+      (result) => {
         if (!result.companiesContacts) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.companiesContacts = [];
           this.areCompaniesContactEmpty = true;
@@ -84,7 +81,7 @@ export class CompanyContactComponent implements OnInit {
           this.areCompaniesContactEmpty = false;
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -92,9 +89,8 @@ export class CompanyContactComponent implements OnInit {
   }
 
   public orderBy(term: string, property?: string): void {
-
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
+      this.orderTerm[0] = '-' + term;
     } else {
       this.orderTerm[0] = term;
     }
@@ -106,61 +102,68 @@ export class CompanyContactComponent implements OnInit {
   }
 
   public addCompanyContact(): void {
-
-    if ( this.companyContact.name !== '') {
+    if (this.companyContact.name !== '') {
       this.companyContact.company = this.company;
       this.saveCompanyContact();
     } else {
-      this.showMessage("Debe completar el contacto", 'info', true);
+      this.showMessage('Debe completar el contacto', 'info', true);
     }
   }
 
   public saveCompanyContact(): void {
-    
     this.loading = true;
 
-    this._companyContactService.saveCompanyContact(this.companyContact).subscribe(
-      result => {
-        if (!result.companyContact) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+    this._companyContactService
+      .saveCompanyContact(this.companyContact)
+      .subscribe(
+        (result) => {
+          if (!result.companyContact) {
+            if (result.message && result.message !== '')
+              this.showMessage(result.message, 'info', true);
+            this.loading = false;
+          } else {
+            this.companyContact = result.companyContact;
+            this.companyContact = new CompanyContact();
+            this.focusEvent.emit(true);
+            this.getCompaniesContacts();
+          }
           this.loading = false;
-        } else {
-          this.companyContact = result.companyContact;
-          this.companyContact = new CompanyContact();
-          this.focusEvent.emit(true);
-          this.getCompaniesContacts();
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
   public deleteCompanyContact(companyContact: CompanyContact): void {
-
     this.loading = true;
 
-    this._companyContactService.deleteCompanyContact(companyContact._id).subscribe(
-      result => {
-        if (!result.companyContact) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+    this._companyContactService
+      .deleteCompanyContact(companyContact._id)
+      .subscribe(
+        (result) => {
+          if (!result.companyContact) {
+            if (result.message && result.message !== '')
+              this.showMessage(result.message, 'info', true);
+            this.loading = false;
+          } else {
+            this.getCompaniesContacts();
+          }
           this.loading = false;
-        } else {
-          this.getCompaniesContacts();
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
@@ -169,5 +172,4 @@ export class CompanyContactComponent implements OnInit {
   public hideMessage(): void {
     this.alertMessage = '';
   }
-
 }

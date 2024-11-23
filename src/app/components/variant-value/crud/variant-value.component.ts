@@ -20,11 +20,11 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from '@types';
 import { Config } from 'app/app.config';
-import { ApplicationService } from 'app/components/application/application.service';
 import { VariantType } from 'app/components/variant-type/variant-type';
-import { VariantTypeService } from 'app/components/variant-type/variant-type.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ApplicationService } from 'app/core/services/application.service';
+import { VariantTypeService } from 'app/core/services/variant-type.service';
 import * as $ from 'jquery';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
@@ -34,8 +34,8 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
+import { VariantValueService } from '../../../core/services/variant-value.service';
 import { VariantValue } from '../variant-value';
-import { VariantValueService } from '../variant-value.service';
 
 @Component({
   selector: 'app-variant-value',

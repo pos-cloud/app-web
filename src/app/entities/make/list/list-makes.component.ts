@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { MakeService } from '../make.service';
+import { MakeService } from '../../../core/services/make.service';
 
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';

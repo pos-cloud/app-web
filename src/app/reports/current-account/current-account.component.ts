@@ -7,19 +7,19 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
 
 import { Company } from 'app/components/company/company';
-import { CompanyService } from 'app/components/company/company.service';
-import { ConfigService } from 'app/components/config/config.service';
-import { AuthService } from 'app/components/login/auth.service';
-import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
 import { CompanyType } from 'app/components/payment-method/payment-method';
-import { PrinterService } from 'app/components/printer/printer.service';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
-import { TransactionService } from 'app/components/transaction/transaction.service';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { AuthService } from 'app/core/services/auth.service';
+import { CompanyService } from 'app/core/services/company.service';
+import { ConfigService } from 'app/core/services/config.service';
+import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { PrinterService } from 'app/core/services/printer.service';
+import { TransactionService } from 'app/core/services/transaction.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CurrentAccountService } from './current-account.service';
 @Component({

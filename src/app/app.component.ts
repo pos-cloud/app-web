@@ -12,8 +12,8 @@ import { ToastrService } from 'ngx-toastr';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
 import { Config } from './app.config';
-import { ConfigService } from './components/config/config.service';
-import { AuthService } from './components/login/auth.service';
+import { AuthService } from './core/services/auth.service';
+import { ConfigService } from './core/services/config.service';
 
 import 'moment/locale/es';
 

@@ -2,8 +2,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AuthService } from 'app/components/login/auth.service';
 import { User } from 'app/components/user/user';
+import { AuthService } from 'app/core/services/auth.service';
 import { UpdateModalContent } from '../update-modal/update-modal.component';
 
 @Component({

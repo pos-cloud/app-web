@@ -8,13 +8,13 @@ import {
 
 import { ActivatedRoute } from '@angular/router';
 import { CashBox } from 'app/components/cash-box/cash-box';
-import { CashBoxService } from 'app/components/cash-box/cash-box.service';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
 import { Movements } from 'app/components/transaction-type/transaction-type';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { FilterPipe } from 'app/core/pipes/filter.pipe';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { CashBoxService } from 'app/core/services/cash-box.service';
+import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { PrintComponent } from '../../print/print/print.component';
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
 import { ListCashBoxesComponent } from '../list-cash-boxes/list-cash-boxes.component';

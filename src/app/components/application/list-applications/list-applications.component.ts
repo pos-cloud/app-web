@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiResponse } from '@types';
-import { CompanyService } from 'app/components/company/company.service';
+import { CompanyService } from 'app/core/services/company.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -11,17 +11,17 @@ import {
   tap,
 } from 'rxjs/operators';
 import { TranslateMePipe } from '../../../core/pipes/translate-me';
+import { ApplicationService } from '../../../core/services/application.service';
+import { ArticleService } from '../../../core/services/article.service';
+import { PaymentMethodService } from '../../../core/services/payment-method.service';
+import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
+import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 import { Article, Type } from '../../article/article';
-import { ArticleService } from '../../article/article.service';
 import { Company, CompanyType } from '../../company/company';
 import { PaymentMethod } from '../../payment-method/payment-method';
-import { PaymentMethodService } from '../../payment-method/payment-method.service';
 import { ShipmentMethod } from '../../shipment-method/shipment-method.model';
-import { ShipmentMethodService } from '../../shipment-method/shipment-method.service';
 import { TransactionType } from '../../transaction-type/transaction-type';
-import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
 import { Application, ApplicationType } from '../application.model';
-import { ApplicationService } from '../application.service';
 
 @Component({
   selector: 'app-list-applications',

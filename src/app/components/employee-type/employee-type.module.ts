@@ -12,7 +12,6 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
 import { EmployeeTypeComponent } from './crud/employee-type.component';
-import { EmployeeTypeService } from './employee-type.service';
 import { ListEmployeeTypesComponent } from './list-employee-types/list-employee-types.component';
 
 const routes: Routes = [
@@ -41,6 +40,6 @@ const routes: Routes = [
   ],
   declarations: [ListEmployeeTypesComponent, EmployeeTypeComponent],
   exports: [EmployeeTypeComponent],
-  providers: [EmployeeTypeService],
+  providers: [],
 })
 export class EmployeeTypeModule {}

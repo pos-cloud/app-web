@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { ArticleFieldService } from '../../../core/services/article-field.service';
 import { ArticleField } from '../article-field';
-import { ArticleFieldService } from '../article-field.service';
 
 import { AddArticleFieldComponent } from '../article-field/add-article-field.component';
 import { DeleteArticleFieldComponent } from '../delete-article-field/delete-article-field.component';

@@ -14,7 +14,6 @@ import { ProgressbarModule } from '../../shared/components/progressbar/progressb
 import { DatatableModule } from '../datatable/datatable.module';
 import { VariantValueComponent } from './crud/variant-value.component';
 import { ListVariantValuesComponent } from './list-variant-values/list-variant-values.component';
-import { VariantValueService } from './variant-value.service';
 
 const routes: Routes = [
   {
@@ -63,6 +62,6 @@ const routes: Routes = [
   ],
   declarations: [ListVariantValuesComponent, VariantValueComponent],
   exports: [VariantValueComponent],
-  providers: [VariantValueService],
+  providers: [],
 })
 export class VariantValueModule {}

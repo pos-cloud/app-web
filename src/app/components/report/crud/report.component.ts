@@ -22,16 +22,16 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from '@types';
 import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
-import { ArticleService } from 'app/components/article/article.service';
 import { Category } from 'app/components/category/category';
-import { EmailTemplateService } from 'app/components/email-template/email-template.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ArticleService } from 'app/core/services/article.service';
+import { EmailTemplateService } from 'app/core/services/email-template.service';
 import * as $ from 'jquery';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
+import { ReportService } from '../../../core/services/report.service';
 import { Report } from '../report.model';
-import { ReportService } from '../report.service';
 
 @Component({
   selector: 'app-report',

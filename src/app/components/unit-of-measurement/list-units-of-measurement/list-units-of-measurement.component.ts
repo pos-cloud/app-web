@@ -1,10 +1,10 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { UnitOfMeasurementService } from '../../../core/services/unit-of-measurement.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { UnitOfMeasurementComponent } from '../crud/unit-of-measurement.component';
 import { UnitOfMeasurement } from '../unit-of-measurement.model';
-import { UnitOfMeasurementService } from '../unit-of-measurement.service';
 
 @Component({
   selector: 'app-list-units-of-measurement',

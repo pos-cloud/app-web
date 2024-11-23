@@ -1,10 +1,10 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { EmployeeTypeService } from '../../../core/services/employee-type.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { EmployeeTypeComponent } from '../crud/employee-type.component';
 import { EmployeeType } from '../employee-type.model';
-import { EmployeeTypeService } from '../employee-type.service';
 
 @Component({
   selector: 'app-list-employee-types',

@@ -8,26 +8,27 @@ import {
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Branch } from 'app/components/branch/branch';
-import { BranchService } from 'app/components/branch/branch.service';
-import { AuthService } from 'app/components/login/auth.service';
 import { PrintComponent } from 'app/components/print/print/print.component';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { User } from 'app/components/user/user';
-import { UserService } from 'app/components/user/user.service';
 import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
+import { AuthService } from 'app/core/services/auth.service';
+import { BranchService } from 'app/core/services/branch.service';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { UserService } from 'app/core/services/user.service';
 import * as moment from 'moment';
 import { Observable, Subscription, of as observableOf } from 'rxjs';
 
 import * as printJS from 'print-js';
 import { Config } from '../../../app.config';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
-import { ConfigService } from '../../config/config.service';
+import { ConfigService } from '../../../core/services/config.service';
+import { PrinterService } from '../../../core/services/printer.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
 import { PrintTransactionTypeComponent } from '../../print/print-transaction-type/print-transaction-type.component';
 import { Printer, PrinterPrintIn } from '../../printer/printer';
-import { PrinterService } from '../../printer/printer.service';
 import { SendEmailComponent } from '../../send-email/send-email.component';
 import {
   TransactionMovement,
@@ -35,7 +36,6 @@ import {
 } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction';
-import { TransactionService } from '../transaction.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';

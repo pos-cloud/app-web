@@ -10,13 +10,13 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Make } from '@types';
 import { Article } from 'app/components/article/article';
-import { ArticleService } from 'app/components/article/article.service';
 import { Category } from 'app/components/category/category';
-import { CategoryService } from 'app/components/category/category.service';
-import { MakeService } from 'app/components/make/make.service';
+import { ArticleService } from 'app/core/services/article.service';
+import { CategoryService } from 'app/core/services/category.service';
 
 import { PriceList } from 'app/components/price-list/price-list';
-import { PriceListService } from 'app/components/price-list/price-list.service';
+import { MakeService } from 'app/core/services/make.service';
+import { PriceListService } from 'app/core/services/price-list.service';
 import { Observable } from 'rxjs';
 import {
   debounceTime,

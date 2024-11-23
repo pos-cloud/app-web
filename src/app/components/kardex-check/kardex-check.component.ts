@@ -3,19 +3,19 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 
+import { MovementOfCashService } from '../../core/services/movement-of-cash.service';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
-import { MovementOfCashService } from '../movement-of-cash/movement-of-cash.service';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { CurrencyPipe } from '@angular/common';
-import { AuthService } from 'app/components/login/auth.service';
 import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
+import { AuthService } from 'app/core/services/auth.service';
 import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
+import { TransactionService } from '../../core/services/transaction.service';
 import { TransactionMovement } from '../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction/transaction';
-import { TransactionService } from '../transaction/transaction.service';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 
 @Component({

@@ -1,26 +1,27 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
 
-
-import { ClassificationService } from '../classification.service';
+import { ClassificationService } from '../../../core/services/classification.service';
 
 import { Classification } from '../classification';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
-
 
 @Component({
   selector: 'app-classification',
   templateUrl: './classification.component.html',
-  styleUrls: ['./classification.component.css']
+  styleUrls: ['./classification.component.css'],
 })
 export class ClassificationComponent implements OnInit {
-
   @Input() operation: string;
   @Input() readonly: boolean;
-  @Input() classificationId : string;
+  @Input() classificationId: string;
   public alertMessage: string = '';
   public userType: string;
   public classification: Classification;
@@ -35,13 +36,13 @@ export class ClassificationComponent implements OnInit {
   public orientation: string = 'horizontal';
 
   public formErrors = {
-    'name': '',
+    name: '',
   };
 
   public validationMessages = {
-    'name': {
-      'required': 'Este campo es requerido.'
-    }
+    name: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
@@ -49,9 +50,9 @@ export class ClassificationComponent implements OnInit {
     public _classificationService: ClassificationService,
     public _router: Router,
     public _fb: UntypedFormBuilder,
-    public activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal
   ) {
-    if(window.screen.width < 1000) this.orientation = 'vertical';
+    if (window.screen.width < 1000) this.orientation = 'vertical';
     this.classification = new Classification();
   }
 
@@ -60,7 +61,7 @@ export class ClassificationComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
-    
+
     if (this.classificationId) {
       this.getClassification();
     }
@@ -71,59 +72,60 @@ export class ClassificationComponent implements OnInit {
   }
 
   public getClassification() {
-
     this.loading = true;
 
-    this._classificationService.getClassification(this.classificationId).subscribe(
-      result => {
-        if (!result.classification) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.hideMessage();
-          this.classification = result.classification;
-          this.setValueForm();
+    this._classificationService
+      .getClassification(this.classificationId)
+      .subscribe(
+        (result) => {
+          if (!result.classification) {
+            if (result.message && result.message !== '')
+              this.showMessage(result.message, 'info', true);
+          } else {
+            this.hideMessage();
+            this.classification = result.classification;
+            this.setValueForm();
+          }
+          this.loading = false;
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
   public setValueForm(): void {
-
-   
-    if (!this.classification._id) { this.classification._id = ''; }
-    if (!this.classification.name) { this.classification.name = ''; }
-
+    if (!this.classification._id) {
+      this.classification._id = '';
+    }
+    if (!this.classification.name) {
+      this.classification.name = '';
+    }
 
     const values = {
-      '_id': this.classification._id,
-      'name': this.classification.name
+      _id: this.classification._id,
+      name: this.classification.name,
     };
     this.classificationForm.setValue(values);
   }
 
   public buildForm(): void {
-
     this.classificationForm = this._fb.group({
-      '_id' : [this.classification._id, []],
-      'name': [this.classification.name, [
-        Validators.required
-        ]
-      ]
+      _id: [this.classification._id, []],
+      name: [this.classification.name, [Validators.required]],
     });
 
-    this.classificationForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.classificationForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.classificationForm) { return; }
+    if (!this.classificationForm) {
+      return;
+    }
     const form = this.classificationForm;
 
     for (const field in this.formErrors) {
@@ -140,7 +142,6 @@ export class ClassificationComponent implements OnInit {
   }
 
   public addClassification() {
-
     switch (this.operation) {
       case 'add':
         this.saveClassification();
@@ -148,7 +149,7 @@ export class ClassificationComponent implements OnInit {
       case 'edit':
         this.updateClassification();
         break;
-      case 'delete' :
+      case 'delete':
         this.deleteClassification();
       default:
         break;
@@ -156,74 +157,95 @@ export class ClassificationComponent implements OnInit {
   }
 
   public updateClassification() {
-
     this.loading = true;
 
     this.classification = this.classificationForm.value;
 
-    this._classificationService.updateClassification(this.classification).subscribe(
-      result => {
-        if (!result.classification) {
+    this._classificationService
+      .updateClassification(this.classification)
+      .subscribe(
+        (result) => {
+          if (!result.classification) {
+            this.loading = false;
+            if (result.message && result.message !== '') {
+              this.showMessage(result.message, 'info', true);
+            }
+          } else {
+            this.loading = false;
+            this.showMessage(
+              'La clasificación se ha actualizado con éxito.',
+              'success',
+              false
+            );
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
-          this.loading = false;
-          this.showMessage('La clasificación se ha actualizado con éxito.', 'success', false);
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
   public saveClassification() {
-
     this.loading = true;
 
     this.classification = this.classificationForm.value;
 
-    this._classificationService.saveClassification(this.classification).subscribe(
-      result => {
-        if (!result.classification) {
-          this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
+    this._classificationService
+      .saveClassification(this.classification)
+      .subscribe(
+        (result) => {
+          if (!result.classification) {
             this.loading = false;
-            this.showMessage('La clasificación se ha añadido con éxito.', 'success', false);
+            if (result.message && result.message !== '') {
+              this.showMessage(result.message, 'info', true);
+            }
+          } else {
+            this.loading = false;
+            this.showMessage(
+              'La clasificación se ha añadido con éxito.',
+              'success',
+              false
+            );
             this.classification = new Classification();
             this.buildForm();
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
   public deleteClassification() {
-
     this.loading = true;
 
-    this._classificationService.deleteClassification(this.classification._id).subscribe(
-      result => {
-        this.loading = false;
-        if (!result.classification) {
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
-          this.activeModal.close();
+    this._classificationService
+      .deleteClassification(this.classification._id)
+      .subscribe(
+        (result) => {
+          this.loading = false;
+          if (!result.classification) {
+            if (result.message && result.message !== '') {
+              this.showMessage(result.message, 'info', true);
+            }
+          } else {
+            this.activeModal.close();
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

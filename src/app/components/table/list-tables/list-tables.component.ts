@@ -18,10 +18,10 @@ import {
 
 import { Table, TableState } from '../table';
 
-import { TransactionTypeService } from '../../transaction-type/transaction-type.service';
-import { TransactionService } from '../../transaction/transaction.service';
-import { UserService } from '../../user/user.service';
-import { TableService } from '../table.service';
+import { TableService } from '../../../core/services/table.service';
+import { TransactionTypeService } from '../../../core/services/transaction-type.service';
+import { TransactionService } from '../../../core/services/transaction.service';
+import { UserService } from '../../../core/services/user.service';
 
 import { ToastrService } from 'ngx-toastr';
 import { TranslateMePipe } from '../../../core/pipes/translate-me';

@@ -1,40 +1,45 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { CompanyField, CompanyFieldType } from '../company-field';
 
-import { CompanyFieldService } from '../company-field.service';
+import { CompanyFieldService } from '../../../core/services/company-field.service';
 
 @Component({
   selector: 'app-update-company-field',
   templateUrl: './update-company-field.component.html',
   styleUrls: ['./update-company-field.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class UpdateCompanyFieldComponent implements OnInit {
-
   @Input() companyField: CompanyField;
   @Input() readonly: boolean;
   public companyFieldForm: UntypedFormGroup;
   public alertMessage: string = '';
-  public datatypes: CompanyFieldType[] = [ CompanyFieldType.Number, CompanyFieldType.String ];
+  public datatypes: CompanyFieldType[] = [
+    CompanyFieldType.Number,
+    CompanyFieldType.String,
+  ];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'name': '',
-    'value':''
+    name: '',
+    value: '',
   };
 
   public validationMessages = {
-    'name': {
-      'required':       'Este campo es requerido.'
-    }
+    name: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
@@ -43,10 +48,9 @@ export class UpdateCompanyFieldComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
@@ -58,32 +62,24 @@ export class UpdateCompanyFieldComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.companyFieldForm = this._fb.group({
-      '_id': [this.companyField._id, [
-        ]
-      ],
-      'name': [this.companyField.name, [
-          Validators.required
-        ]
-      ],
-      'datatype' : [this.companyField.datatype, [
-        ]
-      ],
-      'value' : [this.companyField.value, [
-        ]
-      ]
+      _id: [this.companyField._id, []],
+      name: [this.companyField.name, [Validators.required]],
+      datatype: [this.companyField.datatype, []],
+      value: [this.companyField.value, []],
     });
 
-    this.companyFieldForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.companyFieldForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.companyFieldForm) { return; }
+    if (!this.companyFieldForm) {
+      return;
+    }
     const form = this.companyFieldForm;
 
     for (const field in this.formErrors) {
@@ -100,20 +96,25 @@ export class UpdateCompanyFieldComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
-    if(!this.companyField._id) { this.companyField._id = '' }
-    if(!this.companyField.name) { this.companyField.name = '' }
-    if(!this.companyField.datatype) { this.companyField.datatype = CompanyFieldType.String }
+    if (!this.companyField._id) {
+      this.companyField._id = '';
+    }
+    if (!this.companyField.name) {
+      this.companyField.name = '';
+    }
+    if (!this.companyField.datatype) {
+      this.companyField.datatype = CompanyFieldType.String;
+    }
 
     this.companyFieldForm.setValue({
-      '_id':this.companyField._id,
-      'name': this.companyField.name,
-      'datatype': this.companyField.datatype,
-      'value': this.companyField.value,
+      _id: this.companyField._id,
+      name: this.companyField.name,
+      datatype: this.companyField.datatype,
+      value: this.companyField.value,
     });
   }
 
-  public updateCompanyField (): void {
+  public updateCompanyField(): void {
     if (!this.readonly) {
       this.loading = true;
       this.companyField = this.companyFieldForm.value;
@@ -122,35 +123,43 @@ export class UpdateCompanyFieldComponent implements OnInit {
   }
 
   public saveChanges(): void {
-
     this.loading = true;
 
     this._companyFieldService.updateCompanyField(this.companyField).subscribe(
-      result => {
+      (result) => {
         if (!result.companyField) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.companyField = result.companyField;
-          this.showMessage("El campo de empresa se ha actualizado con éxito.", 'success', false);
+          this.showMessage(
+            'El campo de empresa se ha actualizado con éxito.',
+            'success',
+            false
+          );
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = '';
   }
 }

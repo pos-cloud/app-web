@@ -13,14 +13,13 @@ import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction/transaction';
 
 //Services
-import { CompanyService } from '../company/company.service';
-import { MovementOfCashService } from '../movement-of-cash/movement-of-cash.service';
-import { TransactionTypeService } from '../transaction-type/transaction-type.service';
-import { TransactionService } from '../transaction/transaction.service';
+import { CompanyService } from '../../core/services/company.service';
+import { MovementOfCashService } from '../../core/services/movement-of-cash.service';
+import { TransactionTypeService } from '../../core/services/transaction-type.service';
+import { TransactionService } from '../../core/services/transaction.service';
 
 //Componentes
 import { Config } from 'app/app.config';
-import { ConfigService } from 'app/components/config/config.service';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import {
@@ -29,12 +28,13 @@ import {
 } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { ConfigService } from 'app/core/services/config.service';
 import { first } from 'rxjs/operators';
+import { AuthService } from '../../core/services/auth.service';
+import { PrinterService } from '../../core/services/printer.service';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
-import { AuthService } from '../login/auth.service';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { Printer, PrinterPrintIn } from '../printer/printer';
-import { PrinterService } from '../printer/printer.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { PrinterService } from 'app/components/printer/printer.service';
-import * as printJS from "print-js";
+import { PrinterService } from 'app/core/services/printer.service';
+import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-print-labels2',
@@ -10,23 +10,22 @@ import * as printJS from "print-js";
 export class PrintLabelsComponent {
   @Input() articleIds: string[];
   public loading: boolean = false;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
 
   constructor(
     private _printerService: PrinterService,
     //  public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {}
   async ngOnInit() {
-    this.printLabels(this.articleIds)
+    this.printLabels(this.articleIds);
   }
-
 
   public printLabels(articlesIds: string[]) {
     this.loading = true;
     this._printerService.printLabels(articlesIds).subscribe(
       (res: Blob) => {
-        if (res) {     
+        if (res) {
           const blobUrl = URL.createObjectURL(res);
           printJS(blobUrl);
           this.loading = false;
@@ -53,6 +52,6 @@ export class PrintLabelsComponent {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

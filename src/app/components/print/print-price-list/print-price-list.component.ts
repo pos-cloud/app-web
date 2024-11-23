@@ -16,16 +16,16 @@ import { Category } from '../../category/category';
 //service
 import { Config } from 'app/app.config';
 import { ArticleField } from 'app/components/article-field/article-field';
-import { ArticleFieldService } from 'app/components/article-field/article-field.service';
-import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
 import { Article } from 'app/components/article/article';
-import { ConfigService } from 'app/components/config/config.service';
 import { PriceList } from 'app/components/price-list/price-list';
-import { PriceListService } from 'app/components/price-list/price-list.service';
-import { VariantService } from 'app/components/variant/variant.service';
-import { ArticleService } from '../../article/article.service';
-import { CategoryService } from '../../category/category.service';
-import { MakeService } from '../../make/make.service';
+import { ArticleFieldService } from 'app/core/services/article-field.service';
+import { ArticleStockService } from 'app/core/services/article-stock.service';
+import { ConfigService } from 'app/core/services/config.service';
+import { MakeService } from 'app/core/services/make.service';
+import { PriceListService } from 'app/core/services/price-list.service';
+import { VariantService } from 'app/core/services/variant.service';
+import { ArticleService } from '../../../core/services/article.service';
+import { CategoryService } from '../../../core/services/category.service';
 
 @Component({
   selector: 'app-print-price-list',

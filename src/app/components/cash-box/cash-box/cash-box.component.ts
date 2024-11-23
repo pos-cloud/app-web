@@ -31,24 +31,24 @@ import { Transaction, TransactionState } from '../../transaction/transaction';
 import { CashBox, CashBoxState } from '../cash-box';
 
 //Servicios
-import { AuthService } from 'app/components/login/auth.service';
-import { MovementOfCashService } from '../../movement-of-cash/movement-of-cash.service';
-import { PaymentMethodService } from '../../payment-method/payment-method.service';
-import { TransactionService } from '../../transaction/transaction.service';
-import { CashBoxService } from '../cash-box.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { CashBoxService } from '../../../core/services/cash-box.service';
+import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
+import { PaymentMethodService } from '../../../core/services/payment-method.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 
 //Componentes
 import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
-import { ConfigService } from 'app/components/config/config.service';
 import { CurrencyValue } from 'app/components/currency-value/currency-value';
-import { CurrencyValueService } from 'app/components/currency-value/currency-value.service';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { User } from 'app/components/user/user';
-import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ConfigService } from 'app/core/services/config.service';
+import { CurrencyValueService } from 'app/core/services/currency-value.service';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { UserService } from 'app/core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { PrintComponent } from '../../print/print/print.component';
 

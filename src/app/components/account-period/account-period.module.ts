@@ -12,7 +12,6 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 import { NgxTinymceModule } from 'ngx-tinymce';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { AccountPeriodService } from './account-period.service';
 import { AccountPeriodComponent } from './crud/account-period.component';
 import { ListAccountPeriodsComponent } from './list-account-periods/list-account-periods.component';
 
@@ -63,6 +62,6 @@ const routes: Routes = [
   ],
   declarations: [AccountPeriodComponent, ListAccountPeriodsComponent],
   exports: [AccountPeriodComponent],
-  providers: [AccountPeriodService],
+  providers: [],
 })
 export class AccountPeriodModule {}

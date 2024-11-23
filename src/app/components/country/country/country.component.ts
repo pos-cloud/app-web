@@ -1,24 +1,26 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
 
-
-import { CountryService } from '../country.service';
+import { CountryService } from '../../../core/services/country.service';
 
 import { Country } from '../country';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-country',
   templateUrl: './country.component.html',
-  styleUrls: ['./country.component.css']
+  styleUrls: ['./country.component.css'],
 })
 export class CountryComponent implements OnInit {
-
   @Input() operation: string;
   @Input() readonly: boolean;
-  @Input() countryId : string;
+  @Input() countryId: string;
   public alertMessage: string = '';
   public userType: string;
   public country: Country;
@@ -31,22 +33,22 @@ export class CountryComponent implements OnInit {
   public orientation: string = 'horizontal';
 
   public formErrors = {
-    'code': '',
-    'name': '',
-    'callingCodes' : '',
-    'timezones' : '',
-    'flag' : '',
-    'alpha2Code' : '',
-    'alpha3Code' : ''
+    code: '',
+    name: '',
+    callingCodes: '',
+    timezones: '',
+    flag: '',
+    alpha2Code: '',
+    alpha3Code: '',
   };
 
   public validationMessages = {
-    'code': {
-      'required': 'Este campo es requerido.'
+    code: {
+      required: 'Este campo es requerido.',
     },
-    'name': {
-      'required': 'Este campo es requerido.'
-    }
+    name: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   public countryForm: UntypedFormGroup;
@@ -56,18 +58,17 @@ export class CountryComponent implements OnInit {
     public _countryService: CountryService,
     public _router: Router,
     public _fb: UntypedFormBuilder,
-    public activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal
   ) {
-    if(window.screen.width < 1000) this.orientation = 'vertical';
+    if (window.screen.width < 1000) this.orientation = 'vertical';
     this.country = new Country();
   }
 
   ngOnInit() {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.buildForm()
-    
+    this.buildForm();
+
     if (this.countryId) {
       this.getCountry();
     }
@@ -78,13 +79,13 @@ export class CountryComponent implements OnInit {
   }
 
   public getCountry() {
-
     this.loading = true;
 
     this._countryService.getCountry(this.countryId).subscribe(
-      result => {
+      (result) => {
         if (!result.country) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.country = result.country;
@@ -92,7 +93,7 @@ export class CountryComponent implements OnInit {
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -100,66 +101,59 @@ export class CountryComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
-    if (!this.country._id) { 
-      this.country._id = ''; 
+    if (!this.country._id) {
+      this.country._id = '';
     }
 
     let code;
     if (!this.country.code) {
       code = null;
     } else {
-        code = this.country.code;
+      code = this.country.code;
     }
-    
 
     let name;
     if (!this.country.name) {
       name = null;
     } else {
-        name = this.country.name;
+      name = this.country.name;
     }
 
     const values = {
-      '_id': this.country._id,
-      'code': code,
-      'name': name,
-      'callingCodes' : this.country.callingCodes,
-      'timezones' : this.country.timezones,
-      'flag' : this.country.flag,      
-      'alpha2Code' : this.country.alpha2Code,
-      'alpha3Code' : this.country.alpha3Code,
+      _id: this.country._id,
+      code: code,
+      name: name,
+      callingCodes: this.country.callingCodes,
+      timezones: this.country.timezones,
+      flag: this.country.flag,
+      alpha2Code: this.country.alpha2Code,
+      alpha3Code: this.country.alpha3Code,
     };
     this.countryForm.setValue(values);
   }
 
   public buildForm(): void {
-
     this.countryForm = this._fb.group({
-      '_id' : [this.country._id, []],
-      'code': [this.country.code, [
-        Validators.required
-        ]
-      ],
-      'name': [this.country.name, [
-        Validators.required
-        ]
-      ],
-      'callingCodes' : [this.country.callingCodes,[]],
-      'timezones' : [this.country.timezones,[]],
-      'flag' : [this.country.flag,[]],
-      'alpha2Code' : [this.country.alpha2Code,[]],
-      'alpha3Code' : [this.country.alpha3Code,[]]
+      _id: [this.country._id, []],
+      code: [this.country.code, [Validators.required]],
+      name: [this.country.name, [Validators.required]],
+      callingCodes: [this.country.callingCodes, []],
+      timezones: [this.country.timezones, []],
+      flag: [this.country.flag, []],
+      alpha2Code: [this.country.alpha2Code, []],
+      alpha3Code: [this.country.alpha3Code, []],
     });
 
-    this.countryForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.countryForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.countryForm) { return; }
+    if (!this.countryForm) {
+      return;
+    }
     const form = this.countryForm;
 
     for (const field in this.formErrors) {
@@ -176,7 +170,6 @@ export class CountryComponent implements OnInit {
   }
 
   public addCountry() {
-
     switch (this.operation) {
       case 'add':
         this.saveCountry();
@@ -184,7 +177,7 @@ export class CountryComponent implements OnInit {
       case 'edit':
         this.updateCountry();
         break;
-      case 'delete' :
+      case 'delete':
         this.deleteCountry();
       default:
         break;
@@ -192,22 +185,27 @@ export class CountryComponent implements OnInit {
   }
 
   public updateCountry() {
-
     this.loading = true;
 
     this.country = this.countryForm.value;
 
     this._countryService.updateCountry(this.country).subscribe(
-      result => {
+      (result) => {
         if (!result.country) {
           this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          if (result.message && result.message !== '') {
+            this.showMessage(result.message, 'info', true);
+          }
         } else {
-            this.loading = false;
-            this.showMessage('El país se ha actualizado con éxito.', 'success', false);
+          this.loading = false;
+          this.showMessage(
+            'El país se ha actualizado con éxito.',
+            'success',
+            false
+          );
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -215,24 +213,29 @@ export class CountryComponent implements OnInit {
   }
 
   public saveCountry() {
-
     this.loading = true;
 
     this.country = this.countryForm.value;
 
     this._countryService.saveCountry(this.country).subscribe(
-      result => {
+      (result) => {
         if (!result.country) {
           this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          if (result.message && result.message !== '') {
+            this.showMessage(result.message, 'info', true);
+          }
         } else {
-            this.loading = false;
-            this.showMessage('El país se ha añadido con éxito.', 'success', false);
-            this.country = new Country();
-            this.buildForm();
+          this.loading = false;
+          this.showMessage(
+            'El país se ha añadido con éxito.',
+            'success',
+            false
+          );
+          this.country = new Country();
+          this.buildForm();
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -240,25 +243,30 @@ export class CountryComponent implements OnInit {
   }
 
   public deleteCountry() {
-
     this.loading = true;
 
     this._countryService.deleteCountry(this.country._id).subscribe(
-      result => {
+      (result) => {
         if (!result.country) {
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          if (result.message && result.message !== '') {
+            this.showMessage(result.message, 'info', true);
+          }
         } else {
-            this.activeModal.close();
+          this.activeModal.close();
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

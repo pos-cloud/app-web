@@ -2,9 +2,9 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { AccountSeatService } from '../../../core/services/account-seat.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { AccountSeat } from '../account-seat';
-import { AccountSeatService } from '../account-seat.service';
 
 @Component({
   selector: 'app-list-account-seats',

@@ -8,7 +8,7 @@ import { ExportExcelComponent } from 'app/components/export/export-excel/export-
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { AccountSeatService } from '../account-seat.service';
+import { AccountSeatService } from '../../../core/services/account-seat.service';
 
 @Component({
   selector: 'app-report-ledger',

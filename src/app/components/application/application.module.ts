@@ -16,7 +16,6 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 import { NgxTinymceModule } from 'ngx-tinymce';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { ApplicationService } from './application.service';
 import { ListApplicationsComponent } from './list-applications/list-applications.component';
 
 const routes: Routes = [
@@ -47,6 +46,6 @@ const routes: Routes = [
   ],
   declarations: [ListApplicationsComponent],
   exports: [],
-  providers: [ApplicationService],
+  providers: [],
 })
 export class ApplicationModule {}

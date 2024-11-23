@@ -10,9 +10,9 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { TransactionService } from '../../transaction/transaction.service';
+import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 import { MovementOfCash } from '../movement-of-cash';
-import { MovementOfCashService } from '../movement-of-cash.service';
 
 @Component({
   selector: 'app-select-movements-of-cashes',

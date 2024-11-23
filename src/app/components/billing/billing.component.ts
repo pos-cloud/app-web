@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 import { ToastrService } from 'ngx-toastr';
 import { DateFormatPipe } from '../../core/pipes/date-format.pipe';
-import { ConfigService } from '../config/config.service';
+import { ConfigService } from '../../core/services/config.service';
 import { Config } from './../../app.config';
 
 @Component({

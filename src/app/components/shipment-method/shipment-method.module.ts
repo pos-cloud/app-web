@@ -15,7 +15,6 @@ import { DatatableModule } from '../datatable/datatable.module';
 import { ShipmentMethodComponent } from './crud/shipment-method.component';
 import { ListShipmentMethodsComponent } from './list-shipment-methods/list-shipment-methods.component';
 import { SelectShipmentMethodComponent } from './select-shipment-method/select-shipment-method.component';
-import { ShipmentMethodService } from './shipment-method.service';
 
 const routes: Routes = [
   {
@@ -48,6 +47,6 @@ const routes: Routes = [
     SelectShipmentMethodComponent,
   ],
   exports: [ShipmentMethodComponent, SelectShipmentMethodComponent],
-  providers: [ShipmentMethodService],
+  providers: [],
 })
 export class ShipmentMethodModule {}

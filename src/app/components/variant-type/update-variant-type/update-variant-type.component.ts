@@ -1,22 +1,24 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { VariantType } from '../variant-type';
 
-import { VariantTypeService } from '../variant-type.service';
+import { VariantTypeService } from '../../../core/services/variant-type.service';
 
 @Component({
   selector: 'app-update-variant-type',
   templateUrl: './update-variant-type.component.html',
   styleUrls: ['./update-variant-type.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class UpdateVariantTypeComponent implements OnInit {
-
   @Input() variantType: VariantType;
   @Input() readonly: boolean;
   public variantTypeForm: UntypedFormGroup;
@@ -26,20 +28,19 @@ export class UpdateVariantTypeComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'order': '',
-    'name': '',
-    'meliId': ''
+    order: '',
+    name: '',
+    meliId: '',
   };
 
   public validationMessages = {
-    'order': {
-      'required': 'Este campo es requerido.'
+    order: {
+      required: 'Este campo es requerido.',
     },
-    'name': {
-      'required': 'Este campo es requerido.'
+    name: {
+      required: 'Este campo es requerido.',
     },
-    'meliId': {
-    }
+    meliId: {},
   };
 
   constructor(
@@ -48,18 +49,17 @@ export class UpdateVariantTypeComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
     this.variantTypeForm.setValue({
-      '_id': this.variantType._id,
-      'order': this.variantType.order,
-      'name': this.variantType.name,
-      'meliId': this.variantType.meliId
+      _id: this.variantType._id,
+      order: this.variantType.order,
+      name: this.variantType.name,
+      meliId: this.variantType.meliId,
     });
   }
 
@@ -68,23 +68,24 @@ export class UpdateVariantTypeComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.variantTypeForm = this._fb.group({
-      '_id': [this.variantType._id, []],
-      'order': [this.variantType.order, [Validators.required]],
-      'name': [this.variantType.name, [Validators.required]],
-      'meliId': [this.variantType.meliId, []],
+      _id: [this.variantType._id, []],
+      order: [this.variantType.order, [Validators.required]],
+      name: [this.variantType.name, [Validators.required]],
+      meliId: [this.variantType.meliId, []],
     });
 
-    this.variantTypeForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.variantTypeForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.variantTypeForm) { return; }
+    if (!this.variantTypeForm) {
+      return;
+    }
     const form = this.variantTypeForm;
 
     for (const field in this.formErrors) {
@@ -109,28 +110,36 @@ export class UpdateVariantTypeComponent implements OnInit {
   }
 
   public saveChanges(): void {
-
     this.loading = true;
 
     this._variantTypeService.updateVariantType(this.variantType).subscribe(
-      result => {
+      (result) => {
         if (!result.variantType) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.variantType = result.variantType;
-          this.showMessage("El tipo de variante se ha actualizado con éxito.", 'success', false);
+          this.showMessage(
+            'El tipo de variante se ha actualizado con éxito.',
+            'success',
+            false
+          );
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

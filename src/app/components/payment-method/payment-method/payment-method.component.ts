@@ -14,14 +14,14 @@ import { CompanyType, PaymentMethod } from '../payment-method';
 
 import { ApiResponse } from '@types';
 import { Account } from 'app/components/account/account';
-import { AccountService } from 'app/components/account/account.service';
 import { Application } from 'app/components/application/application.model';
-import { ApplicationService } from 'app/components/application/application.service';
 import { Article } from 'app/components/article/article';
-import { ArticleService } from 'app/components/article/article.service';
 import { Currency } from 'app/components/currency/currency';
-import { CurrencyService } from 'app/components/currency/currency.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { AccountService } from 'app/core/services/account.service';
+import { ApplicationService } from 'app/core/services/application.service';
+import { ArticleService } from 'app/core/services/article.service';
+import { CurrencyService } from 'app/core/services/currency.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
@@ -30,7 +30,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { PaymentMethodService } from '../payment-method.service';
+import { PaymentMethodService } from '../../../core/services/payment-method.service';
 
 @Component({
   selector: 'app-payment-method',

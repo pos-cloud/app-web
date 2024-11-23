@@ -11,8 +11,8 @@ import { ExportersModule } from '../components/export/exporters.module';
 import { LicenseGuard } from '../core/guards/license.guard';
 import { ProgressbarModule } from '../shared/components/progressbar/progressbar.module';
 
-import { CompanyService } from 'app/components/company/company.service';
 import { PipesModule } from 'app/core/pipes/pipes.module';
+import { CompanyService } from 'app/core/services/company.service';
 import { CurrentAccountComponent } from './current-account/current-account.component';
 import { CurrentAccountService } from './current-account/current-account.service';
 import { ListArticlesRequirementsByTransactionComponent } from './list-articles-requirements-by-transaction/list-articles-requirements-by-transaction.component';

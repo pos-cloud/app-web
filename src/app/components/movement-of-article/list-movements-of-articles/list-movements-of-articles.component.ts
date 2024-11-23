@@ -14,17 +14,17 @@ import { ExportExcelComponent } from '../../export/export-excel/export-excel.com
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Config } from 'app/app.config';
 import { Branch } from 'app/components/branch/branch';
-import { BranchService } from 'app/components/branch/branch.service';
 import { Category } from 'app/components/category/category';
-import { CategoryService } from 'app/components/category/category.service';
-import { AuthService } from 'app/components/login/auth.service';
 import {
   attributes,
   MovementOfArticle,
 } from 'app/components/movement-of-article/movement-of-article';
-import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { BranchService } from 'app/core/services/branch.service';
+import { CategoryService } from 'app/core/services/category.service';
+import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { Subscription } from 'rxjs';

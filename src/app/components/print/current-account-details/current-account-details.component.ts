@@ -9,22 +9,22 @@ import {
   Validators,
 } from '@angular/forms';
 import { Company, CompanyType } from 'app/components/company/company';
-import { EmployeeService } from 'app/components/employee/employee.service';
-import { TransactionService } from 'app/components/transaction/transaction.service';
+import { EmployeeService } from 'app/core/services/employee.service';
+import { TransactionService } from 'app/core/services/transaction.service';
 import { DateFormatPipe } from '../../../core/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { Config } from './../../../app.config';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyGroup } from 'app/components/company-group/company-group';
-import { CompanyGroupService } from 'app/components/company-group/company-group.service';
-import { CompanyService } from 'app/components/company/company.service';
-import { ConfigService } from 'app/components/config/config.service';
 import { Employee } from 'app/components/employee/employee';
-import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { Transaction } from 'app/components/transaction/transaction';
+import { CompanyGroupService } from 'app/core/services/company-group.service';
+import { CompanyService } from 'app/core/services/company.service';
+import { ConfigService } from 'app/core/services/config.service';
+import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { Observable } from 'rxjs';
 import {
   debounceTime,

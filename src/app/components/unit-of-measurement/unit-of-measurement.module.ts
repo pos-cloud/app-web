@@ -13,7 +13,6 @@ import { ProgressbarModule } from '../../shared/components/progressbar/progressb
 import { DatatableModule } from '../datatable/datatable.module';
 import { UnitOfMeasurementComponent } from './crud/unit-of-measurement.component';
 import { ListUnitOfMeasurementsComponent } from './list-units-of-measurement/list-units-of-measurement.component';
-import { UnitOfMeasurementService } from './unit-of-measurement.service';
 
 const routes: Routes = [
   {
@@ -41,6 +40,6 @@ const routes: Routes = [
   ],
   declarations: [ListUnitOfMeasurementsComponent, UnitOfMeasurementComponent],
   exports: [UnitOfMeasurementComponent],
-  providers: [UnitOfMeasurementService],
+  providers: [],
 })
 export class UnitOfMeasurementModule {}

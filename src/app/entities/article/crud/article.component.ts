@@ -36,49 +36,49 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Make } from '@types';
 import { ArticleStock } from 'app/components/article-stock/article-stock';
-import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
 import { Category } from 'app/components/category/category';
-import { CategoryService } from 'app/components/category/category.service';
 import { Company } from 'app/components/company/company';
 import { Taxes } from 'app/components/tax/taxes';
 import { Variant } from 'app/components/variant/variant';
-import { VariantService } from 'app/components/variant/variant.service';
+import { ArticleStockService } from 'app/core/services/article-stock.service';
+import { CategoryService } from 'app/core/services/category.service';
+import { VariantService } from 'app/core/services/variant.service';
 import { Config } from '../../../app.config';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
-import { MakeService } from '../../make/make.service';
+import { MakeService } from '../../../core/services/make.service';
 import { Article, ArticlePrintIn, Type } from '../article.model';
 import { ArticleService } from '../article.service';
 
 import { Account } from 'app/components/account/account';
-import { AccountService } from 'app/components/account/account.service';
 import { Application } from 'app/components/application/application.model';
-import { ApplicationService } from 'app/components/application/application.service';
 import { Classification } from 'app/components/classification/classification';
-import { ClassificationService } from 'app/components/classification/classification.service';
-import { ConfigService } from 'app/components/config/config.service';
 import { Currency } from 'app/components/currency/currency';
+import { AccountService } from 'app/core/services/account.service';
+import { ApplicationService } from 'app/core/services/application.service';
+import { ClassificationService } from 'app/core/services/classification.service';
+import { ConfigService } from 'app/core/services/config.service';
 
 // Services
 
-import { CurrencyService } from 'app/components/currency/currency.service';
+import { CurrencyService } from 'app/core/services/currency.service';
 
 // Pipes
 import { ApiResponse, MediaCategory } from '@types';
-import { CompanyService } from 'app/components/company/company.service';
 import { Tax, TaxClassification } from 'app/components/tax/tax';
-import { TaxService } from 'app/components/tax/tax.service';
 import { UnitOfMeasurement } from 'app/components/unit-of-measurement/unit-of-measurement.model';
-import { UnitOfMeasurementService } from 'app/components/unit-of-measurement/unit-of-measurement.service';
 import { User } from 'app/components/user/user';
-import { UserService } from 'app/components/user/user.service';
 import { VariantType } from 'app/components/variant-type/variant-type';
-import { VariantTypeService } from 'app/components/variant-type/variant-type.service';
 import { VariantValue } from 'app/components/variant-value/variant-value';
-import { VariantValueService } from 'app/components/variant-value/variant-value.service';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { FileService } from 'app/shared/services/file.service';
+import { CompanyService } from 'app/core/services/company.service';
+import { FileService } from 'app/core/services/file.service';
+import { TaxService } from 'app/core/services/tax.service';
+import { UnitOfMeasurementService } from 'app/core/services/unit-of-measurement.service';
+import { UserService } from 'app/core/services/user.service';
+import { VariantTypeService } from 'app/core/services/variant-type.service';
+import { VariantValueService } from 'app/core/services/variant-value.service';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 

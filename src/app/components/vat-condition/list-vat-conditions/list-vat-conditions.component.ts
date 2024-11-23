@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { VATConditionService } from '../../../core/services/vat-condition.service';
 import { VATCondition } from '../vat-condition';
-import { VATConditionService } from '../vat-condition.service';
 
 import { Config } from 'app/app.config';
 import { VATConditionComponent } from '../vat-condition/vat-condition.component';

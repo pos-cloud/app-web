@@ -1,26 +1,28 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserState } from '../user/user';
 
-import { EmployeeService } from '../employee/employee.service';
-import { EmployeeTypeService } from '../employee-type/employee-type.service';
-import { CompanyService } from '../company/company.service';
-import { AuthService } from 'app/components/login/auth.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { CompanyService } from '../../core/services/company.service';
+import { EmployeeTypeService } from '../../core/services/employee-type.service';
+import { EmployeeService } from '../../core/services/employee.service';
 import { Employee } from '../employee/employee';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class RegisterComponent implements OnInit {
-
   public registerForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
@@ -28,33 +30,42 @@ export class RegisterComponent implements OnInit {
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
   public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
-  public categories: string[] = ["Restaurante", "Delivery", "Bar", "Tienda de ropa", "Cafetería", "Kiosco", "Venta de productos","Otro"];
+  public categories: string[] = [
+    'Restaurante',
+    'Delivery',
+    'Bar',
+    'Tienda de ropa',
+    'Cafetería',
+    'Kiosco',
+    'Venta de productos',
+    'Otro',
+  ];
 
   public formErrors = {
-    'employeeName': '',
-    'companyName': '',
-    'category': '',
-    'email': '',
-    'phone': ''
+    employeeName: '',
+    companyName: '',
+    category: '',
+    email: '',
+    phone: '',
   };
 
   public validationMessages = {
-    'employeeName': {
-      'required': 'Este campo es requerido.'
+    employeeName: {
+      required: 'Este campo es requerido.',
     },
-    'companyName': {
-      'required': 'Este campo es requerido.'
+    companyName: {
+      required: 'Este campo es requerido.',
     },
-    'category': {
-      'required': 'Este campo es requerido.'
+    category: {
+      required: 'Este campo es requerido.',
     },
-    'email': {
-      'required': 'Este campo es requerido.',
-      'pattern': 'El email ingresado no es válido'
+    email: {
+      required: 'Este campo es requerido.',
+      pattern: 'El email ingresado no es válido',
     },
-    'phone': {
-      'required': 'Este campo es requerido.'
-    }
+    phone: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
@@ -65,11 +76,10 @@ export class RegisterComponent implements OnInit {
     public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-  ) { }
+    public alertConfig: NgbAlertConfig
+  ) {}
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
@@ -80,59 +90,38 @@ export class RegisterComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.registerForm = this._fb.group({
-      'employeeName': ['', [
-          Validators.required
-        ]
-      ],
-      'companyName': ['', [
-          Validators.required
-        ]
-      ],
-      'category': ['', [
-          Validators.required
-        ]
-      ],
-      'email': ['', [
+      employeeName: ['', [Validators.required]],
+      companyName: ['', [Validators.required]],
+      category: ['', [Validators.required]],
+      email: [
+        '',
+        [
           Validators.required,
-          Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$")
-        ]
+          Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,3}$'),
+        ],
       ],
-      'phone': ['', [
-          Validators.required
-        ]
-      ],
-      'counter': [true, [
-        ]
-      ],
-      'resto': [false, [
-        ]
-      ],
-      'delivery': [false, [
-        ]
-      ],
-      'purchase': [false, [
-        ]
-      ],
-      'stock': [false, [
-        ]
-      ],
-      'money': [false, [
-      ]
-    ]
+      phone: ['', [Validators.required]],
+      counter: [true, []],
+      resto: [false, []],
+      delivery: [false, []],
+      purchase: [false, []],
+      stock: [false, []],
+      money: [false, []],
     });
 
-    this.registerForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.registerForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
     this.focusEvent.emit(true);
   }
 
   public onValueChanged(data?: any): void {
- 
-    if (!this.registerForm) { return; }
+    if (!this.registerForm) {
+      return;
+    }
     const form = this.registerForm;
 
     for (const field in this.formErrors) {
@@ -149,37 +138,36 @@ export class RegisterComponent implements OnInit {
   }
 
   public checkModules(category: string) {
-
-    switch(category) {
-      case "Restaurante": 
+    switch (category) {
+      case 'Restaurante':
         this.registerForm.value.resto = true;
         this.registerForm.value.delivery = false;
         break;
-      case "Delivery":
+      case 'Delivery':
         this.registerForm.value.resto = false;
         this.registerForm.value.delivery = true;
         break;
-      case "Bar":
+      case 'Bar':
         this.registerForm.value.resto = true;
         this.registerForm.value.delivery = false;
         break;
-      case "Tienda de ropa":
+      case 'Tienda de ropa':
         this.registerForm.value.resto = false;
         this.registerForm.value.delivery = false;
         break;
-      case "Cafetería":
+      case 'Cafetería':
         this.registerForm.value.resto = true;
         this.registerForm.value.delivery = false;
         break;
-      case "Kiosco":
+      case 'Kiosco':
         this.registerForm.value.resto = false;
         this.registerForm.value.delivery = false;
         break;
-      case "Venta de productos":
+      case 'Venta de productos':
         this.registerForm.value.resto = false;
         this.registerForm.value.delivery = false;
         break;
-      case "Otro":
+      case 'Otro':
         this.registerForm.value.resto = false;
         this.registerForm.value.delivery = false;
         break;
@@ -189,61 +177,72 @@ export class RegisterComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
     this.registerForm.setValue({
-      'employeeName': this.registerForm.value.employeeName,
-      'companyName': this.registerForm.value.companyName,
-      'category': this.registerForm.value.category,
-      'email': this.registerForm.value.email,
-      'phone': this.registerForm.value.phone,
-      'counter': this.registerForm.value.counter,
-      'resto': this.registerForm.value.resto,
-      'delivery': this.registerForm.value.delivery,
-      'purchase': this.registerForm.value.purchase,
-      'stock': this.registerForm.value.stock,
-      'money' : this.registerForm.value.money
+      employeeName: this.registerForm.value.employeeName,
+      companyName: this.registerForm.value.companyName,
+      category: this.registerForm.value.category,
+      email: this.registerForm.value.email,
+      phone: this.registerForm.value.phone,
+      counter: this.registerForm.value.counter,
+      resto: this.registerForm.value.resto,
+      delivery: this.registerForm.value.delivery,
+      purchase: this.registerForm.value.purchase,
+      stock: this.registerForm.value.stock,
+      money: this.registerForm.value.money,
     });
   }
 
   public register(): void {
-
     if (this.isDBNameValid(this.registerForm.value.companyName)) {
-
       this.loading = true;
-      
+
       this._authService.register(this.registerForm.value).subscribe(
-        result => {
+        (result) => {
           if (!result.user) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '')
+              this.showMessage(result.message, 'info', true);
           } else {
-            this.showMessage("Ha sido registrado correctamente, le enviamos a la casilla de correo los datos necesarios para ingresar POS Cloud.", 'success', false);
+            this.showMessage(
+              'Ha sido registrado correctamente, le enviamos a la casilla de correo los datos necesarios para ingresar POS Cloud.',
+              'success',
+              false
+            );
           }
           this.loading = false;
         },
-        error => {
+        (error) => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
     } else {
-      this.showMessage("No se aceptan los siguientes caractéres en el nombre de negocio: '.', '&', '@'", 'info', true);
+      this.showMessage(
+        "No se aceptan los siguientes caractéres en el nombre de negocio: '.', '&', '@'",
+        'info',
+        true
+      );
     }
   }
 
   public isDBNameValid(dbName: string): boolean {
-
     let isValid: boolean = false;
 
-    if (dbName.indexOf('.') === -1 &&
-        dbName.indexOf('&') === -1 &&
-        dbName.indexOf('@') === -1) {
+    if (
+      dbName.indexOf('.') === -1 &&
+      dbName.indexOf('&') === -1 &&
+      dbName.indexOf('@') === -1
+    ) {
       isValid = true;
     }
 
     return isValid;
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

@@ -14,7 +14,6 @@ import { ProgressbarModule } from '../../shared/components/progressbar/progressb
 import { DatatableModule } from '../datatable/datatable.module';
 
 import { FocusDirective } from 'app/shared/directives/focus.directive';
-import { BusinessRuleService } from './business-rule.service';
 import { BusinessRuleComponent } from './crud/business-rule.component';
 import { ListBusinessRulesComponent } from './list-business-rules/list-business-rules.component';
 
@@ -65,6 +64,6 @@ const routes: Routes = [
   ],
   declarations: [BusinessRuleComponent, ListBusinessRulesComponent],
   exports: [BusinessRuleComponent],
-  providers: [BusinessRuleService],
+  providers: [],
 })
 export class BusinessRuleModule {}

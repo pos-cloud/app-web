@@ -7,15 +7,15 @@ import {
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 
+import { CashBoxService } from '../../../core/services/cash-box.service';
 import { CashBox } from '../cash-box';
-import { CashBoxService } from '../cash-box.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { Printer } from 'app/components/printer/printer';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { User } from 'app/components/user/user';
-import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { UserService } from 'app/core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { PrintComponent } from '../../print/print/print.component';
 

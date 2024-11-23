@@ -6,13 +6,13 @@ import {
 } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Bank } from 'app/components/bank/bank';
-import { BankService } from 'app/components/bank/bank.service';
 import {
   MovementOfCash,
   StatusCheck,
 } from 'app/components/movement-of-cash/movement-of-cash';
-import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { BankService } from 'app/core/services/bank.service';
+import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';

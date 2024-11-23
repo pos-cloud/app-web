@@ -1,23 +1,31 @@
-import { Component, OnInit, Input, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { EmailService } from './send-email.service';
-import { CompanyService } from '../company/company.service';
 import * as $ from 'jquery';
+import { CompanyService } from '../../core/services/company.service';
+import { EmailService } from '../../core/services/send-email.service';
 
 @Component({
   selector: 'app-send-email',
   templateUrl: './send-email.component.html',
   styleUrls: ['./send-email.component.css'],
   providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class SendEmailComponent implements OnInit {
-  
   public sendEmailForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
@@ -29,80 +37,79 @@ export class SendEmailComponent implements OnInit {
   @Input() attachments;
 
   public formErrors = {
-    'emails': '',
-    'subject': ''
+    emails: '',
+    subject: '',
     // 'body': ''
   };
 
   public validationMessages = {
-    'emails': {
-      'required':       'Este campo es requerido.'
+    emails: {
+      required: 'Este campo es requerido.',
     },
-    'subject': {
-      'required':       'Este campo es requerido.'
-    }
+    subject: {
+      required: 'Este campo es requerido.',
+    },
     // 'body' : {
     //   'required':       'Este campo es requerido.'
     // }
   };
 
-  
-    //tiny
-    public html = '';
+  //tiny
+  public html = '';
 
-    public tinyMCEConfigBody = {
-        selector: "tinymce",
-        theme: "modern",
-        paste_data_images: true,
-        plugins: [
-            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-            "searchreplace wordcount visualblocks visualchars code fullscreen",
-            "insertdatetime media nonbreaking table contextmenu directionality",
-            "emoticons template paste textcolor colorpicker textpattern"
-        ],
-        toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen",
-        image_advtab: true,
-        height: 250,
-        file_picker_types: 'file image media',
-        images_dataimg_filter: function(img) {
-            return img.hasAttribute('internal-blob');
-          },
-        file_picker_callback: function(callback, value, meta) {
-            if (meta.filetype == 'image') {
-              $('#upload').trigger('click');
-              $('#upload').on('change', function() {
-                let file = this.files[0];
-                let reader = new FileReader();
-                reader.onload = function(e) {
-            
-                  callback(e.target['result'], {
-                    alt: ''
-                  });
-                };
-                reader.readAsDataURL(file);
-              });
-            }
-          },
-    }
-  
+  public tinyMCEConfigBody = {
+    selector: 'tinymce',
+    theme: 'modern',
+    paste_data_images: true,
+    plugins: [
+      'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+      'searchreplace wordcount visualblocks visualchars code fullscreen',
+      'insertdatetime media nonbreaking table contextmenu directionality',
+      'emoticons template paste textcolor colorpicker textpattern',
+    ],
+    toolbar1:
+      'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen',
+    image_advtab: true,
+    height: 250,
+    file_picker_types: 'file image media',
+    images_dataimg_filter: function (img) {
+      return img.hasAttribute('internal-blob');
+    },
+    file_picker_callback: function (callback, value, meta) {
+      if (meta.filetype == 'image') {
+        $('#upload').trigger('click');
+        $('#upload').on('change', function () {
+          let file = this.files[0];
+          let reader = new FileReader();
+          reader.onload = function (e) {
+            callback(e.target['result'], {
+              alt: '',
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    },
+  };
+
   constructor(
     public _companyService: CompanyService,
     public _serviceEmail: EmailService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-  ) { }
+    public alertConfig: NgbAlertConfig
+  ) {}
 
   ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
     this.sendEmailForm.setValue({
-      'emails': this.emails || '',
-      'subject': this.subject || '', 
-      'body': this.body || '',
-      'attachments': this.attachments || ''
+      emails: this.emails || '',
+      subject: this.subject || '',
+      body: this.body || '',
+      attachments: this.attachments || '',
     });
   }
 
@@ -112,31 +119,27 @@ export class SendEmailComponent implements OnInit {
 
   public buildForm(): void {
     this.sendEmailForm = this._fb.group({
-      'emails': [this.emails, [
-          Validators.required
-        ]
-      ],
-      'subject': [this.subject, [
-          Validators.required
-        ]
-      ],
-      'body':["",[]],
+      emails: [this.emails, [Validators.required]],
+      subject: [this.subject, [Validators.required]],
+      body: ['', []],
       // 'body': [this.body, [
       //     Validators.required
       //   ]
       // ],
-      'attachments' : ["",[]]
+      attachments: ['', []],
     });
 
-    this.sendEmailForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.sendEmailForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-    
-    if (!this.sendEmailForm) { return; }
+    if (!this.sendEmailForm) {
+      return;
+    }
     const form = this.sendEmailForm;
 
     for (const field in this.formErrors) {
@@ -152,30 +155,36 @@ export class SendEmailComponent implements OnInit {
     }
   }
 
-  public sendEmail (): void {
-    
+  public sendEmail(): void {
     this.loading = true;
     this.sendEmailForm.value.attachments = this.attachments;
 
     this._serviceEmail.sendEmail(this.sendEmailForm.value).subscribe(
-      result => {
-
+      (result) => {
         this.loading = false;
-        if(result.accepted && result.accepted.length > 0) {
-          this.showMessage("El email se ha enviado correctamente.", 'success', false);
-        } 
+        if (result.accepted && result.accepted.length > 0) {
+          this.showMessage(
+            'El email se ha enviado correctamente.',
+            'success',
+            false
+          );
+        }
         if (result.message && result.message !== '') {
-            this.showMessage(result.message, 'info', true);
+          this.showMessage(result.message, 'info', true);
         }
       },
-      err => {
+      (err) => {
         this.loading = false;
         this.showMessage(err.error, 'danger', false);
       }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

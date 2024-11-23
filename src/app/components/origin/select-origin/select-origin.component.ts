@@ -1,20 +1,22 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbActiveModal,
+  NgbAlertConfig,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
 
-import { AuthService } from 'app/components/login/auth.service';
 import { Origin } from 'app/components/origin/origin';
-import { OriginService } from 'app/components/origin/origin.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { OriginService } from 'app/core/services/origin.service';
 
 @Component({
   selector: 'app-select-origin',
   templateUrl: './select-origin.component.html',
-  styleUrls: ['./select-origin.component.css']
+  styleUrls: ['./select-origin.component.css'],
 })
-
 export class SelectOriginComponent implements OnInit {
-
   @Input() branchId: string;
   public origins: Origin[] = new Array();
   public originSelected: Origin;
@@ -28,20 +30,20 @@ export class SelectOriginComponent implements OnInit {
     public _authService: AuthService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _modalService: NgbModal,
-  ) { }
+    public _modalService: NgbModal
+  ) {}
 
   async ngOnInit() {
-
     this.originSelected = new Origin();
-    await this.getOrigins({ branch: { $oid: this.branchId }, operationType: { $ne: 'D' } }).then(
-      origins => {
-        if(origins && origins.length > 0) {
-          this.origins = origins;
-          this.originSelected = this.origins[0];
-        }
+    await this.getOrigins({
+      branch: { $oid: this.branchId },
+      operationType: { $ne: 'D' },
+    }).then((origins) => {
+      if (origins && origins.length > 0) {
+        this.origins = origins;
+        this.originSelected = this.origins[0];
       }
-    );
+    });
   }
 
   ngAfterViewInit() {
@@ -49,29 +51,29 @@ export class SelectOriginComponent implements OnInit {
   }
 
   public getOrigins(match: {} = {}): Promise<Origin[]> {
-
     return new Promise<Origin[]>((resolve, reject) => {
-  
-      this._originService.getOrigins(
+      this._originService
+        .getOrigins(
           {}, // PROJECT
           match, // MATCH
           { number: 1 }, // SORT
           {}, // GROUP
           0, // LIMIT
           0 // SKIP
-      ).subscribe(
-        result => {
-          if (result.origins) {
-            resolve(result.origins);
-          } else {
+        )
+        .subscribe(
+          (result) => {
+            if (result.origins) {
+              resolve(result.origins);
+            } else {
+              resolve(null);
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
           }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 
@@ -79,7 +81,11 @@ export class SelectOriginComponent implements OnInit {
     this.activeModal.close({ origin: this.originSelected });
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

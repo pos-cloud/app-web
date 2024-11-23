@@ -12,11 +12,11 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //service
 import { Make } from '@types';
-import { CategoryService } from 'app/components/category/category.service';
-import { MakeService } from 'app/components/make/make.service';
+import { CategoryService } from 'app/core/services/category.service';
+import { MakeService } from 'app/core/services/make.service';
+import { ArticleService } from '../../../../core/services/article.service';
 import { Category } from '../../../category/category';
 import { Article } from '../../article';
-import { ArticleService } from '../../article.service';
 
 @Component({
   selector: 'app-update-article-price',

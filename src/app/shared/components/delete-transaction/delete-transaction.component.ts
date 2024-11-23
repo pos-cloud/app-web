@@ -4,10 +4,10 @@ import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
-import { AuthService } from 'app/components/login/auth.service';
 import { Transaction } from 'app/components/transaction/transaction';
-import { TransactionService } from 'app/components/transaction/transaction.service';
 import { User } from 'app/components/user/user';
+import { AuthService } from 'app/core/services/auth.service';
+import { TransactionService } from 'app/core/services/transaction.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 @Component({
   selector: 'app-delete-transaction',

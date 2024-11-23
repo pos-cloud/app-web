@@ -30,15 +30,15 @@ import { Config } from 'app/app.config';
 
 // COMPONENTS
 
-import { AccountSeatService } from 'app/components/account-seat/account-seat.service';
 import { Bank } from 'app/components/bank/bank';
-import { BankService } from 'app/components/bank/bank.service';
-import { CompanyService } from 'app/components/company/company.service';
 import { Currency } from 'app/components/currency/currency';
-import { CurrencyService } from 'app/components/currency/currency.service';
 import { Holiday } from 'app/components/holiday/holiday.model';
-import { HolidayService } from 'app/components/holiday/holiday.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { AccountSeatService } from 'app/core/services/account-seat.service';
+import { BankService } from 'app/core/services/bank.service';
+import { CompanyService } from 'app/core/services/company.service';
+import { CurrencyService } from 'app/core/services/currency.service';
+import { HolidayService } from 'app/core/services/holiday.service';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -52,22 +52,22 @@ import Keyboard from 'simple-keyboard';
 
 import { ApiResponse } from '@types';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
+import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
+import { PaymentMethodService } from '../../../core/services/payment-method.service';
+import { TaxService } from '../../../core/services/tax.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
-import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
 import { PaymentMethod } from '../../payment-method/payment-method';
-import { PaymentMethodService } from '../../payment-method/payment-method.service';
 import { Tax } from '../../tax/tax';
-import { TaxService } from '../../tax/tax.service';
 import { Taxes } from '../../tax/taxes';
 import {
   Movements,
   TransactionMovement,
 } from '../../transaction-type/transaction-type';
 import { Transaction, TransactionState } from '../../transaction/transaction';
-import { TransactionService } from '../../transaction/transaction.service';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
 import { MovementOfCash, StatusCheck } from '../movement-of-cash';
-import { MovementOfCashService } from '../movement-of-cash.service';
 import { SelectChecksComponent } from '../select-checks/select-checks.component';
 
 @Component({

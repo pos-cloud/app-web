@@ -1,23 +1,28 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
+import {
+  CompanyField,
+  CompanyFieldType,
+} from '../../company-field/company-field';
 import { CompanyFields } from '../company-fields';
-import { CompanyField, CompanyFieldType } from '../../company-field/company-field';
 
-import { CompanyFieldService } from '../../company-field/company-field.service';
+import { CompanyFieldService } from '../../../core/services/company-field.service';
 
 @Component({
   selector: 'app-add-company-fields',
   templateUrl: './add-company-fields.component.html',
   styleUrls: ['./add-company-fields.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class AddCompanyFieldsComponent implements OnInit {
-
   public field: CompanyFields;
   public companyFields: CompanyField[];
   @Input() fields: CompanyFields[];
@@ -25,27 +30,28 @@ export class AddCompanyFieldsComponent implements OnInit {
   public alertMessage: string = '';
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  @Output() eventAddCompanyFields: EventEmitter<CompanyFields[]> = new EventEmitter<CompanyFields[]>();
+  @Output() eventAddCompanyFields: EventEmitter<CompanyFields[]> =
+    new EventEmitter<CompanyFields[]>();
 
   public formErrors = {
-    'companyField': '',
-    'name': '',
-    'datatype': '',
-    'value': '',
+    companyField: '',
+    name: '',
+    datatype: '',
+    value: '',
   };
 
   public validationMessages = {
-    'companyField': {
-      'required': 'Este campo es requerido.'
+    companyField: {
+      required: 'Este campo es requerido.',
     },
-    'name': {
-      'required': 'Este campo es requerido.'
+    name: {
+      required: 'Este campo es requerido.',
     },
-    'datatype': {
-      'required': 'Este campo es requerido.'
+    datatype: {
+      required: 'Este campo es requerido.',
     },
-    'value': {
-      'required': 'Este campo es requerido.'
+    value: {
+      required: 'Este campo es requerido.',
     },
   };
 
@@ -55,13 +61,12 @@ export class AddCompanyFieldsComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     this.field = new CompanyFields();
     this.companyFields = new Array();
-    if(!this.fields) {
+    if (!this.fields) {
       this.fields = new Array();
     }
     this.getCompanyFields();
@@ -73,35 +78,25 @@ export class AddCompanyFieldsComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.companyFieldsForm = this._fb.group({
-      'companyField': [this.field.companyField, [
-          Validators.required
-        ]
-      ],
-      'name': [this.field.name, [
-          Validators.required
-        ]
-      ],
-      'datatype': [this.field.datatype, [
-          Validators.required
-        ]
-      ],
-      'value': [this.field.value, [
-        ]
-      ]
+      companyField: [this.field.companyField, [Validators.required]],
+      name: [this.field.name, [Validators.required]],
+      datatype: [this.field.datatype, [Validators.required]],
+      value: [this.field.value, []],
     });
 
-    this.companyFieldsForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.companyFieldsForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
     this.focusEvent.emit(true);
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.companyFieldsForm) { return; }
+    if (!this.companyFieldsForm) {
+      return;
+    }
     const form = this.companyFieldsForm;
 
     for (const field in this.formErrors) {
@@ -118,7 +113,6 @@ export class AddCompanyFieldsComponent implements OnInit {
   }
 
   public changeValues(): void {
-
     this.field.companyField = this.companyFieldsForm.value.companyField;
     this.field.name = this.field.companyField.name;
     this.field.datatype = this.field.companyField.datatype;
@@ -128,28 +122,34 @@ export class AddCompanyFieldsComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
-    if(!this.field.companyField) { null }
-    if(!this.field.name) { this.field.name = '' }
-    if(!this.field.datatype) { this.field.datatype = CompanyFieldType.String }
-    if(!this.field.value) { this.field.value = '' }
+    if (!this.field.companyField) {
+      null;
+    }
+    if (!this.field.name) {
+      this.field.name = '';
+    }
+    if (!this.field.datatype) {
+      this.field.datatype = CompanyFieldType.String;
+    }
+    if (!this.field.value) {
+      this.field.value = '';
+    }
 
     const values = {
-      'companyField': this.field.companyField,
-      'name': this.field.name,
-      'datatype': this.field.datatype,
-      'value' : this.field.value
+      companyField: this.field.companyField,
+      name: this.field.name,
+      datatype: this.field.datatype,
+      value: this.field.value,
     };
 
     this.companyFieldsForm.setValue(values);
   }
 
   public getCompanyFields(): void {
-
     this.loading = true;
 
     this._companyFieldService.getCompanyFields().subscribe(
-      result => {
+      (result) => {
         if (!result.companyFields) {
           this.hideMessage();
         } else {
@@ -158,7 +158,7 @@ export class AddCompanyFieldsComponent implements OnInit {
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -173,14 +173,15 @@ export class AddCompanyFieldsComponent implements OnInit {
   }
 
   public deleteArticlField(companyField: CompanyFields): void {
-
     let i: number = 0;
     let companyTaxToDelete: number = -1;
 
     if (this.fields && this.fields.length > 0) {
       for (let companyTaxAux of this.fields) {
-        if (companyField.companyField._id === companyTaxAux.companyField._id &&
-            companyField.value === companyTaxAux.value) {
+        if (
+          companyField.companyField._id === companyTaxAux.companyField._id &&
+          companyField.value === companyTaxAux.value
+        ) {
           companyTaxToDelete = i;
         }
         i++;
@@ -194,7 +195,11 @@ export class AddCompanyFieldsComponent implements OnInit {
     this.eventAddCompanyFields.emit(this.fields);
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

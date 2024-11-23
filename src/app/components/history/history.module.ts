@@ -11,7 +11,6 @@ import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { HistoryService } from './history.service';
 import { ListHistoriesComponent } from './list-history/list-histories.component';
 
 const routes: Routes = [
@@ -40,6 +39,6 @@ const routes: Routes = [
   ],
   declarations: [ListHistoriesComponent],
   exports: [],
-  providers: [HistoryService],
+  providers: [],
 })
 export class HistoryModule {}

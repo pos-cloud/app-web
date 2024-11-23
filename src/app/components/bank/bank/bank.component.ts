@@ -1,30 +1,37 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl } from '@angular/forms';
 
-
-import { BankService } from '../bank.service';
+import { BankService } from '../../../core/services/bank.service';
 
 import { Bank } from '../bank';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
-import { AccountService } from 'app/components/account/account.service';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { Account } from 'app/components/account/account';
+import { AccountService } from 'app/core/services/account.service';
+import { Observable } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 
 @Component({
   selector: 'app-bank',
   templateUrl: './bank.component.html',
   styleUrls: ['./bank.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
 export class BankComponent implements OnInit {
-
   @Input() operation: string;
   @Input() readonly: boolean;
-  @Input() bankId : string;
+  @Input() bankId: string;
   public alertMessage: string = '';
   public userType: string;
   public bank: Bank;
@@ -39,49 +46,56 @@ export class BankComponent implements OnInit {
   public orientation: string = 'horizontal';
 
   public formErrors = {
-    'code': '',
-    'name': '',
-    'agency' : ''
+    code: '',
+    name: '',
+    agency: '',
   };
 
   public validationMessages = {
-    'code': {
-      'required': 'Este campo es requerido.'
+    code: {
+      required: 'Este campo es requerido.',
     },
-    'agency': {
-      'required': 'Este campo es requerido.'
+    agency: {
+      required: 'Este campo es requerido.',
     },
-    'name': {
-      'required': 'Este campo es requerido.'
-    }
+    name: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   public searchAccounts = (text$: Observable<string>) =>
-  text$.pipe(
-    debounceTime(300),
-    distinctUntilChanged(),
-    tap(() => this.loading = true),
-    switchMap(async term => {
-      let match: {} = (term && term !== '') ? { description: { $regex: term, $options: 'i' }, mode : "Analitico", operationType : { "$ne" : "D" } } : {};
-      return await this.getAllAccounts(match).then(
-        result => {
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => (this.loading = true)),
+      switchMap(async (term) => {
+        let match: {} =
+          term && term !== ''
+            ? {
+                description: { $regex: term, $options: 'i' },
+                mode: 'Analitico',
+                operationType: { $ne: 'D' },
+              }
+            : {};
+        return await this.getAllAccounts(match).then((result) => {
           return result;
-        }
-      )
-    }),
-    tap(() => this.loading = false)
-  )
-public formatterAccounts = (x: Account) => { return x.description; };
+        });
+      }),
+      tap(() => (this.loading = false))
+    );
+  public formatterAccounts = (x: Account) => {
+    return x.description;
+  };
 
   constructor(
     public alertConfig: NgbAlertConfig,
     public _bankService: BankService,
-    public _accountService : AccountService,
+    public _accountService: AccountService,
     public _router: Router,
     public _fb: UntypedFormBuilder,
-    public activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal
   ) {
-    if(window.screen.width < 1000) this.orientation = 'vertical';
+    if (window.screen.width < 1000) this.orientation = 'vertical';
     this.bank = new Bank();
   }
 
@@ -90,7 +104,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
-    
+
     if (this.bankId) {
       this.getBank();
     }
@@ -101,13 +115,13 @@ public formatterAccounts = (x: Account) => { return x.description; };
   }
 
   public getBank() {
-
     this.loading = true;
 
     this._bankService.getBank(this.bankId).subscribe(
-      result => {
+      (result) => {
         if (!result.bank) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.bank = result.bank;
@@ -115,7 +129,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -123,52 +137,49 @@ public formatterAccounts = (x: Account) => { return x.description; };
   }
 
   public setValueForm(): void {
-
-   
-    if (!this.bank._id) { this.bank._id = ''; }
-    if (!this.bank.code) { this.bank.code = 0; }
-    if (!this.bank.name) { this.bank.name = ''; }
-    if (!this.bank.agency) { this.bank.agency = 0; }
-    if (!this.bank.account) { this.bank.account = null; }
-
+    if (!this.bank._id) {
+      this.bank._id = '';
+    }
+    if (!this.bank.code) {
+      this.bank.code = 0;
+    }
+    if (!this.bank.name) {
+      this.bank.name = '';
+    }
+    if (!this.bank.agency) {
+      this.bank.agency = 0;
+    }
+    if (!this.bank.account) {
+      this.bank.account = null;
+    }
 
     const values = {
-      '_id': this.bank._id,
-      'code': this.bank.code,
-      'name': this.bank.name,
-      'agency' : this.bank.agency,
-      'account' : this.bank.account,
+      _id: this.bank._id,
+      code: this.bank.code,
+      name: this.bank.name,
+      agency: this.bank.agency,
+      account: this.bank.account,
     };
     this.bankForm.setValue(values);
   }
 
   public buildForm(): void {
-
     this.bankForm = this._fb.group({
-      '_id' : [this.bank._id, []],
-      'code': [this.bank.code, [
-        Validators.required
-        ]
-      ],
-      'name': [this.bank.name, [
-        Validators.required
-        ]
-      ],
-      'agency': [this.bank.agency, [
-        Validators.required
-        ]
-      ],
-      'account' : [this.bank.account,[]]
+      _id: [this.bank._id, []],
+      code: [this.bank.code, [Validators.required]],
+      name: [this.bank.name, [Validators.required]],
+      agency: [this.bank.agency, [Validators.required]],
+      account: [this.bank.account, []],
     });
 
-    this.bankForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.bankForm.valueChanges.subscribe((data) => this.onValueChanged(data));
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.bankForm) { return; }
+    if (!this.bankForm) {
+      return;
+    }
     const form = this.bankForm;
 
     for (const field in this.formErrors) {
@@ -186,21 +197,22 @@ public formatterAccounts = (x: Account) => { return x.description; };
 
   public getAllAccounts(match: {}): Promise<Account[]> {
     return new Promise<Account[]>((resolve, reject) => {
-      this._accountService.getAll({
-        match,
-        sort: { description : 1 },
-      }).subscribe(
-        result => {
-          this.loading = false;
-          (result.status === 200) ? resolve(result.result) : reject(result);
-        },
-        error => reject(error)
-      );
+      this._accountService
+        .getAll({
+          match,
+          sort: { description: 1 },
+        })
+        .subscribe(
+          (result) => {
+            this.loading = false;
+            result.status === 200 ? resolve(result.result) : reject(result);
+          },
+          (error) => reject(error)
+        );
     });
   }
 
   public addBank() {
-
     switch (this.operation) {
       case 'add':
         this.saveBank();
@@ -208,7 +220,7 @@ public formatterAccounts = (x: Account) => { return x.description; };
       case 'edit':
         this.updateBank();
         break;
-      case 'delete' :
+      case 'delete':
         this.deleteBank();
       default:
         break;
@@ -216,22 +228,27 @@ public formatterAccounts = (x: Account) => { return x.description; };
   }
 
   public updateBank() {
-
     this.loading = true;
 
     this.bank = this.bankForm.value;
 
     this._bankService.updateBank(this.bank).subscribe(
-      result => {
+      (result) => {
         if (!result.bank) {
           this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          if (result.message && result.message !== '') {
+            this.showMessage(result.message, 'info', true);
+          }
         } else {
           this.loading = false;
-          this.showMessage('El banco se ha actualizado con éxito.', 'success', false);
+          this.showMessage(
+            'El banco se ha actualizado con éxito.',
+            'success',
+            false
+          );
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -239,24 +256,29 @@ public formatterAccounts = (x: Account) => { return x.description; };
   }
 
   public saveBank() {
-
     this.loading = true;
 
     this.bank = this.bankForm.value;
 
     this._bankService.saveBank(this.bank).subscribe(
-      result => {
+      (result) => {
         if (!result.bank) {
           this.loading = false;
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          if (result.message && result.message !== '') {
+            this.showMessage(result.message, 'info', true);
+          }
         } else {
-            this.loading = false;
-            this.showMessage('El banco se ha añadido con éxito.', 'success', false);
-            this.bank = new Bank();
-            this.buildForm();
+          this.loading = false;
+          this.showMessage(
+            'El banco se ha añadido con éxito.',
+            'success',
+            false
+          );
+          this.bank = new Bank();
+          this.buildForm();
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
@@ -264,26 +286,31 @@ public formatterAccounts = (x: Account) => { return x.description; };
   }
 
   public deleteBank() {
-
     this.loading = true;
 
     this._bankService.deleteBank(this.bank._id).subscribe(
-      result => {
+      (result) => {
         this.loading = false;
         if (!result.bank) {
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+          if (result.message && result.message !== '') {
+            this.showMessage(result.message, 'info', true);
+          }
         } else {
           this.activeModal.close();
         }
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
@@ -293,5 +320,3 @@ public formatterAccounts = (x: Account) => { return x.description; };
     this.alertMessage = '';
   }
 }
-
-

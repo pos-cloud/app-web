@@ -2,9 +2,9 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { CategoryService } from '../../../core/services/category.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { Category } from '../category';
-import { CategoryService } from '../category.service';
 
 @Component({
   selector: 'app-list-categories',

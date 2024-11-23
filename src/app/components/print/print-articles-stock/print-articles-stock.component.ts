@@ -1,14 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ArticleStock } from 'app/components/article-stock/article-stock';
-import { ArticleStockService } from 'app/components/article-stock/article-stock.service';
+import { ArticleStockService } from 'app/core/services/article-stock.service';
 
 //terceros
 import { DomSanitizer } from '@angular/platform-browser';
 import { Config } from 'app/app.config';
-import { ConfigService } from 'app/components/config/config.service';
 import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { ConfigService } from 'app/core/services/config.service';
 import jsPDF from 'jspdf';
 
 @Component({

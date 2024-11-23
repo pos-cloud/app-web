@@ -2,9 +2,9 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { HolidayService } from '../../../core/services/holiday.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { Holiday } from '../holiday.model';
-import { HolidayService } from '../holiday.service';
 
 @Component({
   selector: 'app-list-holidays',

@@ -12,10 +12,7 @@ import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 //service
 import { Config } from 'app/app.config';
 import { Classification } from 'app/components/classification/classification';
-import { ClassificationService } from 'app/components/classification/classification.service';
-import { ConfigService } from 'app/components/config/config.service';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
-import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
 import { TaxClassification } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
 import {
@@ -23,9 +20,12 @@ import {
   TransactionMovement,
 } from 'app/components/transaction-type/transaction-type';
 import { Transaction } from 'app/components/transaction/transaction';
-import { TransactionService } from 'app/components/transaction/transaction.service';
 import { VATCondition } from 'app/components/vat-condition/vat-condition';
-import { VATConditionService } from 'app/components/vat-condition/vat-condition.service';
+import { ClassificationService } from 'app/core/services/classification.service';
+import { ConfigService } from 'app/core/services/config.service';
+import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
+import { TransactionService } from 'app/core/services/transaction.service';
+import { VATConditionService } from 'app/core/services/vat-condition.service';
 
 @Component({
   selector: 'app-print-vat-book',

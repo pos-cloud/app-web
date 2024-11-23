@@ -22,13 +22,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ApiResponse, FormField } from '@types';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
+import { PermissionService } from '../../../core/services/permission.service';
 import { Permission } from '../permission.model';
-import { PermissionService } from '../permission.service';
 
 @Component({
   selector: 'app-permission',

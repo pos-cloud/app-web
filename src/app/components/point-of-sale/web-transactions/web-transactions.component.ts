@@ -7,22 +7,22 @@ import { Subscription } from 'rxjs';
 import { Config } from '../../../app.config';
 import { User } from '../../../components/user/user';
 import { TranslateMePipe } from '../../../core/pipes/translate-me';
-import { ConfigService } from '../../config/config.service';
+import { ConfigService } from '../../../core/services/config.service';
+import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
+import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
+import { PrinterService } from '../../../core/services/printer.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
-import { MovementOfArticleService } from '../../movement-of-article/movement-of-article.service';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
-import { MovementOfCashService } from '../../movement-of-cash/movement-of-cash.service';
 import { PrintTransactionTypeComponent } from '../../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../../print/print/print.component';
 import { Printer, PrinterPrintIn } from '../../printer/printer';
-import { PrinterService } from '../../printer/printer.service';
 import { CancelComponent } from '../../tiendaNube/cancel/cancel.component';
 import { DateFromToComponent } from '../../tiendaNube/date-from-to/date-from-to.component';
 import { FulfilledComponent } from '../../tiendaNube/fulfilled/fulfilled.component';
 import { TransactionMovement } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../../transaction/add-transaction/add-transaction.component';
 import { Transaction, TransactionState } from '../../transaction/transaction';
-import { TransactionService } from '../../transaction/transaction.service';
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
 
 @Component({

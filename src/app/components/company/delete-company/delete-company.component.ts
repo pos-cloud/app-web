@@ -1,20 +1,18 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company } from '../company';
 
-import { CompanyService } from '../company.service';
+import { CompanyService } from '../../../core/services/company.service';
 
 @Component({
   selector: 'app-delete-company',
   templateUrl: './delete-company.component.html',
   styleUrls: ['./delete-company.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
 export class DeleteCompanyComponent implements OnInit {
-
   @Input() company: Company;
   public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
@@ -24,38 +22,40 @@ export class DeleteCompanyComponent implements OnInit {
     public _companyService: CompanyService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
   }
 
   public deleteCompany(): void {
-
     this.loading = true;
-    
+
     this._companyService.deleteCompany(this.company._id).subscribe(
-      result => {
+      (result) => {
         this.activeModal.close('delete_close');
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = '';
   }
 }

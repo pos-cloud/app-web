@@ -12,7 +12,7 @@ import { Transaction } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
-import { AccountSeatService } from '../account-seat.service';
+import { AccountSeatService } from '../../../core/services/account-seat.service';
 
 @Component({
   selector: 'app-report-details-ledger',

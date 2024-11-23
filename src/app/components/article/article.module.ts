@@ -18,7 +18,6 @@ import { PrintLabelComponent } from './actions/print-label/print-label.component
 import { PrintLabelsComponent } from './actions/print-labels/print-labels.component';
 import { UpdateArticlePriceComponent } from './actions/update-article-price/update-article-price.component';
 import { AddArticleTaxComponent } from './add-article-tax/add-article-tax.component';
-import { ArticleService } from './article.service';
 import { ArticleComponent } from './crud/article.component';
 import { ListArticlesComponent } from './list-articles/list-articles.component';
 import { ListVariantsComponent } from './list-variants/list-variants.component';
@@ -120,6 +119,6 @@ const routes: Routes = [
     HistoryComponent,
     UpdateArticlePriceComponent,
   ],
-  providers: [ArticleService],
+  providers: [],
 })
 export class ArticleModule {}

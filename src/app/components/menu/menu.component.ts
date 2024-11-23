@@ -2,9 +2,9 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ApplicationService } from '../../core/services/application.service';
+import { MenuService } from '../../core/services/menu.service';
 import { Application, ApplicationType } from '../application/application.model';
-import { ApplicationService } from '../application/application.service';
-import { MenuService } from './menu.service';
 
 @Component({
   selector: 'app-menu',

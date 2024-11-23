@@ -13,8 +13,8 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 //service
 import { Make } from '@types';
 import { Category } from 'app/components/category/category';
-import { CategoryService } from 'app/components/category/category.service';
-import { MakeService } from 'app/components/make/make.service';
+import { CategoryService } from 'app/core/services/category.service';
+import { MakeService } from 'app/core/services/make.service';
 import { Article } from '../../article.model';
 import { ArticleService } from '../../article.service';
 

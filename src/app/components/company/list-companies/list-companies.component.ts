@@ -15,16 +15,16 @@ import {
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableHistory } from 'app/components/datatable/datatable-history.interface';
-import { AuthService } from 'app/components/login/auth.service';
 import { User } from 'app/components/user/user';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { AuthService } from 'app/core/services/auth.service';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Config } from '../../../app.config';
+import { CompanyService } from '../../../core/services/company.service';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { Company, CompanyType, attributes } from '../company';
-import { CompanyService } from '../company.service';
 import { AddCompanyComponent } from '../company/add-company.component';
 @Component({
   selector: 'app-list-companies',

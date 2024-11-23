@@ -3,9 +3,9 @@ import { IButton } from '@types';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { HistoryService } from '../../../core/services/history.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { History } from '../history.model';
-import { HistoryService } from '../history.service';
 
 @Component({
   selector: 'app-list-histories',

@@ -11,11 +11,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { MakeComponent } from './crud/make.component';
 import { ListMakesComponent } from './list/list-makes.component';
-import { MakeRoutingModule } from './make-routing.module'; // Asegúrate de importar las rutas del módulo
-import { MakeService } from './make.service';
+import { MakeRoutingModule } from './make-routing.module';
 
 @NgModule({
-  declarations: [MakeComponent, ListMakesComponent], // Declara los componentes que forman parte del módulo
+  declarations: [MakeComponent, ListMakesComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -29,8 +28,7 @@ import { MakeService } from './make.service';
     NgbDropdownModule,
     NgbModule,
     DatatableModule,
-    MakeRoutingModule, // Importa MakeRoutingModule para que las rutas sean reconocidas
+    MakeRoutingModule,
   ],
-  providers: [MakeService], // El servicio MakeService
 })
 export class MakeModule {}

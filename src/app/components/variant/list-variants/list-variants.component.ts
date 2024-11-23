@@ -13,7 +13,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Article } from '../../article/article';
 import { Variant } from '../variant';
 
-import { VariantService } from '../variant.service';
+import { VariantService } from '../../../core/services/variant.service';
 
 import { DeleteVariantComponent } from '../delete-variant/delete-variant.component';
 

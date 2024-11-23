@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-    UntypedFormBuilder,
-    UntypedFormGroup,
-    Validators,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -10,9 +10,9 @@ import { ArticleFieldType } from 'app/components/article-field/article-field';
 import { ArticleFields } from 'app/components/article-field/article-fields';
 import { Article } from 'app/components/article/article';
 import { Tax, TaxBase, TaxClassification } from 'app/components/tax/tax';
-import { TaxService } from 'app/components/tax/tax.service';
 import { Transaction } from 'app/components/transaction/transaction';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { TaxService } from 'app/core/services/tax.service';
 
 import { Taxes } from 'app/components/tax/taxes';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';

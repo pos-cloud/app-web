@@ -14,8 +14,8 @@ import {
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { Subscription } from 'rxjs';
+import { MovementOfCancellationService } from '../../../core/services/movement-of-cancellation.service';
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
-import { MovementOfCancellationService } from '../movement-of-cancellation.service';
 
 @Component({
   selector: 'app-list-movements-of-cancellations',

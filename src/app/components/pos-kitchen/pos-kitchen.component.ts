@@ -7,13 +7,13 @@ import {
   MovementOfArticle,
   MovementOfArticleStatus,
 } from 'app/components/movement-of-article/movement-of-article';
-import { MovementOfArticleService } from 'app/components/movement-of-article/movement-of-article.service';
 import {
   Transaction,
   TransactionState,
 } from 'app/components/transaction/transaction';
-import { TransactionService } from 'app/components/transaction/transaction.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
+import { TransactionService } from 'app/core/services/transaction.service';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';

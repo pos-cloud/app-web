@@ -1,9 +1,9 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { IButton } from '@types';
+import { ReportService } from '../../../core/services/report.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { Report } from '../report.model';
-import { ReportService } from '../report.service';
 
 @Component({
   selector: 'app-list-reports',

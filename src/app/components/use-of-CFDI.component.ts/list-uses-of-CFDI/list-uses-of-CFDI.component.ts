@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { UseOfCFDIService } from '../../../core/services/use-of-CFDI.service';
 import { UseOfCFDI } from '../use-of-CFDI';
-import { UseOfCFDIService } from '../use-of-CFDI.service';
 
 import { AddUseOfCFDIComponent } from '../use-of-CFDI/add-use-of-CFDI.component';
 

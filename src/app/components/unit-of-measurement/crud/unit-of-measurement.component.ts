@@ -16,8 +16,8 @@ import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
+import { UnitOfMeasurementService } from '../../../core/services/unit-of-measurement.service';
 import { UnitOfMeasurement } from '../unit-of-measurement.model';
-import { UnitOfMeasurementService } from '../unit-of-measurement.service';
 
 @Component({
   selector: 'app-unit-of-measurement',

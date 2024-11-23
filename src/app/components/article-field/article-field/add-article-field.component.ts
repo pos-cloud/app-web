@@ -1,30 +1,32 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { ArticleField, ArticleFieldType } from '../article-field';
 
-import { ArticleFieldService } from '../article-field.service';
+import { ArticleFieldService } from '../../../core/services/article-field.service';
 
 @Component({
   selector: 'app-add-article-field',
   templateUrl: './add-article-field.component.html',
   styleUrls: ['./add-article-field.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
 })
-
-export class AddArticleFieldComponent  implements OnInit {
-
+export class AddArticleFieldComponent implements OnInit {
   public articleField: ArticleField;
   public articleFieldForm: UntypedFormGroup;
   public alertMessage: string = '';
-  public datatypes: ArticleFieldType[] = [ 
-    ArticleFieldType.Percentage, 
-    ArticleFieldType.Number, 
-    ArticleFieldType.String, 
-    ArticleFieldType.Array
+  public datatypes: ArticleFieldType[] = [
+    ArticleFieldType.Percentage,
+    ArticleFieldType.Number,
+    ArticleFieldType.String,
+    ArticleFieldType.Array,
   ];
   public userType: string;
   public loading: boolean = false;
@@ -32,18 +34,18 @@ export class AddArticleFieldComponent  implements OnInit {
   public resultUpload;
 
   public formErrors = {
-    'order': '',
-    'name': '',
-    'value': ''
+    order: '',
+    name: '',
+    value: '',
   };
 
   public validationMessages = {
-    'order': {
-      'required':       'Este campo es requerido.'
+    order: {
+      required: 'Este campo es requerido.',
     },
-    'name': {
-      'required':       'Este campo es requerido.'
-    }
+    name: {
+      required: 'Este campo es requerido.',
+    },
   };
 
   constructor(
@@ -51,11 +53,10 @@ export class AddArticleFieldComponent  implements OnInit {
     public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-  ) { }
+    public alertConfig: NgbAlertConfig
+  ) {}
 
   ngOnInit(): void {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.articleField = new ArticleField();
@@ -67,46 +68,29 @@ export class AddArticleFieldComponent  implements OnInit {
   }
 
   public buildForm(): void {
-
     this.articleFieldForm = this._fb.group({
-      'order': [this.articleField.order, [
-          Validators.required
-        ]
-      ],
-      'name': [this.articleField.name, [
-          Validators.required
-        ]
-      ],
-      'datatype': [this.articleField.datatype, [
-        ]
-      ],
-      'value': [this.articleField.value, [
-        ]
-      ],
-      'modify': [this.articleField.modify, [
-        ]
-      ],
-      'modifyVAT': [this.articleField.modifyVAT, [
-        ]
-      ],
-      'discriminateVAT' : [this.articleField.discriminateVAT, [
-        ]
-      ],
-      'ecommerceEnabled' : [this.articleField.ecommerceEnabled, [
-      ]
-    ]
+      order: [this.articleField.order, [Validators.required]],
+      name: [this.articleField.name, [Validators.required]],
+      datatype: [this.articleField.datatype, []],
+      value: [this.articleField.value, []],
+      modify: [this.articleField.modify, []],
+      modifyVAT: [this.articleField.modifyVAT, []],
+      discriminateVAT: [this.articleField.discriminateVAT, []],
+      ecommerceEnabled: [this.articleField.ecommerceEnabled, []],
     });
 
-    this.articleFieldForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+    this.articleFieldForm.valueChanges.subscribe((data) =>
+      this.onValueChanged(data)
+    );
 
     this.onValueChanged();
     this.focusEvent.emit(true);
   }
 
   public onValueChanged(data?: any): void {
-
-    if (!this.articleFieldForm) { return; }
+    if (!this.articleFieldForm) {
+      return;
+    }
     const form = this.articleFieldForm;
 
     for (const field in this.formErrors) {
@@ -129,36 +113,44 @@ export class AddArticleFieldComponent  implements OnInit {
   }
 
   public saveArticleField(): void {
-
     this.loading = true;
 
     this._articleFieldService.saveArticleField(this.articleField).subscribe(
-      result => {
+      (result) => {
         if (!result.articleField) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '')
+            this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.articleField = result.articleField;
-          this.showMessage("El campo de producto se ha añadido con éxito.", 'success', false);
+          this.showMessage(
+            'El campo de producto se ha añadido con éxito.',
+            'success',
+            false
+          );
           this.articleField = new ArticleField();
           this.buildForm();
         }
         this.loading = false;
       },
-      error => {
+      (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = '';
   }
 }

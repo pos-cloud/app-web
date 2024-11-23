@@ -14,39 +14,39 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
 
 import { Config } from 'app/app.config';
-import { BranchService } from 'app/components/branch/branch.service';
-import { CashBoxService } from 'app/components/cash-box/cash-box.service';
 import { Company, CompanyType } from 'app/components/company/company';
-import { CurrencyService } from 'app/components/currency/currency.service';
-import { DepositService } from 'app/components/deposit/deposit.service';
-import { AuthService } from 'app/components/login/auth.service';
 import { Table } from 'app/components/table/table';
-import { TableService } from 'app/components/table/table.service';
+import { AuthService } from 'app/core/services/auth.service';
+import { BranchService } from 'app/core/services/branch.service';
+import { CashBoxService } from 'app/core/services/cash-box.service';
+import { CurrencyService } from 'app/core/services/currency.service';
+import { DepositService } from 'app/core/services/deposit.service';
+import { TableService } from 'app/core/services/table.service';
 
-import { ConfigService } from 'app/components/config/config.service';
 import { EmployeeType } from 'app/components/employee-type/employee-type.model';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { MovementOfCashService } from 'app/components/movement-of-cash/movement-of-cash.service';
-import { OriginService } from 'app/components/origin/origin.service';
 import { Printer } from 'app/components/printer/printer';
-import { PrinterService } from 'app/components/printer/printer.service';
 import { Room } from 'app/components/room/room';
-import { RoomService } from 'app/components/room/room.service';
-import { EmailService } from 'app/components/send-email/send-email.service';
 import {
   TransactionMovement,
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
-import { TransactionTypeService } from 'app/components/transaction-type/transaction-type.service';
 import {
   Transaction,
   TransactionState,
 } from 'app/components/transaction/transaction';
-import { TransactionService } from 'app/components/transaction/transaction.service';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
-import { UserService } from 'app/components/user/user.service';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ConfigService } from 'app/core/services/config.service';
+import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { OriginService } from 'app/core/services/origin.service';
+import { PrinterService } from 'app/core/services/printer.service';
+import { RoomService } from 'app/core/services/room.service';
+import { EmailService } from 'app/core/services/send-email.service';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { TransactionService } from 'app/core/services/transaction.service';
+import { UserService } from 'app/core/services/user.service';
 import { ClaimService } from 'app/layout/claim/claim.service';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastrService } from 'ngx-toastr';

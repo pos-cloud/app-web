@@ -18,9 +18,9 @@ import { VariantValue } from '../../variant-value/variant-value';
 import { Variant } from '../variant';
 
 import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
-import { VariantTypeService } from '../../variant-type/variant-type.service';
-import { VariantValueService } from '../../variant-value/variant-value.service';
-import { VariantService } from '../variant.service';
+import { VariantTypeService } from '../../../core/services/variant-type.service';
+import { VariantValueService } from '../../../core/services/variant-value.service';
+import { VariantService } from '../../../core/services/variant.service';
 
 @Component({
   selector: 'app-add-variant',

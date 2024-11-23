@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { CompanyFieldService } from '../../../core/services/company-field.service';
 import { CompanyField } from '../../company-field/company-field';
-import { CompanyFieldService } from '../../company-field/company-field.service';
 
 import { AddCompanyFieldComponent } from '../../company-field/add-company-field.component';
 import { DeleteCompanyFieldComponent } from '../../company-field/delete-company-field/delete-company-field.component';

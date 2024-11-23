@@ -19,21 +19,21 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from '@types';
 import { Config } from 'app/app.config';
-import { ApplicationService } from 'app/components/application/application.service';
-import { BranchService } from 'app/components/branch/branch.service';
-import { CompanyService } from 'app/components/company/company.service';
-import { EmailTemplateService } from 'app/components/email-template/email-template.service';
-import { EmployeeTypeService } from 'app/components/employee-type/employee-type.service';
-import { PaymentMethodService } from 'app/components/payment-method/payment-method.service';
-import { PrinterService } from 'app/components/printer/printer.service';
-import { ShipmentMethodService } from 'app/components/shipment-method/shipment-method.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ApplicationService } from 'app/core/services/application.service';
+import { BranchService } from 'app/core/services/branch.service';
+import { CompanyService } from 'app/core/services/company.service';
+import { EmailTemplateService } from 'app/core/services/email-template.service';
+import { EmployeeTypeService } from 'app/core/services/employee-type.service';
+import { PaymentMethodService } from 'app/core/services/payment-method.service';
+import { PrinterService } from 'app/core/services/printer.service';
+import { ShipmentMethodService } from 'app/core/services/shipment-method.service';
 import * as $ from 'jquery';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
+import { AccountPeriodService } from '../../../core/services/account-period.service';
 import { AccountPeriod, StatusPeriod } from '../account-period';
-import { AccountPeriodService } from '../account-period.service';
 
 @Component({
   selector: 'app-account-period',

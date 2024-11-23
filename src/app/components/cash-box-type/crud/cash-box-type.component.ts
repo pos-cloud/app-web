@@ -16,8 +16,8 @@ import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
+import { CashBoxTypeService } from '../../../core/services/cash-box-type.service';
 import { CashBoxType } from '../cash-box-type.model';
-import { CashBoxTypeService } from '../cash-box-type.service';
 
 @Component({
   selector: 'app-cash-box-type',

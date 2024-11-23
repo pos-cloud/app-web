@@ -1,19 +1,19 @@
 import {
   Component,
-  OnInit,
-  Input,
-  Output,
   EventEmitter,
-  ViewEncapsulation,
+  Input,
+  OnInit,
+  Output,
   SimpleChanges,
+  ViewEncapsulation,
 } from '@angular/core';
-import {Router} from '@angular/router';
-import {NgbModal, NgbAlertConfig} from '@ng-bootstrap/ng-bootstrap';
-import {TransactionMovement} from 'app/components/transaction-type/transaction-type';
+import { Router } from '@angular/router';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 
-import {Config} from '../../../app.config';
-import {Category} from '../category';
-import {CategoryService} from '../category.service';
+import { Config } from '../../../app.config';
+import { CategoryService } from '../../../core/services/category.service';
+import { Category } from '../category';
 
 @Component({
   selector: 'app-list-categories-pos',
@@ -24,7 +24,8 @@ import {CategoryService} from '../category.service';
 })
 export class ListCategoriesPosComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
-  @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
+  @Output() eventSelectCategory: EventEmitter<Category> =
+    new EventEmitter<Category>();
   @Input() areCategoriesVisible: boolean = true;
   @Input() transactionMovement: TransactionMovement;
   @Input() loading: boolean = false;
@@ -44,7 +45,7 @@ export class ListCategoriesPosComponent implements OnInit {
     public _categoryService: CategoryService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) {}
 
   ngOnInit(): void {
@@ -94,7 +95,7 @@ export class ListCategoriesPosComponent implements OnInit {
       (error) => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-      },
+      }
     );
   }
 
@@ -156,22 +157,28 @@ export class ListCategoriesPosComponent implements OnInit {
         order: -1,
       };
 
-      this._categoryService.getCategoriesV2(project, match, sort, {}, 0).subscribe(
-        (result) => {
-          if (!result.categories) {
+      this._categoryService
+        .getCategoriesV2(project, match, sort, {}, 0)
+        .subscribe(
+          (result) => {
+            if (!result.categories) {
+              resolve(null);
+            } else {
+              resolve(result.categories);
+            }
+          },
+          (error) => {
             resolve(null);
-          } else {
-            resolve(result.categories);
           }
-        },
-        (error) => {
-          resolve(null);
-        },
-      );
+        );
     });
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

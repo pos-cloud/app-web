@@ -23,8 +23,8 @@ import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
+import { HolidayService } from '../../../core/services/holiday.service';
 import { Holiday } from '../holiday.model';
-import { HolidayService } from '../holiday.service';
 
 @Component({
   selector: 'app-holiday',

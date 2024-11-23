@@ -11,22 +11,22 @@ import {
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Branch } from 'app/components/branch/branch';
-import { BranchService } from 'app/components/branch/branch.service';
 import { Deposit } from 'app/components/deposit/deposit';
-import { DepositService } from 'app/components/deposit/deposit.service';
 import { PriceList } from 'app/components/price-list/price-list';
-import { PriceListService } from 'app/components/price-list/price-list.service';
 import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { BranchService } from 'app/core/services/branch.service';
+import { DepositService } from 'app/core/services/deposit.service';
+import { PriceListService } from 'app/core/services/price-list.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 
 import { Config } from '../../../app.config';
+import { ArticleStockService } from '../../../core/services/article-stock.service';
+import { PrinterService } from '../../../core/services/printer.service';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { PrintArticlesStockComponent } from '../../print/print-articles-stock/print-articles-stock.component';
 import { Printer } from '../../printer/printer';
-import { PrinterService } from '../../printer/printer.service';
 import { ArticleStock, attributes } from '../article-stock';
-import { ArticleStockService } from '../article-stock.service';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 
 import { ApiResponse } from '@types';

@@ -13,11 +13,11 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ApiResponse, FormField } from '@types';
 import { Application } from 'app/components/application/application.model';
-import { ApplicationService } from 'app/components/application/application.service';
 import { Article } from 'app/components/article/article';
-import { ArticleService } from 'app/components/article/article.service';
 import { CapitalizePipe } from 'app/core/pipes/capitalize';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ApplicationService } from 'app/core/services/application.service';
+import { ArticleService } from 'app/core/services/article.service';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
@@ -28,8 +28,8 @@ import {
   tap,
 } from 'rxjs/operators';
 
+import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
 import { ShipmentMethod } from '../shipment-method.model';
-import { ShipmentMethodService } from '../shipment-method.service';
 declare const google: any;
 
 @Component({
