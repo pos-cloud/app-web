@@ -269,6 +269,13 @@ export class HeaderComponent {
   public logout(): void {
     this.makeVisibleReport(false);
     //this.socket.emit('finish');
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.endsWith('_itemsPerPage')) {
+        localStorage.removeItem(key);
+      }
+    }
+
     this._authService.logoutStorage();
   }
 
