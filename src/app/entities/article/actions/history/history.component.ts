@@ -4,10 +4,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
+import { ArticleService } from 'app/core/services/article.service';
 import { Subscription } from 'rxjs';
 import { RoundNumberPipe } from '../../../../core/pipes/round-number.pipe';
 import { Type, attributes } from '../../article.model';
-import { ArticleService } from '../../article.service';
 
 @Component({
   selector: 'app-history',

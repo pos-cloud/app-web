@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
-import { ResourceService } from '../resource.service';
+import { ResourceService } from '../../../core/services/resource.service';
 
 @Component({
   selector: 'app-list-resources',

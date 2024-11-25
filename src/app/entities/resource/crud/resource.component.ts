@@ -12,7 +12,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ResourceService } from '../resource.service';
+import { ResourceService } from '../../../core/services/resource.service';
 
 @Component({
   selector: 'app-resource',

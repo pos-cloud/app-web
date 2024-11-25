@@ -47,7 +47,6 @@ import { Config } from '../../../app.config';
 import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { MakeService } from '../../../core/services/make.service';
 import { Article, ArticlePrintIn, Type } from '../article.model';
-import { ArticleService } from '../article.service';
 
 import { Account } from 'app/components/account/account';
 import { Application } from 'app/components/application/application.model';
@@ -72,6 +71,7 @@ import { VariantValue } from 'app/components/variant-value/variant-value';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { ArticleService } from 'app/core/services/article.service';
 import { CompanyService } from 'app/core/services/company.service';
 import { FileService } from 'app/core/services/file.service';
 import { TaxService } from 'app/core/services/tax.service';

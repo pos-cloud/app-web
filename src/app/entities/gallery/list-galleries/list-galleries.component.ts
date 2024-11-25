@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
-import { GalleryService } from '../gallery.service';
+import { GalleryService } from '../../../core/services/gallery.service';
 
 @Component({
   selector: 'app-list-galleries',

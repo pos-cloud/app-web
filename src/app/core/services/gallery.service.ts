@@ -4,7 +4,9 @@ import { Injectable } from '@angular/core';
 import { AuthService } from 'app/core/services/auth.service';
 import { ModelService } from 'app/core/services/model.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class GalleryService extends ModelService {
   constructor(
     public _http: HttpClient,

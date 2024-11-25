@@ -9,11 +9,11 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponse, Resource } from '@types';
 import { TranslateMePipe } from 'app/core/pipes/translate-me';
-import { ResourceService } from 'app/entities/resource/resource.service';
+import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { GalleryService } from '../gallery.service';
+import { GalleryService } from '../../../core/services/gallery.service';
 
 @Component({
   selector: 'app-gallery',

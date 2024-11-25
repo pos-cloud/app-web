@@ -8,7 +8,9 @@ import { AuthService } from 'app/core/services/auth.service';
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ResourceService extends ModelService {
   public routeParams: any;
 

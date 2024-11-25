@@ -5,6 +5,7 @@ import { IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
+import { ArticleService } from 'app/core/services/article.service';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { ImportComponent } from 'app/shared/components/import/import.component';
@@ -12,7 +13,6 @@ import { PrintLabelComponent } from '../actions/print-label/print-label.componen
 import { PrintLabelsComponent } from '../actions/print-labels/print-labels.component';
 import { UpdateArticlePriceComponent } from '../actions/update-article-price.ts/update-article-price.component';
 import { attributes } from '../article.model';
-import { ArticleService } from '../article.service';
 
 @Component({
   selector: 'app-list-articles',
