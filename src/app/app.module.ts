@@ -194,14 +194,10 @@ import { ProgressbarModule } from './shared/components/progressbar/progressbar.m
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
 
-export function createTranslateLoader(http: HttpClient) {
+// Loader de traducciones
+export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
-
-// const configSocket: SocketIoConfig = {
-//   url: 'http://demo.poscloud.com.ar:300',
-//   options: {},
-// };
 
 @NgModule({
   declarations: [
@@ -373,7 +369,7 @@ export function createTranslateLoader(http: HttpClient) {
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: createTranslateLoader,
+        useFactory: HttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

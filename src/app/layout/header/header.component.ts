@@ -30,8 +30,8 @@ import { ToastrService } from 'ngx-toastr';
 import { AddUserComponent } from '../../components/user/user/add-user.component';
 import { ClaimComponent } from '../claim/claim.component';
 //import { Socket } from 'ngx-socket-io';
+import { TranslateService } from '@ngx-translate/core';
 import { PushNotificationsService } from 'app/core/services/notification.service';
-import { UserService } from 'app/core/services/user.service';
 import { CurrentAccountDetailsComponent } from '../../components/print/current-account-details/current-account-details.component';
 
 @Component({
@@ -54,6 +54,8 @@ export class HeaderComponent {
   public intervalSocket;
   public notificationMessage: string;
   showAccordion = false;
+  languages = ['en', 'es', 'it']; // Idiomas disponibles
+  currentLanguage = 'es'; // Idioma predeterminado
 
   constructor(
     private _authService: AuthService,
@@ -67,7 +69,7 @@ export class HeaderComponent {
     //private socket: Socket,
     private _toastr: ToastrService,
     private _notificationService: PushNotificationsService,
-    private _userService: UserService
+    private translate: TranslateService
   ) {
     // OCULTAR MENU REPORTE
     this.isReportVisible = false;
@@ -125,6 +127,12 @@ export class HeaderComponent {
     // });
 
     //this.initSocket();
+  }
+
+  ngOnInit(): void {
+    const savedLang = localStorage.getItem('lang') || 'es';
+    this.currentLanguage = savedLang;
+    this.translate.use(savedLang);
   }
 
   public ngAfterViewInit() {
@@ -306,11 +314,20 @@ export class HeaderComponent {
   }
 
   toggleMenu() {
-    console.log('entro');
     this.toggleNavbar = !this.toggleNavbar;
   }
 
   closeNavbar() {
     this.toggleNavbar = false;
+  }
+
+  changeLanguage(lang: string): void {
+    this.currentLanguage = lang;
+    this.translate.use(lang).subscribe(() => {
+      console.log('idioma cambiado ');
+      console.log(lang);
+      this.translate.reloadLang(lang); // Fuerza la recarga del archivo JSON del idioma
+    });
+    localStorage.setItem('lang', lang);
   }
 }

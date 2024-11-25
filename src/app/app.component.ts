@@ -42,6 +42,7 @@ export class AppComponent {
     private _translateService: TranslateService
   ) {
     this._translateService.setDefaultLang('es');
+    this._translateService.use('es');
     this.setApiConfigurationSettings();
     this.config$ = this._configService.getConfig;
   }
