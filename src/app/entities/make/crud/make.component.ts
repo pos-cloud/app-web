@@ -27,7 +27,7 @@ export class MakeComponent implements OnInit, OnDestroy {
   public focusEvent = new EventEmitter<boolean>();
 
   private makeId: string;
-  private make: Make;
+  public make: Make;
   private destroy$ = new Subject<void>();
 
   constructor(
