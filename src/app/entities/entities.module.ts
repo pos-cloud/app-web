@@ -28,6 +28,8 @@ import { EntitiesRoutingModule } from './entities-routing.module';
     EntitiesRoutingModule,
   ],
   exports: [
+    CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     NgxPaginationModule,
     FocusDirective,
