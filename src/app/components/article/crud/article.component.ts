@@ -61,6 +61,7 @@ import { Currency } from '../../currency/currency';
 import { CurrencyService } from '../../../core/services/currency.service';
 
 // Pipes
+import { TranslateService } from '@ngx-translate/core';
 import { ApiResponse, MediaCategory } from '@types';
 import { User } from 'app/components/user/user';
 import { VariantType } from 'app/components/variant-type/variant-type';
@@ -408,7 +409,8 @@ export class ArticleComponent implements OnInit {
     public _variantTypeService: VariantTypeService,
     public _variantValueService: VariantValueService,
     public _userService: UserService,
-    public _taxService: TaxService
+    public _taxService: TaxService,
+    public translate: TranslateService
   ) {
     this.article = new Article();
     this.notes = new Array();
@@ -439,6 +441,10 @@ export class ArticleComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.translate.get('return').subscribe((value) => {
+      console.log('Traducción de return:', value);
+    });
+
     if (this.property) {
       this.operation = this.property.operation;
       this.articleId = this.property.articleId;

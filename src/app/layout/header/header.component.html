@@ -990,6 +990,19 @@
           (click)="reload()"
         ></i>
       </li>
+      <li style="margin-top: 10px; margin-left: 5px">
+        <div class="language-selector">
+          <select
+            id="language"
+            (change)="changeLanguage($event.target.value)"
+            [(ngModel)]="currentLanguage"
+          >
+            <option *ngFor="let lang of languages" [value]="lang">
+              {{ lang | uppercase }}
+            </option>
+          </select>
+        </div>
+      </li>
     </ul>
   </div>
 </nav>
