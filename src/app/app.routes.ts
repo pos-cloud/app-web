@@ -19,8 +19,6 @@ import { ListCurrenciesComponent } from './components/currency/list-currencies/l
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListDepositsComponent } from './components/deposit/list-deposits/list-deposits.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
-import { ListEmployeeTypesComponent } from './components/employee-type/list-employee-types/list-employee-types.component';
-import { ListEmployeesComponent } from './components/employee/list-employees/list-employees.component';
 import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
 import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
@@ -226,16 +224,6 @@ export const _routes: Routes = [
   {
     path: 'admin/price-list',
     component: ListPriceListsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/empleados',
-    component: ListEmployeesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/tipos-de-empleado',
-    component: ListEmployeeTypesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

@@ -23,7 +23,7 @@ import { CurrencyService } from 'app/core/services/currency.service';
 import { DepositService } from 'app/core/services/deposit.service';
 import { TableService } from 'app/core/services/table.service';
 
-import { EmployeeType } from 'app/components/employee-type/employee-type.model';
+import { EmployeeType } from '@types';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { Printer } from 'app/components/printer/printer';
 import { Room } from 'app/components/room/room';

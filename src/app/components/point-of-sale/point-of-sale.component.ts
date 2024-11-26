@@ -29,7 +29,7 @@ import { RoomService } from '../../core/services/room.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { TransactionService } from '../../core/services/transaction.service';
 
-import { ApiResponse, EmailProps } from '@types';
+import { ApiResponse, EmailProps, EmployeeType } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -52,7 +52,6 @@ import { SelectBranchComponent } from '../branch/select-branch/select-branch.com
 import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
 import { SelectDepositComponent } from '../deposit/select-deposit/select-deposit.component';
-import { EmployeeType } from '../employee-type/employee-type.model';
 import { SelectEmployeeComponent } from '../employee/select-employee/select-employee.component';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';

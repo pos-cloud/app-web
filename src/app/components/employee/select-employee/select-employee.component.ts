@@ -5,7 +5,7 @@ import {
   NgbAlertConfig,
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
-import { EmployeeType } from 'app/components/employee-type/employee-type.model';
+import { EmployeeType } from '@types';
 import { Table } from 'app/components/table/table';
 import { AuthService } from 'app/core/services/auth.service';
 import { EmployeeTypeService } from 'app/core/services/employee-type.service';

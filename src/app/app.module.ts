@@ -84,8 +84,6 @@ import { ListDepositsComponent } from './components/deposit/list-deposits/list-d
 import { SelectDepositComponent } from './components/deposit/select-deposit/select-deposit.component';
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
-import { AddEmployeeComponent } from './components/employee/employee/add-employee.component';
-import { ListEmployeesComponent } from './components/employee/list-employees/list-employees.component';
 import { SelectEmployeeComponent } from './components/employee/select-employee/select-employee.component';
 import { ExportersModule } from './components/export/exporters.module';
 import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
@@ -210,8 +208,6 @@ export function createTranslateLoader(http: HttpClient) {
     HomeComponent,
     HeaderComponent,
     Header2Component,
-    ListEmployeesComponent,
-    AddEmployeeComponent,
     ListTablesComponent,
     TableComponent,
     ListCashBoxesComponent,

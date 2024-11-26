@@ -10,7 +10,6 @@ import { CashBoxTypeModule } from './cash-box-type/cash-box-type.module';
 import { CategoryModule } from './category/category.module';
 import { CompanyGroupModule } from './company-group/company-group.module';
 import { DatatableModule } from './datatable/datatable.module';
-import { EmployeeTypeModule } from './employee-type/employee-type.module';
 import { ExportersModule } from './export/exporters.module';
 import { HistoryModule } from './history/history.module';
 import { HolidayModule } from './holiday/holiday.module';
@@ -29,7 +28,6 @@ import { VariantValueModule } from './variant-value/variant-value.module';
     ApplicationModule,
     PermissionModule,
     CashBoxTypeModule,
-    EmployeeTypeModule,
     HistoryModule,
     ShipmentMethodModule,
     HolidayModule,
