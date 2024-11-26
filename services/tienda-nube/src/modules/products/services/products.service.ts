@@ -49,17 +49,17 @@ export class ProductsService {
         );
       }
 
-      // const pictureUrls = foundArticle.pictures.map(
-      //   (picture) => picture.picture,
-      // );
+      let images = null;
+      if (foundArticle.picture.includes('amazonaws')) {
+        images = [
+          {
+            src: foundArticle.picture,
+          },
+        ];
+      }
 
       const dataNewProductTiendaNube = {
-        // images: [
-        //   {
-        //     src: foundArticle.picture,
-        //   },
-        //   //...pictureUrls.map((src) => ({ src })),
-        // ],
+        images: images,
         name: {
           es: foundArticle.description,
         },
@@ -100,6 +100,14 @@ export class ProductsService {
         userID,
       );
 
+      await foundCollection.updateOne(
+        { _id: foundArticle._id },
+        {
+          $set: {
+            picture: result.images[0].src,
+          },
+        },
+      );
       const stockCollection = await this.poolDatabase.getCollection(
         'article-stocks',
         database,
@@ -363,9 +371,22 @@ export class ProductsService {
         return this.create(database, productId);
       }
 
-      // const pictureUrls = foundArticle.pictures.map(
-      //   (picture) => picture.picture,
-      // );
+      let images = null;
+      if (foundArticle.picture.includes('amazonaws')) {
+        await this.tiendaNubeService.uploadImageOfProduct(
+          foundArticle.tiendaNubeId,
+          foundArticle.picture,
+          token,
+          userID,
+        );
+      }
+      if (foundArticle.picture.includes('amazonaws')) {
+        images = [
+          {
+            src: foundArticle.picture,
+          },
+        ];
+      }
 
       const dataUpdateProductTiendaNube = {
         name: {
@@ -374,12 +395,6 @@ export class ProductsService {
         description: {
           es: foundArticle.observation || '',
         },
-        // images: [
-        //   {
-        //     src: foundArticle.picture,
-        //   },
-        //   //...pictureUrls.map((src) => ({ src })),
-        // ],
       };
 
       if (foundArticle.category) {
@@ -407,38 +422,15 @@ export class ProductsService {
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
 
-      // if (!foundArticle.picture.includes('default') && foundArticle.picture !== null && foundArticle.picture !== undefined) {
-      //   await this.tiendaNubeService.uploadImageOfProduct(
-      //     foundArticle.tiendaNubeId,
-      //     foundArticle.picture,
-      //     token,
-      //     userID,
-      //   );
-      // }
+      await foundCollection.updateOne(
+        { _id: foundArticle._id },
+        {
+          $set: {
+            picture: result.images[0].src,
+          },
+        },
+      );
 
-      // eliminacion de imagenee
-      // try {
-      // //  this.deleteAllImageVariant(result.variants, result.id, token, userID);
-      // } catch (err) {}
-      // if (foundArticle.picture != result.images[0]?.src) {
-      //   const dataresult =
-      //     await this.tiendaNubeService.updatePrincipalImageOfProduct(
-      //       foundArticle.picture,
-      //       result.id,
-      //       result.images[0].id,
-      //       token,
-      //       userID,
-      //     );
-
-      //   await foundCollection.updateOne(
-      //     { _id: foundArticle._id },
-      //     {
-      //       $set: {
-      //         picture: dataresult.src,
-      //       },
-      //     },
-      //   );
-      // }
       const historiesCollection = await this.poolDatabase.getCollection(
         'histories',
         database,
@@ -451,29 +443,6 @@ export class ProductsService {
           'doc.articleParent': new ObjectId(foundArticle._id.toString()),
         })
         .toArray();
-
-      // for (let variant of variantProducts) {
-      //   const article = await historiesCollection.find({
-      //     'doc._id': new ObjectId(variant.doc.articleChild.toString()),
-      //   }).toArray();
-      //   if (article.length > 0 && article[0].doc.tiendaNubeId !== null) {
-      //     await this.tiendaNubeService.deleteVariant(
-      //       token,
-      //       userID,
-      //       foundArticle.tiendaNubeId,
-      //       article[0].doc.tiendaNubeId
-      //     )
-
-      //    await historiesCollection.updateOne(
-      //       { 'doc._id': article[0].doc._id },
-      //       {
-      //         $set: {
-      //           'doc.tiendaNubeId': null,
-      //         },
-      //       },
-      //     );
-      //   }
-      // }
 
       if (foundArticle.containsVariants) {
         for (let variant of dataVarinat) {
