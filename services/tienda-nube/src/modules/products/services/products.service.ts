@@ -52,12 +52,12 @@ export class ProductsService {
       // );
 
       const dataNewProductTiendaNube = {
-        // images: [
-        //   {
-        //     src: foundArticle.picture,
-        //   },
-        //   ...pictureUrls.map((src) => ({ src })),
-        // ],
+        images: [
+          {
+            src: foundArticle.picture,
+          },
+          //...pictureUrls.map((src) => ({ src })),
+        ],
         name: {
           es: foundArticle.description,
         },
