@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { ObjectId } from 'mongodb';
 import { ResponseVariantsDB } from 'src/common/interfaces/ResponseVariantDb.interface';
+import { PictureService } from 'src/common/services/picture.service';
 import { PoolDatabase } from 'src/database/services/database-2.service';
 import { CategoriesService } from 'src/modules/categories/services/categories.service';
 import { CreateProductTiendaNubeDTO } from 'src/services/tienda-nube/dto/create-product-tienda-nube.dto';
@@ -17,6 +18,7 @@ export class ProductsService {
     private readonly tiendaNubeService: TiendaNubeService,
     private readonly categoryService: CategoriesService,
     private readonly productVariantService: VariantProduct,
+    private readonly pictureService: PictureService,
   ) {}
 
   async create(database: string, productId: string) {
@@ -56,7 +58,7 @@ export class ProductsService {
         //   {
         //     src: foundArticle.picture,
         //   },
-        //   ...pictureUrls.map((src) => ({ src })),
+        //   //...pictureUrls.map((src) => ({ src })),
         // ],
         name: {
           es: foundArticle.description,
@@ -372,6 +374,12 @@ export class ProductsService {
         description: {
           es: foundArticle.observation || '',
         },
+        // images: [
+        //   {
+        //     src: foundArticle.picture,
+        //   },
+        //   //...pictureUrls.map((src) => ({ src })),
+        // ],
       };
 
       if (foundArticle.category) {

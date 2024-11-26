@@ -29,7 +29,7 @@ import { ImportService } from './import.service';
     PipesModule,
     NgMultiSelectDropDownModule,
   ],
-  providers: [NgbAlertConfig, TranslateMePipe],
+  providers: [NgbAlertConfig, TranslateMePipe, ImportService],
 })
 export class ImportComponent implements OnInit {
   @Input() branches: Branch[];

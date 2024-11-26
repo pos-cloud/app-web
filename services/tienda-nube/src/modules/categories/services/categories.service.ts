@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
 // import { DatabaseService } from 'src/database/services/database.service';
 import { PoolDatabase } from 'src/database/services/database-2.service';
@@ -43,7 +42,7 @@ export class CategoriesService {
         );
       }
 
-      let categoryTN
+      let categoryTN;
       if (foundCategory.tiendaNubeId) {
         categoryTN = await this.tiendaNubeService.getCategoryId(
           foundCategory.tiendaNubeId,
@@ -55,7 +54,7 @@ export class CategoriesService {
           {
             name: {
               es: foundCategory.description,
-            }
+            },
           },
           token,
           userID,
@@ -69,30 +68,33 @@ export class CategoriesService {
             },
           },
         );
-
       }
 
       if (foundCategory.parent) {
         let parent = foundCategory.parent;
         let categoryTiendaNubeId = categoryTN;
         while (parent !== null) {
-          const foundCategoryParent = await this.poolDatabase.getDocumentById('categories', parent, database);
+          const foundCategoryParent = await this.poolDatabase.getDocumentById(
+            'categories',
+            parent,
+            database,
+          );
           const categoryTiendaNube = foundCategoryParent.tiendaNubeId
             ? await this.tiendaNubeService.getCategoryId(
-              foundCategoryParent.tiendaNubeId,
-              token,
-              userID,
-            )
+                foundCategoryParent.tiendaNubeId,
+                token,
+                userID,
+              )
             : await this.tiendaNubeService.createCategory(
-              { name: { es: foundCategoryParent.description } },
-              token,
-              userID
-            );
+                { name: { es: foundCategoryParent.description } },
+                token,
+                userID,
+              );
 
           if (!foundCategoryParent.tiendaNubeId) {
             await foundCollection.updateOne(
               { _id: foundCategoryParent._id },
-              { $set: { tiendaNubeId: categoryTiendaNube.id } }
+              { $set: { tiendaNubeId: categoryTiendaNube.id } },
             );
           }
 
@@ -104,12 +106,12 @@ export class CategoriesService {
             },
             token,
             userID,
-            categoryTiendaNubeId.id//   categoryTiendaNube.id
+            categoryTiendaNubeId.id, //   categoryTiendaNube.id
           );
           categoryTiendaNubeId = categoryTiendaNube;
           parent = foundCategoryParent.parent || null;
 
-          categoryTN = result
+          categoryTN = result;
         }
       }
       return categoryTN;
