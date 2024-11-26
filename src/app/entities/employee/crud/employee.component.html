@@ -1,0 +1,133 @@
+<section class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{ 'add-employee' |
+                translate | capitalize }}</span>
+            <span style="color: #607d8b" *ngIf="operation === 'update'">{{ 'edit' | translate | capitalize }} {{
+                employee?.name }}</span>
+            <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{ employee?.name
+                }}</span>
+            <div class="pull-right">
+                <button type="button" class="btn" (click)="returnTo()">
+                    <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+                </button>
+                <button type="button" class="btn" [disabled]="loading"
+                    *ngIf="operation !== 'delete' && operation !== 'view'" (click)="addEmployee()">
+                    <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+                    <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+                    <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+                </button>
+                <button type="button" class="btn btn-danger active" *ngIf="operation === 'delete'" [disabled]="loading"
+                    (click)="deleteEmployee()">
+                    <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+                    <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+                    <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+                </button>
+            </div>
+        </div>
+        <app-progressbar [loading]="loading"></app-progressbar>
+        <div class="card-body scroll">
+            <form [formGroup]="employeeForm" (ngSubmit)="addEmployee()" autocomplete="off">
+                <div class="row">
+                    <label class="form-group col-md-12">
+                        <b>{{ 'mainData' | translate | capitalize }}</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label">{{ 'name' | translate | capitalize }}:</label>
+                        <input type="text" class="form-control" formControlName="name" name="name" id="code"
+                            [focus]="focusEvent" [ngClass]="{
+                'is-invalid':
+                  employeeForm.get('name')?.touched &&
+                  employeeForm.get('name')?.invalid
+              }" [readonly]="readonly" />
+                        <div class="invalid-feedback" *ngIf="
+                employeeForm.get('name')?.touched &&
+                employeeForm.get('name')?.hasError('required')
+              ">
+                            Este campo es obligatorio.
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label">{{ 'contact.phone' | translate | capitalize }}:</label>
+                        <input type="text" class="form-control" formControlName="phone" name="phone" id="phone"
+                            [focus]="focusEvent" [readonly]="readonly" />
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label">{{ 'address' | translate | capitalize }}:</label>
+                        <input type="text" class="form-control" formControlName="address" name="address" id="address"
+                            [focus]="focusEvent" [readonly]="readonly" />
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <label class="form-group col-md-12">
+                        <b>{{ 'employee-type' | translate | capitalize }}</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 typeahead-container">
+                        <input id="type" type="text" formControlName="type" name="type"
+                            class="form-control custom-typeahead" [ngbTypeahead]="searchEmployeeType"
+                            [resultFormatter]="formatResult" [inputFormatter]="formatResult"
+                            (focus)="employeeTypeFocus$.next('')" (click)="employeeTypeClick$.next('')"
+                            #instance="ngbTypeahead" placeholder="Tipo" (blur)="onValueChanged($event.target.id)"
+                            [readonly]="readonly" />
+                    </div>
+                </div>
+
+                <hr />
+                <div class="row">
+                    <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+                        <b>{{ 'audit' | translate | capitalize }}</b>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="control-label">{{ 'creationUser.name' | translate | capitalize }}:</label>
+                                <label *ngIf="employee?.creationUser" class="control-label"><b> {{
+                                        employee.creationUser.name
+                                        }}</b></label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">{{ 'theDay' | translate | capitalize }}:</label>
+                                <label *ngIf="employee?.creationDate" class="control-label"><b>
+                                        {{
+                                        employee.creationDate
+                                        | dateFormat
+                                        : 'DD/MM/YYYY
+                                        HH:mm:ss'
+                                        }}</b></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="control-label">{{ 'updateUser.name' | translate | capitalize }}:</label>
+                                <label *ngIf="employee?.updateUser" class="control-label"><b>{{
+                                        employee.updateUser.name
+                                        }}</b></label>
+                                <label *ngIf="!employee?.updateUser" class="control-label"><b>-</b></label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">{{ 'theDay' | translate | capitalize }}:</label>
+                                <label *ngIf="employee?.updateDate" class="control-label"><b>{{
+                                        employee.updateDate | dateFormat: 'DD/MM/YYYY HH:mm:ss'
+                                        }}</b></label>
+                                <label *ngIf="!employee?.updateDate" class="control-label"><b>-</b></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Id:</label>
+                                <label class="control-label"><b>{{ employee?._id }}</b></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
