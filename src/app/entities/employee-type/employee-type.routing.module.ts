@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'app/core/guards/auth.guard';
 import { EmployeeTypeComponent } from './crud/employee-type.component';
-import { ListEmployeeTypesComponent } from './list-employee-types/list-employee-types.component';
+import { ListEmployeeTypesComponent } from './list/list-employee-types.component';
 
 const routes: Routes = [
   {

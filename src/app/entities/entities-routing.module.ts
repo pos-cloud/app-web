@@ -5,9 +5,9 @@ import { LicenseGuard } from 'app/core/guards/license.guard'; // Si también lo 
 
 const routes: Routes = [
   {
-    path: 'makes', // Esto redirige a las rutas de MakeModule
-    loadChildren: () => import('./make/make.module').then((m) => m.MakeModule), // Lazy load MakeModule
-    canActivate: [AuthGuard, LicenseGuard], // Protege las rutas con guardias si es necesario
+    path: 'makes',
+    loadChildren: () => import('./make/make.module').then((m) => m.MakeModule),
+    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'articles',

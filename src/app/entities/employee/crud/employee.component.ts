@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import {
   UntypedFormBuilder,
-  UntypedFormControl,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
@@ -24,14 +23,11 @@ import { EmployeeService } from '../../../core/services/employee.service';
 @Component({
   selector: 'app-add-employee',
   templateUrl: './employee.component.html',
-  styleUrls: ['./employee.component.css'],
   providers: [TranslateMePipe],
 })
 export class EmployeeComponent implements OnInit {
   public operation: string;
   public readonly: boolean;
-  public employeeId: string;
-
   public employee: Employee;
   public employeeTypes: EmployeeType[];
   public employeeForm: UntypedFormGroup;
@@ -75,45 +71,25 @@ export class EmployeeComponent implements OnInit {
     return employeeType?.description;
   };
 
-  public formErrors = {
-    code: '',
-    name: '',
-    type: '',
-  };
-
-  public validationMessages = {
-    code: {
-      required: 'Este campo es requerido.',
-      pattern: 'No puede exceder los 5 dígitos.',
-    },
-    name: {
-      required: 'Este campo es requerido.',
-    },
-    type: {
-      required: 'Este campo es requerido.',
-      validateAutocomplete: 'Debe ingresar un valor válido',
-    },
-  };
-
   constructor(
-    public _employeeService: EmployeeService,
-    public _employeeTypeService: EmployeeTypeService,
-    public _fb: UntypedFormBuilder,
-    public _router: Router,
+    private _employeeService: EmployeeService,
+    private _employeeTypeService: EmployeeTypeService,
+    private _fb: UntypedFormBuilder,
+    private _router: Router,
     private _toastService: ToastService
   ) {
     this.getAllEmployeeTypes();
   }
 
   ngOnInit(): void {
-    let pathUrl = this._router.url.split('/');
+    const pathUrl = this._router.url.split('/');
+    const employeeId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.employeeId = pathUrl[4];
     this.buildForm();
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
-    if (this.employeeId) {
-      this.getEmployee();
+    if (employeeId) {
+      this.getEmployee(employeeId);
     }
   }
 
@@ -132,27 +108,8 @@ export class EmployeeComponent implements OnInit {
       name: ['', [Validators.required]],
       phone: ['', []],
       address: ['', []],
-      type: ['', []],
+      type: ['', [Validators.required]],
     });
-  }
-
-  public onValueChanged(data?: any): void {
-    if (!this.employeeForm) {
-      return;
-    }
-    const form = this.employeeForm;
-
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const npm = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += npm[key] + ' ';
-        }
-      }
-    }
   }
 
   public setValueForm() {
@@ -163,18 +120,6 @@ export class EmployeeComponent implements OnInit {
       address: this.employee.address ?? '',
       type: this.employee.type ?? null,
     });
-  }
-
-  public validateAutocomplete(c: UntypedFormControl) {
-    let result =
-      c.value && Object.keys(c.value)[0] === '0'
-        ? {
-            validateAutocomplete: {
-              valid: false,
-            },
-          }
-        : null;
-    return result;
   }
 
   returnTo() {
@@ -203,10 +148,10 @@ export class EmployeeComponent implements OnInit {
       );
   }
 
-  public getEmployee() {
+  public getEmployee(employeeId: string) {
     this.loading = true;
     this._employeeService
-      .getById(this.employeeId)
+      .getById(employeeId)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (result: ApiResponse) => {

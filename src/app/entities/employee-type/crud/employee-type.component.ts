@@ -17,11 +17,9 @@ import { EmployeeTypeService } from '../../../core/services/employee-type.servic
 @Component({
   selector: 'app-employee-type',
   templateUrl: './employee-type.component.html',
-  styleUrls: ['./employee-type.component.scss'],
   providers: [TranslateMePipe, TranslatePipe],
 })
 export class EmployeeTypeComponent implements OnInit {
-  private employeeTypeId: string;
   public readonly: boolean;
   public operation: string;
   public employeeType: EmployeeType;
@@ -39,14 +37,14 @@ export class EmployeeTypeComponent implements OnInit {
   ) {}
 
   public async ngOnInit() {
-    let pathUrl = this._router.url.split('/');
+    const pathUrl = this._router.url.split('/');
+    const employeeTypeId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.employeeTypeId = pathUrl[4];
     this.buildForm();
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
-    if (this.employeeTypeId) {
-      this.getEmployeeTypes();
+    if (employeeTypeId) {
+      this.getEmployeeTypes(employeeTypeId);
     }
   }
 
@@ -73,10 +71,10 @@ export class EmployeeTypeComponent implements OnInit {
     });
   }
 
-  public getEmployeeTypes() {
+  public getEmployeeTypes(employeeTypeId: string) {
     this.loading = true;
     this._employeeTypeService
-      .getById(this.employeeTypeId)
+      .getById(employeeTypeId)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (result: ApiResponse) => {
