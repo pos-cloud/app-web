@@ -1,6 +1,5 @@
-import { Activity } from "@types";
+import { Activity } from '@types';
 
 export interface EmployeeType extends Activity {
-    description: string;
-  
+  description: string;
 }

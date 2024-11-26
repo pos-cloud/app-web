@@ -143,13 +143,13 @@ db.articles.find({ type: 'Variante' }).forEach((article) => {
 // ultimos codigo de barra
 
 db.articles.find({ type: 'Variante' }).forEach(function (article) {
-  // Convertir el código a número
   const code = Number(article.code);
 
-  // Verificar que el código sea mayor a 401
   if (code >= 401) {
     // Reemplazar las barras '/' por espacios
-    const correctedDescription = article.description.replace(/\//g, ' ');
+    const correctedDescription = article.description
+      .replace(/\//g, ' ') // Reemplazar '/' por espacio
+      .replace(/\bY\b/g, ' '); // Reemplazar 'Y' (como palabra independiente) por espacio
 
     // Dividir la descripción en palabras
     const descriptionWords = correctedDescription.split(' ');
@@ -161,6 +161,9 @@ db.articles.find({ type: 'Variante' }).forEach(function (article) {
     const firstLetters = descriptionWords
       .map((word) => word.charAt(0)) // Tomamos la primera letra de cada palabra
       .join(''); // Unir las primeras letras
+
+    // Ahora, eliminamos la última letra de `firstLetters`
+    //const firstLettersWithoutLast = firstLetters.slice(0, -1); // Elimina la última letra
 
     // Crear el código de barras
     const barcode = article.code + firstLetters + lastWord;

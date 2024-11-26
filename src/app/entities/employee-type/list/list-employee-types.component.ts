@@ -1,18 +1,17 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { EmployeeTypeService } from '../../../core/services/employee-type.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-employee-types',
   templateUrl: './list-employee-types.component.html',
-  styleUrls: ['./list-employee-types.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class ListEmployeeTypesComponent {
   public title: string = 'employee-types';
-  public sort = { name: 1 };
+  public sort = { description: 1 };
   public columns: IAttribute[];
   public rowButtons: IButton[] = [
     {
@@ -67,6 +66,37 @@ export class ListEmployeeTypesComponent {
         project: null,
         align: 'left',
         required: false,
+      },
+      {
+        name: 'creationDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'date',
+        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updateDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
       },
     ];
   }
