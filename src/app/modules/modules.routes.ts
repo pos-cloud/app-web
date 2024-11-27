@@ -1,14 +1,15 @@
-// const routes: Routes = [
-//     // Rutas de Ventas
-//     { path: 'ventas/resto', component: CreateTransactionComponent },
-//     { path: 'ventas/mostrador', component: CreateTransactionComponent },
-//     { path: 'ventas/pedidos-web', component: CreateTransactionComponent },
-//     { path: 'ventas/lector-voucher', component: CreateTransactionComponent },
+import { Routes } from '@angular/router';
 
-//     // Rutas de Compras
-//     { path: 'compras/mostrador', component: CreateTransactionComponent },
+const routes: Routes = [
+  // Rutas de Ventas
+  { path: 'ventas/resto' },
+  { path: 'ventas/mostrador' },
+  { path: 'ventas/pedidos-web' },
+  { path: 'ventas/lector-voucher' },
 
-//     // Rutas de Stock
-//     { path: 'stock/mostrador', component: CreateTransactionComponent },
+  // Rutas de Compras
+  { path: 'compras/mostrador' },
 
-//   ];
+  // Rutas de Stock
+  { path: 'stock/mostrador' },
+];
