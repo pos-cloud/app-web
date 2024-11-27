@@ -7,4 +7,29 @@ app-datatable {
   th {
     user-select: none;
   }
+
+  .card-large {
+    min-height: calc(100vh - 120px);
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-footer {
+    margin-top: auto;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
 }
