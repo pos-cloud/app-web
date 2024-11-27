@@ -1,22 +1,20 @@
-
+import { Employee } from '@types';
 import * as moment from 'moment';
-import { Employee } from 'app/components/employee/employee';
 import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 
 export class CashBox {
+  public _id: string;
+  public number: number;
+  public openingDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  public closingDate: string;
+  public state: CashBoxState = CashBoxState.Open;
+  public employee: Employee = null;
+  public type: CashBoxType = null;
 
-    public _id: string;
-    public number: number;
-    public openingDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    public closingDate: string;
-    public state: CashBoxState = CashBoxState.Open;
-    public employee: Employee = null;
-    public type: CashBoxType = null;
-
-	constructor () {}
+  constructor() {}
 }
 
 export enum CashBoxState {
-	Open = <any> "Abierta",
-	Closed = <any> "Cerrada",
+  Open = <any>'Abierta',
+  Closed = <any>'Cerrada',
 }

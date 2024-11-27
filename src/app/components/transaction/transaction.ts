@@ -1,23 +1,23 @@
-import {Employee} from 'app/components/employee/employee';
 import * as moment from 'moment';
 
-import {Account} from '../account/account';
-import {Address} from '../address/address.model';
-import {Branch} from '../branch/branch';
-import {BusinessRule} from '../business-rules/business-rules';
-import {CashBox} from '../cash-box/cash-box';
-import {Company} from '../company/company';
-import {Currency} from '../currency/currency';
-import {Deposit} from '../deposit/deposit';
-import {PriceList} from '../price-list/price-list';
-import {RelationType} from '../relation-type/relation-type';
-import {ShipmentMethod} from '../shipment-method/shipment-method.model';
-import {Table} from '../table/table';
-import {Taxes} from '../tax/taxes';
-import {TransactionType} from '../transaction-type/transaction-type';
-import {Transport} from '../transport/transport';
-import {UseOfCFDI} from '../use-of-CFDI.component.ts/use-of-CFDI';
-import {User} from '../user/user';
+import { Employee } from '@types';
+import { Account } from '../account/account';
+import { Address } from '../address/address.model';
+import { Branch } from '../branch/branch';
+import { BusinessRule } from '../business-rules/business-rules';
+import { CashBox } from '../cash-box/cash-box';
+import { Company } from '../company/company';
+import { Currency } from '../currency/currency';
+import { Deposit } from '../deposit/deposit';
+import { PriceList } from '../price-list/price-list';
+import { RelationType } from '../relation-type/relation-type';
+import { ShipmentMethod } from '../shipment-method/shipment-method.model';
+import { Table } from '../table/table';
+import { Taxes } from '../tax/taxes';
+import { TransactionType } from '../transaction-type/transaction-type';
+import { Transport } from '../transport/transport';
+import { UseOfCFDI } from '../use-of-CFDI.component.ts/use-of-CFDI';
+import { User } from '../user/user';
 
 export class Transaction {
   _id: string;
@@ -83,7 +83,7 @@ export class Transaction {
   creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   updateUser: User;
   updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-  tracking: {date: string; state: TransactionState}[];
+  tracking: { date: string; state: TransactionState }[];
   tiendaNubeId: string;
 
   constructor() {}
@@ -101,17 +101,16 @@ export enum TransactionState {
   Sent = <any>'Enviado',
   Preparing = <any>'Preparando',
   Pending = <any>'Pendiente',
-  Produccion= <any>'En Producción'
+  Produccion = <any>'En Producción',
 }
 
 export enum TransactionStateTiendaNube {
-  Open = <any> 'open', //abierto
-  Closed = <any> 'closed', //cerrado
-  Canceled = <any> 'canceled',//cancelado
-  Packed = <any> 'packed',//preparado
-  Fulfilled = <any> 'fulfilled'//completado
+  Open = <any>'open', //abierto
+  Closed = <any>'closed', //cerrado
+  Canceled = <any>'canceled', //cancelado
+  Packed = <any>'packed', //preparado
+  Fulfilled = <any>'fulfilled', //completado
 }
-
 
 export let attributes = [
   {

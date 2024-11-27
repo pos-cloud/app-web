@@ -84,7 +84,6 @@ import { ListDepositsComponent } from './components/deposit/list-deposits/list-d
 import { SelectDepositComponent } from './components/deposit/select-deposit/select-deposit.component';
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
-import { SelectEmployeeComponent } from './components/employee/select-employee/select-employee.component';
 import { ExportersModule } from './components/export/exporters.module';
 import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
@@ -188,7 +187,6 @@ import { ClaimService } from './layout/claim/claim.service';
 import { HeaderComponent } from './layout/header/header.component';
 import { Header2Component } from './layout/header2/header2.component';
 import { HomeComponent } from './layout/home/home.component';
-import { ProgressbarModule } from './shared/components/progressbar/progressbar.module';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
 
@@ -233,7 +231,6 @@ export function createTranslateLoader(http: HttpClient) {
     AddTransactionComponent,
     CurrentAccountComponent,
     SendEmailComponent,
-    SelectEmployeeComponent,
     PrintComponent,
     ViewTransactionComponent,
     RegisterComponent,
@@ -379,7 +376,6 @@ export function createTranslateLoader(http: HttpClient) {
       //baseURL: '//cdn.bootcss.com/tinymce/4.7.13/',
       baseURL: '//cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.0/',
     }),
-    ProgressbarModule,
     PipesModule,
     ComponentsModule,
     ExportersModule,

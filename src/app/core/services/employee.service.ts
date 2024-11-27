@@ -4,9 +4,9 @@ import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
+import { Employee } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { Employee } from '../../components/employee/employee';
 import { AuthService } from './auth.service';
 
 @Injectable({

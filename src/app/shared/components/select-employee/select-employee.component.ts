@@ -1,24 +1,24 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
-import { EmployeeType } from '@types';
+import { FormsModule, UntypedFormBuilder } from '@angular/forms';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { Employee, EmployeeType } from '@types';
 import { Table } from 'app/components/table/table';
+import { PipesModule } from 'app/core/pipes/pipes.module';
 import { AuthService } from 'app/core/services/auth.service';
 import { EmployeeTypeService } from 'app/core/services/employee-type.service';
 import { TableService } from 'app/core/services/table.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { EmployeeService } from '../../../core/services/employee.service';
-import { Employee } from '../employee';
 
 @Component({
   selector: 'app-select-employee',
   templateUrl: './select-employee.component.html',
-  styleUrls: ['./select-employee.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, PipesModule, TranslateModule],
 })
 export class SelectEmployeeComponent implements OnInit {
   public employees: Employee[] = new Array();
@@ -41,14 +41,12 @@ export class SelectEmployeeComponent implements OnInit {
     public _authService: AuthService,
     public _transactionService: TransactionService,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
+    public _toast: ToastService,
     public _userService: UserService
   ) {}
 
   ngOnInit() {
-    this.employeeSelected = new Employee();
-
     if (this.typeEmployee) {
       this.getEmployees('where="type":"' + this.typeEmployee._id + '"');
     }
@@ -70,10 +68,9 @@ export class SelectEmployeeComponent implements OnInit {
       (result) => {
         if (!result.employees) {
           if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+            this._toast.showToast(result.message, 'info');
           this.loading = false;
         } else {
-          this.hideMessage();
           this.loading = false;
           this.employees = result.employees;
           if (this.employees && this.employees.length > 0) {
@@ -82,7 +79,7 @@ export class SelectEmployeeComponent implements OnInit {
         }
       },
       (error) => {
-        this.showMessage(error._body, 'danger', false);
+        this._toast.showToast(error._body);
         this.loading = false;
       }
     );
@@ -122,30 +119,24 @@ export class SelectEmployeeComponent implements OnInit {
 
     if (this.table && this.chair <= 0) {
       isValid = false;
-      this.showMessage(
-        'La cantidad de comensables debe ser superior a 0',
-        'info',
-        true
-      );
+      this._toast.showToast({
+        message: 'La cantidad de comensables debe ser superior a 0',
+      });
     }
 
     if (this.requireLogin && (!this.password || this.password === '')) {
       isValid = false;
-      this.showMessage(
-        'Debe completar la contraseña del ' + this.typeEmployee.description,
-        'info',
-        true
-      );
+      this._toast.showToast({
+        message:
+          'Debe completar la contraseña del ' + this.typeEmployee.description,
+      });
     }
 
     if (!this.employeeSelected || !this.employeeSelected._id) {
       isValid = false;
-      this.showMessage(
-        'Debe seleccionar un ' + this.typeEmployee.description,
-        'info',
-        true
-      );
-    } else {
+      this._toast.showToast({
+        message: 'Debe seleccionar un ' + this.typeEmployee.description,
+      });
     }
 
     return isValid;
@@ -161,19 +152,5 @@ export class SelectEmployeeComponent implements OnInit {
     } else {
       this.chair = 1;
     }
-  }
-
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage(): void {
-    this.alertMessage = '';
   }
 }

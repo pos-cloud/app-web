@@ -32,7 +32,7 @@ import { TransactionTypeService } from '../../../core/services/transaction-type.
 import { TransactionService } from '../../../core/services/transaction.service';
 
 //Pipes
-import { ApiResponse } from '@types';
+import { ApiResponse, Employee } from '@types';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import {
@@ -50,7 +50,6 @@ import { CashBoxService } from '../../../core/services/cash-box.service';
 import { MovementOfCancellationService } from '../../../core/services/movement-of-cancellation.service';
 import { UserService } from '../../../core/services/user.service';
 import { SelectCompanyComponent } from '../../company/select-company/select-company.component';
-import { Employee } from '../../employee/employee';
 import { MovementOfCancellationComponent } from '../../movement-of-cancellation/movement-of-cancellation.component';
 import { TaxBase, TaxClassification } from '../../tax/tax';
 import { Config } from './../../../app.config';

@@ -13,10 +13,10 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { User, UserState } from '../user';
 
+import { Employee } from '@types';
 import { Branch } from 'app/components/branch/branch';
 import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
 import { Company } from 'app/components/company/company';
-import { Employee } from 'app/components/employee/employee';
 import { Origin } from 'app/components/origin/origin';
 import { Permission } from 'app/components/permission/permission.model';
 import { Printer } from 'app/components/printer/printer';
@@ -648,7 +648,6 @@ export class AddUserComponent implements OnInit {
             userStorage.name = result.user.name;
             userStorage.email = result.user.email;
             if (result.user.employee) {
-              userStorage.employee = new Employee();
               userStorage.employee._id = result.user.employee._id;
               userStorage.employee.name = result.user.employee.name;
               // userStorage.employee.type = new EmployeeType();

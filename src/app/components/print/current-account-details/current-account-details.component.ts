@@ -16,8 +16,8 @@ import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { Config } from './../../../app.config';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Employee } from '@types';
 import { CompanyGroup } from 'app/components/company-group/company-group';
-import { Employee } from 'app/components/employee/employee';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { Transaction } from 'app/components/transaction/transaction';
 import { CompanyGroupService } from 'app/core/services/company-group.service';

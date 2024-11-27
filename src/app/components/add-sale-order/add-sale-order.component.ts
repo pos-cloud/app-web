@@ -48,6 +48,7 @@ import { TableService } from '../../core/services/table.service';
 import { TaxService } from '../../core/services/tax.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { UserService } from '../../core/services/user.service';
+import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { ApplyDiscountComponent } from '../apply-discount/apply-discount.component';
 import { ArticleFieldType } from '../article-field/article-field';
 import { ArticleFields } from '../article-field/article-fields';
@@ -61,7 +62,6 @@ import { Category } from '../category/category';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
 import { CompanyType } from '../company/company';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
-import { SelectEmployeeComponent } from '../employee/select-employee/select-employee.component';
 import { AddMovementOfArticleComponent } from '../movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import {
   MovementOfArticle,

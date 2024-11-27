@@ -26,7 +26,7 @@ import { EmployeeService } from '../../core/services/employee.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
 //import { Socket } from 'ngx-socket-io';
-import { Employee } from '../employee/employee';
+import { Employee } from '@types';
 
 @Component({
   selector: 'app-login',

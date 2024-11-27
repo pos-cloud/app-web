@@ -5,7 +5,7 @@ export class ToastService {
   toasts: any[] = [];
 
   // Muestra una notificación
-  show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+  private show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
     this.toasts.push({ textOrTpl, ...options });
   }
 
@@ -15,18 +15,18 @@ export class ToastService {
   }
 
   // Métodos para notificaciones específicas
-  success(message: string, title: string) {
+  private success(message: string, title: string) {
     this.show(message, {
       classname: 'bg-success text-light',
       header: title,
     });
   }
 
-  error(message: string, title: string) {
+  private error(message: string, title: string) {
     this.show(message, { classname: 'bg-danger text-light', header: title });
   }
 
-  info(message: string, title: string) {
+  private info(message: string, title: string) {
     this.show(message, { classname: 'bg-info text-light', header: title });
   }
 

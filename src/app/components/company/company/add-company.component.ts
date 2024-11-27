@@ -23,10 +23,10 @@ import { EmployeeService } from '../../../core/services/employee.service';
 import { VATConditionService } from '../../../core/services/vat-condition.service';
 
 //PIPE
+import { Employee } from '@types';
 import { Config } from 'app/app.config';
 import { Account } from 'app/components/account/account';
 import { Address } from 'app/components/address/address.model';
-import { Employee } from 'app/components/employee/employee';
 import { IdentificationType } from 'app/components/identification-type/identification-type';
 import { PriceList } from 'app/components/price-list/price-list';
 import { State } from 'app/components/state/state';

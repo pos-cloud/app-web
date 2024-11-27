@@ -10,11 +10,11 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserState } from '../user/user';
 
+import { Employee } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { CompanyService } from '../../core/services/company.service';
 import { EmployeeTypeService } from '../../core/services/employee-type.service';
 import { EmployeeService } from '../../core/services/employee.service';
-import { Employee } from '../employee/employee';
 
 @Component({
   selector: 'app-register',
