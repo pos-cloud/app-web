@@ -100,14 +100,6 @@ export class ProductsService {
         userID,
       );
 
-      await foundCollection.updateOne(
-        { _id: foundArticle._id },
-        {
-          $set: {
-            picture: result.images[0].src,
-          },
-        },
-      );
       const stockCollection = await this.poolDatabase.getCollection(
         'article-stocks',
         database,
@@ -193,6 +185,7 @@ export class ProductsService {
         {
           $set: {
             tiendaNubeId: result.id,
+            picture: result?.images[0]?.src ?? foundArticle.picture,
           },
         },
       );
@@ -422,14 +415,16 @@ export class ProductsService {
         dataUpdateProductTiendaNube as UpdateProductTiendaNubeDto,
       );
 
-      await foundCollection.updateOne(
-        { _id: foundArticle._id },
-        {
-          $set: {
-            picture: result.images[0].src,
+      if (result?.images[0]?.src) {
+        await foundCollection.updateOne(
+          { _id: foundArticle._id },
+          {
+            $set: {
+              picture: result.images[0].src,
+            },
           },
-        },
-      );
+        );
+      }
 
       const historiesCollection = await this.poolDatabase.getCollection(
         'histories',
