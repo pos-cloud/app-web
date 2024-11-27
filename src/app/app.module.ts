@@ -181,7 +181,6 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { NotificationGuard } from './core/guards/notification.guard';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { PipesModule } from './core/pipes/pipes.module';
 import { ClaimComponent } from './layout/claim/claim.component';
 import { ClaimService } from './layout/claim/claim.service';
 import { HeaderComponent } from './layout/header/header.component';
@@ -189,6 +188,7 @@ import { Header2Component } from './layout/header2/header2.component';
 import { HomeComponent } from './layout/home/home.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
+import { PipesModule } from './shared/pipes/pipes.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');

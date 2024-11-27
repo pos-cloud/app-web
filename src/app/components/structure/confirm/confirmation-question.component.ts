@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input } from '@angular/core';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

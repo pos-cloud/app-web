@@ -11,8 +11,8 @@ import {
 import { Company, CompanyType } from 'app/components/company/company';
 import { EmployeeService } from 'app/core/services/employee.service';
 import { TransactionService } from 'app/core/services/transaction.service';
-import { DateFormatPipe } from '../../../core/pipes/date-format.pipe';
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { Config } from './../../../app.config';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';

@@ -24,9 +24,9 @@ import {
   TransactionMovement,
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 import { ArticleService } from '../../core/services/article.service';
 import { CategoryService } from '../../core/services/category.service';

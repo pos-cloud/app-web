@@ -9,14 +9,14 @@ import {
   TransactionMovement,
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
-import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import * as moment from 'moment';
 import { Observable, of as observableOf, Subscription } from 'rxjs';
 import { Config } from '../../app.config';
-import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
 import { attributes } from './list-articles.requirements-by-transaction';
 import { ListArticlesRequirementsByTransactionService } from './list-articles.requirements-by-transaction.service';
 

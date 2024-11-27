@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import jsPDF from 'jspdf';
 
-import { DateFormatPipe } from '../../../core/pipes/date-format.pipe';
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 
 //model
 import { Make } from '@types';

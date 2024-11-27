@@ -16,9 +16,9 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableHistory } from 'app/components/datatable/datatable-history.interface';
 import { User } from 'app/components/user/user';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { AuthService } from 'app/core/services/auth.service';
 import { ImportComponent } from 'app/shared/components/import/import.component';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Config } from '../../../app.config';

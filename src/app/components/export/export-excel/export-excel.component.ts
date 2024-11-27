@@ -4,7 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 registerLocaleData(localeEsAr, 'es-Ar');
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 

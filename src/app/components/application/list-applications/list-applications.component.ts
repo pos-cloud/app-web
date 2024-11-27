@@ -10,12 +10,12 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { TranslateMePipe } from '../../../core/pipes/translate-me';
 import { ApplicationService } from '../../../core/services/application.service';
 import { ArticleService } from '../../../core/services/article.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
 import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
+import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { Article, Type } from '../../article/article';
 import { Company, CompanyType } from '../../company/company';
 import { PaymentMethod } from '../../payment-method/payment-method';

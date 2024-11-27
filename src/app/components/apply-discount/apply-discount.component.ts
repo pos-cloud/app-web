@@ -8,7 +8,7 @@ import {
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //PIPES
-import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
 
 @Component({
   selector: 'app-apply-discount',

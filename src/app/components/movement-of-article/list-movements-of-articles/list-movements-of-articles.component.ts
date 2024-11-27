@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';

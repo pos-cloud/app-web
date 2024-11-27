@@ -22,13 +22,13 @@ import { Deposit } from 'app/components/deposit/deposit';
 import { PriceList } from 'app/components/price-list/price-list';
 import { Structure, Utilization } from 'app/components/structure/structure';
 import { Transaction } from 'app/components/transaction/transaction';
-import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { AccountService } from 'app/core/services/account.service';
 import { ArticleService } from 'app/core/services/article.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { StructureService } from 'app/core/services/structure.service';
+import { OrderByPipe } from 'app/shared/pipes/order-by.pipe';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -41,10 +41,10 @@ import {
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { Config } from '../../../app.config';
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { VariantService } from '../../../core/services/variant.service';
+import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ArticleFieldType } from '../../article-field/article-field';
 import { ArticleFields } from '../../article-field/article-fields';
 import { ArticleStock } from '../../article-stock/article-stock';

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ApplicationService } from '../../core/services/application.service';
 import { MenuService } from '../../core/services/menu.service';
 import { Application, ApplicationType } from '../application/application.model';

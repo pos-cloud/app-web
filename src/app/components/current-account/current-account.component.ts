@@ -27,8 +27,8 @@ import {
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { ConfigService } from 'app/core/services/config.service';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { first } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';

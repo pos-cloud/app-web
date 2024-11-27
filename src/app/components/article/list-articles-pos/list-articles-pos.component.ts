@@ -26,7 +26,6 @@ import { PriceList } from 'app/components/price-list/price-list';
 import { Structure, Utilization } from 'app/components/structure/structure';
 import { Tax } from 'app/components/tax/tax';
 import { User } from 'app/components/user/user';
-import { FilterPipe } from 'app/core/pipes/filter.pipe';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PriceListService } from 'app/core/services/price-list.service';
@@ -35,15 +34,16 @@ import { TaxService } from 'app/core/services/tax.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
 import { ClaimService } from 'app/layout/claim/claim.service';
+import { FilterPipe } from 'app/shared/pipes/filter.pipe';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import {
   StockMovement,
   TransactionMovement,
 } from '../../transaction-type/transaction-type';
 
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

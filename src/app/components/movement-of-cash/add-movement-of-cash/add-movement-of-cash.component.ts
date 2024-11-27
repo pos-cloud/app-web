@@ -33,12 +33,12 @@ import { Config } from 'app/app.config';
 import { Bank } from 'app/components/bank/bank';
 import { Currency } from 'app/components/currency/currency';
 import { Holiday } from 'app/components/holiday/holiday.model';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { AccountSeatService } from 'app/core/services/account-seat.service';
 import { BankService } from 'app/core/services/bank.service';
 import { CompanyService } from 'app/core/services/company.service';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { HolidayService } from 'app/core/services/holiday.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -51,12 +51,12 @@ import {
 import Keyboard from 'simple-keyboard';
 
 import { ApiResponse } from '@types';
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
 import { TaxService } from '../../../core/services/tax.service';
 import { TransactionService } from '../../../core/services/transaction.service';
+import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { Tax } from '../../tax/tax';

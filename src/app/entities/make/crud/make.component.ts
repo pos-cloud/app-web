@@ -7,8 +7,8 @@ import {
 import { Router } from '@angular/router';
 
 import { ApiResponse, Make } from '@types';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';

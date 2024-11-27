@@ -12,11 +12,11 @@ import { GalleryService } from '../../../core/services/gallery.service';
 import { Gallery, Resource } from '@types';
 import { Article } from 'app/components/article/article';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ArticleService } from 'app/core/services/article.service';
 import { PaymentMethodService } from 'app/core/services/payment-method.service';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import 'hammerjs';
 @Component({
   selector: 'app-view-gallery',

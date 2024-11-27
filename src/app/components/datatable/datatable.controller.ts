@@ -1,7 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
 import { Config } from 'app/app.config';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 
 export class DatatableController {
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();

@@ -11,9 +11,9 @@ import {
   Transaction,
   TransactionState,
 } from 'app/components/transaction/transaction';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { TransactionService } from 'app/core/services/transaction.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';

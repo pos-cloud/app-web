@@ -10,20 +10,20 @@ import {
 import { Branch } from 'app/components/branch/branch';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { User } from 'app/components/user/user';
-import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';
+import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import * as moment from 'moment';
 import { Observable, Subscription, of as observableOf } from 'rxjs';
 
 import * as printJS from 'print-js';
 import { Config } from '../../../app.config';
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { ConfigService } from '../../../core/services/config.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { TransactionService } from '../../../core/services/transaction.service';
+import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';

@@ -24,7 +24,7 @@ import { TransactionService } from '../../../core/services/transaction.service';
 import { UserService } from '../../../core/services/user.service';
 
 import { ToastrService } from 'ngx-toastr';
-import { TranslateMePipe } from '../../../core/pipes/translate-me';
+import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { TableComponent } from '../table/table.component';
 import { PrintQRComponent } from './../../../components/print/print-qr/print-qr.component';
 import { TransactionType } from './../../../components/transaction-type/transaction-type';

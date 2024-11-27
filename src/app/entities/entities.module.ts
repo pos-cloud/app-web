@@ -5,9 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { PipesModule } from 'app/core/pipes/pipes.module';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { EntitiesRoutingModule } from './entities-routing.module';
 @NgModule({

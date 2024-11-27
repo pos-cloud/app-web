@@ -6,9 +6,9 @@ import { ArticleStockService } from 'app/core/services/article-stock.service';
 //terceros
 import { DomSanitizer } from '@angular/platform-browser';
 import { Config } from 'app/app.config';
-import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { ConfigService } from 'app/core/services/config.service';
+import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import jsPDF from 'jspdf';
 
 @Component({

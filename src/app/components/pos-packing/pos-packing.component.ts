@@ -9,12 +9,12 @@ import {
   TransactionState,
 } from 'app/components/transaction/transaction';
 import { User } from 'app/components/user/user';
-import { JsonDiffPipe } from 'app/core/pipes/json-diff';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
+import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';

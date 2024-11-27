@@ -13,7 +13,6 @@ import { AddTransactionComponent } from 'app/components/transaction/add-transact
 import { Transaction } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { AuthService } from 'app/core/services/auth.service';
 import { CompanyService } from 'app/core/services/company.service';
 import { ConfigService } from 'app/core/services/config.service';
@@ -21,6 +20,7 @@ import { MovementOfCashService } from 'app/core/services/movement-of-cash.servic
 import { PrinterService } from 'app/core/services/printer.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { CurrentAccountService } from './current-account.service';
 @Component({
   selector: 'app-current-account',

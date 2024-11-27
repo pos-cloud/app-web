@@ -44,8 +44,8 @@ import { ArticleStockService } from 'app/core/services/article-stock.service';
 import { CategoryService } from 'app/core/services/category.service';
 import { VariantService } from 'app/core/services/variant.service';
 import { Config } from '../../../app.config';
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { MakeService } from '../../../core/services/make.service';
+import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { Article, ArticlePrintIn, Type } from '../article.model';
 
 import { Account } from 'app/components/account/account';
@@ -69,8 +69,6 @@ import { User } from 'app/components/user/user';
 import { VariantType } from 'app/components/variant-type/variant-type';
 import { VariantValue } from 'app/components/variant-value/variant-value';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
-import { OrderByPipe } from 'app/core/pipes/order-by.pipe';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ArticleService } from 'app/core/services/article.service';
 import { CompanyService } from 'app/core/services/company.service';
 import { FileService } from 'app/core/services/file.service';
@@ -79,6 +77,8 @@ import { UnitOfMeasurementService } from 'app/core/services/unit-of-measurement.
 import { UserService } from 'app/core/services/user.service';
 import { VariantTypeService } from 'app/core/services/variant-type.service';
 import { VariantValueService } from 'app/core/services/variant-value.service';
+import { OrderByPipe } from 'app/shared/pipes/order-by.pipe';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 

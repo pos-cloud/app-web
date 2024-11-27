@@ -7,8 +7,8 @@ import {
 import { Router } from '@angular/router';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse, Employee, EmployeeType } from '@types';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { merge, Observable, OperatorFunction, Subject } from 'rxjs';
 import {
   debounceTime,

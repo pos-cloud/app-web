@@ -13,9 +13,9 @@ import { CashBox } from '../cash-box';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Printer } from 'app/components/printer/printer';
 import { User } from 'app/components/user/user';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { PrintComponent } from '../../print/print/print.component';
 

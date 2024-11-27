@@ -24,10 +24,10 @@ import { Config } from './../../app.config';
 import { IdentificationType } from 'app/components/identification-type/identification-type';
 import { AuthService } from 'app/core/services/auth.service';
 import { IdentificationTypeService } from 'app/core/services/identification-type.service';
-import { DateFormatPipe } from '../../core/pipes/date-format.pipe';
 import { ConfigService } from '../../core/services/config.service';
 import { UserService } from '../../core/services/user.service';
 import { VATConditionService } from '../../core/services/vat-condition.service';
+import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 
 import { MediaCategory } from '@types';
 import { Currency } from 'app/components/currency/currency';

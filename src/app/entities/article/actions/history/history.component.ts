@@ -6,7 +6,7 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { ArticleService } from 'app/core/services/article.service';
 import { Subscription } from 'rxjs';
-import { RoundNumberPipe } from '../../../../core/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../../../shared/pipes/round-number.pipe';
 import { Type, attributes } from '../../article.model';
 
 @Component({

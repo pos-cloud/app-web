@@ -15,7 +15,7 @@ import { CancellationType } from '../cancellation-type';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TransactionState } from 'app/components/transaction/transaction';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

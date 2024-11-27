@@ -16,12 +16,12 @@ import { AccountPeriod } from 'app/components/account-period/account-period';
 import { AccountSeat } from 'app/components/account-seat/account-seat';
 import { Account } from 'app/components/account/account';
 import { Printer } from 'app/components/printer/printer';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { AccountPeriodService } from 'app/core/services/account-period.service';
 import { AccountSeatService } from 'app/core/services/account-seat.service';
 import { AccountService } from 'app/core/services/account.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { UserService } from 'app/core/services/user.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -32,10 +32,10 @@ import {
   tap,
 } from 'rxjs/operators';
 
-import { RoundNumberPipe } from '../../../core/pipes/round-number.pipe';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
 import { TransactionService } from '../../../core/services/transaction.service';
+import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ArticleComponent } from '../../article/crud/article.component';
 import { AddCompanyComponent } from '../../company/company/add-company.component';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';

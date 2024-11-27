@@ -6,12 +6,12 @@ import { DeleteTransactionComponent } from 'app/shared/components/delete-transac
 import { Subscription } from 'rxjs';
 import { Config } from '../../../app.config';
 import { User } from '../../../components/user/user';
-import { TranslateMePipe } from '../../../core/pipes/translate-me';
 import { ConfigService } from '../../../core/services/config.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { TransactionService } from '../../../core/services/transaction.service';
+import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { PrintTransactionTypeComponent } from '../../print/print-transaction-type/print-transaction-type.component';

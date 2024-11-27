@@ -5,8 +5,8 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
 import { ToastrService } from 'ngx-toastr';
 import { Config } from '../../../app.config';
-import { TranslateMePipe } from '../../../core/pipes/translate-me';
 import { TransactionService } from '../../../core/services/transaction.service';
+import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { Transaction } from '../../transaction/transaction';
 
 @Component({

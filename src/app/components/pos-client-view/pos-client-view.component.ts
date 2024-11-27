@@ -6,8 +6,8 @@ import {
   Transaction,
   TransactionState,
 } from 'app/components/transaction/transaction';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { TransactionService } from 'app/core/services/transaction.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

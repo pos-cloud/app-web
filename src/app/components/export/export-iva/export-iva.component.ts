@@ -21,13 +21,13 @@ import {
   TransactionMovement,
 } from 'app/components/transaction-type/transaction-type';
 import { VATCondition } from 'app/components/vat-condition/vat-condition';
-import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { BranchService } from 'app/core/services/branch.service';
 import { ClassificationService } from 'app/core/services/classification.service';
 import { StateService } from 'app/core/services/state.service';
 import { TaxService } from 'app/core/services/tax.service';
 import { VATConditionService } from 'app/core/services/vat-condition.service';
+import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import * as moment from 'moment';
 
 import { CompanyService } from '../../../core/services/company.service';

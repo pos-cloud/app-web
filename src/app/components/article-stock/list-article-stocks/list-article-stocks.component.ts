@@ -13,10 +13,10 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Branch } from 'app/components/branch/branch';
 import { Deposit } from 'app/components/deposit/deposit';
 import { PriceList } from 'app/components/price-list/price-list';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { BranchService } from 'app/core/services/branch.service';
 import { DepositService } from 'app/core/services/deposit.service';
 import { PriceListService } from 'app/core/services/price-list.service';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 

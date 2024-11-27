@@ -17,11 +17,11 @@ import { Account } from 'app/components/account/account';
 import { Application } from 'app/components/application/application.model';
 import { Article } from 'app/components/article/article';
 import { Currency } from 'app/components/currency/currency';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { AccountService } from 'app/core/services/account.service';
 import { ApplicationService } from 'app/core/services/application.service';
 import { ArticleService } from 'app/core/services/article.service';
 import { CurrencyService } from 'app/core/services/currency.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {

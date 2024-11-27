@@ -12,7 +12,7 @@ import { Config } from 'app/app.config';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { ConfigService } from 'app/core/services/config.service';
 import { Subscription } from 'rxjs';
-import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
 import { CurrentAccountDetailsComponent } from '../print/current-account-details/current-account-details.component';
 
 @Component({

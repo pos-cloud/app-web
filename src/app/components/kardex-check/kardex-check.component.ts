@@ -9,10 +9,10 @@ import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { CurrencyPipe } from '@angular/common';
-import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
 import { AuthService } from 'app/core/services/auth.service';
-import { RoundNumberPipe } from '../../core/pipes/round-number.pipe';
+import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { TransactionService } from '../../core/services/transaction.service';
+import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
 import { TransactionMovement } from '../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction/transaction';

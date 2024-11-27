@@ -31,11 +31,11 @@ import { CancellationType } from 'app/components/cancellation-type/cancellation-
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { Taxes } from 'app/components/tax/taxes';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { CompanyService } from 'app/core/services/company.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { ArticleService } from '../../core/services/article.service';
 import { Article } from '../article/article';

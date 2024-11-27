@@ -5,13 +5,13 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Employee, EmployeeType } from '@types';
 import { Table } from 'app/components/table/table';
-import { PipesModule } from 'app/core/pipes/pipes.module';
 import { AuthService } from 'app/core/services/auth.service';
 import { EmployeeTypeService } from 'app/core/services/employee-type.service';
 import { TableService } from 'app/core/services/table.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { EmployeeService } from '../../../core/services/employee.service';
 
 @Component({

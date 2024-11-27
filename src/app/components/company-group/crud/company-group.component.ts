@@ -15,8 +15,8 @@ import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
-import { CapitalizePipe } from 'app/core/pipes/capitalize';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { CapitalizePipe } from 'app/shared/pipes/capitalize';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';

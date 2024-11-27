@@ -31,7 +31,6 @@ import { IdentificationType } from 'app/components/identification-type/identific
 import { PriceList } from 'app/components/price-list/price-list';
 import { State } from 'app/components/state/state';
 import { Transport } from 'app/components/transport/transport';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { AccountService } from 'app/core/services/account.service';
 import { AddressService } from 'app/core/services/address.service';
 import { ConfigService } from 'app/core/services/config.service';
@@ -40,6 +39,7 @@ import { IdentificationTypeService } from 'app/core/services/identification-type
 import { PriceListService } from 'app/core/services/price-list.service';
 import { StateService } from 'app/core/services/state.service';
 import { TransportService } from 'app/core/services/transport.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -48,7 +48,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { DateFormatPipe } from '../../../core/pipes/date-format.pipe';
+import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 
 @Component({
   selector: 'app-add-company',

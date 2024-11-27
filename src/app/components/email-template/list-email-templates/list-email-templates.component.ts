@@ -7,11 +7,11 @@ import {
   NgbAlertConfig,
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
-import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { EmailTemplateService } from 'app/core/services/email-template.service';
+import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { EmailTemplate, attributes } from '../email-template';

@@ -22,8 +22,6 @@ import {
   TransactionMovement,
   TransactionType,
 } from 'app/components/transaction-type/transaction-type';
-import { CapitalizePipe } from 'app/core/pipes/capitalize';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ArticleService } from 'app/core/services/article.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { CompanyService } from 'app/core/services/company.service';
@@ -33,6 +31,8 @@ import { PaymentMethodService } from 'app/core/services/payment-method.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { ShipmentMethodService } from 'app/core/services/shipment-method.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { CapitalizePipe } from 'app/shared/pipes/capitalize';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';

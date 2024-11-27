@@ -8,8 +8,8 @@ import {
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ApiResponse, EmployeeType } from '@types';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EmployeeTypeService } from '../../../core/services/employee-type.service';

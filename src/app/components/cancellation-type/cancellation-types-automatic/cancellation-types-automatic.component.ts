@@ -26,13 +26,13 @@ import {
   Transaction,
   TransactionState,
 } from 'app/components/transaction/transaction';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { TransactionService } from 'app/core/services/transaction.service';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

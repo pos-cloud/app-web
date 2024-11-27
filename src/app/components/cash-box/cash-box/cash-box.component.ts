@@ -44,11 +44,11 @@ import { CurrencyValue } from 'app/components/currency-value/currency-value';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ConfigService } from 'app/core/services/config.service';
 import { CurrencyValueService } from 'app/core/services/currency-value.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { PrintComponent } from '../../print/print/print.component';
 

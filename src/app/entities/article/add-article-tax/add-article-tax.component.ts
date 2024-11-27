@@ -11,11 +11,11 @@ import { ArticleFields } from 'app/components/article-field/article-fields';
 import { Article } from 'app/components/article/article';
 import { Tax, TaxBase, TaxClassification } from 'app/components/tax/tax';
 import { Transaction } from 'app/components/transaction/transaction';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { TaxService } from 'app/core/services/tax.service';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 
 import { Taxes } from 'app/components/tax/taxes';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

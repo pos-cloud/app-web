@@ -1,6 +1,6 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IButton } from '@types';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { HistoryService } from '../../../core/services/history.service';

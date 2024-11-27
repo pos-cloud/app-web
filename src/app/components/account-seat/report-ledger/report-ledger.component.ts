@@ -5,7 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Config } from 'app/app.config';
 import { Account } from 'app/components/account/account';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { AccountSeatService } from '../../../core/services/account-seat.service';

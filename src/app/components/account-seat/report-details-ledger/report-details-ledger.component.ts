@@ -10,7 +10,7 @@ import { Config } from 'app/app.config';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { Transaction } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { AccountSeatService } from '../../../core/services/account-seat.service';
 

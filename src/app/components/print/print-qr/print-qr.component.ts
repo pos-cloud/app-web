@@ -16,12 +16,12 @@ import {
   PrinterType,
 } from 'app/components/printer/printer';
 import { Table } from 'app/components/table/table';
-import { DateFormatPipe } from 'app/core/pipes/date-format.pipe';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ApplicationService } from 'app/core/services/application.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PrintService } from 'app/core/services/print.service';
+import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
 let splitRegex = /\r\n|\r|\n/g;

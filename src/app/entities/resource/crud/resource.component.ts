@@ -7,8 +7,8 @@ import {
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { MediaCategory, Resource } from '@types';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';

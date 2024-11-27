@@ -19,12 +19,12 @@ import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash
 import { PriceList } from 'app/components/price-list/price-list';
 import { PositionPrint, Printer } from 'app/components/printer/printer';
 import { Transaction } from 'app/components/transaction/transaction';
-import { RoundNumberPipe } from 'app/core/pipes/round-number.pipe';
 import { ArticleService } from 'app/core/services/article.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { PrintService } from 'app/core/services/print.service';
 import { PrinterService } from 'app/core/services/printer.service';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 
 @Component({
   selector: 'app-print-transaction-type',

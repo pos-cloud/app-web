@@ -10,9 +10,9 @@ import {
   MovementOfCash,
   StatusCheck,
 } from 'app/components/movement-of-cash/movement-of-cash';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
 import { BankService } from 'app/core/services/bank.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { ToastrService } from 'ngx-toastr';

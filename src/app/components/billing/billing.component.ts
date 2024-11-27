@@ -5,8 +5,8 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 
 import { ToastrService } from 'ngx-toastr';
-import { DateFormatPipe } from '../../core/pipes/date-format.pipe';
 import { ConfigService } from '../../core/services/config.service';
+import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { Config } from './../../app.config';
 
 @Component({

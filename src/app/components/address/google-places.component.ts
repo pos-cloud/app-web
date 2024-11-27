@@ -6,7 +6,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { TranslateMePipe } from 'app/core/pipes/translate-me';
+import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 import {
   ShipmentMethod,
