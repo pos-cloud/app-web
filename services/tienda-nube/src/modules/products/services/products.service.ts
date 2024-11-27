@@ -283,6 +283,11 @@ export class ProductsService {
               ? element.articleChildInfo.salePriceTN
               : element.articleChildInfo.salePrice;
 
+          variantData['weight'] = element.articleChildInfo.weight ?? null;
+          variantData['width'] = element.articleChildInfo.width ?? null;
+          variantData['height'] = element.articleChildInfo.height ?? null;
+          variantData['depth'] = element.articleChildInfo.depth ?? null;
+
           const stockCollection = await this.poolDatabase.getCollection(
             'article-stocks',
             database,
