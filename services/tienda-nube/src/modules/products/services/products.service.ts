@@ -50,7 +50,10 @@ export class ProductsService {
       }
 
       let images = null;
-      if (foundArticle.picture.includes('amazonaws')) {
+      if (
+        foundArticle.picture.includes('amazonaws') &&
+        !foundArticle.containsVariants
+      ) {
         images = [
           {
             src: foundArticle.picture,
@@ -365,7 +368,10 @@ export class ProductsService {
       }
 
       let images = null;
-      if (foundArticle.picture.includes('amazonaws')) {
+      if (
+        foundArticle.picture.includes('amazonaws') &&
+        !foundArticle.containsVariants
+      ) {
         await this.tiendaNubeService.uploadImageOfProduct(
           foundArticle.tiendaNubeId,
           foundArticle.picture,
