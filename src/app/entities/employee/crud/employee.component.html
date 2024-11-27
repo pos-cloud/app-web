@@ -119,39 +119,29 @@
         </div>
 
         <div class="row">
-          <div class="form-group col-md-6 typeahead-container">
-            <label class="control-label">
-              {{ 'employee-type' | translate | capitalize }}
-            </label>
-
-            <input
-              id="type"
-              type="text"
-              formControlName="type"
-              name="type"
-              class="form-control custom-typeahead"
-              [ngbTypeahead]="searchEmployeeType"
-              [resultFormatter]="formatResult"
-              [inputFormatter]="formatResult"
-              (focus)="employeeTypeFocus$.next('')"
-              (click)="employeeTypeClick$.next('')"
-              #instance="ngbTypeahead"
-              [readonly]="readonly"
-              [ngClass]="{
-                'is-invalid':
-                  employeeForm.get('name')?.touched &&
-                  employeeForm.get('name')?.invalid
-              }"
-            />
-          </div>
           <div
-            class="invalid-feedback"
-            *ngIf="
-              employeeForm.get('type')?.touched &&
-              employeeForm.get('type')?.hasError('required')
-            "
+            class="form-group col-md-6 typeahead-container"
+            *ngIf="employeeTypes?.length > 0"
           >
-            Este campo es obligatorio.
+            <label class="control-label"
+              >{{ 'employee-type' | translate | capitalize }}:</label
+            >
+            <app-typeahead-dropdown
+              [control]="employeeForm.get('type')"
+              [data]="employeeTypes"
+              [readonly]="readonly"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+            <div
+              *ngIf="
+                employeeForm.get('type').hasError('required') &&
+                employeeForm.get('type').touched
+              "
+              class="text-danger"
+            >
+              Este campo es requerido
+            </div>
           </div>
         </div>
         <hr />

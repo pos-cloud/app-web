@@ -34,13 +34,17 @@ export class EmployeeTypeComponent implements OnInit {
     private _toastService: ToastService,
     public _fb: UntypedFormBuilder,
     public _router: Router
-  ) {}
+  ) {
+    this.employeeTypeForm = this._fb.group({
+      _id: ['', []],
+      description: ['', [Validators.required]],
+    });
+  }
 
   public async ngOnInit() {
     const pathUrl = this._router.url.split('/');
     const employeeTypeId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.buildForm();
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
     if (employeeTypeId) {
@@ -55,13 +59,6 @@ export class EmployeeTypeComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  public buildForm(): void {
-    this.employeeTypeForm = this._fb.group({
-      _id: ['', []],
-      description: ['', [Validators.required]],
-    });
   }
 
   public setValueForm() {

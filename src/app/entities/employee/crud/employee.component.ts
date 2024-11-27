@@ -1,22 +1,15 @@
-import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse, Employee, EmployeeType } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { merge, Observable, OperatorFunction, Subject } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  takeUntil,
-} from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { EmployeeTypeService } from '../../../core/services/employee-type.service';
 import { EmployeeService } from '../../../core/services/employee.service';
 
@@ -34,42 +27,6 @@ export class EmployeeComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   private destroy$ = new Subject<void>();
-  @ViewChild('instance', { static: true }) instance: NgbTypeahead;
-
-  employeeTypeFocus$ = new Subject<string>();
-  employeeTypeClick$ = new Subject<string>();
-
-  searchEmployeeType: OperatorFunction<string, readonly any[]> = (
-    text$: Observable<string>
-  ) => {
-    const debouncedText$ = text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged()
-    );
-    const clicksWithClosedPopup$ = this.employeeTypeClick$.pipe(
-      filter(() => !this.instance.isPopupOpen())
-    );
-    const inputFocus$ = this.employeeTypeFocus$;
-
-    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map((term) =>
-        (term === ''
-          ? this.employeeTypes
-          : this.employeeTypes.filter((v) =>
-              v.description.toLowerCase().includes(term.toLowerCase())
-            )
-        ).slice()
-      )
-    );
-  };
-
-  formatResult = (x: any) => {
-    let valueId = x._id === undefined ? x : x._id;
-    const employeeType = this.employeeTypes?.find(
-      (u: EmployeeType) => u._id === valueId
-    );
-    return employeeType?.description;
-  };
 
   constructor(
     private _employeeService: EmployeeService,
@@ -78,14 +35,20 @@ export class EmployeeComponent implements OnInit {
     private _router: Router,
     private _toastService: ToastService
   ) {
-    this.getAllEmployeeTypes();
+    this.employeeForm = this._fb.group({
+      _id: ['', []],
+      name: ['', [Validators.required]],
+      phone: ['', []],
+      address: ['', []],
+      type: ['', [Validators.required]],
+    });
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.getAllEmployeeTypes();
     const pathUrl = this._router.url.split('/');
     const employeeId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.buildForm();
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
     if (employeeId) {
@@ -102,23 +65,17 @@ export class EmployeeComponent implements OnInit {
     this.destroy$.complete();
   }
 
-  public buildForm(): void {
-    this.employeeForm = this._fb.group({
-      _id: ['', []],
-      name: ['', [Validators.required]],
-      phone: ['', []],
-      address: ['', []],
-      type: ['', [Validators.required]],
-    });
-  }
-
   public setValueForm() {
+    const type = this.employeeTypes?.find(
+      (item) => item._id == this.employee.type.toString()
+    );
+
     this.employeeForm.setValue({
       _id: this.employee._id ?? '',
       name: this.employee.name ?? '',
       phone: this.employee.phone ?? '',
       address: this.employee.address ?? '',
-      type: this.employee.type ?? null,
+      type: type ?? null,
     });
   }
 
@@ -126,26 +83,38 @@ export class EmployeeComponent implements OnInit {
     return this._router.navigate(['/entities/employees']);
   }
 
-  public getAllEmployeeTypes() {
-    let match = {
+  public getAllEmployeeTypes(): Promise<void> {
+    const match = {
       operationType: { $ne: 'D' },
     };
-    this._employeeTypeService
-      .getAll({
-        match,
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
-          if (!result.result) {
-            this._toastService.showToast(result);
-          } else {
-            this.employeeTypes = result.result;
+
+    this.loading = true;
+
+    return new Promise((resolve, reject) => {
+      this._employeeTypeService
+        .getAll({
+          match,
+        })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          (result: ApiResponse) => {
+            if (!result.result) {
+              this._toastService.showToast(result);
+              reject();
+            } else {
+              this.employeeTypes = result.result;
+              resolve();
+            }
+          },
+          (error) => {
+            this._toastService.showToast(error);
+            reject(error);
+          },
+          () => {
+            this.loading = false;
           }
-        },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        );
+    });
   }
 
   public getEmployee(employeeId: string) {
@@ -169,6 +138,15 @@ export class EmployeeComponent implements OnInit {
 
   public addEmployee(): void {
     this.loading = true;
+    this.employeeForm.markAllAsTouched();
+    if (this.employeeForm.invalid) {
+      this._toastService.showToast({
+        message: 'Por favor complete todos los campos obligatorios.',
+      });
+      this.loading = false;
+      return;
+    }
+
     this.employee = this.employeeForm.value;
 
     switch (this.operation) {

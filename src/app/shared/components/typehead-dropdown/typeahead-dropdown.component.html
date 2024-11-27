@@ -1,0 +1,18 @@
+<div class="form-group typeahead-container">
+  <input
+    type="text"
+    [formControl]="control"
+    class="form-control custom-typeahead"
+    [ngbTypeahead]="searchFn"
+    [resultFormatter]="resultFormatter"
+    [inputFormatter]="resultFormatter"
+    (focus)="focus$.next('')"
+    (click)="click$.next('')"
+    #instance="ngbTypeahead"
+    [readonly]="readonly"
+    [placeholder]="placeholder || ''"
+    [ngClass]="{
+      'is-invalid': control?.touched && control?.invalid
+    }"
+  />
+</div>
