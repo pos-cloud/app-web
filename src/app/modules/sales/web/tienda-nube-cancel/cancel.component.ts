@@ -7,11 +7,11 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
+import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Config } from '../../../../app.config';
 import { Transaction } from '../../../../components/transaction/transaction';
-import { TransactionService } from '../../../../core/services/transaction.service';
 
 @Component({
   selector: 'app-cancel',
@@ -35,9 +35,9 @@ export class CancelComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private _transactionService: TransactionService,
+    private _tiendaNubeService: TiendaNubeService,
     public activeModal: NgbActiveModal,
-    private _toastr: ToastrService
+    private _toastService: ToastService
   ) {}
 
   async ngOnInit() {
@@ -64,7 +64,7 @@ export class CancelComponent implements OnInit {
       };
       formData.reason = reasonMappings[formData.reason];
       return new Promise<Transaction>((resolve, reject) => {
-        this._transactionService
+        this._tiendaNubeService
           .updateTransactionStatus(
             this.transaction.tiendaNubeId,
             formData,
@@ -76,13 +76,13 @@ export class CancelComponent implements OnInit {
                 resolve(result.result);
                 this.activeModal.close();
               } else {
-                // this.showToast(result);
+                this._toastService.showToast(result);
                 reject(result);
                 this.activeModal.close();
               }
             },
             (error) => {
-              //  this.showToast(error);
+              this._toastService.showToast(error);
               reject(error);
               this.activeModal.close();
             }

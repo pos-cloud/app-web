@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import { Transaction } from 'app/components/transaction/transaction';
-import { TransactionService } from 'app/core/services/transaction.service';
+import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -39,7 +39,7 @@ export class FulfilledComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private _transactionService: TransactionService,
+    private _tiendaNubeService: TiendaNubeService,
     public activeModal: NgbActiveModal,
     private _toastService: ToastService
   ) {}
@@ -67,7 +67,7 @@ export class FulfilledComponent implements OnInit {
       const formData = this.fulfilledForm.value;
 
       return new Promise<Transaction>((resolve, reject) => {
-        this._transactionService
+        this._tiendaNubeService
           .updateTransactionStatus(
             this.transaction.tiendaNubeId,
             formData,
