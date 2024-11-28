@@ -181,8 +181,6 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { NotificationGuard } from './core/guards/notification.guard';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { ClaimComponent } from './layout/claim/claim.component';
-import { ClaimService } from './layout/claim/claim.service';
 import { HeaderComponent } from './layout/header/header.component';
 import { Header2Component } from './layout/header2/header2.component';
 import { HomeComponent } from './layout/home/home.component';
@@ -302,7 +300,6 @@ export function createTranslateLoader(http: HttpClient) {
     OriginComponent,
     SelectBranchComponent,
     SelectOriginComponent,
-    ClaimComponent,
     TransportComponent,
     ListTransportComponent,
     SelectTransportComponent,
@@ -398,7 +395,6 @@ export function createTranslateLoader(http: HttpClient) {
     AuthGuard,
     NotificationGuard,
     LicenseGuard,
-    ClaimService,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent],

@@ -1,21 +1,25 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import {
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
+import { CommonModule } from '@angular/common';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Claim, ClaimPriority, ClaimType } from '@types';
 import { Config } from 'app/app.config';
-import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
-import { ClaimService } from 'app/layout/claim/claim.service';
+import { ClaimService } from 'app/core/services/claim.service';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-claim',
   templateUrl: './claim.component.html',
-  styleUrls: ['./claim.component.css'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FocusDirective],
   providers: [NgbAlertConfig],
 })
 export class ClaimComponent implements OnInit {
@@ -78,7 +82,6 @@ export class ClaimComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     private _authService: AuthService
   ) {
-    this.claim = new Claim();
     this._authService.getIdentity.subscribe((identity) => {
       if (identity && identity.employee) {
         this.claim.author = identity.employee.name;
@@ -157,7 +160,6 @@ export class ClaimComponent implements OnInit {
           );
           this.fileName = null;
           this.file = null;
-          this.claim = new Claim();
           this._authService.getIdentity.subscribe((identity) => {
             if (identity && identity.employee) {
               this.claim.author = identity.employee.name;

@@ -11,10 +11,10 @@ import { MovementOfCancellation } from 'app/components/movement-of-cancellation/
 import { TaxClassification } from 'app/components/tax/tax';
 import { Voucher } from 'app/components/voucher-reader/voucher';
 import { BranchService } from 'app/core/services/branch.service';
+import { ClaimService } from 'app/core/services/claim.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { UserService } from 'app/core/services/user.service';
 import { VoucherService } from 'app/core/services/voucher.service';
-import { ClaimService } from 'app/layout/claim/claim.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import jsPDF from 'jspdf';
 import * as moment from 'moment';
@@ -5537,10 +5537,12 @@ export class PrintComponent implements OnInit {
       );
       this.row += 5;
       this.doc.text(
-        'Hora: ' + this.transaction?.endDate?.substring(11, 13) ??
-          '' + ':' + this.transaction?.endDate?.substring(15, 17) ??
-          '' + ':' + this.transaction?.endDate?.substring(19, 21) ??
-          '',
+        'Hora: ' +
+          (this.transaction?.endDate?.substring(11, 13) ?? '') +
+          ':' +
+          (this.transaction?.endDate?.substring(14, 16) ?? '') +
+          ':' +
+          (this.transaction?.endDate?.substring(17, 19) ?? ''),
         width / 1.6,
         this.row
       );

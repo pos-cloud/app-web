@@ -32,8 +32,6 @@ import { PriceListService } from 'app/core/services/price-list.service';
 import { StructureService } from 'app/core/services/structure.service';
 import { TaxService } from 'app/core/services/tax.service';
 import { TransactionService } from 'app/core/services/transaction.service';
-import { Claim, ClaimPriority, ClaimType } from 'app/layout/claim/claim';
-import { ClaimService } from 'app/layout/claim/claim.service';
 import { FilterPipe } from 'app/shared/pipes/filter.pipe';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -43,6 +41,8 @@ import {
   TransactionMovement,
 } from '../../transaction-type/transaction-type';
 
+import { Claim, ClaimPriority, ClaimType } from '@types';
+import { ClaimService } from 'app/core/services/claim.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
 
@@ -1113,7 +1113,7 @@ export class ListArticlesPosComponent implements OnInit {
   public saveClaim(titulo: string, message: string): void {
     this.loading = true;
 
-    let claim: Claim = new Claim();
+    let claim: Claim;
     claim.description = message;
     claim.name = titulo;
     claim.priority = ClaimPriority.High;

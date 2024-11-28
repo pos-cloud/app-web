@@ -9,7 +9,6 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { MediaCategory, Resource } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ResourceService } from '../../../core/services/resource.service';
@@ -39,7 +38,7 @@ export class ResourceComponent implements OnInit {
     private _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _toastr: ToastrService,
+    public _toastr: ToastService,
     public translatePipe: TranslateMePipe,
     public _router: Router,
     private _toastService: ToastService

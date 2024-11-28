@@ -29,7 +29,15 @@ import { RoomService } from '../../core/services/room.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { TransactionService } from '../../core/services/transaction.service';
 
-import { ApiResponse, EmailProps, EmployeeType } from '@types';
+import {
+  ApiResponse,
+  Claim,
+  ClaimPriority,
+  ClaimType,
+  EmailProps,
+  EmployeeType,
+} from '@types';
+import { ClaimService } from 'app/core/services/claim.service';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -73,8 +81,6 @@ import { Deposit } from './../../components/deposit/deposit';
 import { Origin } from './../../components/origin/origin';
 import { Table, TableState } from './../../components/table/table';
 import { User } from './../../components/user/user';
-import { Claim, ClaimPriority, ClaimType } from './../../layout/claim/claim';
-import { ClaimService } from './../../layout/claim/claim.service';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -1929,7 +1935,7 @@ export class PointOfSaleComponent implements OnInit {
   public saveClaim(titulo: string, message: string): void {
     this.loading = true;
 
-    let claim: Claim = new Claim();
+    let claim: Claim;
     claim.description = message;
     claim.name = titulo;
     claim.priority = ClaimPriority.High;

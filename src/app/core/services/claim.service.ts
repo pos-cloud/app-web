@@ -4,12 +4,14 @@ import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { catchError, map } from 'rxjs/operators';
 
+import { Claim } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Claim } from 'app/layout/claim/claim';
 import { Config } from '../../app.config';
 import { AuthService } from '../../core/services/auth.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ClaimService extends ModelService {
   constructor(
     public _http: HttpClient,

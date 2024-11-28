@@ -2,6 +2,7 @@
 export { Article } from './entities/article.interface';
 export { Branch } from './entities/branch.interface';
 export { Category } from './entities/category.interface';
+export { Claim, ClaimPriority, ClaimType } from './entities/claim.interface';
 export { Classification } from './entities/classification.interface';
 export { Deposit } from './entities/deposit.interface';
 export { EmployeeType } from './entities/employee-type.interface';
@@ -25,4 +26,3 @@ export { EmailProps } from './common/email-props.type';
 export { FormField } from './common/form-field.interface';
 export { MediaCategory } from './common/media-category.enum';
 export { IService } from './common/service.interface';
-

@@ -46,7 +46,6 @@ import { EmailService } from 'app/core/services/send-email.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
-import { ClaimService } from 'app/layout/claim/claim.service';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ToastrService } from 'ngx-toastr';
@@ -133,7 +132,6 @@ export class AbandonedCartsComponent implements OnInit {
     private _originService: OriginService,
     private _configService: ConfigService,
     private _userService: UserService,
-    private _claimService: ClaimService,
     private _emailService: EmailService,
     public translatePipe: TranslateMePipe,
     private _toastr: ToastrService,
