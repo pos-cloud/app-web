@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { interval as observableInterval } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Observable, interval as observableInterval } from 'rxjs';
 import { map, share } from 'rxjs/operators';
 
 import * as moment from 'moment';

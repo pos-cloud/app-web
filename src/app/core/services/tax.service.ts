@@ -3,8 +3,7 @@ import { Injectable } from '@angular/core';
 import { Config } from 'app/app.config';
 import { AuthService } from 'app/core/services/auth.service';
 import { ModelService } from 'app/core/services/model.service';
-import { of } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Tax } from '../../components/tax/tax';
 
