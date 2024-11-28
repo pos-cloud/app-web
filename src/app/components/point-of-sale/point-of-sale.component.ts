@@ -53,6 +53,7 @@ import { OriginService } from '../../core/services/origin.service';
 import { EmailService } from '../../core/services/send-email.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
+import { CancelComponent } from '../../modules/sales/web/tienda-nube-cancel/cancel.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
 import { padNumber } from '../../util/functions/pad/padNumber';
@@ -68,8 +69,7 @@ import { SelectOriginComponent } from '../origin/select-origin/select-origin.com
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
 import { SendEmailComponent } from '../send-email/send-email.component';
-import { CancelComponent } from '../tiendaNube/cancel/cancel.component';
-import { FulfilledComponent } from '../tiendaNube/fulfilled/fulfilled.component';
+import { FulfilledComponent } from 'app/modules/sales/web/tienda-nube-fulfilled/fulfilled.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { Config } from './../../app.config';

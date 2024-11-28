@@ -1,15 +1,30 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TransactionService } from '../../../core/services/transaction.service';
-import { TranslateMePipe } from '../../../shared/pipes/translate-me';
+import { TranslateModule } from '@ngx-translate/core';
+import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { ToastrService } from 'ngx-toastr';
+import { TransactionService } from '../../../../core/services/transaction.service';
 
 @Component({
   selector: 'app-date-from-to',
   templateUrl: './date-from-to.component.html',
-  styleUrls: ['./date-from-to.component.css'],
-  providers: [TranslateMePipe],
+  standalone: true,
+  imports: [
+    CommonModule,
+    PipesModule,
+    TranslateModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ProgressbarModule,
+  ],
 })
 export class DateFromToComponent {
   loading = false;
@@ -17,10 +32,9 @@ export class DateFromToComponent {
 
   constructor(
     private fb: FormBuilder,
-    private _toastService: ToastService,
     private _transactionService: TransactionService,
     public activeModal: NgbActiveModal,
-    public translatePipe: TranslateMePipe
+    private _toastr: ToastrService
   ) {}
 
   async ngOnInit() {
@@ -40,12 +54,12 @@ export class DateFromToComponent {
     this._transactionService.syncTiendaNube(formData).subscribe(
       (result) => {
         this.loading = false;
-        this._toastService.showToast(result, 'success', null, result.result);
+        // this.showToast(result, 'success', null, result.result);
         this.activeModal.close();
       },
       (error) => {
         this.loading = false;
-        this._toastService.showToast(error);
+        //   this.showToast(error);
         this.activeModal.close();
       }
     );

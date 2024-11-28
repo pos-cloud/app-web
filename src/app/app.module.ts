@@ -152,9 +152,6 @@ import { SelectTableComponent } from './components/table/select-table/select-tab
 import { TableComponent } from './components/table/table/table.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { TaxComponent } from './components/tax/tax/tax.component';
-import { CancelComponent } from './components/tiendaNube/cancel/cancel.component';
-import { DateFromToComponent } from './components/tiendaNube/date-from-to/date-from-to.component';
-import { FulfilledComponent } from './components/tiendaNube/fulfilled/fulfilled.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { ViewTransactionComponent } from './components/transaction/view-transaction/view-transaction.component';
@@ -339,11 +336,8 @@ export function createTranslateLoader(http: HttpClient) {
     AbandonedCartsComponent,
     SelectPriceListComponent,
     KardexCheckComponent,
-    CancelComponent,
-    FulfilledComponent,
     MenuComponent,
     WebTransactionsComponent,
-    DateFromToComponent,
   ],
   imports: [
     BrowserModule,
