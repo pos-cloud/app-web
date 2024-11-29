@@ -4,8 +4,8 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 import { Structure } from 'app/components/structure/structure';
 import { StructureService } from 'app/core/services/structure.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { ConfirmationQuestionComponent } from '../confirm/confirmation-question.component';
 import { StructureComponent } from '../structure/structure.component';
 
@@ -50,7 +50,7 @@ export class ListStructureComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService
+    private _toastService: ToastService
   ) {
     this.filters = new Array();
     for (let field of this.displayedColumns) {
@@ -249,10 +249,10 @@ export class ListStructureComponent implements OnInit {
             this.loading = true;
             this._structureService.updateBasePriceByStruct().subscribe(
               (result) => {
-                this.showToast(result);
+                this._toastService.showToast(result);
               },
               (error) => {
-                this.showToast(error);
+                this._toastService.showToast(error);
               }
             );
           }
@@ -279,49 +279,5 @@ export class ListStructureComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

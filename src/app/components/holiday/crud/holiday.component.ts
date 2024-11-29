@@ -19,9 +19,9 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from '@types';
 import { Config } from 'app/app.config';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { HolidayService } from '../../../core/services/holiday.service';
 import { Holiday } from '../holiday.model';
@@ -84,7 +84,7 @@ export class HolidayComponent implements OnInit {
 
   constructor(
     private _objService: HolidayService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _title: Title,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
@@ -127,9 +127,9 @@ export class HolidayComponent implements OnInit {
             if (result.status === 200) {
               this.obj = result.result;
               this.setValuesForm();
-            } else this.showToast(result);
+            } else this._toastService.showToast(result);
           },
-          (error) => this.showToast(error)
+          (error) => this._toastService.showToast(error)
         )
       );
     }
@@ -301,14 +301,20 @@ export class HolidayComponent implements OnInit {
                       if (result) {
                         this.obj[field.name] = result;
                       } else {
-                        this.showToast(result['error'].message, 'info');
+                        this._toastService.showToast({
+                          message: result['error'].message,
+                          type: 'info',
+                        });
                         isValid = false;
                       }
                     })
                     .catch((error) => {
                       this.loading = false;
                       isValid = false;
-                      this.showToast(error.message, 'danger');
+                      this._toastService.showToast({
+                        message: error.message,
+                        type: 'danger',
+                      });
                     });
                 }
               }
@@ -371,17 +377,17 @@ export class HolidayComponent implements OnInit {
           this.subscription.add(
             this._objService.update(this.obj).subscribe(
               (result) => {
-                this.showToast(result);
+                this._toastService.showToast(result);
                 this.setValuesForm();
               },
-              (error) => this.showToast(error)
+              (error) => this._toastService.showToast(error)
             )
           );
         } else {
-          this.showToast(result);
+          this._toastService.showToast(result);
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -390,10 +396,10 @@ export class HolidayComponent implements OnInit {
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/holidays']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -403,10 +409,10 @@ export class HolidayComponent implements OnInit {
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/holidays']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -416,57 +422,13 @@ export class HolidayComponent implements OnInit {
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) {
             this._router.navigate(['/holidays']);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

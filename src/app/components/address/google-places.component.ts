@@ -7,7 +7,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import {
   ShipmentMethod,
   Zone,
@@ -44,10 +43,7 @@ export class AutocompleteComponent implements AfterViewInit {
   public place: any;
   public error: string = '';
 
-  constructor(
-    private translatePipe: TranslateMePipe,
-    private _toastr: ToastrService
-  ) {}
+  constructor() {}
 
   async ngAfterViewInit() {
     this.getPlaceAutocomplete();
@@ -315,49 +311,5 @@ export class AutocompleteComponent implements AfterViewInit {
         }
       }
     }
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

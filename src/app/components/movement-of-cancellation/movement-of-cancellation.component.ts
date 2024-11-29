@@ -34,9 +34,9 @@ import { Taxes } from 'app/components/tax/taxes';
 import { CompanyService } from 'app/core/services/company.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { ArticleService } from '../../core/services/article.service';
 import { Article } from '../article/article';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
@@ -105,7 +105,7 @@ export class MovementOfCancellationComponent implements OnInit {
     private _movementOfArticleService: MovementOfArticleService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _articleService: ArticleService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
@@ -211,17 +211,16 @@ export class MovementOfCancellationComponent implements OnInit {
               }
             }
           } else {
-            this.showToast(
-              null,
-              'danger',
-              'No se encontraron transactiones relacionadas'
-            );
+            this._toastService.showToast({
+              type: 'danger',
+              message: 'No se encontraron transactiones relacionadas',
+            });
             this.totalItems = 0;
           }
           this.loading = false;
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           this.totalItems = 0;
         }
       );
@@ -242,7 +241,7 @@ export class MovementOfCancellationComponent implements OnInit {
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           this.totalItems = 0;
           this.loading = false;
           resolve(null);
@@ -296,7 +295,7 @@ export class MovementOfCancellationComponent implements OnInit {
           this.loading = false;
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           this.totalItems = 0;
           this.loading = false;
         }
@@ -471,7 +470,7 @@ export class MovementOfCancellationComponent implements OnInit {
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           this.loading = false;
           this.totalItems = 0;
         }
@@ -541,7 +540,7 @@ export class MovementOfCancellationComponent implements OnInit {
             }
           },
           (error) => {
-            this.showToast(error);
+            this._toastService.showToast(error);
             resolve(null);
           }
         );
@@ -696,11 +695,11 @@ export class MovementOfCancellationComponent implements OnInit {
           } else {
             if (balanceSelected) {
               isValid = false;
-              this.showToast(
-                null,
-                'danger',
-                'La suma de saldo a cancelar no puede ser mayor al balance de la transacción.'
-              );
+              this._toastService.showToast({
+                type: 'danger',
+                message:
+                  'La suma de saldo a cancelar no puede ser mayor al balance de la transacción.',
+              });
             } else {
               movementOfCancellation.balance = this.roundNumber.transform(
                 this.totalPrice - this.balanceSelected
@@ -1013,7 +1012,7 @@ export class MovementOfCancellationComponent implements OnInit {
       this.loading = false;
       this.closeModal();
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -1237,14 +1236,20 @@ export class MovementOfCancellationComponent implements OnInit {
         (result) => {
           if (!result.article) {
             if (result.message && result.message !== '')
-              this.showToast(null, 'info', result.message);
+              this._toastService.showToast({
+                type: 'info',
+                message: result.message,
+              });
             resolve(null);
           } else {
             resolve(result.article);
           }
         },
         (error) => {
-          this.showToast(null, 'danger', error._body);
+          this._toastService.showToast({
+            type: 'danger',
+            message: error._body,
+          });
           resolve(null);
         }
       );
@@ -1280,12 +1285,12 @@ export class MovementOfCancellationComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -1745,12 +1750,13 @@ export class MovementOfCancellationComponent implements OnInit {
       this.totalPrice < this.roundNumber.transform(totalBalance)
     ) {
       areValid = false;
-      this.showToast(
-        'El saldo seleccionado de las transacciones no puede ser distinto del monto de la transacción ($ ' +
+      this._toastService.showToast({
+        message:
+          'El saldo seleccionado de las transacciones no puede ser distinto del monto de la transacción ($ ' +
           this.totalPrice +
           ')',
-        'info'
-      );
+        type: 'info',
+      });
     }
     return areValid;
   }
@@ -1768,10 +1774,10 @@ export class MovementOfCancellationComponent implements OnInit {
       }
       this.recalculateBalanceSelected();
     } else {
-      this.showToast(
-        `El saldo ingresado no puede ser mayor al saldo de la transacción (${transaction.balance}).`,
-        'info'
-      );
+      this._toastService.showToast({
+        message: `El saldo ingresado no puede ser mayor al saldo de la transacción (${transaction.balance}).`,
+        type: 'info',
+      });
       transaction['balanceSelected'] = this.roundNumber.transform(
         transaction.balance
       );
@@ -1797,49 +1803,5 @@ export class MovementOfCancellationComponent implements OnInit {
         reject(error);
       }
     });
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

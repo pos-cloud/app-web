@@ -15,8 +15,8 @@ import { CancellationType } from '../cancellation-type';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TransactionState } from 'app/components/transaction/transaction';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cancellation-type',
@@ -65,7 +65,7 @@ export class CancellationTypeComponent implements OnInit {
     public _router: Router,
     public _fb: UntypedFormBuilder,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public activeModal: NgbActiveModal
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
@@ -196,11 +196,11 @@ export class CancellationTypeComponent implements OnInit {
           if (result.status == 200) {
             this.origins = result.result;
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           this.loading = false;
         }
       );
@@ -240,12 +240,12 @@ export class CancellationTypeComponent implements OnInit {
               this.setValueForm();
             }
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
           }
         },
         (error) => {
           this.loading = false;
-          this.showToast(error);
+          this._toastService.showToast(error);
         }
       );
   }
@@ -452,49 +452,5 @@ export class CancellationTypeComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

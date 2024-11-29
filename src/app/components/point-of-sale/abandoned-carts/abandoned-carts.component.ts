@@ -8,7 +8,6 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
@@ -16,12 +15,6 @@ import 'moment/locale/es';
 import { Config } from 'app/app.config';
 import { Company, CompanyType } from 'app/components/company/company';
 import { Table } from 'app/components/table/table';
-import { AuthService } from 'app/core/services/auth.service';
-import { BranchService } from 'app/core/services/branch.service';
-import { CashBoxService } from 'app/core/services/cash-box.service';
-import { CurrencyService } from 'app/core/services/currency.service';
-import { DepositService } from 'app/core/services/deposit.service';
-import { TableService } from 'app/core/services/table.service';
 
 import { EmployeeType } from '@types';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
@@ -37,18 +30,11 @@ import {
 } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
-import { ConfigService } from 'app/core/services/config.service';
-import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
-import { OriginService } from 'app/core/services/origin.service';
-import { PrinterService } from 'app/core/services/printer.service';
-import { RoomService } from 'app/core/services/room.service';
-import { EmailService } from 'app/core/services/send-email.service';
-import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -116,26 +102,11 @@ export class AbandonedCartsComponent implements OnInit {
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    private _roomService: RoomService,
     private _transactionService: TransactionService,
-    private _transactionTypeService: TransactionTypeService,
-    private _printerService: PrinterService,
-    private _depositService: DepositService,
-    private _branchService: BranchService,
-    private _router: Router,
-    private _route: ActivatedRoute,
     private _modalService: NgbModal,
-    private _currencyService: CurrencyService,
-    private _cashBoxService: CashBoxService,
-    private _tableService: TableService,
-    private _authService: AuthService,
-    private _originService: OriginService,
-    private _configService: ConfigService,
     private _userService: UserService,
-    private _emailService: EmailService,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
-    private _movementOfCashService: MovementOfCashService
+    private _toastService: ToastService
   ) {
     this.roomSelected = new Room();
     this.transactionTypes = new Array();
@@ -151,7 +122,9 @@ export class AbandonedCartsComponent implements OnInit {
       if (transactions) {
         this.transactions = transactions;
       } else {
-        this.showToast('No se encontraron transacciones');
+        this._toastService.showToast({
+          message: 'No se encontraron transacciones',
+        });
       }
     });
   }
@@ -238,11 +211,11 @@ export class AbandonedCartsComponent implements OnInit {
               if (result && result.transactions) {
                 resolve(result.transactions);
               } else {
-                this.showToast(result);
+                this._toastService.showToast(result);
               }
             },
             (error) => {
-              this.showToast(error._body, 'danger');
+              this._toastService.showToast(error._body, 'danger');
               this.loading = false;
               resolve(new Array());
             }
@@ -261,11 +234,14 @@ export class AbandonedCartsComponent implements OnInit {
             if (result && result.user) {
               resolve(result.user);
             } else {
-              this.showToast('Debe volver a iniciar sesión', 'danger');
+              this._toastService.showToast(
+                'Debe volver a iniciar sesión',
+                'danger'
+              );
             }
           },
           (error) => {
-            this.showToast(error._body, 'danger');
+            this._toastService.showToast(error._body, 'danger');
           }
         );
       }
@@ -286,18 +262,18 @@ export class AbandonedCartsComponent implements OnInit {
     this._transactionService.deleteAll({ where: where }).subscribe(
       (result) => {
         if (result && result.status === 200) {
-          this.showToast(result.message);
+          this._toastService.showToast(result.message);
         } else {
           if (result.status === 500) {
-            this.showToast(result.error, 'danger');
+            this._toastService.showToast(result.error, 'danger');
           } else {
-            this.showToast(result.result, 'danger');
+            this._toastService.showToast(result.result, 'danger');
           }
         }
         this.loading = false;
       },
       (error) => {
-        this.showToast(error, 'danger');
+        this._toastService.showToast(error, 'danger');
         this.loading = false;
       }
     );
@@ -343,49 +319,5 @@ export class AbandonedCartsComponent implements OnInit {
         break;
       default:
     }
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

@@ -7,8 +7,8 @@ import {
   TransactionState,
 } from 'app/components/transaction/transaction';
 import { TransactionService } from 'app/core/services/transaction.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-pos-client-view',
@@ -42,7 +42,7 @@ export class PosClientViewComponent {
     private _route: ActivatedRoute,
     private _transactionService: TransactionService,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService
+    private _toastService: ToastService
   ) {
     this.transactions = new Array();
   }
@@ -150,12 +150,12 @@ export class PosClientViewComponent {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -235,49 +235,5 @@ export class PosClientViewComponent {
     }
 
     this.viewBotton = false;
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

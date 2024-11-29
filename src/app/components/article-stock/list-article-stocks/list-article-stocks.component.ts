@@ -17,7 +17,6 @@ import { BranchService } from 'app/core/services/branch.service';
 import { DepositService } from 'app/core/services/deposit.service';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 
 import { Config } from '../../../app.config';
@@ -32,6 +31,7 @@ import { UpdateArticleStockComponent } from '../update-article-stock/update-arti
 import { ApiResponse } from '@types';
 import { PrintLabelComponent } from 'app/components/article/actions/print-label/print-label.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { AddArticleStockComponent } from '../article-stock/add-article-stock.component';
 
 @Component({
@@ -98,7 +98,7 @@ export class ListArticleStocksComponent implements OnInit {
     private _articleStockService: ArticleStockService,
     private _priceList: PriceListService,
     private _router: Router,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _printerService: PrinterService,
     private _branchService: BranchService,
     private _depositService: DepositService,
@@ -275,7 +275,7 @@ export class ListArticleStocksComponent implements OnInit {
           )
       );
     } catch (error) {
-      this.showToast(error, 'danger');
+      this._toastService.showToast({ message: error, type: 'danger' });
     }
   }
 
@@ -419,12 +419,12 @@ export class ListArticleStocksComponent implements OnInit {
         this._articleStockService.updateArticle().subscribe(
           (result) => {
             if (result && result.message) {
-              this.showToast(result.message, 'success');
+              this._toastService.showToast(result.message, 'success');
               this.loading = false;
             }
           },
           (error) => {
-            this.showToast(error._body, 'danger');
+            this._toastService.showToast(error._body, 'danger');
             this.loading = false;
             this.totalItems = 0;
           }
@@ -527,7 +527,7 @@ export class ListArticleStocksComponent implements OnInit {
             }
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
   }
 
@@ -544,7 +544,7 @@ export class ListArticleStocksComponent implements OnInit {
             this.allDeposits = this.allDeposits.concat(depositsForBranch);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
   }
 
@@ -564,26 +564,5 @@ export class ListArticleStocksComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(message: string, type: string = 'success'): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message);
-        break;
-      case 'warning':
-        this._toastr.warning('', message);
-        break;
-      case 'danger':
-        this._toastr.error('', message);
-        break;
-      default:
-        this._toastr.success('', message);
-        break;
-    }
-    this.loading = false;
   }
 }

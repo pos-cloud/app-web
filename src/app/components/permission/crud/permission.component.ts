@@ -23,9 +23,9 @@ import { ApiResponse, FormField } from '@types';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { PermissionService } from '../../../core/services/permission.service';
 import { Permission } from '../permission.model';
@@ -290,7 +290,7 @@ export class PermissionComponent implements OnInit {
   constructor(
     private _objService: PermissionService,
     private _transactionType: TransactionTypeService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _title: Title,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
@@ -353,9 +353,9 @@ export class PermissionComponent implements OnInit {
               this.loading = false;
               if (result.status === 200) {
                 this.obj = result.result[0];
-              } else this.showToast(result);
+              } else this._toastService.showToast(result);
             },
-            (error) => this.showToast(error)
+            (error) => this._toastService.showToast(error)
           )
       );
     }
@@ -365,7 +365,7 @@ export class PermissionComponent implements OnInit {
         this.transactionTypes = result;
         this.setValuesForm();
       })
-      .catch((error: ApiResponse) => this.showToast(error));
+      .catch((error: ApiResponse) => this._toastService.showToast(error));
   }
 
   public ngAfterViewInit(): void {
@@ -529,7 +529,10 @@ export class PermissionComponent implements OnInit {
 
     this.objForm.controls.collections.value.forEach((element) => {
       if (collectionForm.value.name == element.name) {
-        this.showToast('', 'warning', 'Esta regla ya existe');
+        this._toastService.showToast({
+          type: 'warning',
+          message: 'Esta regla ya existe',
+        });
         valid = false;
       }
     });
@@ -540,7 +543,10 @@ export class PermissionComponent implements OnInit {
       collectionForm.value.delete === '' ||
       collectionForm.value.export === ''
     ) {
-      this.showToast('', 'warning', 'Debe completar todos los campos');
+      this._toastService.showToast({
+        type: 'warning',
+        message: 'Debe completar todos los campos',
+      });
       valid = false;
     }
 
@@ -627,14 +633,20 @@ export class PermissionComponent implements OnInit {
                           this.obj[field.name].push(result['result']);
                         }
                       } else {
-                        this.showToast(result['error'].message, 'info');
+                        this._toastService.showToast({
+                          message: result['error'].message,
+                          type: 'info',
+                        });
                         isValid = false;
                       }
                     })
                     .catch((error) => {
                       this.loading = false;
                       isValid = false;
-                      this.showToast(error.message, 'danger');
+                      this._toastService.showToast({
+                        message: error.message,
+                        type: 'danger',
+                      });
                     });
                 }
               }
@@ -676,11 +688,10 @@ export class PermissionComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast(
-        null,
-        'info',
-        'Revise los errores marcados en el formulario'
-      );
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Revise los errores marcados en el formulario',
+      });
     }
   }
 
@@ -699,16 +710,16 @@ export class PermissionComponent implements OnInit {
           this.subscription.add(
             this._objService.update(this.obj).subscribe(
               (result) => {
-                this.showToast(result);
+                this._toastService.showToast(result);
               },
-              (error) => this.showToast(error)
+              (error) => this._toastService.showToast(error)
             )
           );
         } else {
-          this.showToast(result);
+          this._toastService.showToast(result);
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -717,10 +728,10 @@ export class PermissionComponent implements OnInit {
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/permissions']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -730,10 +741,10 @@ export class PermissionComponent implements OnInit {
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/permissions']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -743,12 +754,12 @@ export class PermissionComponent implements OnInit {
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) {
             this._router.navigate(['/permissions']);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -770,49 +781,5 @@ export class PermissionComponent implements OnInit {
           )
       );
     });
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

@@ -22,9 +22,9 @@ import { ApiResponse, FormField, MediaCategory } from '@types';
 import { Config } from 'app/app.config';
 import { Application } from 'app/components/application/application.model';
 import { ApplicationService } from 'app/core/services/application.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
 import {
   debounceTime,
@@ -212,7 +212,7 @@ export class CategoryComponent implements OnInit {
 
   constructor(
     private _objService: CategoryService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _title: Title,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
@@ -287,10 +287,10 @@ export class CategoryComponent implements OnInit {
                 this.obj = result.result[0];
                 this.setValuesForm();
               } else {
-                this.showToast(result);
+                this._toastService.showToast(result);
               }
             },
-            (error) => this.showToast(error)
+            (error) => this._toastService.showToast(error)
           )
       );
     }
@@ -300,7 +300,7 @@ export class CategoryComponent implements OnInit {
         this.applications = result;
         this.setValuesForm();
       })
-      .catch((error: ApiResponse) => this.showToast(error));
+      .catch((error: ApiResponse) => this._toastService.showToast(error));
   }
 
   public ngAfterViewInit(): void {
@@ -511,14 +511,20 @@ export class CategoryComponent implements OnInit {
                       if (result) {
                         this.obj[field.name] = result;
                       } else {
-                        this.showToast(result['error'].message, 'info');
+                        this._toastService.showToast({
+                          message: result['error'].message,
+                          type: 'info',
+                        });
                         isValid = false;
                       }
                     })
                     .catch((error) => {
                       this.loading = false;
                       isValid = false;
-                      this.showToast(error.message, 'danger');
+                      this._toastService.showToast({
+                        message: error.message,
+                        type: 'danger',
+                      });
                     });
                 }
               }
@@ -559,11 +565,10 @@ export class CategoryComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast(
-        null,
-        'info',
-        'Revise los errores marcados en el formulario'
-      );
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Revise los errores marcados en el formulario',
+      });
     }
   }
 
@@ -572,7 +577,7 @@ export class CategoryComponent implements OnInit {
       (result) => {
         this.obj[fieldName] = './../../../assets/img/default.jpg';
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -581,10 +586,10 @@ export class CategoryComponent implements OnInit {
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/categories']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -594,10 +599,10 @@ export class CategoryComponent implements OnInit {
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/categories']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -607,12 +612,12 @@ export class CategoryComponent implements OnInit {
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) {
             this._router.navigate(['/categories']);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -658,49 +663,5 @@ export class CategoryComponent implements OnInit {
           )
       );
     });
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

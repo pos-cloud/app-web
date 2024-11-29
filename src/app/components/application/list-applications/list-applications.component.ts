@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiResponse } from '@types';
 import { CompanyService } from 'app/core/services/company.service';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -150,7 +150,7 @@ export class ListApplicationsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public _service: ApplicationService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public translatePipe: TranslateMePipe,
     public _transactionTypeService: TransactionTypeService,
     public _shipmentMethodService: ShipmentMethodService,
@@ -292,7 +292,7 @@ export class ListApplicationsComponent implements OnInit {
             resolve(result.transactionTypes);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
     });
   }
@@ -307,7 +307,7 @@ export class ListApplicationsComponent implements OnInit {
             resolve(result.result);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
     });
   }
@@ -322,7 +322,7 @@ export class ListApplicationsComponent implements OnInit {
             resolve(result.paymentMethods);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
     });
   }
@@ -337,7 +337,7 @@ export class ListApplicationsComponent implements OnInit {
             resolve(result.companies);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
     });
   }
@@ -352,7 +352,7 @@ export class ListApplicationsComponent implements OnInit {
             resolve(result.articles);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
     });
   }
@@ -428,27 +428,31 @@ export class ListApplicationsComponent implements OnInit {
         .subscribe(
           (result: ApiResponse) => {
             if (result.status == 200) {
-              this.showToast(
-                null,
-                'success',
-                'Los webhooks se han creado con éxito.'
-              );
+              this._toastService.showToast({
+                type: 'success',
+                message: 'Los webhooks se han creado con éxito.',
+              });
               this.loading = false;
             } else {
-              this.showToast(null, 'danger', result.result);
+              this._toastService.showToast({
+                type: 'danger',
+                message: result.result,
+              });
               this.loading = false;
             }
           },
           (error) => {
-            this.showToast(null, 'danger', 'Error al crear los webhooks.');
+            this._toastService.showToast({
+              type: 'danger',
+              message: 'Error al crear los webhooks.',
+            });
           }
         );
     } else {
-      this.showToast(
-        null,
-        'info',
-        'Completa el UserId y el Token para generar los webhooks.'
-      );
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Completa el UserId y el Token para generar los webhooks.',
+      });
     }
   }
 
@@ -459,7 +463,7 @@ export class ListApplicationsComponent implements OnInit {
 
     if (type === ApplicationType.TiendaNube) {
       if (!this.tiendaNubeForm.valid) {
-        return this.showToast({
+        return this._toastService.showToast({
           message: 'Revisa los errores en el formulario.',
         });
       }
@@ -474,14 +478,16 @@ export class ListApplicationsComponent implements OnInit {
     this.subscription.add(
       this._service.update(application).subscribe((result) => {
         if (result.status === 200) {
-          this.showToast(
-            null,
-            'success',
-            'La aplicación se ha actualizado con éxito.'
-          );
+          this._toastService.showToast({
+            type: 'success',
+            message: 'La aplicación se ha actualizado con éxito.',
+          });
           this.loading = false;
         } else {
-          this.showToast(null, 'danger', 'Error al actualizar la Aplicación.');
+          this._toastService.showToast({
+            type: 'danger',
+            message: 'Error al actualizar la Aplicación.',
+          });
           this.loading = false;
         }
       })
@@ -495,7 +501,7 @@ export class ListApplicationsComponent implements OnInit {
         (result) => {
           if (!result.result) {
             if (result.message && result.message !== '')
-              this.showToast(
+              this._toastService.showToast(
                 null,
                 'denger',
                 'Error al sincronizar los artículos.'
@@ -503,58 +509,22 @@ export class ListApplicationsComponent implements OnInit {
             this.loading = false;
             resolve(null);
           } else {
-            this.showToast(
-              null,
-              'success',
-              'Los artículos se sincronizaron correctamente'
-            );
+            this._toastService.showToast({
+              type: 'success',
+              message: 'Los artículos se sincronizaron correctamente',
+            });
             resolve(result);
             this.loading = false;
           }
         },
         (error) => {
-          this.showToast(null, 'denger', 'Error al sincronizar los artículos.');
+          this._toastService.showToast({
+            type: 'danger',
+            message: 'Error al sincronizar los artículos.',
+          });
           resolve(null);
         }
       );
     });
-  }
-  showToast(result, type?: string, title?: string, message?: string): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

@@ -9,7 +9,6 @@ import { Config } from 'app/app.config';
 import { ConfigService } from 'app/core/services/config.service';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
@@ -17,7 +16,6 @@ import { map, take } from 'rxjs/operators';
 export class LicenseGuard implements CanActivate {
   constructor(
     private _configService: ConfigService,
-    private _toastr: ToastrService,
     private _router: Router
   ) {}
 
@@ -92,31 +90,5 @@ export class LicenseGuard implements CanActivate {
         }
       );
     });
-  }
-
-  public showToast(message: string, type: string = 'success'): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      case 'warning':
-        this._toastr.warning('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      case 'danger':
-        this._toastr.error('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      default:
-        this._toastr.success('', message);
-        break;
-    }
   }
 }

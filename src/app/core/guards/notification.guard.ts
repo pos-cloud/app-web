@@ -6,9 +6,9 @@ import {
 } from '@angular/router';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/core/services/config.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
@@ -16,7 +16,7 @@ import { map, take } from 'rxjs/operators';
 export class NotificationGuard implements CanActivate {
   constructor(
     private _configService: ConfigService,
-    private _toastr: ToastrService
+    private _toast: ToastService
   ) {}
 
   canActivate(
@@ -34,56 +34,62 @@ export class NotificationGuard implements CanActivate {
 
           if (config['demo']) {
             if ((days = 0)) {
-              this.showToast('Su licencia demo vence hoy', 'info');
+              this._toast.showToast({
+                message: 'Su licencia demo vence hoy',
+                type: 'info',
+              });
               return true;
             }
             if ((days = 1)) {
-              this.showToast(
-                'Su licencia demo vence en ' + days + ' día',
-                'info'
-              );
+              this._toast.showToast({
+                message: 'Su licencia demo vence en ' + days + ' día',
+                type: 'info',
+              });
               return true;
             }
             if (days < 2) {
-              this.showToast(
-                'Su licencia demo vence en ' + days + ' días',
-                'info'
-              );
+              this._toast.showToast({
+                message: 'Su licencia demo vence en ' + days + ' días',
+                type: 'info',
+              });
               return true;
             }
             return true;
           } else {
             if (days < 5) {
-              this.showToast(
-                'Su licencia expiró por favor regularice su pago',
-                'danger'
-              );
+              this._toast.showToast({
+                message: 'Su licencia expiró por favor regularice su pago',
+                type: 'danger',
+              });
               return true;
             } else {
               days = days + 5;
               if ((days = 0)) {
-                this.showToast('Su licencia vence hoy', 'warning');
+                this._toast.showToast({
+                  message: 'Su licencia vence hoy',
+                  type: 'danger',
+                });
                 return true;
               }
               if ((days = 1)) {
-                this.showToast(
-                  'Su licencia vence en ' + days + ' día',
-                  'warning'
-                );
+                this._toast.showToast({
+                  message: 'Su licencia vence en ' + days + ' día',
+                  toast: 'danger',
+                });
                 return true;
               }
               if (days < 5) {
-                this.showToast(
-                  'Su licencia vence en ' + days + ' días',
-                  'warning'
-                );
+                this._toast.showToast({
+                  message: 'Su licencia vence en ' + days + ' días',
+                  type: 'danger',
+                });
                 return true;
               }
               if (days < 10) {
-                this.showToast(
-                  'Su licencia vence en ' + days + ' días',
-                  'info'
-                );
+                this._toast.showToast({
+                  message: 'Su licencia vence en ' + days + ' días',
+                  type: 'info',
+                });
                 return true;
               }
               return true;
@@ -92,31 +98,5 @@ export class NotificationGuard implements CanActivate {
         }
       })
     );
-  }
-
-  public showToast(message: string, type: string = 'success'): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      case 'warning':
-        this._toastr.warning('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      case 'danger':
-        this._toastr.error('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      default:
-        this._toastr.success('', message);
-        break;
-    }
   }
 }

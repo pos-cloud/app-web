@@ -29,7 +29,6 @@ import { PriceListService } from 'app/core/services/price-list.service';
 import { StructureService } from 'app/core/services/structure.service';
 import { OrderByPipe } from 'app/shared/pipes/order-by.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -40,6 +39,7 @@ import {
 
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Config } from '../../../app.config';
 import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
@@ -155,7 +155,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     private _priceListService: PriceListService,
     private _accountService: AccountService,
     private _modalService: NgbModal,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public translatePipe: TranslateMePipe,
     public _router: Router,
     public _fb: UntypedFormBuilder,
@@ -2311,7 +2311,7 @@ export class AddMovementOfArticleComponent implements OnInit {
                 }
               });
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
           }
         },
         (error) => {
@@ -2411,52 +2411,5 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  showToast(result, type?: string, title?: string, message?: string): void {
-    if (result) {
-      if (result.status === 0) {
-        type = 'info';
-        title =
-          'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
-      } else if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 500) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.hideMessage();
-    this.loading = false;
   }
 }

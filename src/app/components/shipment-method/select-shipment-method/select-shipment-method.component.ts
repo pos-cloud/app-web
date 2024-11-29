@@ -5,8 +5,8 @@ import { Address } from 'app/components/address/address.model';
 import { Company } from 'app/components/company/company';
 import { AddressService } from 'app/core/services/address.service';
 import { ShipmentMethodService } from 'app/core/services/shipment-method.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ShipmentMethod } from '../shipment-method.model';
 
@@ -33,7 +33,7 @@ export class SelectShipmentMethodComponent implements OnInit {
     public _shipmentMethodService: ShipmentMethodService,
     public activeModal: NgbActiveModal,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _addressService: AddressService
   ) {
     this.shipmentMethods = new Array();
@@ -62,20 +62,26 @@ export class SelectShipmentMethodComponent implements OnInit {
         (result: ApiResponse) => {
           if (result.status === 200) {
             this.shipmentMethods = result.result;
-          } else this.showToast(result);
+          } else this._toastService.showToast(result);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       );
   }
 
   public selectShipmentMethod(): void {
     if (!this.shipmentMethodSelected) {
-      this.showToast(null, 'info', 'Debe seleccionar un método de entrega.');
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Debe seleccionar un método de entrega.',
+      });
     } else if (
       this.shipmentMethodSelected.requireAddress &&
       !this.addressSelected
     ) {
-      this.showToast(null, 'info', 'Debe seleccionar una dirección.');
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Debe seleccionar una dirección.',
+      });
     } else {
       this.activeModal.close({
         shipmentMethod: this.shipmentMethodSelected,
@@ -104,54 +110,10 @@ export class SelectShipmentMethodComponent implements OnInit {
             this.loading = false;
             if (result.status === 200) {
               this.addresses = result.result;
-            } else this.showToast(result);
+            } else this._toastService.showToast(result);
           },
-          (error) => this.showToast(error)
+          (error) => this._toastService.showToast(error)
         )
     );
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

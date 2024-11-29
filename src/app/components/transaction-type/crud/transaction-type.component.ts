@@ -39,7 +39,6 @@ import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
 import {
   debounceTime,
@@ -48,6 +47,7 @@ import {
   tap,
 } from 'rxjs/operators';
 
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 import {
   CurrentAccount,
@@ -995,7 +995,7 @@ export class TransactionTypeComponent implements OnInit {
 
   constructor(
     private _objService: TransactionTypeService,
-    private _toastr: ToastrService,
+    private _toast: ToastService,
     private _title: Title,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
@@ -1181,10 +1181,10 @@ export class TransactionTypeComponent implements OnInit {
                 }
                 this.setValuesForm();
               } else {
-                this.showToast(result);
+                this._toast.showToast(result);
               }
             },
-            (error) => this.showToast(error)
+            (error) => this._toast.showToast(error)
           )
       );
     }
@@ -1194,7 +1194,7 @@ export class TransactionTypeComponent implements OnInit {
         this.paymentMethods = result;
         this.setValuesForm();
       })
-      .catch((error: ApiResponse) => this.showToast(error));
+      .catch((error: ApiResponse) => this._toast.showToast(error));
   }
 
   public ngAfterViewInit(): void {
@@ -1422,14 +1422,20 @@ export class TransactionTypeComponent implements OnInit {
                           this.obj[field.name].push(result['result']);
                         }
                       } else {
-                        this.showToast(result['error'].message, 'info');
+                        this._toast.showToast({
+                          message: result['error'].message,
+                          type: 'info',
+                        });
                         isValid = false;
                       }
                     })
                     .catch((error) => {
                       this.loading = false;
                       isValid = false;
-                      this.showToast(error.message, 'danger');
+                      this._toast.showToast({
+                        message: error.message,
+                        type: 'danger',
+                      });
                     });
                 }
               }
@@ -1530,11 +1536,10 @@ export class TransactionTypeComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast(
-        null,
-        'info',
-        'Revise los errores marcados en el formulario'
-      );
+      this._toast.showToast({
+        type: 'info',
+        message: 'Revise los errores marcados en el formulario',
+      });
     }
   }
 
@@ -1557,17 +1562,17 @@ export class TransactionTypeComponent implements OnInit {
           this.subscription.add(
             this._objService.update(this.obj).subscribe(
               (result) => {
-                this.showToast(result);
+                this._toast.showToast(result);
                 this.setValuesForm();
               },
-              (error) => this.showToast(error)
+              (error) => this._toast.showToast(error)
             )
           );
         } else {
-          this.showToast(result);
+          this._toast.showToast(result);
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toast.showToast(error)
     );
   }
 
@@ -1576,11 +1581,11 @@ export class TransactionTypeComponent implements OnInit {
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toast.showToast(result);
           if (result.status === 200)
             this._router.navigate(['/transaction-types']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toast.showToast(error)
       )
     );
   }
@@ -1590,11 +1595,11 @@ export class TransactionTypeComponent implements OnInit {
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toast.showToast(result);
           if (result.status === 200)
             this._router.navigate(['/transaction-types']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toast.showToast(error)
       )
     );
   }
@@ -1604,12 +1609,12 @@ export class TransactionTypeComponent implements OnInit {
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toast.showToast(result);
           if (result.status === 200) {
             this._router.navigate(['/transaction-types']);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toast.showToast(error)
       )
     );
   }
@@ -1833,49 +1838,5 @@ export class TransactionTypeComponent implements OnInit {
           )
       );
     });
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

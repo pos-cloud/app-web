@@ -33,7 +33,7 @@ import { TransactionService } from '../../../core/services/transaction.service';
 
 //Pipes
 import { ApiResponse, Employee } from '@types';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable } from 'rxjs';
 import {
   debounceTime,
@@ -173,7 +173,7 @@ export class AddTransactionComponent implements OnInit {
     public _userService: UserService,
     public _cancellationTypeService: CancellationTypeService,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService
+    private _toast: ToastService
   ) {
     this.transaction = new Transaction();
     this.transactionDate = this.transaction.startDate;
@@ -577,7 +577,7 @@ export class AddTransactionComponent implements OnInit {
         movementsOfCashes: this.movementsOfCashes,
       });
     } catch (error) {
-      this.showToast(error);
+      this._toast.showToast(error);
     }
   }
 
@@ -694,7 +694,7 @@ export class AddTransactionComponent implements OnInit {
                 '" ya existe para ' +
                 this.transactionForm.value.company,
             };
-            this.showToast(err);
+            this._toast.showToast(err);
             // this.showMessage('La transacción \"' + this.transactionForm.value.origin + '-' + this.transactionForm.value.letter + '-' + this.transactionForm.value.number + '\" ya existe', 'danger', false);
           }
         } else {
@@ -805,12 +805,12 @@ export class AddTransactionComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toast.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toast.showToast(error);
           reject(error);
         }
       );
@@ -884,56 +884,5 @@ export class AddTransactionComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 0) {
-        type = 'info';
-        title =
-          'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
-      } else if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 500) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

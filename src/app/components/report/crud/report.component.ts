@@ -23,11 +23,9 @@ import { FormField } from '@types';
 import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
 import { Category } from 'app/components/category/category';
-import { ArticleService } from 'app/core/services/article.service';
-import { EmailTemplateService } from 'app/core/services/email-template.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { ReportService } from '../../../core/services/report.service';
 import { Report } from '../report.model';
@@ -122,9 +120,7 @@ export class ReportComponent implements OnInit {
 
   constructor(
     private _objService: ReportService,
-    private _articleService: ArticleService,
-    private _emailTemplate: EmailTemplateService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _title: Title,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
@@ -169,9 +165,9 @@ export class ReportComponent implements OnInit {
             if (result.status === 200) {
               this.obj = result.result;
               this.setValuesForm();
-            } else this.showToast(result);
+            } else this._toastService.showToast(result);
           },
-          (error) => this.showToast(error)
+          (error) => this._toastService.showToast(error)
         )
       );
     }
@@ -312,7 +308,10 @@ export class ReportComponent implements OnInit {
     const params = this.objForm.controls.params as UntypedFormArray;
 
     if (paramForm.value.name === '' || paramForm.value.type === '') {
-      this.showToast('', 'warning', 'Debe completar todos los campos');
+      this._toastService.showToast({
+        type: 'warning',
+        message: 'Debe completar todos los campos',
+      });
       valid = false;
     }
 
@@ -352,17 +351,17 @@ export class ReportComponent implements OnInit {
           this.subscription.add(
             this._objService.update(this.obj).subscribe(
               (result) => {
-                this.showToast(result);
+                this._toastService.showToast(result);
                 this.setValuesForm();
               },
-              (error) => this.showToast(error)
+              (error) => this._toastService.showToast(error)
             )
           );
         } else {
-          this.showToast(result);
+          this._toastService.showToast(result);
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -421,14 +420,20 @@ export class ReportComponent implements OnInit {
                           this.obj[field.name].push(result['result']);
                         }
                       } else {
-                        this.showToast(result['error'].message, 'info');
+                        this._toastService.showToast({
+                          message: result['error'].message,
+                          type: 'info',
+                        });
                         isValid = false;
                       }
                     })
                     .catch((error) => {
                       this.loading = false;
                       isValid = false;
-                      this.showToast(error.message, 'danger');
+                      this._toastService.showToast({
+                        message: error.message,
+                        type: 'danger',
+                      });
                     });
                 }
               }
@@ -474,11 +479,10 @@ export class ReportComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast(
-        null,
-        'info',
-        'Revise los errores marcados en el formulario'
-      );
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Revise los errores marcados en el formulario',
+      });
     }
   }
 
@@ -487,10 +491,10 @@ export class ReportComponent implements OnInit {
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/reports']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -500,10 +504,10 @@ export class ReportComponent implements OnInit {
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/reports']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -513,12 +517,12 @@ export class ReportComponent implements OnInit {
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) {
             this._router.navigate(['/reports']);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -526,49 +530,5 @@ export class ReportComponent implements OnInit {
   public fileChangeEvent(fileInput: any, eCommerce: boolean): void {
     this.filesToUploadHome = <Array<File>>fileInput.target.files;
     this.fileNamePrincipal = this.filesToUploadHome[0].name;
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

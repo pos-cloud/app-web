@@ -1,7 +1,7 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IButton } from '@types';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { HistoryService } from '../../../core/services/history.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
@@ -49,7 +49,7 @@ export class ListHistoriesComponent {
   constructor(
     public _service: HistoryService,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService
+    private _toastService: ToastService
   ) {}
 
   public async emitEvent(event) {
@@ -70,59 +70,15 @@ export class ListHistoriesComponent {
     this.subscription.add(
       this._service.recoverDoc(obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this.datatableComponent.refresh();
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
 
   public refresh() {
     this.datatableComponent.refresh();
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

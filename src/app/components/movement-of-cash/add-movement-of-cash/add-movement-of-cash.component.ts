@@ -40,7 +40,6 @@ import { CurrencyService } from 'app/core/services/currency.service';
 import { HolidayService } from 'app/core/services/holiday.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -51,6 +50,7 @@ import {
 import Keyboard from 'simple-keyboard';
 
 import { ApiResponse } from '@types';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
@@ -162,7 +162,7 @@ export class AddMovementOfCashComponent implements OnInit {
     private _companyService: CompanyService,
     private _taxService: TaxService,
     private _movementOfArticleService: MovementOfArticleService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _currencyService: CurrencyService,
     public activeModal: NgbActiveModal,
     public _fb: UntypedFormBuilder,
@@ -753,7 +753,10 @@ export class AddMovementOfCashComponent implements OnInit {
 
         // Corroboramos que la fecha sea válida y comparamos que la fecha sea mayor a la actual
         if (!moment(newValue).isValid()) {
-          this.showToast(null, 'info', 'Debe ingresar una fecha válida');
+          this._toastService.showToast({
+            type: 'info',
+            message: 'Debe ingresar una fecha válida',
+          });
         }
         if (
           this.movementsOfCashesToFinance &&
@@ -921,7 +924,7 @@ export class AddMovementOfCashComponent implements OnInit {
         );
       }
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -1035,7 +1038,7 @@ export class AddMovementOfCashComponent implements OnInit {
               }
             }
           } catch (error) {
-            this.showToast(error);
+            this._toastService.showToast(error);
           }
         });
         break;
@@ -1089,7 +1092,7 @@ export class AddMovementOfCashComponent implements OnInit {
               }
               this.getMovementOfCashesByTransaction();
             } catch (error) {
-              this.showToast(error);
+              this._toastService.showToast(error);
             }
           }
         });
@@ -1135,11 +1138,11 @@ export class AddMovementOfCashComponent implements OnInit {
         if (this.transaction.totalPrice < paid) {
           this.closeModal();
         } else {
-          this.showToast(
-            null,
-            'info',
-            'La suma de métodos de pago debe ser igual o mayor al de la transacción.'
-          );
+          this._toastService.showToast({
+            type: 'info',
+            message:
+              'La suma de métodos de pago debe ser igual o mayor al de la transacción.',
+          });
         }
       }
     } else {
@@ -1194,10 +1197,10 @@ export class AddMovementOfCashComponent implements OnInit {
           .addAccountSeatByTransaction(this.transaction._id)
           .subscribe(
             (result) => {
-              this.showToast(result);
+              this._toastService.showToast(result);
             },
             (error) => {
-              this.showToast(error);
+              this._toastService.showToast(error);
             }
           );
       }
@@ -1208,7 +1211,7 @@ export class AddMovementOfCashComponent implements OnInit {
         transaction: this.transaction,
       });
     } catch (error) {
-      this.showToast(null, 'info', error.message);
+      this._toastService.showToast({ type: 'info', message: error.message });
     }
   }
 
@@ -1223,7 +1226,7 @@ export class AddMovementOfCashComponent implements OnInit {
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           resolve(null);
         }
       );
@@ -1256,7 +1259,7 @@ export class AddMovementOfCashComponent implements OnInit {
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           resolve(null);
         }
       );
@@ -1333,11 +1336,11 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.paymentMethodSelected.commission || 0;
               this.getMovementOfCashesByTransaction();
             } else {
-              this.showToast(result.result);
+              this._toastService.showToast(result.result);
             }
           },
           (error) => {
-            this.showToast(error);
+            this._toastService.showToast(error);
             this.loading = false;
           }
         )
@@ -1592,7 +1595,7 @@ export class AddMovementOfCashComponent implements OnInit {
         resolve(true);
       } catch (error) {
         resolve(false);
-        this.showToast(null, 'info', error.message);
+        this._toastService.showToast({ type: 'info', message: error.message });
       }
     });
   }
@@ -1868,7 +1871,7 @@ export class AddMovementOfCashComponent implements OnInit {
         resolve(true);
       } catch (error) {
         resolve(false);
-        this.showToast(null, 'info', error.message);
+        this._toastService.showToast({ type: 'info', message: error.message });
       }
     });
   }
@@ -2072,7 +2075,7 @@ export class AddMovementOfCashComponent implements OnInit {
         throw new Error('Verificar errores en el formulario');
       }
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     } finally {
       setTimeout(function () {
         this.loading = false;
@@ -2146,7 +2149,7 @@ export class AddMovementOfCashComponent implements OnInit {
           resolve(true);
         }
       } catch (error) {
-        this.showToast(error);
+        this._toastService.showToast(error);
         resolve(false);
       }
     });
@@ -2160,14 +2163,17 @@ export class AddMovementOfCashComponent implements OnInit {
           (result) => {
             if (!result.movementsOfCashes) {
               if (result.message && result.message !== '')
-                this.showToast(null, 'info', result.message);
+                this._toastService.showToast({
+                  type: 'info',
+                  message: result.message,
+                });
               resolve(null);
             } else {
               resolve(result.movementsOfCashes);
             }
           },
           (error) => {
-            this.showToast(error);
+            this._toastService.showToast(error);
             resolve(null);
           }
         );
@@ -2256,7 +2262,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.getMovementOfCashesByTransaction();
       }
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -2293,19 +2299,19 @@ export class AddMovementOfCashComponent implements OnInit {
       this._taxService.getTaxes(query).subscribe(
         async (result) => {
           if (!result.taxes) {
-            this.showToast(
-              null,
-              'info',
-              'Debe configurar el impuesto IVA para el realizar el descuento/recargo con ' +
-                this.paymentMethodSelected.name
-            );
+            this._toastService.showToast({
+              type: 'info',
+              message:
+                'Debe configurar el impuesto IVA para el realizar el descuento/recargo con ' +
+                this.paymentMethodSelected.name,
+            });
             resolve(null);
           } else {
             resolve(result.taxes);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           this.loading = false;
         }
       );
@@ -2345,12 +2351,12 @@ export class AddMovementOfCashComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -2364,44 +2370,5 @@ export class AddMovementOfCashComponent implements OnInit {
       this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
-  }
-
-  showToast(result, type?: string, title?: string, message?: string): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

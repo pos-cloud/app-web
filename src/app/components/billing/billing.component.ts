@@ -4,7 +4,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Router } from '@angular/router';
 
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { ConfigService } from '../../core/services/config.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { Config } from './../../app.config';
@@ -24,7 +24,7 @@ export class BillingComponent implements OnInit {
   constructor(
     public _router: Router,
     public _configService: ConfigService,
-    public _toastr: ToastrService,
+    public _toastService: ToastService,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) {}
@@ -43,38 +43,24 @@ export class BillingComponent implements OnInit {
           (result) => {
             if (!result.paymentLink) {
               if (result.message && result.message !== '')
-                this.showToast(result.message, 'danger');
+                this._toastService.showToast({
+                  message: result.message,
+                  type: 'danger',
+                });
             } else {
               window.open(result.paymentLink, '_blank');
             }
           },
           (error) => {
-            this.showToast(error.message, 'danger');
+            this._toastService.showToast({
+              message: error.message,
+              type: 'danger',
+            });
           }
         );
         break;
       case 'tf':
         this.showTransferData = true;
-        break;
-    }
-  }
-
-  public showToast(message: string, type: string): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message);
-        break;
-      case 'warning':
-        this._toastr.warning('', message);
-        break;
-      case 'danger':
-        this._toastr.error('', message);
-        break;
-      default:
-        this._toastr.success('', message);
         break;
     }
   }

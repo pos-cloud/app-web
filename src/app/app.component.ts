@@ -8,7 +8,6 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import * as moment from 'moment';
-import { ToastrService } from 'ngx-toastr';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
 import { Config } from './app.config';
@@ -16,6 +15,7 @@ import { AuthService } from './core/services/auth.service';
 import { ConfigService } from './core/services/config.service';
 
 import 'moment/locale/es';
+import { ToastService } from './shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +35,7 @@ export class AppComponent {
     public _configService: ConfigService,
     public _authService: AuthService,
     public activeModal: NgbActiveModal,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _router: Router,
@@ -97,29 +97,29 @@ export class AppComponent {
       if (!this.config['demo']) {
         if (days <= 0) {
           message = 'Su licencia expiró, por favor, regularice su pago.';
-          this.showToast(message, 'danger');
+          this._toastService.showToast({ message, type: 'danger' });
         } else {
           if (days == 1) {
             message = 'Su licencia vence hoy.';
-            this.showToast(message, 'warning');
+            this._toastService.showToast({ message, type: 'warning' });
           }
           if (days <= 5 && days > 1) {
             message = 'Su licencia vence en ' + days + ' días.';
-            this.showToast(message, 'warning');
+            this._toastService.showToast({ message, type: 'warning' });
           }
           if (days <= 10 && days > 5) {
             message = 'Su licencia vence en ' + days + ' días.';
-            this.showToast(message, 'info');
+            this._toastService.showToast({ message, type: 'info' });
           }
         }
       } else {
         if (days == 1) {
           message = 'Su licencia vence hoy.';
-          this.showToast(message, 'warning');
+          this._toastService.showToast({ message, type: 'warning' });
         }
         if (days > 1) {
           message = 'Su licencia de prueba vence en ' + days + ' días.';
-          this.showToast(message, 'info');
+          this._toastService.showToast({ message, type: 'info' });
         }
       }
 
@@ -251,31 +251,5 @@ export class AppComponent {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(message: string, type: string = 'success'): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      case 'warning':
-        this._toastr.warning('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      case 'danger':
-        this._toastr.error('', message, {
-          positionClass: 'toast-bottom-left',
-        });
-        break;
-      default:
-        this._toastr.success('', message);
-        break;
-    }
   }
 }

@@ -23,7 +23,6 @@ import { PrinterService } from 'app/core/services/printer.service';
 import { UserService } from 'app/core/services/user.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -42,6 +41,7 @@ import { MovementOfArticle } from '../../movement-of-article/movement-of-article
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction';
 
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'moment/locale/es';
 import * as printJS from 'print-js';
 
@@ -112,7 +112,7 @@ export class ViewTransactionComponent implements OnInit {
     private _modalService: NgbModal,
 
     private _objService: AccountSeatService,
-    private _toastr: ToastrService,
+    private _toast: ToastService,
     public _periodService: AccountPeriodService,
     public _fb: UntypedFormBuilder,
     public translatePipe: TranslateMePipe,
@@ -171,10 +171,10 @@ export class ViewTransactionComponent implements OnInit {
                 this.obj = result.result[0];
                 this.setValuesForm();
               } else {
-                this.showToast(result);
+                this._toast.showToast(result);
               }
             },
-            (error) => this.showToast(error)
+            (error) => this._toast.showToast(error)
           )
       );
     }
@@ -191,54 +191,12 @@ export class ViewTransactionComponent implements OnInit {
             this.accounts = result.result;
           },
           (error) => {
-            this.showToast(error, 'danger');
+            this._toast.showToast(error, 'danger');
           }
         )
     );
   }
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
-  }
+
   public setValuesForm(): void {
     let values: {} = {
       _id: this.transactionId,

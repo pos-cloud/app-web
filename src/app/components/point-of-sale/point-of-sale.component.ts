@@ -39,7 +39,7 @@ import {
 } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { BranchService } from '../../core/services/branch.service';
@@ -157,9 +157,8 @@ export class PointOfSaleComponent implements OnInit {
     private _configService: ConfigService,
     private _userService: UserService,
     private _claimService: ClaimService,
-    private _emailService: EmailService,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _movementOfCashService: MovementOfCashService,
     private _movementOfCancellationService: MovementOfCancellationService
   ) {
@@ -461,11 +460,11 @@ export class PointOfSaleComponent implements OnInit {
                 resolve(result.result);
               } else {
                 resolve(null);
-                this.showToast(result);
+                this._toastService.showToast(result);
               }
             },
             (error) => {
-              this.showToast(error);
+              this._toastService.showToast(error);
               resolve(null);
             }
           )
@@ -511,12 +510,12 @@ export class PointOfSaleComponent implements OnInit {
     this.loading = true;
     this._transactionService.syncMeli().subscribe(
       (result) => {
-        this.showToast(result);
+        this._toastService.showToast(result);
         this.loading = false;
         this.refresh();
       },
       (error) => {
-        this.showToast(error);
+        this._toastService.showToast(error);
         this.loading = false;
         this.refresh();
       }
@@ -528,19 +527,18 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionService.syncWoocommerce().subscribe(
       (result) => {
         if (result.status === 200) {
-          this.showToast(
-            null,
-            'success',
-            'Finalizó la sincronización de woocommerce.'
-          );
+          this._toastService.showToast({
+            type: 'success',
+            message: 'Finalizó la sincronización de woocommerce.',
+          });
           this.refresh();
         } else {
-          this.showToast(result);
+          this._toastService.showToast(result);
           this.refresh();
         }
       },
       (error) => {
-        this.showToast(error);
+        this._toastService.showToast(error);
         this.refresh();
       }
     );
@@ -1201,7 +1199,7 @@ export class PointOfSaleComponent implements OnInit {
         }
       }
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -1888,7 +1886,7 @@ export class PointOfSaleComponent implements OnInit {
             } else {
               this.refresh();
             }
-          } else this.showToast(result);
+          } else this._toastService.showToast(result);
         },
         (error) => {
           this.showMessage(
@@ -2184,7 +2182,7 @@ export class PointOfSaleComponent implements OnInit {
         }, 2500);
       }
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -2368,12 +2366,12 @@ export class PointOfSaleComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -2407,12 +2405,12 @@ export class PointOfSaleComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -2575,7 +2573,7 @@ export class PointOfSaleComponent implements OnInit {
               this.refresh();
             },
             (error) => {
-              this.showToast(error);
+              this._toastService.showToast(error);
               reject(error);
             }
           );
@@ -2599,10 +2597,10 @@ export class PointOfSaleComponent implements OnInit {
   public sendEmail(body: EmailProps): void {
     this._serviceEmail.sendEmailV2(body).subscribe(
       (result) => {
-        this.showToast(result);
+        this._toastService.showToast(result);
       },
       (err) => {
-        this.showToast(err);
+        this._toastService.showToast(err);
       }
     );
   }
@@ -2624,49 +2622,5 @@ export class PointOfSaleComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

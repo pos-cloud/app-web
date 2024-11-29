@@ -26,12 +26,11 @@ import { User } from '../../components/user/user';
 // SERVICES
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
-import { ToastrService } from 'ngx-toastr';
 import { AddUserComponent } from '../../components/user/user/add-user.component';
 import { ClaimComponent } from '../claim/claim.component';
 //import { Socket } from 'ngx-socket-io';
 import { PushNotificationsService } from 'app/core/services/notification.service';
-import { UserService } from 'app/core/services/user.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CurrentAccountDetailsComponent } from '../../components/print/current-account-details/current-account-details.component';
 
 @Component({
@@ -65,9 +64,8 @@ export class HeaderComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     //private socket: Socket,
-    private _toastr: ToastrService,
-    private _notificationService: PushNotificationsService,
-    private _userService: UserService
+    private _toast: ToastService,
+    private _notificationService: PushNotificationsService
   ) {
     // OCULTAR MENU REPORTE
     this.isReportVisible = false;
@@ -82,13 +80,14 @@ export class HeaderComponent {
 
     this.online$.subscribe((result) => {
       if (!this.online && result) {
-        this.showToast('Conexión a internet restablecida', 'success');
+        this._toast.showToast({ message: 'Conexión a internet restablecida' });
       }
       if (!result) {
-        this.showToast(
-          'Se ha perdido la conexión a internet, por favor verificar su red',
-          'warning'
-        );
+        this._toast.showToast({
+          message:
+            'Se ha perdido la conexión a internet, por favor verificar su red',
+          type: 'danger',
+        });
       }
       this.online = result;
     });
@@ -277,26 +276,6 @@ export class HeaderComponent {
     }
 
     this._authService.logoutStorage();
-  }
-
-  public showToast(message: string, type: string = 'success'): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message);
-        break;
-      case 'warning':
-        this._toastr.warning('', message);
-        break;
-      case 'danger':
-        this._toastr.error('', message);
-        break;
-      default:
-        this._toastr.success('', message);
-        break;
-    }
   }
 
   public showNotification(message: string) {

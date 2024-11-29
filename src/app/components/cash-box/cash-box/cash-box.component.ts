@@ -48,8 +48,8 @@ import { ConfigService } from 'app/core/services/config.service';
 import { CurrencyValueService } from 'app/core/services/currency-value.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { PrintComponent } from '../../print/print/print.component';
 
 @Component({
@@ -92,7 +92,7 @@ export class CashBoxComponent implements OnInit {
     private _transactionService: TransactionService,
     private _currencyValueService: CurrencyValueService,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _configService: ConfigService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -728,12 +728,12 @@ export class CashBoxComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -801,28 +801,28 @@ export class CashBoxComponent implements OnInit {
               await this._transactionTypeService.update(element).subscribe(
                 (result) => {
                   if (result && result.status === 200) {
-                    this.showToast(
-                      null,
-                      'success',
-                      'La numeracion del tipo de transaccion: ' +
+                    this._toastService.showToast({
+                      type: 'success',
+                      message:
+                        'La numeracion del tipo de transaccion: ' +
                         result.result.name +
-                        ' se reinicio correctamente'
-                    );
+                        ' se reinicio correctamente',
+                    });
                   } else {
-                    this.showToast(result.error);
+                    this._toastService.showToast(result.error);
                   }
                 },
                 (error) => {
-                  this.showToast(error);
+                  this._toastService.showToast(error);
                 }
               );
             });
           } else {
-            this.showToast(result.error);
+            this._toastService.showToast(result.error);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
         }
       );
   }
@@ -839,49 +839,5 @@ export class CashBoxComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

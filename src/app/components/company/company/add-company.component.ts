@@ -39,8 +39,8 @@ import { IdentificationTypeService } from 'app/core/services/identification-type
 import { PriceListService } from 'app/core/services/price-list.service';
 import { StateService } from 'app/core/services/state.service';
 import { TransportService } from 'app/core/services/transport.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -182,7 +182,7 @@ export class AddCompanyComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public translatePipe: TranslateMePipe
   ) {
     if (window.screen.width < 1000) this.orientation = 'vertical';
@@ -952,57 +952,13 @@ export class AddCompanyComponent implements OnInit {
     this.subscription.add(
       this._companyService.delete(this.company._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200)
             this.activeModal.close({ company: this.company });
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 
   public showMessage(

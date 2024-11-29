@@ -14,8 +14,8 @@ import { Transaction } from 'app/components/transaction/transaction';
 import { TaxService } from 'app/core/services/tax.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Taxes } from '../../tax/taxes';
 
 @Component({
@@ -60,7 +60,7 @@ export class AddArticleTaxComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public translatePipe: TranslateMePipe
   ) {
     this.articleTax = new Taxes();
@@ -170,7 +170,7 @@ export class AddArticleTaxComponent implements OnInit {
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           resolve(null);
         }
       );
@@ -267,15 +267,15 @@ export class AddArticleTaxComponent implements OnInit {
       for (let taxArticleAux of this.articleTaxes) {
         if (taxArticleAux.tax._id === this.articleTax.tax._id) {
           exists = true;
-          this.showToast(
-            null,
-            'info',
-            'El impuesto ' +
+          this._toastService.showToast({
+            type: 'info',
+            message:
+              'El impuesto ' +
               this.articleTax.tax.name +
               ' con porcentaje ' +
               this.articleTax.percentage +
-              ' ya existe'
-          );
+              ' ya existe',
+          });
         }
       }
     }
@@ -312,45 +312,6 @@ export class AddArticleTaxComponent implements OnInit {
   //   this.alertConfig.type = type;
   //   this.alertConfig.dismissible = dismissible;
   // }
-
-  showToast(result, type?: string, title?: string, message?: string): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
-  }
 
   public hideMessage(): void {
     this.alertMessage = '';

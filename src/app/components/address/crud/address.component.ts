@@ -11,12 +11,11 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { Company } from 'app/components/company/company';
 import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
 import { CompanyService } from 'app/core/services/company.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { AddressService } from '../../../core/services/address.service';
 import { Address } from '../address.model';
@@ -86,9 +85,8 @@ export class AddressComponent {
   constructor(
     public _fb: UntypedFormBuilder,
     private _addressService: AddressService,
-    private _route: ActivatedRoute,
     private _companyService: CompanyService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private translatePipe: TranslateMePipe,
     public zone: NgZone
   ) {
@@ -221,7 +219,10 @@ export class AddressComponent {
 
     if (isValid && !this.place) {
       isValid = false;
-      this.showToast(null, 'info', 'Debe ingresar una dirección correcta');
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Debe ingresar una dirección correcta',
+      });
     }
 
     if (isValid) {
@@ -268,7 +269,10 @@ export class AddressComponent {
 
       if (isValid && !this.address.name) {
         isValid = false;
-        this.showToast(null, 'info', 'Debe indiciar el nombre de la dirección');
+        this._toastService.showToast({
+          type: 'info',
+          message: 'Debe indiciar el nombre de la dirección',
+        });
       }
 
       if (isValid && !this.address.number) {
@@ -295,16 +299,18 @@ export class AddressComponent {
 
       if (isValid && !this.address.state) {
         isValid = false;
-        this.showToast(
-          null,
-          'info',
-          'Debe indiciar la provincia de la dirección'
-        );
+        this._toastService.showToast({
+          type: 'info',
+          message: 'Debe indiciar la provincia de la dirección',
+        });
       }
 
       if (isValid && !this.address.country) {
         isValid = false;
-        this.showToast(null, 'info', 'Debe indiciar el país de la dirección');
+        this._toastService.showToast({
+          type: 'info',
+          message: 'Debe indiciar el país de la dirección',
+        });
       }
     }
 
@@ -313,13 +319,13 @@ export class AddressComponent {
       this.subscription.add(
         this._addressService.save(this.address).subscribe(
           async (result) => {
-            this.showToast(result);
+            this._toastService.showToast(result);
             if (result.status === 200) {
               this.address = result.result;
               this.back();
             }
           },
-          (error) => this.showToast(error)
+          (error) => this._toastService.showToast(error)
         )
       );
     }
@@ -333,49 +339,5 @@ export class AddressComponent {
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.subscriptionCompany.unsubscribe();
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

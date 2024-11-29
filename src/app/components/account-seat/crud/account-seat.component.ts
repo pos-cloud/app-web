@@ -33,9 +33,9 @@ import { EmployeeTypeService } from 'app/core/services/employee-type.service';
 import { PaymentMethodService } from 'app/core/services/payment-method.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { ShipmentMethodService } from 'app/core/services/shipment-method.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -152,7 +152,7 @@ export class AccountSeatComponent implements OnInit {
 
   constructor(
     private _objService: AccountSeatService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _title: Title,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
@@ -266,10 +266,10 @@ export class AccountSeatComponent implements OnInit {
               this.obj = result.result[0];
               this.setValuesForm();
             } else {
-              this.showToast(result);
+              this._toastService.showToast(result);
             }
           },
-          (error) => this.showToast(error)
+          (error) => this._toastService.showToast(error)
         )
       );
     }
@@ -464,14 +464,20 @@ export class AccountSeatComponent implements OnInit {
                           this.obj[field.name].push(result['result']);
                         }
                       } else {
-                        this.showToast(result['error'].message, 'info');
+                        this._toastService.showToast({
+                          message: result['error'].message,
+                          type: 'info',
+                        });
                         isValid = false;
                       }
                     })
                     .catch((error) => {
                       this.loading = false;
                       isValid = false;
-                      this.showToast(error.message, 'danger');
+                      this._toastService.showToast({
+                        message: error.message,
+                        type: 'danger',
+                      });
                     });
                 }
               }
@@ -514,11 +520,10 @@ export class AccountSeatComponent implements OnInit {
           break;
       }
     } else {
-      this.showToast(
-        null,
-        'info',
-        'Revise los errores marcados en el formulario'
-      );
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Revise los errores marcados en el formulario',
+      });
     }
   }
 
@@ -541,17 +546,17 @@ export class AccountSeatComponent implements OnInit {
           this.subscription.add(
             this._objService.update(this.obj).subscribe(
               (result) => {
-                this.showToast(result);
+                this._toastService.showToast(result);
                 this.setValuesForm();
               },
-              (error) => this.showToast(error)
+              (error) => this._toastService.showToast(error)
             )
           );
         } else {
-          this.showToast(result);
+          this._toastService.showToast(result);
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -560,10 +565,10 @@ export class AccountSeatComponent implements OnInit {
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/account-seats']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -573,10 +578,10 @@ export class AccountSeatComponent implements OnInit {
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this._router.navigate(['/account-seats']);
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -586,12 +591,12 @@ export class AccountSeatComponent implements OnInit {
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) {
             this._router.navigate(['/account-seats']);
           }
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -650,7 +655,7 @@ export class AccountSeatComponent implements OnInit {
             this.accounts = result.result;
           },
           (error) => {
-            this.showToast(error, 'danger');
+            this._toastService.showToast({ message: error, type: 'danger' });
           }
         )
     );
@@ -692,49 +697,5 @@ export class AccountSeatComponent implements OnInit {
       this.totalDebit = this.totalDebit + +element.value.debit;
       this.totalHaber = this.totalHaber + +element.value.credit;
     });
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

@@ -21,12 +21,12 @@ import { Config } from 'app/app.config';
 // SERVICES
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
-import { ToastrService } from 'ngx-toastr';
 import { EmployeeService } from '../../core/services/employee.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
 //import { Socket } from 'ngx-socket-io';
 import { Employee } from '@types';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -76,7 +76,7 @@ export class LoginComponent implements OnInit {
     private _configService: ConfigService,
     private _route: ActivatedRoute,
     //private socket: Socket,
-    private _toastr: ToastrService
+    private _toastService: ToastService
   ) {
     this.alertMessage = '';
   }
@@ -151,7 +151,10 @@ export class LoginComponent implements OnInit {
     this.password = this.loginForm.value.password;
 
     if (!this.company.match(/^[a-z0-9]+$/)) {
-      this.showToast('El negocio ingresado no fue encontrado.', 'danger');
+      this._toastService.showToast({
+        message: 'El negocio ingresado no fue encontrado.',
+        type: 'danger',
+      });
     } else {
       this.showMessage('Comprobando usuario...', 'info', false);
       this.loading = true;
@@ -284,27 +287,6 @@ export class LoginComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-    this.loading = false;
-  }
-
-  public showToast(message: string, type: string = 'success'): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message);
-        break;
-      case 'warning':
-        this._toastr.warning('', message);
-        break;
-      case 'danger':
-        this._toastr.error('', message);
-        break;
-      default:
-        this._toastr.success('', message);
-        break;
-    }
     this.loading = false;
   }
 }

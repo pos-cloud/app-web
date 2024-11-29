@@ -19,10 +19,10 @@ import { Table } from 'app/components/table/table';
 import { ApplicationService } from 'app/core/services/application.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PrintService } from 'app/core/services/print.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 
 let splitRegex = /\r\n|\r|\n/g;
 jsPDF.API['textEx'] = function (
@@ -109,7 +109,7 @@ export class PrintQRComponent implements OnInit {
     public _printService: PrintService,
     private _http: HttpClient,
     public _applicationService: ApplicationService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public translatePipe: TranslateMePipe
   ) {}
 
@@ -140,9 +140,9 @@ export class PrintQRComponent implements OnInit {
       .then((result: ApiResponse) => {
         if (result.status === 200 && result.result.length > 0) {
           applications = result.result;
-        } else this.showToast(result);
+        } else this._toastService.showToast(result);
       })
-      .catch((error) => this.showToast(error));
+      .catch((error) => this._toastService.showToast(error));
     let imgLogo = await this.getBase64();
 
     if (applications && applications.length > 0) {
@@ -247,7 +247,10 @@ export class PrintQRComponent implements OnInit {
         }
       }
     } else {
-      this.showToast(null, 'info', 'No se encontraron aplicaciones cargadas.');
+      this._toastService.showToast({
+        type: 'info',
+        message: 'No se encontraron aplicaciones cargadas.',
+      });
     }
     this.finishImpression();
   }
@@ -358,48 +361,5 @@ export class PrintQRComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
   }
 }

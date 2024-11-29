@@ -19,8 +19,8 @@ import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { DepositService } from 'app/core/services/deposit.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ArticleStock } from '../article-stock/article-stock';
 import { ListArticlesComponent } from '../article/list-articles/list-articles.component';
@@ -68,7 +68,7 @@ export class ReportKardexComponent implements OnInit {
   constructor(
     public _movementOfArticleService: MovementOfArticleService,
     public _articleStockService: ArticleStockService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _articleService: ArticleService,
     public _router: Router,
     private _route: ActivatedRoute,
@@ -766,17 +766,20 @@ export class ReportKardexComponent implements OnInit {
             (result) => {
               this.loading = false;
               if (result && result.articleStock) {
-                this.showToast(
-                  'El stock se actualizó correctamente.',
-                  'success'
-                );
+                this._toastService.showToast({
+                  message: 'El stock se actualizó correctamente.',
+                  type: 'success',
+                });
               } else {
                 if (result.message && result.message !== '')
                   this.showMessage(result.message, 'info', true);
               }
             },
             (error) => {
-              this.showToast(error._body, 'danger');
+              this._toastService.showToast({
+                message: error._body,
+                type: 'danger',
+              });
               this.loading = false;
             }
           );
@@ -788,24 +791,27 @@ export class ReportKardexComponent implements OnInit {
               (result) => {
                 this.loading = false;
                 if (result && result.articleStock) {
-                  this.showToast(
-                    'El stock se actualizó correctamente.',
-                    'success'
-                  );
+                  this._toastService.showToast({
+                    message: 'El stock se actualizó correctamente.',
+                    type: 'success',
+                  });
                 } else {
                   if (result.message && result.message !== '')
                     this.showMessage(result.message, 'info', true);
                 }
               },
               (error) => {
-                this.showToast(error._body, 'danger');
+                this._toastService.showToast({
+                  message: error._body,
+                  type: 'danger',
+                });
                 this.loading = false;
               }
             );
         }
       },
       (error) => {
-        this.showToast(error._body, 'danger');
+        this._toastService.showToast({ message: error._body, type: 'danger' });
         this.loading = false;
       }
     );
@@ -823,25 +829,5 @@ export class ReportKardexComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(message: string, type: string = 'success'): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message);
-        break;
-      case 'warning':
-        this._toastr.warning('', message);
-        break;
-      case 'danger':
-        this._toastr.error('', message);
-        break;
-      default:
-        this._toastr.success('', message);
-        break;
-    }
   }
 }

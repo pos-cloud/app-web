@@ -3,9 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { ReportService } from '../../../core/services/report.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { ParamsReportComponent } from '../params-report/params-report.component';
@@ -34,7 +34,7 @@ export class ViewReportComponent implements OnInit {
     public _service: ReportService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _modalService: NgbModal,
     public translatePipe: TranslateMePipe
   ) {}
@@ -53,12 +53,7 @@ export class ViewReportComponent implements OnInit {
         this.getReportByName(params['name']);
       } else {
         this.loading = false;
-        this.showToast(
-          '',
-          'Danger',
-          'Error de Ruta',
-          'El reporte no se encontro'
-        );
+        this._toastService.showToast({ message: 'El reporte no se encontro' });
       }
     });
   }
@@ -86,12 +81,12 @@ export class ViewReportComponent implements OnInit {
             }
           } else {
             this.loading = false;
-            this.showToast(result);
+            this._toastService.showToast(result);
           }
         },
         (error) => {
           this.loading = false;
-          this.showToast(error);
+          this._toastService.showToast(error);
         }
       );
   }
@@ -144,12 +139,12 @@ export class ViewReportComponent implements OnInit {
           });
           this.loading = false;
         } else {
-          this.showToast(result);
+          this._toastService.showToast(result);
         }
       },
       (error) => {
         this.loading = false;
-        this.showToast(error);
+        this._toastService.showToast(error);
       }
     );
   }
@@ -173,49 +168,5 @@ export class ViewReportComponent implements OnInit {
   public exportItems(): void {
     this.exportExcelComponent.items = this.items;
     this.exportExcelComponent.export();
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

@@ -33,7 +33,7 @@ import { MediaCategory } from '@types';
 import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { FileService } from 'app/core/services/file.service';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -126,7 +126,7 @@ export class ConfigComponent implements OnInit {
     public _accountService: AccountService,
     public _userService: UserService,
     public _fb: UntypedFormBuilder,
-    public _toastr: ToastrService,
+    public _toastService: ToastService,
     public alertConfig: NgbAlertConfig,
     private _authService: AuthService,
     public _modalService: NgbModal,
@@ -192,7 +192,10 @@ export class ConfigComponent implements OnInit {
       link.download = 'filename';
       link.href = this.apiV8URL + 'configs/downloadBD/' + result.archive_path;
       link.click();
-      this.showToast(result.message, 'success');
+      this._toastService.showToast({
+        message: result.message,
+        type: 'success',
+      });
       // [attr.href]="apiURL + 'config/generateBackUp'"
     });
   }
@@ -203,11 +206,14 @@ export class ConfigComponent implements OnInit {
     this._configService.uploadCRT(this.filesToUpload, companyCUIT).then(
       (result) => {
         if (result) {
-          this.showToast(result.message, 'success');
+          this._toastService.showToast({
+            message: result.message,
+            type: 'success',
+          });
         }
       },
       (error) => {
-        this.showToast(error, 'warning');
+        this._toastService.showToast({ message: error, type: 'warning' });
       }
     );
   }
@@ -467,7 +473,7 @@ export class ConfigComponent implements OnInit {
         this.loadingCompany = false;
       },
       (error) => {
-        this.showToast(error._body, 'danger');
+        this._toastService.showToast({ message: error._body, type: 'danger' });
         this.loadingCompany = false;
       }
     );
@@ -485,7 +491,7 @@ export class ConfigComponent implements OnInit {
         this.loadingCompany = false;
       },
       (error) => {
-        this.showToast(error._body, 'danger');
+        this._toastService.showToast({ message: error._body, type: 'danger' });
         this.loadingCompany = false;
       }
     );
@@ -503,7 +509,7 @@ export class ConfigComponent implements OnInit {
         this.getConfig();
       },
       (error) => {
-        this.showToast(error._body, 'danger');
+        this._toastService.showToast({ message: error._body, type: 'danger' });
       }
     );
   }
@@ -513,7 +519,10 @@ export class ConfigComponent implements OnInit {
       (result) => {
         if (!result.configs) {
           if (result.message && result.message !== '')
-            this.showToast(result.message, 'info');
+            this._toastService.showToast({
+              message: result.message,
+              type: 'info',
+            });
         } else {
           //let config = result.configs[0];
           this.config = result.configs[0];
@@ -524,7 +533,7 @@ export class ConfigComponent implements OnInit {
         }
       },
       (error) => {
-        this.showToast(error._body, 'danger');
+        this._toastService.showToast({ message: error._body, type: 'danger' });
       }
     );
   }
@@ -551,7 +560,10 @@ export class ConfigComponent implements OnInit {
           this.loading = false;
         },
         (error) => {
-          this.showToast(error._body, 'danger');
+          this._toastService.showToast({
+            message: error._body,
+            type: 'danger',
+          });
           this.loading = false;
         }
       );
@@ -573,12 +585,15 @@ export class ConfigComponent implements OnInit {
     await this.updateConfig().then((config) => {
       if (config) {
         this.config = config;
-        this.showToast(
-          'La configuración de empresa se guardo con éxito ',
-          'success'
-        );
+        this._toastService.showToast({
+          message: 'La configuración de empresa se guardo con éxito ',
+          type: 'success',
+        });
       } else {
-        this.showToast('No se encontro configuración de empresa', 'danger');
+        this._toastService.showToast({
+          message: 'No se encontro configuración de empresa',
+          type: 'danger',
+        });
       }
       this.loadingCompany = false;
     });
@@ -590,7 +605,10 @@ export class ConfigComponent implements OnInit {
     await this.updateConfig().then((config) => {
       if (config) {
         this.config = config;
-        this.showToast('Los cambios fueron guardados con éxito.', 'success');
+        this._toastService.showToast({
+          message: 'Los cambios fueron guardados con éxito.',
+          type: 'success',
+        });
         this.getConfig();
       }
       this.loadingEmail = false;
@@ -603,7 +621,10 @@ export class ConfigComponent implements OnInit {
     await this.updateConfig().then((config) => {
       if (config) {
         this.config = config;
-        this.showToast('Los cambios fueron guardados con éxito.', 'success');
+        this._toastService.showToast({
+          message: 'Los cambios fueron guardados con éxito.',
+          type: 'success',
+        });
       }
       this.loadingSystem = false;
     });
@@ -615,14 +636,20 @@ export class ConfigComponent implements OnInit {
         (result) => {
           if (!result.configs) {
             if (result.message && result.message !== '')
-              this.showToast(result.message, 'info');
+              this._toastService.showToast({
+                message: result.message,
+                type: 'info',
+              });
             resolve(null);
           } else {
             resolve(result.configs[0]);
           }
         },
         (error) => {
-          this.showToast(error._body, 'danger');
+          this._toastService.showToast({
+            message: error._body,
+            type: 'danger',
+          });
           resolve(null);
         }
       );
@@ -875,26 +902,6 @@ export class ConfigComponent implements OnInit {
     this.alertMessage = '';
   }
 
-  public showToast(message: string, type: string): void {
-    switch (type) {
-      case 'success':
-        this._toastr.success('', message);
-        break;
-      case 'info':
-        this._toastr.info('', message);
-        break;
-      case 'warning':
-        this._toastr.warning('', message);
-        break;
-      case 'danger':
-        this._toastr.error('', message);
-        break;
-      default:
-        this._toastr.success('', message);
-        break;
-    }
-  }
-
   async uploadFile(pictureDelete: string): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
       if (
@@ -913,7 +920,7 @@ export class ConfigComponent implements OnInit {
             this.imageURL = result;
             resolve(result);
           },
-          (error) => this.showToast('', error)
+          (error) => this._toastService.showToast({ message: error })
         );
     });
   }
@@ -926,7 +933,7 @@ export class ConfigComponent implements OnInit {
         },
         (error) => {
           console.log(error);
-          this.showToast('', error.messge);
+          this._toastService.showToast({ message: error.messge });
           resolve(true);
         }
       );

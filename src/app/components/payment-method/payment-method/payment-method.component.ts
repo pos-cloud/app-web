@@ -20,8 +20,8 @@ import { AccountService } from 'app/core/services/account.service';
 import { ApplicationService } from 'app/core/services/application.service';
 import { ArticleService } from 'app/core/services/article.service';
 import { CurrencyService } from 'app/core/services/currency.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -141,7 +141,7 @@ export class PaymentMethodComponent implements OnInit {
     private _applicationService: ApplicationService,
     public _accountService: AccountService,
     public translatePipe: TranslateMePipe,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _articleService: ArticleService,
     private _currencyService: CurrencyService
   ) {}
@@ -159,7 +159,7 @@ export class PaymentMethodComponent implements OnInit {
           this.setValuesArray();
         }
       })
-      .catch((error: ApiResponse) => this.showToast(error));
+      .catch((error: ApiResponse) => this._toastService.showToast(error));
 
     if (this.paymentMethodId) {
       this.getPaymentMetod();
@@ -522,11 +522,10 @@ export class PaymentMethodComponent implements OnInit {
             this.loading = false;
           } else {
             this.paymentMethod = result.paymentMethod;
-            this.showToast(
-              null,
-              'success',
-              'El método de pago se ha actualizado con éxito.'
-            );
+            this._toastService.showToast({
+              type: 'success',
+              message: 'El método de pago se ha actualizado con éxito.',
+            });
           }
           this.loading = false;
         },
@@ -565,11 +564,10 @@ export class PaymentMethodComponent implements OnInit {
           this.loading = false;
         } else {
           this.paymentMethod = result.paymentMethod;
-          this.showToast(
-            null,
-            'success',
-            'El medio de pago se ha añadido con éxito.'
-          );
+          this._toastService.showToast({
+            type: 'success',
+            message: 'El medio de pago se ha añadido con éxito.',
+          });
           this.paymentMethod = new PaymentMethod();
           this.buildForm();
         }
@@ -594,49 +592,5 @@ export class PaymentMethodComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

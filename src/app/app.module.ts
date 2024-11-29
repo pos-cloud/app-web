@@ -182,7 +182,6 @@ import { LicenseGuard } from './core/guards/license.guard';
 import { NotificationGuard } from './core/guards/notification.guard';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { HeaderComponent } from './layout/header/header.component';
-import { Header2Component } from './layout/header2/header2.component';
 import { HomeComponent } from './layout/home/home.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
@@ -203,7 +202,6 @@ export function createTranslateLoader(http: HttpClient) {
     AppComponent,
     HomeComponent,
     HeaderComponent,
-    Header2Component,
     ListTablesComponent,
     TableComponent,
     ListCashBoxesComponent,

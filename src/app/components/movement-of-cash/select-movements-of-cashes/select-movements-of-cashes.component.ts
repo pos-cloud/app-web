@@ -3,12 +3,12 @@ import { Title } from '@angular/platform-browser';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
 import { TransactionService } from '../../../core/services/transaction.service';
@@ -39,7 +39,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
   constructor(
     private _title: Title,
     private _movementOfCashService: MovementOfCashService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
@@ -206,12 +206,12 @@ export class SelectMovementsOfCashesComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -258,7 +258,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         movementsOfCashes: this.movementsOfCashes,
       });
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -273,49 +273,5 @@ export class SelectMovementsOfCashesComponent implements OnInit {
       this.orderTerm[0] = term;
     }
     this.loadMovementsOfCashes();
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

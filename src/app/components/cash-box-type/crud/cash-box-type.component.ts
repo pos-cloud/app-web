@@ -12,9 +12,9 @@ import { Title } from '@angular/platform-browser';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormField } from '@types';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { CashBoxTypeService } from '../../../core/services/cash-box-type.service';
 import { CashBoxType } from '../cash-box-type.model';
@@ -61,7 +61,7 @@ export class CashBoxTypeComponent implements OnInit {
 
   constructor(
     private _objService: CashBoxTypeService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _title: Title,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
@@ -93,14 +93,17 @@ export class CashBoxTypeComponent implements OnInit {
             if (result.status === 200) {
               this.obj = result.result;
               this.setValuesForm();
-            } else this.showToast(result);
+            } else this._toastService.showToast(result);
           },
-          (error) => this.showToast(error)
+          (error) => this._toastService.showToast(error)
         )
       );
     } else {
       if (this.operation !== 'add')
-        this.showToast(null, 'danger', 'Debe ingresar un identificador válido');
+        this._toastService.showToast({
+          type: 'danger',
+          message: 'Debe ingresar un identificador válido',
+        });
     }
   }
 
@@ -225,10 +228,10 @@ export class CashBoxTypeComponent implements OnInit {
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -238,10 +241,10 @@ export class CashBoxTypeComponent implements OnInit {
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -251,55 +254,11 @@ export class CashBoxTypeComponent implements OnInit {
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }

@@ -19,7 +19,6 @@ import { ArticleService } from 'app/core/services/article.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
 import {
   debounceTime,
@@ -28,6 +27,7 @@ import {
   tap,
 } from 'rxjs/operators';
 
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
 import { ShipmentMethod } from '../shipment-method.model';
 declare const google: any;
@@ -128,7 +128,7 @@ export class ShipmentMethodComponent implements OnInit {
   constructor(
     private _objService: ShipmentMethodService,
     private _articleService: ArticleService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     private _title: Title,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
@@ -175,21 +175,24 @@ export class ShipmentMethodComponent implements OnInit {
               if (result.status === 200) {
                 this.obj = result.result[0];
                 this.setValuesForm();
-              } else this.showToast(result);
+              } else this._toastService.showToast(result);
             },
-            (error) => this.showToast(error)
+            (error) => this._toastService.showToast(error)
           )
       );
     } else {
       if (this.operation !== 'add')
-        this.showToast(null, 'danger', 'Debe ingresar un identificador válido');
+        this._toastService.showToast({
+          type: 'danger',
+          message: 'Debe ingresar un identificador válido',
+        });
     }
     await this.getAllApplications({})
       .then((result: Application[]) => {
         this.applications = result;
         this.setValuesForm();
       })
-      .catch((error: ApiResponse) => this.showToast(error));
+      .catch((error: ApiResponse) => this._toastService.showToast(error));
   }
 
   public ngAfterViewInit(): void {
@@ -386,10 +389,10 @@ export class ShipmentMethodComponent implements OnInit {
     this.subscription.add(
       this._objService.save(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -399,10 +402,10 @@ export class ShipmentMethodComponent implements OnInit {
     this.subscription.add(
       this._objService.update(this.obj).subscribe(
         (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
   }
@@ -412,56 +415,12 @@ export class ShipmentMethodComponent implements OnInit {
     this.subscription.add(
       this._objService.delete(this.obj._id).subscribe(
         async (result) => {
-          this.showToast(result);
+          this._toastService.showToast(result);
           if (result.status === 200) this.activeModal.close({ obj: this.obj });
         },
-        (error) => this.showToast(error)
+        (error) => this._toastService.showToast(error)
       )
     );
-  }
-
-  public showToast(
-    result,
-    type?: string,
-    title?: string,
-    message?: string
-  ): void {
-    if (result) {
-      if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 400) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title = result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 
   public getArticles(match: {}): Promise<Article[]> {

@@ -34,7 +34,6 @@ import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { ToastrService } from 'ngx-toastr';
 
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
@@ -91,6 +90,7 @@ import { SelectTransportComponent } from '../transport/select-transport/select-t
 
 import { ApiResponse, EmailProps } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
 import { Config } from './../../app.config';
 
@@ -222,7 +222,7 @@ export class AddSaleOrderComponent {
     private _structureService: StructureService,
     private _jsonDiffPipe: JsonDiffPipe,
     private _businessRulesService: BusinessRuleService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public translatePipe: TranslateMePipe,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
@@ -371,7 +371,7 @@ export class AddSaleOrderComponent {
 
       this.loading = false;
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -600,12 +600,12 @@ export class AddSaleOrderComponent {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -944,11 +944,11 @@ export class AddSaleOrderComponent {
           this.openModal('movement_of_article', movementOfArticle);
         }
       } else {
-        this.showToast(
-          null,
-          'danger',
-          'Error al agregar el artículo, por favor inténtelo de nuevo.'
-        );
+        this._toastService.showToast({
+          type: 'danger',
+          message:
+            'Error al agregar el artículo, por favor inténtelo de nuevo.',
+        });
       }
     } else {
       this.showArticles();
@@ -1211,7 +1211,7 @@ export class AddSaleOrderComponent {
           );
         resolve(true);
       } catch (error) {
-        this.showToast(error);
+        this._toastService.showToast(error);
         resolve(false);
       }
     });
@@ -2132,10 +2132,10 @@ export class AddSaleOrderComponent {
             this.transaction.number = transactionResponse.number;
             this.transaction.state = transactionResponse.state;
             this.finish();
-          } else this.showToast(result);
+          } else this._toastService.showToast(result);
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
         }
       );
   }
@@ -2357,11 +2357,10 @@ export class AddSaleOrderComponent {
         const user: User = await this.getUser();
 
         if (user.permission.allowDiscount === false) {
-          this.showToast(
-            null,
-            'error',
-            'No tiene permisos para aplicar descuento.'
-          );
+          this._toastService.showToast({
+            type: 'danger',
+            message: 'No tiene permisos para aplicar descuento.',
+          });
           return;
         }
 
@@ -2597,11 +2596,10 @@ export class AddSaleOrderComponent {
 
         const users: User = await this.getUser();
         if (users.permission.allowPayment === false) {
-          this.showToast(
-            null,
-            'error',
-            'No tiene permisos para hacer esta operación.'
-          );
+          this._toastService.showToast({
+            type: 'danger',
+            message: 'No tiene permisos para hacer esta operación.',
+          });
           return;
         }
         if (
@@ -3071,14 +3069,14 @@ export class AddSaleOrderComponent {
         .apply(this.businessRulesCode, this.transactionId)
         .subscribe(
           async (result) => {
-            this.showToast(result);
+            this._toastService.showToast(result);
             if (result.status === 200) {
               this.businessRulesCode = null;
               this._modalService.dismissAll();
               this.getMovementsOfTransaction();
             }
           },
-          (error) => this.showToast(error)
+          (error) => this._toastService.showToast(error)
         );
     }
   }
@@ -3239,7 +3237,7 @@ export class AddSaleOrderComponent {
 
         resolve(true);
       } catch (error) {
-        this.showToast(error);
+        this._toastService.showToast(error);
         resolve(false);
       }
     });
@@ -3290,27 +3288,26 @@ export class AddSaleOrderComponent {
       this._articleService.updateArticleTiendaNube(idArticle).subscribe(
         (result) => {
           if (result.error) {
-            this.showToast(
-              null,
-              'info',
-              result.error && result.error.message
-                ? result.error.message
-                : result.message
-                  ? result.message
-                  : ''
-            );
+            this._toastService.showToast({
+              type: 'info',
+              message:
+                result.error && result.error.message
+                  ? result.error.message
+                  : result.message
+                    ? result.message
+                    : '',
+            });
           } else {
-            this.showToast(
-              null,
-              'success',
-              'Producto actualizado con éxito en TiendaNube'
-            );
+            this._toastService.showToast({
+              type: 'success',
+              message: 'Producto actualizado con éxito en TiendaNube',
+            });
           }
           resolve(true);
         },
         (error) => {
           resolve(true);
-          this.showToast(error);
+          this._toastService.showToast(error);
         }
       );
     });
@@ -3352,14 +3349,16 @@ export class AddSaleOrderComponent {
         let count = await this.updateArticlesCostPrice();
 
         if (count === 1) {
-          this.showToast(null, 'info', 'Se actualizó : 1 producto');
+          this._toastService.showToast({
+            type: 'info',
+            message: 'Se actualizó : 1 producto',
+          });
         } else {
           if (count > 1) {
-            this.showToast(
-              null,
-              'info',
-              'Se actualizaron : ' + count + ' productos'
-            );
+            this._toastService.showToast({
+              type: 'info',
+              message: 'Se actualizaron : ' + count + ' productos',
+            });
           }
         }
       }
@@ -3500,7 +3499,7 @@ export class AddSaleOrderComponent {
 
       this.loading = false;
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -3510,25 +3509,24 @@ export class AddSaleOrderComponent {
     this._articleService.updateArticlesTiendaNube(tiendaNubeIds).subscribe(
       (result) => {
         if (result.error) {
-          this.showToast(
-            null,
-            'info',
-            result.error && result.error.message
-              ? result.error.message
-              : result.message
-                ? result.message
-                : ''
-          );
+          this._toastService.showToast({
+            type: 'info',
+            message:
+              result.error && result.error.message
+                ? result.error.message
+                : result.message
+                  ? result.message
+                  : '',
+          });
         } else {
-          this.showToast(
-            null,
-            'success',
-            'Operación realizada con éxito en TiendaNube'
-          );
+          this._toastService.showToast({
+            type: 'success',
+            message: 'Operación realizada con éxito en TiendaNube',
+          });
           this.activeModal.close();
         }
       },
-      (error) => this.showToast(error)
+      (error) => this._toastService.showToast(error)
     );
   }
 
@@ -3574,13 +3572,13 @@ export class AddSaleOrderComponent {
             if (result.status === 200) {
               resolve(true);
             } else {
-              this.showToast(result);
+              this._toastService.showToast(result);
               resolve(false);
             }
           },
           (error) => {
             this.loading = false;
-            this.showToast(error);
+            this._toastService.showToast(error);
             resolve(false);
           }
         );
@@ -4079,7 +4077,10 @@ export class AddSaleOrderComponent {
           }
         }
       } else {
-        this.showToast(null, 'info', 'Debe iniciar sesión');
+        this._toastService.showToast({
+          type: 'info',
+          message: 'Debe iniciar sesión',
+        });
       }
 
       switch (this.typeOfOperationToPrint) {
@@ -4215,7 +4216,7 @@ export class AddSaleOrderComponent {
         }
       );
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -4284,7 +4285,10 @@ export class AddSaleOrderComponent {
 
       //validate read
       if (mov.length === 0 || mov[0].read >= mov[0].amount) {
-        this.showToast(null, 'info', `El producto ya fue cerrado`);
+        this._toastService.showToast({
+          type: 'info',
+          message: `El producto ya fue cerrado`,
+        });
         return;
       }
 
@@ -4366,53 +4370,6 @@ export class AddSaleOrderComponent {
     this.loading = false;
   }
 
-  showToast(result, type?: string, title?: string, message?: string): void {
-    if (result) {
-      if (result.status === 0) {
-        type = 'info';
-        title =
-          'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
-      } else if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 500) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.hideMessage();
-    this.loading = false;
-  }
-
   padNumber(n, length): string {
     n = n.toString();
     while (n.length < length) n = '0' + n;
@@ -4423,10 +4380,10 @@ export class AddSaleOrderComponent {
   public sendEmail(body: EmailProps): void {
     this._serviceEmail.sendEmailV2(body).subscribe(
       (result) => {
-        this.showToast(result);
+        this._toastService.showToast(result);
       },
       (err) => {
-        this.showToast(err);
+        this._toastService.showToast(err);
       }
     );
   }
@@ -4440,13 +4397,13 @@ export class AddSaleOrderComponent {
           if (result.status === 200) {
             resolve(true);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             resolve(false);
           }
         },
         (error) => {
           this.loading = false;
-          this.showToast(error);
+          this._toastService.showToast(error);
           resolve(false);
         }
       );

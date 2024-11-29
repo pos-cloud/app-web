@@ -31,9 +31,9 @@ import { MovementOfCancellationService } from 'app/core/services/movement-of-can
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { TransactionService } from 'app/core/services/transaction.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cancellation-types-automatic',
@@ -67,7 +67,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private _transactionTypeService: TransactionTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
-    private _toastr: ToastrService,
+    private _toastService: ToastService,
     public translatePipe: TranslateMePipe
   ) {
     this.cancellationTypes = new Array();
@@ -303,7 +303,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         this.activeModal.close({ transaction: transactionDestination });
       }
     } catch (error) {
-      this.showToast(error);
+      this._toastService.showToast(error);
     }
   }
 
@@ -314,12 +314,12 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -693,12 +693,12 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           if (result.status === 200) {
             resolve(result.result);
           } else {
-            this.showToast(result);
+            this._toastService.showToast(result);
             reject(result);
           }
         },
         (error) => {
-          this.showToast(error);
+          this._toastService.showToast(error);
           reject(error);
         }
       );
@@ -747,51 +747,5 @@ export class CancellationTypeAutomaticComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
-  }
-
-  showToast(result, type?: string, title?: string, message?: string): void {
-    if (result) {
-      if (result.status === 0) {
-        type = 'info';
-        title =
-          'el servicio se encuentra en mantenimiento, inténtelo nuevamente en unos minutos';
-      } else if (result.status === 200) {
-        type = 'success';
-        title = result.message;
-      } else if (result.status >= 500) {
-        type = 'danger';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      } else {
-        type = 'info';
-        title =
-          result.error && result.error.message
-            ? result.error.message
-            : result.message;
-      }
-    }
-    switch (type) {
-      case 'success':
-        this._toastr.success(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      case 'danger':
-        this._toastr.error(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-      default:
-        this._toastr.info(
-          this.translatePipe.translateMe(message),
-          this.translatePipe.translateMe(title)
-        );
-        break;
-    }
-    this.loading = false;
   }
 }
