@@ -11,10 +11,7 @@ import { TransactionMovement } from '../../components/transaction-type/transacti
 import { AuthService } from './auth.service';
 
 import { environment } from 'environments/environment';
-import {
-  Transaction,
-  TransactionStateTiendaNube,
-} from '../../components/transaction/transaction';
+import { Transaction } from '../../components/transaction/transaction';
 
 @Injectable({
   providedIn: 'root',
@@ -398,23 +395,6 @@ export class TransactionService extends ModelService {
       );
   }
 
-  public syncTiendaNube(value): Observable<any> {
-    const URL = `${environment.apiv2}/tienda-nube/order`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http.post(URL, { date: value }, { headers: headers }).pipe(
-      map((res) => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
   public setOrderNumber(transaction: Transaction): Observable<any> {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -436,43 +416,5 @@ export class TransactionService extends ModelService {
           return of(err);
         })
       );
-  }
-
-  public updateTransactionStatus(orderId: string, data: any, status: any) {
-    const URL = `${environment.apiTiendaNube}/orders/${orderId}`;
-    let statusEndpoint: string;
-    let payload: any;
-
-    switch (status) {
-      case TransactionStateTiendaNube.Open:
-        statusEndpoint = 'open';
-        payload = { storeId: data };
-        break;
-      case TransactionStateTiendaNube.Closed:
-        statusEndpoint = 'close';
-        payload = { storeId: data };
-        break;
-      case TransactionStateTiendaNube.Canceled:
-        statusEndpoint = 'cancel';
-        payload = data;
-        break;
-      case TransactionStateTiendaNube.Packed:
-        statusEndpoint = 'pack';
-        payload = { storeId: data };
-        break;
-      case TransactionStateTiendaNube.Fulfilled:
-        statusEndpoint = 'fulfill';
-        payload = data;
-        break;
-    }
-
-    return this._http.post(`${URL}/${statusEndpoint}`, payload).pipe(
-      map((res) => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
   }
 }

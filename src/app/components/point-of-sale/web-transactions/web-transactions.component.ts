@@ -2,6 +2,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
+import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
+import { FulfilledComponent } from 'app/modules/sales/web/tienda-nube-fulfilled/fulfilled.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { Subscription } from 'rxjs';
 import { Config } from '../../../app.config';
@@ -11,15 +13,14 @@ import { MovementOfArticleService } from '../../../core/services/movement-of-art
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { TransactionService } from '../../../core/services/transaction.service';
+import { CancelComponent } from '../../../modules/sales/web/tienda-nube-cancel/cancel.component';
+import { DateFromToComponent } from '../../../modules/sales/web/tienda-nube-date-from-to/date-from-to.component';
 import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { PrintTransactionTypeComponent } from '../../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../../print/print/print.component';
 import { Printer, PrinterPrintIn } from '../../printer/printer';
-import { CancelComponent } from '../../tiendaNube/cancel/cancel.component';
-import { DateFromToComponent } from '../../tiendaNube/date-from-to/date-from-to.component';
-import { FulfilledComponent } from '../../tiendaNube/fulfilled/fulfilled.component';
 import { TransactionMovement } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../../transaction/add-transaction/add-transaction.component';
 import { Transaction, TransactionState } from '../../transaction/transaction';
@@ -80,7 +81,8 @@ export class WebTransactionsComponent implements OnInit {
     private _printerService: PrinterService,
     private _configService: ConfigService,
     public _movementOfArticleService: MovementOfArticleService,
-    public _movementOfCashService: MovementOfCashService
+    public _movementOfCashService: MovementOfCashService,
+    private _tiendaNubeService: TiendaNubeService
   ) {}
 
   async ngOnInit() {
@@ -458,7 +460,7 @@ export class WebTransactionsComponent implements OnInit {
       this.config.tiendaNube.userID
     ) {
       return new Promise<Transaction>((resolve, reject) => {
-        this._transactionService
+        this._tiendaNubeService
           .updateTransactionStatus(
             transaction.tiendaNubeId,
             this.config.tiendaNube.userID,

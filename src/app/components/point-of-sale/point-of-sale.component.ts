@@ -38,6 +38,8 @@ import {
   EmployeeType,
 } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
+import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
+import { FulfilledComponent } from 'app/modules/sales/web/tienda-nube-fulfilled/fulfilled.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subscription } from 'rxjs';
@@ -53,6 +55,7 @@ import { OriginService } from '../../core/services/origin.service';
 import { EmailService } from '../../core/services/send-email.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
+import { CancelComponent } from '../../modules/sales/web/tienda-nube-cancel/cancel.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
 import { padNumber } from '../../util/functions/pad/padNumber';
@@ -68,8 +71,6 @@ import { SelectOriginComponent } from '../origin/select-origin/select-origin.com
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
 import { SendEmailComponent } from '../send-email/send-email.component';
-import { CancelComponent } from '../tiendaNube/cancel/cancel.component';
-import { FulfilledComponent } from '../tiendaNube/fulfilled/fulfilled.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { Config } from './../../app.config';
@@ -160,7 +161,8 @@ export class PointOfSaleComponent implements OnInit {
     public translatePipe: TranslateMePipe,
     private _toastService: ToastService,
     private _movementOfCashService: MovementOfCashService,
-    private _movementOfCancellationService: MovementOfCancellationService
+    private _movementOfCancellationService: MovementOfCancellationService,
+    private _tiendaNubeService: TiendaNubeService
   ) {
     this.roomSelected = new Room();
     this.transactionTypes = new Array();
@@ -2555,7 +2557,7 @@ export class PointOfSaleComponent implements OnInit {
       this.config.tiendaNube.userID
     ) {
       return new Promise<Transaction>((resolve, reject) => {
-        this._transactionService
+        this._tiendaNubeService
           .updateTransactionStatus(
             transaction.tiendaNubeId,
             this.config.tiendaNube.userID,

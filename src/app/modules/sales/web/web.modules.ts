@@ -5,17 +5,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
-import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { ModulesRoutingModule } from './modules-routing.module';
+import { ProgressbarModule } from '../../../shared/components/progressbar/progressbar.module';
+import { WebComponent } from './list/web.component';
+import { WebRoutingModule } from './web-routing.module';
+// import { ListMakesComponent } from './list/list-makes.component';
+// import { MakeRoutingModule } from './make-routing.module';
 
 @NgModule({
-  declarations: [],
+  declarations: [WebComponent],
   imports: [
-    TypeaheadDropdownComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -28,21 +29,7 @@ import { ModulesRoutingModule } from './modules-routing.module';
     NgbDropdownModule,
     NgbModule,
     DatatableModule,
-    ModulesRoutingModule,
-  ],
-  exports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxPaginationModule,
-    FocusDirective,
-    DragDropModule,
-    ProgressbarModule,
-    PipesModule,
-    TranslateModule,
-    NgbModule,
-    TypeaheadDropdownComponent,
-    DatatableModule,
+    WebRoutingModule,
   ],
 })
-export class ModulesModule {}
+export class WebModule {}
