@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
+import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { FulfilledComponent } from 'app/modules/sales/web/tienda-nube-fulfilled/fulfilled.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { Subscription } from 'rxjs';
@@ -24,7 +25,6 @@ import { TransactionMovement } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../../transaction/add-transaction/add-transaction.component';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
-import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 
 @Component({
   selector: 'app-web-transactions',
@@ -199,7 +199,7 @@ export class WebTransactionsComponent implements OnInit {
             (result) => {
               this.loading = false;
               this.hideMessage();
-              this.transactions = result.result;
+              this.transactions = result.transactions;
               resolve(result.transactions);
             },
             (error) => {

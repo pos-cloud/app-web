@@ -667,6 +667,12 @@ export const _routes: Routes = [
       import('./entities/entities.module').then((m) => m.EntitiesModule),
   },
   {
+    path: 'modules',
+    canActivate: [AuthGuard, LicenseGuard],
+    loadChildren: () =>
+      import('./modules/modules.module').then((m) => m.ModulesModule),
+  },
+  {
     path: '**',
     pathMatch: 'full',
     redirectTo: '',
