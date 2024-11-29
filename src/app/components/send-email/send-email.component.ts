@@ -14,7 +14,6 @@ import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import * as $ from 'jquery';
 import { CompanyService } from '../../core/services/company.service';
 import { EmailService } from '../../core/services/send-email.service';
 
@@ -54,41 +53,21 @@ export class SendEmailComponent implements OnInit {
     // }
   };
 
-  //tiny
-  public html = '';
-
-  public tinyMCEConfigBody = {
-    selector: 'tinymce',
-    theme: 'modern',
-    paste_data_images: true,
-    plugins: [
-      'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-      'searchreplace wordcount visualblocks visualchars code fullscreen',
-      'insertdatetime media nonbreaking table contextmenu directionality',
-      'emoticons template paste textcolor colorpicker textpattern',
-    ],
-    toolbar1:
-      'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen',
-    image_advtab: true,
-    height: 250,
-    file_picker_types: 'file image media',
-    images_dataimg_filter: function (img) {
-      return img.hasAttribute('internal-blob');
+  observationContent: string = '';
+  quillConfig = {
+    formats: ['bold', 'italic', 'underline', 'strike', 'list', 'link'],
+    modules: {
+      toolbar: [
+        ['bold', 'italic', 'underline', 'strike'], // Estilos básicos
+        [{ list: 'ordered' }, { list: 'bullet' }], // Listas
+        ['link'], // Enlaces
+      ],
     },
-    file_picker_callback: function (callback, value, meta) {
-      if (meta.filetype == 'image') {
-        $('#upload').trigger('click');
-        $('#upload').on('change', function () {
-          let file = this.files[0];
-          let reader = new FileReader();
-          reader.onload = function (e) {
-            callback(e.target['result'], {
-              alt: '',
-            });
-          };
-          reader.readAsDataURL(file);
-        });
-      }
+    theme: 'snow', // Tema similar a "modern" en TinyMCE
+    readOnly: false, // Si quieres solo lectura, usa true
+    styles: {
+      height: '150px', // Altura del editor
+      width: '600px',
     },
   };
 

@@ -9,7 +9,6 @@ import { AuthGuard } from 'app/core/guards/auth.guard';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
-import { NgxTinymceModule } from 'ngx-tinymce';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
 import { VariantValueComponent } from './crud/variant-value.component';
@@ -57,7 +56,6 @@ const routes: Routes = [
     NgbDropdownModule,
     NgbModule,
     DatatableModule,
-    NgxTinymceModule,
     FocusDirective,
   ],
   declarations: [ListVariantValuesComponent, VariantValueComponent],

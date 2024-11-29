@@ -127,25 +127,26 @@
                   }}:</label
                 >
                 <input
-                id="make"
-                type="text"
-                formControlName="make"
-                name="make"
-                class="form-control custom-typeahead"
-                [ngbTypeahead]="searchMakes"
-                [inputFormatter]="formatterMakes"
-                [resultFormatter]="formatterMakes"
-                (focus)="makeFocus$.next('')"
-                (click)="makeClick$.next('')"
-                #instance="ngbTypeahead"
-                placeholder="Marca"
-                (blur)="onValueChanged($event.target.id)"
-                [readonly]="readonly"
-              />
-              
+                  id="make"
+                  type="text"
+                  formControlName="make"
+                  name="make"
+                  class="form-control custom-typeahead"
+                  [ngbTypeahead]="searchMakes"
+                  [inputFormatter]="formatterMakes"
+                  [resultFormatter]="formatterMakes"
+                  (focus)="makeFocus$.next('')"
+                  (click)="makeClick$.next('')"
+                  #instance="ngbTypeahead"
+                  placeholder="Marca"
+                  (blur)="onValueChanged($event.target.id)"
+                  [readonly]="readonly"
+                />
               </div>
               <div class="form-group col-md-6 typeahead-container">
-                <label for="category">{{ 'category' | translate | capitalize }}:</label>
+                <label for="category"
+                  >{{ 'category' | translate | capitalize }}:</label
+                >
                 <input
                   id="category"
                   type="text"
@@ -161,10 +162,11 @@
                   placeholder="Categoría"
                   (blur)="onValueChanged($event.target.id)"
                   [ngClass]="{
-                    'is-invalid': !articleForm.get('category')?.valid && formErrors.category
+                    'is-invalid':
+                      !articleForm.get('category')?.valid && formErrors.category
                   }"
                   [readonly]="readonly"
-                />    
+                />
                 <div
                   class="invalid-feedback"
                   [style.display]="formErrors.category ? 'block' : 'none'"
@@ -281,21 +283,21 @@
               >{{ 'unitOfMeasurement' | translate | capitalize }}:</label
             >
             <input
-            id="unitOfMeasurement"
-            type="text"
-            formControlName="unitOfMeasurement"
-            name="unitOfMeasurement"
-            class="form-control custom-typeahead"
-            [ngbTypeahead]="searchUnitsOfMeasurement"
-            [inputFormatter]="formatterUnitsOfMeasurement"
-            [resultFormatter]="formatterUnitsOfMeasurement"
-            (focus)="unitsOfMeasurementFocus$.next('')"
-            (click)="unitsOfMeasurementClick$.next('')"
-            #instance="ngbTypeahead"
-            placeholder="Unidad de medida"
-            (blur)="onValueChanged($event.target.id)"
-            [readonly]="readonly"
-          />
+              id="unitOfMeasurement"
+              type="text"
+              formControlName="unitOfMeasurement"
+              name="unitOfMeasurement"
+              class="form-control custom-typeahead"
+              [ngbTypeahead]="searchUnitsOfMeasurement"
+              [inputFormatter]="formatterUnitsOfMeasurement"
+              [resultFormatter]="formatterUnitsOfMeasurement"
+              (focus)="unitsOfMeasurementFocus$.next('')"
+              (click)="unitsOfMeasurementClick$.next('')"
+              #instance="ngbTypeahead"
+              placeholder="Unidad de medida"
+              (blur)="onValueChanged($event.target.id)"
+              [readonly]="readonly"
+            />
             <div
               class="invalid-feedback"
               [style.display]="
@@ -345,10 +347,13 @@
                 <label for="observation" class="control-label">{{
                   'observation' | translate | capitalize
                 }}</label>
-                <tinymce
+                <quill-editor
                   formControlName="observation"
-                  [config]="tinyMCEConfigBody"
-                ></tinymce>
+                  [(ngModel)]="observationContent"
+                  [modules]="quillConfig.modules"
+                  [theme]="quillConfig.theme"
+                >
+                </quill-editor>
               </div>
               <div class="form-group col-md-5">
                 <label for="note" class="control-label"
@@ -1194,21 +1199,21 @@
                   'providersName' | translate | capitalize
                 }}</label>
                 <input
-                id="provider"
-                type="text"
-                formControlName="provider"
-                name="provider"
-                class="form-control custom-typeahead"
-                [ngbTypeahead]="searchProvider"
-                [inputFormatter]="formatterProvider"
-                [resultFormatter]="formatterProvider"
-                (focus)="companiesFocus$.next('')"
-                (click)="companiesClick$.next('')"
-                #instance="ngbTypeahead"
-                placeholder="proveedor"
-                (blur)="onValueChanged($event.target.id)"
-                [readonly]="readonly"
-              />
+                  id="provider"
+                  type="text"
+                  formControlName="provider"
+                  name="provider"
+                  class="form-control custom-typeahead"
+                  [ngbTypeahead]="searchProvider"
+                  [inputFormatter]="formatterProvider"
+                  [resultFormatter]="formatterProvider"
+                  (focus)="companiesFocus$.next('')"
+                  (click)="companiesClick$.next('')"
+                  #instance="ngbTypeahead"
+                  placeholder="proveedor"
+                  (blur)="onValueChanged($event.target.id)"
+                  [readonly]="readonly"
+                />
               </div>
               <div
                 class="invalid-feedback"
@@ -1320,7 +1325,7 @@
                 >
                 <label *ngIf="article.updateDate" class="control-label"
                   ><b>{{
-                    article.updateDate | dateFormat : 'DD/MM/YYYY HH:mm:ss'
+                    article.updateDate | dateFormat: 'DD/MM/YYYY HH:mm:ss'
                   }}</b></label
                 >
                 <label *ngIf="!article.updateDate" class="control-label"

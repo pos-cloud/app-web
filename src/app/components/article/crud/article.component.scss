@@ -41,7 +41,7 @@ app-article {
   }
 
   .btnStyle:hover {
-    background-color: #C82333;
+    background-color: #c82333;
     padding: 4px 13px 6px 13px;
     border-radius: 5px;
     color: white;
@@ -50,14 +50,37 @@ app-article {
   .typeahead-container {
     position: relative;
   }
-  
+
   .custom-typeahead + .dropdown-menu {
-    max-height: 300px; 
-    overflow-y: auto; 
+    max-height: 300px;
+    overflow-y: auto;
     overflow-x: hidden;
-    width: 95%; 
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+    width: 95%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
-  
-  
+
+  .ql-editor {
+    height: 150px; /* Altura fija */
+    width: 100%; /* El editor ocupará el 100% del ancho disponible */
+    max-width: 100%; /* Asegura que no se agrande más allá del 100% de su contenedor */
+    min-width: 200px; /* Establece un ancho mínimo */
+    width: 500px; /* Establece el ancho inicial en 500px */
+    margin: 0 auto; /* Centra el editor (opcional) */
+  }
+
+  /* Media query para pantallas más pequeñas */
+  @media (max-width: 768px) {
+    .ql-editor {
+      width: 100px; /* Permitir que el editor se ajuste al ancho disponible */
+    }
+  }
+
+  .control-label {
+    display: block; /* Hace que el label ocupe toda la línea y esté arriba del editor */
+    margin-bottom: 10px; /* Espacio entre el label y el editor */
+  }
+
+  quill-editor {
+    display: block; /* Hace que el editor ocupe toda la línea y esté abajo del label */
+  }
 }

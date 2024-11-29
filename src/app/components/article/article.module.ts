@@ -10,7 +10,7 @@ import { LicenseGuard } from 'app/core/guards/license.guard';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
-import { NgxTinymceModule } from 'ngx-tinymce';
+import { QuillModule } from 'ngx-quill';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
 import { HistoryComponent } from './actions/history/history.component';
@@ -100,7 +100,7 @@ const routes: Routes = [
     NgbDropdownModule,
     NgbModule,
     DatatableModule,
-    NgxTinymceModule,
+    QuillModule,
   ],
   declarations: [
     ListArticlesComponent,

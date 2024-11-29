@@ -33,7 +33,6 @@ import { ShipmentMethodService } from 'app/core/services/shipment-method.service
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import * as $ from 'jquery';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
@@ -250,42 +249,6 @@ export class BusinessRuleComponent implements OnInit {
   validationMessages = {
     required: 'Este campo es requerido.',
     min: 'El campo debe ser mayor a 0.',
-  };
-
-  tinyMCEConfigBody = {
-    selector: 'textarea',
-    theme: 'modern',
-    paste_data_images: true,
-    plugins: [
-      'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-      'searchreplace wordcount visualblocks visualchars code fullscreen',
-      'insertdatetime media nonbreaking table contextmenu directionality',
-      'emoticons template paste textcolor colorpicker textpattern',
-    ],
-    toolbar1:
-      'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | forecolor backcolor emoticons | print preview fullscreen',
-    image_advtab: true,
-    height: 150,
-    file_picker_types: 'file image media',
-    images_dataimg_filter: function (img) {
-      return img.hasAttribute('internal-blob');
-    },
-    file_picker_callback: function (callback, value, meta) {
-      if (meta.filetype == 'image') {
-        $('#upload').trigger('click');
-        $('#upload').on('change', function () {
-          let file = this.files[0];
-          let reader = new FileReader();
-
-          reader.onload = function (e) {
-            callback(e.target['result'], {
-              alt: '',
-            });
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-    },
   };
 
   constructor(

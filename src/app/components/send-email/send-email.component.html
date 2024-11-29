@@ -1,32 +1,54 @@
 <div class="modal-header">
-	<h4 class="modal-title">Enviar Email</h4>
-	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-		<span aria-hidden="true">&times;</span>
-	</button>
+  <h4 class="modal-title">Enviar Email</h4>
+  <button
+    type="button"
+    class="close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('close_click')"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 <section class="container-fluid">
-	<div class="center-content"  *ngIf="alertMessage !== ''">
-		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-			{{alertMessage}}
-		</ngb-alert>
-	</div>
-	<form [formGroup]="sendEmailForm" (ngSubmit)="sendEmail()" autocomplete="off">
-		<div class="modal-body">
-			<div class = "row">
-				<label for="emails" class="control-label">Destinatarios:</label>
-				<input type="text" class="form-control" formControlName="emails" name="emails" id="emails" [focus]="focusEvent"/>
-				<div *ngIf="formErrors.emails" class="alert alert-danger">
-					{{ formErrors.emails }}
-				</div>
-			</div>
-			<div class = "row">
-				<label for="subject" class="control-label">Asunto:</label>
-				<input type="text" class="form-control" formControlName="subject" name="subject" id="subject" />
-				<div *ngIf="formErrors.subject" class="alert alert-danger">
-					{{ formErrors.subject }}
-				</div>
-			</div>
-			<!--<div class = "row">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert
+      [type]="alertConfig.type"
+      [dismissible]="alertConfig.dismissible"
+      (close)="alertMessage = ''"
+    >
+      {{ alertMessage }}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="sendEmailForm" (ngSubmit)="sendEmail()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <label for="emails" class="control-label">Destinatarios:</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="emails"
+          name="emails"
+          id="emails"
+          [focus]="focusEvent"
+        />
+        <div *ngIf="formErrors.emails" class="alert alert-danger">
+          {{ formErrors.emails }}
+        </div>
+      </div>
+      <div class="row">
+        <label for="subject" class="control-label">Asunto:</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="subject"
+          name="subject"
+          id="subject"
+        />
+        <div *ngIf="formErrors.subject" class="alert alert-danger">
+          {{ formErrors.subject }}
+        </div>
+      </div>
+      <!--<div class = "row">
 				<label for="body" class="control-label">Texto:</label>
 				<textarea rows="4" cols="50" class="form-control" formControlName="body" name="body" id="body" >
 				</textarea>
@@ -34,21 +56,39 @@
 					{{ formErrors.body }}
                 </div>
             </div>-->
-            <div class="row">
-                <div class="form-group col-md-12">
-                    <label for="design" class="control-label">Texto:</label>
-                    <tinymce formControlName="body" [config]="tinyMCEConfigBody">
-                    </tinymce>
-                </div>
-            </div>
-		</div>
-		<div class="modal-footer">
-			<button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-			<button type="submit" class="btn btn-primary" [disabled]="!sendEmailForm?.valid || loading" >
-				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-				<span *ngIf="!loading">Enviar</span>
-				<span *ngIf="loading">Espere por favor</span>
-			</button>
-		</div>
-	</form>	
+      <div class="row">
+        <div class="form-group col-md-12">
+          <br />
+          <quill-editor
+            formControlName="body"
+            [(ngModel)]="observationContent"
+            [modules]="quillConfig.modules"
+            [theme]="quillConfig.theme"
+          >
+          </quill-editor>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-light"
+        (click)="activeModal.close('cancel')"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!sendEmailForm?.valid || loading"
+      >
+        <i
+          class="fa"
+          [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
+        ></i>
+        <span *ngIf="!loading">Enviar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
 </section>

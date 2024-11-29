@@ -8,7 +8,6 @@ import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
-import { NgxTinymceModule } from 'ngx-tinymce';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { HistoryComponent } from './actions/history/history.component';
 import { PrintLabelComponent } from './actions/print-label/print-label.component';
@@ -43,7 +42,6 @@ import { ListArticlesComponent } from './list-article/list-article.component';
     NgbDropdownModule,
     NgbModule,
     DatatableModule,
-    NgxTinymceModule,
     ArticleRoutingModule,
   ],
   // declarations: [

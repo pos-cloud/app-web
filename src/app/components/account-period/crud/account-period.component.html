@@ -121,13 +121,6 @@
                                 [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
                                 (blur)="onValueChanged($event.target.id)"></textarea>
 
-                            <!-- HTML -->
-                            <tinymce *ngIf="field.tag === 'html'" [formControlName]="field.name"
-                                [config]="tinyMCEConfigBody" [id]="field.name"
-                                [ngClass]="{'is-invalid':!objForm.get(field.name)?.valid && formErrors[field.name]}"
-                                (blur)="onValueChanged($event.target.id)" style="width: 100%;">
-                            </tinymce>
-
                             <!-- MOSTRAR ERROR -->
                             <div class="invalid-feedback" [style.display]="(formErrors[field.name])? 'block': 'none'">
                                 {{ formErrors[field.name] }}

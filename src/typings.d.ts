@@ -4,9 +4,7 @@ interface NodeModule {
   id: string;
 }
 
-declare var tinymce: any;
-
-declare module "*.json" {
-    const value: any;
-    export default value;
-  }
+declare module '*.json' {
+  const value: any;
+  export default value;
+}

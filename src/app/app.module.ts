@@ -26,10 +26,10 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 //import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
-import { NgxTinymceModule } from 'ngx-tinymce';
 import { ToastrModule } from 'ngx-toastr';
 
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { QuillModule } from 'ngx-quill';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
@@ -369,10 +369,6 @@ export function createTranslateLoader(http: HttpClient) {
     }),
     //SocketIoModule.forRoot(configSocket),
     ToastrModule.forRoot(),
-    NgxTinymceModule.forRoot({
-      //baseURL: '//cdn.bootcss.com/tinymce/4.7.13/',
-      baseURL: '//cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.0/',
-    }),
     PipesModule,
     ComponentsModule,
     ExportersModule,
@@ -383,6 +379,7 @@ export function createTranslateLoader(http: HttpClient) {
       enabled: true,
       registrationStrategy: 'registerWhenStable:30000',
     }),
+    QuillModule.forRoot(),
   ],
   providers: [
     {
