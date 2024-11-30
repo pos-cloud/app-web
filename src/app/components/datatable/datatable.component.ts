@@ -7,7 +7,6 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAlertConfig, NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IAttribute, IButton } from '@types';
@@ -61,8 +60,6 @@ export class DatatableComponent {
     private _toastService: ToastService,
     public alertConfig: NgbAlertConfig,
     private translatePipe: TranslateMePipe,
-    private _router: Router,
-    private _route: ActivatedRoute,
     config: NgbDropdownConfig
   ) {
     config.placement = 'bottom-right';
@@ -88,7 +85,7 @@ export class DatatableComponent {
     this.subscription.unsubscribe();
   }
 
-  private loadColumnVisibility(): void {
+  public loadColumnVisibility(): void {
     const storedColumnVisibility = JSON.parse(
       localStorage.getItem(`${this.identifier}_columnVisibility`) || '{}'
     );
@@ -100,7 +97,7 @@ export class DatatableComponent {
     });
   }
 
-  private saveColumnVisibility(): void {
+  public saveColumnVisibility(): void {
     const columnVisibility = {};
     this.columns.forEach((column) => {
       columnVisibility[column.name] = column.visible;
@@ -133,8 +130,6 @@ export class DatatableComponent {
       localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10',
       10
     );
-
-    this.currentPage = 0;
 
     this.getItems();
   }
