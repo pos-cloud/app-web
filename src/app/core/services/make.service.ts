@@ -167,11 +167,9 @@ export class MakeService extends ModelService {
       })
       .pipe(
         map((res) => {
-          console.log(res);
           return res;
         }),
         catchError((err) => {
-          console.log(err);
           return of(err);
         })
       );

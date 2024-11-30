@@ -349,7 +349,6 @@ export class CurrentAccountComponent implements OnInit {
           this.items = result.result[0].items;
           this.totalItems = result.result[0].count;
 
-          console.log(this.isFirstTime);
           if (this.isFirstTime) {
             const totalPages = Math.ceil(this.totalItems / limit); // Número total de páginas
             const lastPageSkip = (totalPages - 1) * limit;

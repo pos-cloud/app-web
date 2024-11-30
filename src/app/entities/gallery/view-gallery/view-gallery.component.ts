@@ -148,7 +148,6 @@ export class ViewGalleryComponent implements OnInit {
               } else {
                 this.articleImage = this.article.picture;
               }
-              console.log(this.articleImage);
             }
           },
           (error) => {

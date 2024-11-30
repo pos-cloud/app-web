@@ -1234,7 +1234,6 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   async changeArticleByVariants(articleSelected: Article) {
-    console.log(articleSelected);
     this.movementOfArticle = new MovementOfArticle();
     this.movementOfArticle.transaction = this.transaction;
     this.movementOfArticle.modifyStock = this.transaction.type.modifyStock;

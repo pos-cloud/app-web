@@ -1,4 +1,3 @@
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -19,7 +18,6 @@ import { EntitiesRoutingModule } from './entities-routing.module';
     ReactiveFormsModule,
     NgxPaginationModule,
     FocusDirective,
-    DragDropModule,
     ProgressbarModule,
     PipesModule,
     TranslateModule,
@@ -35,7 +33,6 @@ import { EntitiesRoutingModule } from './entities-routing.module';
     ReactiveFormsModule,
     NgxPaginationModule,
     FocusDirective,
-    DragDropModule,
     ProgressbarModule,
     PipesModule,
     TranslateModule,

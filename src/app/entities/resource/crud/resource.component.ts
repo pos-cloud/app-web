@@ -229,7 +229,6 @@ export class ResourceComponent implements OnInit {
       ) {
         await this.deleteFile(pictureDelete);
       }
-      console.log(MediaCategory.RESOURCE);
       this._resourceService
         .makeFileRequest(MediaCategory.RESOURCE, this.selectedFile)
         .then(

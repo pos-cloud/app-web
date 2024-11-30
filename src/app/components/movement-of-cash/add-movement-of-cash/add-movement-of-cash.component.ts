@@ -2086,7 +2086,6 @@ export class AddMovementOfCashComponent implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    console.log(this.disableEnterKey);
     if (event.key === 'Enter' && this.disableEnterKey) {
       event.preventDefault();
     }

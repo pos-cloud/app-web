@@ -292,7 +292,6 @@ export class HeaderComponent {
   }
 
   toggleMenu() {
-    console.log('entro');
     this.toggleNavbar = !this.toggleNavbar;
   }
 

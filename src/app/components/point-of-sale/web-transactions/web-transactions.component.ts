@@ -392,7 +392,6 @@ export class WebTransactionsComponent implements OnInit {
   }
 
   public async viewTransaction(transaction: Transaction) {
-    console.log(transaction);
     this.transaction = await this.getTransaction(transaction._id);
     if (this.transaction) {
       this.openModal('view-transaction');

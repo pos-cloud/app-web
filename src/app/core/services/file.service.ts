@@ -32,7 +32,6 @@ export class FileService {
       formData.append('origin', origin);
 
       xhr.onreadystatechange = function () {
-        // console.log(xhr);
         if (xhr.readyState == 4) {
           if (xhr.status == 201) {
             resolve(xhr.response);

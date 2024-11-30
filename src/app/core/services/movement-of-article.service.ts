@@ -295,8 +295,6 @@ export class MovementOfArticleService extends ModelService {
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    console.log(headers);
-
     return this._http
       .put(
         URL,

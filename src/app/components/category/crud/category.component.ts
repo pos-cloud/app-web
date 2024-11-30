@@ -474,10 +474,6 @@ export class CategoryComponent implements OnInit {
             this.obj[field.name] = parseFloat(this.obj[field.name]);
             break;
           case 'file':
-            console.log('swith file');
-            console.log(this.operation);
-            console.log(this.obj[field.name]);
-
             if (this.operation === 'delete') {
               this.deleteFile(field.name, this.obj[field.name]);
             }
@@ -488,7 +484,6 @@ export class CategoryComponent implements OnInit {
               this.filesToUpload[field.name].length > 0
             ) {
               this.loading = true;
-              console.log(this.obj[field.name]);
               this.deleteFile(field.name, this.obj[field.name]);
               if (
                 this.filesToUpload[field.name] &&

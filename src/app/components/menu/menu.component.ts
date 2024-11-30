@@ -110,7 +110,6 @@ export class MenuComponent implements OnInit {
         },
       })
       .subscribe((result) => {
-        console.log(result);
         // if (result.status === 200) {
         // this.styleMenu = result.result[0]
         // }

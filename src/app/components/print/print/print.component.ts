@@ -6823,7 +6823,6 @@ export class PrintComponent implements OnInit {
         )
         .subscribe(
           (result) => {
-            console.log(result);
             this.loading = false;
             if (result && result[0] && result[0].structures) {
               resolve(true);

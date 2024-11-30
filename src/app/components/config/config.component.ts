@@ -915,7 +915,6 @@ export class ConfigComponent implements OnInit {
         .uploadImage(MediaCategory.CONFIG, this.filesToUpload)
         .then(
           (result: string) => {
-            console.log(result);
             this.config['companyPicture'] = result;
             this.imageURL = result;
             resolve(result);
@@ -932,7 +931,6 @@ export class ConfigComponent implements OnInit {
           resolve(true);
         },
         (error) => {
-          console.log(error);
           this._toastService.showToast({ message: error.messge });
           resolve(true);
         }

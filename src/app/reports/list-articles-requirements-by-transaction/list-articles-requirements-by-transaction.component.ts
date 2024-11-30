@@ -305,10 +305,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     return count;
   }
 
-  public orderBy(value) {
-    console.log(value);
-  }
-
   public getValue(item, column): any {
     let val: string = 'item';
     let exists: boolean = true;
