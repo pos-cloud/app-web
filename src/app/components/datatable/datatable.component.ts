@@ -131,6 +131,10 @@ export class DatatableComponent {
       10
     );
 
+    this.sort = JSON.parse(
+      localStorage.getItem(`${this.identifier}_sort`) || '{}'
+    );
+
     this.getItems();
   }
 
@@ -157,6 +161,9 @@ export class DatatableComponent {
     } else {
       this.sort = JSON.parse('{"' + term + '": 1 }');
     }
+
+    localStorage.setItem(`${this.identifier}_sort`, JSON.stringify(this.sort));
+
     this.getItems();
   }
 
@@ -169,7 +176,6 @@ export class DatatableComponent {
   }
 
   public addFilters(): void {
-    console.log(this.filters);
     localStorage.setItem(
       `${this.identifier}_datatableFilters`,
       JSON.stringify(this.filters)
