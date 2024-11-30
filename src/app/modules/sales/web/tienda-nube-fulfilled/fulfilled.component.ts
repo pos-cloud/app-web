@@ -18,7 +18,6 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-fulfilled',
   templateUrl: './fulfilled.component.html',
-  styleUrls: ['./fulfilled.component.css'],
   standalone: true,
   imports: [
     CommonModule,

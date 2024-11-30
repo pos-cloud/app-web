@@ -26,7 +26,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 //import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
-import { ToastrModule } from 'ngx-toastr';
 
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { QuillModule } from 'ngx-quill';
@@ -359,8 +358,6 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
-    //SocketIoModule.forRoot(configSocket),
-    ToastrModule.forRoot(),
     PipesModule,
     ComponentsModule,
     ExportersModule,
