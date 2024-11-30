@@ -91,7 +91,7 @@
                   [focus]="focusEvent"
                   [ngClass]="{
                     'is-invalid':
-                      !articleForm.get('code')?.valid && formErrors.code
+                      !articleForm.get('code')?.valid && formErrors.code,
                   }"
                   [readonly]="readonly"
                 />
@@ -163,7 +163,8 @@
                   (blur)="onValueChanged($event.target.id)"
                   [ngClass]="{
                     'is-invalid':
-                      !articleForm.get('category')?.valid && formErrors.category
+                      !articleForm.get('category')?.valid &&
+                      formErrors.category,
                   }"
                   [readonly]="readonly"
                 />
@@ -192,7 +193,7 @@
                   [ngClass]="{
                     'is-invalid':
                       !articleForm.get('description')?.valid &&
-                      formErrors.description
+                      formErrors.description,
                   }"
                   [readonly]="readonly"
                 />
@@ -221,7 +222,7 @@
                   [ngClass]="{
                     'is-invalid':
                       !articleForm.get('posDescription')?.valid &&
-                      formErrors.posDescription
+                      formErrors.posDescription,
                   }"
                   [readonly]="readonly"
                 />
@@ -435,7 +436,7 @@
                     [ngClass]="{
                       'is-invalid':
                         !articleForm.get('basePrice')?.valid &&
-                        formErrors.basePrice
+                        formErrors.basePrice,
                     }"
                   />
                 </div>
@@ -544,7 +545,7 @@
                     [ngClass]="{
                       'is-invalid':
                         !articleForm.get('markupPercentage')?.valid &&
-                        formErrors.markupPercentage
+                        formErrors.markupPercentage,
                     }"
                   />
                 </div>
@@ -601,7 +602,7 @@
                     [ngClass]="{
                       'is-invalid':
                         !articleForm.get('markupPrice')?.valid &&
-                        formErrors.markupPrice
+                        formErrors.markupPrice,
                     }"
                   />
                 </div>
@@ -654,7 +655,7 @@
                     [ngClass]="{
                       'is-invalid':
                         !articleForm.get('salePrice')?.valid &&
-                        formErrors.salePrice
+                        formErrors.salePrice,
                     }"
                   />
                 </div>
@@ -956,7 +957,11 @@
               class="form-control"
               name="tag"
               id="tag"
-              (keydown.enter)="addTag($event.target.value)"
+              (keydown.enter)="
+                addTag($event.target.value);
+                $event.stopPropagation();
+                $event.preventDefault()
+              "
               placeholder="Ingresar el tag y luego presionar enter por cada tag."
               [focus]="focusTagEvent"
               [readonly]="readonly"
