@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'app/core/guards/auth.guard';
-// import { GalleryComponent } from './crud/gallery.component';
-// import { ListGalleriesComponent } from './list-galleries/list-galleries.component';
-// import { ViewGalleryComponent } from './view-gallery/view-gallery.component';
 import { EmployeeComponent } from './crud/employee.component';
 import { ListEmployeeComponent } from './list/list-employee.component';
 

@@ -6,7 +6,7 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiResponse, Resource } from '@types';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -41,8 +41,7 @@ export class GalleryComponent implements OnInit {
     public _resourceService: ResourceService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
-    private _route: ActivatedRoute,
-    private _toastr: ToastService,
+    private _toastService: ToastService,
     public translatePipe: TranslateMePipe
   ) {
     this.getResources();
@@ -109,7 +108,7 @@ export class GalleryComponent implements OnInit {
       .subscribe(
         (result: ApiResponse) => {
           if (!result.result) {
-            this._toastr.showToast(result);
+            this._toastService.showToast(result);
           } else {
             this.gallery = result.result;
             this.gallery.resources = this.gallery.resources.map(
@@ -120,16 +119,16 @@ export class GalleryComponent implements OnInit {
                 if (completeResource) {
                   return {
                     ...galleryResource,
-                    resource: completeResource, // Aquí reemplazamos el ID con el objeto completo
+                    resource: completeResource,
                   };
                 }
-                return galleryResource; // Si no se encuentra, se deja el recurso como está
+                return galleryResource;
               }
             );
             this.setValueForm();
           }
         },
-        (error) => this._toastr.showToast(error),
+        (error) => this._toastService.showToast(error),
         () => (this.loading = false)
       );
   }
@@ -163,20 +162,8 @@ export class GalleryComponent implements OnInit {
     this.galleryForm.patchValue(values);
   }
 
-  returnTo(): void {
-    this._route.queryParams.subscribe((params) => {
-      const returnUrl = params['returnURL']
-        ? decodeURIComponent(params['returnURL'])
-        : null;
-
-      if (returnUrl) {
-        // Si hay una returnURL, navegar a esa URL
-        this._router.navigateByUrl(returnUrl);
-      } else {
-        // Navegar a una ruta por defecto si no hay returnURL
-        this._router.navigate(['/entities/galleries']);
-      }
-    });
+  returnTo() {
+    return this._router.navigate(['/entities/galleries']);
   }
 
   addGallery() {
@@ -206,13 +193,13 @@ export class GalleryComponent implements OnInit {
         .subscribe(
           (result: ApiResponse) => {
             if (!result.result) {
-              this._toastr.showToast(result);
+              this._toastService.showToast(result);
             } else {
-              this._toastr.showToast(result);
+              this._toastService.showToast(result);
               if (result.status == 200) return this.returnTo();
             }
           },
-          (error) => this._toastr.showToast(error),
+          (error) => this._toastService.showToast(error),
           () => (this.loading = false)
         );
     } else {
@@ -232,13 +219,13 @@ export class GalleryComponent implements OnInit {
         .subscribe(
           (result: ApiResponse) => {
             if (!result.result) {
-              this._toastr.showToast(result);
+              this._toastService.showToast(result);
             } else {
-              this._toastr.showToast(result);
+              this._toastService.showToast(result);
               if (result.status == 200) return this.returnTo();
             }
           },
-          (error) => this._toastr.showToast(error),
+          (error) => this._toastService.showToast(error),
           () => (this.loading = false)
         );
     } else {
@@ -253,13 +240,13 @@ export class GalleryComponent implements OnInit {
       (result) => {
         this.loading = false;
         if (!result.result) {
-          this._toastr.showToast(result);
+          this._toastService.showToast(result);
         } else {
-          this._toastr.showToast(result);
+          this._toastService.showToast(result);
           if (result.status == 200) return this.returnTo();
         }
       },
-      (error) => this._toastr.showToast(error),
+      (error) => this._toastService.showToast(error),
       () => (this.loading = false)
     );
   }
@@ -282,12 +269,12 @@ export class GalleryComponent implements OnInit {
       .subscribe(
         (result: ApiResponse) => {
           if (!result.result) {
-            this._toastr.showToast(result);
+            this._toastService.showToast(result);
           } else {
             this.resources = result.result;
           }
         },
-        (error) => this._toastr.showToast(error),
+        (error) => this._toastService.showToast(error),
         () => (this.loading = false)
       );
   }
@@ -306,12 +293,9 @@ export class GalleryComponent implements OnInit {
         this.gallery.colddown < 0 ||
         this.galleryForm.value.colddown < 0
       ) {
-        this._toastr.showToast(
-          null,
-          'info',
-          undefined,
-          'El intervalo no puede ser 0 o negativo'
-        );
+        this._toastService.showToast({
+          message: 'El intervalo no puede ser 0 o negativo',
+        });
         resolve(false);
       }
 

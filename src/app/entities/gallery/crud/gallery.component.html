@@ -52,165 +52,223 @@
     <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body">
       <form [formGroup]="galleryForm" autocomplete="off">
-        <div class="modal-body">
-          <div class="row">
-            <label class="form-group col-md-12">
-              <b>{{ 'mainData' | translate | capitalize }}</b>
-            </label>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-8">
-              <label for="name" class="control-label"
-                >{{ 'name' | translate | capitalize }}:</label
-              >
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="name"
-                  name="name"
-                  id="name"
-                  [focus]="focusEvent"
-                  [readonly]="readonly"
-                  [ngClass]="{
-                    'is-invalid':
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-8">
+            <label for="name" class="control-label"
+              >{{ 'name' | translate | capitalize }}:</label
+            >
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="name"
+                name="name"
+                id="name"
+                [focus]="focusEvent"
+                [readonly]="readonly"
+                [ngClass]="{
+                  'is-invalid':
                     galleryForm.get('name')?.touched &&
-                    galleryForm.get('name')?.hasError('required')
-                  }"
-                />
-              </div>
-              <div
-                  class="invalid-feedback"
-                  *ngIf="
-                  galleryForm.get('name')?.touched &&
-                  galleryForm.get('name')?.hasError('required')
-                  "
-                >
-                  Este campo es obligatorio.
-                </div>
-           
+                    galleryForm.get('name')?.hasError('required'),
+                }"
+              />
             </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                galleryForm.get('name')?.touched &&
+                galleryForm.get('name')?.hasError('required')
+              "
+            >
+              Este campo es obligatorio.
+            </div>
+          </div>
 
-            <div class="form-group col-md-2">
-              <label for="colddown" class="control-label"
-                >{{ 'colddown' | translate | capitalize }}:</label
+          <div class="form-group col-md-2">
+            <label for="colddown" class="control-label"
+              >{{ 'colddown' | translate | capitalize }}:</label
+            >
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="colddown"
+                name="colddown"
+                id="colddown"
+                value="colddown"
+                [readonly]="readonly"
+              />
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">seg</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="barcode" class="control-label"
+              >Tiene Codigo de Barra</label
+            >
+            <select class="form-control" formControlName="barcode">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm)">
+          <div class="row">
+            <div class="form-group col-md-5">
+              <label for="resource" class="control-label">
+                {{ 'resource' | translate | capitalize }}:</label
+              >
+              <select
+                class="form-control"
+                [(ngModel)]="selectedResource"
+                name="resource"
+              >
+                <option
+                  *ngFor="let resource of resources"
+                  [value]="resource._id"
+                  [disabled]="readonly"
+                >
+                  {{ resource.name }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group col-md-3">
+              <label for="order" class="control-label"
+                >{{ 'order' | translate | capitalize }}:</label
               >
               <div class="input-group">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="colddown"
-                  name="colddown"
-                  id="colddown"
-                  value="colddown"
+                  ngModel
+                  name="order"
                   [readonly]="readonly"
                 />
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">seg</span>
-                </div>
               </div>
             </div>
             <div class="form-group col-md-2">
-              <label for="barcode" class="control-label"
-                >Tiene Codigo de Barra</label
-              >
-              <select class="form-control" formControlName="barcode">
-                <option [ngValue]="true" [disabled]="readonly">
-                  {{ 'true' | translate | capitalize }}
-                </option>
-                <option [ngValue]="false" [disabled]="readonly">
-                  {{ 'false' | translate | capitalize }}
-                </option>
-              </select>
+              <label for="colddown" class="control-label">{{
+                'add' | translate | capitalize
+              }}</label>
+              <div class="input-group">
+                <button type="summit" class="btn btn-success btn-sm especial">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
             </div>
           </div>
-          <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm)">
+        </form>
+        <table class="table table-striped">
+          <thead>
+            <tr class="separation">
+              <th>{{ 'resource' | translate | capitalize }}</th>
+              <th>{{ 'order' | translate | capitalize }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              class="separation"
+              *ngFor="
+                let resourceAux of galleryForm.get('resources')['controls'];
+                let i = index
+              "
+            >
+              <div *ngFor="let resource of resources; let i = index">
+                <td
+                  *ngIf="
+                    resourceAux &&
+                    resourceAux.value &&
+                    resourceAux.value.resource &&
+                    resourceAux.value.resource === resource._id
+                  "
+                >
+                  {{ resource.name }}
+                </td>
+              </div>
+              <td>{{ resourceAux.value.order }}</td>
+              <td align="right" width="10">
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  (click)="deleteResource(i)"
+                >
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
             <div class="row">
-              <div class="form-group col-md-5">
-                <label for="resource" class="control-label">
-                  {{ 'resource' | translate | capitalize }}:</label
+              <div class="form-group col-md-6">
+                <label class="control-label"
+                  >{{ 'creationUser.name' | translate | capitalize }}:</label
                 >
-                <select
-                  class="form-control"
-                  [(ngModel)]="selectedResource"
-                  name="resource"
+                <label class="control-label"
+                  ><b> {{ gallery?.creationUser?.name ?? '' }}</b></label
                 >
-                  <option
-                    *ngFor="let resource of resources"
-                    [value]="resource._id"
-                    [disabled]="readonly"
-                  >
-                    {{ resource.name }}
-                  </option>
-                </select>
               </div>
-              <div class="form-group col-md-3">
-                <label for="order" class="control-label"
-                  >{{ 'order' | translate | capitalize }}:</label
+              <div class="form-group col-md-6">
+                <label class="control-label"
+                  >{{ 'theDay' | translate | capitalize }}:</label
                 >
-                <div class="input-group">
-                  <input
-                    type="number"
-                    class="form-control"
-                    ngModel
-                    name="order"
-                    [readonly]="readonly"
-                  />
-                </div>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="colddown" class="control-label">{{
-                  'add' | translate | capitalize
-                }}</label>
-                <div class="input-group">
-                  <button type="summit" class="btn btn-success btn-sm especial">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                </div>
+                <label class="control-label"
+                  ><b>
+                    {{
+                      gallery?.creationDate ?? null
+                        | dateFormat: 'DD/MM/YYYY HH:mm:ss'
+                    }}</b
+                  ></label
+                >
               </div>
             </div>
-          </form>
-          <table class="table table-striped">
-            <thead>
-              <tr class="separation">
-                <th>{{ 'resource' | translate | capitalize }}</th>
-                <th>{{ 'order' | translate | capitalize }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                class="separation"
-                *ngFor="
-                  let resourceAux of galleryForm.get('resources')['controls'];
-                  let i = index
-                "
-              >
-                <div *ngFor="let resource of resources; let i = index">
-                  <td
-                    *ngIf="
-                      resourceAux &&
-                      resourceAux.value &&
-                      resourceAux.value.resource &&
-                      resourceAux.value.resource === resource._id
-                    "
-                  >
-                    {{ resource.name }}
-                  </td>
-                </div>
-                <td>{{ resourceAux.value.order }}</td>
-                <td align="right" width="10">
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    (click)="deleteResource(i)"
-                  >
-                    <i class="fa fa-trash-o"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-            <tfoot></tfoot>
-          </table>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label"
+                  >{{ 'updateUser.name' | translate | capitalize }}:</label
+                >
+                <label class="control-label"
+                  ><b>{{ gallery?.updateUser?.name ?? '' }}</b></label
+                >
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label"
+                  >{{ 'theDay' | translate | capitalize }}:</label
+                >
+                <label class="control-label"
+                  ><b>{{
+                    gallery?.updateDate ?? null
+                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
+                  }}</b></label
+                >
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">Id:</label>
+                <label class="control-label"
+                  ><b>{{ gallery?._id }}</b></label
+                >
+              </div>
+            </div>
+          </div>
         </div>
       </form>
     </div>

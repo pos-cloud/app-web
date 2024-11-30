@@ -1,18 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'app/core/guards/auth.guard';
-import { LicenseGuard } from 'app/core/guards/license.guard'; // Si también lo necesitas
+import { LicenseGuard } from 'app/core/guards/license.guard';
 
 const routes: Routes = [
   {
     path: 'makes',
     loadChildren: () => import('./make/make.module').then((m) => m.MakeModule),
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'articles',
-    loadChildren: () =>
-      import('./article/article.module').then((m) => m.ArticleModule),
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

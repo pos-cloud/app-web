@@ -14,7 +14,6 @@ import { EntitiesRoutingModule } from './entities-routing.module';
 @NgModule({
   declarations: [],
   imports: [
-    TypeaheadDropdownComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -26,6 +25,7 @@ import { EntitiesRoutingModule } from './entities-routing.module';
     TranslateModule,
     NgbDropdownModule,
     NgbModule,
+    TypeaheadDropdownComponent,
     DatatableModule,
     EntitiesRoutingModule,
   ],
