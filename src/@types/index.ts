@@ -1,5 +1,6 @@
 // entities
 export { Article } from './entities/article.interface';
+export { Bank } from './entities/bank.interface';
 export { Branch } from './entities/branch.interface';
 export { Category } from './entities/category.interface';
 export { Claim, ClaimPriority, ClaimType } from './entities/claim.interface';

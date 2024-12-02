@@ -1,11 +1,10 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 
+import { Config } from 'app/app.config';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
-import { Bank } from '../../components/bank/bank';
+import { catchError, map, Observable, of } from 'rxjs';
+import Bank from '../../../../services/print/app/models/bank';
 import { AuthService } from './auth.service';
 
 @Injectable({

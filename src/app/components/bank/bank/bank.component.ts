@@ -232,7 +232,7 @@ export class BankComponent implements OnInit {
 
     this.bank = this.bankForm.value;
 
-    this._bankService.updateBank(this.bank).subscribe(
+    this._bankService.update(this.bank).subscribe(
       (result) => {
         if (!result.bank) {
           this.loading = false;
@@ -260,7 +260,7 @@ export class BankComponent implements OnInit {
 
     this.bank = this.bankForm.value;
 
-    this._bankService.saveBank(this.bank).subscribe(
+    this._bankService.save(this.bank).subscribe(
       (result) => {
         if (!result.bank) {
           this.loading = false;
