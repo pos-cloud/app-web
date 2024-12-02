@@ -30,7 +30,7 @@ import { Config } from 'app/app.config';
 
 // COMPONENTS
 
-import { Bank } from 'app/components/bank/bank';
+import { Bank } from '@types';
 import { Currency } from 'app/components/currency/currency';
 import { Holiday } from 'app/components/holiday/holiday.model';
 import { AccountSeatService } from 'app/core/services/account-seat.service';

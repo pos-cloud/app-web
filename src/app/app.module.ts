@@ -43,8 +43,6 @@ import { AddArticleStockComponent } from './components/article-stock/article-sto
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
-import { BankComponent } from './components/bank/bank/bank.component';
-import { ListBankComponent } from './components/bank/list-bank/list-bank.component';
 import { BranchComponent } from './components/branch/branch/branch.component';
 import { ListBranchComponent } from './components/branch/list-branches/list-branches.component';
 import { SelectBranchComponent } from './components/branch/select-branch/select-branch.component';
@@ -286,8 +284,6 @@ export function createTranslateLoader(http: HttpClient) {
     ListStatesComponent,
     CountryComponent,
     ListCountriesComponent,
-    BankComponent,
-    ListBankComponent,
     BranchComponent,
     ListBranchComponent,
     ListOriginsComponent,

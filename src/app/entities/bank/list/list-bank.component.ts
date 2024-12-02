@@ -136,7 +136,7 @@ export class ListBankComponent {
         click: `this.refresh()`,
       },
     ];
-    this.title = 'bank';
+    this.title = 'banks';
   }
 
   public async emitEvent(event) {

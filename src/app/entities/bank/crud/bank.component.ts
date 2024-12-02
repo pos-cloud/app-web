@@ -39,18 +39,23 @@ export class BankComponent implements OnInit {
     public _router: Router,
     public _fb: UntypedFormBuilder,
     private _toastService: ToastService
-  ) {}
+  ) {
+    this.bankForm = this._fb.group({
+      _id: ['', []],
+      code: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      agency: ['', []],
+      account: ['', []],
+    });
+  }
 
-  ngOnInit() {
-    let pathUrl = this._router.url.split('/');
+  async ngOnInit() {
+    const pathUrl = this._router.url.split('/');
+    const bankId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.bankId = pathUrl[4];
-    this.getAccount();
-    this.buildForm();
+    await this.getAccount();
 
-    if (this.bankId) {
-      this.getBank();
-    }
+    if (bankId) this.getBank(bankId);
   }
 
   ngAfterViewInit() {
@@ -60,16 +65,6 @@ export class BankComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  public buildForm(): void {
-    this.bankForm = this._fb.group({
-      _id: ['', []],
-      code: ['', [Validators.required]],
-      name: ['', [Validators.required]],
-      agency: ['', [Validators.required]],
-      account: ['', []],
-    });
   }
 
   public setValueForm(): void {
@@ -90,30 +85,32 @@ export class BankComponent implements OnInit {
     return this._router.navigate(['/entities/banks']);
   }
 
-  getAccount() {
+  getAccount(): Promise<void> {
     this.loading = true;
-
-    this._accountService
-      .getAll({})
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: ApiResponse) => {
-          this.accounts = result.result;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    return new Promise((resolve, reject) => {
+      this._accountService
+        .getAll({})
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this.accounts = result.result;
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            resolve();
+          },
+        });
+    });
   }
 
-  public getBank() {
+  public getBank(bankId: string) {
     this.loading = true;
 
     this._bankService
-      .getById(this.bankId)
+      .getById(bankId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
@@ -177,13 +174,12 @@ export class BankComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          this.buildForm();
+          this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
-          this.returnTo();
           this.loading = false;
         },
       });
@@ -198,13 +194,13 @@ export class BankComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
           this.loading = false;
         },
         complete: () => {
-          this.returnTo();
           this.loading = false;
         },
       });

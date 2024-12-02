@@ -5,7 +5,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Bank } from 'app/components/bank/bank';
+import { Bank } from '@types';
 import {
   MovementOfCash,
   StatusCheck,
