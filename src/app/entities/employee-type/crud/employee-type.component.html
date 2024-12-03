@@ -102,54 +102,43 @@
           <div class="form-group col-md-12">
             <div class="row">
               <div class="form-group col-md-6">
-                <label class="control-label"
-                  >{{ 'creationUser.name' | translate | capitalize }}:</label
-                >
-                <label class="control-label"
-                  ><b> {{ employeeType?.creationUser?.name ?? null }}</b></label
-                >
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ employeeType?.creationUser?.name || '' }}</b>
+                </label>
               </div>
               <div class="form-group col-md-6">
-                <label class="control-label"
-                  >{{ 'theDay' | translate | capitalize }}:</label
-                >
-                <label class="control-label"
-                  ><b>
-                    {{
-                      employeeType?.creationDate ?? null
-                        | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                    }}</b
-                  ></label
-                >
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{
+                    employeeType?.creationDate ?? null
+                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
+                  }}</b>
+                </label>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6">
-                <label class="control-label"
-                  >{{ 'updateUser.name' | translate | capitalize }}:</label
-                >
-                <label class="control-label"
-                  ><b>{{ employeeType?.updateUser?.name ?? '' }}</b></label
-                >
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ employeeType?.updateUser?.name || '' }}</b>
+                </label>
               </div>
               <div class="form-group col-md-6">
-                <label class="control-label"
-                  >{{ 'theDay' | translate | capitalize }}:</label
-                >
-                <label class="control-label"
-                  ><b>{{
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{
                     employeeType?.updateDate ?? null
                       | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b></label
-                >
+                  }}</b>
+                </label>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6">
-                <label class="control-label">Id:</label>
-                <label class="control-label"
-                  ><b>{{ employeeType?._id ?? '' }}</b></label
-                >
+                <label class="control-label">
+                  ID:<b>{{ employeeType?._id || '' }}</b>
+                </label>
               </div>
             </div>
           </div>

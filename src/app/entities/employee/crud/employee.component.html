@@ -76,7 +76,7 @@
               [ngClass]="{
                 'is-invalid':
                   employeeForm.get('name')?.touched &&
-                  employeeForm.get('name')?.invalid
+                  employeeForm.get('name')?.invalid,
               }"
               [readonly]="readonly"
             />
@@ -154,54 +154,43 @@
           <div class="form-group col-md-12">
             <div class="row">
               <div class="form-group col-md-6">
-                <label class="control-label"
-                  >{{ 'creationUser.name' | translate | capitalize }}:</label
-                >
-                <label class="control-label"
-                  ><b> {{ employee?.creationUser?.name ?? '' }}</b></label
-                >
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ employee?.creationUser?.name || '' }}</b>
+                </label>
               </div>
               <div class="form-group col-md-6">
-                <label class="control-label"
-                  >{{ 'theDay' | translate | capitalize }}:</label
-                >
-                <label class="control-label"
-                  ><b>
-                    {{
-                      employee?.creationDate ?? null
-                        | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                    }}</b
-                  ></label
-                >
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{
+                    employee?.creationDate ?? null
+                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
+                  }}</b>
+                </label>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6">
-                <label class="control-label"
-                  >{{ 'updateUser.name' | translate | capitalize }}:</label
-                >
-                <label class="control-label"
-                  ><b>{{ employee?.updateUser?.name ?? '' }}</b></label
-                >
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ employee?.updateUser?.name || '' }}</b>
+                </label>
               </div>
               <div class="form-group col-md-6">
-                <label class="control-label"
-                  >{{ 'theDay' | translate | capitalize }}:</label
-                >
-                <label class="control-label"
-                  ><b>{{
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{
                     employee?.updateDate ?? null
                       | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b></label
-                >
+                  }}</b>
+                </label>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6">
-                <label class="control-label">Id:</label>
-                <label class="control-label"
-                  ><b>{{ employee?._id }}</b></label
-                >
+                <label class="control-label">
+                  ID:<b>{{ employee?._id || '' }}</b>
+                </label>
               </div>
             </div>
           </div>
