@@ -152,7 +152,7 @@ export class ListBankComponent {
         this._router.navigateByUrl('entities/banks/update/' + obj._id);
         break;
       case 'delete':
-        this._router.navigateByUrl('entities/bansk/delete/' + obj._id);
+        this._router.navigateByUrl('entities/banks/delete/' + obj._id);
         break;
       case 'add':
         this._router.navigateByUrl('entities/banks/add');

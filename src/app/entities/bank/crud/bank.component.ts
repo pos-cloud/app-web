@@ -45,7 +45,7 @@ export class BankComponent implements OnInit {
       code: ['', [Validators.required]],
       name: ['', [Validators.required]],
       agency: ['', []],
-      account: ['', []],
+      account: [null, []],
     });
   }
 
@@ -69,8 +69,9 @@ export class BankComponent implements OnInit {
 
   public setValueForm(): void {
     const account = this.accounts?.find(
-      (item) => item._id === this.bank.account.toString()
+      (item) => item._id === this.bank?.account?.toString()
     );
+
     const values = {
       _id: this.bank._id ?? '',
       code: this.bank.code ?? 0,
@@ -131,7 +132,7 @@ export class BankComponent implements OnInit {
       case 'add':
         this.saveBank();
         break;
-      case 'edit':
+      case 'update':
         this.updateBank();
         break;
       case 'delete':
@@ -145,7 +146,7 @@ export class BankComponent implements OnInit {
     this.loading = true;
 
     this.bank = this.bankForm.value;
-
+    this.bank.account = this.bank.account == '' ? null : this.bank.account;
     this._bankService
       .update(this.bank)
       .pipe(takeUntil(this.destroy$))
