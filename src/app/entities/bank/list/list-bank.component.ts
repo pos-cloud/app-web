@@ -61,7 +61,7 @@ export class ListBankComponent {
         required: true,
       },
       {
-        name: 'account',
+        name: 'account.description',
         visible: false,
         disabled: false,
         filter: true,
