@@ -39,7 +39,7 @@ import {
 } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
-import { FulfilledComponent } from 'app/modules/sales/web/tienda-nube-fulfilled/fulfilled.component';
+import { FulfilledComponent } from 'app/modules/sales/tienda-nube/tienda-nube-fulfilled/fulfilled.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subscription } from 'rxjs';
@@ -55,7 +55,7 @@ import { OriginService } from '../../core/services/origin.service';
 import { EmailService } from '../../core/services/send-email.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
-import { CancelComponent } from '../../modules/sales/web/tienda-nube-cancel/cancel.component';
+import { CancelComponent } from '../../modules/sales/tienda-nube/tienda-nube-cancel/cancel.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
 import { padNumber } from '../../util/functions/pad/padNumber';

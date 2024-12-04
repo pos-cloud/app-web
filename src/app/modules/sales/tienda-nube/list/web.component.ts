@@ -1,8 +1,16 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
+import {
+  NgbAlertConfig,
+  NgbModal,
+  NgbModule,
+} from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ApiResponse, IAttribute } from '@types';
 import { Config } from 'app/app.config';
 import { DatatableController } from 'app/components/datatable/datatable.controller';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
@@ -13,16 +21,19 @@ import {
 } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
+import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
-import { CancelComponent } from 'app/modules/sales/web/tienda-nube-cancel/cancel.component';
-import { DateFromToComponent } from 'app/modules/sales/web/tienda-nube-date-from-to/date-from-to.component';
+import { CancelComponent } from 'app/modules/sales/tienda-nube/tienda-nube-cancel/cancel.component';
+import { DateFromToComponent } from 'app/modules/sales/tienda-nube/tienda-nube-date-from-to/date-from-to.component';
+import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TranslateMePipe } from 'app/shared/pipes/translate-me';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as moment from 'moment';
+import { NgxPaginationModule } from 'ngx-pagination';
 import * as printJS from 'print-js';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -32,13 +43,24 @@ import { FulfilledComponent } from '../tienda-nube-fulfilled/fulfilled.component
   selector: 'app-web-transactions',
   templateUrl: './web.component.html',
   styleUrls: ['./web.component.scss'],
-  providers: [NgbAlertConfig, TranslateMePipe],
+  standalone: true,
+  providers: [NgbAlertConfig, TranslateService],
   encapsulation: ViewEncapsulation.None,
+  imports: [
+    CommonModule,
+    NgbModule,
+    DatatableModule,
+    PipesModule,
+    TranslateModule,
+    FormsModule,
+    NgxPaginationModule,
+    ProgressbarModule,
+  ],
 })
 export class WebComponent implements OnInit {
   public loading: boolean = false;
   public transactions: Transaction[] = new Array();
-  public transaction;
+  public transaction: Transaction;
   public transactionMovement: TransactionMovement = TransactionMovement.Sale;
   public datatableController: DatatableController;
   public user: User;
@@ -63,7 +85,8 @@ export class WebComponent implements OnInit {
     private _tiendaNubeService: TiendaNubeService,
     private _toastService: ToastService,
     public _userService: UserService,
-    private _configService: ConfigService
+    private _configService: ConfigService,
+    private _authService: AuthService
   ) {
     this.columns = [
       {
@@ -205,8 +228,12 @@ export class WebComponent implements OnInit {
 
   async ngOnInit() {
     this.identifier = this.title.replace(/\s+/g, '-').toLowerCase();
-    await this._configService.getConfig.subscribe((config) => {
+    this._configService.getConfig.subscribe((config) => {
       this.config = config;
+    });
+
+    this._authService.getIdentity.subscribe(async (identity) => {
+      this.user = identity;
     });
 
     this.datatableController = new DatatableController(
@@ -227,31 +254,13 @@ export class WebComponent implements OnInit {
   }
 
   private processParams(): void {
-    // Recupera los filtros desde localStorage
-    const storedFilters = JSON.parse(
-      localStorage.getItem(`${this.identifier}_datatableFilters`) || '{}'
-    );
     this.filters = {};
 
     for (let field of this.columns) {
-      this.filters[field.name] =
-        storedFilters[field.name] || field.defaultFilter || '';
+      this.filters[field.name] = field.defaultFilter;
     }
-
-    // Recupera currentPage e itemsPerPage desde localStorage
-    this.currentPage = parseInt(
-      localStorage.getItem(`${this.identifier}_currentPage`) || '0',
-      10
-    );
-    this.itemsPerPage = parseInt(
-      localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10',
-      10
-    );
-
-    this.sort = JSON.parse(
-      localStorage.getItem(`${this.identifier}_sort`) || '{}'
-    );
-
+    this.itemsPerPage = 10;
+    this.sort = {};
     this.getTransactions();
   }
 
@@ -323,31 +332,33 @@ export class WebComponent implements OnInit {
               } else {
                 let printer: Printer;
 
-                await this.getUser().then(async (user) => {
-                  if (user && user.printers && user.printers.length > 0) {
-                    for (const element of user.printers) {
-                      if (
-                        element &&
-                        element.printer &&
-                        element.printer.printIn === PrinterPrintIn.Counter
-                      ) {
-                        printer = element.printer;
-                      }
+                if (
+                  this.user &&
+                  this.user.printers &&
+                  this.user.printers.length > 0
+                ) {
+                  for (const element of this.user.printers) {
+                    if (
+                      element &&
+                      element.printer &&
+                      element.printer.printIn === PrinterPrintIn.Counter
+                    ) {
+                      printer = element.printer;
                     }
+                  }
+                } else {
+                  if (this.transaction.type.defectPrinter) {
+                    printer = this.transaction.type.defectPrinter;
                   } else {
-                    if (this.transaction.type.defectPrinter) {
-                      printer = this.transaction.type.defectPrinter;
-                    } else {
-                      if (this.printers && this.printers.length > 0) {
-                        for (let printer of this.printers) {
-                          if (printer.printIn === PrinterPrintIn.Counter) {
-                            printer = printer;
-                          }
+                    if (this.printers && this.printers.length > 0) {
+                      for (let printer of this.printers) {
+                        if (printer.printIn === PrinterPrintIn.Counter) {
+                          printer = printer;
                         }
                       }
                     }
                   }
-                });
+                }
 
                 modalRef = this._modalService.open(PrintComponent);
                 modalRef.componentInstance.company = transaction.company;
@@ -489,8 +500,6 @@ export class WebComponent implements OnInit {
       this.sort = JSON.parse('{"' + term + '": 1 }');
     }
 
-    localStorage.setItem(`${this.identifier}_sort`, JSON.stringify(this.sort));
-
     this.getTransactions();
   }
 
@@ -527,43 +536,8 @@ export class WebComponent implements OnInit {
       });
   }
 
-  public getUser(): Promise<User> {
-    return new Promise<User>((resolve, reject) => {
-      let identity: User = JSON.parse(sessionStorage.getItem('user'));
-      let user;
-
-      if (identity) {
-        this._userService
-          .getById(identity._id)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (result) => {
-              resolve(result.result);
-            },
-            error: (error) => {
-              this._toastService.showToast(error);
-            },
-          });
-      }
-    });
-  }
-
   public pageChange(page): void {
     this.currentPage = page;
-    // Guarda la página actual en localStorage
-    localStorage.setItem(
-      `${this.identifier}_currentPage`,
-      this.currentPage.toString()
-    );
-    this.getTransactions();
-  }
-
-  public changeItemsPerPage(): void {
-    // Guarda itemsPerPage en localStorage
-    localStorage.setItem(
-      `${this.identifier}_itemsPerPage`,
-      this.itemsPerPage.toString()
-    );
     this.getTransactions();
   }
 }

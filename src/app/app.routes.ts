@@ -70,6 +70,7 @@ import { ListVATConditionsComponent } from './components/vat-condition/list-vat-
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
+import { MODULES_ROUTES } from './modules/modules.routes';
 
 export const _routes: Routes = [
   {
@@ -662,9 +663,7 @@ export const _routes: Routes = [
   },
   {
     path: 'modules',
-    canActivate: [AuthGuard, LicenseGuard],
-    loadChildren: () =>
-      import('./modules/modules.module').then((m) => m.ModulesModule),
+    children: MODULES_ROUTES,
   },
   {
     path: '**',

@@ -1,14 +1,14 @@
 <section class="container-fluid">
   <div class="card list-counter">
     <div class="card-header">
-      <span>Pedidos</span>
+      <span>Pedidos Tienda Nube</span>
       <div class="pull-right">
         <button
-          class="btn"
+          class="btn fa fa-cloud"
           [disabled]="loading"
           (click)="openModal('dateTn', null)"
         >
-          Sincronizar Tienda Nube
+          Sincronizar
         </button>
         <button
           class="btn fa fa-refresh"
@@ -348,45 +348,6 @@
             <td>
               {{ transaction.paymentMethodEcommerce | translate }}
             </td>
-            <!-- <td style="white-space: normal">
-              <b *ngIf="transaction && transaction.shipmentMethod"
-                >{{ transaction.shipmentMethod.name }} -
-              </b>
-              <span *ngIf="transaction && transaction.deliveryAddress">
-                {{ transaction.deliveryAddress.name }}
-                {{
-                  transaction.deliveryAddress.number
-                    ? transaction.deliveryAddress.number
-                    : ''
-                }}
-                {{
-                  transaction.deliveryAddress.flat ||
-                  transaction.deliveryAddress.floor
-                    ? ' -'
-                    : ''
-                }}
-                {{
-                  transaction.deliveryAddress.flat
-                    ? ' ' + transaction.deliveryAddress.flat
-                    : ''
-                }}
-                {{
-                  transaction.deliveryAddress.floor
-                    ? ' ' + transaction.deliveryAddress.floor
-                    : ''
-                }}
-                {{
-                  transaction.deliveryAddress.city
-                    ? ', ' + transaction.deliveryAddress.city
-                    : ''
-                }}
-                {{
-                  transaction.deliveryAddress.state
-                    ? ', ' + transaction.deliveryAddress.state
-                    : ''
-                }}
-              </span>
-            </td> -->
             <td style="white-space: normal">{{ transaction.observation }}</td>
             <td>
               {{
@@ -424,7 +385,7 @@
           <select
             class="form-control"
             [(ngModel)]="itemsPerPage"
-            (change)="changeItemsPerPage()"
+            (change)="getTransactions()"
           >
             <option [value]="5">
               {{ 'show 5 records' | translate | capitalize }}
@@ -441,7 +402,6 @@
             <option [value]="100">
               {{ 'show 100 records' | translate | capitalize }}
             </option>
-            <option [value]="1000000">Mostrar Todos</option>
           </select>
         </div>
       </div>
