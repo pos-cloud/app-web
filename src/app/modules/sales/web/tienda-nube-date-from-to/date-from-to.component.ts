@@ -1,34 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateModule } from '@ngx-translate/core';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
-import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-date-from-to',
   templateUrl: './date-from-to.component.html',
   standalone: true,
-  imports: [
-    CommonModule,
-    PipesModule,
-    TranslateModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ProgressbarModule,
-  ],
+  imports: [CommonModule, PipesModule, ReactiveFormsModule],
 })
 export class DateFromToComponent {
   loading = false;
   syncForm: FormGroup;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +30,11 @@ export class DateFromToComponent {
     this.buildForm();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   buildForm(): void {
     this.syncForm = this.fb.group({
       desde: [''],
@@ -51,17 +45,20 @@ export class DateFromToComponent {
   syncTiendaNube() {
     this.loading = true;
     const formData = this.syncForm.value;
-    this._tiendaNubeService.syncTiendaNube(formData).subscribe(
-      (result) => {
-        this.loading = false;
-        this._toastService.showToast(result);
-        this.activeModal.close();
-      },
-      (error) => {
-        this.loading = false;
-        this._toastService.showToast(error);
-        this.activeModal.close();
-      }
-    );
+    this._tiendaNubeService
+      .syncTiendaNube(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this._toastService.showToast(result);
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+          this.activeModal.close();
+        },
+      });
   }
 }

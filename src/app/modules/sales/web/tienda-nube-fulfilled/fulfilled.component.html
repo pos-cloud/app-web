@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{ 'sendOrder' | translate | capitalize }}</h4>
+  <h4 class="modal-title">Enviar pedido</h4>
   <button
     type="button"
     class="close"
@@ -14,7 +14,7 @@
     <div class="row">
       <div class="form-group col-md-3">
         <label for="shipping_tracking_number" class="control-label"
-          >{{ 'shipping tracking number' | translate | capitalize }}:</label
+          >Número de seguimiento de envío:</label
         >
         <input
           type="string"
@@ -26,7 +26,7 @@
       </div>
       <div class="form-group col-md-3">
         <label for="shipping_tracking_url" class="control-label"
-          >{{ 'shipping tracking URL' | translate | capitalize }}:</label
+          >URL de seguimiento envío:</label
         >
         <input
           type="url"
@@ -38,13 +38,11 @@
       </div>
       <div class="form-group col-md-3">
         <label for="notify_customer" class="control-label"
-          >{{ 'notifyclient' | translate | capitalize }}:</label
+          >Notificar cliente:</label
         >
         <select class="form-control" formControlName="notify_customer">
-          <option [value]="true">{{ 'true' | translate | capitalize }}</option>
-          <option [value]="false">
-            {{ 'false' | translate | capitalize }}
-          </option>
+          <option [value]="true">Si</option>
+          <option [value]="false">No</option>
         </select>
       </div>
     </div>
@@ -54,11 +52,11 @@
         class="btn btn-light"
         (click)="activeModal.dismiss('cancel')"
       >
-        {{ 'cancel' | translate | capitalize }}
+        Cancelar
       </button>
       <button type="submit" class="btn btn-primary" [disabled]="loading">
         <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
-        <span *ngIf="!loading">{{ 'send' | translate | capitalize }}</span>
+        <span *ngIf="!loading">Enviar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
     </div>

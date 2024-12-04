@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse } from '@types';
+import { ApiResponse, IAttribute } from '@types';
 import { Config } from 'app/app.config';
+import { DatatableController } from 'app/components/datatable/datatable.controller';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
@@ -12,18 +13,19 @@ import {
 } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
+import { ConfigService } from 'app/core/services/config.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
 import { CancelComponent } from 'app/modules/sales/web/tienda-nube-cancel/cancel.component';
 import { DateFromToComponent } from 'app/modules/sales/web/tienda-nube-date-from-to/date-from-to.component';
-import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import * as printJS from 'print-js';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { FulfilledComponent } from '../tienda-nube-fulfilled/fulfilled.component';
 
 @Component({
@@ -36,26 +38,23 @@ import { FulfilledComponent } from '../tienda-nube-fulfilled/fulfilled.component
 export class WebComponent implements OnInit {
   public loading: boolean = false;
   public transactions: Transaction[] = new Array();
-  public transaction: Transaction;
+  public transaction;
   public transactionMovement: TransactionMovement = TransactionMovement.Sale;
+  public datatableController: DatatableController;
   public user: User;
   private subscription: Subscription = new Subscription();
-  public orderTerm: string[] = ['startDate'];
-  public propertyTerm: string;
-  public itemsPerPage = 10;
+  public columns: IAttribute[];
   public printers: Printer[];
   public config: Config;
+  private sort: {};
+  public filters: any;
+  private identifier: string;
+  private title: string = 'TiendaNube';
+  private destroy$ = new Subject<void>();
 
-  public filterEndDate;
-  public filterType;
-  public filterNumber;
-  public filterCompany;
-  public filterOrderNumber;
-  public filterState;
-  filterBalance;
-  filterObservation;
-  filterTotalPrice;
-  p;
+  public currentPage: number = 0;
+  public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     private _transactionService: TransactionService,
@@ -63,116 +62,222 @@ export class WebComponent implements OnInit {
     private _printerService: PrinterService,
     private _tiendaNubeService: TiendaNubeService,
     private _toastService: ToastService,
-    public _userService: UserService
-  ) {}
+    public _userService: UserService,
+    private _configService: ConfigService
+  ) {
+    this.columns = [
+      {
+        name: 'startDate',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'date',
+        project: `{ "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'right',
+        required: true,
+      },
+      {
+        name: 'type.name',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'number',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'number',
+        project: `{"$toString" : "$number"}`,
+        align: 'right',
+        required: false,
+      },
+      {
+        name: 'company.name',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'state',
+        visible: true,
+        disabled: false,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        defaultFilter: `{ "$nin": ["Anulado"] }`,
+        align: 'left',
+        required: true,
+      },
+      {
+        name: 'paymentMethodEcommerce',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+      },
+      {
+        name: 'observation',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+      },
+      {
+        name: 'balance',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{"$toString" : "$balance"}`,
+        defaultFilter: `{ "$gt": "0" }`,
+        align: 'right',
+        required: true,
+      },
+      {
+        name: 'madein',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        defaultFilter: `{ "$eq": "tiendanube" }`,
+        align: 'left',
+        required: true,
+      },
+      {
+        name: 'orderNumber',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'number',
+        project: null,
+        align: 'right',
+        required: true,
+      },
+      {
+        name: 'origin',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'number',
+        project: `{"$toString" : "$origin"}`,
+        align: 'center',
+        required: true,
+      },
+      {
+        name: 'totalPrice',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{"$toString" : "$totalPrice"}`,
+        align: 'right',
+        required: true,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
+      },
+    ];
+  }
 
   async ngOnInit() {
-    this.refresh();
+    this.identifier = this.title.replace(/\s+/g, '-').toLowerCase();
+    await this._configService.getConfig.subscribe((config) => {
+      this.config = config;
+    });
+
+    this.datatableController = new DatatableController(
+      this._transactionService,
+      this.columns
+    );
+
+    this.processParams();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   refresh() {
     this.getTransactions();
   }
 
-  public getTransactions(): Promise<Transaction[]> {
-    return new Promise<Transaction[]>((resolve, reject) => {
-      this.loading = true;
+  private processParams(): void {
+    // Recupera los filtros desde localStorage
+    const storedFilters = JSON.parse(
+      localStorage.getItem(`${this.identifier}_datatableFilters`) || '{}'
+    );
+    this.filters = {};
 
-      let project = {
-        _id: 1,
-        startDate: 1,
-        endDate: 1,
-        origin: 1,
-        number: 1,
-        orderNumber: 1,
-        observation: 1,
-        totalPrice: 1,
-        balance: 1,
-        state: 1,
-        madein: 1,
-        operationType: 1,
-        taxes: 1,
-        CAE: 1,
-        creationUser: 1,
-        tiendaNubeId: 1,
-        'company.name': 1,
-        'type._id': 1,
-        'type.allowEdit': 1,
-        'type.name': 1,
-        'type.level': 1,
-        'type.transactionMovement': 1,
-        'type.electronics': 1,
-        'type.paymentMethods': 1,
-        branchOrigin: 1,
-        'deliveryAddress.name': 1,
-        'deliveryAddress.number': 1,
-        'deliveryAddress.floor': 1,
-        'deliveryAddress.flat': 1,
-        'deliveryAddress.city': 1,
-        'deliveryAddress.state': 1,
-        'deliveryAddress.observation': 1,
-        'deliveryAddress.shippingStatus': 1,
-        'shipmentMethod.name': 1,
-        paymentMethodEcommerce: 1,
-      };
-      let match = {
-        state: { $nin: [TransactionState.Canceled] },
-        madein: {
-          $in: ['pedidos-web', 'mercadolibre', 'woocommerce', 'tiendanube'],
-        },
-        operationType: { $ne: 'D' },
-        balance: { $gt: 0 },
-        'type.transactionMovement': this.transactionMovement,
-      };
+    for (let field of this.columns) {
+      this.filters[field.name] =
+        storedFilters[field.name] || field.defaultFilter || '';
+    }
 
-      if (this.transactionMovement !== TransactionMovement.Stock) {
-        project['company._id'] = 1;
-        project['company.name'] = 1;
-      }
+    // Recupera currentPage e itemsPerPage desde localStorage
+    this.currentPage = parseInt(
+      localStorage.getItem(`${this.identifier}_currentPage`) || '0',
+      10
+    );
+    this.itemsPerPage = parseInt(
+      localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10',
+      10
+    );
 
-      if (this.transactionMovement === TransactionMovement.Sale) {
-        project['employeeClosing._id'] = 1;
-        project['employeeClosing.name'] = 1;
-      }
+    this.sort = JSON.parse(
+      localStorage.getItem(`${this.identifier}_sort`) || '{}'
+    );
 
-      let sort: {} = { startDate: -1 };
+    this.getTransactions();
+  }
 
-      this.orderTerm = ['-orderNumber'];
-
-      if (
-        this.user &&
-        this.user.permission &&
-        this.user.permission.transactionTypes &&
-        this.user.permission.transactionTypes.length > 0
-      ) {
-        let transactionTypes = [];
-        this.user.permission.transactionTypes.forEach((element) => {
-          transactionTypes.push({ $oid: element });
-        });
-        match['type._id'] = { $in: transactionTypes };
-      }
-
-      this.subscription.add(
-        this._transactionService
-          .getAll({
-            project,
-            match,
-            sort,
-          })
-          .subscribe(
-            (result) => {
-              this.loading = false;
-              this.transactions = result.result;
-              resolve(result.result);
-            },
-            (error) => {
-              this._toastService.showToast(error);
-              this.loading = false;
-              resolve(new Array());
+  public async getTransactions() {
+    this.loading = true;
+    this.subscription.add(
+      await this.datatableController
+        .getItems(this.filters, this.currentPage, this.itemsPerPage, this.sort)
+        .then((result) => {
+          if (result.status === 200) {
+            if (result.result.length > 0) {
+              if (this.itemsPerPage === 0) {
+                this.itemsPerPage = 10;
+              } else {
+                this.transactions = result.result[0].items;
+                this.totalItems = result.result[0].count;
+              }
+            } else {
+              this.transactions = [];
+              this.totalItems = 0;
             }
-          )
-      );
-    });
+          } else this._toastService.showToast(result);
+        })
+        .catch((error) => this._toastService.showToast(error))
+    );
+    this.loading = false;
   }
 
   async openModal(
@@ -183,7 +288,7 @@ export class WebComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        this.transaction = await this.getTransaction(transaction._id);
+        this.getTransaction(transaction._id);
         if (this.transaction) {
           modalRef = this._modalService.open(ViewTransactionComponent, {
             size: 'lg',
@@ -193,7 +298,7 @@ export class WebComponent implements OnInit {
         }
         break;
       case 'print':
-        this.transaction = await this.getTransaction(transaction._id);
+        this.getTransaction(transaction._id);
         if (this.transaction) {
           if (
             transaction.type.transactionMovement ===
@@ -293,26 +398,8 @@ export class WebComponent implements OnInit {
           }
         }
         break;
-
-        this.transaction = await this.getTransaction(transaction._id);
-        if (this.transaction) {
-          modalRef = this._modalService.open(DeleteTransactionComponent, {
-            size: 'lg',
-            backdrop: 'static',
-          });
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.result.then(
-            (result) => {
-              if (result === 'delete_close') {
-                this.refresh();
-              }
-            },
-            (reason) => {}
-          );
-        }
-        break;
       case 'canceledTn':
-        this.transaction = await this.getTransaction(transaction._id);
+        this.getTransaction(transaction._id);
         if (this.transaction) {
           modalRef = this._modalService.open(CancelComponent, {
             size: 'lg',
@@ -321,10 +408,13 @@ export class WebComponent implements OnInit {
           modalRef.componentInstance.transaction = this.transaction;
           modalRef.componentInstance.config = this.config;
           modalRef.componentInstance.state = state;
+          modalRef.result.then(() => {
+            this.getTransactions();
+          });
         }
         break;
       case 'fulfilledTn':
-        this.transaction = await this.getTransaction(transaction._id);
+        this.getTransaction(transaction._id);
         if (this.transaction) {
           modalRef = this._modalService.open(FulfilledComponent, {
             size: 'lg',
@@ -333,6 +423,9 @@ export class WebComponent implements OnInit {
           modalRef.componentInstance.transaction = this.transaction;
           modalRef.componentInstance.config = this.config;
           modalRef.componentInstance.state = state;
+          modalRef.result.then(() => {
+            this.getTransactions();
+          });
         }
         break;
       case 'dateTn':
@@ -341,98 +434,97 @@ export class WebComponent implements OnInit {
           backdrop: 'static',
         });
         modalRef.result.then(() => {
-          this.refresh();
+          this.getTransactions();
         });
         break;
     }
   }
 
-  public getTransaction(transactionId: string): Promise<Transaction> {
-    return new Promise<Transaction>((resolve, reject) => {
-      this._transactionService.getById(transactionId).subscribe(
-        async (result) => {
-          if (!result.result) {
-            this._toastService.showToast(result);
-            //  this.showMessage(result.message, 'danger', false);
-            resolve(null);
-          } else {
-            resolve(result.result);
-          }
+  getTransaction(transactionId) {
+    this._transactionService
+      .getById(transactionId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.transaction = result.result;
         },
-        (error) => {
+        error: (error) => {
           this._toastService.showToast(error);
-          resolve(null);
-        }
-      );
-    });
+        },
+      });
   }
 
-  async changeStateOfTransaction(
-    transaction: Transaction,
-    state: TransactionState
-  ) {
-    this.transaction = await this.getTransaction(transaction._id);
+  changeStateOfTransaction(transaction: Transaction, state: TransactionState) {
+    this.getTransaction(transaction._id);
     if (
       this.transaction &&
       this.transaction.tiendaNubeId &&
       this.config.tiendaNube.userID
     ) {
-      return new Promise<Transaction>((resolve, reject) => {
-        this._tiendaNubeService
-          .updateTransactionStatus(
-            transaction.tiendaNubeId,
-            this.config.tiendaNube.userID,
-            state
-          )
-          .subscribe(
-            (result: ApiResponse) => {
-              if (result.status === 201) {
-                this.refresh();
-                resolve(result.result);
-              } else {
-                this.refresh();
-                reject(result);
-              }
-              this.refresh();
-            },
-            (error) => {
-              this._toastService.showToast(error);
-              reject(error);
-            }
-          );
-      });
+      this._tiendaNubeService
+        .updateTransactionStatus(
+          transaction.tiendaNubeId,
+          this.config.tiendaNube.userID,
+          state
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this._toastService.showToast(result);
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.refresh();
+          },
+        });
     }
   }
 
-  public orderBy(term: string, property?: string): void {
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = '-' + term;
+  public orderBy(term: string): void {
+    if (this.sort[term]) {
+      this.sort[term] *= -1;
     } else {
-      this.orderTerm[0] = term;
+      this.sort = JSON.parse('{"' + term + '": 1 }');
     }
-    this.propertyTerm = property;
+
+    localStorage.setItem(`${this.identifier}_sort`, JSON.stringify(this.sort));
+
+    this.getTransactions();
   }
 
-  public printTransaction(transaction: Transaction) {
-    this.loading = true;
-    this._printerService.printTransaction(transaction._id).subscribe(
-      (res: Blob) => {
-        if (res) {
-          const blobUrl = URL.createObjectURL(res);
-          printJS(blobUrl);
-          this.loading = false;
-        } else {
-          this.loading = false;
-          this._toastService.showToast({
-            message: 'Error al cargar el PDF',
-          });
-        }
-      },
-      (error) => {
-        this.loading = false;
-        this._toastService.showToast(error);
-      }
+  public addFilters(): void {
+    localStorage.setItem(
+      `${this.identifier}_datatableFilters`,
+      JSON.stringify(this.filters)
     );
+    this.getTransactions();
+  }
+
+  printTransaction(transaction: Transaction) {
+    this.loading = true;
+    this._printerService
+      .printTransaction(transaction._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: Blob) => {
+          if (res) {
+            const blobUrl = URL.createObjectURL(res);
+            printJS(blobUrl);
+          } else {
+            this._toastService.showToast({
+              message: 'Error al cargar el PDF',
+            });
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public getUser(): Promise<User> {
@@ -441,21 +533,37 @@ export class WebComponent implements OnInit {
       let user;
 
       if (identity) {
-        this._userService.getUser(identity._id).subscribe(
-          (result) => {
-            if (result && result.user) {
-              resolve(result.user);
-            } else {
-              this._toastService.showToast({
-                message: 'Debe volver a iniciar sesión',
-              });
-            }
-          },
-          (error) => {
-            this._toastService.showToast(error);
-          }
-        );
+        this._userService
+          .getById(identity._id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (result) => {
+              resolve(result.result);
+            },
+            error: (error) => {
+              this._toastService.showToast(error);
+            },
+          });
       }
     });
+  }
+
+  public pageChange(page): void {
+    this.currentPage = page;
+    // Guarda la página actual en localStorage
+    localStorage.setItem(
+      `${this.identifier}_currentPage`,
+      this.currentPage.toString()
+    );
+    this.getTransactions();
+  }
+
+  public changeItemsPerPage(): void {
+    // Guarda itemsPerPage en localStorage
+    localStorage.setItem(
+      `${this.identifier}_itemsPerPage`,
+      this.itemsPerPage.toString()
+    );
+    this.getTransactions();
   }
 }

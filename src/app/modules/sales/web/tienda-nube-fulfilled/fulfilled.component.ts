@@ -4,14 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateModule } from '@ngx-translate/core';
 import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import { Transaction } from 'app/components/transaction/transaction';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
-import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -19,14 +16,7 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-fulfilled',
   templateUrl: './fulfilled.component.html',
   standalone: true,
-  imports: [
-    CommonModule,
-    PipesModule,
-    TranslateModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ProgressbarModule,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class FulfilledComponent implements OnInit {
   @Input() transaction: Transaction;
@@ -63,33 +53,27 @@ export class FulfilledComponent implements OnInit {
 
   changeStatusTiendaNube() {
     if (this.fulfilledForm.valid) {
+      this.loading = true;
       const formData = this.fulfilledForm.value;
-
-      return new Promise<Transaction>((resolve, reject) => {
-        this._tiendaNubeService
-          .updateTransactionStatus(
-            this.transaction.tiendaNubeId,
-            formData,
-            this.state
-          )
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(
-            (result: ApiResponse) => {
-              if (result.status === 201) {
-                resolve(result.result);
-                this.activeModal.close();
-              } else {
-                reject(result);
-                this.activeModal.close();
-              }
-            },
-            (error) => {
-              this._toastService.showToast(error);
-              reject(error);
-              this.activeModal.close();
-            }
-          );
-      });
+      this._tiendaNubeService
+        .updateTransactionStatus(
+          this.transaction.tiendaNubeId,
+          formData,
+          this.state
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this._toastService.showToast(result);
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.activeModal.close();
+          },
+        });
     }
   }
 }
