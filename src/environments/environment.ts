@@ -5,6 +5,7 @@
 
 export const environment = {
   production: false,
+<<<<<<< Updated upstream
   // api: "http://localhost:300",
   // apiv2: "http://localhost:308",
   // apiPrint: "http://localhost:302",
@@ -17,4 +18,18 @@ export const environment = {
   apiStorage: 'https://d-api-storage.poscloud.ar',
   apiTiendaNube: 'https://d-api-tiendanube.poscloud.ar',
   feAr: 'https://d-fe-ar.poscloud.ar',
+=======
+  api: 'http://localhost:300',
+  apiv2: 'http://localhost:308',
+  apiPrint: 'http://localhost:302',
+  apiStorage: 'https://api-storage.poscloud.ar',
+  apiTiendaNube: 'http://localhost:305',
+  feAr: 'http://localhost:307',
+  // api: 'https://api-v1.poscloud.ar',
+  // apiv2: 'https://api-v2.poscloud.ar',
+  // apiPrint: 'https://api-print.poscloud.ar',
+  // apiStorage: 'https://api-storage.poscloud.ar',
+  // apiTiendaNube: 'https://api-tiendanube.poscloud.ar',
+  // feAr: 'https://fe-ar.poscloud.ar',
+>>>>>>> Stashed changes
 };

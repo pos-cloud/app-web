@@ -40,6 +40,17 @@ const routes: Routes = [
     loadChildren: () => import('./bank/bank.module').then((m) => m.BankModule),
     canActivate: [AuthGuard, LicenseGuard],
   },
+  {
+    path: 'rooms',
+    loadChildren: () => import('./room/room.module').then((m) => m.RoomModule),
+    canActivate: [AuthGuard, LicenseGuard],
+  },
+  {
+    path: 'tables',
+    loadChildren: () =>
+      import('./table/table.module').then((m) => m.TableModule),
+    canActivate: [AuthGuard, LicenseGuard],
+  },
 ];
 
 @NgModule({

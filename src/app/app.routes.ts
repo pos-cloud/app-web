@@ -54,12 +54,10 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
-import { ListRoomsComponent } from './components/room/list-rooms/list-rooms.component';
 import { SendEmailComponent } from './components/send-email/send-email.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListStructureComponent } from './components/structure/list-structure/list-structure.component';
-import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { ListTransportComponent } from './components/transport/list-transports/list-transports.component';
@@ -226,12 +224,12 @@ export const _routes: Routes = [
     component: ListPriceListsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  {
-    path: 'admin/mesas',
-    component: ListTablesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' },
-  },
+  // {
+  //   path: 'admin/mesas',
+  //   component: ListTablesComponent,
+  //   canActivate: [AuthGuard, LicenseGuard],
+  //   //   data: { module: 'config.modules.sale.resto' },
+  // },
   {
     path: 'admin/ventas',
     component: ListTransactionsComponent,
@@ -275,12 +273,12 @@ export const _routes: Routes = [
     component: ListSummaryOfAccountsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  {
-    path: 'admin/salones',
-    component: ListRoomsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' },
-  },
+  // {
+  //   path: 'admin/salones',
+  //   //  component: ListRoomsComponent,
+  //   canActivate: [AuthGuard, LicenseGuard],
+  //   // data: { module: 'config.modules.sale.resto' },
+  // },
   {
     path: 'admin/condiciones-de-iva',
     component: ListVATConditionsComponent,

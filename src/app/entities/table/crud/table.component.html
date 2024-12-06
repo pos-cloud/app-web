@@ -1,0 +1,344 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span
+        style="color: #607d8b"
+        *ngIf="operation === 'add' || operation === 'copy'"
+        >{{ 'add-table' | translate | capitalize }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ table?.description }}</span
+      >
+      <span
+        style="color: #607d8b"
+        *ngIf="operation === 'view' || operation === 'delete'"
+        >{{ table?.description }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i
+          ><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="addTable()"
+        >
+          <i
+            class="fa"
+            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
+          ></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger active"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="addTable()"
+        >
+          <i
+            class="fa"
+            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
+          ></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="tableForm" (ngSubmit)="addTable()" autocomplete="off">
+        <div class="row">
+          <label class="form-group col-md-5">
+            <b>{{ 'salones' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div
+            class="form-group col-md-6 typeahead-container"
+            *ngIf="rooms?.length > 0"
+          >
+            <app-typeahead-dropdown
+              [control]="tableForm.get('room')"
+              [data]="rooms"
+              [readonly]="readonly"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+            <div
+              *ngIf="
+                employeeForm.get('type').hasError('required') &&
+                employeeForm.get('type').touched
+              "
+              class="text-danger"
+            >
+              Este campo es requerido
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label class="control-label"
+              >{{ 'description' | translate | capitalize }}:</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              name="description"
+              id="description"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid':
+                  tableForm.get('description')?.touched &&
+                  tableForm.get('description')?.invalid,
+              }"
+              [readonly]="readonly"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                tableForm.get('description')?.touched &&
+                tableForm.get('description')?.hasError('required')
+              "
+            >
+              Este campo es obligatorio.
+            </div>
+          </div>
+          <div class="form-group col-md-12">
+            <label class="control-label"
+              >{{ 'chair' | translate | capitalize }}:</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="chair"
+              name="chair"
+              id="chair"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid':
+                  tableForm.get('chair')?.touched &&
+                  tableForm.get('chair')?.invalid,
+              }"
+              [readonly]="readonly"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                tableForm.get('chair')?.touched &&
+                tableForm.get('chair')?.hasError('required')
+              "
+            >
+              Este campo es obligatorio.
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="state" class="control-label">Estado</label>
+              <select class="form-control" formControlName="state">
+                <option
+                  *ngFor="let state of states"
+                  [ngValue]="state"
+                  [disabled]="readonly"
+                >
+                  {{ state }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ table?.creationUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{
+                    table?.creationDate ?? null
+                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
+                  }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ table?.updateUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{
+                    table?.updateDate ?? null
+                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
+                  }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  ID:<b>{{ table?._id || '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- <div class="modal-header">
+  <h4 class="modal-title">Agregar Mesa</h4>
+  <button
+    type="button"
+    class="close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('close_click')"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert
+      [type]="alertConfig.type"
+      [dismissible]="alertConfig.dismissible"
+      (close)="alertMessage = ''"
+    >
+      {{ alertMessage }}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="tableForm" (ngSubmit)="addTable()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="room" class="control-label">Salón</label>
+          <select class="form-control" formControlName="room">
+            <option
+              *ngFor="let room of rooms"
+              [selected]="
+                (table.room && table.room._id && room._id === table.room._id) ||
+                (table.room && room._id === table.room)
+              "
+              [value]="room._id"
+              [disabled]="readonly"
+            >
+              {{ room.description }}
+            </option>
+          </select>
+          <div *ngIf="formErrors.room" class="alert alert-danger">
+            {{ formErrors.room }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-10">
+          <label for="description">Descripción:</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="description"
+            name="description"
+            id="description"
+            [focus]="focusEvent"
+            [readonly]="readonly"
+          />
+          <div *ngIf="formErrors.description" class="alert alert-danger">
+            {{ formErrors.description }}
+          </div>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="chair" class="control-label">Sillas:</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="chair"
+            name="chair"
+            id="chair"
+            [readonly]="readonly"
+          />
+          <div *ngIf="formErrors.chair" class="alert alert-danger">
+            {{ formErrors.chair }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="state" class="control-label">Estado</label>
+          <select class="form-control" formControlName="state">
+            <option
+              *ngFor="let state of states"
+              [ngValue]="state"
+              [disabled]="readonly"
+            >
+              {{ state }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" *ngIf="operation !== 'view'">
+      <button
+        type="button"
+        class="btn btn-light"
+        (click)="activeModal.dismiss('cancel')"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!tableForm?.valid || loading"
+        *ngIf="operation !== 'delete'"
+      >
+        <i
+          class="fa"
+          [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
+        ></i>
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        *ngIf="operation === 'delete'"
+        [disabled]="!tableForm?.valid || loading"
+        (click)="deleteTable()"
+      >
+        <i
+          class="fa"
+          [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
+        ></i>
+        <span *ngIf="!loading">Eliminar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section> -->
