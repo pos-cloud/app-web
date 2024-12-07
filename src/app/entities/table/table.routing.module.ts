@@ -5,34 +5,34 @@ import { TableComponent } from './crud/table.component';
 import { ListTablesComponent } from './list/list-tables.component';
 const routes: Routes = [
   {
-    path: '', // Ruta por defecto para "makes"
+    path: '',
     component: ListTablesComponent,
-    canActivate: [AuthGuard], // Solo usuarios autenticados
+    canActivate: [AuthGuard],
   },
   {
-    path: 'add', // Ruta para agregar un nuevo make
+    path: 'add',
     component: TableComponent,
     canActivate: [AuthGuard],
   },
   {
-    path: 'view/:id', // Ruta para ver detalles de un make por su id
+    path: 'view/:id',
     component: TableComponent,
     canActivate: [AuthGuard],
   },
   {
-    path: 'update/:id', // Ruta para editar un make por su id
+    path: 'update/:id',
     component: TableComponent,
     canActivate: [AuthGuard],
   },
   {
-    path: 'delete/:id', // Ruta para eliminar un make por su id
+    path: 'delete/:id',
     component: TableComponent,
     canActivate: [AuthGuard],
   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)], // Importa las rutas como rutas hijas del módulo
-  exports: [RouterModule], // Exporta el RouterModule para que se pueda usar en el módulo principal
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
 export class TableRoutingModule {}

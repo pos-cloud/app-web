@@ -20,7 +20,6 @@ import { TableService } from '../../../core/services/table.service';
 export class TableComponent implements OnInit {
   public operation: string;
   public readonly: boolean;
-  public tableId: string;
   public table: Table;
   public rooms: Room[] = new Array();
   public tableForm: UntypedFormGroup;
@@ -40,20 +39,25 @@ export class TableComponent implements OnInit {
     public _router: Router,
     private _toastService: ToastService
   ) {
-    this.getRooms();
+    this.tableForm = this._fb.group({
+      _id: ['', []],
+      description: ['', [Validators.required, Validators.maxLength(5)]],
+      room: ['', [Validators.required]],
+      chair: ['', [Validators.required]],
+      state: [TableState.Available, []],
+    });
   }
 
-  ngOnInit(): void {
-    let pathUrl = this._router.url.split('/');
+  async ngOnInit() {
+    const pathUrl = this._router.url.split('/');
+    const tableId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.tableId = pathUrl[4];
-
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
 
-    if (this.tableId) {
-      this.getTable();
+    this.getRooms();
+    if (tableId) {
+      this.getTable(tableId);
     }
-    this.buildForm();
   }
 
   ngAfterViewInit() {
@@ -65,81 +69,79 @@ export class TableComponent implements OnInit {
     this.destroy$.complete();
   }
 
-  public buildForm(): void {
-    this.tableForm = this._fb.group({
-      _id: ['', []],
-      description: ['', [Validators.required, Validators.maxLength(5)]],
-      room: [null, [Validators.required]],
-      chair: [0, [Validators.required]],
-      state: [TableState.Available, []],
-    });
-  }
-
-  public getRooms(): void {
+  public getRooms(): Promise<void> {
     this.loading = true;
 
-    this._roomService
-      .getAll({})
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          this.rooms = result.result;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    return new Promise((resolve, reject) => {
+      this._roomService
+        .getAll({})
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            this.rooms = result.result;
+            resolve();
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+            reject();
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
+    });
   }
 
   returnTo() {
     return this._router.navigate(['/entities/tables']);
   }
 
-  public getTable() {
+  public getTable(tableId: string) {
     this.loading = true;
 
     this._tableService
-      .getById(this.tableId)
+      .getById(tableId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
           this.table = result.result;
+          this.setValueForm();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.setValueForm();
         },
       });
   }
 
   public setValueForm() {
-    let room;
-    if (!this.table.room) {
-      room = null;
-    } else {
-      if (this.table.room._id) {
-        room = this.table.room._id;
-      } else {
-        room = this.table.room;
-      }
-    }
+    const room = this.rooms?.find(
+      (item) => item._id == this.table.room.toString()
+    );
 
     this.tableForm.setValue({
       _id: this.table._id ?? '',
       description: this.table.description ?? '',
-      room: room,
+      room: room ?? null,
       chair: this.table.chair ?? 0,
       state: this.table.state ?? TableState.Available,
     });
   }
 
   public addTable(): void {
+    this.tableForm.markAllAsTouched();
+    if (this.tableForm.invalid) {
+      this._toastService.showToast({
+        message: 'Por favor complete todos los campos obligatorios.',
+      });
+      this.loading = false;
+      return;
+    }
+
+    this.table = this.tableForm.value;
+
     switch (this.operation) {
       case 'add':
         this.saveTable();
@@ -157,8 +159,6 @@ export class TableComponent implements OnInit {
   public updateTable() {
     this.loading = true;
 
-    this.table = this.tableForm.value;
-
     this._tableService
       .update(this.table)
       .pipe(takeUntil(this.destroy$))
@@ -171,13 +171,13 @@ export class TableComponent implements OnInit {
         },
         complete: () => {
           this.loading = false;
+          this.returnTo();
         },
       });
   }
 
   public saveTable(): void {
     this.loading = true;
-    this.table = this.tableForm.value;
 
     this._tableService
       .save(this.table)
@@ -191,9 +191,8 @@ export class TableComponent implements OnInit {
           this._toastService.showToast(error);
         },
         complete: () => {
-          this.buildForm();
-          this.getRooms();
           this.loading = false;
+          this.returnTo();
         },
       });
   }
@@ -210,6 +209,7 @@ export class TableComponent implements OnInit {
       },
       complete: () => {
         this.loading = false;
+        this.returnTo();
       },
     });
   }

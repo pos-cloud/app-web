@@ -32,7 +32,12 @@ export class RoomComponent implements OnInit {
     public _fb: UntypedFormBuilder,
     public _router: Router,
     private _toastService: ToastService
-  ) {}
+  ) {
+    this.roomForm = this._fb.group({
+      _id: ['', []],
+      description: ['', [Validators.required]],
+    });
+  }
 
   ngOnInit(): void {
     let pathUrl = this._router.url.split('/');
@@ -44,7 +49,6 @@ export class RoomComponent implements OnInit {
     if (this.roomId) {
       this.getRoom();
     }
-    this.buildForm();
   }
 
   ngAfterViewInit() {
@@ -54,13 +58,6 @@ export class RoomComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  public buildForm(): void {
-    this.roomForm = this._fb.group({
-      _id: ['', []],
-      description: ['', [Validators.required]],
-    });
   }
 
   public setValueForm(): void {
@@ -76,6 +73,16 @@ export class RoomComponent implements OnInit {
 
   public addRoom(): void {
     this.loading = true;
+
+    this.roomForm.markAllAsTouched();
+    if (this.roomForm.invalid) {
+      this._toastService.showToast({
+        message: 'Por favor complete todos los campos obligatorios.',
+      });
+      this.loading = false;
+      return;
+    }
+
     this.room = this.roomForm.value;
 
     switch (this.operation) {
@@ -99,13 +106,13 @@ export class RoomComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this.room = result.result;
+          this.setValueForm();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.setValueForm();
         },
       });
   }
@@ -141,7 +148,7 @@ export class RoomComponent implements OnInit {
           this._toastService.showToast(error);
         },
         complete: () => {
-          this.buildForm();
+          this.loading = false;
           this.returnTo();
         },
       });
