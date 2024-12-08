@@ -9,7 +9,6 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ApiResponse, IAttribute } from '@types';
 import { Config } from 'app/app.config';
-import { DatatableController } from 'app/components/datatable/datatable.controller';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
@@ -23,6 +22,7 @@ import { ViewTransactionComponent } from 'app/components/transaction/view-transa
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
+import { DatatableService } from 'app/core/services/datatable.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { TransactionService } from 'app/core/services/transaction.service';
@@ -62,7 +62,7 @@ export class WebComponent implements OnInit {
   public transactions: Transaction[] = new Array();
   public transaction: Transaction;
   public transactionMovement: TransactionMovement = TransactionMovement.Sale;
-  public datatableController: DatatableController;
+  public _datatableService: DatatableService;
   public user: User;
   private subscription: Subscription = new Subscription();
   public columns: IAttribute[];
@@ -236,7 +236,7 @@ export class WebComponent implements OnInit {
       this.user = identity;
     });
 
-    this.datatableController = new DatatableController(
+    this._datatableService = new DatatableService(
       this._transactionService,
       this.columns
     );
@@ -267,7 +267,7 @@ export class WebComponent implements OnInit {
   public async getTransactions() {
     this.loading = true;
     this.subscription.add(
-      await this.datatableController
+      await this._datatableService
         .getItems(this.filters, this.currentPage, this.itemsPerPage, this.sort)
         .then((result) => {
           if (result.status === 200) {

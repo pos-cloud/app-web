@@ -30,7 +30,7 @@
               ngbDropdownItem
               cdkDropList
               class="example-list"
-              (cdkDropListDropped)="datatableController.drop($event)"
+              (cdkDropListDropped)="_datatableService.drop($event)"
             >
               <div
                 class="example-box"
@@ -90,7 +90,7 @@
                   [ngClass]="{
                     disabled: loading,
                     enabled: !loading,
-                    'has-data': filters[column.name]
+                    'has-data': filters[column.name],
                   }"
                   [(ngModel)]="filters[column.name]"
                   (keydown.enter)="addFilters()"
@@ -132,8 +132,8 @@
         <tbody>
           <tr>
             <td
-              [attr.colspan]="datatableController.getColumnsVisibles() + 1"
-              style="padding: 0px"
+              [attr.colspan]="_datatableService.getColumnsVisibles() + 1"
+              style="padding: 0px; height: 5px"
             >
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
@@ -145,7 +145,7 @@
                   : {
                       itemsPerPage: itemsPerPage,
                       currentPage: currentPage,
-                      totalItems: totalItems
+                      totalItems: totalItems,
                     }
             "
           >

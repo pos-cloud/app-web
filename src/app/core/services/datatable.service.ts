@@ -1,9 +1,13 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
+import { Injectable } from '@angular/core';
 import { Config } from 'app/app.config';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 
-export class DatatableController {
+@Injectable({
+  providedIn: 'root',
+})
+export class DatatableService {
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   public columns: any[];
@@ -14,16 +18,18 @@ export class DatatableController {
     this.service = service;
   }
 
-  public getValue(item, column) {
+  public getValue(item: any, column: any): any {
     let val: string = 'item';
     let exists: boolean = true;
     let value: any = '';
+
     for (let a of column.name.split('.')) {
       val += '.' + a;
       if (exists && !eval(val)) {
         exists = false;
       }
     }
+
     if (exists) {
       switch (column.datatype) {
         case 'number':
@@ -52,8 +58,8 @@ export class DatatableController {
     filters: any,
     currentPage: number,
     itemsPerPage: number,
-    sort: {},
-    group: {} = null
+    sort: any,
+    group: any = null
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       let timezone = '-03:00';
@@ -61,7 +67,7 @@ export class DatatableController {
         timezone = Config.timezone.split('UTC')[1];
       }
 
-      // FILTRAMOS LA CONSULTA
+      // Construcción del filtro
       let match = `{`;
       for (let i = 0; i < this.columns.length; i++) {
         if (this.columns[i].visible || this.columns[i].required) {
@@ -82,12 +88,13 @@ export class DatatableController {
           }
         }
       }
-      if (match.charAt(match.length - 1) === ',')
+      if (match.charAt(match.length - 1) === ',') {
         match = match.substring(0, match.length - 1);
+      }
       match += `}`;
       match = JSON.parse(match);
 
-      // ARMAMOS EL PROJECT
+      // Construcción del proyecto
       let project = `{`;
       let j = 0;
       for (let i = 0; i < this.columns.length; i++) {
@@ -117,7 +124,7 @@ export class DatatableController {
       project += `}`;
       project = JSON.parse(project);
 
-      // AGRUPAMOS EL RESULTADO
+      // Agrupamiento
       if (!group) {
         group = {
           _id: null,
@@ -126,10 +133,7 @@ export class DatatableController {
         };
       }
 
-      let page = 0;
-      if (currentPage != 0) {
-        page = currentPage - 1;
-      }
+      let page = currentPage > 0 ? currentPage - 1 : 0;
 
       this.service
         .getAll({
@@ -141,22 +145,14 @@ export class DatatableController {
           skip: !isNaN(page * itemsPerPage) ? page * itemsPerPage : 0,
         })
         .subscribe(
-          (result) => {
-            resolve(result);
-          },
-          (error) => reject(error)
+          (result: any) => resolve(result),
+          (error: any) => reject(error)
         );
     });
   }
 
   public getColumnsVisibles(): number {
-    let count: number = 0;
-    for (let column of this.columns) {
-      if (column.visible) {
-        count++;
-      }
-    }
-    return count;
+    return this.columns.filter((column) => column.visible).length;
   }
 
   public drop(event: CdkDragDrop<string[]>): void {

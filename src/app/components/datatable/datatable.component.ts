@@ -7,15 +7,15 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { NgbAlertConfig, NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IAttribute, IButton } from '@types';
+import { DatatableService } from 'app/core/services/datatable.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Subscription } from 'rxjs';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
-import { DatatableController } from './datatable.controller';
 
 @Component({
   selector: 'app-datatable',
@@ -37,7 +37,7 @@ export class DatatableComponent {
   }>();
 
   // TABLA
-  public datatableController: DatatableController;
+  public _datatableService: DatatableService;
   public filters: any;
   public currentPage: number = 0;
   public itemsPerPage = 10;
@@ -58,7 +58,6 @@ export class DatatableComponent {
   constructor(
     private _title: Title,
     private _toastService: ToastService,
-    public alertConfig: NgbAlertConfig,
     private translatePipe: TranslateMePipe,
     config: NgbDropdownConfig
   ) {
@@ -73,10 +72,9 @@ export class DatatableComponent {
       );
       this._title.setTitle(this.title);
     }, 0);
-    this.datatableController = new DatatableController(
-      this._service,
-      this.columns
-    );
+
+    this._datatableService = new DatatableService(this._service, this.columns);
+
     this.loadColumnVisibility();
     this.processParams();
   }
@@ -143,11 +141,11 @@ export class DatatableComponent {
   }
 
   public getValue(item, column): any {
-    return typeof this.datatableController.getValue(item, column) === 'string'
+    return typeof this._datatableService.getValue(item, column) === 'string'
       ? this.translatePipe.transform(
-          this.datatableController.getValue(item, column)
+          this._datatableService.getValue(item, column)
         )
-      : this.datatableController.getValue(item, column);
+      : this._datatableService.getValue(item, column);
   }
 
   public exportItems(): void {
@@ -186,7 +184,7 @@ export class DatatableComponent {
   public async getItems() {
     this.loading = true;
     this.subscription.add(
-      await this.datatableController
+      await this._datatableService
         .getItems(this.filters, this.currentPage, this.itemsPerPage, this.sort)
         .then((result) => {
           if (result.status === 200) {
