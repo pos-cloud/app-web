@@ -181,7 +181,7 @@
             </ng-container>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td [attr.colspan]="datatableController.getColumnsVisibles() + 1">
+            <td [attr.colspan]="_datatableService.getColumnsVisibles() + 1">
               {{ 'no data found' | translate | capitalize }}
             </td>
           </tr>
