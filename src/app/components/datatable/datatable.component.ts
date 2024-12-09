@@ -115,8 +115,13 @@ export class DatatableComponent {
     this.filters = {};
 
     for (let field of this.columns) {
-      this.filters[field.name] =
-        storedFilters[field.name] || field.defaultFilter || '';
+      if (field.defaultFilter) {
+        this.filters[field.name] = field.defaultFilter;
+      }
+
+      if (field.visible && storedFilters[field.name]) {
+        this.filters[field.name] = storedFilters[field.name];
+      }
     }
 
     // Recupera currentPage e itemsPerPage desde localStorage
