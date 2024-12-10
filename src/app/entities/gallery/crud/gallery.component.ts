@@ -53,8 +53,8 @@ export class GalleryComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.getResources();
+  async ngOnInit() {
+    await this.getResources();
     const URL = this._router.url.split('/');
     this.operation = URL[3].split('?')[0];
     let pathLocation: string[] = this._router.url.split('/');
@@ -247,7 +247,7 @@ export class GalleryComponent implements OnInit {
       });
   }
 
-  getResources(): void {
+  getResources(): Promise<void> {
     let match = `{ "operationType": { "$ne": "D" } }`;
 
     match = JSON.parse(match);
@@ -259,20 +259,24 @@ export class GalleryComponent implements OnInit {
       file: 1,
       operationType: 1,
     };
-    this._resourceService
-      .getAll({ project, match })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: ApiResponse) => {
-          this.resources = result.result;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    return new Promise((resolve, reject) => {
+      this._resourceService
+        .getAll({ project, match })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this.resources = result.result;
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+            reject(error);
+          },
+          complete: () => {
+            this.loading = false;
+            resolve();
+          },
+        });
+    });
   }
 
   deleteResource(index) {
