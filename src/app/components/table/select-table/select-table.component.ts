@@ -5,8 +5,7 @@ import {
   NgbAlertConfig,
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
-import { Room } from 'app/components/room/room';
-import { Table } from 'app/components/table/table';
+import { Room, Table } from '@types';
 import { RoomService } from 'app/core/services/room.service';
 import { TableService } from 'app/core/services/table.service';
 

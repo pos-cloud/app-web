@@ -7,7 +7,7 @@ import jsPDF from 'jspdf';
 
 //modelos
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@types';
+import { ApiResponse, Table } from '@types';
 import { Config } from 'app/app.config';
 import { Application } from 'app/components/application/application.model';
 import {
@@ -15,7 +15,6 @@ import {
   PrinterPrintIn,
   PrinterType,
 } from 'app/components/printer/printer';
-import { Table } from 'app/components/table/table';
 import { ApplicationService } from 'app/core/services/application.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PrintService } from 'app/core/services/print.service';

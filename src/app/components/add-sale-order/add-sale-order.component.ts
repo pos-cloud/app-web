@@ -35,6 +35,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
+import { Table, TableState } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { BusinessRuleService } from '../../core/services/business-rule.service';
@@ -75,7 +76,6 @@ import { PrintTransactionTypeComponent } from '../print/print-transaction-type/p
 import { PrintComponent } from '../print/print/print.component';
 import { Printer, PrinterPrintIn, PrinterType } from '../printer/printer';
 import { SelectShipmentMethodComponent } from '../shipment-method/select-shipment-method/select-shipment-method.component';
-import { Table, TableState } from '../table/table';
 import { TaxBase, TaxClassification } from '../tax/tax';
 import { Taxes } from '../tax/taxes';
 import {

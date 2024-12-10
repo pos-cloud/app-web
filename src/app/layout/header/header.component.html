@@ -113,20 +113,6 @@
               Pedidos Web
             </button>
           </div>
-          <div
-            *ngIf="
-              config.modules.app && identity?.permission?.menu?.sales?.webOrders
-            "
-          >
-            <button
-              class="dropdown-item"
-              [routerLink]="['pos', 'carritos-abandonados']"
-              [routerLinkActive]="['active']"
-              (click)="closeNavbar()"
-            >
-              Carritos Abandonados
-            </button>
-          </div>
         </div>
       </li>
       <li

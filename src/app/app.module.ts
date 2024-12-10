@@ -106,7 +106,6 @@ import { OriginComponent } from './components/origin/origin/origin.component';
 import { SelectOriginComponent } from './components/origin/select-origin/select-origin.component';
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
 import { PaymentMethodComponent } from './components/payment-method/payment-method/payment-method.component';
-import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { WebTransactionsComponent } from './components/point-of-sale/web-transactions/web-transactions.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
@@ -136,8 +135,6 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
-import { ListRoomsComponent } from './components/room/list-rooms/list-rooms.component';
-import { RoomComponent } from './components/room/room/room.component';
 import { SendEmailComponent } from './components/send-email/send-email.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StateComponent } from './components/state/state/state.component';
@@ -146,7 +143,6 @@ import { ListStructureComponent } from './components/structure/list-structure/li
 import { StructureComponent } from './components/structure/structure/structure.component';
 import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
-import { TableComponent } from './components/table/table/table.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { TaxComponent } from './components/tax/tax/tax.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
@@ -197,12 +193,9 @@ export function createTranslateLoader(http: HttpClient) {
     HomeComponent,
     HeaderComponent,
     ListTablesComponent,
-    TableComponent,
     ListCashBoxesComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
-    ListRoomsComponent,
-    RoomComponent,
     ListVATConditionsComponent,
     VATConditionComponent,
     PointOfSaleComponent,
@@ -328,7 +321,6 @@ export function createTranslateLoader(http: HttpClient) {
     ReportTransactionTypeComponent,
     PrintQRComponent,
     SelectMovementsOfCashesComponent,
-    AbandonedCartsComponent,
     SelectPriceListComponent,
     KardexCheckComponent,
     MenuComponent,

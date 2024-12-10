@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { Table } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { Table } from '../../components/table/table';
 import { AuthService } from './auth.service';
 
 @Injectable({

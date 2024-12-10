@@ -33,7 +33,6 @@ import { ListChecksComponent } from './components/movement-of-cash/list-checks/l
 import { ListMovementOfCashesComponent } from './components/movement-of-cash/list-movements-of-cashes/list-movements-of-cashes.component';
 import { ListOriginsComponent } from './components/origin/list-origins/list-origins.component';
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
-import { AbandonedCartsComponent } from './components/point-of-sale/abandoned-carts/abandoned-carts.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { WebTransactionsComponent } from './components/point-of-sale/web-transactions/web-transactions.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
@@ -551,12 +550,6 @@ export const _routes: Routes = [
   {
     path: 'pos/pedidos-web',
     component: WebTransactionsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.app' },
-  },
-  {
-    path: 'pos/carritos-abandonados',
-    component: AbandonedCartsComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.app' },
   },

@@ -16,16 +16,16 @@ import {
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 
-import { Table, TableState } from '../table';
+import { Table, TableState } from '@types';
 
 import { TableService } from '../../../core/services/table.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { UserService } from '../../../core/services/user.service';
 
+import { TableComponent } from 'app/entities/table/crud/table.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from '../../../shared/pipes/translate-me';
-import { TableComponent } from '../table/table.component';
 import { PrintQRComponent } from './../../../components/print/print-qr/print-qr.component';
 import { TransactionType } from './../../../components/transaction-type/transaction-type';
 

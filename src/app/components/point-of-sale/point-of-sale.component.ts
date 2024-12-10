@@ -14,8 +14,8 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
+import { Room } from '@types';
 import { Printer, PrinterPrintIn } from '../printer/printer';
-import { Room } from '../room/room';
 import {
   CurrentAccount,
   StockMovement,
@@ -36,6 +36,8 @@ import {
   ClaimType,
   EmailProps,
   EmployeeType,
+  Table,
+  TableState,
 } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
@@ -80,7 +82,6 @@ import { Company, CompanyType } from './../../components/company/company';
 import { Currency } from './../../components/currency/currency';
 import { Deposit } from './../../components/deposit/deposit';
 import { Origin } from './../../components/origin/origin';
-import { Table, TableState } from './../../components/table/table';
 import { User } from './../../components/user/user';
 
 @Component({
@@ -164,7 +165,6 @@ export class PointOfSaleComponent implements OnInit {
     private _movementOfCancellationService: MovementOfCancellationService,
     private _tiendaNubeService: TiendaNubeService
   ) {
-    this.roomSelected = new Room();
     this.transactionTypes = new Array();
     this.originsToFilter = new Array();
   }
@@ -489,7 +489,7 @@ export class PointOfSaleComponent implements OnInit {
             this.loading = false;
             this.rooms = result.rooms;
 
-            if (this.roomSelected._id === undefined) {
+            if (this.roomSelected?._id === undefined) {
               this.roomSelected = this.rooms[0];
             } else {
               for (let room of this.rooms) {
@@ -587,7 +587,8 @@ export class PointOfSaleComponent implements OnInit {
       });
     } else {
       if (this.posType === 'resto') {
-        this.roomSelected._id = pathLocation[4];
+        if (pathLocation?.[4] && this.roomSelected)
+          this.roomSelected._id = pathLocation[4];
         this.getRooms();
       } else if (this.posType === 'delivery') {
         let match = {

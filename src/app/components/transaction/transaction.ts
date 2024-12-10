@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { Employee } from '@types';
+import { Employee, Table } from '@types';
 import { Account } from '../account/account';
 import { Address } from '../address/address.model';
 import { Branch } from '../branch/branch';
@@ -12,7 +12,6 @@ import { Deposit } from '../deposit/deposit';
 import { PriceList } from '../price-list/price-list';
 import { RelationType } from '../relation-type/relation-type';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
-import { Table } from '../table/table';
 import { Taxes } from '../tax/taxes';
 import { TransactionType } from '../transaction-type/transaction-type';
 import { Transport } from '../transport/transport';
