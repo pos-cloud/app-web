@@ -35,7 +35,13 @@ export class MakeComponent implements OnInit, OnDestroy {
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _toastService: ToastService
-  ) {}
+  ) {
+    this.makeForm = this._fb.group({
+      _id: ['', []],
+      description: ['', [Validators.required]],
+      visibleSale: [true, []],
+    });
+  }
 
   ngOnInit() {
     let pathUrl = this._router.url.split('/');
@@ -46,7 +52,6 @@ export class MakeComponent implements OnInit, OnDestroy {
     if (this.makeId) {
       this.getMake();
     }
-    this.buildForm();
   }
 
   ngAfterViewInit() {
@@ -62,18 +67,18 @@ export class MakeComponent implements OnInit, OnDestroy {
     this._makeService
       .getById(this.makeId)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
-          if (!result.result) {
-            this._toastService.showToast(result);
-          } else {
-            this.make = result.result;
-            this.setValueForm();
-          }
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this.make = result.result;
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.setValueForm();
+          this.loading = false;
+        },
+      });
   }
 
   setValueForm(): void {
@@ -81,14 +86,6 @@ export class MakeComponent implements OnInit, OnDestroy {
       _id: this.make._id ?? '',
       description: this.make.description ?? null,
       visibleSale: this.make.visibleSale ?? true,
-    });
-  }
-
-  buildForm(): void {
-    this.makeForm = this._fb.group({
-      _id: ['', []],
-      description: ['', [Validators.required]],
-      visibleSale: [true, []],
     });
   }
 
@@ -126,14 +123,18 @@ export class MakeComponent implements OnInit, OnDestroy {
     this._makeService
       .save(this.make)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+          this.returnTo();
+        },
+      });
   }
 
   updateMake(): void {
@@ -142,14 +143,18 @@ export class MakeComponent implements OnInit, OnDestroy {
     this._makeService
       .update(this.make)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+          this.returnTo();
+        },
+      });
   }
 
   deleteMake() {
@@ -157,13 +162,17 @@ export class MakeComponent implements OnInit, OnDestroy {
     this._makeService
       .delete(this.make._id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status === 200) return this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+          this.returnTo();
+        },
+      });
   }
 }

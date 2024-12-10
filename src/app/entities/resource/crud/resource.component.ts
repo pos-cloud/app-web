@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { MediaCategory, Resource } from '@types';
+import { ApiResponse, MediaCategory, Resource } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Subject } from 'rxjs';
@@ -42,7 +42,12 @@ export class ResourceComponent implements OnInit {
     public translatePipe: TranslateMePipe,
     public _router: Router,
     private _toastService: ToastService
-  ) {}
+  ) {
+    this.resourceForm = this._fb.group({
+      _id: ['', []],
+      name: ['', [Validators.required]],
+    });
+  }
 
   ngOnInit() {
     let pathUrl = this._router.url.split('/');
@@ -53,7 +58,6 @@ export class ResourceComponent implements OnInit {
     if (this.resourceId) {
       this.getResource();
     }
-    this.buildForm();
   }
 
   ngAfterViewInit() {
@@ -70,32 +74,26 @@ export class ResourceComponent implements OnInit {
     this._resourceService
       .getById(this.resourceId)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result) => {
-          if (!result.result) {
-            this._toastService.showToast(result);
-          } else {
-            this.resource = result.result;
-            if (this.resource?.file) this.src = this.resource.file;
-            this.setValueForm();
-          }
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this.resource = result.result;
+          if (this.resource?.file) this.src = this.resource.file;
+          this._toastService.showToast(result);
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+          this.setValueForm();
+        },
+      });
   }
 
   public setValueForm(): void {
     this.resourceForm.setValue({
       _id: this.resource?._id ?? '',
       name: this.resource?.name ?? '',
-    });
-  }
-
-  public buildForm(): void {
-    this.resourceForm = this._fb.group({
-      _id: ['', []],
-      name: ['', [Validators.required]],
     });
   }
 
@@ -122,22 +120,21 @@ export class ResourceComponent implements OnInit {
     if (this.selectedFile) {
       this.resource.file = await this.uploadFile(this.resource.file);
     }
-
     this._resourceService
       .update(this.resource)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result) => {
-          if (!result.result) {
-            this._toastService.showToast(result);
-          } else {
-            this._toastService.showToast(result);
-            this.returnTo();
-          }
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this._toastService.showToast(result);
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+          this.returnTo();
+        },
+      });
   }
 
   returnTo() {
@@ -154,21 +151,18 @@ export class ResourceComponent implements OnInit {
       this._resourceService
         .save(this.resource)
         .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          (result) => {
-            if (!result.result) {
-              if (result.message && result.message !== '') {
-                this._toastService.showToast(result);
-              }
-            } else {
-              this.resource = result.resource;
-              this._toastService.showToast(result);
-              this.returnTo();
-            }
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this._toastService.showToast(result);
           },
-          (error) => this._toastService.showToast(error),
-          () => (this.loading = false)
-        );
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.returnTo();
+          },
+        });
     } else {
       this.loading = false;
       this._toastService.showToast({
@@ -185,18 +179,18 @@ export class ResourceComponent implements OnInit {
     this._resourceService
       .delete(this.resource._id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result) => {
-          if (!result.result) {
-            this._toastService.showToast(result);
-          } else {
-            this._toastService.showToast(result);
-            this.returnTo();
-          }
+      .subscribe({
+        next: (result) => {
+          this._toastService.showToast(result);
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+          this.returnTo();
+        },
+      });
   }
 
   public onFileSelected(event) {
