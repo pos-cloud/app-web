@@ -3082,34 +3082,45 @@ export class AddSaleOrderComponent {
   }
 
   async updateArticlesCostPrice(): Promise<number> {
-    return new Promise<number>(async (resolve, reject) => {
-      try {
-        let unitPrice: number = 0;
-        let countArticle = 0;
+    let countArticle = 0;
 
-        for (const mov of this.movementsOfArticles) {
-          if (mov && mov.article && mov.article._id) {
-            if (this.transaction.quotation > 1)
-              unitPrice = this.roundNumber.transform(
-                mov.basePrice / mov.amount / this.transaction.quotation
-              );
-            else
-              unitPrice = this.roundNumber.transform(
-                mov.basePrice / mov.amount
-              );
+    for (const mov of this.movementsOfArticles) {
+      try {
+        if (mov && mov.article && mov.article._id) {
+          let unitPrice: number = 0;
+
+          if (this.transaction.quotation > 1) {
             unitPrice = this.roundNumber.transform(
-              unitPrice + mov.transactionDiscountAmount
+              mov.basePrice / mov.amount / this.transaction.quotation
             );
-            if (unitPrice !== mov.article.basePrice)
-              if (await this.updateArticleCostPrice(mov.article, unitPrice))
-                countArticle++;
+          } else {
+            unitPrice = this.roundNumber.transform(mov.basePrice / mov.amount);
+          }
+
+          unitPrice = this.roundNumber.transform(
+            unitPrice + mov.transactionDiscountAmount
+          );
+
+          if (unitPrice !== mov.article.basePrice) {
+            const updated = await this.updateArticleCostPrice(
+              mov.article,
+              unitPrice
+            );
+            if (updated) {
+              countArticle++;
+            }
           }
         }
-        resolve(countArticle);
       } catch (error) {
-        reject(error);
+        console.error(
+          `Error actualizando precio de costo para el artículo con ID ${mov?.article?._id}:`,
+          error
+        );
+        // Continúa con el siguiente artículo
       }
-    });
+    }
+
+    return countArticle;
   }
 
   async updateArticleCostPrice(
@@ -3347,7 +3358,6 @@ export class AddSaleOrderComponent {
       // ACTUALIZACIÓN DE PRECIOS DE COSTOS
       if (this.transaction.type.updatePrice === PriceType.Base) {
         let count = await this.updateArticlesCostPrice();
-
         if (count === 1) {
           this._toastService.showToast({
             type: 'info',
@@ -3362,7 +3372,6 @@ export class AddSaleOrderComponent {
           }
         }
       }
-
       // ACTUALIZACIÓN DE A PREPARAR SI APARECE EN COCINA LOS ARTICULOS
       if (this.transaction.type.posKitchen) {
         await this.changeArticlesStatusToPending();
@@ -3373,7 +3382,6 @@ export class AddSaleOrderComponent {
         if (await this.areValidMovementOfArticle())
           await this.updateStockByTransaction();
       }
-
       // ACTUALIZACION DE ORDENES DE PRODUCCION
       // esto es solo para actualizar el estado de la orden cuando todos los movimientos de articulos fueron leidos
       if (
@@ -3386,7 +3394,6 @@ export class AddSaleOrderComponent {
       let result: ApiResponse = await this._transactionService
         .updateBalance(this.transaction)
         .toPromise();
-
       if (result.status !== 200) throw result;
       this.transaction.balance = result.result.balance;
 
@@ -3409,7 +3416,6 @@ export class AddSaleOrderComponent {
       } else {
         this.transaction.state = TransactionState.Closed;
       }
-
       this.transaction = await this.updateTransaction();
 
       // GUARDAMOS LA FECHA DE TRANSACCION EN LOS MOV DE ARTICULOS.
