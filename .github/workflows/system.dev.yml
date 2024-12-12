@@ -5,7 +5,7 @@ on:
     branches:
       - dev
     paths-ignore:
-      - "services/**"
+      - 'services/**'
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'
 
       - name: Install Angular CLI
         run: npm install -g @angular/cli
@@ -28,7 +28,7 @@ jobs:
 
       - name: Build
         run: npm run build:dev
-      
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -47,6 +47,19 @@ jobs:
 
       - name: Clean system
         run: rm -rf /home/system-dev/*
+
+      - name: Increment patch version
+        run: |
+          PATCH_FILE="src/assets/patch.txt"
+          # Asegurarse de que el archivo existe
+          if [ ! -f "$PATCH_FILE" ]; then
+            echo "0" > "$PATCH_FILE"
+          fi
+          # Leer, incrementar y guardar el nuevo valor
+          CURRENT_PATCH=$(cat "$PATCH_FILE")
+          NEW_PATCH=$((CURRENT_PATCH + 1))
+          echo $NEW_PATCH > "$PATCH_FILE"
+          echo "Updated patch version to $NEW_PATCH"
 
       - name: Download artifact
         uses: actions/download-artifact@v4
