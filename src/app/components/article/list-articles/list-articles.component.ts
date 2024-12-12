@@ -34,12 +34,12 @@ export class ListArticlesComponent {
       icon: 'fa fa-plus',
       click: `this.emitEvent('add', null)`,
     },
-    {
-      title: 'import',
-      class: 'btn btn-light',
-      icon: 'fa fa-upload',
-      click: `this.emitEvent('uploadFile', null)`,
-    },
+    // {
+    //   title: 'import',
+    //   class: 'btn btn-light',
+    //   icon: 'fa fa-upload',
+    //   click: `this.emitEvent('uploadFile', null)`,
+    // },
     {
       title: 'Imprimir Etiquetas',
       class: 'btn btn-light',
