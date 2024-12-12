@@ -34,6 +34,7 @@ import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { FileService } from 'app/core/services/file.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { environment } from 'environments/environment';
 import { Observable, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -188,15 +189,22 @@ export class ConfigComponent implements OnInit {
   }
   public async generateBackUp() {
     this._configService.generateBackUp().subscribe((result) => {
-      let link = document.createElement('a');
-      link.download = 'filename';
-      link.href = this.apiV8URL + 'configs/downloadBD/' + result.archive_path;
-      link.click();
-      this._toastService.showToast({
-        message: result.message,
-        type: 'success',
-      });
-      // [attr.href]="apiURL + 'config/generateBackUp'"
+      if (result && result.archive_path) {
+        let link = document.createElement('a');
+        link.download = 'filename';
+        link.href =
+          environment.apiv2 + 'configs/downloadBD/' + result.archive_path;
+        link.click();
+        this._toastService.showToast({
+          message: result.message,
+          type: 'success',
+        });
+      } else {
+        this._toastService.showToast({
+          message: 'Error al generar el respaldo',
+          type: 'error',
+        });
+      }
     });
   }
 
