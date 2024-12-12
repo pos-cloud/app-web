@@ -123,7 +123,6 @@ import { PrintVatBookComponent } from './components/print/print-vat-book/print-v
 import { PrintComponent } from './components/print/print/print.component';
 import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
 import { PrinterComponent } from './components/printer/printer/printer.component';
-import { RegisterComponent } from './components/register/register.component';
 import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
 import { RelationTypeComponent } from './components/relation-type/relation-type/relation-type.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
@@ -216,7 +215,6 @@ export function createTranslateLoader(http: HttpClient) {
     SendEmailComponent,
     PrintComponent,
     ViewTransactionComponent,
-    RegisterComponent,
     AddArticleStockComponent,
     UpdateArticleStockComponent,
     ListArticleStocksComponent,
