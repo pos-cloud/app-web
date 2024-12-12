@@ -114,14 +114,18 @@ export class EmployeeTypeComponent implements OnInit {
     this._employeeTypeService
       .save(this.employeeType)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.returnTo();
+          if (result.status == 200) this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public updateEmployeeType(): void {
@@ -130,14 +134,18 @@ export class EmployeeTypeComponent implements OnInit {
     this._employeeTypeService
       .update(this.employeeType)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.returnTo();
+          if (result.status == 200) this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public deleteEmployeeType(): void {
@@ -146,13 +154,17 @@ export class EmployeeTypeComponent implements OnInit {
     this._employeeTypeService
       .delete(this.employeeType._id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.returnTo();
+          if (result.status == 200) this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 }

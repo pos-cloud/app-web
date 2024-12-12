@@ -1,10 +1,6 @@
-import { User } from "./user.interface";
+import { Activity } from '@types';
 
-export interface Classification {
-    _id: string;
-    name : string;
-    creationUser?: User;
-    creationDate?: string;
-    updateUser?: User;
-    updateDate?: string;
+export interface Classification extends Activity {
+  _id: string;
+  name: string;
 }

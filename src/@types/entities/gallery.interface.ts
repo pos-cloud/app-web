@@ -1,18 +1,14 @@
-import { Resource } from "./resource.iterface";
-import { User } from "./user.interface";
+import { Activity, Resource } from '@types';
 
-export interface Gallery {
-     _id: string;
-     name: string;
-     colddown: number;
-     barcode: boolean;
-     resources: [
-      {
-        resource: Resource;
-        order: number;
-      }
-    ];
-     creationDate: string;
-     updateUser: User;
-     updateDate: string;
-  }
+export interface Gallery extends Activity {
+  _id: string;
+  name: string;
+  interval: number;
+  barcode: boolean;
+  resources: [
+    {
+      resource: Resource;
+      order: number;
+    },
+  ];
+}

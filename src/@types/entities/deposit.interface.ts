@@ -1,14 +1,10 @@
-import { Branch } from "./branch.interface";
-import { User } from "./user.interface";
+import { Activity } from '@types';
+import { Branch } from './branch.interface';
 
-export interface Deposit {
-     _id: string;
-     name: string;
-     branch: Branch;
-     capacity: number;
-     default : Boolean;
-     operationType : string;
-     creationDate: string;
-	 updateUser: User;
-     updateDate: string;
+export interface Deposit extends Activity {
+  _id: string;
+  name: string;
+  branch: Branch;
+  capacity: number;
+  default: Boolean;
 }

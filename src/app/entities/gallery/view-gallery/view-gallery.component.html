@@ -11,7 +11,7 @@
       <ngb-carousel
         class="barcode"
         *ngIf="images?.length > 0"
-        [interval]="gallery.colddown * 1000"
+        [interval]="gallery.interval * 1000"
         [pauseOnHover]="false"
         [showNavigationArrows]="false"
       >
@@ -49,7 +49,7 @@
       <div class="content">
         <h2 class="display-5 mb-3">{{ article.description }}</h2>
         <h1>
-          {{ article.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+          {{ article.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
         </h1>
         <p [innerHTML]="article?.observation"></p>
       </div>
