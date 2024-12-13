@@ -190,11 +190,22 @@ export class ConfigComponent implements OnInit {
   public async downloadBackup() {
     this._configService.downloadBackup().subscribe((result) => {
       if (result) {
+        const currentDate = new Date();
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const year = currentDate.getFullYear();
+
+        const formattedDate = `${day}-${month}-${year}`;
+
+        const dbName = localStorage.getItem('company');
+
+        const fileName = `${dbName}-${formattedDate}.gz`;
+
         const blob = new Blob([result], { type: 'application/gzip' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = result.fileName || 'backup.gz';
+        link.download = fileName;
         link.click();
         window.URL.revokeObjectURL(url);
 
