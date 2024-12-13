@@ -190,14 +190,13 @@ export class ConfigComponent implements OnInit {
   public async downloadBackup() {
     this._configService.downloadBackup().subscribe((result) => {
       if (result) {
-        // Si la respuesta es un blob (el archivo)
-        const blob = new Blob([result], { type: 'application/gzip' }); // Tipo de archivo, puedes ajustarlo
+        const blob = new Blob([result], { type: 'application/gzip' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'backup.gz'; // El nombre del archivo
+        link.download = result.fileName || 'backup.gz';
         link.click();
-        window.URL.revokeObjectURL(url); // Liberar el objeto URL
+        window.URL.revokeObjectURL(url);
 
         this._toastService.showToast({
           message: 'Backup descargado correctamente',
