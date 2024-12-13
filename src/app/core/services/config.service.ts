@@ -35,10 +35,10 @@ export class ConfigService extends ModelService {
 
   public downloadBackup(): Observable<any> {
     const URL = `${environment.apiv2}/configs/download-backup`;
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: this._authService.getToken(),
-    });
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
     // Solicitar el backup al backend
     return this._http
