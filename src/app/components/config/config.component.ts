@@ -34,7 +34,6 @@ import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { FileService } from 'app/core/services/file.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { environment } from 'environments/environment';
 import { Observable, Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -187,16 +186,21 @@ export class ConfigComponent implements OnInit {
       this.timezones = this.timezones.timezones;
     });
   }
-  public async generateBackUp() {
-    this._configService.generateBackUp().subscribe((result) => {
-      if (result && result.archive_path) {
-        let link = document.createElement('a');
-        link.download = 'filename';
-        link.href =
-          environment.apiv2 + 'configs/downloadBD/' + result.archive_path;
+
+  public async downloadBackup() {
+    this._configService.downloadBackup().subscribe((result) => {
+      if (result) {
+        // Si la respuesta es un blob (el archivo)
+        const blob = new Blob([result], { type: 'application/gzip' }); // Tipo de archivo, puedes ajustarlo
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'backup.gz'; // El nombre del archivo
         link.click();
+        window.URL.revokeObjectURL(url); // Liberar el objeto URL
+
         this._toastService.showToast({
-          message: result.message,
+          message: 'Backup descargado correctamente',
           type: 'success',
         });
       } else {
