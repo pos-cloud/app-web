@@ -19,8 +19,6 @@ import { Article, Type } from '../article';
 
 import { ArticleService } from '../../../core/services/article.service';
 
-import { ArticleFieldType } from 'app/components/article-field/article-field';
-import { ArticleFields } from 'app/components/article-field/article-fields';
 import { CompanyType } from 'app/components/company/company';
 import { PriceList } from 'app/components/price-list/price-list';
 import { Structure, Utilization } from 'app/components/structure/structure';
@@ -318,7 +316,7 @@ export class ListArticlesPosComponent implements OnInit {
     increasePrice -= this.discountCompany;
     increasePrice -= this.discountCompanyGroup;
 
-    if (this.database == 'sangenemi') {
+    if (this.database == 'sangenemi' || this.database == 'globalstore') {
       return this.roundNumber.transform(
         article.costPrice + (article.costPrice * increasePrice) / 100
       );
@@ -480,34 +478,6 @@ export class ListArticlesPosComponent implements OnInit {
             this.transaction.type.transactionMovement ===
               TransactionMovement.Sale
           ) {
-            let fields: ArticleFields[] = new Array();
-            if (
-              movementOfArticle.otherFields &&
-              movementOfArticle.otherFields.length > 0
-            ) {
-              for (const field of movementOfArticle.otherFields) {
-                if (
-                  field.articleField.datatype === ArticleFieldType.Percentage ||
-                  field.articleField.datatype === ArticleFieldType.Number
-                ) {
-                  if (
-                    field.articleField.datatype === ArticleFieldType.Percentage
-                  ) {
-                    field.amount = this.roundNumber.transform(
-                      (movementOfArticle.basePrice * parseFloat(field.value)) /
-                        100
-                    );
-                  } else if (
-                    field.articleField.datatype === ArticleFieldType.Number
-                  ) {
-                    field.amount = parseFloat(field.value);
-                  }
-                }
-                fields.push(field);
-              }
-            }
-
-            movementOfArticle.otherFields = fields;
             movementOfArticle.costPrice = this.roundNumber.transform(
               article.costPrice
             );
@@ -549,20 +519,21 @@ export class ListArticlesPosComponent implements OnInit {
                 movementOfArticle.salePrice +
                   (movementOfArticle.salePrice * increasePrice) / 100
               );
-            }
 
-            if (this.database == 'sangenemi' && priceList) {
-              movementOfArticle.markupPrice = this.roundNumber.transform(
-                priceList.percentage
-              );
-              let aux =
-                (movementOfArticle.costPrice * priceList.percentage) / 100;
-              movementOfArticle.salePrice = this.roundNumber.transform(
-                movementOfArticle.costPrice + aux
-              );
-              movementOfArticle.unitPrice = this.roundNumber.transform(
-                movementOfArticle.salePrice / movementOfArticle.amount
-              );
+              if (
+                this.database == 'sangenemi' ||
+                this.database == 'globalstore'
+              ) {
+                movementOfArticle.markupPrice =
+                  this.roundNumber.transform(increasePrice);
+                let aux = (movementOfArticle.costPrice * increasePrice) / 100;
+                movementOfArticle.salePrice = this.roundNumber.transform(
+                  movementOfArticle.costPrice + aux
+                );
+                movementOfArticle.unitPrice = this.roundNumber.transform(
+                  movementOfArticle.salePrice / movementOfArticle.amount
+                );
+              }
             }
 
             if (this.transaction.type.requestTaxes) {
@@ -627,38 +598,6 @@ export class ListArticlesPosComponent implements OnInit {
             let taxedAmount = movementOfArticle.basePrice;
             movementOfArticle.costPrice = 0;
 
-            let fields: ArticleFields[] = new Array();
-            if (
-              movementOfArticle.otherFields &&
-              movementOfArticle.otherFields.length > 0
-            ) {
-              for (const field of movementOfArticle.otherFields) {
-                if (
-                  field.articleField.datatype === ArticleFieldType.Percentage ||
-                  field.articleField.datatype === ArticleFieldType.Number
-                ) {
-                  if (
-                    field.articleField.datatype === ArticleFieldType.Percentage
-                  ) {
-                    field.amount = this.roundNumber.transform(
-                      (movementOfArticle.basePrice * parseFloat(field.value)) /
-                        100
-                    );
-                  } else if (
-                    field.articleField.datatype === ArticleFieldType.Number
-                  ) {
-                    field.amount = parseFloat(field.value);
-                  }
-                  if (field.articleField.modifyVAT) {
-                    taxedAmount += field.amount;
-                  } else {
-                    movementOfArticle.costPrice += field.amount;
-                  }
-                }
-                fields.push(field);
-              }
-            }
-            movementOfArticle.otherFields = fields;
             if (this.transaction.type.requestTaxes) {
               let taxes: Taxes[] = new Array();
               if (article.taxes) {
