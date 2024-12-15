@@ -1228,6 +1228,16 @@ export let attributesVariant = [
     required: false,
   },
   {
+    name: 'provider.name',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
     name: 'm3',
     visible: false,
     disabled: false,
