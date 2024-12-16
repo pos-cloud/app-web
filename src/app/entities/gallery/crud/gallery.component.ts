@@ -47,8 +47,8 @@ export class GalleryComponent implements OnInit {
     this.galleryForm = this._fb.group({
       _id: ['', []],
       name: ['', [Validators.required]],
-      colddown: ['', []],
-      barcode: ['', []],
+      interval: [10, []],
+      barcode: [true, []],
       resources: this._fb.array([]),
     });
   }
@@ -131,8 +131,8 @@ export class GalleryComponent implements OnInit {
     const values = {
       _id: this.gallery?._id ?? '',
       name: this.gallery?.name ?? '',
-      colddown: this.gallery?.colddown ?? 6,
-      barcode: this.gallery.barcode ? this.gallery.barcode : false,
+      interval: this.gallery?.interval ?? 10,
+      barcode: this.gallery.barcode || false,
     };
 
     if (this.gallery.resources && this.gallery.resources.length > 0) {
@@ -161,6 +161,14 @@ export class GalleryComponent implements OnInit {
   }
 
   addGallery() {
+    this.galleryForm.markAllAsTouched();
+    if (this.galleryForm.invalid) {
+      this.loading = false;
+      return;
+    }
+
+    this.gallery = this.galleryForm.value;
+
     switch (this.operation) {
       case 'add':
         this.saveGallery();
@@ -178,8 +186,6 @@ export class GalleryComponent implements OnInit {
   async saveGallery() {
     this.loading = true;
 
-    this.gallery = this.galleryForm.value;
-
     if (await this.isValid()) {
       this._galleryService
         .save(this.gallery)
@@ -187,13 +193,13 @@ export class GalleryComponent implements OnInit {
         .subscribe({
           next: (result: ApiResponse) => {
             this._toastService.showToast(result);
+            if (result.status == 200) this.returnTo();
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
-            this.returnTo();
           },
         });
     } else {
@@ -204,8 +210,6 @@ export class GalleryComponent implements OnInit {
   async updateGallery() {
     this.loading = true;
 
-    this.gallery = this.galleryForm.value;
-
     if (await this.isValid()) {
       this._galleryService
         .update(this.gallery)
@@ -213,13 +217,13 @@ export class GalleryComponent implements OnInit {
         .subscribe({
           next: (result: ApiResponse) => {
             this._toastService.showToast(result);
+            if (result.status == 200) this.returnTo();
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
-            this.returnTo();
           },
         });
     } else {
@@ -236,23 +240,20 @@ export class GalleryComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          if (result.status == 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
 
   getResources(): Promise<void> {
-    let match = `{ "operationType": { "$ne": "D" } }`;
+    const match = { operationType: { $ne: 'D' } };
 
-    match = JSON.parse(match);
-
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
       name: 1,
       type: 1,
@@ -287,11 +288,11 @@ export class GalleryComponent implements OnInit {
   public isValid(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       if (
-        this.galleryForm.value.colddown === 0 ||
-        this.gallery.colddown === 0 ||
-        this.gallery.colddown === null ||
-        this.gallery.colddown < 0 ||
-        this.galleryForm.value.colddown < 0
+        this.galleryForm.value.interval === 0 ||
+        this.gallery.interval === 0 ||
+        this.gallery.interval === null ||
+        this.gallery.interval < 0 ||
+        this.galleryForm.value.interval < 0
       ) {
         this._toastService.showToast({
           message: 'El intervalo no puede ser 0 o negativo',

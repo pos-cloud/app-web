@@ -17,17 +17,6 @@ app-view-gallery {
     object-fit: contain; /* Ajuste de imagen sin recortar */
   }
 
-  .tile {
-    background-color: #ccc;
-    background-size: cover !important;
-    height: 100vh;
-    display: flex;
-    background-position: center center;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  }
-
   .content img {
     max-width: 100%;
     object-fit: contain;

@@ -42,7 +42,6 @@ import { ListPriceListsComponent } from './components/price-list/list-price-list
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { PrintComponent } from './components/print/print/print.component';
 import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
-import { RegisterComponent } from './components/register/register.component';
 import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
@@ -83,10 +82,6 @@ export const _routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-  },
-  {
-    path: 'registrar',
-    component: RegisterComponent,
   },
   {
     path: 'histories',

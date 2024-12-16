@@ -40,7 +40,7 @@ export class EmployeeComponent implements OnInit {
       name: ['', [Validators.required]],
       phone: ['', []],
       address: ['', []],
-      type: ['', [Validators.required]],
+      type: [null, [Validators.required]],
     });
   }
 
@@ -96,24 +96,24 @@ export class EmployeeComponent implements OnInit {
           match,
         })
         .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          (result: ApiResponse) => {
-            if (!result.result) {
-              this._toastService.showToast(result);
-              reject();
-            } else {
+        .subscribe({
+          next: (result: ApiResponse) => {
+            if (result.status == 200) {
               this.employeeTypes = result.result;
               resolve();
+            } else {
+              this._toastService.showToast(result.message);
+              reject();
             }
           },
-          (error) => {
+          error: (error) => {
             this._toastService.showToast(error);
-            reject(error);
+            reject();
           },
-          () => {
+          complete: () => {
             this.loading = false;
-          }
-        );
+          },
+        });
     });
   }
 
@@ -122,27 +122,28 @@ export class EmployeeComponent implements OnInit {
     this._employeeService
       .getById(employeeId)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
-          if (!result.result) {
-            this._toastService.showToast(result);
-          } else {
+      .subscribe({
+        next: (result: ApiResponse) => {
+          if (result.status == 200) {
             this.employee = result.result;
             this.setValueForm();
+          } else {
+            this._toastService.showToast(result.message);
           }
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public addEmployee(): void {
     this.loading = true;
     this.employeeForm.markAllAsTouched();
     if (this.employeeForm.invalid) {
-      this._toastService.showToast({
-        message: 'Por favor complete todos los campos obligatorios.',
-      });
       this.loading = false;
       return;
     }
@@ -169,14 +170,18 @@ export class EmployeeComponent implements OnInit {
     this._employeeService
       .save(this.employee)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.returnTo();
+          if (result.status == 200) this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public updateEmployee(): void {
@@ -185,14 +190,18 @@ export class EmployeeComponent implements OnInit {
     this._employeeService
       .update(this.employee)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.returnTo();
+          if (result.status == 200) this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public deleteEmployee(): void {
@@ -201,13 +210,17 @@ export class EmployeeComponent implements OnInit {
     this._employeeService
       .delete(this.employee._id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (result: ApiResponse) => {
+      .subscribe({
+        next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) return this.returnTo();
+          if (result.status == 200) this.returnTo();
         },
-        (error) => this._toastService.showToast(error),
-        () => (this.loading = false)
-      );
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 }

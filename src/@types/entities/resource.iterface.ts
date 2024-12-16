@@ -1,12 +1,8 @@
-import { User } from "./user.interface";
+import { Activity } from '@types';
 
-export interface Resource {
-     _id: string;
-     name: string;
-     type: string;
-     file: string;
-     creationUser: User;
-     creationDate: string;
-     updateUser: User;
-     updateDate: string;
-  }
+export interface Resource extends Activity {
+  _id: string;
+  name: string;
+  type: string;
+  file: string;
+}

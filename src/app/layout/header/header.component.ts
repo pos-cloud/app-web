@@ -1,5 +1,5 @@
 // ANGULAR
-import { Component, ElementRef, Renderer2 } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import {
   Event as NavigationEvent,
   NavigationStart,
@@ -30,6 +30,7 @@ import { AddUserComponent } from '../../components/user/user/add-user.component'
 import { ClaimComponent } from '../claim/claim.component';
 //import { Socket } from 'ngx-socket-io';
 import { PushNotificationsService } from 'app/core/services/notification.service';
+import { VersionService } from 'app/core/services/version.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CurrentAccountDetailsComponent } from '../../components/print/current-account-details/current-account-details.component';
 
@@ -38,7 +39,7 @@ import { CurrentAccountDetailsComponent } from '../../components/print/current-a
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   toggleNavbar = false;
   public config$: any;
   public identity$: Observable<User>;
@@ -52,6 +53,7 @@ export class HeaderComponent {
   public readedNotification: boolean;
   public intervalSocket;
   public notificationMessage: string;
+  public patchVersion: string = 'loading...';
   showAccordion = false;
 
   constructor(
@@ -65,7 +67,8 @@ export class HeaderComponent {
     public _modalService: NgbModal,
     //private socket: Socket,
     private _toast: ToastService,
-    private _notificationService: PushNotificationsService
+    private _notificationService: PushNotificationsService,
+    private _versionService: VersionService
   ) {
     // OCULTAR MENU REPORTE
     this.isReportVisible = false;
@@ -124,6 +127,18 @@ export class HeaderComponent {
     // });
 
     //this.initSocket();
+  }
+
+  ngOnInit(): void {
+    this._versionService.getPatchVersion().subscribe(
+      (version) => {
+        this.patchVersion = version.trim();
+      },
+      (error) => {
+        console.error('Error fetching patch version:', error);
+        this.patchVersion = 'Error';
+      }
+    );
   }
 
   public ngAfterViewInit() {

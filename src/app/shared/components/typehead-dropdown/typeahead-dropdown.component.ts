@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   NgbDropdownModule,
@@ -7,6 +7,7 @@ import {
   NgbTypeaheadModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject, merge } from 'rxjs';
+import { Subscription } from 'rxjs/internal/Subscription';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -25,7 +26,7 @@ import {
     ReactiveFormsModule,
   ],
 })
-export class TypeaheadDropdownComponent {
+export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   @Input() placeholder: string = ''; // Placeholder opcional
   @Input() control: FormControl; // Control del formulario
   @Input() data: any[] = []; // Lista de opciones para el dropdown
@@ -37,6 +38,23 @@ export class TypeaheadDropdownComponent {
 
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
+  private controlSubscription: Subscription;
+
+  ngOnInit(): void {
+    // Suscribirse a los cambios del FormControl
+    this.controlSubscription = this.control.valueChanges.subscribe((value) => {
+      if (value === '') {
+        this.control.setValue(null, { emitEvent: false });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Desuscribirse al destruir el componente
+    if (this.controlSubscription) {
+      this.controlSubscription.unsubscribe();
+    }
+  }
 
   // Función de búsqueda
   searchFn = (text$: Observable<string>): Observable<readonly any[]> => {
@@ -54,11 +72,10 @@ export class TypeaheadDropdownComponent {
         (term) =>
           (term === ''
             ? this.data
-            : this.data.filter(
-                (item) =>
-                  item[this.displayField]
-                    ?.toLowerCase()
-                    .includes(term.toLowerCase())
+            : this.data.filter((item) =>
+                item[this.displayField]
+                  ?.toLowerCase()
+                  .includes(term.toLowerCase())
               )
           ).slice(0, 10) // Limitar resultados (opcional)
       )

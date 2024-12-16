@@ -1,4 +1,4 @@
-import { Activity } from '../common/activity.interface';
+import { Activity } from '@types';
 import { Employee } from './employee.interface';
 import { Room } from './room.interface';
 import { TableState } from './table.enum';

@@ -175,3 +175,13 @@ db.articles.find({ type: 'Variante' }).forEach(function (article) {
     );
   }
 });
+
+// replace colddown for interval
+db.galleries.updateMany(
+  { colddown: { $exists: true } }, // Filtrar documentos con `colddown`
+  [
+    {
+      $set: { interval: '$colddown' }, // Copiar el valor de `colddown` a `interval`
+    },
+  ]
+);

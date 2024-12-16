@@ -32,24 +32,28 @@ export class ConfigService extends ModelService {
   get getConfig() {
     return this.config.asObservable();
   }
-  public generateBackUp(): Observable<any> {
-    const URL = `${environment.apiv2}/configs/generateBackUp`;
+
+  public downloadBackup(): Observable<any> {
+    const URL = `${environment.apiv2}/configs/download-backup`;
+
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
+
+    // Solicitar el backup al backend
     return this._http
       .get(URL, {
         headers: headers,
+        responseType: 'blob', // Indicamos que esperamos un archivo binario (blob)
       })
       .pipe(
-        map((res) => {
-          return res;
-        }),
         catchError((err) => {
-          return of(err);
+          console.error('Error al solicitar el backup:', err);
+          return of(null); // Retornamos null en caso de error
         })
       );
   }
+
   public getConfigApi(): Observable<any> {
     const URL = `${Config.apiURL}config`;
 

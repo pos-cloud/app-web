@@ -116,18 +116,27 @@ export class BankComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this.bank = result.result;
+          if (result.status == 200) this.setValueForm();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.setValueForm();
         },
       });
   }
 
   public addBank() {
+    this.loading = true;
+    this.bankForm.markAllAsTouched();
+    if (this.bankForm.invalid) {
+      this.loading = false;
+      return;
+    }
+
+    this.bank = this.bankForm.value;
+
     switch (this.operation) {
       case 'add':
         this.saveBank();
@@ -145,20 +154,18 @@ export class BankComponent implements OnInit {
   public updateBank() {
     this.loading = true;
 
-    this.bank = this.bankForm.value;
-    this.bank.account = this.bank.account == '' ? null : this.bank.account;
     this._bankService
       .update(this.bank)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          if (result.status == 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
-          this.returnTo();
           this.loading = false;
         },
       });
@@ -167,15 +174,13 @@ export class BankComponent implements OnInit {
   public saveBank() {
     this.loading = true;
 
-    this.bank = this.bankForm.value;
-
     this._bankService
       .save(this.bank)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          this.returnTo();
+          if (result.status == 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -195,11 +200,10 @@ export class BankComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          this.returnTo();
+          if (result.status == 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
-          this.loading = false;
         },
         complete: () => {
           this.loading = false;
