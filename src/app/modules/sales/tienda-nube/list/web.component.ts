@@ -223,6 +223,16 @@ export class WebComponent implements OnInit {
         align: 'left',
         required: true,
       },
+      {
+        name: 'tiendaNubeId',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+      },
     ];
   }
 
