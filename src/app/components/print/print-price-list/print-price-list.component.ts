@@ -681,7 +681,11 @@ export class PrintPriceListComponent implements OnInit {
         }
         let increasePrice = 0;
 
-        if (priceList && this.database !== 'sangenemi') {
+        if (
+          priceList &&
+          this.database !== 'sangenemi' &&
+          this.database !== 'globalstore'
+        ) {
           if (priceList.allowSpecialRules) {
             priceList.rules.forEach((rule) => {
               if (rule) {
@@ -757,7 +761,10 @@ export class PrintPriceListComponent implements OnInit {
             this.articles[index].currency.quotation;
         }
 
-        if (this.database === 'sangenemi' && priceList) {
+        if (
+          (this.database === 'sangenemi' || this.database === 'globalstore') &&
+          priceList
+        ) {
           this.articles[index].salePrice =
             this.articles[index].costPrice +
             (this.articles[index].costPrice * priceList.percentage) / 100;

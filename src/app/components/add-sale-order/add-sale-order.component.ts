@@ -1506,7 +1506,8 @@ export class AddSaleOrderComponent {
       if (
         movementOfArticle.article &&
         this.priceList &&
-        this.database !== 'sangenemi'
+        this.database !== 'sangenemi' &&
+        this.database !== 'globalstore'
       ) {
         let increasePrice = 0;
 
@@ -1582,7 +1583,8 @@ export class AddSaleOrderComponent {
       if (
         movementOfArticle.article &&
         this.newPriceList &&
-        this.database !== 'sangenemi'
+        this.database !== 'sangenemi' &&
+        this.database !== 'globalstore'
       ) {
         let increasePrice = 0;
 
@@ -1674,7 +1676,7 @@ export class AddSaleOrderComponent {
 
       //logic for sangenemi quiere que se updatee por lista de precios esto lo vamos a mejorar y agregar una funcion en apiv2
       if (
-        this.database === 'sangenemi' &&
+        (this.database === 'sangenemi' || this.database === 'globalstore') &&
         (this.priceList || this.newPriceList)
       ) {
         let markupPrice = 0;

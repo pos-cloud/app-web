@@ -318,7 +318,7 @@ export class ListArticlesPosComponent implements OnInit {
     increasePrice -= this.discountCompany;
     increasePrice -= this.discountCompanyGroup;
 
-    if (this.database == 'sangenemi') {
+    if (this.database == 'sangenemi' || this.database == 'globalstore') {
       return this.roundNumber.transform(
         article.costPrice + (article.costPrice * increasePrice) / 100
       );
@@ -551,7 +551,11 @@ export class ListArticlesPosComponent implements OnInit {
               );
             }
 
-            if (this.database == 'sangenemi' && priceList) {
+            if (
+              (this.database == 'sangenemi' ||
+                this.database == 'globalstore') &&
+              priceList
+            ) {
               movementOfArticle.markupPrice = this.roundNumber.transform(
                 priceList.percentage
               );
