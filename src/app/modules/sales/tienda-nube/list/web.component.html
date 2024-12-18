@@ -19,7 +19,7 @@
         </button>
       </div>
     </div>
-    <div class="table-responsive">
+    <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>
           <th [width]="50">
@@ -119,6 +119,66 @@
               <b>{{ transaction.number }}</b>
             </td>
             <td *ngIf="transaction.company">{{ transaction.company.name }}</td>
+            <td>
+              <div class="btn-group mr-3">
+                <button
+                  type="button"
+                  class="btn"
+                  [ngClass]="{
+                    'btn-state-close':
+                      transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                      'Desempaquetado',
+                    'btn-state-open':
+                      transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                      'Enviado',
+                    'btn-state-canceled':
+                      transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                      'No enviado',
+                  }"
+                >
+                  {{ transaction.deliveryAddress.shippingStatus }}
+                </button>
+
+                <div
+                  class="btn-group"
+                  ngbDropdown
+                  role="group"
+                  aria-label="Button group with nested dropdown"
+                >
+                  <button
+                    class="btn dropdown-toggle-split"
+                    ngbDropdownToggle
+                    [ngClass]="{
+                      'btn-state-close':
+                        transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                        'Desempaquetado',
+                      'btn-state-open':
+                        transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                        'Enviado',
+                      'btn-state-canceled':
+                        transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                        'No enviado',
+                    }"
+                  ></button>
+                  <div class="dropdown-menu" ngbDropdownMenu>
+                    <button
+                      ngbDropdownItem
+                      (click)="changeStateOfTransaction(transaction, 'packed')"
+                    >
+                      Empaquetado
+                    </button>
+                    <button
+                      ngbDropdownItem
+                      (click)="
+                        openModal('fulfilledTn', 'fulfilled', transaction)
+                      "
+                    >
+                      Enviado
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </td>
             <td *ngIf="!transaction.company">Consumidor Final</td>
             <td>
               <div
@@ -187,7 +247,7 @@
                     >
                       Anulado
                     </button>
-                    <button
+                    <!-- <button
                       ngbDropdownItem
                       (click)="changeStateOfTransaction(transaction, 'packed')"
                     >
@@ -200,7 +260,7 @@
                       "
                     >
                       Enviado
-                    </button>
+                    </button> -->
                   </div>
                 </div>
               </div>

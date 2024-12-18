@@ -130,6 +130,16 @@ export class WebComponent implements OnInit {
         required: false,
       },
       {
+        name: 'deliveryAddress.shippingStatus',
+        visible: true,
+        disabled: false,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
         name: 'state',
         visible: true,
         disabled: false,
