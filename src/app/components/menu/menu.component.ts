@@ -30,7 +30,7 @@ export class MenuComponent implements OnInit {
     });
 
     this.getMenu();
-    this.getApplication();
+    //this.getApplication();
   }
 
   getMenu() {

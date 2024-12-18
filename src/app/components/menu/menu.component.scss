@@ -1,14 +1,16 @@
-
-.presentation-image{
+.presentation-image {
   width: 100%;
 }
 
-.product-price{
-  background: #fff;
+.product-price {
   min-width: 3rem;
   bottom: 0;
   right: 0;
-  padding-left: .2rem;
+  padding-left: 0.2rem;
   text-align: right;
   z-index: 2;
+}
+
+.card-body {
+  background-color: #f1e8de;
 }
