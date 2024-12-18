@@ -1,8 +1,11 @@
 <div>
   <img class="presentation-image" src="assets/image.png" alt="Presentación" />
-  <div class="row align-items-start">
-    <div *ngFor="let category of getMenuCategories()" class="category col-md-6">
-      <div class="card m-2">
+  <div class="align-items-start">
+    <div
+      *ngFor="let category of getMenuCategories()"
+      class="category col-md-12"
+    >
+      <div class="card m-3">
         <div class="card-body">
           <div
             class="col-md-12"
