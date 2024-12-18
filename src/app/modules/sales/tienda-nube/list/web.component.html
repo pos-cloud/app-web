@@ -125,13 +125,13 @@
                   type="button"
                   class="btn"
                   [ngClass]="{
-                    'btn-state-close':
+                    'btn-state-canceled':
                       transaction?.deliveryAddress?.shippingStatus?.toString() ===
                       'Desempaquetado',
-                    'btn-state-open':
+                    'btn-state-close':
                       transaction?.deliveryAddress?.shippingStatus?.toString() ===
                       'Enviado',
-                    'btn-state-canceled':
+                    'btn-state-open':
                       transaction?.deliveryAddress?.shippingStatus?.toString() ===
                       'No enviado',
                   }"
@@ -149,19 +149,23 @@
                     class="btn dropdown-toggle-split"
                     ngbDropdownToggle
                     [ngClass]="{
-                      'btn-state-close':
+                      'btn-state-canceled':
                         transaction?.deliveryAddress?.shippingStatus?.toString() ===
                         'Desempaquetado',
-                      'btn-state-open':
+                      'btn-state-close':
                         transaction?.deliveryAddress?.shippingStatus?.toString() ===
                         'Enviado',
-                      'btn-state-canceled':
+                      'btn-state-open':
                         transaction?.deliveryAddress?.shippingStatus?.toString() ===
                         'No enviado',
                     }"
                   ></button>
                   <div class="dropdown-menu" ngbDropdownMenu>
                     <button
+                      *ngIf="
+                        transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                        'Desempaquetado'
+                      "
                       ngbDropdownItem
                       (click)="changeStateOfTransaction(transaction, 'packed')"
                     >
