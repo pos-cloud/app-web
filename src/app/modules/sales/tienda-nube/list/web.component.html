@@ -141,7 +141,7 @@
                         'No enviado',
                     }"
                   >
-                    {{ transaction.deliveryAddress.shippingStatus }}
+                    {{ transaction?.deliveryAddress?.shippingStatus ?? '' }}
                   </button>
 
                   <div
