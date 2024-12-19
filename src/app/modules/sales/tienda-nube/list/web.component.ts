@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  NgbAlertConfig,
+  NgbDropdownConfig,
   NgbModal,
   NgbModule,
 } from '@ng-bootstrap/ng-bootstrap';
@@ -44,7 +44,7 @@ import { FulfilledComponent } from '../tienda-nube-fulfilled/fulfilled.component
   templateUrl: './web.component.html',
   styleUrls: ['./web.component.scss'],
   standalone: true,
-  providers: [NgbAlertConfig, TranslateService],
+  providers: [NgbDropdownConfig, TranslateService],
   encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
@@ -86,7 +86,8 @@ export class WebComponent implements OnInit {
     private _toastService: ToastService,
     public _userService: UserService,
     private _configService: ConfigService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    config: NgbDropdownConfig
   ) {
     this.columns = [
       {
@@ -244,6 +245,8 @@ export class WebComponent implements OnInit {
         required: true,
       },
     ];
+    config.placement = 'top-left';
+    config.autoClose = false;
   }
 
   async ngOnInit() {
@@ -317,200 +320,225 @@ export class WebComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        this.getTransaction(transaction._id);
-        if (this.transaction) {
-          modalRef = this._modalService.open(ViewTransactionComponent, {
-            size: 'lg',
-            backdrop: 'static',
-          });
-          modalRef.componentInstance.transactionId = this.transaction._id;
-        }
+        this.getTransaction(transaction._id, () => {
+          if (this.transaction) {
+            modalRef = this._modalService.open(ViewTransactionComponent, {
+              size: 'lg',
+              backdrop: 'static',
+            });
+            modalRef.componentInstance.transactionId = this.transaction._id;
+          }
+        });
         break;
       case 'print':
-        this.getTransaction(transaction._id);
-        if (this.transaction) {
-          if (
-            transaction.type.transactionMovement ===
-            TransactionMovement.Production
-          ) {
-            this.printTransaction(this.transaction);
-          } else {
+        this.getTransaction(transaction._id, () => {
+          if (this.transaction) {
             if (
-              this.transaction.type.expirationDate &&
-              moment(this.transaction.type.expirationDate).diff(
-                moment(),
-                'days'
-              ) <= 0
+              transaction.type.transactionMovement ===
+              TransactionMovement.Production
             ) {
-              // this.showMessage('El documento esta vencido', 'danger', true);
+              this.printTransaction(this.transaction);
             } else {
-              if (this.transaction.type.readLayout) {
-                modalRef = this._modalService.open(
-                  PrintTransactionTypeComponent
-                );
-                modalRef.componentInstance.transactionId = this.transaction._id;
+              if (
+                this.transaction.type.expirationDate &&
+                moment(this.transaction.type.expirationDate).diff(
+                  moment(),
+                  'days'
+                ) <= 0
+              ) {
+                // this.showMessage('El documento esta vencido', 'danger', true);
               } else {
-                let printer: Printer;
-
-                if (
-                  this.user &&
-                  this.user.printers &&
-                  this.user.printers.length > 0
-                ) {
-                  for (const element of this.user.printers) {
-                    if (
-                      element &&
-                      element.printer &&
-                      element.printer.printIn === PrinterPrintIn.Counter
-                    ) {
-                      printer = element.printer;
-                    }
-                  }
+                if (this.transaction.type.readLayout) {
+                  modalRef = this._modalService.open(
+                    PrintTransactionTypeComponent
+                  );
+                  modalRef.componentInstance.transactionId =
+                    this.transaction._id;
                 } else {
-                  if (this.transaction.type.defectPrinter) {
-                    printer = this.transaction.type.defectPrinter;
+                  let printer: Printer;
+
+                  if (
+                    this.user &&
+                    this.user.printers &&
+                    this.user.printers.length > 0
+                  ) {
+                    for (const element of this.user.printers) {
+                      if (
+                        element &&
+                        element.printer &&
+                        element.printer.printIn === PrinterPrintIn.Counter
+                      ) {
+                        printer = element.printer;
+                      }
+                    }
                   } else {
-                    if (this.printers && this.printers.length > 0) {
-                      for (let printer of this.printers) {
-                        if (printer.printIn === PrinterPrintIn.Counter) {
-                          printer = printer;
+                    if (this.transaction.type.defectPrinter) {
+                      printer = this.transaction.type.defectPrinter;
+                    } else {
+                      if (this.printers && this.printers.length > 0) {
+                        for (let printer of this.printers) {
+                          if (printer.printIn === PrinterPrintIn.Counter) {
+                            printer = printer;
+                          }
                         }
                       }
                     }
                   }
+
+                  modalRef = this._modalService.open(PrintComponent);
+                  modalRef.componentInstance.company = transaction.company;
+                  modalRef.componentInstance.transactionId =
+                    this.transaction._id;
+                  modalRef.componentInstance.typePrint = 'invoice';
+                  modalRef.componentInstance.printer = printer;
+
+                  modalRef.result.then(
+                    (result) => {
+                      if (
+                        this.transaction.taxes &&
+                        this.transaction.taxes.length > 0
+                      ) {
+                        for (const tax of this.transaction.taxes) {
+                          if (tax.tax.printer) {
+                            modalRef = this._modalService.open(
+                              PrintTransactionTypeComponent
+                            );
+                            modalRef.componentInstance.transactionId =
+                              this.transaction._id;
+                            modalRef.componentInstance.printerID =
+                              tax.tax.printer;
+                          }
+                        }
+                      }
+                    },
+                    (reason) => {
+                      if (
+                        this.transaction.taxes &&
+                        this.transaction.taxes.length > 0
+                      ) {
+                        for (const tax of this.transaction.taxes) {
+                          if (tax.tax.printer) {
+                            modalRef = this._modalService.open(
+                              PrintTransactionTypeComponent
+                            );
+                            modalRef.componentInstance.transactionId =
+                              this.transaction._id;
+                            modalRef.componentInstance.printerID =
+                              tax.tax.printer;
+                          }
+                        }
+                      }
+                    }
+                  );
                 }
-
-                modalRef = this._modalService.open(PrintComponent);
-                modalRef.componentInstance.company = transaction.company;
-                modalRef.componentInstance.transactionId = this.transaction._id;
-                modalRef.componentInstance.typePrint = 'invoice';
-                modalRef.componentInstance.printer = printer;
-
-                modalRef.result.then(
-                  (result) => {
-                    if (
-                      this.transaction.taxes &&
-                      this.transaction.taxes.length > 0
-                    ) {
-                      for (const tax of this.transaction.taxes) {
-                        if (tax.tax.printer) {
-                          modalRef = this._modalService.open(
-                            PrintTransactionTypeComponent
-                          );
-                          modalRef.componentInstance.transactionId =
-                            this.transaction._id;
-                          modalRef.componentInstance.printerID =
-                            tax.tax.printer;
-                        }
-                      }
-                    }
-                  },
-                  (reason) => {
-                    if (
-                      this.transaction.taxes &&
-                      this.transaction.taxes.length > 0
-                    ) {
-                      for (const tax of this.transaction.taxes) {
-                        if (tax.tax.printer) {
-                          modalRef = this._modalService.open(
-                            PrintTransactionTypeComponent
-                          );
-                          modalRef.componentInstance.transactionId =
-                            this.transaction._id;
-                          modalRef.componentInstance.printerID =
-                            tax.tax.printer;
-                        }
-                      }
-                    }
-                  }
-                );
               }
             }
           }
-        }
+        });
         break;
       case 'canceledTn':
-        this.getTransaction(transaction._id);
-        if (this.transaction) {
-          modalRef = this._modalService.open(CancelComponent, {
-            size: 'lg',
-            backdrop: 'static',
-          });
-          modalRef.componentInstance.transaction = this.transaction;
-          modalRef.componentInstance.config = this.config;
-          modalRef.componentInstance.state = state;
-          modalRef.result.then(() => {
-            this.getTransactions();
-          });
-        }
+        this.getTransaction(transaction._id, () => {
+          if (this.transaction) {
+            modalRef = this._modalService.open(CancelComponent, {
+              size: 'lg',
+              backdrop: 'static',
+            });
+            modalRef.componentInstance.transaction = this.transaction;
+            modalRef.componentInstance.config = this.config;
+            modalRef.componentInstance.state = state;
+            modalRef.result.then(() => {
+              this.refresh();
+            });
+          }
+        });
         break;
       case 'fulfilledTn':
-        this.getTransaction(transaction._id);
-        if (this.transaction) {
-          modalRef = this._modalService.open(FulfilledComponent, {
-            size: 'lg',
-            backdrop: 'static',
-          });
-          modalRef.componentInstance.transaction = this.transaction;
-          modalRef.componentInstance.config = this.config;
-          modalRef.componentInstance.state = state;
-          modalRef.result.then(() => {
-            this.getTransactions();
-          });
-        }
+        this.getTransaction(transaction._id, () => {
+          if (this.transaction) {
+            this.loading = true;
+            modalRef = this._modalService.open(FulfilledComponent, {
+              size: 'lg',
+              backdrop: 'static',
+            });
+            modalRef.componentInstance.transaction = this.transaction;
+            modalRef.componentInstance.config = this.config;
+            modalRef.componentInstance.state = state;
+            modalRef.result.then(() => {
+              setTimeout(() => {
+                this.refresh();
+                this.loading = false;
+              }, 3000);
+            });
+          }
+        });
         break;
       case 'dateTn':
+        this.loading = true;
         modalRef = this._modalService.open(DateFromToComponent, {
           size: 'lg',
           backdrop: 'static',
         });
         modalRef.result.then(() => {
-          this.getTransactions();
+          setTimeout(() => {
+            this.refresh();
+            this.loading = false;
+          }, 3000);
         });
         break;
     }
   }
 
-  getTransaction(transactionId) {
+  getTransaction(transactionId, callback) {
     this._transactionService
       .getById(transactionId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
           this.transaction = result.result;
+          if (callback) {
+            callback();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
+        complete: () => {},
       });
   }
 
   changeStateOfTransaction(transaction: Transaction, state: TransactionState) {
-    this.getTransaction(transaction._id);
-    if (
-      this.transaction &&
-      this.transaction.tiendaNubeId &&
-      this.config.tiendaNube.userID
-    ) {
-      this._tiendaNubeService
-        .updateTransactionStatus(
-          transaction.tiendaNubeId,
-          this.config.tiendaNube.userID,
-          state
-        )
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result: ApiResponse) => {
-            this._toastService.showToast(result);
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-          },
-          complete: () => {
-            this.refresh();
-          },
-        });
-    }
+    this.loading = true;
+    this.getTransaction(transaction._id, () => {
+      if (
+        this.transaction &&
+        this.transaction.tiendaNubeId &&
+        this.config.tiendaNube.userID
+      ) {
+        this._tiendaNubeService
+          .updateTransactionStatus(
+            transaction.tiendaNubeId,
+            this.config.tiendaNube.userID,
+            state
+          )
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (result: ApiResponse) => {
+              this._toastService.showToast({
+                message: 'Operacion realizada con exito',
+              });
+            },
+            error: (error) => {
+              this._toastService.showToast(error);
+            },
+            complete: () => {
+              setTimeout(() => {
+                this.refresh();
+                this.loading = false;
+              }, 3000);
+            },
+          });
+      }
+    });
   }
 
   public orderBy(term: string): void {
@@ -558,6 +586,9 @@ export class WebComponent implements OnInit {
 
   public pageChange(page): void {
     this.currentPage = page;
+    this.getTransactions();
+  }
+  public changeItemsPerPage(): void {
     this.getTransactions();
   }
 }

@@ -1,5 +1,5 @@
 <section class="container-fluid">
-  <div class="card list-counter">
+  <div class="card card-large">
     <div class="card-header">
       <span>Pedidos Tienda Nube</span>
       <div class="pull-right">
@@ -19,20 +19,22 @@
         </button>
       </div>
     </div>
-    <div class="card-block table-responsive">
+    <div class="table-responsive">
       <table class="table table-striped">
         <thead>
-          <th [width]="50">
-            <i class="fa fa-bars"></i>
-          </th>
-          <ng-container *ngFor="let column of columns">
-            <th *ngIf="column.visible" (click)="orderBy(column.name)">
-              <i *ngIf="sort[column.name] === 1" class="fa fa-sort-up"></i>
-              <i *ngIf="sort[column.name] === -1" class="fa fa-sort-down"></i>
-              <i *ngIf="!sort[column.name]" class="fa fa-sort"></i>
-              {{ column.name | translate | capitalize }}
+          <tr>
+            <th [width]="50">
+              <i class="fa fa-bars"></i>
             </th>
-          </ng-container>
+            <ng-container *ngFor="let column of columns">
+              <th *ngIf="column.visible" (click)="orderBy(column.name)">
+                <i *ngIf="sort[column.name] === 1" class="fa fa-sort-up"></i>
+                <i *ngIf="sort[column.name] === -1" class="fa fa-sort-down"></i>
+                <i *ngIf="!sort[column.name]" class="fa fa-sort"></i>
+                {{ column.name | translate | capitalize }}
+              </th>
+            </ng-container>
+          </tr>
           <tr class="filters">
             <th></th>
             <ng-container *ngFor="let column of columns">
@@ -93,61 +95,40 @@
             </td>
           </tr>
           <tr *ngFor="let transaction of transactions">
-            <td align="left" width="150">
-              <button
-                type="button"
-                class="btn btn-success"
-                (click)="openModal('view-transaction', null, transaction)"
-                title="Ver"
-              >
-                <i class="fa fa-eye"></i>
-              </button>
-              <button
-                type="button"
-                class="btn btn-light"
-                (click)="openModal('print', null, transaction)"
-                title="Imprimir"
-              >
-                <i class="fa fa-print"></i>
-              </button>
-            </td>
-            <td>
-              {{ transaction.startDate }}
-            </td>
-            <td>{{ transaction.type.name }}</td>
-            <td>
-              <b>{{ transaction.number }}</b>
-            </td>
-            <td *ngIf="transaction.company">{{ transaction.company.name }}</td>
-            <td>
-              <div class="btn-group mr-3">
+            <ng-container>
+              <td align="left" width="150">
                 <button
                   type="button"
-                  class="btn"
-                  [ngClass]="{
-                    'btn-state-canceled':
-                      transaction?.deliveryAddress?.shippingStatus?.toString() ===
-                      'Desempaquetado',
-                    'btn-state-close':
-                      transaction?.deliveryAddress?.shippingStatus?.toString() ===
-                      'Enviado',
-                    'btn-state-open':
-                      transaction?.deliveryAddress?.shippingStatus?.toString() ===
-                      'No enviado',
-                  }"
+                  class="btn btn-success"
+                  (click)="openModal('view-transaction', null, transaction)"
+                  title="Ver"
                 >
-                  {{ transaction.deliveryAddress.shippingStatus }}
+                  <i class="fa fa-eye"></i>
                 </button>
-
-                <div
-                  class="btn-group"
-                  ngbDropdown
-                  role="group"
-                  aria-label="Button group with nested dropdown"
+                <button
+                  type="button"
+                  class="btn btn-light"
+                  (click)="openModal('print', null, transaction)"
+                  title="Imprimir"
                 >
+                  <i class="fa fa-print"></i>
+                </button>
+              </td>
+              <td>
+                {{ transaction.startDate }}
+              </td>
+              <td>{{ transaction.type.name }}</td>
+              <td>
+                <b>{{ transaction.number }}</b>
+              </td>
+              <td *ngIf="transaction.company">
+                {{ transaction.company.name }}
+              </td>
+              <td>
+                <div class="btn-group mr-3">
                   <button
-                    class="btn dropdown-toggle-split"
-                    ngbDropdownToggle
+                    type="button"
+                    class="btn"
                     [ngClass]="{
                       'btn-state-canceled':
                         transaction?.deliveryAddress?.shippingStatus?.toString() ===
@@ -159,60 +140,65 @@
                         transaction?.deliveryAddress?.shippingStatus?.toString() ===
                         'No enviado',
                     }"
-                  ></button>
-                  <div class="dropdown-menu" ngbDropdownMenu>
+                  >
+                    {{ transaction.deliveryAddress.shippingStatus }}
+                  </button>
+
+                  <div
+                    class="btn-group"
+                    ngbDropdown
+                    role="group"
+                    aria-label="Button group with nested dropdown"
+                  >
                     <button
-                      *ngIf="
-                        transaction?.deliveryAddress?.shippingStatus?.toString() ===
-                        'Desempaquetado'
-                      "
-                      ngbDropdownItem
-                      (click)="changeStateOfTransaction(transaction, 'packed')"
-                    >
-                      Empaquetado
-                    </button>
-                    <button
-                      ngbDropdownItem
-                      (click)="
-                        openModal('fulfilledTn', 'fulfilled', transaction)
-                      "
-                    >
-                      Enviado
-                    </button>
+                      class="btn dropdown-toggle-split"
+                      ngbDropdownToggle
+                      [ngClass]="{
+                        'btn-state-canceled':
+                          transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                          'Desempaquetado',
+                        'btn-state-close':
+                          transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                          'Enviado',
+                        'btn-state-open':
+                          transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                          'No enviado',
+                      }"
+                    ></button>
+                    <div class="dropdown-menu" ngbDropdownMenu>
+                      <button
+                        *ngIf="
+                          transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                          'Desempaquetado'
+                        "
+                        ngbDropdownItem
+                        (click)="
+                          changeStateOfTransaction(transaction, 'packed')
+                        "
+                      >
+                        Empaquetado
+                      </button>
+                      <button
+                        ngbDropdownItem
+                        (click)="
+                          openModal('fulfilledTn', 'fulfilled', transaction)
+                        "
+                      >
+                        Enviado
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </td>
-            <td *ngIf="!transaction.company">Consumidor Final</td>
-            <td>
-              <div
-                class="btn-group mr-3"
-                *ngIf="transaction.tiendaNubeId !== undefined"
-              >
-                <button
-                  type="button"
-                  class="btn"
-                  [ngClass]="{
-                    'btn-state-close':
-                      transaction?.state?.toString() === 'Cerrado',
-                    'btn-state-open':
-                      transaction?.state?.toString() === 'Abierto',
-                    'btn-state-canceled':
-                      transaction?.state?.toString() === 'Anulado',
-                  }"
-                >
-                  {{ transaction.state }}
-                </button>
-
+              </td>
+              <td *ngIf="!transaction.company">Consumidor Final</td>
+              <td>
                 <div
-                  class="btn-group"
-                  ngbDropdown
-                  role="group"
-                  aria-label="Button group with nested dropdown"
+                  class="btn-group mr-3"
+                  *ngIf="transaction.tiendaNubeId !== undefined"
                 >
                   <button
-                    class="btn dropdown-toggle-split"
-                    ngbDropdownToggle
+                    type="button"
+                    class="btn"
                     [ngClass]="{
                       'btn-state-close':
                         transaction?.state?.toString() === 'Cerrado',
@@ -221,37 +207,67 @@
                       'btn-state-canceled':
                         transaction?.state?.toString() === 'Anulado',
                     }"
-                  ></button>
+                  >
+                    {{ transaction.state }}
+                  </button>
 
-                  <div class="dropdown-menu" ngbDropdownMenu>
+                  <div
+                    class="btn-group"
+                    ngbDropdown
+                    role="group"
+                    aria-label="Button group with nested dropdown"
+                  >
                     <button
-                      ngbDropdownItem
-                      (click)="changeStateOfTransaction(transaction, 'open')"
-                      *ngIf="
-                        transaction?.state?.toString() !== 'Anulado' &&
-                        transaction?.state?.toString() !== 'Abierto'
-                      "
+                      class="btn dropdown-toggle-split"
+                      ngbDropdownToggle
+                      id="dropdownConfig"
+                      [ngClass]="{
+                        'btn-state-close':
+                          transaction?.state?.toString() === 'Cerrado',
+                        'btn-state-open':
+                          transaction?.state?.toString() === 'Abierto',
+                        'btn-state-canceled':
+                          transaction?.state?.toString() === 'Anulado',
+                      }"
+                    ></button>
+
+                    <div
+                      class="dropdown-menu"
+                      ngbDropdownMenu
+                      aria-labelledby="dropdownConfig"
                     >
-                      Abierto
-                    </button>
-                    <button
-                      ngbDropdownItem
-                      (click)="changeStateOfTransaction(transaction, 'closed')"
-                      *ngIf="
-                        transaction?.state?.toString() !== 'Anulado' &&
-                        transaction?.state?.toString() !== 'Cerrado'
-                      "
-                    >
-                      Cerrado
-                    </button>
-                    <button
-                      ngbDropdownItem
-                      (click)="openModal('canceledTn', 'canceled', transaction)"
-                      *ngIf="transaction?.state?.toString() !== 'Anulado'"
-                    >
-                      Anulado
-                    </button>
-                    <!-- <button
+                      <button
+                        ngbDropdownItem
+                        (click)="changeStateOfTransaction(transaction, 'open')"
+                        *ngIf="
+                          transaction?.state?.toString() !== 'Anulado' &&
+                          transaction?.state?.toString() !== 'Abierto'
+                        "
+                      >
+                        Abierto
+                      </button>
+                      <button
+                        ngbDropdownItem
+                        (click)="
+                          changeStateOfTransaction(transaction, 'closed')
+                        "
+                        *ngIf="
+                          transaction?.state?.toString() !== 'Anulado' &&
+                          transaction?.state?.toString() !== 'Cerrado'
+                        "
+                      >
+                        Cerrado
+                      </button>
+                      <button
+                        ngbDropdownItem
+                        (click)="
+                          openModal('canceledTn', 'canceled', transaction)
+                        "
+                        *ngIf="transaction?.state?.toString() !== 'Anulado'"
+                      >
+                        Anulado
+                      </button>
+                      <!-- <button
                       ngbDropdownItem
                       (click)="changeStateOfTransaction(transaction, 'packed')"
                     >
@@ -265,26 +281,27 @@
                     >
                       Enviado
                     </button> -->
+                    </div>
                   </div>
                 </div>
-              </div>
-            </td>
-            <td>
-              {{ transaction.paymentMethodEcommerce | translate }}
-            </td>
-            <td style="white-space: normal">{{ transaction.observation }}</td>
-            <td>
-              {{
-                transaction.balance
-                  | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-              }}
-            </td>
-            <td>
-              {{
-                transaction.totalPrice
-                  | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-              }}
-            </td>
+              </td>
+              <td>
+                {{ transaction.paymentMethodEcommerce | translate }}
+              </td>
+              <td style="white-space: normal">{{ transaction.observation }}</td>
+              <td>
+                {{
+                  transaction.balance
+                    | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                }}
+              </td>
+              <td>
+                {{
+                  transaction.totalPrice
+                    | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                }}
+              </td>
+            </ng-container>
           </tr>
           <tr align="center" *ngIf="!transactions || transactions.length === 0">
             <td colspan="8">No se encontraron pedidos</td>
@@ -295,21 +312,20 @@
     <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls
-            class="my-pagination"
+          <ngb-pagination
+            [collectionSize]="totalItems"
+            [(page)]="currentPage"
+            [maxSize]="5"
+            [boundaryLinks]="true"
+            [pageSize]="itemsPerPage"
             (pageChange)="pageChange($event)"
-            #api
-            previousLabel="Ant."
-            nextLabel="Sig."
-            autoHide="true"
-          >
-          </pagination-controls>
+          ></ngb-pagination>
         </div>
         <div class="form-group col-md-2">
           <select
             class="form-control"
             [(ngModel)]="itemsPerPage"
-            (change)="getTransactions()"
+            (change)="changeItemsPerPage()"
           >
             <option [value]="5">
               {{ 'show 5 records' | translate | capitalize }}

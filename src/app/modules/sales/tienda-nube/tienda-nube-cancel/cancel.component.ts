@@ -71,7 +71,9 @@ export class CancelComponent implements OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {
-            this._toastService.showToast(result);
+            this._toastService.showToast({
+              message: 'Operacion realizada con exito',
+            });
           },
           error: (error) => {
             this._toastService.showToast(error);
