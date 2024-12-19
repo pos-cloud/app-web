@@ -552,10 +552,6 @@ export class WebComponent implements OnInit {
   }
 
   public addFilters(): void {
-    localStorage.setItem(
-      `${this.identifier}_datatableFilters`,
-      JSON.stringify(this.filters)
-    );
     this.getTransactions();
   }
 
