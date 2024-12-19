@@ -303,8 +303,14 @@
               </td>
             </ng-container>
           </tr>
-          <tr align="center" *ngIf="!transactions || transactions.length === 0">
-            <td colspan="8">No se encontraron pedidos</td>
+          <tr
+            align="center"
+            *ngIf="
+              (!transactions || transactions.length === 0) &&
+              this.loading === false
+            "
+          >
+            <td colspan="10">No se encontraron pedidos</td>
           </tr>
         </tbody>
       </table>
