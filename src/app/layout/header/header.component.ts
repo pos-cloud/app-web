@@ -193,6 +193,13 @@ export class HeaderComponent implements OnInit {
     this.makeVisibleReport(false);
     let modalRef;
     switch (op) {
+      case 'soporte':
+        window.open(
+          'https://tawk.to/chat/676477cc49e2fd8dfefa6b74/1ifg77trp',
+          'ChatSoporte',
+          'width=400,height=600,scrollbars=no,resizable=no'
+        );
+        break;
       case 'view-user':
         modalRef = this._modalService.open(AddUserComponent, {
           size: 'lg',

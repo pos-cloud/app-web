@@ -922,6 +922,15 @@
           <div>
             <button
               class="dropdown-item"
+              (click)="openModal('soporte')"
+              [routerLinkActive]="['active']"
+            >
+              Soporte
+            </button>
+          </div>
+          <div>
+            <button
+              class="dropdown-item"
               (click)="openModal('changelogs')"
               [routerLinkActive]="['active']"
             >
@@ -937,9 +946,11 @@
               Documentación
             </button>
           </div>
-          <div>
-            <a class="dropdown-item" (click)="openModal('claim')"> Soporte </a>
-          </div>
+          <!-- <div>
+            <a class="dropdown-item" (click)="openModal('claim')">
+              Reportar un error
+            </a>
+          </div> -->
           <!-- <div>
             <a class="dropdown-item" (click)="openModal('chat')">
               Chat
