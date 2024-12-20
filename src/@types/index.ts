@@ -10,6 +10,7 @@ export { EmployeeType } from './entities/employee-type.interface';
 export { Employee } from './entities/employee.interface';
 export { Gallery } from './entities/gallery.interface';
 export { Make } from './entities/make.interface';
+export { MovementOfCash } from './entities/movement-of-cash.interface';
 export { Printer } from './entities/printer.interface';
 export { Resource } from './entities/resource.iterface';
 export { Room } from './entities/room.interface';

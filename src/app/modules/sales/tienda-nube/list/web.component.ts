@@ -1,13 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  NgbDropdownConfig,
-  NgbModal,
-  NgbModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ApiResponse, IAttribute } from '@types';
+import { ApiResponse, IAttribute, MovementOfCash } from '@types';
 import { Config } from 'app/app.config';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
@@ -23,6 +19,7 @@ import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { DatatableService } from 'app/core/services/datatable.service';
+import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { TransactionService } from 'app/core/services/transaction.service';
@@ -44,7 +41,7 @@ import { FulfilledComponent } from '../tienda-nube-fulfilled/fulfilled.component
   templateUrl: './web.component.html',
   styleUrls: ['./web.component.scss'],
   standalone: true,
-  providers: [NgbDropdownConfig, TranslateService],
+  providers: [TranslateService],
   encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
@@ -59,7 +56,7 @@ import { FulfilledComponent } from '../tienda-nube-fulfilled/fulfilled.component
 })
 export class WebComponent implements OnInit {
   public loading: boolean = false;
-  public transactions: Transaction[] = new Array();
+  public transactions = new Array();
   public transaction: Transaction;
   public transactionMovement: TransactionMovement = TransactionMovement.Sale;
   public _datatableService: DatatableService;
@@ -73,6 +70,7 @@ export class WebComponent implements OnInit {
   private identifier: string;
   private title: string = 'TiendaNube';
   private destroy$ = new Subject<void>();
+  public movOfCash: MovementOfCash[];
 
   public currentPage: number = 0;
   public itemsPerPage = 10;
@@ -83,11 +81,11 @@ export class WebComponent implements OnInit {
     private _modalService: NgbModal,
     private _printerService: PrinterService,
     private _tiendaNubeService: TiendaNubeService,
+    private _movementOfCash: MovementOfCashService,
     private _toastService: ToastService,
     public _userService: UserService,
     private _configService: ConfigService,
-    private _authService: AuthService,
-    config: NgbDropdownConfig
+    private _authService: AuthService
   ) {
     this.columns = [
       {
@@ -150,6 +148,16 @@ export class WebComponent implements OnInit {
         defaultFilter: `{ "$nin": ["Anulado"] }`,
         align: 'left',
         required: true,
+      },
+      {
+        name: 'estado del pago',
+        visible: true,
+        disabled: false,
+        filter: false,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
       },
       {
         name: 'paymentMethodEcommerce',
@@ -245,8 +253,6 @@ export class WebComponent implements OnInit {
         required: true,
       },
     ];
-    config.placement = 'top-left';
-    config.autoClose = false;
   }
 
   async ngOnInit() {
@@ -300,6 +306,7 @@ export class WebComponent implements OnInit {
               } else {
                 this.transactions = result.result[0].items;
                 this.totalItems = result.result[0].count;
+                this.getMovementCash();
               }
             } else {
               this.transactions = [];
@@ -504,6 +511,47 @@ export class WebComponent implements OnInit {
         },
         complete: () => {},
       });
+  }
+
+  getMovementCash() {
+    const transactionId = this.transactions.map((transaction) => ({
+      $oid: transaction._id,
+    }));
+    let project = {
+      status: 1,
+      transaction: 1,
+      _id: 1,
+    };
+
+    const match = {
+      transaction: { $in: transactionId },
+    };
+
+    this._movementOfCash
+      .getAll({ project, match })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.movOfCash = result.result;
+
+          const mergedData = this.transactions.map((movo) => {
+            const matchedTransaction = this.movOfCash.find(
+              (item) => item.transaction === movo._id
+            );
+            return { ...movo, movOfCash: matchedTransaction || null };
+          });
+          this.transactions = mergedData;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {},
+      });
+  }
+
+  isLastTransaction(transaction: any): boolean {
+    const index = this.transactions.findIndex((t) => t === transaction);
+    return index === this.transactions.length - 1;
   }
 
   changeStateOfTransaction(transaction: Transaction, state: TransactionState) {

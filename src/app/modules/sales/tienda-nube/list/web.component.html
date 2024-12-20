@@ -131,13 +131,13 @@
                     class="btn"
                     [ngClass]="{
                       'btn-state-canceled':
-                        transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                        transaction?.deliveryAddress?.shippingStatus ===
                         'Desempaquetado',
                       'btn-state-close':
-                        transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                        transaction?.deliveryAddress?.shippingStatus ===
                         'Enviado',
                       'btn-state-open':
-                        transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                        transaction?.deliveryAddress?.shippingStatus ===
                         'No enviado',
                     }"
                   >
@@ -147,6 +147,9 @@
                   <div
                     class="btn-group"
                     ngbDropdown
+                    [placement]="
+                      isLastTransaction(transaction) ? 'top' : 'bottom'
+                    "
                     role="group"
                     aria-label="Button group with nested dropdown"
                   >
@@ -155,20 +158,20 @@
                       ngbDropdownToggle
                       [ngClass]="{
                         'btn-state-canceled':
-                          transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                          transaction?.deliveryAddress?.shippingStatus ===
                           'Desempaquetado',
                         'btn-state-close':
-                          transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                          transaction?.deliveryAddress?.shippingStatus ===
                           'Enviado',
                         'btn-state-open':
-                          transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                          transaction?.deliveryAddress?.shippingStatus ===
                           'No enviado',
                       }"
                     ></button>
                     <div class="dropdown-menu" ngbDropdownMenu>
                       <button
                         *ngIf="
-                          transaction?.deliveryAddress?.shippingStatus?.toString() ===
+                          transaction?.deliveryAddress?.shippingStatus ===
                           'Desempaquetado'
                         "
                         ngbDropdownItem
@@ -190,6 +193,7 @@
                   </div>
                 </div>
               </td>
+
               <td *ngIf="!transaction.company">Consumidor Final</td>
               <td>
                 <div
@@ -215,6 +219,9 @@
                     class="btn-group"
                     ngbDropdown
                     role="group"
+                    [placement]="
+                      isLastTransaction(transaction) ? 'top' : 'bottom'
+                    "
                     aria-label="Button group with nested dropdown"
                   >
                     <button
@@ -284,6 +291,9 @@
                     </div>
                   </div>
                 </div>
+              </td>
+              <td>
+                {{ transaction.movOfCash.status }}
               </td>
               <td>
                 {{ transaction.paymentMethodEcommerce | translate }}
