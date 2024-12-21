@@ -4,6 +4,7 @@
 
 html {
   font-family: Open Sans, sans-serif !important;
+  font-weight: 500 !important;
 }
 
 body {
@@ -22,7 +23,6 @@ body {
   height: 60px;
   background-color: white;
   box-shadow: 0-4px 10px black;
-  z-index: 99;
 }
 
 .nav-link {
