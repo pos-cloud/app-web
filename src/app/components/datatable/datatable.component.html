@@ -191,14 +191,15 @@
     <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
-          <ngb-pagination
-            [collectionSize]="totalItems"
-            [(page)]="currentPage"
-            [maxSize]="5"
-            [boundaryLinks]="true"
-            [pageSize]="itemsPerPage"
+          <pagination-controls
+            class="my-pagination"
             (pageChange)="pageChange($event)"
-          ></ngb-pagination>
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
+            autoHide="true"
+          >
+          </pagination-controls>
         </div>
         <div class="form-group col-md-2">
           <select
