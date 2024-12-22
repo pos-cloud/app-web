@@ -1,6 +1,6 @@
 .mega-dropdown-menu {
   background-color: white;
-  border: 1px solid #D8D8D8;
+  border: 1px solid #d8d8d8;
   border-radius: 5px 5px;
   z-index: 100;
   position: fixed;
@@ -26,9 +26,9 @@ li > a:focus {
 }
 
 .mega-dropdown-menu .dropdown-header {
-  color: #0275D8;
+  color: #0275d8;
   font-size: 18px;
-  font-weight:bold;
+  font-weight: bold;
 }
 
 li {
@@ -37,7 +37,7 @@ li {
 }
 
 li > a {
-  color: #292B2C;
+  color: #292b2c;
   font-family: 'Arial';
 }
 
@@ -52,7 +52,7 @@ li > a {
 .btn-li > a:hover,
 .btn-li > a:active,
 .btn-li > a:focus {
-  background-color: #088A08;
+  background-color: #088a08;
   color: white;
 }
 
@@ -77,9 +77,6 @@ li > a {
 }
 
 @media (max-width: 767px) {
-  .navbar-brand img {
-    margin-top: 10px;
-  }
   .mega-dropdown-menu {
     position: relative;
     top: 45vh;
