@@ -441,10 +441,6 @@ export class ArticleComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.translate.get('return').subscribe((value) => {
-      console.log('Traducción de return:', value);
-    });
-
     if (this.property) {
       this.operation = this.property.operation;
       this.articleId = this.property.articleId;
