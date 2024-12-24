@@ -29,6 +29,7 @@ import { ConfigService } from 'app/core/services/config.service';
 import { AddUserComponent } from '../../components/user/user/add-user.component';
 import { ClaimComponent } from '../claim/claim.component';
 //import { Socket } from 'ngx-socket-io';
+import { TranslateService } from '@ngx-translate/core';
 import { PushNotificationsService } from 'app/core/services/notification.service';
 import { VersionService } from 'app/core/services/version.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -55,6 +56,8 @@ export class HeaderComponent implements OnInit {
   public notificationMessage: string;
   public patchVersion: string = 'loading...';
   showAccordion = false;
+  languages = ['en', 'es', 'it']; // Idiomas disponibles
+  currentLanguage = 'es'; // Idioma predeterminado
 
   constructor(
     private _authService: AuthService,
@@ -68,7 +71,8 @@ export class HeaderComponent implements OnInit {
     //private socket: Socket,
     private _toast: ToastService,
     private _notificationService: PushNotificationsService,
-    private _versionService: VersionService
+    private _versionService: VersionService,
+    private translate: TranslateService
   ) {
     // OCULTAR MENU REPORTE
     this.isReportVisible = false;
@@ -139,6 +143,9 @@ export class HeaderComponent implements OnInit {
         this.patchVersion = 'Error';
       }
     );
+    const savedLang = localStorage.getItem('lang') || 'es';
+    this.currentLanguage = savedLang;
+    this.translate.use(savedLang);
   }
 
   public ngAfterViewInit() {
@@ -319,5 +326,15 @@ export class HeaderComponent implements OnInit {
 
   closeNavbar() {
     this.toggleNavbar = false;
+  }
+
+  changeLanguage(lang: string): void {
+    this.currentLanguage = lang;
+    this.translate.use(lang).subscribe(() => {
+      console.log('idioma cambiado ');
+      console.log(lang);
+      this.translate.reloadLang(lang); // Fuerza la recarga del archivo JSON del idioma
+    });
+    localStorage.setItem('lang', lang);
   }
 }

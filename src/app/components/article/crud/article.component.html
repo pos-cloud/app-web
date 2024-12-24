@@ -4,11 +4,11 @@
       <span
         style="color: #607d8b"
         *ngIf="operation === 'add' || operation === 'copy'"
-        >{{ 'add-product' | translate | capitalize }}</span
+        >{{ 'add-product' | translate }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ articleType }}
-        {{ article.code }} - {{ article.description }}</span
+        >{{ 'edit' | translate }} {{ articleType }} {{ article.code }} -
+        {{ article.description }}</span
       >
       <span
         style="color: #607d8b"
@@ -18,7 +18,7 @@
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
           <i class="fa fa-arrow-left"></i
-          ><span>{{ 'return' | translate | capitalize }}</span>
+          ><span>{{ 'return' | translate }}</span>
         </button>
         <button
           type="button"
@@ -179,7 +179,7 @@
             <div class="row">
               <div class="form-group col-md-6">
                 <label for="description" class="control-label"
-                  >{{ 'article.description' | translate | capitalize }}:</label
+                  >{{ 'description' | translate | capitalize }}:</label
                 >
                 <input
                   type="text"

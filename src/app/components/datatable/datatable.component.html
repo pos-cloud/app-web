@@ -94,7 +94,7 @@
                   }"
                   [(ngModel)]="filters[column.name]"
                   (keydown.enter)="addFilters()"
-                  placeholder="{{ column.name | translate }}"
+                  placeholder="{{ column.name | translate | capitalize }}"
                   [disabled]="!column.filter || loading"
                 />
                 <select

@@ -990,6 +990,30 @@
           (click)="reload()"
         ></i>
       </li>
+      <!-- <li style="margin-top: 5px; margin-left: 5px">
+        <div ngbDropdown>
+          <button
+            ngbDropdownToggle
+            class="btn btn-light d-flex align-items-center"
+            style="border: none; box-shadow: none"
+          >
+            <i class="fa fa-globe"></i>
+            <span style="margin-left: 5px">{{
+              currentLanguage | uppercase
+            }}</span> 
+          </button>
+
+          <div ngbDropdownMenu>
+            <button
+              *ngFor="let lang of languages"
+              ngbDropdownItem
+              (click)="changeLanguage(lang)"
+            >
+              {{ lang | uppercase }}
+            </button>
+          </div>
+        </div>
+      </li> -->
     </ul>
   </div>
 </nav>
