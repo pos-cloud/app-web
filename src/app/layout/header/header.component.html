@@ -990,17 +990,28 @@
           (click)="reload()"
         ></i>
       </li>
-      <li style="margin-top: 10px; margin-left: 5px">
-        <div class="language-selector">
-          <select
-            id="language"
-            (change)="changeLanguage($event.target.value)"
-            [(ngModel)]="currentLanguage"
+      <li style="margin-top: 5px; margin-left: 5px">
+        <div ngbDropdown>
+          <button
+            ngbDropdownToggle
+            class="btn btn-light d-flex align-items-center"
+            style="border: none; box-shadow: none"
           >
-            <option *ngFor="let lang of languages" [value]="lang">
+            <i class="fa fa-globe"></i>
+            <!-- <span style="margin-left: 5px">{{
+              currentLanguage | uppercase
+            }}</span> -->
+          </button>
+
+          <div ngbDropdownMenu>
+            <button
+              *ngFor="let lang of languages"
+              ngbDropdownItem
+              (click)="changeLanguage(lang)"
+            >
               {{ lang | uppercase }}
-            </option>
-          </select>
+            </button>
+          </div>
         </div>
       </li>
     </ul>
