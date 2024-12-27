@@ -67,8 +67,6 @@ export class WebComponent implements OnInit {
   public config: Config;
   private sort: {};
   public filters: any;
-  private identifier: string;
-  private title: string = 'TiendaNube';
   private destroy$ = new Subject<void>();
   public movOfCash: MovementOfCash[];
 
@@ -307,7 +305,6 @@ export class WebComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.identifier = this.title.replace(/\s+/g, '-').toLowerCase();
     this._configService.getConfig.subscribe((config) => {
       this.config = config;
     });
@@ -622,9 +619,7 @@ export class WebComponent implements OnInit {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (result: ApiResponse) => {
-              this._toastService.showToast({
-                message: 'Operacion realizada con exito',
-              });
+              this._toastService.showToast(result);
             },
             error: (error) => {
               this._toastService.showToast(error);
