@@ -10,7 +10,6 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Config } from '../../../../app.config';
-import { Transaction } from '../../../../components/transaction/transaction';
 
 @Component({
   selector: 'app-cancel',
@@ -19,8 +18,8 @@ import { Transaction } from '../../../../components/transaction/transaction';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class CancelComponent implements OnInit {
-  @Input() transaction: Transaction;
-  @Input() config: Config;
+  @Input() tiendaNubeId: string;
+  @Input() userID: string;
   @Input() state: string;
   public cancelForm: FormGroup;
   public loading = false;
@@ -47,7 +46,7 @@ export class CancelComponent implements OnInit {
       reason: ['El cliente cambió de idea'],
       email: [true],
       restock: [true],
-      storeIdTn: [this.config?.tiendaNube?.userID],
+      storeIdTn: [this.userID],
     });
   }
 
@@ -63,11 +62,7 @@ export class CancelComponent implements OnInit {
       };
       formData.reason = reasonMappings[formData.reason];
       this._tiendaNubeService
-        .updateTransactionStatus(
-          this.transaction.tiendaNubeId,
-          formData,
-          this.state
-        )
+        .updateTransactionStatus(this.tiendaNubeId, formData, this.state)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {

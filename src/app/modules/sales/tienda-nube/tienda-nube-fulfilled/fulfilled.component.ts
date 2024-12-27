@@ -5,8 +5,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
-import { Config } from 'app/app.config';
-import { Transaction } from 'app/components/transaction/transaction';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subject } from 'rxjs';
@@ -19,8 +17,8 @@ import { takeUntil } from 'rxjs/operators';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class FulfilledComponent implements OnInit {
-  @Input() transaction: Transaction;
-  @Input() config: Config;
+  @Input() tiendaNubeId: string;
+  @Input() userID: string;
   @Input() state: string;
   fulfilledForm: FormGroup;
   loading = false;
@@ -47,7 +45,7 @@ export class FulfilledComponent implements OnInit {
       shipping_tracking_number: [''],
       shipping_tracking_url: [''],
       notify_customer: [true],
-      storeIdTn: [this.config.tiendaNube.userID],
+      storeIdTn: [this.userID],
     });
   }
 
@@ -56,11 +54,7 @@ export class FulfilledComponent implements OnInit {
       this.loading = true;
       const formData = this.fulfilledForm.value;
       this._tiendaNubeService
-        .updateTransactionStatus(
-          this.transaction.tiendaNubeId,
-          formData,
-          this.state
-        )
+        .updateTransactionStatus(this.tiendaNubeId, formData, this.state)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {
