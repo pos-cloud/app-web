@@ -17,6 +17,7 @@ import { CurrentAccountComponent } from './current-account/current-account.compo
 import { CurrentAccountService } from './current-account/current-account.service';
 import { ListArticlesRequirementsByTransactionComponent } from './list-articles-requirements-by-transaction/list-articles-requirements-by-transaction.component';
 import { ListArticlesRequirementsByTransactionService } from './list-articles-requirements-by-transaction/list-articles.requirements-by-transaction.service';
+import { ReportSalesByCategoryComponent } from './mov-art-by-category/mov-art-by-category.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,16 @@ const routes: Routes = [
   {
     path: 'current-account/:id',
     component: CurrentAccountComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+  },
+  {
+    path: 'venta/mov-art-by-category',
+    component: ReportSalesByCategoryComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+  },
+  {
+    path: 'compra/mov-art-by-category',
+    component: ReportSalesByCategoryComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
 ];
@@ -47,6 +58,7 @@ const routes: Routes = [
   declarations: [
     ListArticlesRequirementsByTransactionComponent,
     CurrentAccountComponent,
+    ReportSalesByCategoryComponent,
   ],
   providers: [
     ListArticlesRequirementsByTransactionService,

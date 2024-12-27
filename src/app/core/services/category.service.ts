@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
+import { environment } from 'environments/environment';
 import { Config } from '../../app.config';
 import { Category } from '../../components/category/category';
 import { AuthService } from './auth.service';
@@ -121,6 +122,27 @@ export class CategoryService extends ModelService {
       .get(URL, {
         headers: headers,
         params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public getSalesByCategoryV2(data: {}): Observable<any> {
+    const URL = `${environment.apiv2}/reports-system/mov-art-by-category`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, data, {
+        headers: headers,
       })
       .pipe(
         map((res) => {
