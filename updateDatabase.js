@@ -185,3 +185,9 @@ db.galleries.updateMany(
     },
   ]
 );
+
+// para poner en 0 los balance menores a 10
+db.transactions.updateMany(
+  { balance: { $lt: 10 } }, // Filtro: balance menor a 10
+  { $set: { balance: 0 } } // Actualización: balance a 0
+);
