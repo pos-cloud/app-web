@@ -37,8 +37,8 @@ export class MenuComponent implements OnInit {
     const organizedData = {};
 
     this._menu.getMenu(this.database).subscribe((result) => {
-      if (result?.result?.data) {
-        result.result.data.forEach((product) => {
+      if (result?.result) {
+        result.result.forEach((product) => {
           const category = product.category.description;
           const description = product.description;
           const price = product.salePrice || 0;

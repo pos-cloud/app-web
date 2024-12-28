@@ -822,20 +822,6 @@
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-3">
-            <label for="showMenu" class="control-label">{{
-              'showMenu' | translate | capitalize
-            }}</label>
-            <select class="form-control" formControlName="showMenu">
-              <option [ngValue]="true" [disabled]="readonly">
-                {{ 'true' | translate | capitalize }}
-              </option>
-              <option [ngValue]="false" [disabled]="readonly">
-                {{ 'false' | translate | capitalize }}
-              </option>
-            </select>
-          </div>
-
           <div
             formArrayName="applications"
             *ngFor="
