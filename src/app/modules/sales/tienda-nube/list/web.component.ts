@@ -198,7 +198,7 @@ export class WebComponent implements OnInit {
         required: true,
       },
       {
-        name: 'estado del pago',
+        name: 'Estado del pago',
         visible: true,
         disabled: false,
         filter: false,
