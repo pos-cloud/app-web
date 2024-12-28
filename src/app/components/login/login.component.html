@@ -6,11 +6,11 @@
       </div>
     </div>
     <br />
-    <div class="row center-content">
+    <div class="row" align="center">
       <h5>Ingresa a tu cuenta</h5>
     </div>
     <hr />
-    <div class="row center-content" *ngIf="alertMessage !== ''">
+    <div class="row" *ngIf="alertMessage !== ''">
       <div class="center-content">
         <ngb-alert
           [type]="alertConfig.type"
@@ -34,17 +34,16 @@
                 formControlName="company"
                 name="company"
                 id="company"
-                [readonly]="checkLockInput"
                 [disabled]="company"
               />
-              <input
+              <!-- <input
                 type="checkbox"
                 class="position-absolute checklockinput"
                 id="check"
                 name="check"
                 (click)="lockInput()"
                 [checked]="company"
-              />
+              /> -->
               <div *ngIf="formErrors.company" class="alert alert-danger">
                 {{ formErrors.company }}
               </div>
@@ -106,11 +105,7 @@
           <div class="row">
             <div class="col-md-12" align="center">
               <b>¿No tienes una cuenta?</b
-              ><a
-                href="http://www.poscloud.com.ar/registro.html?tipo-negocio=ropa"
-              >
-                Crear una cuenta</a
-              >
+              ><a href="http://www.poscloud.com.ar"> Crear una cuenta</a>
             </div>
           </div>
         </div>
