@@ -67,6 +67,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
 import { MODULES_ROUTES } from './modules/modules.routes';
+import { REPORTS_ROUTES } from './reports/reports.routes';
 
 export const _routes: Routes = [
   {
@@ -636,12 +637,6 @@ export const _routes: Routes = [
     component: MenuComponent,
   },
   {
-    path: 'reports',
-    canActivate: [AuthGuard, LicenseGuard],
-    loadChildren: () =>
-      import('./reports/reports.module').then((m) => m.ReportsModule),
-  },
-  {
     path: 'entities',
     canActivate: [AuthGuard, LicenseGuard],
     loadChildren: () =>
@@ -649,7 +644,13 @@ export const _routes: Routes = [
   },
   {
     path: 'modules',
+    canActivate: [AuthGuard, LicenseGuard],
     children: MODULES_ROUTES,
+  },
+  {
+    path: 'reports',
+    canActivate: [AuthGuard, LicenseGuard],
+    children: REPORTS_ROUTES,
   },
   {
     path: '**',

@@ -7,7 +7,9 @@ import { catchError, map } from 'rxjs/operators';
 import { ModelService } from 'app/core/services/model.service';
 import { AuthService } from '../../core/services/auth.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ListArticlesRequirementsByTransactionService extends ModelService {
   constructor(
     public _http: HttpClient,

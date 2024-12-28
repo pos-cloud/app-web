@@ -1,75 +1,5 @@
-<!--ESTADISTICAS GENERALES-->
-<div class="card" *ngIf="listType === 'statistics'">
-  <div class="card-header" *ngIf="transactionMovement === 'Venta'">
-    Categorías más vendidos
-  </div>
-  <div class="card-header" *ngIf="transactionMovement === 'Compra'">
-    Categorías más comprados
-  </div>
-  <div class="card-block table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Categoría</th>
-          <th>Cantidad</th>
-          <th>Monto total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td colspan="99" style="padding: 0px">
-            <app-progressbar [loading]="loading"></app-progressbar>
-          </td>
-        </tr>
-        <tr *ngFor="let item of items">
-          <td class="flat">{{ item.category.description }}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Venta'">
-            {{ item.count }}
-          </td>
-          <td class="flat" *ngIf="transactionMovement === 'Compra'">
-            {{ item.count * -1 }}
-          </td>
-          <td class="flat" *ngIf="transactionMovement === 'Venta'">
-            {{ item.total | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-          </td>
-          <td class="flat" *ngIf="transactionMovement === 'Compra'">
-            {{ item.total * -1 | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-          </td>
-        </tr>
-        <tr
-          *ngIf="items.length > 0 && transactionMovement === 'Venta'"
-          align="center"
-        >
-          <td colspan="3">
-            <a [routerLink]="['', 'admin', 'venta', 'rubros-mas-vendidos']"
-              >Ver más...</a
-            >
-          </td>
-        </tr>
-        <tr
-          *ngIf="items.length > 0 && transactionMovement === 'Compra'"
-          align="center"
-        >
-          <td colspan="3">
-            <a [routerLink]="['', 'admin', 'compra', 'rubros-mas-comprados']"
-              >Ver más...</a
-            >
-          </td>
-        </tr>
-        <tr align="center" *ngIf="!loading && transactionMovement === 'Venta'">
-          <td colspan="3">No se encontraron ventas por categoría</td>
-        </tr>
-        <tr align="center" *ngIf="!loading && transactionMovement === 'Compra'">
-          <td colspan="3">No se encontraron compras por categoría</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!--REPORTE-->
-<section class="container-fluid" *ngIf="listType !== 'statistics'">
-  <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert
       [type]="alertConfig.type"
       [dismissible]="alertConfig.dismissible"
@@ -181,7 +111,7 @@
           <tr
             align="center"
             *ngIf="
-              areCategoriesEmpty && !loading && transactionMovement === 'Venta'
+              items?.length == 0 && !loading && transactionMovement === 'Venta'
             "
           >
             <td colspan="3">No se encontraron ventas por categoría</td>
@@ -189,7 +119,7 @@
           <tr
             align="center"
             *ngIf="
-              areCategoriesEmpty && !loading && transactionMovement === 'Compra'
+              items?.length == 0 && !loading && transactionMovement === 'Compra'
             "
           >
             <td colspan="3">No se encontraron compras por categoría</td>

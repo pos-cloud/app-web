@@ -1,10 +1,17 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbAlertConfig,
+  NgbModal,
+  NgbModule,
+} from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from 'app/components/branch/branch';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
+import { ExportersModule } from 'app/components/export/exporters.module';
 import {
   TransactionMovement,
   TransactionType,
@@ -12,8 +19,12 @@ import {
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as moment from 'moment';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { Observable, of as observableOf, Subscription } from 'rxjs';
 import { Config } from '../../app.config';
 import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
@@ -23,6 +34,18 @@ import { ListArticlesRequirementsByTransactionService } from './list-articles.re
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
   templateUrl: './list-articles-requirements-by-transaction.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ProgressbarModule,
+    TranslateModule,
+    PipesModule,
+    NgbModule,
+    NgMultiSelectDropDownModule,
+    NgxPaginationModule,
+    ExportersModule,
+  ],
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   private subscription: Subscription = new Subscription();

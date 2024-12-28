@@ -1,26 +1,50 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbAlertConfig,
+  NgbModal,
+  NgbModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from 'app/components/branch/branch';
+import { ExportersModule } from 'app/components/export/exporters.module';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CategoryService } from '../../core/services/category.service';
 
 @Component({
+  standalone: true,
   selector: 'app-report-sales-by-category',
   templateUrl: './mov-art-by-category.component.html',
   providers: [NgbAlertConfig],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ProgressbarModule,
+    TranslateModule,
+    PipesModule,
+    NgbModule,
+    NgMultiSelectDropDownModule,
+    NgxPaginationModule,
+    ExportersModule,
+  ],
 })
 export class ReportSalesByCategoryComponent implements OnInit {
-  public items: any[] = new Array();
+  public items: any[] = [];
   public alertMessage: string = '';
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
@@ -28,7 +52,6 @@ export class ReportSalesByCategoryComponent implements OnInit {
   public startDate: string;
   public endDate: string;
   public limit: number = 0;
-  public listType: string = 'statistics';
   public itemsPerPage: string = '5';
   public currentPage: number = 1;
   public sort = { count: -1 };
@@ -62,7 +85,8 @@ export class ReportSalesByCategoryComponent implements OnInit {
     private _branchService: BranchService,
     private _authService: AuthService,
     public _transactionTypeService: TransactionTypeService,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private _activatedRoute: ActivatedRoute
   ) {
     this.startDate = moment().format('YYYY-MM-DD');
     this.endDate = moment().format('YYYY-MM-DD');
@@ -72,10 +96,12 @@ export class ReportSalesByCategoryComponent implements OnInit {
 
   async ngOnInit() {
     this.loading = true;
-    let pathLocation: string[] = this._router.url.split('/');
-    this.transactionMovement =
-      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    this.listType = pathLocation[3];
+
+    this._activatedRoute.params.subscribe((params) => {
+      this.transactionMovement =
+        params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+    });
+
     if (!this.branchSelectedId) {
       await this.getBranches().then((branches) => {
         this.branches = branches;

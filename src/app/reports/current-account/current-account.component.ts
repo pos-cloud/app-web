@@ -3,10 +3,18 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 //Paquetes de terceros
-import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbAlertConfig,
+  NgbModal,
+  NgbModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Company } from 'app/components/company/company';
+import { ExportersModule } from 'app/components/export/exporters.module';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
@@ -19,14 +27,30 @@ import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TransactionService } from 'app/core/services/transaction.service';
+import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { CurrentAccountService } from './current-account.service';
 @Component({
   selector: 'app-current-account',
   templateUrl: './current-account.component.html',
   styleUrls: ['./current-account.component.scss'],
   providers: [NgbAlertConfig],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ProgressbarModule,
+    TranslateModule,
+    PipesModule,
+    NgbModule,
+    NgMultiSelectDropDownModule,
+    NgxPaginationModule,
+    ExportersModule,
+  ],
 })
 export class CurrentAccountComponent implements OnInit {
   public transactions: Transaction[];

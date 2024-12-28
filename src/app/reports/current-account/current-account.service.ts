@@ -6,7 +6,9 @@ import { catchError, map } from 'rxjs/operators';
 
 import { AuthService } from 'app/core/services/auth.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CurrentAccountService {
   constructor(
     public _http: HttpClient,
