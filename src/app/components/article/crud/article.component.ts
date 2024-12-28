@@ -1314,30 +1314,12 @@ export class ArticleComponent implements OnInit {
     }
 
     if (this.applications && this.applications.length > 0) {
-      this.applications.forEach((x) => {
-        let exists = false;
-
-        this.article.applications.forEach((y) => {
-          const app: any =
-            typeof y === 'string'
-              ? this.applications.find((app) => app._id === y)
-              : y._id;
-          if (x._id === app._id) {
-            exists = true;
-            const control = new UntypedFormControl(true); // if first item set to true, else false
-
-            (this.articleForm.controls.applications as UntypedFormArray).push(
-              control
-            );
-          }
-        });
-        if (!exists) {
-          const control = new UntypedFormControl(false); // if first item set to true, else false
-
-          (this.articleForm.controls.applications as UntypedFormArray).push(
-            control
-          );
-        }
+      this.applications.forEach((app) => {
+        const exists = this.article.applications.toString().includes(app._id);
+        const control = new UntypedFormControl(exists);
+        (this.articleForm.controls.applications as UntypedFormArray).push(
+          control
+        );
       });
     }
   }
