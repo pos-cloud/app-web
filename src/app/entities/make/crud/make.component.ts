@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 
 import { ApiResponse, Make } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -17,7 +16,6 @@ import { MakeService } from '../../../core/services/make.service';
 @Component({
   selector: 'app-make',
   templateUrl: './make.component.html',
-  providers: [TranslateMePipe],
 })
 export class MakeComponent implements OnInit, OnDestroy {
   public operation: string;

@@ -76,9 +76,6 @@ export class RoomComponent implements OnInit {
 
     this.roomForm.markAllAsTouched();
     if (this.roomForm.invalid) {
-      this._toastService.showToast({
-        message: 'Por favor complete todos los campos obligatorios.',
-      });
       this.loading = false;
       return;
     }

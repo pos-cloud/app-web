@@ -18,7 +18,6 @@ import { GalleryService } from '../../../core/services/gallery.service';
 @Component({
   selector: 'app-gallery',
   templateUrl: './gallery.component.html',
-  providers: [TranslateMePipe],
 })
 export class GalleryComponent implements OnInit {
   public operation: string;

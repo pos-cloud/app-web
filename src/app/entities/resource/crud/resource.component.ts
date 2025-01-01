@@ -16,7 +16,6 @@ import { ResourceService } from '../../../core/services/resource.service';
 @Component({
   selector: 'app-resource',
   templateUrl: './resource.component.html',
-  providers: [NgbAlertConfig, TranslateMePipe],
 })
 export class ResourceComponent implements OnInit {
   public operation: string;

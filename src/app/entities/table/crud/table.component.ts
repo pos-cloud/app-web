@@ -33,10 +33,10 @@ export class TableComponent implements OnInit {
   ];
 
   constructor(
-    public _tableService: TableService,
-    public _roomService: RoomService,
-    public _fb: UntypedFormBuilder,
-    public _router: Router,
+    private _tableService: TableService,
+    private _roomService: RoomService,
+    private _fb: UntypedFormBuilder,
+    private _router: Router,
     private _toastService: ToastService
   ) {
     this.tableForm = this._fb.group({
@@ -131,11 +131,10 @@ export class TableComponent implements OnInit {
   }
 
   public addTable(): void {
+    this.loading = true;
+
     this.tableForm.markAllAsTouched();
     if (this.tableForm.invalid) {
-      this._toastService.showToast({
-        message: 'Por favor complete todos los campos obligatorios.',
-      });
       this.loading = false;
       return;
     }

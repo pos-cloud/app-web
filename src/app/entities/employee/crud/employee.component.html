@@ -24,7 +24,7 @@
           class="btn"
           [disabled]="loading"
           *ngIf="operation !== 'delete' && operation !== 'view'"
-          (click)="addEmployee()"
+          (click)="handleEmployeeOperation()"
         >
           <i
             class="fa"
@@ -38,7 +38,7 @@
           class="btn btn-danger active"
           *ngIf="operation === 'delete'"
           [disabled]="loading"
-          (click)="deleteEmployee()"
+          (click)="handleEmployeeOperation()"
         >
           <i
             class="fa"
@@ -53,7 +53,7 @@
     <div class="card-body scroll">
       <form
         [formGroup]="employeeForm"
-        (ngSubmit)="addEmployee()"
+        (ngSubmit)="handleEmployeeOperation()"
         autocomplete="off"
       >
         <div class="row">
@@ -87,7 +87,7 @@
                 employeeForm.get('name')?.hasError('required')
               "
             >
-              Este campo es obligatorio.
+              {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-3">
@@ -140,7 +140,7 @@
               "
               class="text-danger"
             >
-              Este campo es requerido
+              {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
         </div>
@@ -156,7 +156,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'creationUser.name' | translate | capitalize }}:
-                  <b>{{ employee?.creationUser?.name || '' }}</b>
+                  <b>{{ employee?.creationUser?.name ?? '' }}</b>
                 </label>
               </div>
               <div class="form-group col-md-6">
@@ -173,7 +173,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'updateUser.name' | translate | capitalize }}:
-                  <b>{{ employee?.updateUser?.name || '' }}</b>
+                  <b>{{ employee?.updateUser?.name ?? '' }}</b>
                 </label>
               </div>
               <div class="form-group col-md-6">
@@ -189,7 +189,7 @@
             <div class="row">
               <div class="form-group col-md-6">
                 <label class="control-label">
-                  ID:<b>{{ employee?._id || '' }}</b>
+                  ID:<b>{{ employee?._id ?? '' }}</b>
                 </label>
               </div>
             </div>

@@ -12,7 +12,68 @@ import { EmployeeTypeService } from '../../../core/services/employee-type.servic
 export class ListEmployeeTypesComponent {
   public title: string = 'employee-types';
   public sort = { description: 1 };
-  public columns: IAttribute[];
+  public columns: IAttribute[] = [
+    {
+      name: 'description',
+      visible: true,
+      disabled: false,
+      filter: true,
+      defaultFilter: null,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'creationDate',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'date',
+      project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'creationUser.name',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'updateUser.name',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'updateDate',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'operationType',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: `{ "$ne": "D" }`,
+      project: null,
+      align: 'left',
+      required: true,
+    },
+  ];
   public rowButtons: IButton[] = [
     {
       title: 'view',
@@ -48,76 +109,12 @@ export class ListEmployeeTypesComponent {
     },
   ];
 
-  // EXCEL
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
   constructor(
     public _service: EmployeeTypeService,
     private _router: Router
-  ) {
-    this.columns = [
-      {
-        name: 'description',
-        visible: true,
-        disabled: false,
-        filter: true,
-        defaultFilter: null,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'creationDate',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'date',
-        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'creationUser.name',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'updateUser.name',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'updateDate',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'operationType',
-        visible: false,
-        disabled: true,
-        filter: false,
-        datatype: 'string',
-        defaultFilter: `{ "$ne": "D" }`,
-        project: null,
-        align: 'left',
-        required: true,
-      },
-    ];
-  }
+  ) {}
 
   public async emitEvent(event) {
     this.redirect(event.op, event.obj);

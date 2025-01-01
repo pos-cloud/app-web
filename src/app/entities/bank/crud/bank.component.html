@@ -155,7 +155,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'creationUser.name' | translate | capitalize }}:
-                  <b>{{ bank?.creationUser?.name || '' }}</b>
+                  <b>{{ bank?.creationUser?.name ?? '' }}</b>
                 </label>
               </div>
               <div class="form-group col-md-6">
@@ -172,7 +172,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'updateUser.name' | translate | capitalize }}:
-                  <b>{{ bank?.updateUser?.name || '' }}</b>
+                  <b>{{ bank?.updateUser?.name ?? '' }}</b>
                 </label>
               </div>
               <div class="form-group col-md-6">
@@ -188,7 +188,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'id' | translate | capitalize }}:
-                  <b>{{ bank?._id || '' }}</b>
+                  <b>{{ bank?._id ?? '' }}</b>
                 </label>
               </div>
             </div>

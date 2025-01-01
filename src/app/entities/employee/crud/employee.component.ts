@@ -7,7 +7,6 @@ import {
 import { Router } from '@angular/router';
 import { ApiResponse, Employee, EmployeeType } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EmployeeTypeService } from '../../../core/services/employee-type.service';
@@ -16,7 +15,6 @@ import { EmployeeService } from '../../../core/services/employee.service';
 @Component({
   selector: 'app-add-employee',
   templateUrl: './employee.component.html',
-  providers: [TranslateMePipe],
 })
 export class EmployeeComponent implements OnInit {
   public operation: string;
@@ -51,9 +49,7 @@ export class EmployeeComponent implements OnInit {
     this.operation = pathUrl[3];
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
-    if (employeeId) {
-      this.getEmployee(employeeId);
-    }
+    if (employeeId) this.getEmployee(employeeId);
   }
 
   ngAfterViewInit() {
@@ -89,7 +85,6 @@ export class EmployeeComponent implements OnInit {
     };
 
     this.loading = true;
-
     return new Promise((resolve, reject) => {
       this._employeeTypeService
         .getAll({
@@ -140,7 +135,7 @@ export class EmployeeComponent implements OnInit {
       });
   }
 
-  public addEmployee(): void {
+  public handleEmployeeOperation(): void {
     this.loading = true;
     this.employeeForm.markAllAsTouched();
     if (this.employeeForm.invalid) {
@@ -165,8 +160,6 @@ export class EmployeeComponent implements OnInit {
   }
 
   public saveEmployee(): void {
-    this.loading = true;
-
     this._employeeService
       .save(this.employee)
       .pipe(takeUntil(this.destroy$))
@@ -185,8 +178,6 @@ export class EmployeeComponent implements OnInit {
   }
 
   public updateEmployee(): void {
-    this.loading = true;
-
     this._employeeService
       .update(this.employee)
       .pipe(takeUntil(this.destroy$))
@@ -205,8 +196,6 @@ export class EmployeeComponent implements OnInit {
   }
 
   public deleteEmployee(): void {
-    this.loading = true;
-
     this._employeeService
       .delete(this.employee._id)
       .pipe(takeUntil(this.destroy$))
