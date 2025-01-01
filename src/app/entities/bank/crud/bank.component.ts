@@ -127,7 +127,7 @@ export class BankComponent implements OnInit {
       });
   }
 
-  public addBank() {
+  public handleBankOperation() {
     this.loading = true;
     this.bankForm.markAllAsTouched();
     if (this.bankForm.invalid) {
@@ -152,8 +152,6 @@ export class BankComponent implements OnInit {
   }
 
   public updateBank() {
-    this.loading = true;
-
     this._bankService
       .update(this.bank)
       .pipe(takeUntil(this.destroy$))
@@ -172,8 +170,6 @@ export class BankComponent implements OnInit {
   }
 
   public saveBank() {
-    this.loading = true;
-
     this._bankService
       .save(this.bank)
       .pipe(takeUntil(this.destroy$))
@@ -192,8 +188,6 @@ export class BankComponent implements OnInit {
   }
 
   public deleteBank() {
-    this.loading = true;
-
     this._bankService
       .delete(this.bank._id)
       .pipe(takeUntil(this.destroy$))

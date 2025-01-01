@@ -631,5 +631,6 @@
   "depth": "Ancho",
   "width": "Largo",
   "height": "Alto",
-  "tiendaNubeId": "Tienda Nube ID"
+  "tiendaNubeId": "Tienda Nube ID",
+  "fieldRequired": "Campo requerido"
 }

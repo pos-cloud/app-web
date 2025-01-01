@@ -25,7 +25,7 @@
           class="btn"
           [disabled]="loading"
           *ngIf="operation !== 'delete' && operation !== 'view'"
-          (click)="addBank()"
+          (click)="handleBankOperation()"
         >
           <i
             class="fa"
@@ -35,11 +35,11 @@
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
         <button
+          *ngIf="operation === 'delete'"
           type="button"
           class="btn btn-danger active"
-          *ngIf="operation === 'delete'"
           [disabled]="loading"
-          (click)="addBank()"
+          (click)="handleBankOperation()"
         >
           <i
             class="fa"
@@ -51,7 +51,11 @@
       </div>
     </div>
     <div class="card-body scroll">
-      <form [formGroup]="bankForm" (ngSubmit)="addBank()" autocomplete="off">
+      <form
+        [formGroup]="bankForm"
+        (ngSubmit)="handleBankOperation()"
+        autocomplete="off"
+      >
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
@@ -96,7 +100,7 @@
                 bankForm.get('code')?.hasError('required')
               "
             >
-              Este campo es obligatorio.
+              {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-5">
@@ -123,7 +127,7 @@
                 bankForm.get('name')?.hasError('required')
               "
             >
-              Este campo es obligatorio.
+              {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-2">
@@ -183,7 +187,8 @@
             <div class="row">
               <div class="form-group col-md-6">
                 <label class="control-label">
-                  ID:<b>{{ bank?._id || '' }}</b>
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ bank?._id || '' }}</b>
                 </label>
               </div>
             </div>
