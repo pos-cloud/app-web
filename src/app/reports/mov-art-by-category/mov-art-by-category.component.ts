@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import {
-  NgbAlertConfig,
-  NgbModal,
-  NgbModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -24,13 +20,12 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CategoryService } from '../../core/services/category.service';
+import { MovArtByCategoryService } from './mov-art-by-category.service';
 
 @Component({
   standalone: true,
   selector: 'app-report-sales-by-category',
   templateUrl: './mov-art-by-category.component.html',
-  providers: [NgbAlertConfig],
   imports: [
     CommonModule,
     FormsModule,
@@ -45,9 +40,6 @@ import { CategoryService } from '../../core/services/category.service';
 })
 export class ReportSalesByCategoryComponent implements OnInit {
   public items: any[] = [];
-  public alertMessage: string = '';
-  public propertyTerm: string;
-  public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public startDate: string;
   public endDate: string;
@@ -78,10 +70,8 @@ export class ReportSalesByCategoryComponent implements OnInit {
   };
 
   constructor(
-    public _categoryService: CategoryService,
+    public _service: MovArtByCategoryService,
     public _router: Router,
-    public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
     private _branchService: BranchService,
     private _authService: AuthService,
     public _transactionTypeService: TransactionTypeService,
@@ -146,7 +136,6 @@ export class ReportSalesByCategoryComponent implements OnInit {
             resolve(result.result);
           },
           error: (error) => {
-            this._toastService.showToast(error);
             resolve(null);
           },
           complete: () => {},
@@ -165,20 +154,17 @@ export class ReportSalesByCategoryComponent implements OnInit {
     };
 
     this.subscription.add(
-      this._categoryService
-        .getSalesByCategoryV2(data)
+      this._service
+        .getMovArtByCategory(data)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            this._toastService.showToast(result);
             this.items = result.result;
           },
-          error: (error) => {
-            this._toastService.showToast(error);
-          },
+          error: (error) => {},
           complete: () => {
-            this.calculateTotal();
             this.loading = false;
+            this.calculateTotal();
           },
         })
     );
@@ -188,7 +174,7 @@ export class ReportSalesByCategoryComponent implements OnInit {
     this.totalItem = 0;
     this.totalAmount = 0;
 
-    for (let index = 0; index < this.items.length; index++) {
+    for (let index = 0; index < this.items?.length; index++) {
       this.totalItem = this.totalItem + this.items[index]['count'];
       this.totalAmount = this.totalAmount + this.items[index]['total'];
     }

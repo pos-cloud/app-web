@@ -1,17 +1,8 @@
 <section class="container-fluid">
-  <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert
-      [type]="alertConfig.type"
-      [dismissible]="alertConfig.dismissible"
-      (close)="alertMessage = ''"
-    >
-      {{ alertMessage }}
-    </ngb-alert>
-  </div>
   <div class="row container-filter">
     <div class="col-md-2">
       <label for="branch" class="control-label">
-        <b>Sucursal</b>
+        <b>{{ 'agency' | translate | capitalize }}</b>
       </label>
       <select class="form-control" [(ngModel)]="branchSelectedId">
         <option [ngValue]="null" [disabled]="!allowChangeBranch">Todas</option>
@@ -26,7 +17,7 @@
     </div>
     <div class="col-md-2">
       <label for="transactionType" class="control-label">
-        <b>Tipo</b>
+        <b>{{ 'type' | translate | capitalize }}</b>
       </label>
       <ng-multiselect-dropdown
         [placeholder]="'Tipo de Transacción'"
@@ -38,7 +29,7 @@
     </div>
     <div class="col-md-2">
       <label for="startDate" class="control-label">
-        <b>Fecha Desde:</b>
+        <b>{{ 'startDate' | translate | capitalize }}:</b>
       </label>
       <input
         type="date"
@@ -50,7 +41,7 @@
     </div>
     <div class="col-md-2">
       <label for="endDate" class="control-label">
-        <b>Fecha Hasta:</b>
+        <b>{{ 'endDate' | translate | capitalize }}:</b>
       </label>
       <input
         type="date"
@@ -62,26 +53,33 @@
     </div>
     <div class="col-md-2" (click)="getSalesByCategory()">
       <label for="action" class="control-label">
-        <b>Acción:</b>
+        <b>{{ 'action' | translate | capitalize }}:</b>
       </label>
       <span class="form-control btn-action center-content">
-        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i>Actualizar
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i
+        >{{ 'refresh' | translate | capitalize }}
       </span>
     </div>
   </div>
   <div class="card card-large">
-    <div class="card-header" *ngIf="transactionMovement === 'Venta'">
-      Categorías más vendidos
-    </div>
-    <div class="card-header" *ngIf="transactionMovement === 'Compra'">
-      Categorías más comprados
+    <div class="card-header">
+      {{ 'mov-art-by-category' | translate | capitalize }}
     </div>
     <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>
           <tr>
-            <th (click)="orderBy('category.description')">Categoría</th>
-            <th class="align-right" (click)="orderBy('count')">Cantidad</th>
+            <th (click)="orderBy('category.description')">
+              {{ 'article.category.description' | translate | capitalize }}
+            </th>
+            <th (click)="orderBy('article.category.parent.description')">
+              {{
+                'article.category.parent.description' | translate | capitalize
+              }}
+            </th>
+            <th class="align-right" (click)="orderBy('count')">
+              {{ 'count' | translate | capitalize }}
+            </th>
             <th class="align-right" (click)="orderBy('total')">Monto Total</th>
           </tr>
         </thead>
@@ -93,41 +91,25 @@
           </tr>
           <tr *ngFor="let item of items">
             <td class="flat">{{ item.category.description }}</td>
-            <td class="align-right" *ngIf="transactionMovement === 'Venta'">
+            <td class="flat">{{ item?.category?.parent?.description }}</td>
+            <td class="align-right">
               {{ item.count }}
             </td>
-            <td class="align-right" *ngIf="transactionMovement === 'Compra'">
-              {{ item.count * -1 }}
-            </td>
-            <td class="align-right" *ngIf="transactionMovement === 'Venta'">
+            <td class="align-right">
               {{ item.total | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
             </td>
-            <td class="align-right" *ngIf="transactionMovement === 'Compra'">
-              {{
-                item.total * -1 | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-              }}
-            </td>
           </tr>
-          <tr
-            align="center"
-            *ngIf="
-              items?.length == 0 && !loading && transactionMovement === 'Venta'
-            "
-          >
-            <td colspan="3">No se encontraron ventas por categoría</td>
-          </tr>
-          <tr
-            align="center"
-            *ngIf="
-              items?.length == 0 && !loading && transactionMovement === 'Compra'
-            "
-          >
-            <td colspan="3">No se encontraron compras por categoría</td>
+
+          <tr align="center" *ngIf="!items?.length && !loading">
+            <td colspan="3">{{ 'no data found' | translate | capitalize }}</td>
           </tr>
         </tbody>
-        <tfoot>
+        <tfoot *ngIf="items?.length">
           <tr>
-            <th><strong>Total</strong></th>
+            <th>
+              <strong>{{ 'total' | translate | capitalize }}</strong>
+            </th>
+            <th></th>
             <th class="align-right">
               <strong>{{ totalItem }}</strong>
             </th>
@@ -140,6 +122,5 @@
         </tfoot>
       </table>
     </div>
-    <div class="card-footer"></div>
   </div>
 </section>
