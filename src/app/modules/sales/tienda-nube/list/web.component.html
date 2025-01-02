@@ -115,11 +115,11 @@
                 </button>
               </td>
               <td>
-                <b>{{ transaction.number }}</b>
+                <b>{{ transaction?.number }}</b>
               </td>
-              <td>{{ transaction.startDate }}</td>
+              <td>{{ transaction?.startDate }}</td>
               <td *ngIf="transaction.company">
-                {{ transaction.company.name }}
+                {{ transaction?.company?.name }}
               </td>
               <td>
                 <div
@@ -138,7 +138,7 @@
                         transaction?.state?.toString() === 'Anulado',
                     }"
                   >
-                    {{ transaction.state }}
+                    {{ transaction?.state }}
                   </button>
 
                   <div
@@ -207,56 +207,52 @@
                   </div>
                 </div>
               </td>
-              <td style="white-space: normal">
-                <b *ngIf="transaction && transaction.shipmentMethod"
-                  >{{ transaction.shipmentMethod.name }} -
+              <td style="white-space: normal; line-height: 1.5">
+                <b *ngIf="transaction && transaction?.shipmentMethod"
+                  >{{ transaction?.shipmentMethod?.name }} -
                 </b>
                 <span *ngIf="transaction && transaction.deliveryAddress">
-                  {{ transaction.deliveryAddress.name }}
+                  {{ transaction?.deliveryAddress?.name ?? '' }}
                   {{
-                    transaction.deliveryAddress.number &&
-                    transaction.deliveryAddress.number !== 'No informado'
-                      ? transaction.deliveryAddress.number
+                    transaction?.deliveryAddress?.number &&
+                    transaction?.deliveryAddress?.number !== 'No informado'
+                      ? ' ' + transaction?.deliveryAddress?.number
                       : ''
                   }}
                   {{
-                    transaction.deliveryAddress.flat ||
-                    (transaction.deliveryAddress.floor &&
-                      transaction.deliveryAddress.flat !== 'No informado' &&
-                      transaction.deliveryAddress.floor !== 'No informado')
+                    transaction?.deliveryAddress?.flat ||
+                    transaction?.deliveryAddress?.floor
                       ? ' -'
                       : ''
                   }}
                   {{
-                    transaction.deliveryAddress.flat &&
-                    transaction.deliveryAddress.flat !== 'No informado'
-                      ? ' ' + transaction.deliveryAddress.flat
+                    transaction?.deliveryAddress?.flat &&
+                    transaction?.deliveryAddress?.flat !== 'No informado'
+                      ? ' Depto. ' + transaction?.deliveryAddress?.flat
                       : ''
                   }}
                   {{
-                    transaction.deliveryAddress.floor &&
-                    transaction.deliveryAddress.floor !== 'No informado'
-                      ? ' ' + transaction.deliveryAddress.floor
+                    transaction?.deliveryAddress?.floor &&
+                    transaction?.deliveryAddress?.floor !== 'No informado'
+                      ? ' Piso ' + transaction?.deliveryAddress?.floor
                       : ''
                   }}
                   {{
-                    transaction.deliveryAddress.flat ||
-                    (transaction.deliveryAddress.floor &&
-                      transaction.deliveryAddress.flat !== 'No informado' &&
-                      transaction.deliveryAddress.floor !== 'No informado')
-                      ? ', '
+                    transaction?.deliveryAddress?.city &&
+                    transaction?.deliveryAddress?.city !== 'No informado'
+                      ? ', ' + transaction?.deliveryAddress?.city
                       : ''
                   }}
                   {{
-                    transaction.deliveryAddress.city &&
-                    transaction.deliveryAddress.city !== 'No informado'
-                      ? transaction.deliveryAddress.city
+                    transaction?.deliveryAddress?.state &&
+                    transaction?.deliveryAddress?.state !== 'No informado'
+                      ? ', ' + transaction?.deliveryAddress?.state
                       : ''
                   }}
                   {{
-                    transaction.deliveryAddress.state &&
-                    transaction.deliveryAddress.state !== 'No informado'
-                      ? ', ' + transaction.deliveryAddress.state
+                    transaction?.deliveryAddress?.postalCode &&
+                    transaction?.deliveryAddress?.postalCode !== 'No informado'
+                      ? ', CP: ' + transaction?.deliveryAddress?.postalCode
                       : ''
                   }}
                 </span>
@@ -309,7 +305,8 @@
                       <button
                         *ngIf="
                           transaction?.deliveryAddress?.shippingStatus ===
-                          'Desempaquetado'
+                            'Desempaquetado' &&
+                          transaction?.state?.toString() !== 'Cerrado'
                         "
                         ngbDropdownItem
                         (click)="
@@ -319,6 +316,7 @@
                         Empaquetado
                       </button>
                       <button
+                        *ngIf="transaction?.state?.toString() !== 'Cerrado'"
                         ngbDropdownItem
                         (click)="
                           openModal('fulfilledTn', 'fulfilled', transaction)
@@ -331,21 +329,23 @@
                 </div>
               </td>
               <td>
-                {{ transaction.paymentMethodEcommerce | translate }}
+                {{ transaction?.paymentMethodEcommerce | translate }}
               </td>
               <td>
-                {{ transaction.movOfCash?.status }}
+                {{ transaction?.movOfCash?.status }}
               </td>
-              <td style="white-space: normal">{{ transaction.observation }}</td>
+              <td style="white-space: normal">
+                {{ transaction?.observation }}
+              </td>
               <td>
                 {{
-                  transaction.balance
+                  transaction?.balance
                     | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </td>
               <td>
                 {{
-                  transaction.totalPrice
+                  transaction?.totalPrice
                     | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </td>
