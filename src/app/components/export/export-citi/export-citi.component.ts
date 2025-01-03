@@ -1,9 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -25,21 +21,7 @@ export class ExportCitiComponent implements OnInit {
   public exportCitiForm: UntypedFormGroup;
   public alertMessage: string = '';
   public loading: boolean = false;
-  public months = [
-    '01',
-    '02',
-    '03',
-    '04',
-    '05',
-    '06',
-    '07',
-    '08',
-    '09',
-    '10',
-    '11',
-    '12',
-  ];
-  public years = ['2018', '2019', '2020', '2021', '2022', '2023', '2024'];
+  public months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
   public toggleButton: boolean;
   public VATPeriod: string;
   public compURL: string;
@@ -77,15 +59,10 @@ export class ExportCitiComponent implements OnInit {
 
   public buildForm(): void {
     this.exportCitiForm = this._fb.group({
-      month: [
-        moment().subtract(1, 'month').format('MM'),
-        [Validators.required],
-      ],
+      month: [moment().subtract(1, 'month').format('MM'), [Validators.required]],
       year: [moment().format('YYYY'), [Validators.required]],
     });
-    this.exportCitiForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.exportCitiForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
   }
@@ -112,57 +89,45 @@ export class ExportCitiComponent implements OnInit {
   public exportCiti(): void {
     this.loading = true;
 
-    this.VATPeriod =
-      this.exportCitiForm.value.year + this.exportCitiForm.value.month;
+    this.VATPeriod = this.exportCitiForm.value.year + this.exportCitiForm.value.month;
 
-    this._transactionService
-      .exportCiti(this.VATPeriod, this.transactionMovement)
-      .subscribe(
-        (result) => {
-          if (result.message !== 'OK') {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
-          } else {
-            this.showMessage(
-              'Los archivos se generaron correctamente.',
-              'success',
-              false
-            );
+    this._transactionService.exportCiti(this.VATPeriod, this.transactionMovement).subscribe(
+      (result) => {
+        if (result.message !== 'OK') {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.showMessage('Los archivos se generaron correctamente.', 'success', false);
 
-            this.compURL =
-              '-' +
-              Config.database +
-              '-CITI-' +
-              this.transactionMovement.toString() +
-              's-' +
-              'comp' +
-              this.VATPeriod +
-              '.txt';
-            this.aliURL =
-              '-' +
-              Config.database +
-              '-CITI-' +
-              this.transactionMovement.toString() +
-              's-' +
-              'ali' +
-              this.VATPeriod +
-              '.txt';
-            this.toggleButton = true;
-          }
-          this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+          this.compURL =
+            '-' +
+            Config.database +
+            '-CITI-' +
+            this.transactionMovement.toString() +
+            's-' +
+            'comp' +
+            this.VATPeriod +
+            '.txt';
+          this.aliURL =
+            '-' +
+            Config.database +
+            '-CITI-' +
+            this.transactionMovement.toString() +
+            's-' +
+            'ali' +
+            this.VATPeriod +
+            '.txt';
+          this.toggleButton = true;
         }
-      );
+        this.loading = false;
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
