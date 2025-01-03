@@ -37,21 +37,22 @@ import { MovArtByCategoryService } from './mov-art-by-category.service';
     NgxPaginationModule,
     ExportersModule,
   ],
+  providers: [MovArtByCategoryService],
 })
 export class ReportSalesByCategoryComponent implements OnInit {
   public items: any[] = [];
   public loading: boolean = false;
-  public startDate: string;
-  public endDate: string;
+  public startDate: string = moment().format('YYYY-MM-DD');
+  public endDate: string = moment().format('YYYY-MM-DD');
   public limit: number = 0;
   public itemsPerPage: string = '5';
   public currentPage: number = 1;
   public sort = { count: -1 };
   public transactionMovement: string;
-  public totalItem;
-  public totalAmount;
+  public totalItem: number = 0;
+  public totalAmount: number = 0;
   public branches: Branch[];
-  public branchSelectedId: String;
+  public branchSelectedId: string;
   public allowChangeBranch: boolean;
   private subscription: Subscription = new Subscription();
   transactionTypes: any;
@@ -77,16 +78,9 @@ export class ReportSalesByCategoryComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute
-  ) {
-    this.startDate = moment().format('YYYY-MM-DD');
-    this.endDate = moment().format('YYYY-MM-DD');
-    this.totalAmount = 0;
-    this.totalItem = 0;
-  }
+  ) {}
 
   async ngOnInit() {
-    this.loading = true;
-
     this._activatedRoute.params.subscribe((params) => {
       this.transactionMovement =
         params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
@@ -109,8 +103,7 @@ export class ReportSalesByCategoryComponent implements OnInit {
         }
       });
     }
-    this.getAlltransactionTypes();
-
+    this.getTransactionTypes();
     this.getSalesByCategory();
   }
 
@@ -144,6 +137,7 @@ export class ReportSalesByCategoryComponent implements OnInit {
   }
 
   public getSalesByCategory(): void {
+    this.loading = true;
     let types = this.transactionTypesSelect?.map((item) => item._id);
     let data = {
       branch: this.branchSelectedId,
@@ -161,7 +155,9 @@ export class ReportSalesByCategoryComponent implements OnInit {
           next: (result) => {
             this.items = result.result;
           },
-          error: (error) => {},
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
           complete: () => {
             this.loading = false;
             this.calculateTotal();
@@ -180,7 +176,7 @@ export class ReportSalesByCategoryComponent implements OnInit {
     }
   }
 
-  getAlltransactionTypes() {
+  getTransactionTypes() {
     let match = {
       transactionMovement: this.transactionMovement,
       operationType: { $ne: 'D' },

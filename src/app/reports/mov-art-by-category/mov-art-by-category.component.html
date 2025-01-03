@@ -17,7 +17,7 @@
     </div>
     <div class="col-md-2">
       <label for="transactionType" class="control-label">
-        <b>{{ 'type' | translate | capitalize }}</b>
+        <b>Tipo de Transacción</b>
       </label>
       <ng-multiselect-dropdown
         [placeholder]="'Tipo de Transacción'"
@@ -62,9 +62,7 @@
     </div>
   </div>
   <div class="card card-large">
-    <div class="card-header">
-      {{ 'mov-art-by-category' | translate | capitalize }}
-    </div>
+    <div class="card-header">Categorias por {{ transactionMovement }}</div>
     <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>
@@ -80,7 +78,7 @@
             <th class="align-right" (click)="orderBy('count')">
               {{ 'count' | translate | capitalize }}
             </th>
-            <th class="align-right" (click)="orderBy('total')">Monto Total</th>
+            <th class="align-right" (click)="orderBy('total')">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -101,7 +99,7 @@
           </tr>
 
           <tr align="center" *ngIf="!items?.length && !loading">
-            <td colspan="3">{{ 'no data found' | translate | capitalize }}</td>
+            <td colspan="4">{{ 'no data found' | translate | capitalize }}.</td>
           </tr>
         </tbody>
         <tfoot *ngIf="items?.length">

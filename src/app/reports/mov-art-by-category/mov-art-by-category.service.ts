@@ -6,9 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { AuthService } from 'app/core/services/auth.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MovArtByCategoryService {
   constructor(
     public _http: HttpClient,
