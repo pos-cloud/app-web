@@ -1,16 +1,6 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { Currency } from 'app/components/currency/currency';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
@@ -63,10 +53,7 @@ import { ListCategoriesPosComponent } from '../category/list-categories-pos/list
 import { CompanyType } from '../company/company';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
 import { AddMovementOfArticleComponent } from '../movement-of-article/add-movement-of-article/add-movement-of-article.component';
-import {
-  MovementOfArticle,
-  MovementOfArticleStatus,
-} from '../movement-of-article/movement-of-article';
+import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article/movement-of-article';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
@@ -89,6 +76,7 @@ import { Transaction, TransactionState } from '../transaction/transaction';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
 
 import { ApiResponse, EmailProps } from '@types';
+import { AuthService } from 'app/core/services/auth.service';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
@@ -196,6 +184,7 @@ export class AddSaleOrderComponent {
     number: 0,
   };
   m3: number = 0;
+  user: User;
 
   constructor(
     private _transactionService: TransactionService,
@@ -225,7 +214,8 @@ export class AddSaleOrderComponent {
     private _toastService: ToastService,
     public translatePipe: TranslateMePipe,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _authService: AuthService
   ) {
     this.initVariables();
     this.processParams();
@@ -275,6 +265,12 @@ export class AddSaleOrderComponent {
       }
     });
 
+    this._authService.getIdentity.subscribe((identity) => {
+      if (identity) {
+        this.user = identity;
+      }
+    });
+
     let pathLocation: string[] = this._router.url.split('/');
 
     this.userType = pathLocation[1];
@@ -290,10 +286,7 @@ export class AddSaleOrderComponent {
       if (this.transactionId) {
         this.transaction = await this.getTransaction();
 
-        if (
-          this.transaction.type.optionalAFIP &&
-          !this.transaction.optionalAFIP
-        ) {
+        if (this.transaction.type.optionalAFIP && !this.transaction.optionalAFIP) {
           this.transaction.optionalAFIP = this.transaction.type.optionalAFIP;
         }
 
@@ -301,11 +294,7 @@ export class AddSaleOrderComponent {
           this.transaction.company = this.transaction.type.company;
         }
 
-        if (
-          this.transaction &&
-          this.transaction.company &&
-          this.transaction.company.transport
-        ) {
+        if (this.transaction && this.transaction.company && this.transaction.company.transport) {
           this.transaction.transport = this.transaction.company.transport;
         }
         if (
@@ -316,9 +305,7 @@ export class AddSaleOrderComponent {
           if (this.posType === 'resto' && this.transaction.table) {
             this.transaction.table.employee = null;
             this.transaction.table.state = TableState.Available;
-            this.transaction.table = await this.updateTable(
-              this.transaction.table
-            );
+            this.transaction.table = await this.updateTable(this.transaction.table);
           }
           this.backFinal();
         } else {
@@ -328,19 +315,11 @@ export class AddSaleOrderComponent {
             }
           });
 
-          this.transactionMovement =
-            '' + this.transaction.type.transactionMovement || '';
-          this.filtersTaxClassification = [
-            TaxClassification.Withholding,
-            TaxClassification.Perception,
-          ];
+          this.transactionMovement = '' + this.transaction.type.transactionMovement || '';
+          this.filtersTaxClassification = [TaxClassification.Withholding, TaxClassification.Perception];
           this.lastQuotation = this.transaction.quotation;
 
-          if (
-            this.userCountry === 'MX' &&
-            this.transaction.type.defectUseOfCFDI &&
-            !this.transaction.useOfCFDI
-          ) {
+          if (this.userCountry === 'MX' && this.transaction.type.defectUseOfCFDI && !this.transaction.useOfCFDI) {
             this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
           }
 
@@ -353,12 +332,8 @@ export class AddSaleOrderComponent {
             this.showButtonCancelation = false;
           }
 
-          this.movementsOfCancellations =
-            await this.getMovementsOfCancellations();
-          if (
-            this.movementsOfCancellations &&
-            this.movementsOfCancellations.length > 0
-          ) {
+          this.movementsOfCancellations = await this.getMovementsOfCancellations();
+          if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
             this.showButtonCancelation = false;
           } else {
             this.showButtonCancelation = true;
@@ -377,11 +352,7 @@ export class AddSaleOrderComponent {
 
   ngAfterViewInit() {
     setTimeout(() => {
-      if (
-        !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        )
-      ) {
+      if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         this.focusEvent.emit(true);
       }
     }, 1000);
@@ -394,10 +365,7 @@ export class AddSaleOrderComponent {
       this._businessRulesService
         .getAll({
           match: {
-            $or: [
-              { transactionTypeIds: { $in: [this.transaction.type._id] } },
-              { transactionTypeIds: { $size: 0 } },
-            ],
+            $or: [{ transactionTypeIds: { $in: [this.transaction.type._id] } }, { transactionTypeIds: { $size: 0 } }],
           },
         })
         .subscribe(
@@ -456,11 +424,7 @@ export class AddSaleOrderComponent {
         )
         .subscribe(
           (result) => {
-            if (
-              result &&
-              result.cancellationTypes &&
-              result.cancellationTypes.length > 0
-            ) {
+            if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
               resolve(result.cancellationTypes);
             } else {
               resolve(null);
@@ -585,16 +549,9 @@ export class AddSaleOrderComponent {
 
   updateTransaction(): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
-      this.transaction.exempt = this.roundNumber.transform(
-        this.transaction.exempt
-      );
-      this.transaction.discountAmount = this.roundNumber.transform(
-        this.transaction.discountAmount,
-        6
-      );
-      this.transaction.totalPrice = this.roundNumber.transform(
-        this.transaction.totalPrice
-      );
+      this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
+      this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount, 6);
+      this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
       this._transactionService.update(this.transaction).subscribe(
         (result: ApiResponse) => {
           if (result.status === 200) {
@@ -612,9 +569,7 @@ export class AddSaleOrderComponent {
     });
   }
 
-  saveMovementsOfCancellations(
-    movementsOfCancellations: MovementOfCancellation[]
-  ): Promise<MovementOfCancellation[]> {
+  saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
     for (let mov of movementsOfCancellations) {
       let transOrigin = new Transaction();
 
@@ -629,25 +584,22 @@ export class AddSaleOrderComponent {
     return new Promise<MovementOfCancellation[]>((resolve) => {
       this.loading = true;
 
-      this._movementOfCancellationService
-        .saveMovementsOfCancellations(movementsOfCancellations)
-        .subscribe(
-          async (result) => {
-            this.loading = false;
-            if (!result.movementsOfCancellations) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
-              resolve(null);
-            } else {
-              resolve(result.movementsOfCancellations);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this.showMessage(error._body, 'danger', false);
+      this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
+        async (result) => {
+          this.loading = false;
+          if (!result.movementsOfCancellations) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
+          } else {
+            resolve(result.movementsOfCancellations);
           }
-        );
+        },
+        (error) => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
     });
   }
 
@@ -655,34 +607,28 @@ export class AddSaleOrderComponent {
     return new Promise((resolve) => {
       this.loading = true;
 
-      this._movementOfCancellationService
-        .deleteMovementsOfCancellations(query)
-        .subscribe(
-          async (result) => {
-            this.loading = false;
-            if (!result.movementsOfCancellations) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
-              resolve(null);
-            } else {
-              resolve(result.movementsOfCancellations);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this.showMessage(error._body, 'danger', false);
+      this._movementOfCancellationService.deleteMovementsOfCancellations(query).subscribe(
+        async (result) => {
+          this.loading = false;
+          if (!result.movementsOfCancellations) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
+          } else {
+            resolve(result.movementsOfCancellations);
           }
-        );
+        },
+        (error) => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
     });
   }
 
   async changeCurrency(currency: Currency) {
     this.transaction.currency = currency;
-    if (
-      this.config['currency'] &&
-      this.transaction.currency._id !== this.config['currency']._id
-    ) {
+    if (this.config['currency'] && this.transaction.currency._id !== this.config['currency']._id) {
       for (let currency of this.currencies) {
         if (currency._id !== this.config['currency']._id) {
           this.transaction.quotation = currency.quotation;
@@ -712,8 +658,7 @@ export class AddSaleOrderComponent {
         (result) => {
           this.loading = false;
           if (!result.table) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.table);
@@ -746,8 +691,7 @@ export class AddSaleOrderComponent {
         } else {
           this.areMovementsOfArticlesEmpty = false;
           this.movementsOfArticles = result.movementsOfArticles;
-          this.lastMovementOfArticle =
-            this.movementsOfArticles[this.movementsOfArticles.length - 1];
+          this.lastMovementOfArticle = this.movementsOfArticles[this.movementsOfArticles.length - 1];
           this.containerMovementsOfArticles.nativeElement.scrollTop =
             this.containerMovementsOfArticles.nativeElement.scrollHeight;
           this.updateQuantity();
@@ -757,8 +701,7 @@ export class AddSaleOrderComponent {
           if (
             result.movementsOfArticles.length == 1 &&
             this.transaction.type.name == 'Cierre de producción' &&
-            this.transaction.type.transactionMovement ===
-              TransactionMovement.Production
+            this.transaction.type.transactionMovement === TransactionMovement.Production
           ) {
             this.finish();
           }
@@ -779,8 +722,7 @@ export class AddSaleOrderComponent {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (!movementOfArticle.movementParent) {
           this.quantity += movementOfArticle.amount;
-          this.m3 +=
-            (movementOfArticle.article?.m3 ?? 0) * movementOfArticle.amount;
+          this.m3 += (movementOfArticle.article?.m3 ?? 0) * movementOfArticle.amount;
         }
       }
     }
@@ -801,38 +743,25 @@ export class AddSaleOrderComponent {
         ) {
           let movementOfArticle: MovementOfArticle;
 
-          if (
-            !itemData.article.isWeigth ||
-            this.transaction.type.stockMovement == StockMovement.Inventory
-          ) {
-            if (
-              this.filterArticle &&
-              this.filterArticle !== '' &&
-              this.filterArticle.slice(0, 1) === '*'
-            ) {
+          if (!itemData.article.isWeigth || this.transaction.type.stockMovement == StockMovement.Inventory) {
+            if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
               if (this.lastMovementOfArticle) {
                 let query = `where="_id":"${this.lastMovementOfArticle._id}"`;
 
-                await this.getMovementsOfArticles(query).then(
-                  (movementsOfArticles) => {
-                    if (movementsOfArticles && movementsOfArticles.length > 0) {
-                      movementOfArticle = movementsOfArticles[0];
-                    }
-                  }
-                );
-              }
-            } else if (
-              this.transaction.type.stockMovement == StockMovement.Inventory
-            ) {
-              let query = `where="transaction":"${this.transactionId}","operationType":{"$ne":"D"},"article":"${itemData.article._id}"`;
-
-              await this.getMovementsOfArticles(query).then(
-                (movementsOfArticles) => {
+                await this.getMovementsOfArticles(query).then((movementsOfArticles) => {
                   if (movementsOfArticles && movementsOfArticles.length > 0) {
                     movementOfArticle = movementsOfArticles[0];
                   }
+                });
+              }
+            } else if (this.transaction.type.stockMovement == StockMovement.Inventory) {
+              let query = `where="transaction":"${this.transactionId}","operationType":{"$ne":"D"},"article":"${itemData.article._id}"`;
+
+              await this.getMovementsOfArticles(query).then((movementsOfArticles) => {
+                if (movementsOfArticles && movementsOfArticles.length > 0) {
+                  movementOfArticle = movementsOfArticles[0];
                 }
-              );
+              });
             }
           }
           if (!movementOfArticle) {
@@ -840,92 +769,71 @@ export class AddSaleOrderComponent {
             movementOfArticle._id = '';
             movementOfArticle.transaction = this.transaction;
             movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-            movementOfArticle.stockMovement =
-              this.transaction.type.stockMovement;
+            movementOfArticle.stockMovement = this.transaction.type.stockMovement;
             movementOfArticle.printed = 0;
             movementOfArticle.read = 0;
             if (child && child.length === 0) {
               if (await this.isValidMovementOfArticle(movementOfArticle)) {
-                await this.saveMovementOfArticle(movementOfArticle).then(
-                  (movementOfArticle) => {
-                    if (movementOfArticle) {
-                      this.getMovementsOfTransaction();
-                    }
+                await this.saveMovementOfArticle(movementOfArticle).then((movementOfArticle) => {
+                  if (movementOfArticle) {
+                    this.getMovementsOfTransaction();
                   }
-                );
+                });
               }
             } else {
               let movsArticle: MovementOfArticle[] = new Array();
 
               for (const movArticle of child) {
-                let stock: boolean = await this.getUtilization(
-                  movementOfArticle.article._id,
-                  movArticle.article._id
-                );
+                let stock: boolean = await this.getUtilization(movementOfArticle.article._id, movArticle.article._id);
 
                 if (await this.isValidMovementOfArticle(movArticle, stock)) {
                   movsArticle.push(movArticle);
                 }
               }
               if (movsArticle.length === child.length) {
-                await this.saveMovementOfArticle(movementOfArticle).then(
-                  async (movementOfArticle) => {
-                    if (movementOfArticle) {
-                      movsArticle = new Array();
-                      for (const movArticle of child) {
-                        movArticle.movementParent = movementOfArticle;
-                        movArticle.movementOrigin = null;
-                        movsArticle.push(movArticle);
-                      }
-                      await this.saveMovementsOfArticles(movsArticle).then(
-                        (result) => {
-                          if (result) {
-                            this.getMovementsOfTransaction();
-                          } else {
-                            this.showMessage(
-                              'No se pudo crear la estructura de producto',
-                              'info',
-                              false
-                            );
-                          }
-                        }
-                      );
+                await this.saveMovementOfArticle(movementOfArticle).then(async (movementOfArticle) => {
+                  if (movementOfArticle) {
+                    movsArticle = new Array();
+                    for (const movArticle of child) {
+                      movArticle.movementParent = movementOfArticle;
+                      movArticle.movementOrigin = null;
+                      movsArticle.push(movArticle);
                     }
+                    await this.saveMovementsOfArticles(movsArticle).then((result) => {
+                      if (result) {
+                        this.getMovementsOfTransaction();
+                      } else {
+                        this.showMessage('No se pudo crear la estructura de producto', 'info', false);
+                      }
+                    });
                   }
-                );
+                });
               }
             }
           } else {
-            if (
-              this.filterArticle &&
-              this.filterArticle !== '' &&
-              this.filterArticle.slice(0, 1) === '*'
-            ) {
+            if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
               movementOfArticle.amount = itemData.amount;
               this.filterArticle = '';
             } else {
               movementOfArticle.amount += 1;
             }
             if (await this.isValidMovementOfArticle(movementOfArticle)) {
-              if (
-                this.transaction.type.transactionMovement ===
-                TransactionMovement.Sale
-              ) {
-                await this.updateMovementOfArticle(
-                  await this.recalculateSalePrice(movementOfArticle)
-                ).then((movementOfArticle) => {
-                  if (movementOfArticle) {
-                    this.getMovementsOfTransaction();
+              if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                await this.updateMovementOfArticle(await this.recalculateSalePrice(movementOfArticle)).then(
+                  (movementOfArticle) => {
+                    if (movementOfArticle) {
+                      this.getMovementsOfTransaction();
+                    }
                   }
-                });
+                );
               } else {
-                await this.updateMovementOfArticle(
-                  this.recalculateCostPrice(movementOfArticle)
-                ).then((movementOfArticle) => {
-                  if (movementOfArticle) {
-                    this.getMovementsOfTransaction();
+                await this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle)).then(
+                  (movementOfArticle) => {
+                    if (movementOfArticle) {
+                      this.getMovementsOfTransaction();
+                    }
                   }
-                });
+                );
               }
             } else {
               movementOfArticle.amount -= 1;
@@ -946,8 +854,7 @@ export class AddSaleOrderComponent {
       } else {
         this._toastService.showToast({
           type: 'danger',
-          message:
-            'Error al agregar el artículo, por favor inténtelo de nuevo.',
+          message: 'Error al agregar el artículo, por favor inténtelo de nuevo.',
         });
       }
     } else {
@@ -1094,48 +1001,35 @@ export class AddSaleOrderComponent {
     });
   }
 
-  saveMovementOfArticle(
-    movementOfArticle: MovementOfArticle
-  ): Promise<MovementOfArticle> {
+  saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
     return new Promise<MovementOfArticle>((resolve) => {
       this.loading = true;
-      movementOfArticle.basePrice = this.roundNumber.transform(
-        movementOfArticle.basePrice
-      );
-      movementOfArticle.costPrice = this.roundNumber.transform(
-        movementOfArticle.costPrice
-      );
-      movementOfArticle.salePrice = this.roundNumber.transform(
-        movementOfArticle.salePrice
-      );
+      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
+      movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
+      movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
 
-      this._movementOfArticleService
-        .saveMovementOfArticle(movementOfArticle)
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (!result.movementOfArticle) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
-              resolve(null);
-            } else {
-              this.hideMessage();
-              movementOfArticle = result.movementOfArticle;
-              resolve(movementOfArticle);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this.showMessage(error._body, 'danger', false);
+      this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
+        (result) => {
+          this.loading = false;
+          if (!result.movementOfArticle) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
+          } else {
+            this.hideMessage();
+            movementOfArticle = result.movementOfArticle;
+            resolve(movementOfArticle);
           }
-        );
+        },
+        (error) => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
     });
   }
 
-  private saveMovementsOfArticles(
-    movementsOfArticles: MovementOfArticle[]
-  ): Promise<boolean> {
+  private saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Promise<boolean> {
     return new Promise<boolean>(async (resolve) => {
       this.loading = true;
 
@@ -1155,39 +1049,32 @@ export class AddSaleOrderComponent {
         }
       }
 
-      this._movementOfArticleService
-        .saveMovementsOfArticles(movsArticles)
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (!result.movementsOfArticles) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
-              resolve(false);
-            } else {
-              this.hideMessage();
-              resolve(true);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this.showMessage(error._body, 'danger', false);
+      this._movementOfArticleService.saveMovementsOfArticles(movsArticles).subscribe(
+        (result) => {
+          this.loading = false;
+          if (!result.movementsOfArticles) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(false);
+          } else {
+            this.hideMessage();
+            resolve(true);
           }
-        );
+        },
+        (error) => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(false);
+        }
+      );
     });
   }
 
-  async isValidMovementOfArticle(
-    movementOfArticle: MovementOfArticle,
-    verifyStock: boolean = true
-  ): Promise<boolean> {
+  async isValidMovementOfArticle(movementOfArticle: MovementOfArticle, verifyStock: boolean = true): Promise<boolean> {
     return new Promise<boolean>(async (resolve) => {
       try {
         if (
           this.transaction.type &&
-          this.transaction.type.transactionMovement ===
-            TransactionMovement.Sale &&
+          this.transaction.type.transactionMovement === TransactionMovement.Sale &&
           movementOfArticle.article &&
           !movementOfArticle.article.allowSale
         )
@@ -1197,8 +1084,7 @@ export class AddSaleOrderComponent {
 
         if (
           this.transaction.type &&
-          this.transaction.type.transactionMovement ===
-            TransactionMovement.Purchase &&
+          this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
           movementOfArticle.article &&
           !movementOfArticle.article.allowPurchase
         )
@@ -1230,19 +1116,16 @@ export class AddSaleOrderComponent {
             movementOfArticle.stockMovement === StockMovement.Transfer) &&
           !movementOfArticle.article.allowSaleWithoutStock
         ) {
-          let articleStocks: ArticleStock[] =
-            await this.getArticleStock(movementOfArticle);
+          let articleStocks: ArticleStock[] = await this.getArticleStock(movementOfArticle);
           let articleStock: ArticleStock;
 
-          if (articleStocks && articleStocks.length > 0)
-            articleStock = articleStocks[0];
+          if (articleStocks && articleStocks.length > 0) articleStock = articleStocks[0];
           let totalStock: number = movementOfArticle.amount;
 
           this.movementsOfArticles.forEach((mov: MovementOfArticle) => {
             if (
               mov?._id?.toString() !== movementOfArticle?._id?.toString() &&
-              mov?.article?._id?.toString() ===
-                movementOfArticle?.article?._id?.toString()
+              mov?.article?._id?.toString() === movementOfArticle?.article?._id?.toString()
             ) {
               totalStock += mov.amount - mov.quantityForStock;
             }
@@ -1250,11 +1133,9 @@ export class AddSaleOrderComponent {
           if (!articleStock || totalStock > articleStock.realStock) {
             if (
               !(
-                this.transaction.type.stockMovement ===
-                  StockMovement.Transfer &&
+                this.transaction.type.stockMovement === StockMovement.Transfer &&
                 movementOfArticle.deposit &&
-                movementOfArticle.deposit._id.toString() ===
-                  this.transaction.depositDestination._id.toString()
+                movementOfArticle.deposit._id.toString() === this.transaction.depositDestination._id.toString()
               )
             ) {
               has = false;
@@ -1268,21 +1149,14 @@ export class AddSaleOrderComponent {
     });
   }
 
-  getArticleStock(
-    movementOfArticle: MovementOfArticle
-  ): Promise<ArticleStock[]> {
+  getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock[]> {
     return new Promise<ArticleStock[]>((resolve, reject) => {
       let depositID;
       let query;
 
-      if (
-        movementOfArticle.article.deposits &&
-        movementOfArticle.article.deposits.length > 0
-      ) {
+      if (movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0) {
         movementOfArticle.article.deposits.forEach((element) => {
-          if (
-            element.deposit.branch._id === this.transaction.branchOrigin._id
-          ) {
+          if (element.deposit.branch._id === this.transaction.branchOrigin._id) {
             depositID = element.deposit._id;
           }
         });
@@ -1307,9 +1181,7 @@ export class AddSaleOrderComponent {
     });
   }
 
-  recalculateCostPrice(
-    movementOfArticle: MovementOfArticle
-  ): MovementOfArticle {
+  recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
     let quotation = 1;
 
     if (this.transaction.quotation) {
@@ -1335,12 +1207,8 @@ export class AddSaleOrderComponent {
       (movementOfArticle.unitPrice * this.transaction.discountPercent) / 100,
       6
     );
-    movementOfArticle.unitPrice -= this.roundNumber.transform(
-      movementOfArticle.transactionDiscountAmount
-    );
-    movementOfArticle.basePrice = this.roundNumber.transform(
-      movementOfArticle.unitPrice * movementOfArticle.amount
-    );
+    movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
+    movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = 0.0;
     movementOfArticle.markupPercentage = 0.0;
 
@@ -1350,19 +1218,14 @@ export class AddSaleOrderComponent {
 
     let fields: ArticleFields[] = new Array();
 
-    if (
-      movementOfArticle.otherFields &&
-      movementOfArticle.otherFields.length > 0
-    ) {
+    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
         if (
           field.articleField.datatype === ArticleFieldType.Percentage ||
           field.articleField.datatype === ArticleFieldType.Number
         ) {
           if (field.articleField.datatype === ArticleFieldType.Percentage) {
-            field.amount = this.roundNumber.transform(
-              (movementOfArticle.basePrice * parseFloat(field.value)) / 100
-            );
+            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value)) / 100);
           } else if (field.articleField.datatype === ArticleFieldType.Number) {
             field.amount = parseFloat(field.value);
           }
@@ -1389,28 +1252,20 @@ export class AddSaleOrderComponent {
           if (articleTax.percentage === 0) {
             for (let artTax of movementOfArticle.article.taxes) {
               if (artTax.tax._id === articleTax.tax._id) {
-                articleTax.taxAmount = this.roundNumber.transform(
-                  artTax.taxAmount * movementOfArticle.amount
-                );
+                articleTax.taxAmount = this.roundNumber.transform(artTax.taxAmount * movementOfArticle.amount);
               }
             }
           } else {
-            articleTax.taxAmount = this.roundNumber.transform(
-              (articleTax.taxBase * articleTax.percentage) / 100
-            );
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage) / 100);
           }
           taxes.push(articleTax);
-          movementOfArticle.costPrice += this.roundNumber.transform(
-            articleTax.taxAmount
-          );
+          movementOfArticle.costPrice += this.roundNumber.transform(articleTax.taxAmount);
         }
         movementOfArticle.taxes = taxes;
       }
     }
     movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
-    movementOfArticle.costPrice = this.roundNumber.transform(
-      movementOfArticle.costPrice
-    );
+    movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
     movementOfArticle.salePrice = this.roundNumber.transform(
       movementOfArticle.costPrice + movementOfArticle.roundingAmount
     );
@@ -1418,9 +1273,7 @@ export class AddSaleOrderComponent {
     return movementOfArticle;
   }
 
-  recalculateSalePrice(
-    movementOfArticle: MovementOfArticle
-  ): Promise<MovementOfArticle> {
+  recalculateSalePrice(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
     return new Promise<MovementOfArticle>(async (resolve) => {
       this.loading = true;
 
@@ -1440,30 +1293,21 @@ export class AddSaleOrderComponent {
           this.config['currency'] &&
           this.config['currency']._id !== movementOfArticle.article.currency._id
         ) {
-          movementOfArticle.basePrice = this.roundNumber.transform(
-            movementOfArticle.basePrice * quotation
-          );
+          movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
         }
       }
 
       let fields: ArticleFields[] = new Array();
 
-      if (
-        movementOfArticle.otherFields &&
-        movementOfArticle.otherFields.length > 0
-      ) {
+      if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
         for (const field of movementOfArticle.otherFields) {
           if (
             field.articleField.datatype === ArticleFieldType.Percentage ||
             field.articleField.datatype === ArticleFieldType.Number
           ) {
             if (field.articleField.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform(
-                (movementOfArticle.basePrice * parseFloat(field.value)) / 100
-              );
-            } else if (
-              field.articleField.datatype === ArticleFieldType.Number
-            ) {
+              field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value)) / 100);
+            } else if (field.articleField.datatype === ArticleFieldType.Number) {
               field.amount = parseFloat(field.value);
             }
           }
@@ -1481,16 +1325,12 @@ export class AddSaleOrderComponent {
           this.config['currency'] &&
           this.config['currency']._id !== movementOfArticle.article.currency._id
         ) {
-          movementOfArticle.costPrice = this.roundNumber.transform(
-            movementOfArticle.costPrice * quotation
-          );
+          movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
         }
       }
 
       movementOfArticle.unitPrice = this.roundNumber.transform(
-        movementOfArticle.unitPrice +
-          movementOfArticle.transactionDiscountAmount +
-          movementOfArticle.discountAmount
+        movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount + movementOfArticle.discountAmount
       );
       if (
         movementOfArticle.article &&
@@ -1511,11 +1351,7 @@ export class AddSaleOrderComponent {
       ) {
         let increasePrice = 0;
 
-        if (
-          this.priceList.allowSpecialRules &&
-          this.priceList.rules &&
-          this.priceList.rules.length > 0
-        ) {
+        if (this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
           this.priceList.rules.forEach((rule) => {
             if (rule) {
               if (
@@ -1526,9 +1362,7 @@ export class AddSaleOrderComponent {
                 rule.category._id === movementOfArticle.category._id &&
                 rule.make._id === movementOfArticle.make._id
               ) {
-                increasePrice = this.roundNumber.transform(
-                  rule.percentage + this.priceList.percentage
-                );
+                increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
               if (
                 rule.make &&
@@ -1536,9 +1370,7 @@ export class AddSaleOrderComponent {
                 rule.category == null &&
                 rule.make._id === movementOfArticle.make._id
               ) {
-                increasePrice = this.roundNumber.transform(
-                  rule.percentage + this.priceList.percentage
-                );
+                increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
               if (
                 rule.category &&
@@ -1546,16 +1378,12 @@ export class AddSaleOrderComponent {
                 rule.make == null &&
                 rule.category._id === movementOfArticle.category._id
               ) {
-                increasePrice = this.roundNumber.transform(
-                  rule.percentage + this.priceList.percentage
-                );
+                increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
             }
           });
           if (increasePrice === 0) {
-            increasePrice = this.roundNumber.transform(
-              this.priceList.percentage
-            );
+            increasePrice = this.roundNumber.transform(this.priceList.percentage);
           }
         } else {
           increasePrice = this.roundNumber.transform(this.priceList.percentage);
@@ -1565,9 +1393,7 @@ export class AddSaleOrderComponent {
           this.priceList.exceptions.forEach((exception) => {
             if (exception) {
               if (exception.article._id === movementOfArticle.article._id) {
-                increasePrice = this.roundNumber.transform(
-                  exception.percentage
-                );
+                increasePrice = this.roundNumber.transform(exception.percentage);
               }
             }
           });
@@ -1588,11 +1414,7 @@ export class AddSaleOrderComponent {
       ) {
         let increasePrice = 0;
 
-        if (
-          this.newPriceList.allowSpecialRules &&
-          this.newPriceList.rules &&
-          this.newPriceList.rules.length > 0
-        ) {
+        if (this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {
           this.newPriceList.rules.forEach((rule) => {
             if (rule) {
               if (
@@ -1603,9 +1425,7 @@ export class AddSaleOrderComponent {
                 rule.category._id === movementOfArticle.category._id &&
                 rule.make._id === movementOfArticle.make._id
               ) {
-                increasePrice = this.roundNumber.transform(
-                  rule.percentage + this.newPriceList.percentage
-                );
+                increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
               }
               if (
                 rule.make &&
@@ -1613,9 +1433,7 @@ export class AddSaleOrderComponent {
                 rule.category == null &&
                 rule.make._id === movementOfArticle.make._id
               ) {
-                increasePrice = this.roundNumber.transform(
-                  rule.percentage + this.newPriceList.percentage
-                );
+                increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
               }
               if (
                 rule.category &&
@@ -1623,33 +1441,22 @@ export class AddSaleOrderComponent {
                 rule.make == null &&
                 rule.category._id === movementOfArticle.category._id
               ) {
-                increasePrice = this.roundNumber.transform(
-                  rule.percentage + this.newPriceList.percentage
-                );
+                increasePrice = this.roundNumber.transform(rule.percentage + this.newPriceList.percentage);
               }
             }
           });
           if (increasePrice === 0) {
-            increasePrice = this.roundNumber.transform(
-              this.newPriceList.percentage
-            );
+            increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
           }
         } else {
-          increasePrice = this.roundNumber.transform(
-            this.newPriceList.percentage
-          );
+          increasePrice = this.roundNumber.transform(this.newPriceList.percentage);
         }
 
-        if (
-          this.newPriceList.exceptions &&
-          this.newPriceList.exceptions.length > 0
-        ) {
+        if (this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0) {
           this.newPriceList.exceptions.forEach((exception) => {
             if (exception) {
               if (exception.article._id === movementOfArticle.article._id) {
-                increasePrice = this.roundNumber.transform(
-                  exception.percentage
-                );
+                increasePrice = this.roundNumber.transform(exception.percentage);
               }
             }
           });
@@ -1657,8 +1464,7 @@ export class AddSaleOrderComponent {
 
         if (increasePrice != 0) {
           movementOfArticle.unitPrice = this.roundNumber.transform(
-            movementOfArticle.unitPrice +
-              (movementOfArticle.unitPrice * increasePrice) / 100
+            movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice) / 100
           );
         }
       }
@@ -1667,18 +1473,11 @@ export class AddSaleOrderComponent {
         (movementOfArticle.unitPrice * this.transaction.discountPercent) / 100,
         6
       );
-      movementOfArticle.unitPrice -= this.roundNumber.transform(
-        movementOfArticle.transactionDiscountAmount
-      );
-      movementOfArticle.unitPrice -= this.roundNumber.transform(
-        movementOfArticle.discountAmount
-      );
+      movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.transactionDiscountAmount);
+      movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.discountAmount);
 
       //logic for sangenemi quiere que se updatee por lista de precios esto lo vamos a mejorar y agregar una funcion en apiv2
-      if (
-        (this.database === 'sangenemi' || this.database === 'globalstore') &&
-        (this.priceList || this.newPriceList)
-      ) {
+      if ((this.database === 'sangenemi' || this.database === 'globalstore') && (this.priceList || this.newPriceList)) {
         let markupPrice = 0;
         if (this.priceList) {
           markupPrice = this.priceList.percentage;
@@ -1693,9 +1492,7 @@ export class AddSaleOrderComponent {
         }
       }
 
-      movementOfArticle.salePrice = this.roundNumber.transform(
-        movementOfArticle.unitPrice * movementOfArticle.amount
-      );
+      movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
       movementOfArticle.markupPrice = this.roundNumber.transform(
         movementOfArticle.salePrice - movementOfArticle.costPrice
       );
@@ -1713,10 +1510,7 @@ export class AddSaleOrderComponent {
           if (movementOfArticle.article) {
             for (let taxAux of movementOfArticle.article.taxes) {
               if (taxAux.percentage === 0) {
-                impInt = this.roundNumber.transform(
-                  taxAux.taxAmount * movementOfArticle.amount,
-                  4
-                );
+                impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
               }
             }
           }
@@ -1727,25 +1521,18 @@ export class AddSaleOrderComponent {
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
             if (tax.tax.taxBase == TaxBase.Neto) {
               tax.taxBase = this.roundNumber.transform(
-                (movementOfArticle.salePrice - impInt) /
-                  (tax.percentage / 100 + 1),
+                (movementOfArticle.salePrice - impInt) / (tax.percentage / 100 + 1),
                 4
               );
             }
             if (taxAux.percentage === 0) {
               for (let artTax of movementOfArticle.article.taxes) {
                 if (artTax.tax._id === tax.tax._id) {
-                  tax.taxAmount = this.roundNumber.transform(
-                    artTax.taxAmount * movementOfArticle.amount,
-                    4
-                  );
+                  tax.taxAmount = this.roundNumber.transform(artTax.taxAmount * movementOfArticle.amount, 4);
                 }
               }
             } else {
-              tax.taxAmount = this.roundNumber.transform(
-                (tax.taxBase * tax.percentage) / 100,
-                4
-              );
+              tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage) / 100, 4);
             }
             taxes.push(tax);
           }
@@ -1768,10 +1555,7 @@ export class AddSaleOrderComponent {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticleAux of this.movementsOfArticles) {
-        if (
-          movementOfArticleAux.article &&
-          movementOfArticleAux.article._id === articleId
-        ) {
+        if (movementOfArticleAux.article && movementOfArticleAux.article._id === articleId) {
           movementOfArticle = movementOfArticleAux;
         }
       }
@@ -1780,47 +1564,36 @@ export class AddSaleOrderComponent {
     return movementOfArticle;
   }
 
-  updateMovementOfArticle(
-    movementOfArticle: MovementOfArticle
-  ): Promise<MovementOfArticle> {
+  updateMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
     return new Promise<MovementOfArticle>(async (resolve, reject) => {
       this.loading = true;
-      movementOfArticle.basePrice = this.roundNumber.transform(
-        movementOfArticle.basePrice
-      );
-      movementOfArticle.costPrice = this.roundNumber.transform(
-        movementOfArticle.costPrice
-      );
-      movementOfArticle.salePrice = this.roundNumber.transform(
-        movementOfArticle.salePrice
-      );
+      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
+      movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
+      movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
 
       // LIMPIAR UN POCO LA RELACIÓN
       movementOfArticle.transaction = new Transaction();
       movementOfArticle.transaction._id = this.transaction._id;
       // FIN DE LIMPIADO
 
-      this._movementOfArticleService
-        .updateMovementOfArticle(movementOfArticle)
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (!result.movementOfArticle) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
-              reject(result.message);
-            } else {
-              this.containerMovementsOfArticles.nativeElement.scrollTop =
-                this.containerMovementsOfArticles.nativeElement.scrollHeight;
-              resolve(result.movementOfArticle);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this.showMessage(error._body, 'danger', false);
-            reject(error);
+      this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
+        (result) => {
+          this.loading = false;
+          if (!result.movementOfArticle) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            reject(result.message);
+          } else {
+            this.containerMovementsOfArticles.nativeElement.scrollTop =
+              this.containerMovementsOfArticles.nativeElement.scrollHeight;
+            resolve(result.movementOfArticle);
           }
-        );
+        },
+        (error) => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          reject(error);
+        }
+      );
     });
   }
 
@@ -1848,15 +1621,11 @@ export class AddSaleOrderComponent {
         this.transaction.company.group.discount > 0 &&
         this.transaction.type.allowCompanyDiscount
       )
-        this.transaction.discountPercent +=
-          this.transaction.company.group.discount;
+        this.transaction.discountPercent += this.transaction.company.group.discount;
     }
 
     if (discountPercent !== undefined) {
-      this.transaction.discountPercent = this.roundNumber.transform(
-        discountPercent,
-        6
-      );
+      this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 6);
       if (
         this.transaction.company &&
         this.transaction.company.discount > 0 &&
@@ -1869,8 +1638,7 @@ export class AddSaleOrderComponent {
         this.transaction.company.group.discount > 0 &&
         this.transaction.type.allowCompanyDiscount
       )
-        this.transaction.discountPercent +=
-          this.transaction.company.group.discount;
+        this.transaction.discountPercent += this.transaction.company.group.discount;
     }
 
     let isUpdateValid: boolean = true;
@@ -1883,51 +1651,30 @@ export class AddSaleOrderComponent {
         }
         let oldMovementOfArticle: {} = {};
 
-        oldMovementOfArticle = Object.assign(
-          oldMovementOfArticle,
-          movementOfArticle
-        );
-        if (
-          !movementOfArticle.movementParent ||
-          (movementOfArticle.movementParent && movementOfArticle.isOptional)
-        ) {
-          this.transaction.discountPercent = this.roundNumber.transform(
-            this.transaction.discountPercent,
-            6
-          );
-          if (
-            this.transaction.type.transactionMovement ===
-            TransactionMovement.Sale
-          ) {
-            movementOfArticle =
-              await this.recalculateSalePrice(movementOfArticle);
+        oldMovementOfArticle = Object.assign(oldMovementOfArticle, movementOfArticle);
+        if (!movementOfArticle.movementParent || (movementOfArticle.movementParent && movementOfArticle.isOptional)) {
+          this.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent, 6);
+          if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+            movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
           } else {
             movementOfArticle = this.recalculateCostPrice(movementOfArticle);
           }
-          totalPriceAux += this.roundNumber.transform(
-            movementOfArticle.salePrice
-          );
+          totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
           discountAmountAux += this.roundNumber.transform(
-            movementOfArticle.transactionDiscountAmount *
-              movementOfArticle.amount,
+            movementOfArticle.transactionDiscountAmount * movementOfArticle.amount,
             6
           );
           // COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
           if (
-            this._jsonDiffPipe.transform(
-              oldMovementOfArticle,
-              movementOfArticle
-            ) ||
+            this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle) ||
             (oldMovementOfArticle['taxes'] &&
               oldMovementOfArticle['taxes'].length > 0 &&
               movementOfArticle['taxes'] &&
               movementOfArticle['taxes'].length > 0 &&
-              oldMovementOfArticle['taxes'][0].taxAmount !==
-                movementOfArticle['taxes'][0].taxAmount)
+              oldMovementOfArticle['taxes'][0].taxAmount !== movementOfArticle['taxes'][0].taxAmount)
           ) {
             try {
-              let result =
-                await this.updateMovementOfArticle(movementOfArticle);
+              let result = await this.updateMovementOfArticle(movementOfArticle);
 
               if (!result) {
                 isUpdateValid = false;
@@ -1998,64 +1745,35 @@ export class AddSaleOrderComponent {
           for (let taxesAux of movementOfArticle.taxes) {
             let transactionTax: Taxes = new Taxes();
 
-            transactionTax.percentage = this.roundNumber.transform(
-              taxesAux.percentage
-            );
+            transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
             transactionTax.tax = taxesAux.tax;
-            transactionTax.taxBase = this.roundNumber.transform(
-              taxesAux.taxBase,
-              4
-            );
-            transactionTax.taxAmount = this.roundNumber.transform(
-              taxesAux.taxAmount,
-              4
-            );
+            transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase, 4);
+            transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount, 4);
             transactionTaxesAUX.push(transactionTax);
-            this.transaction.basePrice += this.roundNumber.transform(
-              transactionTax.taxBase
-            );
+            this.transaction.basePrice += this.roundNumber.transform(transactionTax.taxBase);
             taxBaseTotal += this.roundNumber.transform(transactionTax.taxBase);
-            taxAmountTotal += this.roundNumber.transform(
-              transactionTax.taxAmount
-            );
+            taxAmountTotal += this.roundNumber.transform(transactionTax.taxAmount);
           }
           if (taxBaseTotal === 0) {
-            this.transaction.exempt += this.roundNumber.transform(
-              movementOfArticle.salePrice - taxAmountTotal
-            );
+            this.transaction.exempt += this.roundNumber.transform(movementOfArticle.salePrice - taxAmountTotal);
           }
         } else {
-          this.transaction.exempt += this.roundNumber.transform(
-            movementOfArticle.salePrice
-          );
+          this.transaction.exempt += this.roundNumber.transform(movementOfArticle.salePrice);
         }
-        totalPriceAux += this.roundNumber.transform(
-          movementOfArticle.salePrice
-        );
+        totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
       }
     }
 
-    this.transaction.basePrice = this.roundNumber.transform(
-      this.transaction.basePrice
-    );
+    this.transaction.basePrice = this.roundNumber.transform(this.transaction.basePrice);
 
     if (transactionTaxesAUX) {
       for (let transactionTaxAux of transactionTaxesAUX) {
         let exists: boolean = false;
 
         for (let transactionTax of transactionTaxes) {
-          if (
-            transactionTaxAux.tax._id.toString() ===
-            transactionTax.tax._id.toString()
-          ) {
-            transactionTax.taxAmount += this.roundNumber.transform(
-              transactionTaxAux.taxAmount,
-              4
-            );
-            transactionTax.taxBase += this.roundNumber.transform(
-              transactionTaxAux.taxBase,
-              4
-            );
+          if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
+            transactionTax.taxAmount += this.roundNumber.transform(transactionTaxAux.taxAmount, 4);
+            transactionTax.taxBase += this.roundNumber.transform(transactionTaxAux.taxBase, 4);
             exists = true;
           }
         }
@@ -2113,62 +1831,47 @@ export class AddSaleOrderComponent {
     this.transaction.type.defectEmailTemplate = null;
 
     this.canceledTransactions =
-      this.canceledTransactions &&
-      this.canceledTransactions.typeId &&
-      this.canceledTransactions.typeId != ''
+      this.canceledTransactions && this.canceledTransactions.typeId && this.canceledTransactions.typeId != ''
         ? this.canceledTransactions
         : null;
-    this._transactionService
-      .validateElectronicTransactionAR(
-        this.transaction,
-        this.canceledTransactions
-      )
-      .subscribe(
-        (result: ApiResponse) => {
-          if (result.status === 200) {
-            let transactionResponse: Transaction = result.result;
+    this._transactionService.validateElectronicTransactionAR(this.transaction, this.canceledTransactions).subscribe(
+      (result: ApiResponse) => {
+        if (result.status === 200) {
+          let transactionResponse: Transaction = result.result;
 
-            this.transaction.CAE = transactionResponse.CAE;
-            this.transaction.CAEExpirationDate =
-              transactionResponse.CAEExpirationDate;
-            this.transaction.number = transactionResponse.number;
-            this.transaction.state = transactionResponse.state;
-            this.finish();
-          } else this._toastService.showToast(result);
-        },
-        (error) => {
-          this._toastService.showToast(error);
-        }
-      );
+          this.transaction.CAE = transactionResponse.CAE;
+          this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
+          this.transaction.number = transactionResponse.number;
+          this.transaction.state = transactionResponse.state;
+          this.finish();
+        } else this._toastService.showToast(result);
+      },
+      (error) => {
+        this._toastService.showToast(error);
+      }
+    );
   }
 
-  updateMovementsOfArticlesByWhere(
-    where: {},
-    set: {},
-    sort: {}
-  ): Promise<MovementOfArticle> {
+  updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
     return new Promise<MovementOfArticle>((resolve, reject) => {
       this.loading = true;
 
-      this._movementOfArticleService
-        .updateMovementsOfArticlesByWhere(where, set, sort)
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (!result.movementOfArticle) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
-              resolve(null);
-            } else {
-              resolve(result.movementOfArticle);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this.showMessage(error._body, 'danger', false);
+      this._movementOfArticleService.updateMovementsOfArticlesByWhere(where, set, sort).subscribe(
+        (result) => {
+          this.loading = false;
+          if (!result.movementOfArticle) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
+          } else {
+            resolve(result.movementOfArticle);
           }
-        );
+        },
+        (error) => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
     });
   }
 
@@ -2176,11 +1879,7 @@ export class AddSaleOrderComponent {
     this.showMessage('Validando comprobante con SAT...', 'info', false);
 
     this._transactionService
-      .validateElectronicTransactionMX(
-        this.transaction,
-        this.movementsOfArticles,
-        this.movementsOfCashes
-      )
+      .validateElectronicTransactionMX(this.transaction, this.movementsOfArticles, this.movementsOfCashes)
       .subscribe(
         (result) => {
           if (result.status === 'err') {
@@ -2193,8 +1892,7 @@ export class AddSaleOrderComponent {
               msn += result.message + '. ';
             }
             if (msn === '') {
-              msn =
-                'Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.';
+              msn = 'Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.';
             }
             this.showMessage(msn, 'info', true);
 
@@ -2221,8 +1919,7 @@ export class AddSaleOrderComponent {
                 priceList: this.transaction.priceList,
               },
               config: {
-                companyIdentificationValue:
-                  this.config['companyIdentificationValue'],
+                companyIdentificationValue: this.config['companyIdentificationValue'],
                 vatCondition: this.config['companyVatCondition'].code,
                 database: this.config['database'],
               },
@@ -2243,21 +1940,13 @@ export class AddSaleOrderComponent {
           this.loading = false;
         },
         (error) => {
-          this.showMessage(
-            'Ha ocurrido un error en el servidor. Comuníquese con Soporte.',
-            'danger',
-            false
-          );
+          this.showMessage('Ha ocurrido un error en el servidor. Comuníquese con Soporte.', 'danger', false);
           this.loading = false;
         }
       );
   }
 
-  async openModal(
-    op: string,
-    movementOfArticle?: MovementOfArticle,
-    fastPayment?: PaymentMethod
-  ) {
+  async openModal(op: string, movementOfArticle?: MovementOfArticle, fastPayment?: PaymentMethod) {
     this.fastPayment = fastPayment;
 
     let modalRef;
@@ -2286,55 +1975,58 @@ export class AddSaleOrderComponent {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionDestinationId =
-          this.transaction._id;
+        modalRef.componentInstance.transactionDestinationId = this.transaction._id;
         modalRef.componentInstance.selectionView = true;
         modalRef.result.then(async (result) => {
           if (result) {
             this.movementsOfCancellations = result.movementsOfCancellations;
           }
-          if (
-            this.movementsOfCancellations &&
-            this.movementsOfCancellations.length > 0
-          ) {
+          if (this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
             this.showButtonCancelation = false;
-            await this.daleteMovementsOfCancellations(
-              '{"transactionDestination":"' + this.transaction._id + '"}'
-            ).then(async (movementsOfCancellations) => {
-              if (movementsOfCancellations) {
-                await this.saveMovementsOfCancellations(
-                  this.movementsOfCancellations
-                ).then((movementsOfCancellations) => {
-                  if (movementsOfCancellations) {
-                    this.focusEvent.emit(true);
-                    this.getMovementsOfTransaction();
-                  }
-                });
+            await this.daleteMovementsOfCancellations('{"transactionDestination":"' + this.transaction._id + '"}').then(
+              async (movementsOfCancellations) => {
+                if (movementsOfCancellations) {
+                  await this.saveMovementsOfCancellations(this.movementsOfCancellations).then(
+                    (movementsOfCancellations) => {
+                      if (movementsOfCancellations) {
+                        this.focusEvent.emit(true);
+                        this.getMovementsOfTransaction();
+                      }
+                    }
+                  );
+                }
               }
-            });
+            );
           }
         });
         break;
       case 'observation':
-        modalRef = this._modalService
-          .open(this.contentChangeObservation)
-          .result.then(async (result) => {
-            if (result !== 'cancel' && result !== '') {
-              if (this.transaction.observation) {
-                await this.updateTransaction().then(async (transaction) => {
-                  if (transaction) {
-                    this.transaction = transaction;
-                    this.lastQuotation = this.transaction.quotation;
-                  }
-                });
-              }
+        modalRef = this._modalService.open(this.contentChangeObservation).result.then(async (result) => {
+          if (result !== 'cancel' && result !== '') {
+            if (this.transaction.observation) {
+              await this.updateTransaction().then(async (transaction) => {
+                if (transaction) {
+                  this.transaction = transaction;
+                  this.lastQuotation = this.transaction.quotation;
+                }
+              });
             }
-          });
+          }
+        });
         break;
       case 'apply-bussiness-rule-code':
         modalRef = this._modalService.open(this.contentBusinessRulesCode);
         break;
       case 'movement_of_article':
+        const movementOfArticleCollection = this.user?.permission?.collections.find(
+          (collection) => collection.name === 'movimiento de articulo'
+        );
+
+        if (movementOfArticleCollection && movementOfArticleCollection?.actions?.edit == false) {
+          this._toastService.showToast({ message: 'No tiene permisos para editar artículos.', type: 'danger' });
+          return;
+        }
+
         movementOfArticle.transaction = this.transaction;
         movementOfArticle.modifyStock = this.transaction.type.modifyStock;
         movementOfArticle.stockMovement = this.transaction.type.stockMovement;
@@ -2372,10 +2064,8 @@ export class AddSaleOrderComponent {
             backdrop: 'static',
           });
           modalRef.componentInstance.totalPrice = this.transaction.totalPrice;
-          modalRef.componentInstance.amountToApply =
-            this.transaction.discountAmount;
-          modalRef.componentInstance.percentageToApply =
-            this.transaction.discountPercent;
+          modalRef.componentInstance.amountToApply = this.transaction.discountAmount;
+          modalRef.componentInstance.percentageToApply = this.transaction.discountPercent;
           modalRef.componentInstance.percentageToApplyCompany =
             this.transaction.company &&
             this.transaction.company.discount > 0 &&
@@ -2395,11 +2085,7 @@ export class AddSaleOrderComponent {
             }
           });
         } else {
-          this.showMessage(
-            'No se ingresaron productos a la transacción.',
-            'info',
-            true
-          );
+          this.showMessage('No se ingresaron productos a la transacción.', 'info', true);
         }
         break;
       case 'send-email':
@@ -2415,8 +2101,7 @@ export class AddSaleOrderComponent {
           modalRef.componentInstance.source = 'mail';
         }
         if (this.transaction.type.defectPrinter) {
-          modalRef.componentInstance.printer =
-            this.transaction.type.defectPrinter;
+          modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
         } else {
           if (this.printers && this.printers.length > 0) {
             for (let printer of this.printers) {
@@ -2480,10 +2165,7 @@ export class AddSaleOrderComponent {
           subject: `${labelPrint} ${this.padNumber(
             this.transaction.origin,
             4
-          )}-${this.transaction.letter}-${this.padNumber(
-            this.transaction.number,
-            8
-          )}`,
+          )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`,
           body: this.transaction?.type?.defectEmailTemplate?.design || '',
           attachments: attachments,
         };
@@ -2520,64 +2202,34 @@ export class AddSaleOrderComponent {
           size: 'lg',
           backdrop: 'static',
         });
-        if (
-          this.transaction.type.transactionMovement ===
-          TransactionMovement.Purchase
-        ) {
+        if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
           modalRef.componentInstance.type = CompanyType.Provider;
-        } else if (
-          this.transaction.type.transactionMovement === TransactionMovement.Sale
-        ) {
+        } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           modalRef.componentInstance.type = CompanyType.Client;
         }
         modalRef.result.then(async (result) => {
           if (result.company) {
-            if (
-              this.transaction.type.requestTransport &&
-              result.company['transport']
-            ) {
+            if (this.transaction.type.requestTransport && result.company['transport']) {
               this.transaction.transport = result.company['transport'];
             }
 
             if (!this.transaction.company && result.company.priceList) {
               this.priceList = undefined;
-              this.newPriceList = await this.getPriceList(
-                result.company.priceList._id
-              );
+              this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
-            if (
-              this.transaction.company &&
-              this.transaction.company.priceList &&
-              result.company.priceList
-            ) {
-              this.priceList = await this.getPriceList(
-                this.transaction.company.priceList._id
-              );
-              this.newPriceList = await this.getPriceList(
-                result.company.priceList._id
-              );
+            if (this.transaction.company && this.transaction.company.priceList && result.company.priceList) {
+              this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
+              this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
-            if (
-              this.transaction.company &&
-              !this.transaction.company.priceList &&
-              result.company.priceList
-            ) {
+            if (this.transaction.company && !this.transaction.company.priceList && result.company.priceList) {
               this.priceList = undefined;
-              this.newPriceList = await this.getPriceList(
-                result.company.priceList._id
-              );
+              this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
-            if (
-              result.company.priceList == null &&
-              this.transaction.company &&
-              this.transaction.company.priceList
-            ) {
-              this.priceList = await this.getPriceList(
-                this.transaction.company.priceList._id
-              );
+            if (result.company.priceList == null && this.transaction.company && this.transaction.company.priceList) {
+              this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
               this.newPriceList = undefined;
             }
 
@@ -2604,16 +2256,11 @@ export class AddSaleOrderComponent {
           });
           return;
         }
-        if (
-          this.transaction.type.transactionMovement === TransactionMovement.Sale
-        ) {
+        if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           this.transaction = await this.assignLetter();
         }
 
-        if (
-          (await this.isValidCharge()) &&
-          (await this.areValidMovementOfArticle())
-        ) {
+        if ((await this.isValidCharge()) && (await this.areValidMovementOfArticle())) {
           if (this.transaction.type.requestPaymentMethods || fastPayment) {
             modalRef = this._modalService.open(AddMovementOfCashComponent, {
               size: 'lg',
@@ -2634,25 +2281,14 @@ export class AddSaleOrderComponent {
                     this.movementsOfArticles.push(result.movementOfArticle);
                   }
 
-                  if (
-                    this.transaction.type.transactionMovement ===
-                    TransactionMovement.Sale
-                  ) {
-                    if (
-                      this.transaction.type.fixedOrigin &&
-                      this.transaction.type.fixedOrigin !== 0
-                    ) {
-                      this.transaction.origin =
-                        this.transaction.type.fixedOrigin;
+                  if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                      this.transaction.origin = this.transaction.type.fixedOrigin;
                     }
 
                     if (this.transaction.type.electronics) {
                       if (this.config['country'] === 'MX') {
-                        if (
-                          !this.transaction.CFDStamp &&
-                          !this.transaction.SATStamp &&
-                          !this.transaction.stringSAT
-                        ) {
+                        if (!this.transaction.CFDStamp && !this.transaction.SATStamp && !this.transaction.stringSAT) {
                           this.validateElectronicTransactionMX();
                         } else {
                           this.close('charge'); //SE FINALIZA POR ERROR EN LA FE
@@ -2664,22 +2300,12 @@ export class AddSaleOrderComponent {
                           this.close('charge'); //SE FINALIZA POR ERROR EN LA FE
                         }
                       } else {
-                        this.showMessage(
-                          'Facturación electrónica no esta habilitada para tu país.',
-                          'info',
-                          true
-                        );
+                        this.showMessage('Facturación electrónica no esta habilitada para tu país.', 'info', true);
                       }
-                    } else if (
-                      this.transaction.type.electronics &&
-                      this.transaction.CAE
-                    ) {
+                    } else if (this.transaction.type.electronics && this.transaction.CAE) {
                       this.close('charge'); //SE FINALIZA POR ERROR EN LA FE
                     } else {
-                      if (
-                        this.transaction.type.fixedLetter !==
-                        this.transaction.letter
-                      ) {
+                      if (this.transaction.type.fixedLetter !== this.transaction.letter) {
                         this.assignTransactionNumber();
                       } else {
                         this.close('charge');
@@ -2694,22 +2320,14 @@ export class AddSaleOrderComponent {
               }
             });
           } else {
-            if (
-              this.transaction.type.transactionMovement ===
-              TransactionMovement.Sale
-            ) {
+            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
               this.transaction = await this.assignLetter();
               if (this.transaction.type.electronics && !this.transaction.CAE) {
                 this.validateElectronicTransactionAR();
-              } else if (
-                this.transaction.type.electronics &&
-                this.transaction.CAE
-              ) {
+              } else if (this.transaction.type.electronics && this.transaction.CAE) {
                 this.close('charge'); //SE FINALIZA POR ERROR EN LA FE
               } else {
-                if (
-                  this.transaction.type.fixedLetter !== this.transaction.letter
-                ) {
+                if (this.transaction.type.fixedLetter !== this.transaction.letter) {
                   this.assignTransactionNumber();
                 } else {
                   this.close('charge');
@@ -2737,11 +2355,7 @@ export class AddSaleOrderComponent {
             } else {
               if (this.transaction && this.transaction.type.printable) {
                 this.print();
-                if (
-                  this.transaction &&
-                  this.transaction.type.requestEmailTemplate
-                )
-                  this.openModal('send-email');
+                if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
               } else {
                 this.backFinal();
               }
@@ -2750,11 +2364,7 @@ export class AddSaleOrderComponent {
           (reason) => {
             if (this.transaction && this.transaction.type.printable) {
               this.print();
-              if (
-                this.transaction &&
-                this.transaction.type.requestEmailTemplate
-              )
-                this.openModal('send-email');
+              if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
             } else {
               this.backFinal();
             }
@@ -2795,100 +2405,79 @@ export class AddSaleOrderComponent {
           });
         break;
       case 'change-date':
-        modalRef = this._modalService
-          .open(this.contentChangeDate)
-          .result.then(async (result) => {
-            if (result !== 'cancel' && result !== '') {
-              if (
-                this.transaction.endDate &&
-                moment(this.transaction.endDate, 'YYYY-MM-DD').isValid()
-              ) {
-                this.transaction.endDate = moment(
-                  this.transaction.endDate,
-                  'YYYY-MM-DD'
-                ).format('YYYY-MM-DDTHH:mm:ssZ');
-                this.transaction.VATPeriod = moment(
-                  this.transaction.endDate,
-                  'YYYY-MM-DDTHH:mm:ssZ'
-                ).format('YYYYMM');
-                this.transaction.expirationDate = this.transaction.endDate;
-                this.transaction = await this.updateTransaction();
-                this.lastQuotation = this.transaction.quotation;
-              }
+        modalRef = this._modalService.open(this.contentChangeDate).result.then(async (result) => {
+          if (result !== 'cancel' && result !== '') {
+            if (this.transaction.endDate && moment(this.transaction.endDate, 'YYYY-MM-DD').isValid()) {
+              this.transaction.endDate = moment(this.transaction.endDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+              this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+              this.transaction.expirationDate = this.transaction.endDate;
+              this.transaction = await this.updateTransaction();
+              this.lastQuotation = this.transaction.quotation;
             }
-          });
+          }
+        });
         break;
       case 'change-optional-afip':
-        modalRef = this._modalService
-          .open(this.contentChangeOptionalAFIP)
-          .result.then(async (result) => {
-            if (result !== 'cancel' && result !== '') {
-              this.transaction.optionalAFIP = {
-                id: this.transaction.type.optionalAFIP.id,
-                value: result
-                  ? result
-                  : this.transaction.type.optionalAFIP.value,
-              };
+        modalRef = this._modalService.open(this.contentChangeOptionalAFIP).result.then(async (result) => {
+          if (result !== 'cancel' && result !== '') {
+            this.transaction.optionalAFIP = {
+              id: this.transaction.type.optionalAFIP.id,
+              value: result ? result : this.transaction.type.optionalAFIP.value,
+            };
 
+            await this.updateTransaction().then(async (transaction) => {
+              if (transaction) {
+                this.transaction = transaction;
+                this.lastQuotation = this.transaction.quotation;
+              }
+            });
+          }
+        });
+        break;
+      case 'priceList':
+        modalRef = this._modalService.open(SelectPriceListComponent).result.then(async (result) => {
+          if (result && result.priceList) {
+            if (this.transaction) {
+              if (!this.transaction.priceList) {
+                this.transaction.priceList = result.priceList;
+                this.newPriceList = result.priceList;
+              } else {
+                if (!this.priceList) {
+                  this.priceList = this.transaction.priceList;
+                }
+                this.transaction.priceList = result.priceList;
+                this.newPriceList = result.priceList;
+              }
               await this.updateTransaction().then(async (transaction) => {
                 if (transaction) {
                   this.transaction = transaction;
-                  this.lastQuotation = this.transaction.quotation;
+                  this.updatePrices();
                 }
               });
             }
-          });
-        break;
-      case 'priceList':
-        modalRef = this._modalService
-          .open(SelectPriceListComponent)
-          .result.then(async (result) => {
-            if (result && result.priceList) {
-              if (this.transaction) {
-                if (!this.transaction.priceList) {
-                  this.transaction.priceList = result.priceList;
-                  this.newPriceList = result.priceList;
-                } else {
-                  if (!this.priceList) {
-                    this.priceList = this.transaction.priceList;
-                  }
-                  this.transaction.priceList = result.priceList;
-                  this.newPriceList = result.priceList;
-                }
-                await this.updateTransaction().then(async (transaction) => {
-                  if (transaction) {
-                    this.transaction = transaction;
-                    this.updatePrices();
-                  }
-                });
-              }
-            }
-          });
+          }
+        });
         break;
       case 'change-information-cancellation':
-        modalRef = this._modalService
-          .open(this.contentInformCancellation)
-          .result.then(async (result) => {
-            if (result !== 'cancel' && result !== '') {
-              this.checkInformationCancellation();
-            }
-          });
+        modalRef = this._modalService.open(this.contentInformCancellation).result.then(async (result) => {
+          if (result !== 'cancel' && result !== '') {
+            this.checkInformationCancellation();
+          }
+        });
         break;
       case 'change-quotation':
-        modalRef = this._modalService
-          .open(this.contentChangeQuotation)
-          .result.then(
-            async (result) => {
-              if (result !== 'cancel' && result !== '') {
-                this.updatePrices();
-              } else {
-                this.transaction.quotation = this.lastQuotation;
-              }
-            },
-            (reason) => {
+        modalRef = this._modalService.open(this.contentChangeQuotation).result.then(
+          async (result) => {
+            if (result !== 'cancel' && result !== '') {
+              this.updatePrices();
+            } else {
               this.transaction.quotation = this.lastQuotation;
             }
-          );
+          },
+          (reason) => {
+            this.transaction.quotation = this.lastQuotation;
+          }
+        );
         break;
       case 'change-taxes':
         modalRef = this._modalService.open(this.containerTaxes, {
@@ -2899,8 +2488,7 @@ export class AddSaleOrderComponent {
       case 'change-employee':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
-        modalRef.componentInstance.typeEmployee =
-          this.transaction.type.requestEmployee;
+        modalRef.componentInstance.typeEmployee = this.transaction.type.requestEmployee;
         modalRef.componentInstance.op = 'change-employee';
         modalRef.result.then(async (result) => {
           if (result) {
@@ -2912,13 +2500,11 @@ export class AddSaleOrderComponent {
                 this.transaction = transaction;
                 if (this.transaction.table) {
                   this.transaction.table.employee = result.employee;
-                  await this.updateTable(this.transaction.table).then(
-                    (table) => {
-                      if (table) {
-                        this.transaction.table = table;
-                      }
+                  await this.updateTable(this.transaction.table).then((table) => {
+                    if (table) {
+                      this.transaction.table = table;
                     }
-                  );
+                  });
                 }
               }
             });
@@ -2951,8 +2537,7 @@ export class AddSaleOrderComponent {
       case 'printKitchen':
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.componentInstance.movementsOfArticles =
-          this.kitchenArticlesToPrint;
+        modalRef.componentInstance.movementsOfArticles = this.kitchenArticlesToPrint;
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'kitchen';
 
@@ -2967,8 +2552,7 @@ export class AddSaleOrderComponent {
       case 'printBar':
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.componentInstance.movementsOfArticles =
-          this.barArticlesToPrint;
+        modalRef.componentInstance.movementsOfArticles = this.barArticlesToPrint;
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'bar';
 
@@ -2983,8 +2567,7 @@ export class AddSaleOrderComponent {
       case 'printVoucher':
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.componentInstance.movementsOfArticles =
-          this.voucherArticlesToPrint;
+        modalRef.componentInstance.movementsOfArticles = this.voucherArticlesToPrint;
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'voucher';
 
@@ -3067,19 +2650,17 @@ export class AddSaleOrderComponent {
   async applyBusinessRuleCode() {
     if (this.businessRulesCode) {
       this.loading = true;
-      await this._businessRulesService
-        .apply(this.businessRulesCode, this.transactionId)
-        .subscribe(
-          async (result) => {
-            this._toastService.showToast(result);
-            if (result.status === 200) {
-              this.businessRulesCode = null;
-              this._modalService.dismissAll();
-              this.getMovementsOfTransaction();
-            }
-          },
-          (error) => this._toastService.showToast(error)
-        );
+      await this._businessRulesService.apply(this.businessRulesCode, this.transactionId).subscribe(
+        async (result) => {
+          this._toastService.showToast(result);
+          if (result.status === 200) {
+            this.businessRulesCode = null;
+            this._modalService.dismissAll();
+            this.getMovementsOfTransaction();
+          }
+        },
+        (error) => this._toastService.showToast(error)
+      );
     }
   }
 
@@ -3092,32 +2673,22 @@ export class AddSaleOrderComponent {
           let unitPrice: number = 0;
 
           if (this.transaction.quotation > 1) {
-            unitPrice = this.roundNumber.transform(
-              mov.basePrice / mov.amount / this.transaction.quotation
-            );
+            unitPrice = this.roundNumber.transform(mov.basePrice / mov.amount / this.transaction.quotation);
           } else {
             unitPrice = this.roundNumber.transform(mov.basePrice / mov.amount);
           }
 
-          unitPrice = this.roundNumber.transform(
-            unitPrice + mov.transactionDiscountAmount
-          );
+          unitPrice = this.roundNumber.transform(unitPrice + mov.transactionDiscountAmount);
 
           if (unitPrice !== mov.article.basePrice) {
-            const updated = await this.updateArticleCostPrice(
-              mov.article,
-              unitPrice
-            );
+            const updated = await this.updateArticleCostPrice(mov.article, unitPrice);
             if (updated) {
               countArticle++;
             }
           }
         }
       } catch (error) {
-        console.error(
-          `Error actualizando precio de costo para el artículo con ID ${mov?.article?._id}:`,
-          error
-        );
+        console.error(`Error actualizando precio de costo para el artículo con ID ${mov?.article?._id}:`, error);
         // Continúa con el siguiente artículo
       }
     }
@@ -3125,10 +2696,7 @@ export class AddSaleOrderComponent {
     return countArticle;
   }
 
-  async updateArticleCostPrice(
-    article: Article,
-    basePrice: number
-  ): Promise<boolean> {
+  async updateArticleCostPrice(article: Article, basePrice: number): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
       try {
         if (basePrice && article) {
@@ -3141,12 +2709,8 @@ export class AddSaleOrderComponent {
           if (article.otherFields && article.otherFields.length > 0) {
             for (const field of article.otherFields) {
               if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                field.amount = this.roundNumber.transform(
-                  (basePrice * parseFloat(field.value)) / 100
-                );
-              } else if (
-                field.articleField.datatype === ArticleFieldType.Number
-              ) {
+                field.amount = this.roundNumber.transform((basePrice * parseFloat(field.value)) / 100);
+              } else if (field.articleField.datatype === ArticleFieldType.Number) {
                 field.amount = parseFloat(field.value);
               }
               if (field.articleField.modifyVAT) {
@@ -3163,9 +2727,7 @@ export class AddSaleOrderComponent {
             for (const articleTax of article.taxes) {
               if (articleTax.tax.percentage && articleTax.tax.percentage != 0) {
                 articleTax.taxBase = this.roundNumber.transform(taxedAmount);
-                articleTax.taxAmount = this.roundNumber.transform(
-                  (taxedAmount * articleTax.percentage) / 100
-                );
+                articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage) / 100);
               }
               article.costPrice += articleTax.taxAmount;
             }
@@ -3173,9 +2735,7 @@ export class AddSaleOrderComponent {
           article.costPrice += taxedAmount;
 
           if (!(taxedAmount === 0 && article.salePrice !== 0)) {
-            article.markupPrice = this.roundNumber.transform(
-              (article.costPrice * article.markupPercentage) / 100
-            );
+            article.markupPrice = this.roundNumber.transform((article.costPrice * article.markupPercentage) / 100);
             article.salePrice = article.costPrice + article.markupPrice;
           }
 
@@ -3183,8 +2743,7 @@ export class AddSaleOrderComponent {
             .updateArticle(article)
             .toPromise()
             .then((result) => {
-              if (result && !result.article && result.message)
-                throw new Error(result.message);
+              if (result && !result.article && result.message) throw new Error(result.message);
             });
         }
         resolve(true);
@@ -3202,16 +2761,11 @@ export class AddSaleOrderComponent {
 
         await this.areValidMovementOfArticle();
 
-        if (
-          this.transaction.type.transactionMovement ===
-            TransactionMovement.Purchase &&
-          !this.transaction.company
-        )
+        if (this.transaction.type.transactionMovement === TransactionMovement.Purchase && !this.transaction.company)
           throw new Error(`Debe seleccionar un proveedor para la transacción`);
 
         if (
-          this.transaction.type.transactionMovement ===
-            TransactionMovement.Sale &&
+          this.transaction.type.transactionMovement === TransactionMovement.Sale &&
           !this.transaction.company &&
           this.transaction.type.requestCompany
         )
@@ -3223,9 +2777,7 @@ export class AddSaleOrderComponent {
           !this.transaction.company &&
           this.config['country'] === 'AR'
         )
-          throw new Error(
-            `Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00`
-          );
+          throw new Error(`Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00`);
 
         if (
           this.transaction.type.electronics &&
@@ -3234,9 +2786,7 @@ export class AddSaleOrderComponent {
             !this.transaction.company.identificationValue ||
             this.transaction.company.identificationValue === '')
         )
-          throw new Error(
-            `El cliente ingresado no tiene número de identificación`
-          );
+          throw new Error(`El cliente ingresado no tiene número de identificación`);
 
         if (
           this.transaction.type.fixedOrigin &&
@@ -3264,8 +2814,7 @@ export class AddSaleOrderComponent {
         (result) => {
           this.loading = false;
           if (!result.printers) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.printers);
@@ -3286,8 +2835,7 @@ export class AddSaleOrderComponent {
         let isValid: boolean = true;
 
         for (let movementOfArticle of this.movementsOfArticles) {
-          if (isValid)
-            isValid = await this.isValidMovementOfArticle(movementOfArticle);
+          if (isValid) isValid = await this.isValidMovementOfArticle(movementOfArticle);
         }
         resolve(isValid);
       } catch (error) {
@@ -3304,11 +2852,7 @@ export class AddSaleOrderComponent {
             this._toastService.showToast({
               type: 'info',
               message:
-                result.error && result.error.message
-                  ? result.error.message
-                  : result.message
-                    ? result.message
-                    : '',
+                result.error && result.error.message ? result.error.message : result.message ? result.message : '',
             });
           } else {
             this._toastService.showToast({
@@ -3381,36 +2925,23 @@ export class AddSaleOrderComponent {
 
       // ACTUALIZACIÓN DE STOCK
       if (this.config['modules'].stock && this.transaction.type.modifyStock) {
-        if (await this.areValidMovementOfArticle())
-          await this.updateStockByTransaction();
+        if (await this.areValidMovementOfArticle()) await this.updateStockByTransaction();
       }
       // ACTUALIZACION DE ORDENES DE PRODUCCION
       // esto es solo para actualizar el estado de la orden cuando todos los movimientos de articulos fueron leidos
-      if (
-        this.transaction.type.transactionMovement ===
-        TransactionMovement.Production
-      ) {
+      if (this.transaction.type.transactionMovement === TransactionMovement.Production) {
         await this.updateOrdenOfProduction(this.transaction._id);
       }
 
-      let result: ApiResponse = await this._transactionService
-        .updateBalance(this.transaction)
-        .toPromise();
+      let result: ApiResponse = await this._transactionService.updateBalance(this.transaction).toPromise();
       if (result.status !== 200) throw result;
       this.transaction.balance = result.result.balance;
 
       if (!this.transaction.endDate) {
         this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
       }
-      if (
-        this.transaction.type.transactionMovement !==
-          TransactionMovement.Purchase ||
-        !this.transaction.VATPeriod
-      ) {
-        this.transaction.VATPeriod = moment(
-          this.transaction.endDate,
-          'YYYY-MM-DDTHH:mm:ssZ'
-        ).format('YYYYMM');
+      if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+        this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
       }
       this.transaction.expirationDate = this.transaction.endDate;
       if (this.transaction.type.finishState) {
@@ -3434,9 +2965,7 @@ export class AddSaleOrderComponent {
 
       if (this.transaction.table) {
         let table: Table = await this.getTable(
-          this.transaction.table._id
-            ? this.transaction.table._id
-            : this.transaction.table.toString()
+          this.transaction.table._id ? this.transaction.table._id : this.transaction.table.toString()
         );
 
         if (this.transaction.type.finishCharge) {
@@ -3449,21 +2978,14 @@ export class AddSaleOrderComponent {
       }
 
       if (this.transaction.type.allowAccounting)
-        this._accountSeatService.addAccountSeatByTransaction(
-          this.transaction._id
-        );
+        this._accountSeatService.addAccountSeatByTransaction(this.transaction._id);
 
-      let cancellationTypesAutomatic =
-        await this.getCancellationTypesAutomatic();
+      let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
 
-      if (
-        !cancellationTypesAutomatic ||
-        cancellationTypesAutomatic.length == 0
-      ) {
+      if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
         if (this.transaction && this.transaction.type.printable) {
           this.print();
-          if (this.transaction && this.transaction.type.requestEmailTemplate)
-            this.openModal('send-email');
+          if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
         } else {
           this.backFinal();
         }
@@ -3486,9 +3008,7 @@ export class AddSaleOrderComponent {
               await this.updateArticleTiendaNube(movement.article._id);
             }
             if (movement.article.type === Type.Variant) {
-              const result = await this.getVariantsByArticleChild(
-                movement.article._id
-              );
+              const result = await this.getVariantsByArticleChild(movement.article._id);
 
               if (result && result.length > 0) {
                 if (!articlesForUpdate.includes(result[0].articleParent._id)) {
@@ -3519,12 +3039,7 @@ export class AddSaleOrderComponent {
         if (result.error) {
           this._toastService.showToast({
             type: 'info',
-            message:
-              result.error && result.error.message
-                ? result.error.message
-                : result.message
-                  ? result.message
-                  : '',
+            message: result.error && result.error.message ? result.error.message : result.message ? result.message : '',
           });
         } else {
           this._toastService.showToast({
@@ -3572,24 +3087,22 @@ export class AddSaleOrderComponent {
   updateStockByTransaction(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
       this.loading = true;
-      this._articleStockService
-        .updateStockByTransaction(this.transaction)
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (result.status === 200) {
-              resolve(true);
-            } else {
-              this._toastService.showToast(result);
-              resolve(false);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this._toastService.showToast(error);
+      this._articleStockService.updateStockByTransaction(this.transaction).subscribe(
+        (result) => {
+          this.loading = false;
+          if (result.status === 200) {
+            resolve(true);
+          } else {
+            this._toastService.showToast(result);
             resolve(false);
           }
-        );
+        },
+        (error) => {
+          this.loading = false;
+          this._toastService.showToast(error);
+          resolve(false);
+        }
+      );
     });
   }
 
@@ -3623,11 +3136,7 @@ export class AddSaleOrderComponent {
         .subscribe(
           (result) => {
             this.loading = false;
-            if (
-              result &&
-              result.cancellationTypes &&
-              result.cancellationTypes.length > 0
-            ) {
+            if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
               resolve(result.cancellationTypes);
             } else {
               resolve(null);
@@ -3681,16 +3190,10 @@ export class AddSaleOrderComponent {
     if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = 'bar';
       this.distributeImpressions();
-    } else if (
-      this.kitchenArticlesToPrint &&
-      this.kitchenArticlesToPrint.length !== 0
-    ) {
+    } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = 'kitchen';
       this.distributeImpressions();
-    } else if (
-      this.voucherArticlesToPrint &&
-      this.voucherArticlesToPrint.length !== 0
-    ) {
+    } else if (this.voucherArticlesToPrint && this.voucherArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = 'voucher';
       this.distributeImpressions();
     } else {
@@ -3711,23 +3214,14 @@ export class AddSaleOrderComponent {
             let paramsFromRoute = params['returnURL'].split('?')[1];
 
             if (paramsFromRoute && paramsFromRoute !== '') {
-              paramsFromRoute = this.removeParam(
-                paramsFromRoute,
-                'automaticCreation'
-              );
-              route +=
-                '?' +
-                paramsFromRoute +
-                '&automaticCreation=' +
-                params['automaticCreation'];
+              paramsFromRoute = this.removeParam(paramsFromRoute, 'automaticCreation');
+              route += '?' + paramsFromRoute + '&automaticCreation=' + params['automaticCreation'];
             } else {
               route += '?' + 'automaticCreation=' + params['automaticCreation'];
             }
             this._router.navigateByUrl(route);
           } else {
-            this._router.navigateByUrl(
-              this.removeParam(params['returnURL'], 'automaticCreation')
-            );
+            this._router.navigateByUrl(this.removeParam(params['returnURL'], 'automaticCreation'));
           }
         } else {
           this._router.navigateByUrl(params['returnURL']);
@@ -3740,8 +3234,7 @@ export class AddSaleOrderComponent {
     let rtn = sourceURL.split('?')[0],
       param,
       params_arr = [],
-      queryString =
-        sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
+      queryString = sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
 
     if (queryString !== '') {
       params_arr = queryString.split('&');
@@ -3764,8 +3257,7 @@ export class AddSaleOrderComponent {
         (result) => {
           this.loading = false;
           if (!result.table) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             this.hideMessage();
@@ -3788,35 +3280,25 @@ export class AddSaleOrderComponent {
     let tax: Taxes = new Taxes();
 
     tax.percentage = 21.0;
-    tax.taxBase = this.roundNumber.transform(
-      movementOfArticle.salePrice / (tax.percentage / 100 + 1)
-    );
-    tax.taxAmount = this.roundNumber.transform(
-      (tax.taxBase * tax.percentage) / 100
-    );
+    tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / (tax.percentage / 100 + 1));
+    tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage) / 100);
 
     this._taxService.getTaxes('where="name":"IVA"').subscribe(
       async (result) => {
         this.loading = false;
         if (!result.taxes) {
-          this.showMessage(
-            'Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta',
-            'info',
-            true
-          );
+          this.showMessage('Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta', 'info', true);
         } else {
           this.hideMessage();
           tax.tax = result.taxes[0];
           taxes.push(tax);
           movementOfArticle.taxes = taxes;
-          await this.saveMovementOfArticle(movementOfArticle).then(
-            (movementOfArticle) => {
-              if (movementOfArticle) {
-                this.focusEvent.emit(true);
-                this.getMovementsOfTransaction();
-              }
+          await this.saveMovementOfArticle(movementOfArticle).then((movementOfArticle) => {
+            if (movementOfArticle) {
+              this.focusEvent.emit(true);
+              this.getMovementsOfTransaction();
             }
-          );
+          });
         }
       },
       (error) => {
@@ -3829,42 +3311,38 @@ export class AddSaleOrderComponent {
   updateMovementOfArticlePrintedBar(): void {
     this.loading = true;
 
-    this.barArticlesToPrint[this.barArticlesPrinted].printed =
-      this.barArticlesToPrint[this.barArticlesPrinted].amount;
-    this._movementOfArticleService
-      .updateMovementOfArticle(this.barArticlesToPrint[this.barArticlesPrinted])
-      .subscribe(
-        async (result) => {
-          this.loading = false;
-          if (!result.movementOfArticle) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+    this.barArticlesToPrint[this.barArticlesPrinted].printed = this.barArticlesToPrint[this.barArticlesPrinted].amount;
+    this._movementOfArticleService.updateMovementOfArticle(this.barArticlesToPrint[this.barArticlesPrinted]).subscribe(
+      async (result) => {
+        this.loading = false;
+        if (!result.movementOfArticle) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.barArticlesPrinted++;
+          if (this.barArticlesPrinted < this.barArticlesToPrint.length) {
+            this.updateMovementOfArticlePrintedBar();
           } else {
-            this.barArticlesPrinted++;
-            if (this.barArticlesPrinted < this.barArticlesToPrint.length) {
-              this.updateMovementOfArticlePrintedBar();
+            if (this.kitchenArticlesToPrint.length > 0) {
+              this.typeOfOperationToPrint = 'kitchen';
+              this.distributeImpressions(null);
+            } else if (this.voucherArticlesToPrint.length > 0) {
+              this.typeOfOperationToPrint = 'voucher';
+              this.distributeImpressions(null);
             } else {
-              if (this.kitchenArticlesToPrint.length > 0) {
-                this.typeOfOperationToPrint = 'kitchen';
-                this.distributeImpressions(null);
-              } else if (this.voucherArticlesToPrint.length > 0) {
-                this.typeOfOperationToPrint = 'voucher';
-                this.distributeImpressions(null);
+              if (this.isCharge) {
+                this.finish();
               } else {
-                if (this.isCharge) {
-                  this.finish();
-                } else {
-                  this.backFinal();
-                }
+                this.backFinal();
               }
             }
           }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
         }
-      );
+      },
+      (error) => {
+        this.loading = false;
+        this.showMessage(error._body, 'danger', false);
+      }
+    );
   }
 
   updateMovementOfArticlePrintedKitchen(): void {
@@ -3873,19 +3351,14 @@ export class AddSaleOrderComponent {
     this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].printed =
       this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].amount;
     this._movementOfArticleService
-      .updateMovementOfArticle(
-        this.kitchenArticlesToPrint[this.kitchenArticlesPrinted]
-      )
+      .updateMovementOfArticle(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted])
       .subscribe(
         async (result) => {
           if (!result.movementOfArticle) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
             this.kitchenArticlesPrinted++;
-            if (
-              this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length
-            ) {
+            if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
               this.updateMovementOfArticlePrintedKitchen();
             } else {
               if (this.voucherArticlesToPrint.length > 0) {
@@ -3919,19 +3392,14 @@ export class AddSaleOrderComponent {
       this.voucherArticlesToPrint[this.voucherArticlesPrinted].printed =
         this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount;
       this._movementOfArticleService
-        .updateMovementOfArticle(
-          this.voucherArticlesToPrint[this.voucherArticlesPrinted]
-        )
+        .updateMovementOfArticle(this.voucherArticlesToPrint[this.voucherArticlesPrinted])
         .subscribe(
           async (result) => {
             if (!result.movementOfArticle) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
+              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             } else {
               this.voucherArticlesPrinted++;
-              if (
-                this.voucherArticlesPrinted < this.voucherArticlesToPrint.length
-              ) {
+              if (this.voucherArticlesPrinted < this.voucherArticlesToPrint.length) {
                 this.updateMovementOfArticlePrintedVoucher();
               } else {
                 if (this.isCharge) {
@@ -3964,34 +3432,19 @@ export class AddSaleOrderComponent {
 
     if (this.printers != undefined) {
       for (let printer of this.printers) {
-        if (
-          this.typeOfOperationToPrint === 'charge' &&
-          printer.printIn === PrinterPrintIn.Counter
-        ) {
+        if (this.typeOfOperationToPrint === 'charge' && printer.printIn === PrinterPrintIn.Counter) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (
-          this.typeOfOperationToPrint === 'bill' &&
-          printer.printIn === PrinterPrintIn.Counter
-        ) {
+        } else if (this.typeOfOperationToPrint === 'bill' && printer.printIn === PrinterPrintIn.Counter) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (
-          this.typeOfOperationToPrint === 'bar' &&
-          printer.printIn === PrinterPrintIn.Bar
-        ) {
+        } else if (this.typeOfOperationToPrint === 'bar' && printer.printIn === PrinterPrintIn.Bar) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (
-          this.typeOfOperationToPrint === 'kitchen' &&
-          printer.printIn === PrinterPrintIn.Kitchen
-        ) {
+        } else if (this.typeOfOperationToPrint === 'kitchen' && printer.printIn === PrinterPrintIn.Kitchen) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (
-          this.typeOfOperationToPrint === 'voucher' &&
-          printer.printIn === PrinterPrintIn.Voucher
-        ) {
+        } else if (this.typeOfOperationToPrint === 'voucher' && printer.printIn === PrinterPrintIn.Voucher) {
           this.printersAux.push(printer);
           numberOfPrinters++;
         }
@@ -4022,8 +3475,7 @@ export class AddSaleOrderComponent {
               element &&
               element.printer &&
               element.printer.printIn === PrinterPrintIn.Counter &&
-              (this.typeOfOperationToPrint === 'charge' ||
-                this.typeOfOperationToPrint === 'bill')
+              (this.typeOfOperationToPrint === 'charge' || this.typeOfOperationToPrint === 'bill')
             ) {
               this.printerSelected = element.printer;
             }
@@ -4050,11 +3502,7 @@ export class AddSaleOrderComponent {
               if (printers) {
                 this.printers = printers;
                 for (const element of this.printers) {
-                  if (
-                    element &&
-                    element.printIn === PrinterPrintIn.Bar &&
-                    this.typeOfOperationToPrint === 'bar'
-                  ) {
+                  if (element && element.printIn === PrinterPrintIn.Bar && this.typeOfOperationToPrint === 'bar') {
                     this.printerSelected = element;
                   }
                   if (
@@ -4074,8 +3522,7 @@ export class AddSaleOrderComponent {
                   if (
                     element &&
                     element.printIn === PrinterPrintIn.Counter &&
-                    (this.typeOfOperationToPrint === 'charge' ||
-                      this.typeOfOperationToPrint === 'bill')
+                    (this.typeOfOperationToPrint === 'charge' || this.typeOfOperationToPrint === 'bill')
                   ) {
                     this.printerSelected = element;
                   }
@@ -4107,11 +3554,7 @@ export class AddSaleOrderComponent {
           this.openModal('printVoucher');
           break;
         default:
-          this.showMessage(
-            'No se reconoce la operación de impresión.',
-            'danger',
-            false
-          );
+          this.showMessage('No se reconoce la operación de impresión.', 'danger', false);
           break;
       }
     });
@@ -4139,24 +3582,16 @@ export class AddSaleOrderComponent {
   }
 
   async assignLetter(): Promise<Transaction> {
-    if (
-      this.transaction.type.fixedLetter &&
-      this.transaction.type.fixedLetter !== ''
-    ) {
+    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     } else {
       if (this.config['country'] === 'AR') {
         if (
           this.config['companyVatCondition'] &&
-          this.config['companyVatCondition'].description ===
-            'Responsable Inscripto'
+          this.config['companyVatCondition'].description === 'Responsable Inscripto'
         ) {
-          if (
-            this.transaction.company &&
-            this.transaction.company.vatCondition
-          ) {
-            this.transaction.letter =
-              this.transaction.company.vatCondition.transactionLetter;
+          if (this.transaction.company && this.transaction.company.vatCondition) {
+            this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
           } else {
             this.transaction.letter = 'B';
           }
@@ -4244,11 +3679,7 @@ export class AddSaleOrderComponent {
         (result) => {
           this.loading = false;
           if (!result.transactions || result.transactions.length === 0) {
-            this.showMessage(
-              'Debe informar un comprobante válido',
-              'info',
-              false
-            );
+            this.showMessage('Debe informar un comprobante válido', 'info', false);
           } else {
             for (let cod of result.transactions[0].type.codes) {
               if (cod.letter === this.canceledTransactions.letter) {
@@ -4263,11 +3694,7 @@ export class AddSaleOrderComponent {
         }
       );
     } else {
-      this.showMessage(
-        'Debe informar todos los campos del comprobante a informar',
-        'info',
-        true
-      );
+      this.showMessage('Debe informar todos los campos del comprobante a informar', 'info', true);
     }
   }
 
@@ -4284,10 +3711,7 @@ export class AddSaleOrderComponent {
   async filterArticles() {
     this.listArticlesComponent.filterArticle = this.filterArticle;
     let article: Article = null;
-    if (
-      this.transaction.type.transactionMovement ==
-      TransactionMovement.Production
-    ) {
+    if (this.transaction.type.transactionMovement == TransactionMovement.Production) {
       let query = 'where="op":"' + this.filterArticle + '"';
       const mov = await this.getMovementsOfArticles(query);
 
@@ -4306,15 +3730,8 @@ export class AddSaleOrderComponent {
       }
     }
 
-    if (
-      this.filterArticle &&
-      this.filterArticle !== '' &&
-      this.filterArticle.slice(0, 1) === '*'
-    ) {
-      this.listArticlesComponent.filterItem(
-        this.lastMovementOfArticle.article,
-        this.categorySelected
-      );
+    if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
+      this.listArticlesComponent.filterItem(this.lastMovementOfArticle.article, this.categorySelected);
     } else if (article) {
       this.listArticlesComponent.filterItem(article, this.categorySelected);
     } else {
@@ -4327,23 +3744,13 @@ export class AddSaleOrderComponent {
 
   showCategories(): void {
     this.categorySelected = null;
-    if (
-      !(
-        this.filterArticle &&
-        this.filterArticle !== '' &&
-        this.filterArticle.slice(0, 1) === '*'
-      )
-    ) {
+    if (!(this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*')) {
       this.filterArticle = '';
     }
     this.listCategoriesComponent.areCategoriesVisible = true;
     this.listArticlesComponent.areArticlesVisible = false;
     this.listArticlesComponent.filterArticle = this.filterArticle;
-    if (
-      !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      )
-    ) {
+    if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       this.listCategoriesComponent.ngOnInit();
       this.focusEvent.emit(true);
     }
@@ -4357,11 +3764,7 @@ export class AddSaleOrderComponent {
     }
     this.listCategoriesComponent.areCategoriesVisible = false;
     this.listArticlesComponent.areArticlesVisible = true;
-    if (
-      !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      )
-    ) {
+    if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       this.focusEvent.emit(true);
     }
   }

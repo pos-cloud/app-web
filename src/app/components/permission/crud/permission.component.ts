@@ -1,9 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   NgForm,
   UntypedFormArray,
@@ -54,7 +49,7 @@ export class PermissionComponent implements OnInit {
   public filesToUpload: any[] = new Array();
   public filename: any[] = new Array();
   public typeFile: any[] = new Array();
-  public tables: string[] = ['empresas', 'transacciones'];
+  public tables: string[] = ['empresas', 'transacciones', 'movimiento de articulo'];
   public oldFiles: any[];
   public database: string = Config.database;
   public transactionTypes: TransactionType[];
@@ -315,12 +310,8 @@ export class PermissionComponent implements OnInit {
   public async ngOnInit() {
     let pathUrl: string[] = this._router.url.split('/');
     this.operation = pathUrl[2];
-    if (this.operation !== 'add' && this.operation !== 'update')
-      this.readonly = false;
-    this.title =
-      this.translatePipe.transform(this.operation) +
-      ' ' +
-      this.translatePipe.transform(this.title);
+    if (this.operation !== 'add' && this.operation !== 'update') this.readonly = false;
+    this.title = this.translatePipe.transform(this.operation) + ' ' + this.translatePipe.transform(this.title);
     this.title = this.capitalizePipe.transform(this.title);
     this._title.setTitle(this.title);
     this.buildForm();
@@ -395,8 +386,7 @@ export class PermissionComponent implements OnInit {
       transactionTypes: this._fb.array([]),
     };
     for (let field of this.formFields) {
-      if (field.tag !== 'separator')
-        fields[field.name] = [this.obj[field.name], field.validators];
+      if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators];
     }
     this.objForm = this._fb.group(fields);
 
@@ -446,10 +436,7 @@ export class PermissionComponent implements OnInit {
           let entro: boolean = false;
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (
-              eval(`this.obj${sumF}`) == null ||
-              eval(`this.obj${sumF}`) == undefined
-            ) {
+            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }
@@ -471,10 +458,7 @@ export class PermissionComponent implements OnInit {
             break;
           default:
             if (field.tag !== 'separator')
-              values[field.name] =
-                eval('this.obj.' + field.name) !== undefined
-                  ? eval('this.obj.' + field.name)
-                  : null;
+              values[field.name] = eval('this.obj.' + field.name) !== undefined ? eval('this.obj.' + field.name) : null;
             break;
         }
       }
@@ -496,26 +480,18 @@ export class PermissionComponent implements OnInit {
     if (this.transactionTypes && this.transactionTypes.length > 0) {
       this.transactionTypes.forEach((x) => {
         let exists: boolean = false;
-        if (
-          this.obj &&
-          this.obj.transactionTypes &&
-          this.obj.transactionTypes.length > 0
-        ) {
+        if (this.obj && this.obj.transactionTypes && this.obj.transactionTypes.length > 0) {
           this.obj.transactionTypes.forEach((y) => {
             if (x._id === y._id) {
               exists = true;
               const control = new UntypedFormControl(y);
-              (this.objForm.controls.transactionTypes as UntypedFormArray).push(
-                control
-              );
+              (this.objForm.controls.transactionTypes as UntypedFormArray).push(control);
             }
           });
         }
         if (!exists) {
           const control = new UntypedFormControl(false);
-          (this.objForm.controls.transactionTypes as UntypedFormArray).push(
-            control
-          );
+          (this.objForm.controls.transactionTypes as UntypedFormArray).push(control);
         }
       });
     }
@@ -593,32 +569,18 @@ export class PermissionComponent implements OnInit {
       for (let field of this.formFields) {
         switch (field.tagType) {
           case 'date':
-            this.obj[field.name] =
-              moment(this.obj[field.name]).format('YYYY-MM-DD') +
-              moment().format('THH:mm:ssZ');
+            this.obj[field.name] = moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
             break;
           case 'number':
             this.obj[field.name] = parseFloat(this.obj[field.name]);
             break;
           case 'file':
-            if (
-              this.filesToUpload &&
-              this.filesToUpload[field.name] &&
-              this.filesToUpload[field.name].length > 0
-            ) {
+            if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
               this.loading = true;
               this._objService.deleteFile(this.obj[field.name]);
-              if (
-                this.filesToUpload[field.name] &&
-                this.filesToUpload[field.name].length > 0
-              ) {
+              if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                 this.obj[field.name] = this.oldFiles[field.name];
-                if (
-                  field.multiple &&
-                  (!this.obj ||
-                    !this.obj[field.name] ||
-                    this.obj[field.name].length === 0)
-                ) {
+                if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                   this.obj[field.name] = new Array();
                 }
                 for (let file of this.filesToUpload[field.name]) {
@@ -652,19 +614,16 @@ export class PermissionComponent implements OnInit {
               }
               this.loading = false;
             } else {
-              if (this.oldFiles)
-                this.obj[field.name] = this.oldFiles[field.name];
+              if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
           case 'boolean':
-            this.obj[field.name] =
-              this.obj[field.name] == 'true' || this.obj[field.name] == true;
+            this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
             break;
           case 'text':
             if (
               field.tag === 'autocomplete' &&
-              (this.obj[field.name] == '' ||
-                (this.obj[field.name] && !this.obj[field.name]['_id']))
+              (this.obj[field.name] == '' || (this.obj[field.name] && !this.obj[field.name]['_id']))
             ) {
               this.obj[field.name] = null;
             }
@@ -699,13 +658,7 @@ export class PermissionComponent implements OnInit {
     this._objService.deleteFile(filename).subscribe(
       (result) => {
         if (result.status === 200) {
-          eval(
-            'this.obj.' +
-              fieldName +
-              ' = this.obj.' +
-              fieldName +
-              '.filter(item => item !== filename)'
-          );
+          eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
           this.loading = true;
           this.subscription.add(
             this._objService.update(this.obj).subscribe(
