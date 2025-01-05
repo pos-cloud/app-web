@@ -10,7 +10,6 @@ import { History } from '../history.model';
 @Component({
   selector: 'app-list-histories',
   templateUrl: './list-histories.component.html',
-  styleUrls: ['./list-histories.component.scss'],
   encapsulation: ViewEncapsulation.None,
   providers: [TranslateMePipe],
 })
