@@ -2175,6 +2175,12 @@ export class AddSaleOrderComponent {
 
         break;
       case 'cancel':
+        if (this.database === 'jaguernight') {
+          this.transaction.state = TransactionState.Canceled;
+          await this.updateTransaction();
+          this.backFinal();
+        }
+
         modalRef = this._modalService.open(DeleteTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
