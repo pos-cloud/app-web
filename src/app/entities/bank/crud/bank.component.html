@@ -1,24 +1,16 @@
 <section class="container-fluid">
   <div class="card">
     <div class="card-header">
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'add' || operation === 'copy'"
-        >{{ 'add-bank' | translate | capitalize }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-bank' | translate | capitalize
+      }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
         >{{ 'edit' | translate | capitalize }} {{ bank?.name ?? '' }}</span
       >
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'view' || operation === 'delete'"
-      >
-        {{ bank?.name ?? '' }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'"> {{ bank?.name ?? '' }}</span>
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
-          <i class="fa fa-arrow-left"></i
-          ><span>{{ 'return' | translate | capitalize }}</span>
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
         </button>
         <button
           type="button"
@@ -27,10 +19,7 @@
           *ngIf="operation !== 'delete' && operation !== 'view'"
           (click)="handleBankOperation()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -41,21 +30,14 @@
           [disabled]="loading"
           (click)="handleBankOperation()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
           <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
         </button>
       </div>
     </div>
     <div class="card-body scroll">
-      <form
-        [formGroup]="bankForm"
-        (ngSubmit)="handleBankOperation()"
-        autocomplete="off"
-      >
+      <form [formGroup]="bankForm" (ngSubmit)="handleBankOperation()" autocomplete="off">
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
@@ -63,9 +45,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-2">
-            <label for="agency" class="control-label"
-              >{{ 'agency' | translate | capitalize }}:</label
-            >
+            <label for="agency" class="control-label">{{ 'agency' | translate | capitalize }}:</label>
             <input
               type="number"
               class="form-control"
@@ -76,9 +56,7 @@
             />
           </div>
           <div class="form-group col-md-2">
-            <label for="code" class="control-label"
-              >{{ 'code' | translate | capitalize }}:</label
-            >
+            <label for="code" class="control-label">{{ 'code' | translate | capitalize }}:</label>
             <input
               type="number"
               class="form-control"
@@ -87,26 +65,19 @@
               id="code"
               [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid':
-                  bankForm.get('code')?.touched &&
-                  bankForm.get('code')?.invalid,
+                'is-invalid': bankForm.get('code')?.touched && bankForm.get('code')?.invalid,
               }"
               [readonly]="readonly"
             />
             <div
               class="invalid-feedback"
-              *ngIf="
-                bankForm.get('code')?.touched &&
-                bankForm.get('code')?.hasError('required')
-              "
+              *ngIf="bankForm.get('code')?.touched && bankForm.get('code')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-5">
-            <label for="name" class="control-label"
-              >{{ 'name' | translate | capitalize }}:</label
-            >
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
@@ -114,26 +85,19 @@
               name="name"
               id="name"
               [ngClass]="{
-                'is-invalid':
-                  bankForm.get('name')?.touched &&
-                  bankForm.get('name')?.invalid,
+                'is-invalid': bankForm.get('name')?.touched && bankForm.get('name')?.invalid,
               }"
               [readonly]="readonly"
             />
             <div
               class="invalid-feedback"
-              *ngIf="
-                bankForm.get('name')?.touched &&
-                bankForm.get('name')?.hasError('required')
-              "
+              *ngIf="bankForm.get('name')?.touched && bankForm.get('name')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-2">
-            <label for="account" class="control-label"
-              >{{ 'account' | translate | capitalize }}:</label
-            >
+            <label for="account" class="control-label">{{ 'account' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="bankForm.get('account')"
               [data]="accounts"
@@ -145,7 +109,7 @@
         </div>
         <hr />
         <div class="row">
-          <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+          <label class="form-group col-md-12">
             <b>{{ 'audit' | translate | capitalize }}</b>
           </label>
         </div>
@@ -161,10 +125,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    bank?.creationDate ?? null
-                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ bank?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -178,9 +139,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    bank?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ bank?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
