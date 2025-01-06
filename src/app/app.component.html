@@ -1,3 +1,12 @@
-<app-header *ngIf="showHeader"></app-header>
+<!-- <app-header *ngIf="showHeader"></app-header> -->
+<app-header2 *ngIf="showHeader"></app-header2>
 <app-toasts></app-toasts>
 <router-outlet *ngIf="config$ | async"></router-outlet>
+<footer>
+  © 2020 Copyright
+  <a href="https://www.poscloud.com.ar" target="_blank" rel="noopener noreferrer">
+    <img src="assets/img/logo.png" alt="POS Cloud" />
+  </a>
+  <b>POS Cloud</b>. All Rights Reserved.
+  <div>v1.9.0</div>
+</footer>

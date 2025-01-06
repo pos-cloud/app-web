@@ -2,7 +2,8 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-update-modal-content',
+  selector: 'app-upgrade-version',
+  standalone: true,
   template: `
     <div class="modal-header">
       <h4 class="modal-title">Nueva versión disponible</h4>
@@ -11,19 +12,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
       <p>Una nueva versión de POS Cloud está disponible.</p>
       <p>
         Puedes ver los detalles
-        <a href="https://docs.poscloud.ar/books/actualizaciones" target="_blank"
-          >aquí</a
-        >.
+        <a href="https://docs.poscloud.ar/books/actualizaciones" target="_blank">aquí</a>.
       </p>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" (click)="reload()">
-        Actualizar ahora
-      </button>
+      <button type="button" class="btn btn-primary" (click)="reload()">Actualizar ahora</button>
     </div>
   `,
 })
-export class UpdateModalContent {
+export class UpgradeVersionComponent {
   @Output() onReload = new EventEmitter<void>();
 
   constructor(public activeModal: NgbActiveModal) {}

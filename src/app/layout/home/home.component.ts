@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
-import { UpdateModalContent } from '../update-modal/update-modal.component';
+import { UpgradeVersionComponent } from '../upgrade-version/upgrade-version.component';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +16,6 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private _authService: AuthService,
-    public _router: Router,
     private swUpdate: SwUpdate,
     private modalService: NgbModal
   ) {}
@@ -34,15 +32,13 @@ export class HomeComponent implements OnInit {
         }
       },
       (error) => {
-        console.error('Error al obtener la identidad:', error);
+        console.error('Error al obtener el usuario:', error);
       }
     );
   }
 
   openUpdateModal() {
-    const modalRef = this.modalService.open(UpdateModalContent);
-    modalRef.componentInstance.onReload.subscribe(() =>
-      window.location.reload()
-    );
+    const modalRef = this.modalService.open(UpgradeVersionComponent);
+    modalRef.componentInstance.onReload.subscribe(() => window.location.reload());
   }
 }

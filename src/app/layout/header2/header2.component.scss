@@ -1,15 +1,99 @@
-.navbar-nav .nav-item {
-  margin-right: 5px; /* Reduce el espacio entre los elementos */
+$topnav-background-color: #222;
+:host {
+  .navbar {
+    width: 70%;
+    background-color: $topnav-background-color;
+
+    .navbar-brand {
+      color: #0275d8;
+    }
+
+    .nav-item > a {
+      color: black;
+
+      &:hover {
+        color: black;
+      }
+    }
+  }
+
+  .messages {
+    width: 300px;
+
+    .media {
+      border-bottom: 1px solid #ddd;
+      padding: 5px 10px;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .media-body {
+      h5 {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .small {
+        margin: 0;
+      }
+
+      .last {
+        font-size: 12px;
+        margin: 0;
+      }
+    }
+  }
 }
 
-.navbar-nav .nav-link {
-  font-size: 17px;
-  color: #000; /* Color de texto predeterminado */
+.dropdown-submenu {
+  position: relative;
+  cursor: pointer;
 }
 
-.navbar-nav .nav-link.active {
-  font-size: 17px;
-  background-color: #fff; /* Fondo blanco al estar activo */
-  color: black; /* Cambia el color del texto cuando está activo */
-  border: 2px solid #007bff; /* Agrega un borde azul al botón activo */
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  margin-top: -6px;
+  left: auto;
+  right: 100%;
+}
+
+/* rotate caret on hover */
+.dropdown-menu > li > a:hover:after {
+  text-decoration: underline;
+  transform: rotate(-90deg);
+}
+
+* {
+  -webkit-transition: margin-left 0.2s ease-in-out;
+  -moz-transition: margin-left 0.2s ease-in-out;
+  -ms-transition: margin-left 0.2s ease-in-out;
+  -o-transition: margin-left 0.2s ease-in-out;
+  transition: margin-left 0.2s ease-in-out;
+}
+
+.main-container {
+  margin-top: 56px;
+  margin-left: 235px;
+  padding: 15px;
+  -ms-overflow-x: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-collapse {
+  width: 100%;
+  height: auto;
+  background-color: white;
+}
+
+@media (max-width: 768px) {
+  .navbar-collapse {
+    width: 100%;
+    height: auto;
+    background-color: white;
+  }
 }

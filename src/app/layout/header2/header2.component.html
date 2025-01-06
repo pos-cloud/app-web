@@ -1,64 +1,128 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" *ngIf="!hideMenu && (identity$ | async) as identity">
   <span class="navbar-brand btn" routerLink="/">
-    <img width="60" src="assets/img/logo.png" />
+    <img width="60" [src]="img" />
   </span>
   <button
     class="navbar-toggler"
     type="button"
-    data-toggle="collapse"
-    data-target="#navbarNav"
-    aria-controls="navbarNav"
-    aria-expanded="false"
+    (click)="toggleMenu()"
+    [attr.aria-expanded]="toggleNavbar ? 'true' : 'false'"
     aria-label="Toggle navigation"
   >
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarNav" #navbarNav>
-    <ul class="navbar-nav nav-pills">
-      <li class="nav-item">
-        <a
-          class="nav-link btn btn-sm"
-          routerLink="/pos/mostrador/venta"
-          routerLinkActive="active"
-          (click)="closeNavbar()"
-          ><i class="fa fa-fax"></i> Ventas</a
-        >
+  <div [class.collapse]="toggleNavbar" class="navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <ng-template #nodeTemplateRef let-node="node">
+        <li *ngIf="!node.isDivider" #dd="ngbDropdown" class="dropdown-submenu" ngbDropdown [autoClose]="'outside'">
+          <a *ngIf="node.link" class="dropdown-item" [routerLink]="[node.link]" (click)="actionClick()">
+            <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
+            {{ node.label }}
+          </a>
+          <a *ngIf="node.children" class="dropdown-item" ngbDropdownToggle>
+            <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
+            {{ node.label }}
+          </a>
+          <ul *ngIf="node.children" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" ngbDropdownMenu>
+            <ng-template ngFor [ngForOf]="node.children" let-child>
+              <ng-template
+                [ngTemplateOutlet]="nodeTemplateRef"
+                [ngTemplateOutletContext]="{ node: child }"
+              ></ng-template>
+            </ng-template>
+          </ul>
+        </li>
+        <div *ngIf="node.isDivider" class="dropdown-divider"></div>
+      </ng-template>
+
+      <!-- Top-level menu -->
+      <ng-template ngFor [ngForOf]="menu" let-topNode>
+        <li *ngIf="!topNode.children" class="nav-item">
+          <a class="nav-link" [routerLink]="[topNode.link]" (click)="actionClick()">
+            <i *ngIf="topNode.icon" [class]="topNode.icon" aria-hidden="true"></i>
+            {{ topNode.label }}
+          </a>
+        </li>
+        <li #dd="ngbDropdown" class="nav-item dropdown" ngbDropdown [autoClose]="'outside'" *ngIf="topNode.children">
+          <a class="nav-link" href="javascript:void(0)" ngbDropdownToggle>
+            <i *ngIf="topNode.icon" [class]="topNode.icon" aria-hidden="true"></i>
+            {{ topNode.label }}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" ngbDropdownMenu>
+            <ng-template ngFor [ngForOf]="topNode.children" let-child>
+              <ng-template
+                [ngTemplateOutlet]="nodeTemplateRef"
+                [ngTemplateOutletContext]="{ node: child }"
+              ></ng-template>
+            </ng-template>
+          </ul>
+        </li>
+      </ng-template>
+    </ul>
+
+    <ul class="navbar-nav navbar-right">
+      <li class="nav-item" ngbDropdown>
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
+          <i class="fa fa-user"></i> {{ identity?.employee?.name }}
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+          <div>
+            <a class="dropdown-item" [routerLink]="['admin', 'billing']" [routerLinkActive]="['active']">
+              Facturación
+            </a>
+          </div>
+          <div>
+            <button class="dropdown-item" (click)="openModal('soporte')" [routerLinkActive]="['active']">
+              Soporte
+            </button>
+          </div>
+          <div>
+            <button class="dropdown-item" (click)="openModal('changelogs')" [routerLinkActive]="['active']">
+              Actualizaciones
+            </button>
+          </div>
+          <div>
+            <button class="dropdown-item" (click)="openModal('documentation')" [routerLinkActive]="['active']">
+              Documentación
+            </button>
+          </div>
+          <div>
+            <button class="dropdown-item" (click)="logout()" [routerLinkActive]="['active']">Cerrar Sesión</button>
+          </div>
+        </div>
       </li>
       <li class="nav-item">
-        <a
-          class="nav-link btn btn-sm"
-          routerLink="/pos/mostrador/compra"
-          routerLinkActive="active"
-          (click)="closeNavbar()"
-          ><i class="fa fa-clipboard"></i> Compras</a
-        >
+        <i
+          class="fa fa-wifi"
+          *ngIf="online$ | async; else blockOffline"
+          style="color: #04b431; margin-top: 13px; margin-left: 5px"
+        ></i>
+        <ng-template #blockOffline>
+          <i class="fa fa-wifi" style="color: #ff0000; margin-top: 13px; margin-left: 5px"></i>
+        </ng-template>
       </li>
-      <li class="nav-item">
-        <a
-          class="nav-link btn btn-sm"
-          routerLink="/pos/mostrador/stock"
-          routerLinkActive="active"
-          (click)="closeNavbar()"
-          ><i class="fa fa-dropbox"></i> Stock</a
-        >
+      <li>
+        <i class="fa fa-refresh" style="color: blue; margin-top: 13px; margin-left: 5px" (click)="reload()"></i>
       </li>
-      <li class="nav-item">
-        <a
-          class="nav-link btn btn-sm"
-          routerLink="/pos/mostrador/fondo"
-          routerLinkActive="active"
-          (click)="closeNavbar()"
-          ><i class="fa fa-money"></i> Fondos</a
-        >
-      </li>
-      <li class="nav-item">
-        <a
-          class="nav-link btn btn-sm"
-          routerLink="/pos/mostrador/production"
-          routerLinkActive="active"
-          (click)="closeNavbar()"
-          ><i class="fa fa-paste"></i> Producción</a
-        >
+      <li style="margin-top: 5px; margin-left: 5px">
+        <div ngbDropdown>
+          <button
+            ngbDropdownToggle
+            class="btn btn-light d-flex align-items-center"
+            style="border: none; box-shadow: none; font-size: 12px"
+          >
+            <i class="fa fa-globe"></i>
+            <span style="margin-left: 5px; font-size: 12px">{{ currentLanguage | uppercase }}</span>
+          </button>
+
+          <div ngbDropdownMenu>
+            <button *ngFor="let lang of languages" ngbDropdownItem (click)="changeLanguage(lang)">
+              <div style="font-size: 12px">
+                {{ lang | uppercase }}
+              </div>
+            </button>
+          </div>
+        </div>
       </li>
     </ul>
   </div>

@@ -1,14 +1,6 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import {
-  HTTP_INTERCEPTORS,
-  HttpClient,
-  HttpClientModule,
-} from '@angular/common/http';
-import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  NgModule,
-  NO_ERRORS_SCHEMA,
-} from '@angular/core';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -171,6 +163,7 @@ import { LicenseGuard } from './core/guards/license.guard';
 import { NotificationGuard } from './core/guards/notification.guard';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { HeaderComponent } from './layout/header/header.component';
+import { Header2Component } from './layout/header2/header2.component';
 import { HomeComponent } from './layout/home/home.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
@@ -187,6 +180,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     HomeComponent,
     HeaderComponent,
+    Header2Component,
     ListTablesComponent,
     ListCashBoxesComponent,
     ListTransactionsComponent,

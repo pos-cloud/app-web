@@ -10,6 +10,26 @@ body {
   font-family: Open Sans, sans-serif !important;
 }
 
+footer {
+  display: flex !important;
+  justify-content: center;
+  font-size: 12px;
+}
+
+footer img {
+  height: 14px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+footer div {
+  position: absolute;
+  right: 20px;
+  font-size: 12px;
+}
+
+
 .card-header .btn-light {
   border: 0px;
 }
@@ -25,10 +45,6 @@ body {
   z-index: 99;
 }
 
-.nav-link {
-  color: black;
-}
-
 .btn-light {
   border-color: #ccc !important;
 }
@@ -36,16 +52,6 @@ body {
 .dropdown-btn {
   background-color: white;
   border: 1px solid #ced4da !important;
-}
-
-.dropdown-menu {
-  max-height: 90vh;
-  overflow-y: auto !important;
-}
-
-.dropdown-menu-right {
-  left: auto !important;
-  right: 0 !important;
 }
 
 .disabled {
@@ -59,7 +65,6 @@ body {
 .container-fluid {
   background-color: #e4e9f2;
   padding: 1.4rem 1.4rem 0.75rem !important;
-  margin-bottom: 20px;
   margin-top: 60px;
 }
 
