@@ -191,7 +191,7 @@ export class Header2Component implements OnInit {
           ],
         },
         {
-          label: 'Produccion',
+          label: 'Producción',
           children: [
             {
               label: 'Listados',
@@ -246,6 +246,8 @@ export class Header2Component implements OnInit {
           children: [
             { label: 'Mi negocio', link: 'admin/configuraciones' },
             { label: 'Aplicaciones', link: 'applications' },
+            { label: 'Tipos de Transacciones', link: 'transaction-types' },
+            { label: 'Tipos de Cancelaciones', link: 'admin/tipos-de-cancelaciones' },
             { label: 'Reglas de negocio', link: 'business-rules' },
             { label: 'Tipos de Relaciones', link: 'admin/tipos-de-relacion' },
             { label: 'Tipos de Identificación', link: 'admin/tipos-de-identificacion' },
@@ -262,6 +264,7 @@ export class Header2Component implements OnInit {
           label: 'Gestión de Usuarios',
           children: [
             { label: 'Usuarios Sistema', link: 'admin/usuarios' },
+            { label: 'Usuarios Web', link: 'admin/usuarios-web' },
             { label: 'Empleados', link: 'entities/employees' },
             { label: 'Tipos de Empleado', link: 'entities/employee-types' },
             { label: 'Permisos', link: 'permissions' },
@@ -274,6 +277,8 @@ export class Header2Component implements OnInit {
             { label: 'Periodos contable', link: 'account-periods' },
             { label: 'Asientos contable', link: 'account-seats' },
             { label: 'Impuestos', link: 'admin/impuestos' },
+            { label: 'Tipos de cajas', link: 'cash-box-types' },
+            { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
           ],
         },
         {
@@ -641,7 +646,7 @@ export class Header2Component implements OnInit {
               ],
             },
             {
-              label: 'Produccion',
+              label: 'Producción',
               children: [
                 {
                   label: 'Listados',
@@ -699,6 +704,8 @@ export class Header2Component implements OnInit {
               children: [
                 { label: 'Mi empresa', link: 'admin/configuraciones' },
                 { label: 'Aplicaciones', link: 'applications' },
+                { label: 'Tipos de Transacciones', link: 'transaction-types' },
+                { label: 'Tipos de Cancelaciones', link: 'admin/tipos-de-cancelaciones' },
                 { label: 'Reglas de negocio', link: 'business-rules' },
                 { label: 'Tipos de Relaciones', link: 'admin/tipos-de-relacion' },
                 { label: 'Tipos de Identificación', link: 'admin/tipos-de-identificacion' },
@@ -715,6 +722,7 @@ export class Header2Component implements OnInit {
               label: 'Gestión de Usuarios',
               children: [
                 { label: 'Usuarios Sistema', link: 'admin/usuarios' },
+                { label: 'Usuarios Web', link: 'admin/usuarios-web' },
                 { label: 'Empleados', link: 'entities/employees' },
                 { label: 'Tipos de Empleado', link: 'entities/employee-types' },
                 { label: 'Permisos', link: 'permissions' },
@@ -727,6 +735,8 @@ export class Header2Component implements OnInit {
                 { label: 'Periodos contable', link: 'account-periods' },
                 { label: 'Asientos contable', link: 'account-seats' },
                 { label: 'Impuestos', link: 'admin/impuestos' },
+                { label: 'Tipos de cajas', link: 'cash-box-types' },
+                { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
               ],
             },
             {
