@@ -122,7 +122,7 @@ export class ImportComponent implements OnInit {
               this.countNotUpdate = response.result.countNotUpdate;
               this.countUpdate = response.result.countUpdate;
               this.notUpdate = response.result.notUpdateArticle;
-              this.messageImport = response.result.menssage;
+              this.messageImport = response.result.message;
               this.update = response.result.updateArticle;
               this.loading = false;
             } else {
