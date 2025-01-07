@@ -161,6 +161,15 @@ export class Application extends Model {
       weight: string;
     };
   };
+  wooCommerce: {
+    key: string;
+    secret: string;
+    transactionType: TransactionType;
+    shipmentMethod: ShipmentMethod;
+    paymentMethod: PaymentMethod;
+    company: Company;
+    article: Article;
+  };
 
   constructor() {
     super();
@@ -219,7 +228,7 @@ export class Application extends Model {
 export enum ApplicationType {
   Web = <any>'Web',
   App = <any>'App',
-  Woocommerce = <any>'Woocommerce',
+  WooCommerce = <any>'WooCommerce',
   MercadoLibre = <any>'MercadoLibre',
   TiendaNube = <any>'TiendaNube',
   Menu = <any>'Carta digital',

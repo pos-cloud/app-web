@@ -1,296 +1,634 @@
 <section class="container-fluid">
-    <div class="card card-large">
-        <div class="card-header">
-            <span>{{ title }}</span>
-        </div>
-        <div class="card-block table-responsive">
-            <ngb-accordion [closeOthers]="true" #acc="ngbAccordion" activeIds="ngb-panel-0">
-                <ngb-panel id="Tienda Nube">
-                    <ng-template ngbPanelTitle>
-                        <div class="row align-items-center">
-                            <div class="col-auto pr-0">
-                                <img src="../../../../assets/img/tiendanube-logo.png" alt="TiendaNube" class="img-fluid"
-                                    style="max-height: 30px;" />
-                            </div>
-                            <div>
-                                <p class="mb-0 h5 text-dark">Tienda Nube</p>
-                            </div>
-                        </div>
-                    </ng-template>
-                    <ng-template ngbPanelContent>
-                        <form [formGroup]="tiendaNubeForm" (ngSubmit)="updateApplication('TiendaNube')"
-                            autocomplete="off">
-                            <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label for="userId" class="control-label">Usuario Id:</label>
-                                    <input formControlName="userId" type="number" class="form-control" name="userId"
-                                        id="userId" [focus]="focusEvent" />
-                                    <div *ngIf="tiendaNubeForm.get('userId').invalid && (tiendaNubeForm.get('userId').dirty || tiendaNubeForm.get('userId').touched)"
-                                        class="alert alert-danger">
-                                        {{ formErrors.userId }}
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="token" class="control-label">Token:</label>
-                                    <input type="text" class="form-control" formControlName="token" name="token"
-                                        id="token" [focus]="focusEvent" />
-                                    <div *ngIf="tiendaNubeForm.get('token').invalid && (tiendaNubeForm.get('token').dirty || tiendaNubeForm.get('token').touched)"
-                                        class="alert alert-danger">
-                                        {{ formErrors.token }}
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <ng-template #rtTransactionType let-r="result" let-t="term">
-                                        <ngb-highlight [result]="r.name" [term]="t">
-                                        </ngb-highlight>
-                                    </ng-template>
-                                    <label for="transactionType" class="control-label">Tipo de transacción:</label>
-                                    <input id="transactionType" type="text" class="form-control" formControlName="transactionType"
-                                    name="transactionType" [ngbTypeahead]="searchTransactionType" [resultTemplate]="rtTransactionType"
-                                     [inputFormatter]="formatterTransactionType"/>
-                                    <div *ngIf="tiendaNubeForm.get('transactionType').invalid && (tiendaNubeForm.get('transactionType').dirty || tiendaNubeForm.get('transactionType').touched)"
-                                        class="alert alert-danger">
-                                        {{ formErrors.transactionType }}
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <ng-template #rtShipmentMethod let-r="result" let-t="term">
-                                        <ngb-highlight [result]="r.name" [term]="t">
-                                        </ngb-highlight>
-                                    </ng-template>
-                                    <label for="shipmentMethod" class="control-label">Método de entrega:</label>
-                                    <input id="shipmentMethod" type="text" class="form-control" formControlName="shipmentMethod"
-                                    name="shipmentMethod" [ngbTypeahead]="searchpShipmentMethod" [resultTemplate]="rtShipmentMethod"
-                                     [inputFormatter]="formatterShipmentMethod"/>
-                                    <div *ngIf="tiendaNubeForm.get('shipmentMethod').invalid && (tiendaNubeForm.get('shipmentMethod').dirty || tiendaNubeForm.get('shipmentMethod').touched)"
-                                        class="alert alert-danger">
-                                        {{ formErrors.shipmentMethod }}
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <ng-template #rtPaymentMethod let-r="result" let-t="term">
-                                        <ngb-highlight [result]="r.name" [term]="t">
-                                        </ngb-highlight>
-                                    </ng-template>
-                                    <label for="paymentMethod" class="control-label">Método de pago:</label>
-                                    <input id="paymentMethod" type="text" class="form-control" formControlName="paymentMethod"
-                                    name="paymentMethod" [ngbTypeahead]="searchPaymentMethod" [resultTemplate]="rtPaymentMethod"
-                                     [inputFormatter]="formatterPaymentMethod"/>
-                                    <div *ngIf="tiendaNubeForm.get('paymentMethod').invalid && (tiendaNubeForm.get('paymentMethod').dirty || tiendaNubeForm.get('paymentMethod').touched)"
-                                        class="alert alert-danger">
-                                        {{ formErrors.paymentMethod }}
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <ng-template #rtCompany let-r="result" let-t="term">
-                                        <ngb-highlight [result]="r.name" [term]="t">
-                                        </ngb-highlight>
-                                    </ng-template>
-                                    <label for="company" class="control-label">Cliente:</label>
-                                    <input id="company" type="text" class="form-control" formControlName="company"
-                                    name="company" [ngbTypeahead]="searchCompany" [resultTemplate]="rtCompany"
-                                     [inputFormatter]="formatterCompany"/>
-                                    <div *ngIf="tiendaNubeForm.get('company').invalid && (tiendaNubeForm.get('company').dirty || tiendaNubeForm.get('company').touched)"
-                                        class="alert alert-danger">
-                                        {{ formErrors.company }}
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <ng-template #rtArticles let-r="result" let-t="term">
-                                        <ngb-highlight [result]="r.description" [term]="t">
-                                        </ngb-highlight>
-                                    </ng-template>
-                                    <label for="article" class="control-label">artículo default:</label>
-                                    <input id="article" type="text" class="form-control" formControlName="article"
-                                    name="article" [ngbTypeahead]="searchArticle" [resultTemplate]="rtArticles"
-                                     [inputFormatter]="formatterArticles"/>
-                                    <div *ngIf="tiendaNubeForm.get('article').invalid && (tiendaNubeForm.get('article').dirty || tiendaNubeForm.get('article').touched)"
-                                        class="alert alert-danger">
-                                        {{ formErrors.article }}
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label class="control-label">Verificar webhook:</label> <br/>
-                                    <button type="submit" class="btn btn-primary" [disabled]="loading" (click)="generateWebhook()">
-                                        <i class="fa" [ngClass]="{'':!loading, 'fa-spinner fa-spin':loading}"></i>
-                                        <span *ngIf="!loading">Generar webhook</span>
-                                        <span *ngIf="loading">Espere por favor</span>
-                                    </button> 
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label class="control-label">Sincronizar artículos de TiendaNube</label><br>
-                                    <button type="submit" class="btn btn-primary" [disabled]="loading" (click)="getAllArticlesTn()">
-                                        <i class="fa" [ngClass]="{'':!loading, 'fa-spinner fa-spin':loading}"></i>
-                                        <span *ngIf="!loading">Tienda Nube</span>
-                                        <span *ngIf="loading">Espere por favor</span>
-                                    </button> 
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
-                                <i [ngClass]="{'save':!loading, 'spinner spin':loading}"></i>
-                                <span *ngIf="!loading">Enviar</span>
-                                <span *ngIf="loading">Espere por favor</span>
-                            </button>
-                        </form>
-                    </ng-template>
-                </ngb-panel>
-                <ngb-panel id="Carta Digital">
-                    <ng-template ngbPanelTitle>
-                        <div class="row align-items-center">
-                            <div class="col-auto pr-0">
-                                <img src="../../../../assets/img/cartadigital.png" alt="Carta Digital" class="img-fluid"
-                                    style="max-height: 30px;" />
-                            </div>
-                            <div>
-                                <p class="mb-0 h5 text-dark">Carta Digital</p>
-                            </div>
-                        </div>
-                    </ng-template>
-                    <ng-template ngbPanelContent>
-                        <form [formGroup]="cartaDigitalForm" (ngSubmit)="updateApplication('Carta digital')">
-                            <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label for="portain" class="control-label">Portada:</label>
-                                    <input formControlName="portain" type="text" class="form-control" name="portain"
-                                        id="portain" />
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="background" class="control-label">Fondo:</label>
-                                    <input formControlName="background" type="text" class="form-control"
-                                        name="background" id="background" />
-                                </div>
-                                <div formGroupName="article" class="row offset-md-0">
-                                    <div class="col-md-12 mt-3">
-                                        <h5 class="m-0">Productos</h5>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="articleFont" class="control-label">Fuente:</label>
-                                        <input type="text" class="form-control" formControlName="font"
-                                            name="articleFont" id="articleFont" />
-                                    </div>
-                                    <div class="form-group col-md-2 mt-2">
-                                        <label for="articleSize" class="control-label">Tamaño:</label>
-                                        <input type="text" class="form-control" formControlName="size"
-                                            name="articleSize" id="articleSize" />
-                                    </div>
-                                    <div class="form-group col-md-2 mt-2">
-                                        <label for="articleColor" class="control-label">Color:</label>
-                                        <input type="text" class="form-control" formControlName="color"
-                                            name="articleColor" id="articleColor" />
-                                    </div>
-                                    <div class="form-group col-md-2 mt-2">
-                                        <label for="articleStyle" class="control-label">Estilo:</label>
-                                        <input type="text" class="form-control" formControlName="style"
-                                            name="articleStyle" id="articleStyle" />
-                                    </div>
-                                    <div class="form-group col-md-2 mt-2">
-                                        <label for="articleWeight" class="control-label">Grosor de la fuente:</label>
-                                        <input type="text" class="form-control" formControlName="weight"
-                                            name="articleWeight" id="articleWeight" />
-                                    </div>
-                                </div>
-
-                                <div formGroupName="category" class="row offset-md-0">
-                                    <div class="col-md-12 mt-3">
-                                        <h5 class="m-0">Categoría</h5>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="categoryFont" class="control-label">Fuente:</label>
-                                        <input type="text" class="form-control" formControlName="font"
-                                            name="categoryFont" id="categoryFont" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="categorySize" class="control-label">Tamaño:</label>
-                                        <input type="text" class="form-control" formControlName="size"
-                                            name="categorySize" id="categorySize" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="categoryColor" class="control-label">Color:</label>
-                                        <input type="text" class="form-control" formControlName="color"
-                                            name="categoryColor" id="categoryColor" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="categoryStyle" class="control-label">Estilo:</label>
-                                        <input type="text" class="form-control" formControlName="style"
-                                            name="categoryStyle" id="categoryStyle" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="categoryWeight" class="control-label">Grosor de la fuente:</label>
-                                        <input type="text" class="form-control" formControlName="weight"
-                                            name="categoryWeight" id="categoryWeight" />
-                                    </div>
-                                </div>
-                                <div formGroupName="price" class="row offset-md-0">
-                                    <div class="col-md-12 mt-3">
-                                        <h5 class="m-0">Precio</h5>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="priceFont" class="control-label">Fuente:</label>
-                                        <input type="text" class="form-control" formControlName="font" name="priceFont"
-                                            id="priceFont" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="priceSize" class="control-label">Tamaño:</label>
-                                        <input type="text" class="form-control" formControlName="size" name="priceSize"
-                                            id="priceSize" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="priceColor" class="control-label">Color:</label>
-                                        <input type="text" class="form-control" formControlName="color"
-                                            name="priceColor" id="priceColor" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="priceStyle" class="control-label">Estilo:</label>
-                                        <input type="text" class="form-control" formControlName="style"
-                                            name="priceStyle" id="priceStyle" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="priceWeight" class="control-label">Grosor de la fuente:</label>
-                                        <input type="text" class="form-control" formControlName="weight"
-                                            name="priceWeight" id="priceWeight" />
-                                    </div>
-                                </div>
-                                <div formGroupName="observation" class="row offset-md-0">
-                                    <div class="col-md-12 mt-3">
-                                        <h5 class="m-0">Observación</h5>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="observationFont" class="control-label">Fuente:</label>
-                                        <input type="text" class="form-control" formControlName="font"
-                                            name="observationFont" id="observationFont" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="observationSize" class="control-label">Tamaño:</label>
-                                        <input type="text" class="form-control" formControlName="size"
-                                            name="observationSize" id="observationSize" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="observationColor" class="control-label">Color:</label>
-                                        <input type="text" class="form-control" formControlName="color"
-                                            name="observationColor" id="observationColor" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="observationStyle" class="control-label">Estilo:</label>
-                                        <input type="text" class="form-control" formControlName="style"
-                                            name="observationStyle" id="observationStyle" />
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="observationWeight" class="control-label">Grosor de la
-                                            fuente:</label>
-                                        <input type="text" class="form-control" formControlName="weight"
-                                            name="observationWeight" id="observationWeight" />
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
-                                <i [ngClass]="{'save':!loading, 'spinner spin':loading}"></i>
-                                <span *ngIf="!loading">Enviar</span>
-                                <span *ngIf="loading">Espere por favor</span>
-                            </button>
-                        </form>
-                    </ng-template>
-                </ngb-panel>
-            </ngb-accordion>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      <span>{{ title }}</span>
     </div>
+    <div class="card-body scroll">
+      <ngb-accordion [closeOthers]="true" #acc="ngbAccordion" activeIds="ngb-panel-0">
+        <ngb-panel id="Tienda Nube">
+          <ng-template ngbPanelTitle>
+            <div class="row align-items-center">
+              <div class="col-auto pr-0">
+                <img
+                  src="../../../../assets/img/tiendanube-logo.png"
+                  alt="TiendaNube"
+                  class="img-fluid"
+                  style="max-height: 30px"
+                />
+              </div>
+              <div>
+                <p class="mb-0 h5 text-dark">Tienda Nube</p>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <form [formGroup]="tiendaNubeForm" (ngSubmit)="updateApplication('TiendaNube')" autocomplete="off">
+              <div class="row">
+                <div class="form-group col-md-3">
+                  <label for="userId" class="control-label">Usuario Id:</label>
+                  <input
+                    formControlName="userId"
+                    type="number"
+                    class="form-control"
+                    name="userId"
+                    id="userId"
+                    [focus]="focusEvent"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('userId').invalid &&
+                      (tiendaNubeForm.get('userId').dirty || tiendaNubeForm.get('userId').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.userId }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="token" class="control-label">Token:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="token"
+                    name="token"
+                    id="token"
+                    [focus]="focusEvent"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('token').invalid &&
+                      (tiendaNubeForm.get('token').dirty || tiendaNubeForm.get('token').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.token }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtTransactionType let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="transactionType" class="control-label">Tipo de transacción:</label>
+                  <input
+                    id="transactionType"
+                    type="text"
+                    class="form-control"
+                    formControlName="transactionType"
+                    name="transactionType"
+                    [ngbTypeahead]="searchTransactionType"
+                    [resultTemplate]="rtTransactionType"
+                    [inputFormatter]="formatterTransactionType"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('transactionType').invalid &&
+                      (tiendaNubeForm.get('transactionType').dirty || tiendaNubeForm.get('transactionType').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.transactionType }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtShipmentMethod let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="shipmentMethod" class="control-label">Método de entrega:</label>
+                  <input
+                    id="shipmentMethod"
+                    type="text"
+                    class="form-control"
+                    formControlName="shipmentMethod"
+                    name="shipmentMethod"
+                    [ngbTypeahead]="searchpShipmentMethod"
+                    [resultTemplate]="rtShipmentMethod"
+                    [inputFormatter]="formatterShipmentMethod"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('shipmentMethod').invalid &&
+                      (tiendaNubeForm.get('shipmentMethod').dirty || tiendaNubeForm.get('shipmentMethod').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.shipmentMethod }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtPaymentMethod let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="paymentMethod" class="control-label">Método de pago:</label>
+                  <input
+                    id="paymentMethod"
+                    type="text"
+                    class="form-control"
+                    formControlName="paymentMethod"
+                    name="paymentMethod"
+                    [ngbTypeahead]="searchPaymentMethod"
+                    [resultTemplate]="rtPaymentMethod"
+                    [inputFormatter]="formatterPaymentMethod"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('paymentMethod').invalid &&
+                      (tiendaNubeForm.get('paymentMethod').dirty || tiendaNubeForm.get('paymentMethod').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.paymentMethod }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtCompany let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="company" class="control-label">Cliente:</label>
+                  <input
+                    id="company"
+                    type="text"
+                    class="form-control"
+                    formControlName="company"
+                    name="company"
+                    [ngbTypeahead]="searchCompany"
+                    [resultTemplate]="rtCompany"
+                    [inputFormatter]="formatterCompany"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('company').invalid &&
+                      (tiendaNubeForm.get('company').dirty || tiendaNubeForm.get('company').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.company }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtArticles let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.description" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="article" class="control-label">artículo default:</label>
+                  <input
+                    id="article"
+                    type="text"
+                    class="form-control"
+                    formControlName="article"
+                    name="article"
+                    [ngbTypeahead]="searchArticle"
+                    [resultTemplate]="rtArticles"
+                    [inputFormatter]="formatterArticles"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('article').invalid &&
+                      (tiendaNubeForm.get('article').dirty || tiendaNubeForm.get('article').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.article }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="control-label">Verificar webhook:</label> <br />
+                  <button type="submit" class="btn btn-primary" [disabled]="loading" (click)="generateWebhook()">
+                    <i class="fa" [ngClass]="{ '': !loading, 'fa-spinner fa-spin': loading }"></i>
+                    <span *ngIf="!loading">Generar webhook</span>
+                    <span *ngIf="loading">Espere por favor</span>
+                  </button>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="control-label">Sincronizar artículos de TiendaNube</label><br />
+                  <button type="submit" class="btn btn-primary" [disabled]="loading" (click)="getAllArticlesTn()">
+                    <i class="fa" [ngClass]="{ '': !loading, 'fa-spinner fa-spin': loading }"></i>
+                    <span *ngIf="!loading">Tienda Nube</span>
+                    <span *ngIf="loading">Espere por favor</span>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
+                <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
+                <span *ngIf="!loading">Enviar</span>
+                <span *ngIf="loading">Espere por favor</span>
+              </button>
+            </form>
+          </ng-template>
+        </ngb-panel>
+        <ngb-panel id="Carta Digital">
+          <ng-template ngbPanelTitle>
+            <div class="row align-items-center">
+              <div class="col-auto pr-0">
+                <img
+                  src="../../../../assets/img/cartadigital.png"
+                  alt="Carta Digital"
+                  class="img-fluid"
+                  style="max-height: 30px"
+                />
+              </div>
+              <div>
+                <p class="mb-0 h5 text-dark">Carta Digital</p>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <form [formGroup]="cartaDigitalForm" (ngSubmit)="updateApplication('Carta digital')">
+              <div class="row">
+                <div class="form-group col-md-3">
+                  <label for="portain" class="control-label">Portada:</label>
+                  <input formControlName="portain" type="text" class="form-control" name="portain" id="portain" />
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="background" class="control-label">Fondo:</label>
+                  <input
+                    formControlName="background"
+                    type="text"
+                    class="form-control"
+                    name="background"
+                    id="background"
+                  />
+                </div>
+                <div formGroupName="article" class="row offset-md-0">
+                  <div class="col-md-12 mt-3">
+                    <h5 class="m-0">Productos</h5>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="articleFont" class="control-label">Fuente:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="font"
+                      name="articleFont"
+                      id="articleFont"
+                    />
+                  </div>
+                  <div class="form-group col-md-2 mt-2">
+                    <label for="articleSize" class="control-label">Tamaño:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="size"
+                      name="articleSize"
+                      id="articleSize"
+                    />
+                  </div>
+                  <div class="form-group col-md-2 mt-2">
+                    <label for="articleColor" class="control-label">Color:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="color"
+                      name="articleColor"
+                      id="articleColor"
+                    />
+                  </div>
+                  <div class="form-group col-md-2 mt-2">
+                    <label for="articleStyle" class="control-label">Estilo:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="style"
+                      name="articleStyle"
+                      id="articleStyle"
+                    />
+                  </div>
+                  <div class="form-group col-md-2 mt-2">
+                    <label for="articleWeight" class="control-label">Grosor de la fuente:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="weight"
+                      name="articleWeight"
+                      id="articleWeight"
+                    />
+                  </div>
+                </div>
+
+                <div formGroupName="category" class="row offset-md-0">
+                  <div class="col-md-12 mt-3">
+                    <h5 class="m-0">Categoría</h5>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="categoryFont" class="control-label">Fuente:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="font"
+                      name="categoryFont"
+                      id="categoryFont"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="categorySize" class="control-label">Tamaño:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="size"
+                      name="categorySize"
+                      id="categorySize"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="categoryColor" class="control-label">Color:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="color"
+                      name="categoryColor"
+                      id="categoryColor"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="categoryStyle" class="control-label">Estilo:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="style"
+                      name="categoryStyle"
+                      id="categoryStyle"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="categoryWeight" class="control-label">Grosor de la fuente:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="weight"
+                      name="categoryWeight"
+                      id="categoryWeight"
+                    />
+                  </div>
+                </div>
+                <div formGroupName="price" class="row offset-md-0">
+                  <div class="col-md-12 mt-3">
+                    <h5 class="m-0">Precio</h5>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="priceFont" class="control-label">Fuente:</label>
+                    <input type="text" class="form-control" formControlName="font" name="priceFont" id="priceFont" />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="priceSize" class="control-label">Tamaño:</label>
+                    <input type="text" class="form-control" formControlName="size" name="priceSize" id="priceSize" />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="priceColor" class="control-label">Color:</label>
+                    <input type="text" class="form-control" formControlName="color" name="priceColor" id="priceColor" />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="priceStyle" class="control-label">Estilo:</label>
+                    <input type="text" class="form-control" formControlName="style" name="priceStyle" id="priceStyle" />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="priceWeight" class="control-label">Grosor de la fuente:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="weight"
+                      name="priceWeight"
+                      id="priceWeight"
+                    />
+                  </div>
+                </div>
+                <div formGroupName="observation" class="row offset-md-0">
+                  <div class="col-md-12 mt-3">
+                    <h5 class="m-0">Observación</h5>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="observationFont" class="control-label">Fuente:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="font"
+                      name="observationFont"
+                      id="observationFont"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="observationSize" class="control-label">Tamaño:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="size"
+                      name="observationSize"
+                      id="observationSize"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="observationColor" class="control-label">Color:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="color"
+                      name="observationColor"
+                      id="observationColor"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="observationStyle" class="control-label">Estilo:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="style"
+                      name="observationStyle"
+                      id="observationStyle"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="observationWeight" class="control-label">Grosor de la fuente:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="weight"
+                      name="observationWeight"
+                      id="observationWeight"
+                    />
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
+                <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
+                <span *ngIf="!loading">Enviar</span>
+                <span *ngIf="loading">Espere por favor</span>
+              </button>
+            </form>
+          </ng-template>
+        </ngb-panel>
+        <ngb-panel id="WooCommerce">
+          <ng-template ngbPanelTitle>
+            <div class="row align-items-center">
+              <div class="col-auto pr-0">
+                <img
+                  src="../../../../assets/img/woo-logo.png"
+                  alt="WooCommerce"
+                  class="img-fluid"
+                  style="max-height: 30px"
+                />
+              </div>
+              <div>
+                <p class="mb-0 h5 text-dark">WooCommerce</p>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <form [formGroup]="wooCommerceForm" (ngSubmit)="updateApplication('WooCommerce')" autocomplete="off">
+              <div class="row">
+                <div class="form-group col-md-3">
+                  <label for="key" class="control-label">Consumer key:</label>
+                  <input
+                    formControlName="key"
+                    type="number"
+                    class="form-control"
+                    name="key"
+                    id="key"
+                    [focus]="focusEvent"
+                  />
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="secret" class="control-label">Consumer secret:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="secret"
+                    name="secret"
+                    id="secret"
+                    [focus]="focusEvent"
+                  />
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtTransactionType let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="transactionType" class="control-label">Tipo de transacción:</label>
+                  <input
+                    id="transactionType"
+                    type="text"
+                    class="form-control"
+                    formControlName="transactionType"
+                    name="transactionType"
+                    [ngbTypeahead]="searchTransactionType"
+                    [resultTemplate]="rtTransactionType"
+                    [inputFormatter]="formatterTransactionType"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('transactionType').invalid &&
+                      (tiendaNubeForm.get('transactionType').dirty || tiendaNubeForm.get('transactionType').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.transactionType }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtShipmentMethod let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="shipmentMethod" class="control-label">Método de entrega:</label>
+                  <input
+                    id="shipmentMethod"
+                    type="text"
+                    class="form-control"
+                    formControlName="shipmentMethod"
+                    name="shipmentMethod"
+                    [ngbTypeahead]="searchpShipmentMethod"
+                    [resultTemplate]="rtShipmentMethod"
+                    [inputFormatter]="formatterShipmentMethod"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('shipmentMethod').invalid &&
+                      (tiendaNubeForm.get('shipmentMethod').dirty || tiendaNubeForm.get('shipmentMethod').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.shipmentMethod }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtPaymentMethod let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="paymentMethod" class="control-label">Método de pago:</label>
+                  <input
+                    id="paymentMethod"
+                    type="text"
+                    class="form-control"
+                    formControlName="paymentMethod"
+                    name="paymentMethod"
+                    [ngbTypeahead]="searchPaymentMethod"
+                    [resultTemplate]="rtPaymentMethod"
+                    [inputFormatter]="formatterPaymentMethod"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('paymentMethod').invalid &&
+                      (tiendaNubeForm.get('paymentMethod').dirty || tiendaNubeForm.get('paymentMethod').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.paymentMethod }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtCompany let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="company" class="control-label">Cliente:</label>
+                  <input
+                    id="company"
+                    type="text"
+                    class="form-control"
+                    formControlName="company"
+                    name="company"
+                    [ngbTypeahead]="searchCompany"
+                    [resultTemplate]="rtCompany"
+                    [inputFormatter]="formatterCompany"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('company').invalid &&
+                      (tiendaNubeForm.get('company').dirty || tiendaNubeForm.get('company').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.company }}
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <ng-template #rtArticles let-r="result" let-t="term">
+                    <ngb-highlight [result]="r.description" [term]="t"> </ngb-highlight>
+                  </ng-template>
+                  <label for="article" class="control-label">artículo default:</label>
+                  <input
+                    id="article"
+                    type="text"
+                    class="form-control"
+                    formControlName="article"
+                    name="article"
+                    [ngbTypeahead]="searchArticle"
+                    [resultTemplate]="rtArticles"
+                    [inputFormatter]="formatterArticles"
+                  />
+                  <div
+                    *ngIf="
+                      tiendaNubeForm.get('article').invalid &&
+                      (tiendaNubeForm.get('article').dirty || tiendaNubeForm.get('article').touched)
+                    "
+                    class="alert alert-danger"
+                  >
+                    {{ formErrors.article }}
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
+                <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
+                <span *ngIf="!loading">Enviar</span>
+                <span *ngIf="loading">Espere por favor</span>
+              </button>
+            </form>
+          </ng-template>
+        </ngb-panel>
+      </ngb-accordion>
+    </div>
+  </div>
 </section>

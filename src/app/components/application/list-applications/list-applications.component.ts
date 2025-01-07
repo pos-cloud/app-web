@@ -1,15 +1,10 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiResponse } from '@types';
 import { CompanyService } from 'app/core/services/company.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable, Subscription } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { ApplicationService } from '../../../core/services/application.service';
 import { ArticleService } from '../../../core/services/article.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
@@ -28,6 +23,7 @@ import { Application, ApplicationType } from '../application.model';
   templateUrl: './list-applications.component.html',
   styleUrls: ['./list-applications.component.scss'],
   providers: [TranslateMePipe],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ListApplicationsComponent implements OnInit {
   private subscription: Subscription = new Subscription();
@@ -35,6 +31,7 @@ export class ListApplicationsComponent implements OnInit {
   public applications: Application[];
   tiendaNubeForm: FormGroup;
   cartaDigitalForm: FormGroup;
+  wooCommerceForm: FormGroup;
   loading: boolean = false;
   transactionTypes: TransactionType[];
   shipmentMethods: ShipmentMethod[];
@@ -96,11 +93,11 @@ export class ListApplicationsComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => null),
       switchMap((term) =>
-        this.getTransactionTypes(
-          `where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`
-        ).then((transactionTypes) => {
-          return transactionTypes;
-        })
+        this.getTransactionTypes(`where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`).then(
+          (transactionTypes) => {
+            return transactionTypes;
+          }
+        )
       ),
       tap(() => null)
     );
@@ -115,11 +112,11 @@ export class ListApplicationsComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => null),
       switchMap((term) =>
-        this.getPaymentMethod(
-          `where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`
-        ).then((paymentMethod) => {
-          return paymentMethod;
-        })
+        this.getPaymentMethod(`where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`).then(
+          (paymentMethod) => {
+            return paymentMethod;
+          }
+        )
       ),
       tap(() => null)
     );
@@ -134,11 +131,11 @@ export class ListApplicationsComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => null),
       switchMap((term) =>
-        this.getShipmentMethod(
-          `where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`
-        ).then((shipmentMethods) => {
-          return shipmentMethods;
-        })
+        this.getShipmentMethod(`where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`).then(
+          (shipmentMethods) => {
+            return shipmentMethods;
+          }
+        )
       ),
       tap(() => null)
     );
@@ -180,8 +177,6 @@ export class ListApplicationsComponent implements OnInit {
       article: ['', [Validators.required]],
     });
 
-    this.focusEvent.emit(true);
-
     this.cartaDigitalForm = this.fb.group({
       portain: [''],
       background: [''],
@@ -214,6 +209,16 @@ export class ListApplicationsComponent implements OnInit {
         weight: [''],
       }),
     });
+
+    this.wooCommerceForm = this.fb.group({
+      key: [0, [Validators.required]],
+      secret: ['', [Validators.required]],
+      transactionType: ['', [Validators.required]],
+      shipmentMethod: ['', [Validators.required]],
+      paymentMethod: ['', [Validators.required]],
+      company: ['', [Validators.required]],
+      article: ['', [Validators.required]],
+    });
   }
 
   public getAllApplication() {
@@ -235,6 +240,18 @@ export class ListApplicationsComponent implements OnInit {
       'tiendaNube.company.name': 1,
       'tiendaNube.article._id': 1,
       'tiendaNube.article.description': 1,
+      'wooCommerce.key': 1,
+      'wooCommerce.secret': 1,
+      'wooCommerce.transactionType._id': 1,
+      'wooCommerce.transactionType.name': 1,
+      'wooCommerce.shipmentMethod.name': 1,
+      'wooCommerce.shipmentMethod._id': 1,
+      'wooCommerce.paymentMethod.name': 1,
+      'wooCommerce.paymentMethod._id': 1,
+      'wooCommerce.company._id': 1,
+      'wooCommerce.company.name': 1,
+      'wooCommerce.article._id': 1,
+      'wooCommerce.article.description': 1,
       'menu.portain': 1,
       'menu.background': 1,
       'menu.article.font': 1,
@@ -266,17 +283,13 @@ export class ListApplicationsComponent implements OnInit {
         .subscribe((result) => {
           if (result.status === 200) {
             this.applications = result.result;
-            const tiendaNubeApplications = this.applications.find(
-              (app) => app.type === ApplicationType.TiendaNube
-            );
-            const cartaDigitalApplications = this.applications.find(
-              (app) => app.type === ApplicationType.Menu
-            );
+            const tiendaNubeApplications = this.applications.find((app) => app.type === ApplicationType.TiendaNube);
+            const cartaDigitalApplications = this.applications.find((app) => app.type === ApplicationType.Menu);
+            const wooCommerce = this.applications.find((app) => app.type === ApplicationType.WooCommerce);
 
-            this.setValuesForm(
-              tiendaNubeApplications,
-              cartaDigitalApplications
-            );
+            console.log(wooCommerce);
+
+            this.setValuesForm(tiendaNubeApplications, cartaDigitalApplications, wooCommerce.wooCommerce);
           }
         })
     );
@@ -357,11 +370,11 @@ export class ListApplicationsComponent implements OnInit {
     });
   }
 
-  setValuesForm(tiendaNube, cartaDigital) {
+  setValuesForm(tiendaNube, cartaDigital, wooCommerce) {
     let tn = tiendaNube.tiendaNube;
     let menu = cartaDigital.menu;
 
-    const formDataTn = {
+    this.tiendaNubeForm.patchValue({
       userId: tn?.userId,
       token: tn?.token,
       transactionType: tn?.transactionType,
@@ -369,11 +382,9 @@ export class ListApplicationsComponent implements OnInit {
       paymentMethod: tn?.paymentMethod,
       company: tn?.company,
       article: tn?.article,
-    };
+    });
 
-    this.tiendaNubeForm.patchValue(formDataTn);
-
-    const formData = {
+    this.cartaDigitalForm.patchValue({
       portain: menu?.portain,
       background: menu?.background,
       article: menu?.article
@@ -412,42 +423,46 @@ export class ListApplicationsComponent implements OnInit {
             weight: menu?.observation.weight,
           }
         : {},
-    };
-    this.cartaDigitalForm.patchValue(formData);
+    });
+
+    this.wooCommerceForm.patchValue({
+      key: wooCommerce?.key,
+      secret: wooCommerce?.secret,
+      transactionType: wooCommerce?.transactionType,
+      shipmentMethod: wooCommerce?.shipmentMethod,
+      paymentMethod: wooCommerce?.paymentMethod,
+      company: wooCommerce?.company,
+      article: wooCommerce?.article,
+    });
   }
 
   generateWebhook() {
     this.loading = true;
 
     if (this.tiendaNubeForm.value.userId && this.tiendaNubeForm.value.token) {
-      this._service
-        .createWebhookTn(
-          this.tiendaNubeForm.value.userId,
-          this.tiendaNubeForm.value.token
-        )
-        .subscribe(
-          (result: ApiResponse) => {
-            if (result.status == 200) {
-              this._toastService.showToast({
-                type: 'success',
-                message: 'Los webhooks se han creado con éxito.',
-              });
-              this.loading = false;
-            } else {
-              this._toastService.showToast({
-                type: 'danger',
-                message: result.result,
-              });
-              this.loading = false;
-            }
-          },
-          (error) => {
+      this._service.createWebhookTn(this.tiendaNubeForm.value.userId, this.tiendaNubeForm.value.token).subscribe(
+        (result: ApiResponse) => {
+          if (result.status == 200) {
+            this._toastService.showToast({
+              type: 'success',
+              message: 'Los webhooks se han creado con éxito.',
+            });
+            this.loading = false;
+          } else {
             this._toastService.showToast({
               type: 'danger',
-              message: 'Error al crear los webhooks.',
+              message: result.result,
             });
+            this.loading = false;
           }
-        );
+        },
+        (error) => {
+          this._toastService.showToast({
+            type: 'danger',
+            message: 'Error al crear los webhooks.',
+          });
+        }
+      );
     } else {
       this._toastService.showToast({
         type: 'info',
@@ -462,17 +477,14 @@ export class ListApplicationsComponent implements OnInit {
     let formData = {};
 
     if (type === ApplicationType.TiendaNube) {
-      if (!this.tiendaNubeForm.valid) {
-        return this._toastService.showToast({
-          message: 'Revisa los errores en el formulario.',
-        });
-      }
-
       formData = this.tiendaNubeForm.value;
       application.tiendaNube = { ...application.tiendaNube, ...formData };
     } else if (type === ApplicationType.Menu) {
       formData = this.cartaDigitalForm.value;
       application.menu = { ...application.menu, ...formData };
+    } else if (type === ApplicationType.WooCommerce) {
+      formData = this.wooCommerceForm.value;
+      application.wooCommerce = { ...application.wooCommerce, ...formData };
     }
 
     this.subscription.add(
@@ -501,11 +513,7 @@ export class ListApplicationsComponent implements OnInit {
         (result) => {
           if (!result.result) {
             if (result.message && result.message !== '')
-              this._toastService.showToast(
-                null,
-                'denger',
-                'Error al sincronizar los artículos.'
-              );
+              this._toastService.showToast(null, 'denger', 'Error al sincronizar los artículos.');
             this.loading = false;
             resolve(null);
           } else {
