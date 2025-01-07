@@ -32,6 +32,7 @@ export class ImportComponent implements OnInit {
   alertMessage: string = '';
   countNotUpdate: number;
   countUpdate: number;
+  messageImport: string;
   notUpdate: string[];
   update: string[];
   errorMessage: string;
@@ -40,6 +41,7 @@ export class ImportComponent implements OnInit {
   public importForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+
   dropdownSettings = {
     singleSelection: true,
     defaultOpen: false,
@@ -120,6 +122,7 @@ export class ImportComponent implements OnInit {
               this.countNotUpdate = response.result.countNotUpdate;
               this.countUpdate = response.result.countUpdate;
               this.notUpdate = response.result.notUpdateArticle;
+              this.messageImport = response.result.menssage;
               this.update = response.result.updateArticle;
               this.loading = false;
             } else {
