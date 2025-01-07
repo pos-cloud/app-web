@@ -13,24 +13,16 @@ export class ImportService {
     public _authService: AuthService
   ) {}
 
-  public importStock(
-    file: File,
-    depositId: string,
-    branchId: string,
-    updatePrice: boolean
-  ): Observable<any> {
+  public importStock(file: File, depositId: string, branchId: string, transactiontypeId: string): Observable<any> {
     const URL = `${environment.apiv2}/article-stocks/import-excel`;
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('depositId', depositId);
     formData.append('branchId', branchId);
-    formData.append('updatePrice', String(updatePrice));
+    formData.append('transactiontypeId', transactiontypeId);
 
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      this._authService.getToken()
-    );
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
 
     return this._http
       .post(URL, formData, {
@@ -52,10 +44,7 @@ export class ImportService {
     const formData = new FormData();
     formData.append('file', file);
 
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      this._authService.getToken()
-    );
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
 
     return this._http
       .post(URL, formData, {
@@ -77,10 +66,7 @@ export class ImportService {
     const formData = new FormData();
     formData.append('file', file);
 
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      this._authService.getToken()
-    );
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
 
     return this._http
       .post(URL, formData, {

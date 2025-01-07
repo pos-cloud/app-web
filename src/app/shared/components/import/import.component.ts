@@ -1,16 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from 'app/components/branch/branch';
 import { Deposit } from 'app/components/deposit/deposit';
+import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -21,19 +17,12 @@ import { ImportService } from './import.service';
   selector: 'add-import',
   templateUrl: './import.component.html',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    TranslateModule,
-    PipesModule,
-    NgMultiSelectDropDownModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule, PipesModule, NgMultiSelectDropDownModule],
   providers: [NgbAlertConfig, TranslateMePipe, ImportService],
 })
 export class ImportComponent implements OnInit {
   @Input() branches: Branch[];
-  @Input() allDeposits: any[];
+  @Input() allDeposits: Deposit[];
   @Input() model: string;
   @Input() title: string;
   branchesSelected: Branch[] = new Array();
@@ -46,6 +35,8 @@ export class ImportComponent implements OnInit {
   notUpdate: string[];
   update: string[];
   errorMessage: string;
+  transactionTypes: TransactionType[];
+  transactionTypesSelect;
   public importForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -63,6 +54,7 @@ export class ImportComponent implements OnInit {
 
   constructor(
     public _excelUpdateService: ImportService,
+    public _transactionTypeService: TransactionTypeService,
     public _fb: UntypedFormBuilder,
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal,
@@ -72,6 +64,10 @@ export class ImportComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
+
+    if (this.model === 'articles-stock') {
+      this.getTransactionTypes();
+    }
   }
 
   public buildForm(): void {
@@ -85,9 +81,7 @@ export class ImportComponent implements OnInit {
 
   onBranchSelect(branch: Branch) {
     const branchId = branch._id;
-    const filteredDeposits = this.allDeposits.filter(
-      (deposit) => deposit.branch === branchId
-    );
+    const filteredDeposits = this.allDeposits.filter((deposit) => deposit.branch.toString() === branchId);
 
     const uniqueDepositIds = new Set<string>();
 
@@ -108,9 +102,7 @@ export class ImportComponent implements OnInit {
 
   public import(): void {
     if (this.importForm.valid) {
-      const inputElement: HTMLInputElement = document.getElementById(
-        'fileInput'
-      ) as HTMLInputElement;
+      const inputElement: HTMLInputElement = document.getElementById('fileInput') as HTMLInputElement;
       const file: File = inputElement.files[0]; // Obtener el primer archivo seleccionado
 
       this.loading = true;
@@ -121,7 +113,7 @@ export class ImportComponent implements OnInit {
             file,
             this.depositsSelected[0]._id,
             this.branchesSelected[0]._id,
-            this.selectedValuePrice
+            this.transactionTypesSelect[0]._id
           )
           .subscribe((response) => {
             if (response.status == 200) {
@@ -182,5 +174,36 @@ export class ImportComponent implements OnInit {
     } else {
       console.warn('No URL found for the specified model');
     }
+  }
+
+  public getTransactionTypes() {
+    let match = {};
+
+    match = {
+      transactionMovement: TransactionMovement.Stock,
+      operationType: { $ne: 'D' },
+    };
+
+    this._transactionTypeService
+      .getAll({
+        project: {
+          _id: 1,
+          transactionMovement: 1,
+          requestArticles: 1,
+          operationType: 1,
+          name: 1,
+          branch: 1,
+        },
+        match: match,
+      })
+      .subscribe(
+        (result) => {
+          if (result) {
+            this.transactionTypes = result.result;
+          } else {
+          }
+        },
+        (error) => {}
+      );
   }
 }

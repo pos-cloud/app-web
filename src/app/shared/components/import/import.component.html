@@ -1,11 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">{{ title }}</h4>
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    (click)="activeModal.dismiss('close_click')"
-  >
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
@@ -37,51 +32,29 @@
     </div>
     <div class="col-md-3">
       <label for="updatePrice" class="control-label">
-        <b>Sumar al stock exitente</b>
+        <b>Tipo de transaccion</b>
       </label>
-      <select class="form-control" [(ngModel)]="selectedValuePrice">
-        <option [value]="false">No</option>
-        <option [value]="true">Si</option>
-      </select>
+      <ng-multiselect-dropdown
+        [placeholder]="'transaction-type' | translate"
+        [settings]="dropdownSettings"
+        [data]="transactionTypes"
+        [(ngModel)]="transactionTypesSelect"
+      ></ng-multiselect-dropdown>
     </div>
   </div>
-  <form
-    [formGroup]="importForm"
-    (ngSubmit)="import()"
-    autocomplete="off"
-    class="d-inline"
-  >
+  <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" class="d-inline">
     <div class="modal-body" class="d-inline">
       <div class="row">
         <div class="form-group col-md-12">
           <label for="file" class="control-label">Archivo:</label>
-          <input
-            type="file"
-            class="form-control"
-            formControlName="file"
-            id="fileInput"
-            accept=".xls,.xlsx"
-          />
+          <input type="file" class="form-control" formControlName="file" id="fileInput" accept=".xls,.xlsx" />
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button
-        type="button"
-        class="btn btn-light"
-        (click)="activeModal.close('cancel')"
-      >
-        Cancelar
-      </button>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="!importForm.valid || loading"
-      >
-        <i
-          class="fa"
-          [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-        ></i>
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!importForm.valid || loading">
+        <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
         <span *ngIf="!loading">Importar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
@@ -90,10 +63,8 @@
   <div class="container" *ngIf="notUpdate?.length > 0 || update?.length > 0">
     <p>
       <span class="font-weight-bold"
-        >{{ countUpdate }} {{ model === 'company' ? 'empresa' : 'artículo'
-        }}<span *ngIf="countUpdate !== 1">s</span>
-        {{ model === 'company' ? 'actualizada' : 'actualizado'
-        }}<span *ngIf="countUpdate !== 1">s</span>:
+        >{{ countUpdate }} {{ model === 'company' ? 'empresa' : 'artículo' }}<span *ngIf="countUpdate !== 1">s</span>
+        {{ model === 'company' ? 'actualizada' : 'actualizado' }}<span *ngIf="countUpdate !== 1">s</span>:
       </span>
 
       <ng-container *ngFor="let article of update; let last = last">
@@ -104,8 +75,7 @@
     <p>
       <span class="font-weight-bold"
         >{{ countNotUpdate }} {{ model === 'company' ? 'empresa' : 'artículo'
-        }}<span *ngIf="countNotUpdate !== 1">s</span> no
-        {{ model === 'company' ? 'actualizada' : 'actualizado'
+        }}<span *ngIf="countNotUpdate !== 1">s</span> no {{ model === 'company' ? 'actualizada' : 'actualizado'
         }}<span *ngIf="countNotUpdate !== 1">s</span>:
       </span>
       <ng-container *ngFor="let article of notUpdate; let last = last">
