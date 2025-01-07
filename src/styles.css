@@ -427,7 +427,6 @@ td {
 }
 
 .scroll {
-  max-height: 75vh !important;
   overflow-y: scroll;
 }
 

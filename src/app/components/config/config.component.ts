@@ -1,15 +1,5 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { User } from 'app/components/user/user';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -35,20 +25,13 @@ import { CurrencyService } from 'app/core/services/currency.service';
 import { FileService } from 'app/core/services/file.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable, Subscription } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  first,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
 import { AccountService } from '../../core/services/account.service';
 import { Account } from '../account/account';
 
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
-  styleUrls: ['./config.component.scss'],
   providers: [NgbAlertConfig, DateFormatPipe],
   encapsulation: ViewEncapsulation.None,
 })
@@ -260,10 +243,7 @@ export class ConfigComponent implements OnInit {
       companyName: [this.config['companyName'], [Validators.required]],
       companyFantasyName: [this.config['companyFantasyName'], []],
       companyIdentificationType: [this.config['companyIdentificationType'], []],
-      companyIdentificationValue: [
-        this.config['companyIdentificationValue'],
-        [],
-      ],
+      companyIdentificationValue: [this.config['companyIdentificationValue'], []],
       companyVatCondition: [this.config['companyVatCondition'], []],
       companyStartOfActivity: ['', [this.validateDate()]],
       companyGrossIncome: [this.config['companyGrossIncome'], []],
@@ -278,9 +258,7 @@ export class ConfigComponent implements OnInit {
       currency: [this.config['currency'], []],
     });
 
-    this.configFormCompany.valueChanges.subscribe((data) =>
-      this.onValueChangedCompany(data)
-    );
+    this.configFormCompany.valueChanges.subscribe((data) => this.onValueChangedCompany(data));
     this.onValueChangedCompany();
     this.focusEvent.emit(true);
   }
@@ -313,9 +291,7 @@ export class ConfigComponent implements OnInit {
       emailPort: [this.config['emailPort'], []],
     });
 
-    this.configFormEmail.valueChanges.subscribe((data) =>
-      this.onValueChangedEmail(data)
-    );
+    this.configFormEmail.valueChanges.subscribe((data) => this.onValueChangedEmail(data));
     this.onValueChangedEmail();
     this.focusEvent.emit(true);
   }
@@ -357,76 +333,34 @@ export class ConfigComponent implements OnInit {
     }
     this.configFormSystem = this._fb.group({
       _id: [this.config._id, [Validators.required]],
-      'article.code.validators.maxLength': [
-        this.config.article.code.validators.maxLength,
-        [],
-      ],
-      'article.salesAccount.default': [
-        this.config.article.salesAccount.default,
-        [],
-      ],
-      'article.purchaseAccount.default': [
-        this.config.article.purchaseAccount.default,
-        [],
-      ],
+      'article.code.validators.maxLength': [this.config.article.code.validators.maxLength, []],
+      'article.salesAccount.default': [this.config.article.salesAccount.default, []],
+      'article.purchaseAccount.default': [this.config.article.purchaseAccount.default, []],
       'article.isWeigth.default': [this.config.article.isWeigth.default, []],
-      'article.allowSaleWithoutStock.default': [
-        this.config.article.allowSaleWithoutStock.default || false,
-        [],
-      ],
-      'company.vatCondition.default': [
-        this.config.company.vatCondition.default,
-        [],
-      ],
+      'article.allowSaleWithoutStock.default': [this.config.article.allowSaleWithoutStock.default || false, []],
+      'company.vatCondition.default': [this.config.company.vatCondition.default, []],
       // 'company.allowCurrentAccount.default': [this.config.company.allowCurrentAccount.default, []],
-      'company.allowCurrentAccountProvider.default': [
-        this.config.company.allowCurrentAccountProvider.default,
-        [],
-      ],
-      'company.allowCurrentAccountClient.default': [
-        this.config.company.allowCurrentAccountClient.default,
-        [],
-      ],
-      'company.accountClient.default': [
-        this.config.company.accountClient.default,
-        [],
-      ],
-      'company.accountProvider.default': [
-        this.config.company.accountProvider.default,
-        [],
-      ],
+      'company.allowCurrentAccountProvider.default': [this.config.company.allowCurrentAccountProvider.default, []],
+      'company.allowCurrentAccountClient.default': [this.config.company.allowCurrentAccountClient.default, []],
+      'company.accountClient.default': [this.config.company.accountClient.default, []],
+      'company.accountProvider.default': [this.config.company.accountProvider.default, []],
       'cashBox.perUser': [this.config.cashBox.perUser, []],
       'reports.summaryOfAccounts.detailsPaymentMethod': [
         this.config.reports.summaryOfAccounts.detailsPaymentMethod,
         [],
       ],
-      'reports.summaryOfAccounts.invertedViewClient': [
-        this.config.reports.summaryOfAccounts.invertedViewClient,
-        [],
-      ],
+      'reports.summaryOfAccounts.invertedViewClient': [this.config.reports.summaryOfAccounts.invertedViewClient, []],
       'reports.summaryOfAccounts.invertedViewProvider': [
         this.config.reports.summaryOfAccounts.invertedViewProvider,
         [],
       ],
       'tradeBalance.codePrefix': [this.config.tradeBalance.codePrefix, []],
       'tradeBalance.numberOfCode': [this.config.tradeBalance.numberOfCode, []],
-      'tradeBalance.numberOfQuantity': [
-        this.config.tradeBalance.numberOfQuantity,
-        [],
-      ],
-      'tradeBalance.numberOfIntegers': [
-        this.config.tradeBalance.numberOfIntegers,
-        [],
-      ],
-      'tradeBalance.numberOfDecimals': [
-        this.config.tradeBalance.numberOfDecimals,
-        [],
-      ],
+      'tradeBalance.numberOfQuantity': [this.config.tradeBalance.numberOfQuantity, []],
+      'tradeBalance.numberOfIntegers': [this.config.tradeBalance.numberOfIntegers, []],
+      'tradeBalance.numberOfDecimals': [this.config.tradeBalance.numberOfDecimals, []],
       'voucher.readingLimit': [this.config.voucher.readingLimit, []],
-      'voucher.minutesOfExpiration': [
-        this.config.voucher.minutesOfExpiration,
-        [],
-      ],
+      'voucher.minutesOfExpiration': [this.config.voucher.minutesOfExpiration, []],
       'twilio.senderNumber': [this.config.twilio.senderNumber, []],
       'twilio.accountSid': [this.config.twilio.accountSid, []],
       'twilio.authToken': [this.config.twilio.authToken, []],
@@ -436,9 +370,7 @@ export class ConfigComponent implements OnInit {
       'tiendaNube.clientSecret': [this.config.tiendaNube.clientSecret, []],
     });
 
-    this.configFormSystem.valueChanges.subscribe((data) =>
-      this.onValueChangedSystem(data)
-    );
+    this.configFormSystem.valueChanges.subscribe((data) => this.onValueChangedSystem(data));
     this.onValueChangedSystem();
     this.focusEvent.emit(true);
   }
@@ -466,11 +398,7 @@ export class ConfigComponent implements OnInit {
     return function (input: UntypedFormControl) {
       let dateValid = false;
       let date;
-      if (
-        input.parent &&
-        input.parent.controls &&
-        input.parent.controls['companyStartOfActivity'].value
-      ) {
+      if (input.parent && input.parent.controls && input.parent.controls['companyStartOfActivity'].value) {
         date = input.parent.controls['companyStartOfActivity'].value;
         if (moment(date, 'DD/MM/YYYY', true).isValid()) {
           dateValid = true;
@@ -563,46 +491,37 @@ export class ConfigComponent implements OnInit {
   public generateCRS() {
     this.loading = true;
 
-    this._configService
-      .generateCRS(
-        this.config['companyName'],
-        this.config['companyIdentificationValue']
-      )
-      .subscribe(
-        (blob: Blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'poscloud.csr';
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
+    this._configService.generateCRS(this.config['companyName'], this.config['companyIdentificationValue']).subscribe(
+      (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'poscloud.csr';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
 
-          this.loading = false;
-        },
-        (error) => {
-          this._toastService.showToast({
-            message: error._body,
-            type: 'danger',
-          });
-          this.loading = false;
-        }
-      );
+        this.loading = false;
+      },
+      (error) => {
+        this._toastService.showToast({
+          message: error._body,
+          type: 'danger',
+        });
+        this.loading = false;
+      }
+    );
   }
 
   async addConfigCompany() {
     this.loadingCompany = true;
 
     this.config = this.configFormCompany.value;
-    this.config['companyStartOfActivity'] = moment(
-      this.config['companyStartOfActivity'],
-      'DD/MM/YYYY'
-    ).format('YYYY-MM-DDTHH:mm:ssZ');
-    if (this.filesToUpload)
-      this.config['companyPicture'] = await this.uploadFile(
-        this.config['companyPicture']
-      );
+    this.config['companyStartOfActivity'] = moment(this.config['companyStartOfActivity'], 'DD/MM/YYYY').format(
+      'YYYY-MM-DDTHH:mm:ssZ'
+    );
+    if (this.filesToUpload) this.config['companyPicture'] = await this.uploadFile(this.config['companyPicture']);
 
     await this.updateConfig().then((config) => {
       if (config) {
@@ -690,11 +609,9 @@ export class ConfigComponent implements OnInit {
     if (!this.config['emailPassword']) this.config['emailPassword'] = '';
     if (!this.config['emailHost']) this.config['emailHost'] = '';
     if (!this.config['emailPort']) this.config['emailPort'] = '';
-    if (!this.config['companyPicture'])
-      this.config['companyPicture'] = 'default.jpg';
+    if (!this.config['companyPicture']) this.config['companyPicture'] = 'default.jpg';
     if (!this.config['companyName']) this.config['companyName'] = '';
-    if (!this.config['companyFantasyName'])
-      this.config['companyFantasyName'] = '';
+    if (!this.config['companyFantasyName']) this.config['companyFantasyName'] = '';
 
     let companyVatCondition;
     if (!this.config['companyVatCondition']) {
@@ -712,25 +629,19 @@ export class ConfigComponent implements OnInit {
       companyIdentificationType = null;
     } else {
       if (this.config['companyIdentificationType']._id) {
-        companyIdentificationType =
-          this.config['companyIdentificationType']._id;
+        companyIdentificationType = this.config['companyIdentificationType']._id;
       } else {
         companyIdentificationType = this.config['companyIdentificationType'];
       }
     }
 
-    if (!this.config['companyIdentificationValue'])
-      this.config['companyIdentificationValue'] = '';
+    if (!this.config['companyIdentificationValue']) this.config['companyIdentificationValue'] = '';
     if (!this.config['companyStartOfActivity'])
-      this.config['companyStartOfActivity'] = moment().format(
-        'YYYY-MM-DDTHH:mm:ssZ'
-      );
-    if (!this.config['companyGrossIncome'])
-      this.config['companyGrossIncome'] = '';
+      this.config['companyStartOfActivity'] = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = '';
     if (!this.config['companyAddress']) this.config['companyAddress'] = '';
     if (!this.config['companyPhone']) this.config['companyPhone'] = '';
-    if (!this.config['companyPostalCode'])
-      this.config['companyPostalCode'] = '';
+    if (!this.config['companyPostalCode']) this.config['companyPostalCode'] = '';
     if (!this.config['footerInvoice']) this.config['footerInvoice'] = '';
     if (!this.config['country']) this.config['country'] = 'AR';
     if (!this.config['latitude']) this.config['latitude'] = '';
@@ -748,38 +659,26 @@ export class ConfigComponent implements OnInit {
       }
     }
 
-    if (this.config.article.code.validators.maxLength === undefined)
-      this.config.article.code.validators.maxLength = 10;
-    if (this.config.article.isWeigth.default === undefined)
-      this.config.article.isWeigth.default = false;
+    if (this.config.article.code.validators.maxLength === undefined) this.config.article.code.validators.maxLength = 10;
+    if (this.config.article.isWeigth.default === undefined) this.config.article.isWeigth.default = false;
     // if (this.config.company.allowCurrentAccount.default === undefined) this.config.company.allowCurrentAccount.default = false;
 
     if (this.config.company.allowCurrentAccountProvider.default === undefined)
       this.config.company.allowCurrentAccountProvider.default = false;
     if (this.config.company.allowCurrentAccountClient.default === undefined)
       this.config.company.allowCurrentAccountClient.default = false;
-    if (this.config.cashBox.perUser === undefined)
-      this.config.cashBox.perUser = false;
+    if (this.config.cashBox.perUser === undefined) this.config.cashBox.perUser = false;
     if (this.config.reports.summaryOfAccounts.invertedViewClient === undefined)
       this.config.reports.summaryOfAccounts.invertedViewClient = false;
-    if (
-      this.config.reports.summaryOfAccounts.invertedViewProvider === undefined
-    )
+    if (this.config.reports.summaryOfAccounts.invertedViewProvider === undefined)
       this.config.reports.summaryOfAccounts.invertedViewProvider = false;
-    if (this.config.tradeBalance.codePrefix === undefined)
-      this.config.tradeBalance.codePrefix = 0;
-    if (this.config.tradeBalance.numberOfCode === undefined)
-      this.config.tradeBalance.numberOfCode = 4;
-    if (this.config.tradeBalance.numberOfQuantity === undefined)
-      this.config.tradeBalance.numberOfQuantity = 2;
-    if (this.config.tradeBalance.numberOfIntegers === undefined)
-      this.config.tradeBalance.numberOfIntegers = 3;
-    if (this.config.tradeBalance.numberOfDecimals === undefined)
-      this.config.tradeBalance.numberOfDecimals = 2;
-    if (this.config.voucher.readingLimit === undefined)
-      this.config.voucher.readingLimit = 0;
-    if (this.config.voucher.minutesOfExpiration === undefined)
-      this.config.voucher.minutesOfExpiration = 720;
+    if (this.config.tradeBalance.codePrefix === undefined) this.config.tradeBalance.codePrefix = 0;
+    if (this.config.tradeBalance.numberOfCode === undefined) this.config.tradeBalance.numberOfCode = 4;
+    if (this.config.tradeBalance.numberOfQuantity === undefined) this.config.tradeBalance.numberOfQuantity = 2;
+    if (this.config.tradeBalance.numberOfIntegers === undefined) this.config.tradeBalance.numberOfIntegers = 3;
+    if (this.config.tradeBalance.numberOfDecimals === undefined) this.config.tradeBalance.numberOfDecimals = 2;
+    if (this.config.voucher.readingLimit === undefined) this.config.voucher.readingLimit = 0;
+    if (this.config.voucher.minutesOfExpiration === undefined) this.config.voucher.minutesOfExpiration = 720;
     // if (!this.config.twilio) {
     //   this.config.twilio = {
     //     senderNumber: '',
@@ -826,10 +725,9 @@ export class ConfigComponent implements OnInit {
       companyIdentificationType: companyIdentificationType,
       companyIdentificationValue: this.config['companyIdentificationValue'],
       companyVatCondition: companyVatCondition,
-      companyStartOfActivity: moment(
-        this.config['companyStartOfActivity'],
-        'YYYY-MM-DDTHH:mm:ssZ'
-      ).format('DD/MM/YYYY'),
+      companyStartOfActivity: moment(this.config['companyStartOfActivity'], 'YYYY-MM-DDTHH:mm:ssZ').format(
+        'DD/MM/YYYY'
+      ),
       companyGrossIncome: this.config['companyGrossIncome'],
       companyPostalCode: this.config['companyPostalCode'],
       footerInvoice: this.config['footerInvoice'],
@@ -850,39 +748,26 @@ export class ConfigComponent implements OnInit {
 
     this.configFormSystem.setValue({
       _id: this.config._id,
-      'article.code.validators.maxLength':
-        this.config.article.code.validators.maxLength,
+      'article.code.validators.maxLength': this.config.article.code.validators.maxLength,
       'article.isWeigth.default': this.config.article.isWeigth.default,
       'article.salesAccount.default': this.config.article.salesAccount.default,
-      'article.purchaseAccount.default':
-        this.config.article.purchaseAccount.default,
-      'article.allowSaleWithoutStock.default':
-        this.config.article.allowSaleWithoutStock.default,
+      'article.purchaseAccount.default': this.config.article.purchaseAccount.default,
+      'article.allowSaleWithoutStock.default': this.config.article.allowSaleWithoutStock.default,
       // 'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
-      'company.allowCurrentAccountProvider.default':
-        this.config.company.allowCurrentAccountProvider.default,
-      'company.allowCurrentAccountClient.default':
-        this.config.company.allowCurrentAccountClient.default,
+      'company.allowCurrentAccountProvider.default': this.config.company.allowCurrentAccountProvider.default,
+      'company.allowCurrentAccountClient.default': this.config.company.allowCurrentAccountClient.default,
       'company.vatCondition.default': vatConfitionDefault,
-      'company.accountClient.default':
-        this.config.company.accountClient.default,
-      'company.accountProvider.default':
-        this.config.company.accountProvider.default,
+      'company.accountClient.default': this.config.company.accountClient.default,
+      'company.accountProvider.default': this.config.company.accountProvider.default,
       'cashBox.perUser': this.config.cashBox.perUser,
-      'reports.summaryOfAccounts.detailsPaymentMethod':
-        this.config.reports.summaryOfAccounts.detailsPaymentMethod,
-      'reports.summaryOfAccounts.invertedViewClient':
-        this.config.reports.summaryOfAccounts.invertedViewClient,
-      'reports.summaryOfAccounts.invertedViewProvider':
-        this.config.reports.summaryOfAccounts.invertedViewProvider,
+      'reports.summaryOfAccounts.detailsPaymentMethod': this.config.reports.summaryOfAccounts.detailsPaymentMethod,
+      'reports.summaryOfAccounts.invertedViewClient': this.config.reports.summaryOfAccounts.invertedViewClient,
+      'reports.summaryOfAccounts.invertedViewProvider': this.config.reports.summaryOfAccounts.invertedViewProvider,
       'tradeBalance.codePrefix': this.config.tradeBalance.codePrefix,
       'tradeBalance.numberOfCode': this.config.tradeBalance.numberOfCode,
-      'tradeBalance.numberOfQuantity':
-        this.config.tradeBalance.numberOfQuantity,
-      'tradeBalance.numberOfIntegers':
-        this.config.tradeBalance.numberOfIntegers,
-      'tradeBalance.numberOfDecimals':
-        this.config.tradeBalance.numberOfDecimals,
+      'tradeBalance.numberOfQuantity': this.config.tradeBalance.numberOfQuantity,
+      'tradeBalance.numberOfIntegers': this.config.tradeBalance.numberOfIntegers,
+      'tradeBalance.numberOfDecimals': this.config.tradeBalance.numberOfDecimals,
       'voucher.readingLimit': this.config.voucher.readingLimit,
       'voucher.minutesOfExpiration': this.config.voucher.minutesOfExpiration,
       // 'twilio.senderNumber': this.config.twilio.senderNumber,
@@ -896,8 +781,7 @@ export class ConfigComponent implements OnInit {
   }
 
   public setConfigurationSettings(config) {
-    if (config.emailAccount)
-      Config.setConfigEmail(config.emailAccount, config.emailPassword);
+    if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword);
     if (config.companyName) {
       Config.setConfigCompany(
         config.companyPicture,
@@ -926,23 +810,18 @@ export class ConfigComponent implements OnInit {
 
   async uploadFile(pictureDelete: string): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
-      if (
-        pictureDelete &&
-        pictureDelete.includes('https://storage.googleapis')
-      ) {
+      if (pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
         await this.deleteFile(pictureDelete);
       }
 
-      this._fileService
-        .uploadImage(MediaCategory.CONFIG, this.filesToUpload)
-        .then(
-          (result: string) => {
-            this.config['companyPicture'] = result;
-            this.imageURL = result;
-            resolve(result);
-          },
-          (error) => this._toastService.showToast({ message: error })
-        );
+      this._fileService.uploadImage(MediaCategory.CONFIG, this.filesToUpload).then(
+        (result: string) => {
+          this.config['companyPicture'] = result;
+          this.imageURL = result;
+          resolve(result);
+        },
+        (error) => this._toastService.showToast({ message: error })
+      );
     });
   }
 

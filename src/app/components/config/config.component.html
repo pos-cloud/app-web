@@ -1,34 +1,13 @@
 <section class="container-fluid" *ngIf="config">
   <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert
-      [type]="alertConfig.type"
-      [dismissible]="alertConfig.dismissible"
-      (close)="alertMessage = ''"
-    >
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
       {{ alertMessage }}
     </ngb-alert>
   </div>
 
-  <!-- COMPANY -->
   <div class="card">
-    <div class="card-header">Datos de la Empresa</div>
-    <div class="card-block">
-      <div class="card-body d-flex justify-content-between align-items-center">
-        <a
-          class="btn btn-primary btn-sm ml-auto"
-          type="button"
-          (click)="downloadBackup()"
-          value="backup"
-          >BACKUP</a
-        >
-      </div>
-    </div>
-    <div class="card-block">
-      <form
-        [formGroup]="configFormCompany"
-        (ngSubmit)="addConfigCompany()"
-        autocomplete="off"
-      >
+    <div class="card-body scroll">
+      <form [formGroup]="configFormCompany" (ngSubmit)="addConfigCompany()" autocomplete="off">
         <div class="row">
           <div class="form-group col-md-2">
             <img [src]="imageURL" height="150" width="300" />
@@ -37,11 +16,7 @@
         <div class="row">
           <div class="form-group col-md-3">
             <div class="custom-file">
-              <label
-                class="custom-file-label btn btn-action"
-                for="customFileLang"
-                >Cambiar Imagen</label
-              >
+              <label class="custom-file-label btn btn-action" for="customFileLang">Cambiar Imagen</label>
               <input
                 type="file"
                 class="custom-file-input"
@@ -53,19 +28,13 @@
             </div>
           </div>
           <div class="form-group col-md-3">
-            <label
-              class="btn btn-primary"
-              (click)="deletePicture(config['companyPicture'])"
-              >Eliminar Imagen</label
-            >
+            <label class="btn btn-primary" (click)="deletePicture(config['companyPicture'])">Eliminar Imagen</label>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Razón Social:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Razón Social:</span>
               <input
                 type="text"
                 class="form-control"
@@ -83,9 +52,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Nombre de fantasía:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Nombre de fantasía:</span>
               <input
                 type="text"
                 class="form-control"
@@ -100,9 +67,7 @@
         <div class="row">
           <div class="form-group col-md-6">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Tipo de Identificación:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Tipo de Identificación:</span>
               <select
                 class="form-control"
                 formControlName="companyIdentificationType"
@@ -114,11 +79,9 @@
                   [selected]="
                     (config['companyIdentificationType'] &&
                       config['companyIdentificationType']._id &&
-                      identificationType._id ===
-                        config['companyIdentificationType']._id) ||
+                      identificationType._id === config['companyIdentificationType']._id) ||
                     (config['companyIdentificationType'] &&
-                      identificationType._id ===
-                        config['companyIdentificationType'])
+                      identificationType._id === config['companyIdentificationType'])
                   "
                   [value]="identificationType._id"
                 >
@@ -129,9 +92,7 @@
           </div>
           <div class="form-group col-md-6">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Nro. de Identificación:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Nro. de Identificación:</span>
               <input
                 type="text"
                 class="form-control"
@@ -146,16 +107,10 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span
-                class="input-group-addon"
-                id="basic-addon1"
-                *ngIf="configFormCompany.value.country === 'AR'"
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'AR'"
                 >Condición de IVA:</span
               >
-              <span
-                class="input-group-addon"
-                id="basic-addon1"
-                *ngIf="configFormCompany.value.country !== 'AR'"
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country !== 'AR'"
                 >Régimen Fiscal:</span
               >
               <select
@@ -170,8 +125,7 @@
                     (config['companyVatCondition'] &&
                       config['companyVatCondition']._id &&
                       vatCondition._id === config['companyVatCondition']._id) ||
-                    (config['companyVatCondition'] &&
-                      vatCondition._id === config['companyVatCondition'])
+                    (config['companyVatCondition'] && vatCondition._id === config['companyVatCondition'])
                   "
                   [value]="vatCondition._id"
                 >
@@ -184,9 +138,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Fecha de inicio de actividades:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Fecha de inicio de actividades:</span>
               <input
                 type="text"
                 class="form-control"
@@ -197,10 +149,7 @@
                 aria-describedby="basic-addon1"
               />
             </div>
-            <div
-              *ngIf="formErrors.companyStartOfActivity"
-              class="alert alert-danger"
-            >
+            <div *ngIf="formErrors.companyStartOfActivity" class="alert alert-danger">
               {{ formErrors.companyStartOfActivity }}
             </div>
           </div>
@@ -208,9 +157,7 @@
         <div class="row" *ngIf="configFormCompany.value.country === 'AR'">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Ingresos Brutos:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Ingresos Brutos:</span>
               <input
                 type="text"
                 class="form-control"
@@ -248,10 +195,7 @@
                 id="country"
                 (ngModelChange)="getTimeZone($event)"
               >
-                <option
-                  *ngFor="let country of countries"
-                  [value]="country.alpha2Code"
-                >
+                <option *ngFor="let country of countries" [value]="country.alpha2Code">
                   {{ country.name }}
                 </option>
               </select>
@@ -261,9 +205,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Código Postal:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Código Postal:</span>
               <input
                 type="text"
                 class="form-control"
@@ -278,9 +220,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Dirección:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Dirección:</span>
               <input
                 type="text"
                 class="form-control"
@@ -295,15 +235,8 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Zona Horaria:</span
-              >
-              <select
-                class="form-control"
-                formControlName="timezone"
-                name="timezone"
-                id="timezone"
-              >
+              <span class="input-group-addon" id="basic-addon1">Zona Horaria:</span>
+              <select class="form-control" formControlName="timezone" name="timezone" id="timezone">
                 <option *ngFor="let timezone of timezones" [value]="timezone">
                   {{ timezone }}
                 </option>
@@ -345,18 +278,11 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Moneda:</span>
-              <select
-                class="form-control"
-                formControlName="currency"
-                name="currency"
-                id="currency"
-              >
+              <select class="form-control" formControlName="currency" name="currency" id="currency">
                 <option
                   *ngFor="let currency of currencies"
                   [selected]="
-                    (config['currency'] &&
-                      config['currency']._id &&
-                      currency._id === config['currency']._id) ||
+                    (config['currency'] && config['currency']._id && currency._id === config['currency']._id) ||
                     (config['currency'] && currency._id === config['currency'])
                   "
                   [value]="currency._id"
@@ -370,9 +296,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Pie de Impresión:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Pie de Impresión:</span>
               <input
                 type="text"
                 class="form-control"
@@ -386,11 +310,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-12">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="!configFormCompany.valid || loadingCompany"
-            >
+            <button type="submit" class="btn btn-primary" [disabled]="!configFormCompany.valid || loadingCompany">
               <i
                 class="fa"
                 [ngClass]="{
@@ -404,24 +324,27 @@
           </div>
         </div>
       </form>
-    </div>
-  </div>
 
-  <!-- EMAIL -->
-  <div class="card">
-    <div class="card-header">Email</div>
-    <div class="card-block">
-      <form
-        [formGroup]="configFormEmail"
-        (ngSubmit)="addConfigEmail()"
-        autocomplete="off"
-      >
+      <hr />
+
+      <div class="row">
+        <label class="form-group col-md-12">
+          <b>Correo</b>
+        </label>
+      </div>
+      <form [formGroup]="configFormEmail" (ngSubmit)="addConfigEmail()" autocomplete="off">
         <div class="row">
           <div class="form-group col-md-12">
+            <label for="emailAccount">Cuenta de Email:</label>
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Cuenta de Email:</span
-              >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="emailAccount"
+                name="emailAccount"
+                id="emailAccount"
+                placeholder="Ingrese su cuenta de email"
+              />
               <button
                 type="button"
                 class="btn btn-light"
@@ -430,76 +353,40 @@
               >
                 <b>?</b>
               </button>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="emailAccount"
-                name="emailAccount"
-                id="emailAccount"
-                aria-describedby="basic-addon1"
-              />
             </div>
-
-            <div *ngIf="formErrors.emailAccount" class="alert alert-danger">
+            <div *ngIf="formErrors.emailAccount" class="alert alert-danger mt-2">
               {{ formErrors.emailAccount }}
             </div>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Contraseña de Email:</span
-              >
-              <input
-                type="password"
-                class="form-control"
-                formControlName="emailPassword"
-                name="emailPassword"
-                id="emailPassword"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-            <div *ngIf="formErrors.emailPassword" class="alert alert-danger">
+            <label for="emailPassword">Contraseña de Email:</label>
+            <input
+              type="password"
+              class="form-control"
+              formControlName="emailPassword"
+              name="emailPassword"
+              id="emailPassword"
+            />
+            <div *ngIf="formErrors.emailPassword" class="alert alert-danger mt-2">
               {{ formErrors.emailPassword }}
             </div>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-md-8">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Host:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="emailHost"
-                name="emailHost"
-                id="emailHost"
-                aria-describedby="basic-addon1"
-              />
-            </div>
+            <label for="emailHost">Host:</label>
+            <input type="text" class="form-control" formControlName="emailHost" name="emailHost" id="emailHost" />
           </div>
           <div class="form-group col-md-4">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Puerto:</span>
-              <input
-                type="number"
-                class="form-control"
-                formControlName="emailPort"
-                name="emailPort"
-                id="emailPort"
-                aria-describedby="basic-addon1"
-              />
-            </div>
+            <label for="emailPort">Puerto:</label>
+            <input type="number" class="form-control" formControlName="emailPort" name="emailPort" id="emailPort" />
           </div>
         </div>
-        <div class="row">
+        <div class="row mt-3">
           <div class="form-group col-md-12">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="!configFormEmail.valid || loadingEmail"
-            >
+            <button type="submit" class="btn btn-primary" [disabled]="!configFormEmail.valid || loadingEmail">
               <i
                 class="fa"
                 [ngClass]="{
@@ -513,15 +400,14 @@
           </div>
         </div>
       </form>
-    </div>
-  </div>
 
-  <!-- AFIP -->
-  <div class="card" *ngIf="config['country'] === 'AR'">
-    <div class="card-header">
-      Generar Certificado para Factura Electrónica (AR)
-    </div>
-    <div class="card-block">
+      <hr />
+
+      <div class="row">
+        <label class="form-group col-md-12">
+          <b>AFIP</b>
+        </label>
+      </div>
       <form (ngSubmit)="generateCRS()" autocomplete="off">
         <div class="row">
           <div class="form-group col-md-6">
@@ -531,49 +417,29 @@
             </button>
           </div>
         </div>
-        <div class="row">
+        <div class="row mt-3">
           <div class="form-group col-md-6">
-            <label for="crtFile" class="form-label"
-              >Subir Certificado (CRT):</label
-            >
+            <label for="crtFile">Subir Certificado (CRT):</label>
             <div class="input-group">
-              <input
-                type="file"
-                accept=".crt"
-                class="form-control"
-                (change)="fileChangeEvent($event)"
-                placeholder="Upload file..."
-                id="crtFile"
-              />
-              <button
-                type="button"
-                class="btn btn-secondary"
-                (click)="upload()"
-              >
-                Subir
-              </button>
+              <input type="file" accept=".crt" class="form-control" (change)="fileChangeEvent($event)" id="crtFile" />
+              <button type="button" class="btn btn-secondary" (click)="upload()">Subir</button>
             </div>
           </div>
         </div>
       </form>
-    </div>
-  </div>
 
-  <!-- SYSTEM -->
-  <div class="card">
-    <div class="card-header">Sistema</div>
-    <div class="card-block">
-      <form
-        [formGroup]="configFormSystem"
-        (ngSubmit)="addConfigSystem()"
-        autocomplete="off"
-      >
+      <hr />
+
+      <div class="row">
+        <label class="form-group col-md-12">
+          <b>Sistema</b>
+        </label>
+      </div>
+      <form [formGroup]="configFormSystem" (ngSubmit)="addConfigSystem()" autocomplete="off">
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Longitud de código interno en artículo:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Longitud de código interno en artículo:</span>
               <input
                 type="number"
                 class="form-control"
@@ -589,14 +455,9 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <ng-template #rtAccounts let-r="result" let-t="term">
-                <ngb-highlight
-                  [result]="r.description"
-                  [term]="t"
-                ></ngb-highlight>
+                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
               </ng-template>
-              <label for="article.salesAccount.default"
-                >Cuenta Venta defecto de Producto:</label
-              >
+              <label for="article.salesAccount.default">Cuenta Venta defecto de Producto:</label>
               <input
                 id="article.salesAccount.default"
                 type="text"
@@ -614,14 +475,9 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <ng-template #rtAccounts let-r="result" let-t="term">
-                <ngb-highlight
-                  [result]="r.description"
-                  [term]="t"
-                ></ngb-highlight>
+                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
               </ng-template>
-              <label for="article.purchaseAccount.default"
-                >Cuenta Compra defecto de Producto:</label
-              >
+              <label for="article.purchaseAccount.default">Cuenta Compra defecto de Producto:</label>
               <input
                 id="article.purchaseAccount.default"
                 type="text"
@@ -638,16 +494,10 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span
-                class="input-group-addon"
-                id="basic-addon1"
-                *ngIf="configFormCompany.value.country === 'AR'"
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'AR'"
                 >Cóndicion de IVA defecto para las empresas:</span
               >
-              <span
-                class="input-group-addon"
-                id="basic-addon1"
-                *ngIf="configFormCompany.value.country !== 'AR'"
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country !== 'AR'"
                 >Régimen Fiscal defecto para las empresas:</span
               >
               <select
@@ -658,11 +508,7 @@
               >
                 <option
                   [ngValue]="null"
-                  [selected]="
-                    !config.company ||
-                    !config.company.vatCondition ||
-                    !config.company.vatCondition.default
-                  "
+                  [selected]="!config.company || !config.company.vatCondition || !config.company.vatCondition.default"
                 ></option>
                 <option
                   *ngFor="let vatCondition of vatConditions"
@@ -671,8 +517,7 @@
                       config.company.vatCondition &&
                       config.company.vatCondition.default &&
                       config.company.vatCondition.default._id &&
-                      vatCondition._id ===
-                        config.company.vatCondition.default._id) ||
+                      vatCondition._id === config.company.vatCondition.default._id) ||
                     (config.company &&
                       config.company.vatCondition &&
                       config.company.vatCondition.default &&
@@ -688,22 +533,21 @@
         </div>
         <div class="row">
           <!-- <div class="form-group col-md-12">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Valor defecto si permite cuenta corriente
-                                al dar de alta:</span>
-                            <select class="form-control" formControlName="company.allowCurrentAccount.default"
-                                name="company.allowCurrentAccount.default" id="company.allowCurrentAccount.default">
-                                <option value="true">Si</option>
-                                <option value="false">No</option>
-                            </select>
-                        </div>
-                    </div> -->
+                          <div class="input-group">
+                              <span class="input-group-addon" id="basic-addon1">Valor defecto si permite cuenta corriente
+                                  al dar de alta:</span>
+                              <select class="form-control" formControlName="company.allowCurrentAccount.default"
+                                  name="company.allowCurrentAccount.default" id="company.allowCurrentAccount.default">
+                                  <option value="true">Si</option>
+                                  <option value="false">No</option>
+                              </select>
+                          </div>
+                      </div> -->
 
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1"
-                >Valor defecto si permite cuenta corriente al dar de alta un
-                proveedor :</span
+                >Valor defecto si permite cuenta corriente al dar de alta un proveedor :</span
               >
               <select
                 class="form-control"
@@ -719,8 +563,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1"
-                >Valor defecto si permite cuenta corriente al dar de alta un
-                cliente :</span
+                >Valor defecto si permite cuenta corriente al dar de alta un cliente :</span
               >
               <select
                 class="form-control"
@@ -738,14 +581,9 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <ng-template #rtAccounts let-r="result" let-t="term">
-                <ngb-highlight
-                  [result]="r.description"
-                  [term]="t"
-                ></ngb-highlight>
+                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
               </ng-template>
-              <label for="company.accountClient.default"
-                >Valor Defecto de cuenta para clientes:</label
-              >
+              <label for="company.accountClient.default">Valor Defecto de cuenta para clientes:</label>
               <input
                 id="company.accountClient.default"
                 type="text"
@@ -763,14 +601,9 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <ng-template #rtAccounts let-r="result" let-t="term">
-                <ngb-highlight
-                  [result]="r.description"
-                  [term]="t"
-                ></ngb-highlight>
+                <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
               </ng-template>
-              <label for="company.accountProvider.default"
-                >Valor Defecto de cuenta para proveedores:</label
-              >
+              <label for="company.accountProvider.default">Valor Defecto de cuenta para proveedores:</label>
               <input
                 id="company.accountProvider.default"
                 type="text"
@@ -787,9 +620,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Administrar caja por usuario:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Administrar caja por usuario:</span>
               <select
                 class="form-control"
                 formControlName="cashBox.perUser"
@@ -805,9 +636,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Vista invertida en cuenta corriente de clientes:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Vista invertida en cuenta corriente de clientes:</span>
               <select
                 class="form-control"
                 formControlName="reports.summaryOfAccounts.invertedViewClient"
@@ -842,8 +671,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1"
-                >Detallar método de pago en el reporte de cuentas corrientes por
-                empresa:</span
+                >Detallar método de pago en el reporte de cuentas corrientes por empresa:</span
               >
               <select
                 class="form-control"
@@ -896,9 +724,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Prefijo del código de barra de la balanza:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Prefijo del código de barra de la balanza:</span>
               <input
                 type="number"
                 class="form-control"
@@ -914,8 +740,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1"
-                >Cantidad de digitos del código de producto para la
-                balanza:</span
+                >Cantidad de digitos del código de producto para la balanza:</span
               >
               <input
                 type="number"
@@ -932,8 +757,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1"
-                >Número de cantidad de producto del código de barra de la
-                balanza:</span
+                >Número de cantidad de producto del código de barra de la balanza:</span
               >
               <input
                 type="number"
@@ -950,8 +774,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1"
-                >Número de enteros del precio del código de barra de la
-                balanza:</span
+                >Número de enteros del precio del código de barra de la balanza:</span
               >
               <input
                 type="number"
@@ -968,8 +791,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1"
-                >Número de decimales del precio en el código de barra de la
-                balanza:</span
+                >Número de decimales del precio en el código de barra de la balanza:</span
               >
               <input
                 type="number"
@@ -985,9 +807,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Cantidad de lecturas por voucher permitidas:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Cantidad de lecturas por voucher permitidas:</span>
               <input
                 type="number"
                 class="form-control"
@@ -1002,9 +822,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Expiración del voucher (en minutos):</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Expiración del voucher (en minutos):</span>
               <input
                 type="number"
                 class="form-control"
@@ -1016,39 +834,10 @@
             </div>
           </div>
         </div>
-        <!-- <div class="row">
-                    <div class="form-group col-md-12">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Número de Twilio:</span>
-                            <input type="text" class="form-control" formControlName="twilio.senderNumber"
-                                name="twilio.senderNumber" id="twilio.senderNumber" aria-describedby="basic-addon1">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Twilio ID:</span>
-                            <input type="text" class="form-control" formControlName="twilio.accountSid"
-                                name="twilio.accountSid" id="twilio.accountSid" aria-describedby="basic-addon1">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Twilio Token:</span>
-                            <input type="text" class="form-control" formControlName="twilio.authToken"
-                                name="twilio.authToken" id="twilio.authToken" aria-describedby="basic-addon1">
-                        </div>
-                    </div>
-                </div> -->
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Tienda Nube Token:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Tienda Nube Token:</span>
               <input
                 type="text"
                 class="form-control"
@@ -1063,9 +852,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"
-                >Tienda Nube Usuario:</span
-              >
+              <span class="input-group-addon" id="basic-addon1">Tienda Nube Usuario:</span>
               <input
                 type="text"
                 class="form-control"
@@ -1079,11 +866,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-12">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="!configFormSystem.valid || loadingSystem"
-            >
+            <button type="submit" class="btn btn-primary" [disabled]="!configFormSystem.valid || loadingSystem">
               <i
                 class="fa"
                 [ngClass]="{
