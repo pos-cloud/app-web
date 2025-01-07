@@ -230,10 +230,7 @@ export class Header2Component implements OnInit {
         { label: 'Contable', children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }] },
         {
           label: 'Otros',
-          children: [
-            { label: 'Detalle de cuentas corrientes', link: 'current/Cliente' },
-            { label: 'Cumpleaños', link: 'admin/cumpleaños' },
-          ],
+          children: [{ label: 'Cumpleaños', link: 'admin/cumpleaños' }],
         },
       ],
     },
@@ -552,7 +549,7 @@ export class Header2Component implements OnInit {
         });
       }
 
-      if (user.permission.menu.content.gallery || user.permission.menu.content.resource) {
+      if (user.permission.menu.content.gallery) {
         this.menu.push({
           label: 'Contenido',
           icon: 'fa fa-image',
@@ -685,10 +682,7 @@ export class Header2Component implements OnInit {
             { label: 'Contable', children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }] },
             {
               label: 'Otros',
-              children: [
-                { label: 'Detalle de cuentas corrientes', link: 'current/Cliente' },
-                { label: 'Cumpleaños', link: 'admin/cumpleaños' },
-              ],
+              children: [{ label: 'Cumpleaños', link: 'admin/cumpleaños' }],
             },
           ],
         });

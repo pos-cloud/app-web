@@ -1,20 +1,10 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableHistory } from 'app/components/datatable/datatable-history.interface';
+import { CurrentAccountDetailsComponent } from 'app/components/print/current-account-details/current-account-details.component';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { ImportComponent } from 'app/shared/components/import/import.component';
@@ -110,20 +100,16 @@ export class ListCompaniesComponent implements OnInit {
     if (pathLocation[2] === 'clientes') {
       this.type = CompanyType.Client;
       this.subscription.add(
-        this._companyService.getClients
-          .pipe(first())
-          .subscribe(async (result) => {
-            datatableHistory = result;
-          })
+        this._companyService.getClients.pipe(first()).subscribe(async (result) => {
+          datatableHistory = result;
+        })
       );
     } else if (pathLocation[2] === 'proveedores') {
       this.type = CompanyType.Provider;
       this.subscription.add(
-        this._companyService.getProviders
-          .pipe(first())
-          .subscribe(async (result) => {
-            datatableHistory = result;
-          })
+        this._companyService.getProviders.pipe(first()).subscribe(async (result) => {
+          datatableHistory = result;
+        })
       );
     }
 
@@ -221,8 +207,7 @@ export class ListCompaniesComponent implements OnInit {
     if (this.employeeId && this.identity.permission.filterCompany) {
       match += `,"employee._id": { "$oid" : "${this.employeeId}"}`;
     }
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
 
@@ -454,12 +439,7 @@ export class ListCompaniesComponent implements OnInit {
         );
         break;
       case 'account':
-        this._router.navigateByUrl(
-          'admin/cuentas-corrientes?companyId=' +
-            company._id +
-            '&companyType=' +
-            this.type
-        );
+        this._router.navigateByUrl('admin/cuentas-corrientes?companyId=' + company._id + '&companyType=' + this.type);
         break;
       case 'account2':
         this._router.navigate(['reports/current-account', company._id]);
@@ -481,6 +461,18 @@ export class ListCompaniesComponent implements OnInit {
         );
 
         break;
+
+      case 'current':
+        modalRef = this._modalService.open(CurrentAccountDetailsComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.companyType = this.type;
+        modalRef.result.then(
+          (result) => {},
+          (reason) => {}
+        );
+        break;
       default:
     }
   }
@@ -489,11 +481,7 @@ export class ListCompaniesComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
