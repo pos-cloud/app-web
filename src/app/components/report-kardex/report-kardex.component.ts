@@ -23,7 +23,6 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 import { ArticleStock } from '../article-stock/article-stock';
-import { ListArticlesComponent } from '../article/list-articles/list-articles.component';
 import { TransactionState } from '../transaction/transaction';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 
@@ -348,21 +347,17 @@ export class ReportKardexComponent implements OnInit {
     }
 
     if (!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        async (branches) => {
-          this.branches = branches;
-          if (this.branches && this.branches.length > 1) {
-            this.branchSelectedId = this.branches[0]._id;
-          }
+      await this.getBranches({ operationType: { $ne: 'D' } }).then(async (branches) => {
+        this.branches = branches;
+        if (this.branches && this.branches.length > 1) {
+          this.branchSelectedId = this.branches[0]._id;
         }
-      );
+      });
     } else {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        async (branches) => {
-          this.branches = branches;
-          this.allowChangeBranch = true;
-        }
-      );
+      await this.getBranches({ operationType: { $ne: 'D' } }).then(async (branches) => {
+        this.branches = branches;
+        this.allowChangeBranch = true;
+      });
     }
 
     await this._authService.getIdentity.subscribe(async (identity) => {
@@ -467,8 +462,7 @@ export class ReportKardexComponent implements OnInit {
   public async getDepositsByBranch() {
     return new Promise(async (resolve, reject) => {
       if (this.branches && this.branches.length > 0) {
-        if (!this.branchSelectedId)
-          this.branchSelectedId = this.branches[0]._id;
+        if (!this.branchSelectedId) this.branchSelectedId = this.branches[0]._id;
         let query = {
           branch: { $oid: this.branchSelectedId },
           operationType: { $ne: 'D' },
@@ -523,8 +517,7 @@ export class ReportKardexComponent implements OnInit {
     this._articleService.getArticle(id).subscribe(
       (result) => {
         if (!result.article) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.articleSelected = result.article;
           this.getItems();
@@ -572,14 +565,12 @@ export class ReportKardexComponent implements OnInit {
       }
     }
 
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
 
     match = JSON.parse(match);
-    if (this.depositSelectedId)
-      match['deposit._id'] = { $oid: this.depositSelectedId };
+    if (this.depositSelectedId) match['deposit._id'] = { $oid: this.depositSelectedId };
     match['endDate'] = {
       $gte: { $date: this.startDate + 'T00:00:00' + timezone },
       $lte: { $date: this.endDate + 'T23:59:59' + timezone },
@@ -652,9 +643,7 @@ export class ReportKardexComponent implements OnInit {
               this.totalItems = result[0].count;
               this.balance = result[0].balance;
               this.currentPage = parseFloat(
-                this.roundNumber
-                  .transform(this.totalItems / this.itemsPerPage + 0.5, 0)
-                  .toFixed(0)
+                this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0)
               );
               let stock = 0;
               for (let mov of this.items) {
@@ -703,24 +692,7 @@ export class ReportKardexComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionId =
-          movementOfArticle.transaction._id;
-        break;
-      case 'article':
-        modalRef = this._modalService.open(ListArticlesComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.userType = 'report';
-        modalRef.result.then(
-          (result) => {
-            if (result.article) {
-              this.articleSelected = result.article;
-              this.getItems();
-            }
-          },
-          (reason) => {}
-        );
+        modalRef.componentInstance.transactionId = movementOfArticle.transaction._id;
         break;
       default:
     }
@@ -771,8 +743,7 @@ export class ReportKardexComponent implements OnInit {
                   type: 'success',
                 });
               } else {
-                if (result.message && result.message !== '')
-                  this.showMessage(result.message, 'info', true);
+                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
               }
             },
             (error) => {
@@ -785,29 +756,26 @@ export class ReportKardexComponent implements OnInit {
           );
         } else {
           result.articleStocks[0].realStock = this.balance;
-          this._articleStockService
-            .updateArticleStock(result.articleStocks[0])
-            .subscribe(
-              (result) => {
-                this.loading = false;
-                if (result && result.articleStock) {
-                  this._toastService.showToast({
-                    message: 'El stock se actualizó correctamente.',
-                    type: 'success',
-                  });
-                } else {
-                  if (result.message && result.message !== '')
-                    this.showMessage(result.message, 'info', true);
-                }
-              },
-              (error) => {
+          this._articleStockService.updateArticleStock(result.articleStocks[0]).subscribe(
+            (result) => {
+              this.loading = false;
+              if (result && result.articleStock) {
                 this._toastService.showToast({
-                  message: error._body,
-                  type: 'danger',
+                  message: 'El stock se actualizó correctamente.',
+                  type: 'success',
                 });
-                this.loading = false;
+              } else {
+                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
               }
-            );
+            },
+            (error) => {
+              this._toastService.showToast({
+                message: error._body,
+                type: 'danger',
+              });
+              this.loading = false;
+            }
+          );
         }
       },
       (error) => {
@@ -817,11 +785,7 @@ export class ReportKardexComponent implements OnInit {
     );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

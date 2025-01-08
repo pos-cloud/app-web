@@ -183,10 +183,7 @@ export class Header2Component implements OnInit {
             },
             {
               label: 'Reportes',
-              children: [
-                { label: 'Kardex de producto', link: 'report/kardex-de-productos' },
-                { label: 'Inventario', link: 'admin/stock-de-productos' },
-              ],
+              children: [{ label: 'Inventario', link: 'admin/stock-de-productos' }],
             },
           ],
         },
@@ -635,10 +632,7 @@ export class Header2Component implements OnInit {
                 },
                 {
                   label: 'Reportes',
-                  children: [
-                    { label: 'Kardex de producto', link: 'report/kardex-de-productos' },
-                    { label: 'Inventario', link: 'admin/stock-de-productos' },
-                  ],
+                  children: [{ label: 'Inventario', link: 'admin/stock-de-productos' }],
                 },
               ],
             },

@@ -1,13 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  Output,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Branch } from 'app/components/branch/branch';
@@ -43,8 +36,7 @@ import { AddArticleStockComponent } from '../article-stock/add-article-stock.com
 })
 export class ListArticleStocksComponent implements OnInit {
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
-  @Output() eventAddItem: EventEmitter<ArticleStock> =
-    new EventEmitter<ArticleStock>();
+  @Output() eventAddItem: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
 
   private subscription: Subscription = new Subscription();
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
@@ -175,8 +167,7 @@ export class ListArticleStocksComponent implements OnInit {
         }
       }
 
-      if (match.charAt(match.length - 1) === ',')
-        match = match.substring(0, match.length - 1);
+      if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
       match += `}`;
 
@@ -233,9 +224,7 @@ export class ListArticleStocksComponent implements OnInit {
       if (this.currentPage != 0) {
         page = this.currentPage - 1;
       }
-      let skip = !isNaN(page * this.itemsPerPage)
-        ? page * this.itemsPerPage
-        : 0; // SKIP
+      let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
       let limit = this.itemsPerPage;
 
       this.subscription.add(
@@ -351,21 +340,19 @@ export class ListArticleStocksComponent implements OnInit {
     switch (op) {
       case 'view':
         window.open(
-          `/#/report/kardex-de-productos/?article=${articleStock.article._id}&branch=${articleStock.branch._id}&deposit=${articleStock.deposit._id}`,
+          `/#/report/kardex-de-productos/?article=${articleStock.article._id}&branch=${this.branchesSelected[0]._id}&deposit=${this.depositsSelected[0]._id}`,
           '_blank'
         );
         break;
       case 'add':
-        modalRef = this._modalService
-          .open(AddArticleStockComponent, { size: 'lg', backdrop: 'static' })
-          .result.then(
-            (result) => {
-              this.getItems();
-            },
-            (reason) => {
-              this.getItems();
-            }
-          );
+        modalRef = this._modalService.open(AddArticleStockComponent, { size: 'lg', backdrop: 'static' }).result.then(
+          (result) => {
+            this.getItems();
+          },
+          (reason) => {
+            this.getItems();
+          }
+        );
         break;
       case 'update':
         modalRef = this._modalService.open(UpdateArticleStockComponent, {
@@ -384,19 +371,13 @@ export class ListArticleStocksComponent implements OnInit {
         );
         break;
       case 'print-label':
-        const printLabelComponent = new PrintLabelComponent(
-          this._printerService,
-          this.alertConfig
-        );
+        const printLabelComponent = new PrintLabelComponent(this._printerService, this.alertConfig);
         printLabelComponent.articleId = articleStock.article._id;
         printLabelComponent.quantity = articleStock.realStock;
         printLabelComponent.ngOnInit();
         break;
       case 'price-lists':
-        const printLabelComponent2 = new PrintLabelComponent(
-          this._printerService,
-          this.alertConfig
-        );
+        const printLabelComponent2 = new PrintLabelComponent(this._printerService, this.alertConfig);
         printLabelComponent2.articleId = articleStock.article._id;
         printLabelComponent.quantity = articleStock.realStock;
         printLabelComponent2.ngOnInit();
@@ -405,14 +386,11 @@ export class ListArticleStocksComponent implements OnInit {
         modalRef = this._modalService.open(PrintArticlesStockComponent);
         modalRef.componentInstance.branch = this.filters['branch.number'];
         modalRef.componentInstance.deposit = this.filters['deposit.name'];
-        modalRef.componentInstance.make =
-          this.filters['article.make.description'];
-        modalRef.componentInstance.category =
-          this.filters['article.category.description'];
+        modalRef.componentInstance.make = this.filters['article.make.description'];
+        modalRef.componentInstance.category = this.filters['article.category.description'];
         modalRef.componentInstance.code = this.filters['article.code'];
         modalRef.componentInstance.barcode = this.filters['article.barcode'];
-        modalRef.componentInstance.description =
-          this.filters['article.description'];
+        modalRef.componentInstance.description = this.filters['article.description'];
         break;
       case 'updateArticle':
         this.loading = true;
@@ -481,8 +459,7 @@ export class ListArticleStocksComponent implements OnInit {
         (result) => {
           this.loading = false;
           if (!result.printers) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.printers);
@@ -513,22 +490,20 @@ export class ListArticleStocksComponent implements OnInit {
   }
 
   public getBranches(): void {
-    this._branchService
-      .getAll({ match: { operationType: { $ne: 'D' } } })
-      .subscribe(
-        (result: ApiResponse) => {
-          if (result.status === 200) {
-            this.branches = result.result;
+    this._branchService.getAll({ match: { operationType: { $ne: 'D' } } }).subscribe(
+      (result: ApiResponse) => {
+        if (result.status === 200) {
+          this.branches = result.result;
 
-            if (this.branches && this.branches.length > 0) {
-              this.branches.forEach((branch) => {
-                this.getDeposits(branch._id);
-              });
-            }
+          if (this.branches && this.branches.length > 0) {
+            this.branches.forEach((branch) => {
+              this.getDeposits(branch._id);
+            });
           }
-        },
-        (error) => this._toastService.showToast(error)
-      );
+        }
+      },
+      (error) => this._toastService.showToast(error)
+    );
   }
 
   public getDeposits(branchId: string): void {
@@ -552,11 +527,7 @@ export class ListArticleStocksComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
