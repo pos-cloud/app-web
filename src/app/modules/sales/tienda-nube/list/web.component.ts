@@ -10,10 +10,7 @@ import { PrintTransactionTypeComponent } from 'app/components/print/print-transa
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
-import {
-  Transaction,
-  TransactionState,
-} from 'app/components/transaction/transaction';
+import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
@@ -30,7 +27,6 @@ import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as moment from 'moment';
-import { NgxPaginationModule } from 'ngx-pagination';
 import * as printJS from 'print-js';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -43,16 +39,7 @@ import { FulfilledComponent } from '../tienda-nube-fulfilled/fulfilled.component
   standalone: true,
   providers: [TranslateService],
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    CommonModule,
-    NgbModule,
-    DatatableModule,
-    PipesModule,
-    TranslateModule,
-    FormsModule,
-    NgxPaginationModule,
-    ProgressbarModule,
-  ],
+  imports: [CommonModule, NgbModule, DatatableModule, PipesModule, TranslateModule, FormsModule, ProgressbarModule],
 })
 export class WebComponent implements OnInit {
   public loading: boolean = false;
@@ -363,10 +350,7 @@ export class WebComponent implements OnInit {
       this.user = identity;
     });
 
-    this._datatableService = new DatatableService(
-      this._transactionService,
-      this.columns
-    );
+    this._datatableService = new DatatableService(this._transactionService, this.columns);
 
     this.processParams();
   }
@@ -417,11 +401,7 @@ export class WebComponent implements OnInit {
     this.loading = false;
   }
 
-  async openModal(
-    op: string,
-    state: TransactionState = TransactionState.Closed,
-    transaction?: Transaction
-  ) {
+  async openModal(op: string, state: TransactionState = TransactionState.Closed, transaction?: Transaction) {
     let modalRef;
     switch (op) {
       case 'view-transaction':
@@ -435,38 +415,24 @@ export class WebComponent implements OnInit {
         break;
       case 'print':
         if (transaction) {
-          if (
-            transaction.type.transactionMovement ===
-            TransactionMovement.Production
-          ) {
+          if (transaction.type.transactionMovement === TransactionMovement.Production) {
             this.printTransaction(transaction);
           } else {
             if (
               transaction.type.expirationDate &&
-              moment(transaction.type.expirationDate).diff(moment(), 'days') <=
-                0
+              moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0
             ) {
               // this.showMessage('El documento esta vencido', 'danger', true);
             } else {
               if (transaction.type.readLayout) {
-                modalRef = this._modalService.open(
-                  PrintTransactionTypeComponent
-                );
+                modalRef = this._modalService.open(PrintTransactionTypeComponent);
                 modalRef.componentInstance.transactionId = transaction._id;
               } else {
                 let printer: Printer;
 
-                if (
-                  this.user &&
-                  this.user.printers &&
-                  this.user.printers.length > 0
-                ) {
+                if (this.user && this.user.printers && this.user.printers.length > 0) {
                   for (const element of this.user.printers) {
-                    if (
-                      element &&
-                      element.printer &&
-                      element.printer.printIn === PrinterPrintIn.Counter
-                    ) {
+                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
                       printer = element.printer;
                     }
                   }
@@ -495,13 +461,9 @@ export class WebComponent implements OnInit {
                     if (transaction.taxes && transaction.taxes.length > 0) {
                       for (const tax of transaction.taxes) {
                         if (tax.tax.printer) {
-                          modalRef = this._modalService.open(
-                            PrintTransactionTypeComponent
-                          );
-                          modalRef.componentInstance.transactionId =
-                            transaction._id;
-                          modalRef.componentInstance.printerID =
-                            tax.tax.printer;
+                          modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                          modalRef.componentInstance.transactionId = transaction._id;
+                          modalRef.componentInstance.printerID = tax.tax.printer;
                         }
                       }
                     }
@@ -510,13 +472,9 @@ export class WebComponent implements OnInit {
                     if (transaction.taxes && transaction.taxes.length > 0) {
                       for (const tax of transaction.taxes) {
                         if (tax.tax.printer) {
-                          modalRef = this._modalService.open(
-                            PrintTransactionTypeComponent
-                          );
-                          modalRef.componentInstance.transactionId =
-                            transaction._id;
-                          modalRef.componentInstance.printerID =
-                            tax.tax.printer;
+                          modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                          modalRef.componentInstance.transactionId = transaction._id;
+                          modalRef.componentInstance.printerID = tax.tax.printer;
                         }
                       }
                     }
@@ -597,9 +555,7 @@ export class WebComponent implements OnInit {
           this.movOfCash = result.result;
 
           const mergedData = this.transactions.map((movo) => {
-            const matchedTransaction = this.movOfCash.find(
-              (item) => item.transaction === movo._id
-            );
+            const matchedTransaction = this.movOfCash.find((item) => item.transaction === movo._id);
             return { ...movo, movOfCash: matchedTransaction || null };
           });
           this.transactions = mergedData;
@@ -618,17 +574,9 @@ export class WebComponent implements OnInit {
 
   changeStateOfTransaction(transaction: Transaction, state: TransactionState) {
     this.loading = true;
-    if (
-      transaction &&
-      transaction.tiendaNubeId &&
-      this.config.tiendaNube.userID
-    ) {
+    if (transaction && transaction.tiendaNubeId && this.config.tiendaNube.userID) {
       this._tiendaNubeService
-        .updateTransactionStatus(
-          transaction.tiendaNubeId,
-          this.config.tiendaNube.userID,
-          state
-        )
+        .updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {

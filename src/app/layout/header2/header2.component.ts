@@ -86,6 +86,7 @@ export class Header2Component implements OnInit {
         { label: '', isDivider: true },
         { label: 'Estructura', link: 'admin/structures' },
         { label: 'Clasificaciones', link: 'admin/classifications' },
+        { label: 'Unidad de medida', link: 'units-of-measurement' },
       ],
     },
     {
@@ -94,6 +95,8 @@ export class Header2Component implements OnInit {
       children: [
         { label: 'Clientes', link: 'admin/clientes' },
         { label: 'Proveedores', link: 'admin/proveedores' },
+        { label: '', isDivider: true },
+        { label: 'Grupo de empresas', link: 'company-groups' },
       ],
     },
     {
@@ -520,6 +523,7 @@ export class Header2Component implements OnInit {
             { label: '', isDivider: true },
             { label: 'Estructura', link: 'admin/structures' },
             { label: 'Clasificaciones', link: 'admin/classifications' },
+            { label: 'Unidad de medida', link: 'units-of-measurement' },
           ],
         });
       }
@@ -531,6 +535,8 @@ export class Header2Component implements OnInit {
           children: [
             { label: 'Clientes', link: 'admin/clientes' },
             { label: 'Proveedores', link: 'admin/proveedores' },
+            { label: '', isDivider: true },
+            { label: 'Grupo de empresa', link: 'company-groups' },
           ],
         });
       }
