@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -67,9 +60,7 @@ export class DatatableComponent {
   public async ngOnInit() {
     this.identifier = this.title.replace(/\s+/g, '-').toLowerCase();
     setTimeout(() => {
-      this.title = this.capitalizePipe.transform(
-        this.translatePipe.translateMe(this.title)
-      );
+      this.title = this.capitalizePipe.transform(this.translatePipe.translateMe(this.title));
       this._title.setTitle(this.title);
     }, 0);
 
@@ -84,9 +75,7 @@ export class DatatableComponent {
   }
 
   public loadColumnVisibility(): void {
-    const storedColumnVisibility = JSON.parse(
-      localStorage.getItem(`${this.identifier}_columnVisibility`) || '{}'
-    );
+    const storedColumnVisibility = JSON.parse(localStorage.getItem(`${this.identifier}_columnVisibility`) || '{}');
 
     this.columns.forEach((column) => {
       if (storedColumnVisibility[column.name] !== undefined) {
@@ -100,18 +89,13 @@ export class DatatableComponent {
     this.columns.forEach((column) => {
       columnVisibility[column.name] = column.visible;
     });
-    localStorage.setItem(
-      `${this.identifier}_columnVisibility`,
-      JSON.stringify(columnVisibility)
-    );
+    localStorage.setItem(`${this.identifier}_columnVisibility`, JSON.stringify(columnVisibility));
     this.getItems();
   }
 
   private processParams(): void {
     // Recupera los filtros desde localStorage
-    const storedFilters = JSON.parse(
-      localStorage.getItem(`${this.identifier}_datatableFilters`) || '{}'
-    );
+    const storedFilters = JSON.parse(localStorage.getItem(`${this.identifier}_datatableFilters`) || '{}');
     this.filters = {};
 
     for (let field of this.columns) {
@@ -125,18 +109,10 @@ export class DatatableComponent {
     }
 
     // Recupera currentPage e itemsPerPage desde localStorage
-    this.currentPage = parseInt(
-      localStorage.getItem(`${this.identifier}_currentPage`) || '0',
-      10
-    );
-    this.itemsPerPage = parseInt(
-      localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10',
-      10
-    );
+    this.currentPage = parseInt(localStorage.getItem(`${this.identifier}_currentPage`) || '0', 10);
+    this.itemsPerPage = parseInt(localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10', 10);
 
-    this.sort = JSON.parse(
-      localStorage.getItem(`${this.identifier}_sort`) || '{}'
-    );
+    this.sort = JSON.parse(localStorage.getItem(`${this.identifier}_sort`) || '{}');
 
     this.getItems();
   }
@@ -147,9 +123,7 @@ export class DatatableComponent {
 
   public getValue(item, column): any {
     return typeof this._datatableService.getValue(item, column) === 'string'
-      ? this.translatePipe.transform(
-          this._datatableService.getValue(item, column)
-        )
+      ? this.translatePipe.transform(this._datatableService.getValue(item, column))
       : this._datatableService.getValue(item, column);
   }
 
@@ -179,10 +153,7 @@ export class DatatableComponent {
   }
 
   public addFilters(): void {
-    localStorage.setItem(
-      `${this.identifier}_datatableFilters`,
-      JSON.stringify(this.filters)
-    );
+    localStorage.setItem(`${this.identifier}_datatableFilters`, JSON.stringify(this.filters));
     this.getItems();
   }
 
@@ -216,19 +187,15 @@ export class DatatableComponent {
   public pageChange(page): void {
     this.currentPage = page;
     // Guarda la página actual en localStorage
-    localStorage.setItem(
-      `${this.identifier}_currentPage`,
-      this.currentPage.toString()
-    );
+    localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
     this.getItems();
   }
 
-  public changeItemsPerPage(): void {
-    // Guarda itemsPerPage en localStorage
-    localStorage.setItem(
-      `${this.identifier}_itemsPerPage`,
-      this.itemsPerPage.toString()
-    );
+  public selectItemsPerPage(value: number): void {
+    this.itemsPerPage = value;
+    this.currentPage = 1;
+    localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
+    localStorage.setItem(`${this.identifier}_itemsPerPage`, this.itemsPerPage.toString());
     this.getItems();
   }
 }
