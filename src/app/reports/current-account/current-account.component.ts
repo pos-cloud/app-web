@@ -3,19 +3,17 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 //Paquetes de terceros
-import {
-  NgbAlertConfig,
-  NgbModal,
-  NgbModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Printer } from '@types';
 import { Company } from 'app/components/company/company';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { CompanyType } from 'app/components/payment-method/payment-method';
+import { PrintComponent } from 'app/components/print/print/print.component';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
@@ -72,6 +70,7 @@ export class CurrentAccountComponent implements OnInit {
   public showBalanceOfTransactions: boolean = false;
   public data = {};
   public isFirstTime = true;
+  printers: Printer[];
 
   public dropdownSettings = {
     singleSelection: false,
@@ -200,9 +199,7 @@ export class CurrentAccountComponent implements OnInit {
     this.loading = true;
 
     if (typeof this.detailsPaymentMethod !== 'boolean') {
-      this.detailsPaymentMethod = Boolean(
-        JSON.parse(this.detailsPaymentMethod)
-      );
+      this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
     }
 
     let page = 0;
@@ -287,28 +284,27 @@ export class CurrentAccountComponent implements OnInit {
         // }
         break;
       case 'print-transaction':
-        // modalRef = this._modalService.open(PrintComponent);
-        // modalRef.componentInstance.transactionId = transactionId;
-        // modalRef.componentInstance.company = this.companySelected;
-        // modalRef.componentInstance.typePrint = 'invoice';
-        // await this.getTransaction(transactionId).then(async (transaction) => {
-        //   if (transaction) {
-        //     if (transaction.type.defectPrinter) {
-        //       modalRef.componentInstance.printer =
-        //         transaction.type.defectPrinter;
-        //     } else {
-        //       await this.getPrinters().then((printers) => {
-        //         if (printers) {
-        //           for (let printer of printers) {
-        //             if (printer.printIn === PrinterPrintIn.Counter) {
-        //               modalRef.componentInstance.printer = printer;
-        //             }
-        //           }
-        //         }
-        //       });
-        //     }
-        //   }
-        // });
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transactionId = transactionId;
+        modalRef.componentInstance.company = this.companySelected;
+        modalRef.componentInstance.typePrint = 'invoice';
+        await this.getTransaction(transactionId).then(async (transaction) => {
+          if (transaction) {
+            if (transaction.type.defectPrinter) {
+              modalRef.componentInstance.printer = transaction.type.defectPrinter;
+            } else {
+              await this.getPrinters().then((printers) => {
+                if (printers) {
+                  for (let printer of printers) {
+                    if (printer.printIn.toString() == 'Mostrador') {
+                      modalRef.componentInstance.printer = printer;
+                    }
+                  }
+                }
+              });
+            }
+          }
+        });
         break;
 
       default:
@@ -343,9 +339,7 @@ export class CurrentAccountComponent implements OnInit {
     this.loading = true;
 
     if (typeof this.detailsPaymentMethod !== 'boolean') {
-      this.detailsPaymentMethod = Boolean(
-        JSON.parse(this.detailsPaymentMethod)
-      );
+      this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
     }
 
     let page = 0;
@@ -388,5 +382,25 @@ export class CurrentAccountComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getPrinters(): Promise<Printer[]> {
+    return new Promise<Printer[]>((resolve, reject) => {
+      this.loading = true;
+
+      this._printerService.getPrinters().subscribe(
+        (result) => {
+          if (!result.printers) {
+            this.printers = new Array();
+          } else {
+            resolve(result.printers);
+          }
+          this.loading = false;
+        },
+        (error) => {
+          this.loading = false;
+        }
+      );
+    });
   }
 }
