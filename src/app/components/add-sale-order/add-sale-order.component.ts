@@ -2178,30 +2178,38 @@ export class AddSaleOrderComponent {
         if (this.database === 'jaguernight') {
           this.transaction.state = TransactionState.Canceled;
           await this.updateTransaction();
-          this.backFinal();
-        }
-
-        modalRef = this._modalService.open(DeleteTransactionComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.result.then(async (result) => {
-          if (result === 'delete_close') {
-            if (this.posType === 'resto' && this.transaction.table) {
-              this.transaction.table.employee = null;
-              this.transaction.table.state = TableState.Available;
-              await this.updateTable(this.transaction.table).then((table) => {
-                if (table) {
-                  this.transaction.table = table;
-                  this.backFinal();
-                }
-              });
-            } else {
+          this.transaction.table.employee = null;
+          this.transaction.table.state = TableState.Available;
+          await this.updateTable(this.transaction.table).then((table) => {
+            if (table) {
+              this.transaction.table = table;
               this.backFinal();
             }
-          }
-        });
+          });
+        } else {
+          modalRef = this._modalService.open(DeleteTransactionComponent, {
+            size: 'lg',
+            backdrop: 'static',
+          });
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.result.then(async (result) => {
+            if (result === 'delete_close') {
+              if (this.posType === 'resto' && this.transaction.table) {
+                this.transaction.table.employee = null;
+                this.transaction.table.state = TableState.Available;
+                await this.updateTable(this.transaction.table).then((table) => {
+                  if (table) {
+                    this.transaction.table = table;
+                    this.backFinal();
+                  }
+                });
+              } else {
+                this.backFinal();
+              }
+            }
+          });
+        }
+
         break;
       case 'add_client':
         modalRef = this._modalService.open(SelectCompanyComponent, {
