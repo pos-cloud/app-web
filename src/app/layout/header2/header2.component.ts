@@ -601,7 +601,7 @@ export class Header2Component implements OnInit {
                 {
                   label: 'Listados',
                   children: [
-                    { label: 'Transacciones', link: 'admin/compra' },
+                    { label: 'Transacciones', link: 'admin/compras' },
                     { label: 'Movimientos de Productos', link: 'admin/compra/movimientos-de-productos' },
                     { label: 'Movimientos de Medios', link: 'admin/compra/movimientos-de-medios' },
                     { label: 'Cancelaciones', link: 'admin/compra/movimientos-de-cancellaciones' },
@@ -610,16 +610,16 @@ export class Header2Component implements OnInit {
                 {
                   label: 'Reportes',
                   children: [
-                    { label: 'Estadísticas Generales', link: 'admin/compra/statistics' },
-                    { label: 'Productos más comprados', link: 'admin/compra/productos-mas-comprados' },
+                    { label: 'Estadísticas Generales', link: 'admin/compras/statistics' },
+                    { label: 'Productos más comprados', link: 'admin/compras/productos-mas-comprados' },
                     { label: 'Compras por medio de pago', link: 'admin/compras/compras-por-metodo-de-pago' },
-                    { label: 'Marcas', link: 'admin/compra/marcas-mas-compradas' },
-                    { label: 'Categorias más vendidos', link: 'admin/compra/rubros-mas-comprados' },
-                    { label: 'Compras por proveedor', link: 'admin/compra/compras-por-proveedor' },
-                    { label: 'Compras por empleado', link: 'admin/compra/compras-por-empleado' },
+                    { label: 'Marcas', link: 'admin/compras/marcas-mas-compradas' },
+                    { label: 'Categorias más vendidos', link: 'admin/compras/rubros-mas-comprados' },
+                    { label: 'Compras por proveedor', link: 'admin/compras/compras-por-proveedor' },
+                    { label: 'Compras por empleado', link: 'admin/compras/compras-por-empleado' },
                     {
                       label: 'Compras por tipo de transacciones',
-                      link: 'report/compra/compras-por-tipo-de-transacción',
+                      link: 'report/compras/compras-por-tipo-de-transaccion',
                     },
                   ],
                 },
