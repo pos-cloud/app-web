@@ -619,7 +619,7 @@ export class Header2Component implements OnInit {
                     { label: 'Compras por empleado', link: 'admin/compra/compras-por-empleado' },
                     {
                       label: 'Compras por tipo de transacciones',
-                      link: 'report/compra/compras-por-tipo-de-transaccion',
+                      link: 'report/compra/compras-por-tipo-de-transacción',
                     },
                   ],
                 },
@@ -666,7 +666,6 @@ export class Header2Component implements OnInit {
                   label: 'Listados',
                   children: [
                     { label: 'Transacciones', link: 'admin/fondos' },
-                    { label: 'Movimientos de Productos', link: 'admin/fondos/movimientos-de-productos' },
                     { label: 'Movimientos de Medios', link: 'admin/fondos/movimientos-de-medios' },
                   ],
                 },
