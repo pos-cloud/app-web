@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/cor
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiResponse } from '@types';
 import { CompanyService } from 'app/core/services/company.service';
+import { WooCommerceService } from 'app/core/services/woocommerce.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
@@ -153,7 +154,8 @@ export class ListApplicationsComponent implements OnInit {
     public _shipmentMethodService: ShipmentMethodService,
     public _paymentMethodService: PaymentMethodService,
     public _companyService: CompanyService,
-    private _articleService: ArticleService
+    private _articleService: ArticleService,
+    private _wooCommerceService: WooCommerceService
   ) {}
 
   async ngOnInit() {
@@ -593,6 +595,20 @@ export class ListApplicationsComponent implements OnInit {
           resolve(null);
         }
       );
+    });
+  }
+
+  public syncWooCommerce() {
+    this._wooCommerceService.syncWoo().subscribe({
+      next: (result) => {
+        this._toastService.showToast(result);
+      },
+      error: (error) => {
+        this._toastService.showToast(error);
+      },
+      complete: () => {
+        this.loading = false;
+      },
     });
   }
 }
