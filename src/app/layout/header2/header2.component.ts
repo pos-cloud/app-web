@@ -456,8 +456,12 @@ export class Header2Component implements OnInit {
           child.push({ label: 'Lector de Vouchers', link: 'pos/lector-de-vouchers' });
         }
 
-        if (user.permission.menu.sales.webOrders) {
+        if (user?.permission?.menu?.sales?.tiendaNube) {
           child.push({ label: 'Tienda Nube', link: 'modules/sales/tienda-nube' });
+        }
+
+        if (user?.permission?.menu?.sales?.wooCommerce) {
+          child.push({ label: 'Woo Commerce', link: 'modules/sales/woo-commerce' });
         }
 
         this.menu.push({
@@ -475,7 +479,7 @@ export class Header2Component implements OnInit {
         });
       }
 
-      if (user.permission.menu.stock) {
+      if (user?.permission?.menu?.stock) {
         this.menu.push({
           label: 'Stock',
           icon: 'fa fa-dropbox',
@@ -483,7 +487,7 @@ export class Header2Component implements OnInit {
         });
       }
 
-      if (user.permission.menu.money) {
+      if (user?.permission?.menu?.money) {
         this.menu.push({
           label: 'Fondos',
           icon: 'fa fa-money',
@@ -494,7 +498,7 @@ export class Header2Component implements OnInit {
         });
       }
 
-      if (user.permission.menu.production) {
+      if (user?.permission?.menu?.production) {
         this.menu.push({
           label: 'Producción',
           icon: 'fa fa-paste',
@@ -528,16 +532,23 @@ export class Header2Component implements OnInit {
         });
       }
 
-      if (user.permission.menu.companies) {
+      if (user?.permission?.menu?.companies?.client || user?.permission?.menu?.companies?.provider) {
+        let companies = [];
+
+        if (user.permission.menu.companies.client) {
+          companies.push({ label: 'Clientes', link: 'admin/clientes' });
+        }
+
+        if (user.permission.menu.companies.provider) {
+          companies.push({ label: 'Proveedores', link: 'admin/proveedores' });
+        }
+
+        companies.push({ label: '', isDivider: true }, { label: 'Grupo de empresa', link: 'company-groups' });
+
         this.menu.push({
           label: 'Empresas',
           icon: 'fa fa-male',
-          children: [
-            { label: 'Clientes', link: 'admin/clientes' },
-            { label: 'Proveedores', link: 'admin/proveedores' },
-            { label: '', isDivider: true },
-            { label: 'Grupo de empresa', link: 'company-groups' },
-          ],
+          children: companies,
         });
       }
 
@@ -552,7 +563,7 @@ export class Header2Component implements OnInit {
         });
       }
 
-      if (user.permission.menu.content.gallery) {
+      if (user.permission.menu.gallery) {
         this.menu.push({
           label: 'Contenido',
           icon: 'fa fa-image',
@@ -667,6 +678,7 @@ export class Header2Component implements OnInit {
                   children: [
                     { label: 'Transacciones', link: 'admin/fondos' },
                     { label: 'Movimientos de Medios', link: 'admin/fondos/movimientos-de-medios' },
+                    { label: 'Cajas', link: 'admin/cajas' },
                   ],
                 },
                 {

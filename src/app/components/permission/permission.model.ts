@@ -19,7 +19,8 @@ export class Permission extends Model {
   public menu: {
     sales: {
       counter: boolean;
-      webOrders: boolean;
+      tiendaNube: boolean;
+      wooCommerce: boolean;
       delivery: boolean;
       voucherReader: boolean;
       resto: boolean;
@@ -31,17 +32,7 @@ export class Permission extends Model {
     articles: boolean;
     companies: {
       client: boolean;
-      clientSummary: boolean;
-      clientAccount: boolean;
       provider: boolean;
-      providerSummary: boolean;
-      providerAccount: boolean;
-      group: boolean;
-      field: boolean;
-    };
-    content: {
-      resource: boolean;
-      gallery: boolean;
     };
     report: boolean;
     config: boolean;
