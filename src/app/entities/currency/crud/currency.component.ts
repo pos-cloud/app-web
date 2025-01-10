@@ -13,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-currency',
-  templateUrl: './currency.component.html',
+  templateUrl: 'currency.component.html',
 })
 export class CurrencyComponent implements OnInit {
   public operation: string;
@@ -26,6 +26,8 @@ export class CurrencyComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public currencyForm: UntypedFormGroup;
   public accounts: Account[];
+  public quotation: any;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -69,6 +71,7 @@ export class CurrencyComponent implements OnInit {
       quotation: this.currency.quotation ?? null,
     };
     this.currencyForm.setValue(values);
+    this.quotation = values.quotation;
   }
 
   returnTo() {
@@ -107,19 +110,19 @@ export class CurrencyComponent implements OnInit {
 
     switch (this.operation) {
       case 'add':
-        this.saveBank();
+        this.saveCurrency();
         break;
       case 'update':
-        this.updateBank();
+        this.updateCurrency();
         break;
       case 'delete':
-        this.deleteBank();
+        this.deleteCurrency();
       default:
         break;
     }
   }
 
-  public updateBank() {
+  public updateCurrency() {
     this._currencyService
       .update(this.currency)
       .pipe(takeUntil(this.destroy$))
@@ -137,7 +140,7 @@ export class CurrencyComponent implements OnInit {
       });
   }
 
-  public saveBank() {
+  public saveCurrency() {
     this._currencyService
       .save(this.currency)
       .pipe(takeUntil(this.destroy$))
@@ -155,7 +158,7 @@ export class CurrencyComponent implements OnInit {
       });
   }
 
-  public deleteBank() {
+  public deleteCurrency() {
     this._currencyService
       .delete(this.currency._id)
       .pipe(takeUntil(this.destroy$))
