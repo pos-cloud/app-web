@@ -1,21 +1,14 @@
 <section class="container-fluid">
   <div class="card">
     <div class="card-header">
-      <span style="color: #607d8b" *ngIf="operation === 'add'">{{
-        'add-resource' | translate | capitalize
-      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'add'">{{ 'add-resource' | translate | capitalize }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
         >{{ 'edit' | translate | capitalize }} {{ resource?.name ?? '' }}</span
       >
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'view' || operation === 'delete'"
-        >{{ resource.name }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{ resource.name }}</span>
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
-          <i class="fa fa-arrow-left"></i
-          ><span>{{ 'return' | translate | capitalize }}</span>
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
         </button>
         <button
           type="button"
@@ -24,10 +17,7 @@
           *ngIf="operation !== 'delete' && operation !== 'view'"
           (click)="addResource()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -38,10 +28,7 @@
           [disabled]="loading"
           (click)="deleteResource()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
           <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -60,9 +47,7 @@
             <div class="form-group col-md-12">
               <div class="row">
                 <div class="form-group col-md-6">
-                  <label for="name" class="control-label">{{
-                    'name' | translate | capitalize
-                  }}</label>
+                  <label for="name" class="control-label">{{ 'name' | translate | capitalize }}</label>
                   <div class="input-group">
                     <input
                       type="text"
@@ -77,8 +62,7 @@
                   <div
                     class="invalid-feedback"
                     *ngIf="
-                      resourceForm.get('description')?.touched &&
-                      resourceForm.get('description')?.hasError('required')
+                      resourceForm.get('description')?.touched && resourceForm.get('description')?.hasError('required')
                     "
                   >
                     Este campo es obligatorio.
@@ -88,12 +72,7 @@
               <div class="row">
                 <div class="form-group col-md-6">
                   <div class="custom-file">
-                    <label
-                      *ngIf="!readonly"
-                      class="custom-file-label btn btn-action"
-                      for="customFileLang"
-                      >Seleccionar Imagen</label
-                    >
+                    <label *ngIf="!readonly" class="custom-file-label" for="customFileLang">Seleccionar Imagen</label>
                     <input
                       *ngIf="!readonly"
                       type="file"
@@ -110,10 +89,7 @@
 
                 <audio
                   controls
-                  *ngIf="
-                    (resource && resource.type == 'audio' && src) ||
-                    (src && typeSelectFile == 'audio')
-                  "
+                  *ngIf="(resource && resource.type == 'audio' && src) || (src && typeSelectFile == 'audio')"
                 >
                   <source [src]="src" type="audio/ogg" />
                 </audio>
@@ -122,10 +98,7 @@
                   controls
                   width="600"
                   height="400"
-                  *ngIf="
-                    (resource && resource.type == 'video' && src) ||
-                    (src && typeSelectFile == 'video')
-                  "
+                  *ngIf="(resource && resource.type == 'video' && src) || (src && typeSelectFile == 'video')"
                 >
                   <source [src]="src" type="video/mp4" />
                 </video>
@@ -134,10 +107,7 @@
           </div>
           <hr />
           <div class="row">
-            <label
-              *ngIf="this.operation !== 'add'"
-              class="form-group col-md-12"
-            >
+            <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
               <b>{{ 'audit' | translate | capitalize }}</b>
             </label>
           </div>
@@ -153,10 +123,7 @@
                 <div class="form-group col-md-6">
                   <label class="control-label">
                     {{ 'theDay' | translate | capitalize }}:
-                    <b>{{
-                      resource?.creationDate ?? null
-                        | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                    }}</b>
+                    <b>{{ resource?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                   </label>
                 </div>
               </div>
@@ -170,10 +137,7 @@
                 <div class="form-group col-md-6">
                   <label class="control-label">
                     {{ 'theDay' | translate | capitalize }}:
-                    <b>{{
-                      resource?.updateDate ?? null
-                        | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                    }}</b>
+                    <b>{{ resource?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                   </label>
                 </div>
               </div>

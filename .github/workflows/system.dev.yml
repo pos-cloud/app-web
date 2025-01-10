@@ -48,19 +48,6 @@ jobs:
       - name: Clean system
         run: rm -rf /home/system-dev/*
 
-      - name: Increment patch version
-        run: |
-          PATCH_FILE="src/assets/patch.txt"
-          # Asegurarse de que el archivo existe
-          if [ ! -f "$PATCH_FILE" ]; then
-            echo "0" > "$PATCH_FILE"
-          fi
-          # Leer, incrementar y guardar el nuevo valor
-          CURRENT_PATCH=$(cat "$PATCH_FILE")
-          NEW_PATCH=$((CURRENT_PATCH + 1))
-          echo $NEW_PATCH > "$PATCH_FILE"
-          echo "Updated patch version to $NEW_PATCH"
-
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
