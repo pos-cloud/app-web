@@ -213,7 +213,7 @@ export class ListApplicationsComponent implements OnInit {
     });
 
     this.wooCommerceForm = this.fb.group({
-      key: [0, [Validators.required]],
+      key: ['', [Validators.required]],
       secret: ['', [Validators.required]],
       url: ['', [Validators.required]],
       transactionType: ['', [Validators.required]],
