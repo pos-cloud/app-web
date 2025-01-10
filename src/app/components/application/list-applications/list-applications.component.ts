@@ -213,6 +213,7 @@ export class ListApplicationsComponent implements OnInit {
     this.wooCommerceForm = this.fb.group({
       key: [0, [Validators.required]],
       secret: ['', [Validators.required]],
+      url: ['', [Validators.required]],
       transactionType: ['', [Validators.required]],
       shipmentMethod: ['', [Validators.required]],
       paymentMethod: ['', [Validators.required]],
@@ -252,6 +253,7 @@ export class ListApplicationsComponent implements OnInit {
       'wooCommerce.company.name': 1,
       'wooCommerce.article._id': 1,
       'wooCommerce.article.description': 1,
+      'wooCommerce.url': 1,
       'menu.portain': 1,
       'menu.background': 1,
       'menu.article.font': 1,
@@ -287,9 +289,7 @@ export class ListApplicationsComponent implements OnInit {
             const cartaDigitalApplications = this.applications.find((app) => app.type === ApplicationType.Menu);
             const wooCommerce = this.applications.find((app) => app.type === ApplicationType.WooCommerce);
 
-            console.log(wooCommerce);
-
-            this.setValuesForm(tiendaNubeApplications, cartaDigitalApplications, wooCommerce.wooCommerce);
+            this.setValuesForm(tiendaNubeApplications, cartaDigitalApplications, wooCommerce?.wooCommerce ?? null);
           }
         })
     );
@@ -426,13 +426,14 @@ export class ListApplicationsComponent implements OnInit {
     });
 
     this.wooCommerceForm.patchValue({
-      key: wooCommerce?.key,
-      secret: wooCommerce?.secret,
-      transactionType: wooCommerce?.transactionType,
-      shipmentMethod: wooCommerce?.shipmentMethod,
-      paymentMethod: wooCommerce?.paymentMethod,
-      company: wooCommerce?.company,
-      article: wooCommerce?.article,
+      key: wooCommerce?.key ?? '',
+      secret: wooCommerce?.secret ?? '',
+      url: wooCommerce?.url ?? '',
+      transactionType: wooCommerce?.transactionType ?? '',
+      shipmentMethod: wooCommerce?.shipmentMethod ?? '',
+      paymentMethod: wooCommerce?.paymentMethod ?? '',
+      company: wooCommerce?.company ?? '',
+      article: wooCommerce?.article ?? '',
     });
   }
 
@@ -471,24 +472,83 @@ export class ListApplicationsComponent implements OnInit {
     }
   }
 
-  updateApplication(type) {
+  upsertApplication(type) {
     this.loading = true;
     let application = this.applications.find((app) => app.type === type);
     let formData = {};
 
-    if (type === ApplicationType.TiendaNube) {
-      formData = this.tiendaNubeForm.value;
-      application.tiendaNube = { ...application.tiendaNube, ...formData };
-    } else if (type === ApplicationType.Menu) {
-      formData = this.cartaDigitalForm.value;
-      application.menu = { ...application.menu, ...formData };
-    } else if (type === ApplicationType.WooCommerce) {
-      formData = this.wooCommerceForm.value;
-      application.wooCommerce = { ...application.wooCommerce, ...formData };
-    }
+    switch (type) {
+      case ApplicationType.TiendaNube:
+        if (application) {
+          formData = this.tiendaNubeForm.value;
+          application.tiendaNube = { ...application.tiendaNube, ...formData };
+          this.updateApplication(application);
+        } else {
+          let application = {
+            type: 'TiendaNube',
+            name: 'TiendaNube',
+            tiendaNube: formData,
+          };
+          this.createApplication(application);
+        }
+        break;
+      case ApplicationType.Menu:
+        if (application) {
+          formData = this.cartaDigitalForm.value;
+          application.menu = { ...application.menu, ...formData };
+          this.updateApplication(application);
+        } else {
+          let application = {
+            type: 'Carta digital',
+            name: 'Carta digital',
+            menu: formData,
+          };
+          this.createApplication(application);
+        }
+        break;
 
+      case ApplicationType.WooCommerce:
+        if (application) {
+          formData = this.wooCommerceForm.value;
+          application.wooCommerce = { ...application.wooCommerce, ...formData };
+          this.updateApplication(application);
+        } else {
+          let application = {
+            type: ApplicationType.WooCommerce,
+            name: 'WooCommerce',
+            wooCommerce: formData,
+          };
+          this.createApplication(application);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  updateApplication(application) {
     this.subscription.add(
       this._service.update(application).subscribe((result) => {
+        if (result.status === 200) {
+          this._toastService.showToast({
+            type: 'success',
+            message: 'La aplicación se ha actualizado con éxito.',
+          });
+          this.loading = false;
+        } else {
+          this._toastService.showToast({
+            type: 'danger',
+            message: 'Error al actualizar la Aplicación.',
+          });
+          this.loading = false;
+        }
+      })
+    );
+  }
+
+  createApplication(application) {
+    this.subscription.add(
+      this._service.save(application).subscribe((result) => {
         if (result.status === 200) {
           this._toastService.showToast({
             type: 'success',

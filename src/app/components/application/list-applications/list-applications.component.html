@@ -22,7 +22,7 @@
             </div>
           </ng-template>
           <ng-template ngbPanelContent>
-            <form [formGroup]="tiendaNubeForm" (ngSubmit)="updateApplication('TiendaNube')" autocomplete="off">
+            <form [formGroup]="tiendaNubeForm" autocomplete="off">
               <div class="row">
                 <div class="form-group col-md-3">
                   <label for="userId" class="control-label">Usuario Id:</label>
@@ -191,7 +191,7 @@
                 </div>
                 <div class="form-group col-md-3">
                   <label class="control-label">Verificar webhook:</label> <br />
-                  <button type="submit" class="btn btn-primary" [disabled]="loading" (click)="generateWebhook()">
+                  <button class="btn btn-primary" [disabled]="loading" (click)="generateWebhook()">
                     <i class="fa" [ngClass]="{ '': !loading, 'fa-spinner fa-spin': loading }"></i>
                     <span *ngIf="!loading">Generar webhook</span>
                     <span *ngIf="loading">Espere por favor</span>
@@ -199,14 +199,14 @@
                 </div>
                 <div class="form-group col-md-3">
                   <label class="control-label">Sincronizar artículos de TiendaNube</label><br />
-                  <button type="submit" class="btn btn-primary" [disabled]="loading" (click)="getAllArticlesTn()">
+                  <button class="btn btn-primary" [disabled]="loading" (click)="getAllArticlesTn()">
                     <i class="fa" [ngClass]="{ '': !loading, 'fa-spinner fa-spin': loading }"></i>
                     <span *ngIf="!loading">Tienda Nube</span>
                     <span *ngIf="loading">Espere por favor</span>
                   </button>
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
+              <button class="btn btn-primary pull-right" [disabled]="loading" (click)="upsertApplication('TiendaNube')">
                 <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
                 <span *ngIf="!loading">Enviar</span>
                 <span *ngIf="loading">Espere por favor</span>
@@ -231,7 +231,7 @@
             </div>
           </ng-template>
           <ng-template ngbPanelContent>
-            <form [formGroup]="cartaDigitalForm" (ngSubmit)="updateApplication('Carta digital')">
+            <form [formGroup]="cartaDigitalForm">
               <div class="row">
                 <div class="form-group col-md-3">
                   <label for="portain" class="control-label">Portada:</label>
@@ -445,7 +445,11 @@
                   </div>
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
+              <button
+                class="btn btn-primary pull-right"
+                [disabled]="loading"
+                (click)="upsertApplication('Carta digital')"
+              >
                 <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
                 <span *ngIf="!loading">Enviar</span>
                 <span *ngIf="loading">Espere por favor</span>
@@ -470,7 +474,7 @@
             </div>
           </ng-template>
           <ng-template ngbPanelContent>
-            <form [formGroup]="wooCommerceForm" (ngSubmit)="updateApplication('WooCommerce')" autocomplete="off">
+            <form [formGroup]="wooCommerceForm" autocomplete="off">
               <div class="row">
                 <div class="form-group col-md-3">
                   <label for="key" class="control-label">Consumer key:</label>
@@ -491,6 +495,17 @@
                     formControlName="secret"
                     name="secret"
                     id="secret"
+                    [focus]="focusEvent"
+                  />
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="url" class="control-label">URL:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="url"
+                    name="url"
+                    id="url"
                     [focus]="focusEvent"
                   />
                 </div>
@@ -620,7 +635,11 @@
                   </div>
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary pull-right" [disabled]="loading">
+              <button
+                class="btn btn-primary pull-right"
+                [disabled]="loading"
+                (click)="upsertApplication('WooCommerce')"
+              >
                 <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
                 <span *ngIf="!loading">Enviar</span>
                 <span *ngIf="loading">Espere por favor</span>
