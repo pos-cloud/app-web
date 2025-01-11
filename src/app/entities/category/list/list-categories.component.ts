@@ -1,9 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IButton } from '@types';
+import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { CategoryService } from '../../../core/services/category.service';
-import { DatatableComponent } from '../../datatable/datatable.component';
 
 @Component({
   selector: 'app-list-categories',
@@ -53,6 +52,57 @@ export class ListCategoriesComponent {
       align: 'left',
       required: false,
     },
+
+    {
+      name: 'favourite',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'isRequiredOptional',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'showMenu',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'publishWooCommerce',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'publishTiendaNube',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
     {
       name: 'visibleInvoice',
       visible: false,
@@ -84,36 +134,6 @@ export class ListCategoriesComponent {
       required: false,
     },
     {
-      name: 'ecommerceEnabled',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'boolean',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
-      name: 'favourite',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'boolean',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
-      name: 'isRequiredOptional',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'boolean',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
       name: 'wooId',
       visible: false,
       disabled: false,
@@ -134,12 +154,40 @@ export class ListCategoriesComponent {
       required: false,
     },
     {
+      name: 'creationUser.name',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'updateUser.name',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'creationDate',
       visible: false,
       disabled: false,
       filter: true,
       datatype: 'date',
-      project: null,
+      project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'updateDate',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
       align: 'left',
       required: false,
     },
@@ -195,7 +243,6 @@ export class ListCategoriesComponent {
 
   constructor(
     public _service: CategoryService,
-    private _modalService: NgbModal,
     private _router: Router
   ) {}
 
@@ -206,16 +253,16 @@ export class ListCategoriesComponent {
   public async openModal(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('categories/view/' + obj._id);
+        this._router.navigateByUrl('entities/categories/view/' + obj._id);
         break;
       case 'add':
-        this._router.navigateByUrl('categories/add');
+        this._router.navigateByUrl('entities/categories/add');
         break;
       case 'update':
-        this._router.navigateByUrl('categories/update/' + obj._id);
+        this._router.navigateByUrl('entities/categories/update/' + obj._id);
         break;
       case 'delete':
-        this._router.navigateByUrl('categories/delete/' + obj._id);
+        this._router.navigateByUrl('entities/categories/delete/' + obj._id);
         break;
       default:
     }

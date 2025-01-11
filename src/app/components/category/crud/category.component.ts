@@ -1,16 +1,5 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  UntypedFormArray,
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -26,12 +15,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CategoryService } from '../../../core/services/category.service';
 import { Category } from '../category';
 
@@ -68,16 +52,12 @@ export class CategoryComponent implements OnInit {
   public applications: Application[];
 
   public searchCategories = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged()
-    );
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['parent'];
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
+        let match: {} = term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
         if (this.operation === 'update' && this.obj._id) {
           match['_id'] = { $ne: { $oid: this.obj._id } };
         }
@@ -179,7 +159,7 @@ export class CategoryComponent implements OnInit {
       class: 'form-group col-md-12',
     },
     {
-      name: 'ecommerceEnabled',
+      name: 'publishWooCommerce',
       tag: 'select',
       tagType: 'boolean',
       values: ['true', 'false'],
@@ -238,12 +218,8 @@ export class CategoryComponent implements OnInit {
   public async ngOnInit() {
     let pathUrl: string[] = this._router.url.split('/');
     this.operation = pathUrl[2];
-    if (this.operation !== 'add' && this.operation !== 'update')
-      this.readonly = false;
-    this.title =
-      this.translatePipe.transform(this.operation) +
-      ' ' +
-      this.translatePipe.transform(this.title);
+    if (this.operation !== 'add' && this.operation !== 'update') this.readonly = false;
+    this.title = this.translatePipe.transform(this.operation) + ' ' + this.translatePipe.transform(this.title);
     this.title = this.capitalizePipe.transform(this.title);
     this._title.setTitle(this.title);
     this.buildForm();
@@ -269,6 +245,7 @@ export class CategoryComponent implements OnInit {
         observation: 1,
         showMenu: 1,
         tiendaNubeId: 1,
+        publishWooCommerce: 1,
       };
 
       this.subscription.add(
@@ -333,8 +310,7 @@ export class CategoryComponent implements OnInit {
       applications: this._fb.array([]),
     };
     for (let field of this.formFields) {
-      if (field.tag !== 'separator')
-        fields[field.name] = [this.obj[field.name], field.validators];
+      if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators];
     }
     this.objForm = this._fb.group(fields);
     this.objForm.valueChanges.subscribe((data) => this.onValueChanged(data));
@@ -383,10 +359,7 @@ export class CategoryComponent implements OnInit {
           let entro: boolean = false;
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (
-              eval(`this.obj${sumF}`) == null ||
-              eval(`this.obj${sumF}`) == undefined
-            ) {
+            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }
@@ -408,10 +381,7 @@ export class CategoryComponent implements OnInit {
           //     break;
           default:
             if (field.tag !== 'separator')
-              values[field.name] =
-                eval('this.obj.' + field.name) !== undefined
-                  ? eval('this.obj.' + field.name)
-                  : null;
+              values[field.name] = eval('this.obj.' + field.name) !== undefined ? eval('this.obj.' + field.name) : null;
             break;
         }
       }
@@ -419,26 +389,18 @@ export class CategoryComponent implements OnInit {
     if (this.applications && this.applications.length > 0) {
       this.applications.forEach((x) => {
         let exists: boolean = false;
-        if (
-          this.obj &&
-          this.obj.applications &&
-          this.obj.applications.length > 0
-        ) {
+        if (this.obj && this.obj.applications && this.obj.applications.length > 0) {
           this.obj.applications.forEach((y) => {
             if (x._id === y._id) {
               exists = true;
               const control = new UntypedFormControl(y);
-              (this.objForm.controls.applications as UntypedFormArray).push(
-                control
-              );
+              (this.objForm.controls.applications as UntypedFormArray).push(control);
             }
           });
         }
         if (!exists) {
           const control = new UntypedFormControl(false);
-          (this.objForm.controls.applications as UntypedFormArray).push(
-            control
-          );
+          (this.objForm.controls.applications as UntypedFormArray).push(control);
         }
       });
     }
@@ -466,8 +428,7 @@ export class CategoryComponent implements OnInit {
         switch (field.tagType) {
           case 'date':
             this.obj[field.name] = moment(this.obj[field.name]).isValid()
-              ? moment(this.obj[field.name]).format('YYYY-MM-DD') +
-                moment().format('THH:mm:ssZ')
+              ? moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ')
               : null;
             break;
           case 'number':
@@ -478,24 +439,12 @@ export class CategoryComponent implements OnInit {
               this.deleteFile(field.name, this.obj[field.name]);
             }
 
-            if (
-              this.filesToUpload &&
-              this.filesToUpload[field.name] &&
-              this.filesToUpload[field.name].length > 0
-            ) {
+            if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
               this.loading = true;
               this.deleteFile(field.name, this.obj[field.name]);
-              if (
-                this.filesToUpload[field.name] &&
-                this.filesToUpload[field.name].length > 0
-              ) {
+              if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                 //this.obj[field.name] = this.oldFiles[field.name];
-                if (
-                  field.multiple &&
-                  (!this.obj ||
-                    !this.obj[field.name] ||
-                    this.obj[field.name].length === 0)
-                ) {
+                if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                   this.obj[field.name] = new Array();
                 }
                 for (let file of this.filesToUpload[field.name]) {
@@ -525,18 +474,15 @@ export class CategoryComponent implements OnInit {
               }
               this.loading = false;
             } else {
-              if (this.oldFiles)
-                this.obj[field.name] = this.oldFiles[field.name];
+              if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
           case 'boolean':
-            this.obj[field.name] =
-              this.obj[field.name] == 'true' || this.obj[field.name] == true;
+            this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
           case 'text':
             if (
               field.tag === 'autocomplete' &&
-              (this.obj[field.name] == '' ||
-                (this.obj[field.name] && !this.obj[field.name]['_id']))
+              (this.obj[field.name] == '' || (this.obj[field.name] && !this.obj[field.name]['_id']))
             ) {
               this.obj[field.name] = null;
             }

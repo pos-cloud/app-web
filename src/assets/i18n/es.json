@@ -639,5 +639,6 @@
   "width": "Largo",
   "height": "Alto",
   "tiendaNubeId": "Tienda Nube ID",
-  "fieldRequired": "Campo requerido"
+  "fieldRequired": "Campo requerido",
+  "publishWooCommerce": "Publicar en WooCommerce"
 }

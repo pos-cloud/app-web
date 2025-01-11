@@ -5,16 +5,16 @@ export interface Category extends Activity {
   order: number;
   description: string;
   picture: string;
+  parent: Category;
+  favourite: boolean;
+  isRequiredOptional: boolean;
+  observation: string;
+  publishWooCommerce: boolean;
+  publishTiendaNube: boolean;
+  showMenu: boolean;
+  wooId: string;
+  tiendaNubeId: string;
   visibleInvoice: boolean;
   visibleOnSale: boolean;
   visibleOnPurchase: boolean;
-  ecommerceEnabled: boolean;
-  applications: any; //Application[];
-  favourite: boolean;
-  isRequiredOptional: boolean;
-  wooId: string;
-  parent: Category;
-  observation: string;
-  tiendaNubeId: string;
-  showMenu: boolean;
 }

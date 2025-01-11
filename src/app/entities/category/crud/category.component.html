@@ -1,0 +1,298 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-category' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ category?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ category?.name ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleCategoryOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handleCategoryOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body scroll">
+      <form [formGroup]="categoryForm" (ngSubmit)="handleCategoryOperation()" autocomplete="off">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-8">
+            <div class="row">
+              <div class="form-group col-md-1">
+                <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="order"
+                  name="order"
+                  id="order"
+                  [readonly]="readonly"
+                />
+              </div>
+              <div class="form-group col-md-9">
+                <label for="description" class="control-label">{{ 'description' | translate | capitalize }}:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="description"
+                  name="description"
+                  id="description"
+                  [focus]="focusEvent"
+                  [ngClass]="{
+                    'is-invalid': categoryForm.get('description')?.touched && categoryForm.get('description')?.invalid,
+                  }"
+                  [readonly]="readonly"
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    categoryForm.get('description')?.touched && categoryForm.get('description')?.hasError('required')
+                  "
+                >
+                  {{ 'fieldRequired' | translate | capitalize }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-10">
+                <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="observation"
+                  name="observation"
+                  id="observation"
+                  [readonly]="readonly"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-5">
+                <label for="parent" class="control-label">{{ 'parent' | translate | capitalize }}:</label>
+                <app-typeahead-dropdown
+                  [control]="categoryForm.get('parent')"
+                  [data]="categories"
+                  [readonly]="readonly"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-4 text-center">
+            <div class="custom-file">
+              <label *ngIf="operation !== 'view'" class="custom-file-label" for="customFileLang">{{
+                'category.picture' | translate | capitalize
+              }}</label>
+              <input
+                *ngIf="operation !== 'view'"
+                type="file"
+                lang="es"
+                placeholder="Buscar Imagen"
+                accept="image/*"
+                id="customFileLang"
+                (change)="fileChangeEvent($event, false)"
+              />
+              <div class="mt-2">
+                <img
+                  class="img-article"
+                  [src]="imageURL"
+                  style="height: 150px; width: 150px; display: block; margin: auto"
+                />
+              </div>
+              <button
+                class="btn btn-sm btn-danger mt-2"
+                (click)="deletePicture(null, article.picture)"
+                *ngIf="this.imageURL != './../../../assets/img/default.jpg' && operation != 'view'"
+              >
+                <i class="fa fa-trash-o"></i> Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="favourite" class="control-label">Favourite</label>
+            <select class="form-control" formControlName="favourite">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="isRequiredOptional" class="control-label">Requiere opcional</label>
+            <select class="form-control" formControlName="isRequiredOptional">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="publishWooCommerce" class="control-label">Publicado en WooCommerce</label>
+            <select class="form-control" formControlName="publishWooCommerce">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="publishTiendaNube" class="control-label">Publicado en Tienda Nube</label>
+            <select class="form-control" formControlName="publishTiendaNube">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="showMenu" class="control-label">Publicado en Carta Digital</label>
+            <select class="form-control" formControlName="showMenu">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="visibleInvoice" class="control-label">Visible en la factura</label>
+            <select class="form-control" formControlName="visibleInvoice">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="visibleOnSale" class="control-label">Visible en la venta</label>
+            <select class="form-control" formControlName="visibleOnSale">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="visibleOnPurchase" class="control-label">Visible en la compra</label>
+            <select class="form-control" formControlName="visibleOnPurchase">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ category?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ category?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ category?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ category?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-3">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ category?._id ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">
+                  {{ 'wooId' | translate | capitalize }}:
+                  <b>{{ category?.wooId ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">
+                  {{ 'tiendaNubeId' | translate | capitalize }}:
+                  <b>{{ category?.tiendaNubeId ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
