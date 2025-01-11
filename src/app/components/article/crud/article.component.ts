@@ -1,13 +1,6 @@
 // Angular
 import { DecimalPipe, SlicePipe } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
   FormArray,
   FormGroup,
@@ -22,12 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 
 // Terceros
-import {
-  NgbActiveModal,
-  NgbModal,
-  NgbTypeahead,
-  NgbTypeaheadConfig,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbTypeahead, NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // Models
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
@@ -232,25 +220,16 @@ export class ArticleComponent implements OnInit {
     tag: {},
   };
 
-  searchCategories: OperatorFunction<string, readonly any[]> = (
-    text$: Observable<string>
-  ) => {
-    const debouncedText$ = text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged()
-    );
-    const clicksWithClosedPopup$ = this.categoryClick$.pipe(
-      filter(() => !this.instance.isPopupOpen())
-    );
+  searchCategories: OperatorFunction<string, readonly any[]> = (text$: Observable<string>) => {
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const clicksWithClosedPopup$ = this.categoryClick$.pipe(filter(() => !this.instance.isPopupOpen()));
     const inputFocus$ = this.categoryFocus$;
 
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
           ? this.categories
-          : this.categories.filter((v) =>
-              v.description.toLowerCase().includes(term.toLowerCase())
-            )
+          : this.categories.filter((v) => v.description.toLowerCase().includes(term.toLowerCase()))
         ).slice()
       )
     );
@@ -258,53 +237,34 @@ export class ArticleComponent implements OnInit {
 
   formatResult = (result: any) => {
     if (result.parent && result.parent) {
-      return (
-        result.description +
-        ' - ' +
-        this.categories.find((c: Category) => c._id === result.parent)
-          .description
-      );
+      return result.description + ' - ' + this.categories.find((c: Category) => c._id === result.parent).description;
     }
     return result.description;
   };
 
   formatInput = (result: any) => {
     let valueId = result._id === undefined ? result : result._id;
-    const category: any = this.categories.find(
-      (c: Category) => c._id === valueId
-    );
+    const category: any = this.categories.find((c: Category) => c._id === valueId);
 
     if (category.parent) {
       return (
-        category.description +
-        ' - ' +
-        this.categories.find((c: Category) => c._id === category.parent)
-          .description
+        category.description + ' - ' + this.categories.find((c: Category) => c._id === category.parent).description
       );
     }
 
     return category?.description;
   };
 
-  searchMakes: OperatorFunction<string, readonly any[]> = (
-    text$: Observable<string>
-  ) => {
-    const debouncedText$ = text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged()
-    );
-    const clicksWithClosedPopup$ = this.makeClick$.pipe(
-      filter(() => !this.instance.isPopupOpen())
-    );
+  searchMakes: OperatorFunction<string, readonly any[]> = (text$: Observable<string>) => {
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const clicksWithClosedPopup$ = this.makeClick$.pipe(filter(() => !this.instance.isPopupOpen()));
     const inputFocus$ = this.makeFocus$;
 
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
           ? this.makes
-          : this.makes.filter((v) =>
-              v.description.toLowerCase().includes(term.toLowerCase())
-            )
+          : this.makes.filter((v) => v.description.toLowerCase().includes(term.toLowerCase()))
         ).slice()
       )
     );
@@ -322,25 +282,16 @@ export class ArticleComponent implements OnInit {
     return make?.description;
   };
 
-  searchUnitsOfMeasurement: OperatorFunction<string, readonly any[]> = (
-    text$: Observable<string>
-  ) => {
-    const debouncedText$ = text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged()
-    );
-    const clicksWithClosedPopup$ = this.unitsOfMeasurementClick$.pipe(
-      filter(() => !this.instance.isPopupOpen())
-    );
+  searchUnitsOfMeasurement: OperatorFunction<string, readonly any[]> = (text$: Observable<string>) => {
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const clicksWithClosedPopup$ = this.unitsOfMeasurementClick$.pipe(filter(() => !this.instance.isPopupOpen()));
     const inputFocus$ = this.unitsOfMeasurementFocus$;
 
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
           ? this.unitsOfMeasurement
-          : this.unitsOfMeasurement.filter((v) =>
-              v.name.toLowerCase().includes(term.toLowerCase())
-            )
+          : this.unitsOfMeasurement.filter((v) => v.name.toLowerCase().includes(term.toLowerCase()))
         ).slice()
       )
     );
@@ -348,31 +299,20 @@ export class ArticleComponent implements OnInit {
 
   formatterUnitsOfMeasurement = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
-    const unitsOfMeasurement = this.unitsOfMeasurement.find(
-      (u: UnitOfMeasurement) => u._id === valueId
-    );
+    const unitsOfMeasurement = this.unitsOfMeasurement.find((u: UnitOfMeasurement) => u._id === valueId);
     return unitsOfMeasurement.name;
   };
 
-  searchProvider: OperatorFunction<string, readonly any[]> = (
-    text$: Observable<string>
-  ) => {
-    const debouncedText$ = text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged()
-    );
-    const clicksWithClosedPopup$ = this.companiesClick$.pipe(
-      filter(() => !this.instance.isPopupOpen())
-    );
+  searchProvider: OperatorFunction<string, readonly any[]> = (text$: Observable<string>) => {
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const clicksWithClosedPopup$ = this.companiesClick$.pipe(filter(() => !this.instance.isPopupOpen()));
     const inputFocus$ = this.companiesFocus$;
 
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
         (term === ''
           ? this.companies
-          : this.companies.filter((v) =>
-              v.name.toLowerCase().includes(term.toLowerCase())
-            )
+          : this.companies.filter((v) => v.name.toLowerCase().includes(term.toLowerCase()))
         ).slice()
       )
     );
@@ -467,10 +407,8 @@ export class ArticleComponent implements OnInit {
       ]);
       this.article.isWeigth = this.config.article.isWeigth.default;
       this.article.salesAccount = this.config.article.salesAccount.default;
-      this.article.purchaseAccount =
-        this.config.article.purchaseAccount.default;
-      this.article.allowSaleWithoutStock =
-        this.config.article.allowSaleWithoutStock.default || false;
+      this.article.purchaseAccount = this.config.article.purchaseAccount.default;
+      this.article.allowSaleWithoutStock = this.config.article.allowSaleWithoutStock.default || false;
     });
 
     await this.getAllApplications({})
@@ -480,9 +418,7 @@ export class ArticleComponent implements OnInit {
           this.applications.forEach((x) => {
             const control = new UntypedFormControl(false);
 
-            (this.articleForm.controls.applications as UntypedFormArray).push(
-              control
-            );
+            (this.articleForm.controls.applications as UntypedFormArray).push(control);
           });
         }
       })
@@ -604,9 +540,7 @@ export class ArticleComponent implements OnInit {
       salePriceTN: [this.article.salePriceTN, []],
     });
 
-    this.articleForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.articleForm.valueChanges.subscribe((data) => this.onValueChanged(data));
     this.focusEvent.emit(true);
   }
 
@@ -624,12 +558,8 @@ export class ArticleComponent implements OnInit {
 
           if (control && !control.valid) {
             for (const key in control.errors) {
-              if (
-                this.validationMessages[field][key] &&
-                this.validationMessages[field][key] != 'undefined'
-              ) {
-                this.formErrors[field] +=
-                  this.validationMessages[field][key] + ' ';
+              if (this.validationMessages[field][key] && this.validationMessages[field][key] != 'undefined') {
+                this.formErrors[field] += this.validationMessages[field][key] + ' ';
               }
             }
           }
@@ -708,17 +638,12 @@ export class ArticleComponent implements OnInit {
           this.taxes = this.article.taxes;
           this.totalTaxes = 0;
           for (let tax of this.taxes) {
-            const taxes: any =
-              typeof tax.tax === 'string'
-                ? this.tax.find((app) => app._id === tax.tax)
-                : tax.tax._id;
+            const taxes: any = typeof tax.tax === 'string' ? this.tax.find((app) => app._id === tax.tax) : tax.tax._id;
             tax.tax = taxes;
             this.totalTaxes += tax.taxAmount;
           }
-          this.imageURL =
-            this.article.picture ?? './../../../assets/img/default.jpg';
-          if (this.article.picture == 'default.jpg')
-            this.imageURL = './../../../assets/img/default.jpg';
+          this.imageURL = this.article.picture ?? './../../../assets/img/default.jpg';
+          if (this.article.picture == 'default.jpg') this.imageURL = './../../../assets/img/default.jpg';
 
           if (this.operation === 'copy') {
             this.article._id = null;
@@ -753,9 +678,7 @@ export class ArticleComponent implements OnInit {
           if (this.article.variants.length > 0) {
             const types = this.article.variants.map((item) => item.type);
             const uniqueTypes = [...new Set(types)];
-            const filteredObjects = this.variantTypes.filter((item: any) =>
-              uniqueTypes.includes(item._id)
-            );
+            const filteredObjects = this.variantTypes.filter((item: any) => uniqueTypes.includes(item._id));
 
             this.variantTypes = filteredObjects;
           }
@@ -780,9 +703,7 @@ export class ArticleComponent implements OnInit {
         // Si el tipo ya existe, agregar el valor si no está ya presente
         let existing = typeMap.get(typeId);
         const existingValues = existing.value;
-        const valueExists = existingValues.some(
-          (val) => val._id === variant.value._id
-        );
+        const valueExists = existingValues.some((val) => val._id === variant.value._id);
 
         if (!valueExists) {
           existingValues.push(variant.value);
@@ -802,8 +723,7 @@ export class ArticleComponent implements OnInit {
   public getVariantValuesByType(variantType: VariantType): void {
     this.loading = true;
 
-    let query =
-      'where="type":"' + variantType._id + '"&sort="order":1,"description":1';
+    let query = 'where="type":"' + variantType._id + '"&sort="order":1,"description":1';
 
     this._variantValueService.getVariantValues(query).subscribe(
       (result) => {
@@ -851,15 +771,11 @@ export class ArticleComponent implements OnInit {
 
   public updateAndRefresh() {
     if (this.operation !== 'add' && this.operation !== 'copy') {
-      const selectedTypeNames = this.articleForm.controls.variants.value.map(
-        (v) => v.value.type.name
-      );
+      const selectedTypeNames = this.articleForm.controls.variants.value.map((v) => v.value.type.name);
       if (!selectedTypeNames.length) {
         this.filteredVariantTypes = this.variantTypes;
       } else {
-        this.filteredVariantTypes = this.variantTypes.filter((type) =>
-          selectedTypeNames.includes(type.name)
-        );
+        this.filteredVariantTypes = this.variantTypes.filter((type) => selectedTypeNames.includes(type.name));
       }
     } else {
       this.filteredVariantTypes = this.variantTypes;
@@ -930,11 +846,7 @@ export class ArticleComponent implements OnInit {
           null,
           'info',
           undefined,
-          'La variante ' +
-            this.variant.type.name +
-            ' ' +
-            this.variant.value.description +
-            ' ya existe'
+          'La variante ' + this.variant.type.name + ' ' + this.variant.value.description + ' ya existe'
         );
       }
     }
@@ -945,10 +857,7 @@ export class ArticleComponent implements OnInit {
 
     if (this.variants && this.variants.length > 0) {
       for (let variantAux of this.variants) {
-        if (
-          variantAux.type._id === variant.type._id &&
-          variantAux.value._id === variant.value._id
-        ) {
+        if (variantAux.type._id === variant.type._id && variantAux.value._id === variant.value._id) {
           exists = true;
         }
       }
@@ -960,9 +869,7 @@ export class ArticleComponent implements OnInit {
   public deleteVariant(v) {
     // Verifica si solo hay un tipo con un valor en variantsByTypes
     const typeId = v.type?._id; // Obtén el ID del tipo desde el objeto v
-    const typeIndex = this.variantsByTypes.findIndex(
-      (type) => type.type._id === typeId
-    );
+    const typeIndex = this.variantsByTypes.findIndex((type) => type.type._id === typeId);
 
     if (typeIndex !== -1) {
       const type = this.variantsByTypes[typeIndex];
@@ -1015,12 +922,7 @@ export class ArticleComponent implements OnInit {
         // Eliminar la variante del FormArray
         this.deleteVariantFromFormArray(v);
       } else {
-        this._toastService.showToast(
-          null,
-          'info',
-          undefined,
-          'No se puede eliminar la única variante restante.'
-        );
+        this._toastService.showToast(null, 'info', undefined, 'No se puede eliminar la única variante restante.');
         return;
       }
     }
@@ -1032,9 +934,7 @@ export class ArticleComponent implements OnInit {
     for (let i = 0; i < variantsArray.length; i++) {
       const variantGroup = variantsArray.at(i) as FormGroup;
       const variantId =
-        typeof variantGroup.value.value === 'string'
-          ? variantGroup.value.value
-          : variantGroup.value.value._id;
+        typeof variantGroup.value.value === 'string' ? variantGroup.value.value : variantGroup.value.value._id;
       if (variantId === variant._id) {
         variantsArray.removeAt(i);
         break;
@@ -1071,20 +971,14 @@ export class ArticleComponent implements OnInit {
   }
 
   onEnter() {
-    const isInQuill =
-      event.target instanceof HTMLDivElement &&
-      event.target.classList.contains('ql-editor');
+    const isInQuill = event.target instanceof HTMLDivElement && event.target.classList.contains('ql-editor');
 
     if (isInQuill) {
       event.preventDefault();
       return;
     }
 
-    if (
-      this.articleForm.valid &&
-      this.operation !== 'view' &&
-      this.operation !== 'delete'
-    ) {
+    if (this.articleForm.valid && this.operation !== 'view' && this.operation !== 'delete') {
       this.addArticle();
     }
     if (this.articleForm.valid && this.operation === 'delete') {
@@ -1270,9 +1164,7 @@ export class ArticleComponent implements OnInit {
   onAppChange(event: Event, index: number): void {
     const selectElement = event.target as HTMLSelectElement;
     const selectedValue = selectElement.value === 'true';
-    (this.articleForm.controls.applications as UntypedFormArray)
-      .at(index)
-      .setValue(selectedValue);
+    (this.articleForm.controls.applications as UntypedFormArray).at(index).setValue(selectedValue);
   }
 
   setValuesArray(): void {
@@ -1294,9 +1186,7 @@ export class ArticleComponent implements OnInit {
       let variants = this.articleForm.controls.variants as UntypedFormArray;
       this.article.variants.forEach((x) => {
         const selectedType = this.variantTypes.find(
-          (varianType) =>
-            varianType._id ===
-            (typeof x.type === 'string' ? x.type : x.type._id)
+          (varianType) => varianType._id === (typeof x.type === 'string' ? x.type : x.type._id)
         );
 
         const selectedValue = this.variantValues.find((variantValue) => {
@@ -1317,18 +1207,14 @@ export class ArticleComponent implements OnInit {
       this.applications.forEach((app) => {
         const exists = this.article.applications.toString().includes(app._id);
         const control = new UntypedFormControl(exists);
-        (this.articleForm.controls.applications as UntypedFormArray).push(
-          control
-        );
+        (this.articleForm.controls.applications as UntypedFormArray).push(control);
       });
     }
   }
 
   public returnTo(): void {
     this._route.queryParams.subscribe((params) => {
-      const returnUrl = params['returnURL']
-        ? decodeURIComponent(params['returnURL'])
-        : null;
+      const returnUrl = params['returnURL'] ? decodeURIComponent(params['returnURL']) : null;
 
       if (this.property) {
         this.activeModal.close();
@@ -1394,10 +1280,7 @@ export class ArticleComponent implements OnInit {
   getLastArticle(): void {
     this._articleService.getLasCode().subscribe(
       (result) => {
-        let code = this.padString(
-          1,
-          this.config.article.code.validators.maxLength
-        );
+        let code = this.padString(1, this.config.article.code.validators.maxLength);
 
         if (result.code) {
           code = result.code;
@@ -1424,27 +1307,6 @@ export class ArticleComponent implements OnInit {
         modalRef.componentInstance.operation = 'view';
         break;
     }
-  }
-
-  saveArticleStock(): void {
-    if (!this.articleStock) {
-      this.articleStock = new ArticleStock();
-    }
-
-    if (this.articleStock && !this.articleStock.article) {
-      this.articleStock.article = this.article;
-    }
-
-    this._articleStockService.saveArticleStock(this.articleStock).subscribe(
-      (result) => {
-        if (!result.articleStock) {
-          this._toastService.showToast(result);
-        } else {
-          this.articleStock = result.articleStock;
-        }
-      },
-      (error) => this._toastService.showToast(error)
-    );
   }
 
   getCategories(query): Promise<Category[]> {
@@ -1475,9 +1337,7 @@ export class ArticleComponent implements OnInit {
           for (const articleTax of this.taxes) {
             if (articleTax.tax.percentage && articleTax.tax.percentage != 0) {
               articleTax.taxBase = taxedAmount;
-              articleTax.taxAmount = this.roundNumber.transform(
-                (taxedAmount * articleTax.percentage) / 100
-              );
+              articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage) / 100);
               this.totalTaxes += articleTax.taxAmount;
             }
             this.articleForm.value.costPrice += articleTax.taxAmount;
@@ -1487,13 +1347,9 @@ export class ArticleComponent implements OnInit {
 
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPrice = this.roundNumber.transform(
-            (this.articleForm.value.costPrice *
-              this.articleForm.value.markupPercentage) /
-              100
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
           );
-          this.articleForm.value.salePrice =
-            this.articleForm.value.costPrice +
-            this.articleForm.value.markupPrice;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
       case 'taxes':
@@ -1511,47 +1367,25 @@ export class ArticleComponent implements OnInit {
         this.articleForm.value.costPrice += taxedAmount;
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPrice = this.roundNumber.transform(
-            (this.articleForm.value.costPrice *
-              this.articleForm.value.markupPercentage) /
-              100
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
           );
-          this.articleForm.value.salePrice =
-            this.articleForm.value.costPrice +
-            this.articleForm.value.markupPrice;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
       case 'markupPercentage':
-        if (
-          !(
-            this.articleForm.value.basePrice === 0 &&
-            this.articleForm.value.salePrice !== 0
-          )
-        ) {
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPrice = this.roundNumber.transform(
-            (this.articleForm.value.costPrice *
-              this.articleForm.value.markupPercentage) /
-              100
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
           );
-          this.articleForm.value.salePrice =
-            this.articleForm.value.costPrice +
-            this.articleForm.value.markupPrice;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
       case 'markupPrice':
-        if (
-          !(
-            this.articleForm.value.basePrice === 0 &&
-            this.articleForm.value.salePrice !== 0
-          )
-        ) {
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPercentage = this.roundNumber.transform(
-            (this.articleForm.value.markupPrice /
-              this.articleForm.value.costPrice) *
-              100
+            (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100
           );
-          this.articleForm.value.salePrice =
-            this.articleForm.value.costPrice +
-            this.articleForm.value.markupPrice;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
       case 'salePrice':
@@ -1560,12 +1394,9 @@ export class ArticleComponent implements OnInit {
           this.articleForm.value.markupPercentage = 100;
           this.articleForm.value.markupPrice = this.articleForm.value.salePrice;
         } else {
-          this.articleForm.value.markupPrice =
-            this.articleForm.value.salePrice - this.articleForm.value.costPrice;
+          this.articleForm.value.markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
           this.articleForm.value.markupPercentage = this.roundNumber.transform(
-            (this.articleForm.value.markupPrice /
-              this.articleForm.value.costPrice) *
-              100
+            (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100
           );
         }
         break;
@@ -1573,24 +1404,12 @@ export class ArticleComponent implements OnInit {
         break;
     }
 
-    this.articleForm.value.basePrice = this.roundNumber.transform(
-      this.articleForm.value.basePrice
-    );
-    this.articleForm.value.costPrice = this.roundNumber.transform(
-      this.articleForm.value.costPrice
-    );
-    this.articleForm.value.markupPercentage = this.roundNumber.transform(
-      this.articleForm.value.markupPercentage
-    );
-    this.articleForm.value.markupPrice = this.roundNumber.transform(
-      this.articleForm.value.markupPrice
-    );
-    this.articleForm.value.salePrice = this.roundNumber.transform(
-      this.articleForm.value.salePrice
-    );
-    this.articleForm.value.salePriceTN = this.roundNumber.transform(
-      this.articleForm.value.salePriceTN
-    );
+    this.articleForm.value.basePrice = this.roundNumber.transform(this.articleForm.value.basePrice);
+    this.articleForm.value.costPrice = this.roundNumber.transform(this.articleForm.value.costPrice);
+    this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
+    this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
+    this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
+    this.articleForm.value.salePriceTN = this.roundNumber.transform(this.articleForm.value.salePriceTN);
     this.article = Object.assign(this.article, this.articleForm.value);
     this.setValuesForm();
   }
@@ -1600,11 +1419,7 @@ export class ArticleComponent implements OnInit {
       const slicePipe = new SlicePipe();
 
       this.articleForm.patchValue({
-        posDescription: slicePipe.transform(
-          this.articleForm.value.description,
-          0,
-          20
-        ),
+        posDescription: slicePipe.transform(this.articleForm.value.description, 0, 20),
       });
     }
   }
@@ -1613,9 +1428,7 @@ export class ArticleComponent implements OnInit {
     const values = {
       _id: this.article._id ?? '',
       order: this.article.order ?? 1,
-      code:
-        this.article.code ??
-        this.padString(1, this.config.article.code.validators.maxLength),
+      code: this.article.code ?? this.padString(1, this.config.article.code.validators.maxLength),
       codeSAT: this.article.codeSAT ?? '',
       currency: this.article.currency?._id ?? this.article.currency ?? null,
       make: this.article.make ?? null,
@@ -1624,20 +1437,11 @@ export class ArticleComponent implements OnInit {
       basePrice: this.roundNumber.transform(this.article.basePrice ?? 0.0),
       costPrice: this.roundNumber.transform(this.article.costPrice ?? 0.0),
       costPrice2: this.roundNumber.transform(this.article.costPrice2 ?? 0.0),
-      markupPercentage: this.roundNumber.transform(
-        this.article.markupPercentage ?? 0.0
-      ),
-      markupPrice: this.roundNumber.transform(
-        this.article.markupPrice ?? 0.0,
-        3
-      ),
-      markupPriceWithoutVAT: this.roundNumber.transform(
-        (this.article.basePrice * this.article.markupPercentage) / 100
-      ),
+      markupPercentage: this.roundNumber.transform(this.article.markupPercentage ?? 0.0),
+      markupPrice: this.roundNumber.transform(this.article.markupPrice ?? 0.0, 3),
+      markupPriceWithoutVAT: this.roundNumber.transform((this.article.basePrice * this.article.markupPercentage) / 100),
       salePrice: this.roundNumber.transform(this.article.salePrice ?? 0.0),
-      salePriceWithoutVAT: this.roundNumber.transform(
-        this.article.basePrice + this.markupPriceWithoutVAT
-      ),
+      salePriceWithoutVAT: this.roundNumber.transform(this.article.basePrice + this.markupPriceWithoutVAT),
       category: this.article.category ?? null,
       quantityPerMeasure: this.article.quantityPerMeasure ?? 1,
       unitOfMeasurement: this.article.unitOfMeasurement ?? null,
@@ -1660,10 +1464,7 @@ export class ArticleComponent implements OnInit {
         null,
       provider: this.article.provider?._id ?? this.article.provider ?? null,
       lastPricePurchase: this.lastPricePurchase ?? 0,
-      classification:
-        this.article.classification?.[0]?._id ??
-        this.article.classification ??
-        null,
+      classification: this.article.classification?.[0]?._id ?? this.article.classification ?? null,
       url: this.article.url ?? '',
       forShipping: this.article.forShipping ?? false,
       salesAccount: this.article.salesAccount ?? null,
@@ -1695,10 +1496,7 @@ export class ArticleComponent implements OnInit {
       const salePrice = this.articleForm.get('salePrice')?.value;
       if (salePrice <= 0) {
         return this._toastService.showToast({
-          message:
-            salePrice < 0
-              ? 'El precio no puede ser negativo.'
-              : 'El precio tiene que ser mayor a 0.',
+          message: salePrice < 0 ? 'El precio no puede ser negativo.' : 'El precio tiene que ser mayor a 0.',
         });
       }
 
@@ -1708,18 +1506,11 @@ export class ArticleComponent implements OnInit {
         this.article.make = null;
       }
 
-      if (
-        this.article.provider === null ||
-        this.article?.provider?.toString() === ''
-      ) {
+      if (this.article.provider === null || this.article?.provider?.toString() === '') {
         this.article.provider = null;
       }
-      if (this.article.category && this.article.category.toString() === '')
-        this.article.category = null;
-      if (
-        this.article.unitOfMeasurement &&
-        this.article.unitOfMeasurement.toString() === ''
-      )
+      if (this.article.category && this.article.category.toString() === '') this.article.category = null;
+      if (this.article.unitOfMeasurement && this.article.unitOfMeasurement.toString() === '')
         this.article.unitOfMeasurement = null;
       this.article.notes = this.notes;
       this.article.tags = this.tags;
@@ -1773,12 +1564,12 @@ export class ArticleComponent implements OnInit {
     this.loading = true;
 
     if (await this.isValid()) {
-      if (this.filesToUpload)
-        this.article.picture = await this.uploadFile(this.article.picture);
-      this._articleService.saveArticle(this.article).subscribe(
-        (result) => {
+      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+      this._articleService.saveArticle(this.article).subscribe({
+        next: (result) => {
           if (!result.result) {
             this._toastService.showToast(result);
+            this.loading = false;
           } else {
             this.hasChanged = true;
             this.article = result.result;
@@ -1788,11 +1579,14 @@ export class ArticleComponent implements OnInit {
             this.loading = false;
           }
         },
-        (error) => {
-          this._toastService.showToast(error);
+        error: (err) => {
+          this._toastService.showToast(err);
           this.loading = false;
-        }
-      );
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
     } else {
       this.loading = false;
     }
@@ -1801,8 +1595,7 @@ export class ArticleComponent implements OnInit {
   async updateArticle() {
     this.loading = true;
     if (await this.isValid()) {
-      if (this.filesToUpload)
-        this.article.picture = await this.uploadFile(this.article.picture);
+      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
       this._articleService.updateArticle(this.article).subscribe(
         async (result) => {
           if (!result.result) {
@@ -1871,23 +1664,18 @@ export class ArticleComponent implements OnInit {
 
   async uploadFile(pictureDelete: string): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
-      if (
-        pictureDelete &&
-        pictureDelete.includes('https://storage.googleapis')
-      ) {
+      if (pictureDelete && pictureDelete.includes('https://storage.googleapis')) {
         await this.deleteFile(pictureDelete);
       }
 
-      this._fileService
-        .uploadImage(MediaCategory.ARTICLE, this.filesToUpload)
-        .then(
-          (result: string) => {
-            this.article.picture = result;
-            this.imageURL = result;
-            resolve(result);
-          },
-          (error) => this._toastService.showToast(JSON.parse(error))
-        );
+      this._fileService.uploadImage(MediaCategory.ARTICLE, this.filesToUpload).then(
+        (result: string) => {
+          this.article.picture = result;
+          this.imageURL = result;
+          resolve(result);
+        },
+        (error) => this._toastService.showToast(JSON.parse(error))
+      );
     });
   }
 
@@ -1977,14 +1765,12 @@ export class ArticleComponent implements OnInit {
   }
 
   addPicture(): void {
-    this._articleService
-      .makeFileRequest(MediaCategory.ARTICLE, this.filesToArray)
-      .then(
-        (result: string) => {
-          this.addPictureArray(result);
-        },
-        (error) => this._toastService.showToast(error)
-      );
+    this._articleService.makeFileRequest(MediaCategory.ARTICLE, this.filesToArray).then(
+      (result: string) => {
+        this.addPictureArray(result);
+      },
+      (error) => this._toastService.showToast(error)
+    );
   }
 
   async addPictureArray(picture: string) {
