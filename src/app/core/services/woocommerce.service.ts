@@ -23,7 +23,7 @@ export class WooCommerceService {
       .set('Authorization', this._authService.getToken());
 
     return this._http
-      .post(URL, {
+      .post(URL, null, {
         headers: headers,
       })
       .pipe(
