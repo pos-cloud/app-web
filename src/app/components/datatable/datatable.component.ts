@@ -153,6 +153,8 @@ export class DatatableComponent {
   }
 
   public addFilters(): void {
+    this.currentPage = 1;
+    localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
     localStorage.setItem(`${this.identifier}_datatableFilters`, JSON.stringify(this.filters));
     this.getItems();
   }
