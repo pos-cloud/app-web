@@ -35,4 +35,26 @@ export class WooCommerceService {
         })
       );
   }
+
+  public updateTransactionStatusWoo(wooId: string, status: string) {
+    const URL = `${environment.apiv2}/woo/orders/status`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    let data = {
+      wooId,
+      status,
+    };
+
+    return this._http.put(`${URL}`, data, { headers: headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }

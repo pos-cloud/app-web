@@ -1,0 +1,70 @@
+app-list-order-woo-commerce {
+  white-space: nowrap;
+
+  .btn-state-close,
+  .btn-state-close:hover {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  .btn-state-open,
+  .btn-state-open:hover {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+  }
+  .btn-state-canceled,
+  .btn-state-canceled:hover {
+    color: #fff;
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+  .btn-state-sent,
+  .btn-state-sent:hover {
+    color: #212529;
+    background-color: #dae0e5;
+    border-color: #d3d9df;
+  }
+
+  .has-data {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+
+  th {
+    user-select: none;
+  }
+
+  .card-large {
+    min-height: calc(100vh - 120px);
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-footer {
+    margin-top: auto;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  .dropdown-menu {
+    z-index: 1050; /* Asegura que esté por encima de otros elementos */
+  }
+
+  .dropup .dropdown-menu {
+    top: auto !important; /* Desactiva el ajuste automático de posición */
+    //  bottom: 100%; /* Posiciona hacia arriba */
+  }
+}

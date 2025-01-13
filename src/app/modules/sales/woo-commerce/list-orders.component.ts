@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { IAttribute } from '@types';
+import { ApiResponse, IAttribute } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
@@ -16,6 +16,7 @@ import { AuthService } from 'app/core/services/auth.service';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TransactionService } from 'app/core/services/transaction.service';
+import { WooCommerceService } from 'app/core/services/woocommerce.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -25,8 +26,10 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-list-order-woo-commerce',
   templateUrl: './list-orders.component.html',
+  styleUrls: ['./list-orders.component.scss'],
   standalone: true,
   providers: [TranslateService],
+  encapsulation: ViewEncapsulation.None,
   imports: [CommonModule, NgbModule, DatatableModule, PipesModule, TranslateModule, FormsModule, ProgressbarModule],
 })
 export class ListOrdersWooCommerceComponent implements OnInit {
@@ -51,7 +54,8 @@ export class ListOrdersWooCommerceComponent implements OnInit {
     private _printerService: PrinterService,
     private _toastService: ToastService,
     private _modalService: NgbModal,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _wooCommerceService: WooCommerceService
   ) {
     this.columns = [
       {
@@ -105,16 +109,16 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         align: 'left',
         required: false,
       },
-      {
-        name: 'deliveryAddress.shippingStatus',
-        visible: true,
-        disabled: false,
-        filter: false,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
+      // {
+      //   name: 'deliveryAddress.shippingStatus',
+      //   visible: true,
+      //   disabled: false,
+      //   filter: false,
+      //   datatype: 'string',
+      //   project: null,
+      //   align: 'left',
+      //   required: false,
+      // },
       {
         name: 'deliveryAddress.city',
         visible: false,
@@ -165,16 +169,16 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         align: 'left',
         required: true,
       },
-      {
-        name: 'deliveryAddress.state',
-        visible: false,
-        disabled: true,
-        filter: false,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: true,
-      },
+      // {
+      //   name: 'deliveryAddress.state',
+      //   visible: false,
+      //   disabled: true,
+      //   filter: false,
+      //   datatype: 'string',
+      //   project: null,
+      //   align: 'left',
+      //   required: true,
+      // },
       {
         name: 'paymentMethodEcommerce',
         visible: true,
@@ -185,16 +189,16 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         align: 'left',
         required: true,
       },
-      {
-        name: 'Estado del pago',
-        visible: true,
-        disabled: false,
-        filter: false,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
+      // {
+      //   name: 'Estado del pago',
+      //   visible: true,
+      //   disabled: false,
+      //   filter: false,
+      //   datatype: 'string',
+      //   project: null,
+      //   align: 'left',
+      //   required: false,
+      // },
       {
         name: 'observation',
         visible: true,
@@ -280,7 +284,7 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         required: true,
       },
       {
-        name: 'tiendaNubeId',
+        name: 'wooId',
         visible: false,
         disabled: true,
         filter: false,
@@ -379,6 +383,7 @@ export class ListOrdersWooCommerceComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
+        console.log(transaction);
         if (transaction) {
           modalRef = this._modalService.open(ViewTransactionComponent, {
             size: 'lg',
@@ -457,7 +462,35 @@ export class ListOrdersWooCommerceComponent implements OnInit {
 
   isLastTransaction(transaction: any): boolean {
     const index = this.transactions.findIndex((t) => t === transaction);
+
+    if (this.transactions.length === 1) {
+      return false;
+    }
+
     return index === this.transactions.length - 1;
+  }
+
+  changeStateOfTransaction(transaction: Transaction, status: string) {
+    this.loading = true;
+    if (transaction && transaction.wooId) {
+      this._wooCommerceService
+        .updateTransactionStatusWoo(transaction.wooId, status)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this._toastService.showToast(result);
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            setTimeout(() => {
+              this.refresh();
+              this.loading = false;
+            }, 3000);
+          },
+        });
+    }
   }
 
   public orderBy(term: string): void {

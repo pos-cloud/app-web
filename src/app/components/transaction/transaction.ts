@@ -111,6 +111,15 @@ export enum TransactionStateTiendaNube {
   Fulfilled = <any>'fulfilled', //completado
 }
 
+export enum TransactionStatusWooCommerce {
+  Pending = <any>'pending', //pendiente
+  Processing = <any>'processing', //procesando
+  Onhold = <any>'onhold', //en espera
+  Completed = <any>'completed', //preparado
+  Cancelled = <any>'cancelled', //completado
+  Refunded = <any>'refunded', //reenboldado
+}
+
 export let attributes = [
   {
     name: 'type._id',
