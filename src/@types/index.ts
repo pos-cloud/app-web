@@ -5,6 +5,7 @@ export { Branch } from './entities/branch.interface';
 export { Category } from './entities/category.interface';
 export { Claim, ClaimPriority, ClaimType } from './entities/claim.interface';
 export { Classification } from './entities/classification.interface';
+export { Currency } from './entities/currency.interface';
 export { Deposit } from './entities/deposit.interface';
 export { EmployeeType } from './entities/employee-type.interface';
 export { Employee } from './entities/employee.interface';
