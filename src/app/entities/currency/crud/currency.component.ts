@@ -2,10 +2,8 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ApiResponse } from '@types';
+import { ApiResponse, Currency } from '@types';
 
-import { Account } from 'app/components/account/account';
-import { Currency } from 'app/components/currency/currency';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subject } from 'rxjs';
@@ -18,14 +16,13 @@ import { takeUntil } from 'rxjs/operators';
 export class CurrencyComponent implements OnInit {
   public operation: string;
   public readonly: boolean;
-  public bankId: string;
+  public currencyId: string;
   public alertMessage: string = '';
   public userType: string;
   public currency: Currency;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public currencyForm: UntypedFormGroup;
-  public accounts: Account[];
   public quotation: any;
 
   private destroy$ = new Subject<void>();
