@@ -230,6 +230,40 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer"></div>
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-md-10">
+          <ngb-pagination
+            *ngIf="itemsPerPage < totalItems"
+            [collectionSize]="totalItems"
+            [(page)]="currentPage"
+            [maxSize]="5"
+            [boundaryLinks]="true"
+            [pageSize]="itemsPerPage"
+            (pageChange)="pageChange($event)"
+          ></ngb-pagination>
+        </div>
+
+        <div class="form-group col-md-2">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
+            <option [value]="5">
+              {{ 'show 5 records' | translate | capitalize }}
+            </option>
+            <option [value]="10">
+              {{ 'show 10 records' | translate | capitalize }}
+            </option>
+            <option [value]="20">
+              {{ 'show 20 records' | translate | capitalize }}
+            </option>
+            <option [value]="50">
+              {{ 'show 50 records' | translate | capitalize }}
+            </option>
+            <option [value]="100">
+              {{ 'show 100 records' | translate | capitalize }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
