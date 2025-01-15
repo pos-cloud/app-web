@@ -22,6 +22,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as printJS from 'print-js';
 import { Subject, Subscription, takeUntil } from 'rxjs';
+import { SyncOrderComponent } from './sync-orders/sync-orders.component';
 
 @Component({
   selector: 'app-list-order-woo-commerce',
@@ -109,16 +110,6 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         align: 'left',
         required: false,
       },
-      // {
-      //   name: 'deliveryAddress.shippingStatus',
-      //   visible: true,
-      //   disabled: false,
-      //   filter: false,
-      //   datatype: 'string',
-      //   project: null,
-      //   align: 'left',
-      //   required: false,
-      // },
       {
         name: 'deliveryAddress.city',
         visible: false,
@@ -169,16 +160,6 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         align: 'left',
         required: true,
       },
-      // {
-      //   name: 'deliveryAddress.state',
-      //   visible: false,
-      //   disabled: true,
-      //   filter: false,
-      //   datatype: 'string',
-      //   project: null,
-      //   align: 'left',
-      //   required: true,
-      // },
       {
         name: 'paymentMethodEcommerce',
         visible: true,
@@ -189,16 +170,6 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         align: 'left',
         required: true,
       },
-      // {
-      //   name: 'Estado del pago',
-      //   visible: true,
-      //   disabled: false,
-      //   filter: false,
-      //   datatype: 'string',
-      //   project: null,
-      //   align: 'left',
-      //   required: false,
-      // },
       {
         name: 'observation',
         visible: true,
@@ -383,7 +354,6 @@ export class ListOrdersWooCommerceComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        console.log(transaction);
         if (transaction) {
           modalRef = this._modalService.open(ViewTransactionComponent, {
             size: 'lg',
@@ -456,6 +426,18 @@ export class ListOrdersWooCommerceComponent implements OnInit {
             }
           }
         }
+        break;
+
+      case 'sync-orders':
+        modalRef = this._modalService.open(SyncOrderComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+
+        modalRef.result.then(() => {
+          this.getTransactions();
+        });
+        break;
         break;
     }
   }

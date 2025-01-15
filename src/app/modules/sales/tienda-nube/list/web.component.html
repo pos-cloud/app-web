@@ -3,18 +3,8 @@
     <div class="card-header">
       <span>Pedidos Tienda Nube</span>
       <div class="pull-right">
-        <button
-          class="btn fa fa-cloud"
-          [disabled]="loading"
-          (click)="openModal('dateTn', null)"
-        >
-          Sincronizar
-        </button>
-        <button
-          class="btn fa fa-refresh"
-          (click)="refresh()"
-          [disabled]="loading"
-        >
+        <button class="btn" [disabled]="loading" (click)="openModal('sync-orders', null)">Sincronizar</button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{ 'fa-spin': loading }"></i>Actualizar
         </button>
       </div>
@@ -122,20 +112,14 @@
                 {{ transaction?.company?.name }}
               </td>
               <td>
-                <div
-                  class="btn-group mr-3"
-                  *ngIf="transaction.tiendaNubeId !== undefined"
-                >
+                <div class="btn-group mr-3" *ngIf="transaction.tiendaNubeId !== undefined">
                   <button
                     type="button"
                     class="btn"
                     [ngClass]="{
-                      'btn-state-close':
-                        transaction?.state?.toString() === 'Cerrado',
-                      'btn-state-open':
-                        transaction?.state?.toString() === 'Abierto',
-                      'btn-state-canceled':
-                        transaction?.state?.toString() === 'Anulado',
+                      'btn-state-close': transaction?.state?.toString() === 'Cerrado',
+                      'btn-state-open': transaction?.state?.toString() === 'Abierto',
+                      'btn-state-canceled': transaction?.state?.toString() === 'Anulado',
                     }"
                   >
                     {{ transaction?.state }}
@@ -145,9 +129,7 @@
                     class="btn-group"
                     ngbDropdown
                     role="group"
-                    [placement]="
-                      isLastTransaction(transaction) ? 'top' : 'bottom'
-                    "
+                    [placement]="isLastTransaction(transaction) ? 'top' : 'bottom'"
                     aria-label="Button group with nested dropdown"
                   >
                     <button
@@ -155,50 +137,36 @@
                       ngbDropdownToggle
                       id="dropdownConfig"
                       [ngClass]="{
-                        'btn-state-close':
-                          transaction?.state?.toString() === 'Cerrado',
-                        'btn-state-open':
-                          transaction?.state?.toString() === 'Abierto',
-                        'btn-state-canceled':
-                          transaction?.state?.toString() === 'Anulado',
+                        'btn-state-close': transaction?.state?.toString() === 'Cerrado',
+                        'btn-state-open': transaction?.state?.toString() === 'Abierto',
+                        'btn-state-canceled': transaction?.state?.toString() === 'Anulado',
                       }"
                     ></button>
 
-                    <div
-                      class="dropdown-menu"
-                      ngbDropdownMenu
-                      aria-labelledby="dropdownConfig"
-                    >
+                    <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdownConfig">
                       <button
                         ngbDropdownItem
                         (click)="changeStateOfTransaction(transaction, 'open')"
                         *ngIf="
-                          transaction?.state?.toString() !== 'Anulado' &&
-                          transaction?.state?.toString() !== 'Abierto'
+                          transaction?.state?.toString() !== 'Anulado' && transaction?.state?.toString() !== 'Abierto'
                         "
                       >
                         Abierto
                       </button>
                       <button
                         ngbDropdownItem
-                        (click)="
-                          changeStateOfTransaction(transaction, 'closed')
-                        "
+                        (click)="changeStateOfTransaction(transaction, 'closed')"
                         *ngIf="
-                          transaction?.state?.toString() !== 'Anulado' &&
-                          transaction?.state?.toString() !== 'Cerrado'
+                          transaction?.state?.toString() !== 'Anulado' && transaction?.state?.toString() !== 'Cerrado'
                         "
                       >
                         Cerrado
                       </button>
                       <button
                         ngbDropdownItem
-                        (click)="
-                          openModal('canceledTn', 'canceled', transaction)
-                        "
+                        (click)="openModal('canceledTn', 'canceled', transaction)"
                         *ngIf="
-                          transaction?.state?.toString() !== 'Cerrado' &&
-                          transaction?.state?.toString() !== 'Anulado'
+                          transaction?.state?.toString() !== 'Cerrado' && transaction?.state?.toString() !== 'Anulado'
                         "
                       >
                         Anulado
@@ -208,44 +176,32 @@
                 </div>
               </td>
               <td style="white-space: normal; line-height: 1.5">
-                <b *ngIf="transaction && transaction?.shipmentMethod"
-                  >{{ transaction?.shipmentMethod?.name }} -
-                </b>
+                <b *ngIf="transaction && transaction?.shipmentMethod">{{ transaction?.shipmentMethod?.name }} - </b>
                 <span *ngIf="transaction && transaction.deliveryAddress">
                   {{ transaction?.deliveryAddress?.name ?? '' }}
                   {{
-                    transaction?.deliveryAddress?.number &&
-                    transaction?.deliveryAddress?.number !== 'No informado'
+                    transaction?.deliveryAddress?.number && transaction?.deliveryAddress?.number !== 'No informado'
                       ? ' ' + transaction?.deliveryAddress?.number
                       : ''
                   }}
+                  {{ transaction?.deliveryAddress?.flat || transaction?.deliveryAddress?.floor ? ' -' : '' }}
                   {{
-                    transaction?.deliveryAddress?.flat ||
-                    transaction?.deliveryAddress?.floor
-                      ? ' -'
-                      : ''
-                  }}
-                  {{
-                    transaction?.deliveryAddress?.flat &&
-                    transaction?.deliveryAddress?.flat !== 'No informado'
+                    transaction?.deliveryAddress?.flat && transaction?.deliveryAddress?.flat !== 'No informado'
                       ? ' Depto. ' + transaction?.deliveryAddress?.flat
                       : ''
                   }}
                   {{
-                    transaction?.deliveryAddress?.floor &&
-                    transaction?.deliveryAddress?.floor !== 'No informado'
+                    transaction?.deliveryAddress?.floor && transaction?.deliveryAddress?.floor !== 'No informado'
                       ? ' Piso ' + transaction?.deliveryAddress?.floor
                       : ''
                   }}
                   {{
-                    transaction?.deliveryAddress?.city &&
-                    transaction?.deliveryAddress?.city !== 'No informado'
+                    transaction?.deliveryAddress?.city && transaction?.deliveryAddress?.city !== 'No informado'
                       ? ', ' + transaction?.deliveryAddress?.city
                       : ''
                   }}
                   {{
-                    transaction?.deliveryAddress?.state &&
-                    transaction?.deliveryAddress?.state !== 'No informado'
+                    transaction?.deliveryAddress?.state && transaction?.deliveryAddress?.state !== 'No informado'
                       ? ', ' + transaction?.deliveryAddress?.state
                       : ''
                   }}
@@ -263,15 +219,9 @@
                     type="button"
                     class="btn"
                     [ngClass]="{
-                      'btn-state-canceled':
-                        transaction?.deliveryAddress?.shippingStatus ===
-                        'Desempaquetado',
-                      'btn-state-close':
-                        transaction?.deliveryAddress?.shippingStatus ===
-                        'Enviado',
-                      'btn-state-open':
-                        transaction?.deliveryAddress?.shippingStatus ===
-                        'No enviado',
+                      'btn-state-canceled': transaction?.deliveryAddress?.shippingStatus === 'Desempaquetado',
+                      'btn-state-close': transaction?.deliveryAddress?.shippingStatus === 'Enviado',
+                      'btn-state-open': transaction?.deliveryAddress?.shippingStatus === 'No enviado',
                     }"
                   >
                     {{ transaction?.deliveryAddress?.shippingStatus ?? '' }}
@@ -280,9 +230,7 @@
                   <div
                     class="btn-group"
                     ngbDropdown
-                    [placement]="
-                      isLastTransaction(transaction) ? 'top' : 'bottom'
-                    "
+                    [placement]="isLastTransaction(transaction) ? 'top' : 'bottom'"
                     role="group"
                     aria-label="Button group with nested dropdown"
                   >
@@ -290,37 +238,26 @@
                       class="btn dropdown-toggle-split"
                       ngbDropdownToggle
                       [ngClass]="{
-                        'btn-state-canceled':
-                          transaction?.deliveryAddress?.shippingStatus ===
-                          'Desempaquetado',
-                        'btn-state-close':
-                          transaction?.deliveryAddress?.shippingStatus ===
-                          'Enviado',
-                        'btn-state-open':
-                          transaction?.deliveryAddress?.shippingStatus ===
-                          'No enviado',
+                        'btn-state-canceled': transaction?.deliveryAddress?.shippingStatus === 'Desempaquetado',
+                        'btn-state-close': transaction?.deliveryAddress?.shippingStatus === 'Enviado',
+                        'btn-state-open': transaction?.deliveryAddress?.shippingStatus === 'No enviado',
                       }"
                     ></button>
                     <div class="dropdown-menu" ngbDropdownMenu>
                       <button
                         *ngIf="
-                          transaction?.deliveryAddress?.shippingStatus ===
-                            'Desempaquetado' &&
+                          transaction?.deliveryAddress?.shippingStatus === 'Desempaquetado' &&
                           transaction?.state?.toString() !== 'Cerrado'
                         "
                         ngbDropdownItem
-                        (click)="
-                          changeStateOfTransaction(transaction, 'packed')
-                        "
+                        (click)="changeStateOfTransaction(transaction, 'packed')"
                       >
                         Empaquetado
                       </button>
                       <button
                         *ngIf="transaction?.state?.toString() !== 'Cerrado'"
                         ngbDropdownItem
-                        (click)="
-                          openModal('fulfilledTn', 'fulfilled', transaction)
-                        "
+                        (click)="openModal('fulfilledTn', 'fulfilled', transaction)"
                       >
                         Enviado
                       </button>
@@ -338,26 +275,14 @@
                 {{ transaction?.observation }}
               </td>
               <td>
-                {{
-                  transaction?.balance
-                    | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                }}
+                {{ transaction?.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td>
-                {{
-                  transaction?.totalPrice
-                    | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                }}
+                {{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </ng-container>
           </tr>
-          <tr
-            align="center"
-            *ngIf="
-              (!transactions || transactions.length === 0) &&
-              this.loading === false
-            "
-          >
+          <tr align="center" *ngIf="(!transactions || transactions.length === 0) && this.loading === false">
             <td colspan="10">No se encontraron pedidos</td>
           </tr>
         </tbody>
@@ -378,11 +303,7 @@
         </div>
 
         <div class="form-group col-md-2">
-          <select
-            class="form-control"
-            [(ngModel)]="itemsPerPage"
-            (change)="getTransactions()"
-          >
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
             <option [value]="5">
               {{ 'show 5 records' | translate | capitalize }}
             </option>

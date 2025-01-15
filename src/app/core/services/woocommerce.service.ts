@@ -57,4 +57,21 @@ export class WooCommerceService {
       })
     );
   }
+
+  public syncOrders(data: { fromDate: string; toDate: string }): Observable<any> {
+    const URL = `${environment.apiv2}/woo/sync/orders`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, data, { headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 }

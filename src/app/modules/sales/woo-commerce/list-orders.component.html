@@ -1,8 +1,11 @@
 <section class="container-fluid">
   <div class="card card-large">
     <div class="card-header">
-      <span>Ordenes Woo Commerce</span>
+      <span>Pedidos Woo Commerce</span>
       <div class="pull-right">
+        <button class="btn" [disabled]="loading" (click)="openModal('sync-orders', null)">
+          <i class="fa fa-sync"></i> Sincronizar
+        </button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{ 'fa-spin': loading }"></i>Actualizar
         </button>
@@ -123,12 +126,6 @@
                   >
                     {{ transaction?.state }}
                   </button>
-                  <!-- processing: 'En proceso',
-                  pending: 'Pendiente',
-                  'on-hold': 'En espera',
-                  completed: 'Cerrado',
-                  cancelled: 'Cancelado',
-                  refunded: 'Reembolsado', -->
                   <div
                     class="btn-group"
                     ngbDropdown
@@ -151,12 +148,6 @@
                           transaction?.state?.toString() === 'Cancelado',
                       }"
                     ></button>
-                    <!-- processing: 'En proceso',
-                    pending: 'Pendiente',
-                    'on-hold': 'En espera',
-                    completed: 'Cerrado',
-                    cancelled: 'Cancelado',
-                    refunded: 'Reembolsado', -->
                     <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdownConfig">
                       <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'processing')">
                         En proceso
