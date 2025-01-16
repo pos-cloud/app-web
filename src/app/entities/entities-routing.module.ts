@@ -36,11 +36,6 @@ const routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'banks',
-    loadChildren: () => import('./bank/bank.module').then((m) => m.BankModule),
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'rooms',
     loadChildren: () => import('./room/room.module').then((m) => m.RoomModule),
     canActivate: [AuthGuard, LicenseGuard],

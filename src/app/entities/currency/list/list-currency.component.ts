@@ -11,7 +11,7 @@ import { CurrencyService } from 'app/core/services/currency.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class ListCurrencyComponent {
-  public title: string = 'currency';
+  public title: string = 'currencies';
   public loading: boolean = false;
   public sort = { name: 1 };
   public columns: IAttribute[] = [
@@ -41,16 +41,6 @@ export class ListCurrencyComponent {
       disabled: false,
       filter: true,
       datatype: 'number',
-      project: null,
-      align: 'left',
-      required: true,
-    },
-    {
-      name: 'account.description',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
       project: null,
       align: 'left',
       required: true,
@@ -154,16 +144,16 @@ export class ListCurrencyComponent {
   public async openModal(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('entities/currency/view/' + obj._id);
+        this._router.navigateByUrl('entities/currencies/view/' + obj._id);
         break;
       case 'update':
-        this._router.navigateByUrl('entities/currency/update/' + obj._id);
+        this._router.navigateByUrl('entities/currencies/update/' + obj._id);
         break;
       case 'delete':
-        this._router.navigateByUrl('entities/currency/delete/' + obj._id);
+        this._router.navigateByUrl('entities/currencies/delete/' + obj._id);
         break;
       case 'add':
-        this._router.navigateByUrl('entities/currency/add');
+        this._router.navigateByUrl('entities/currencies/add');
         break;
     }
   }
