@@ -64,7 +64,7 @@ export class CurrencyComponent implements OnInit {
       _id: this.currency._id ?? '',
       code: this.currency.code ?? 0,
       name: this.currency.name ?? '',
-      sing: this.currency.sign ?? 0,
+      sign: this.currency.sign ?? 0,
       quotation: this.currency.quotation ?? null,
     };
     this.currencyForm.setValue(values);

@@ -79,21 +79,21 @@
             </div>
           </div>
           <div class="form-group col-md-5">
-            <label for="sing" class="control-label">{{ 'sing' | translate | capitalize }}:</label>
+            <label for="sign" class="control-label">{{ 'sign' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
-              formControlName="name"
-              name="sing"
-              id="sing"
+              formControlName="sign"
+              name="sign"
+              id="sign"
               [ngClass]="{
-                'is-invalid': currencyForm.get('sing')?.touched && currencyForm.get('sing')?.invalid,
+                'is-invalid': currencyForm.get('sign')?.touched && currencyForm.get('sign')?.invalid,
               }"
               [readonly]="readonly"
             />
             <div
               class="invalid-feedback"
-              *ngIf="currencyForm.get('sing')?.touched && currencyForm.get('sing')?.hasError('required')"
+              *ngIf="currencyForm.get('sign')?.touched && currencyForm.get('sign')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
