@@ -1,23 +1,16 @@
 <section class="container-fluid">
   <div class="card">
     <div class="card-header">
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'add' || operation === 'copy'"
-        >{{ 'add-employee' | translate | capitalize }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-employee' | translate | capitalize
+      }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
         >{{ 'edit' | translate | capitalize }} {{ employee?.name }}</span
       >
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'view' || operation === 'delete'"
-        >{{ employee?.name }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{ employee?.name }}</span>
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
-          <i class="fa fa-arrow-left"></i
-          ><span>{{ 'return' | translate | capitalize }}</span>
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
         </button>
         <button
           type="button"
@@ -26,10 +19,7 @@
           *ngIf="operation !== 'delete' && operation !== 'view'"
           (click)="handleEmployeeOperation()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -40,10 +30,7 @@
           [disabled]="loading"
           (click)="handleEmployeeOperation()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
           <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -51,11 +38,7 @@
     </div>
     <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
-      <form
-        [formGroup]="employeeForm"
-        (ngSubmit)="handleEmployeeOperation()"
-        autocomplete="off"
-      >
+      <form [formGroup]="employeeForm" (ngSubmit)="handleEmployeeOperation()" autocomplete="off">
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
@@ -63,9 +46,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-3">
-            <label class="control-label"
-              >{{ 'name' | translate | capitalize }}:</label
-            >
+            <label class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
@@ -74,26 +55,19 @@
               id="code"
               [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid':
-                  employeeForm.get('name')?.touched &&
-                  employeeForm.get('name')?.invalid,
+                'is-invalid': employeeForm.get('name')?.touched && employeeForm.get('name')?.invalid,
               }"
               [readonly]="readonly"
             />
             <div
               class="invalid-feedback"
-              *ngIf="
-                employeeForm.get('name')?.touched &&
-                employeeForm.get('name')?.hasError('required')
-              "
+              *ngIf="employeeForm.get('name')?.touched && employeeForm.get('name')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label"
-              >{{ 'contact.phone' | translate | capitalize }}:</label
-            >
+            <label class="control-label">{{ 'contact.phone' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
@@ -104,9 +78,7 @@
             />
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label"
-              >{{ 'address' | translate | capitalize }}:</label
-            >
+            <label class="control-label">{{ 'address' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
@@ -119,13 +91,8 @@
         </div>
 
         <div class="row">
-          <div
-            class="form-group col-md-6 typeahead-container"
-            *ngIf="employeeTypes?.length > 0"
-          >
-            <label class="control-label"
-              >{{ 'employee-type' | translate | capitalize }}:</label
-            >
+          <div class="form-group col-md-6 typeahead-container" *ngIf="employeeTypes?.length > 0">
+            <label class="control-label">{{ 'employee-type' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="employeeForm.get('type')"
               [data]="employeeTypes"
@@ -134,10 +101,7 @@
               [displayField]="'description'"
             ></app-typeahead-dropdown>
             <div
-              *ngIf="
-                employeeForm.get('type').hasError('required') &&
-                employeeForm.get('type').touched
-              "
+              *ngIf="employeeForm.get('type').hasError('required') && employeeForm.get('type').touched"
               class="text-danger"
             >
               {{ 'fieldRequired' | translate | capitalize }}
@@ -162,10 +126,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    employee?.creationDate ?? null
-                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ employee?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -179,10 +140,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    employee?.updateDate ?? null
-                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ employee?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
