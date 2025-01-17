@@ -60,7 +60,7 @@
           <div class="form-group col-md-2">
             <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="name"
               name="name"
@@ -98,15 +98,19 @@
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
+
           <div class="form-group col-md-2">
-            <label for="quotation" class="control-label">{{ 'quotation' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
-              [control]="currencyForm.get('quotation')"
-              [data]="quotation"
+            <label type="button" for="quotation" class="control-label"
+              >{{ 'quotation' | translate | capitalize }}:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              formControlName="quotation"
+              name="quotation"
+              id="quotation"
               [readonly]="readonly"
-              [keyField]="'_id'"
-              [displayField]="'description'"
-            ></app-typeahead-dropdown>
+            />
           </div>
         </div>
         <hr />
@@ -128,28 +132,6 @@
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
                   <b>{{ currency?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">
-                  {{ 'updateUser.name' | translate | capitalize }}:
-                  <b>{{ currency?.updateUser?.name ?? '' }}</b>
-                </label>
-              </div>
-              <div class="form-group col-md-6">
-                <label class="control-label">
-                  {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ currency?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">
-                  {{ 'id' | translate | capitalize }}:
-                  <b>{{ currency?._id ?? '' }}</b>
                 </label>
               </div>
             </div>

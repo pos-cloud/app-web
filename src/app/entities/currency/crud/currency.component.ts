@@ -34,11 +34,11 @@ export class CurrencyComponent implements OnInit {
     private _toastService: ToastService
   ) {
     this.currencyForm = this._fb.group({
-      _id: ['', []],
+      _id: ['', [Validators.required]],
       code: ['', [Validators.required]],
       sign: ['', [Validators.required]],
-      quotation: ['', []],
-      name: [null, []],
+      quotation: ['', [Validators.required]],
+      name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z\s]+$/)]],
     });
   }
 
@@ -65,8 +65,9 @@ export class CurrencyComponent implements OnInit {
       code: this.currency.code ?? 0,
       name: this.currency.name ?? '',
       sign: this.currency.sign ?? 0,
-      quotation: this.currency.quotation ?? null,
+      quotation: this.currency.quotation ?? '',
     };
+
     this.currencyForm.setValue(values);
     this.quotation = values.quotation;
   }
@@ -114,6 +115,7 @@ export class CurrencyComponent implements OnInit {
         break;
       case 'delete':
         this.deleteCurrency();
+        break;
       default:
         break;
     }
