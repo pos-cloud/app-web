@@ -23,7 +23,7 @@ export class ListCurrencyComponent {
       datatype: 'string',
       project: null,
       align: 'left',
-      required: false,
+      required: true,
     },
     {
       name: 'code',
@@ -33,7 +33,7 @@ export class ListCurrencyComponent {
       datatype: 'number',
       project: null,
       align: 'left',
-      required: false,
+      required: true,
     },
     {
       name: 'sign',
@@ -53,16 +53,17 @@ export class ListCurrencyComponent {
       datatype: 'number',
       project: null,
       align: 'right',
-      required: false,
+      required: true,
     },
-    {
+  ];
+  /*{
       name: 'creationUser.name',
       visible: false,
       disabled: false,
       filter: true,
       datatype: 'string',
       align: 'left',
-      required: false,
+      required: true,
     },
     {
       name: 'updateUser.name',
@@ -71,7 +72,7 @@ export class ListCurrencyComponent {
       filter: true,
       datatype: 'string',
       align: 'left',
-      required: false,
+      required: true,
     },
     {
       name: 'creationDate',
@@ -81,7 +82,7 @@ export class ListCurrencyComponent {
       datatype: 'date',
       project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
       align: 'left',
-      required: false,
+      required: true,
     },
     {
       name: 'updateDate',
@@ -91,7 +92,7 @@ export class ListCurrencyComponent {
       datatype: 'string',
       project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
       align: 'left',
-      required: false,
+      required: true,
     },
     {
       name: 'operationType',
@@ -104,7 +105,7 @@ export class ListCurrencyComponent {
       align: 'left',
       required: true,
     },
-  ];
+  ];*/
   public headerButtons: IButton[] = [
     {
       title: 'add',

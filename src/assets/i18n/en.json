@@ -3,6 +3,7 @@
   "articles": "Articles EN",
   "description": "Description EN",
   "return": "Return EN",
-  "currency": "Currency EN",
-  "currencies": "Currencies EN"
+  "currency": "Currency ",
+  "currencies": "Currencies ",
+  "add-currency": "Add currency"
 }
