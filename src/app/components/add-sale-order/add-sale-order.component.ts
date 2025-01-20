@@ -3725,7 +3725,7 @@ export class AddSaleOrderComponent {
   async filterArticles() {
     this.listArticlesComponent.filterArticle = this.filterArticle;
     let article: Article = null;
-    if (this.transaction.type.transactionMovement == TransactionMovement.Production) {
+    if (this.transaction.type.transactionMovement == TransactionMovement.Production && this.database !== 'ajonjoli') {
       let query = 'where="op":"' + this.filterArticle + '"';
       const mov = await this.getMovementsOfArticles(query);
 
