@@ -2,9 +2,8 @@ import { Activity } from '../common/activity.interface';
 
 export interface Currency extends Activity {
   _id: string;
-  code: number;
-  agency: number;
+  code: string;
   name: string;
-  sign: number;
+  sign: string;
   quotation: number | null;
 }

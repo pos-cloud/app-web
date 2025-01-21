@@ -30,7 +30,7 @@ export class ListCurrencyComponent {
       visible: true,
       disabled: false,
       filter: true,
-      datatype: 'number',
+      datatype: 'string',
       project: null,
       align: 'left',
       required: true,
@@ -55,8 +55,7 @@ export class ListCurrencyComponent {
       align: 'right',
       required: true,
     },
-  ];
-  /*{
+    {
       name: 'creationUser.name',
       visible: false,
       disabled: false,
@@ -105,7 +104,8 @@ export class ListCurrencyComponent {
       align: 'left',
       required: true,
     },
-  ];*/
+  ];
+
   public headerButtons: IButton[] = [
     {
       title: 'add',

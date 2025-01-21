@@ -36,8 +36,8 @@ export class CurrencyComponent implements OnInit {
     this.currencyForm = this._fb.group({
       _id: ['', [Validators.required]],
       code: ['', [Validators.required]],
-      sign: ['', [Validators.required]],
-      quotation: ['', [Validators.required]],
+      sign: [1, [Validators.required]],
+      quotation: [1, [Validators.required]],
       name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z\s]+$/)]],
     });
   }
@@ -62,10 +62,10 @@ export class CurrencyComponent implements OnInit {
   public setValueForm(): void {
     const values = {
       _id: this.currency._id ?? '',
-      code: this.currency.code ?? 0,
+      code: this.currency.code ?? '',
       name: this.currency.name ?? '',
-      sign: this.currency.sign ?? 0,
-      quotation: this.currency.quotation ?? '',
+      sign: this.currency.sign ?? '',
+      quotation: this.currency.quotation ?? 0,
     };
 
     this.currencyForm.setValue(values);
