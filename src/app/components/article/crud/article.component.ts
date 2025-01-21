@@ -23,7 +23,6 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Make } from '@types';
 import { Config } from '../../../app.config';
-import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { ArticleService } from '../../../core/services/article.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { VariantService } from '../../../core/services/variant.service';
@@ -321,14 +320,13 @@ export class ArticleComponent implements OnInit {
   formatterProvider = (x: any) => {
     let valueId = x._id === undefined ? x : x._id;
     const company = this.companies.find((c: Company) => c._id === valueId);
-    return company.name;
+    return company?.name;
   };
 
   @ViewChild(AddVariantComponent) addVariantComponent: AddVariantComponent;
 
   constructor(
     private _articleService: ArticleService,
-    private _articleStockService: ArticleStockService,
     private _variantService: VariantService,
     private _modalService: NgbModal,
     private _makeService: MakeService,
