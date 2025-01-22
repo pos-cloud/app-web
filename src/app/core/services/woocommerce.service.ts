@@ -16,7 +16,7 @@ export class WooCommerceService {
   ) {}
 
   public syncWoo(): Observable<any> {
-    const URL = `${environment.apiv2}/woo/sync`;
+    const URL = `${environment.apiv2}/woo/sync/products`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
