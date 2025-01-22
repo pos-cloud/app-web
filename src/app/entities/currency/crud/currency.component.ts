@@ -34,9 +34,9 @@ export class CurrencyComponent implements OnInit {
     private _toastService: ToastService
   ) {
     this.currencyForm = this._fb.group({
-      _id: ['', [Validators.required]],
+      _id: [''],
       code: ['', [Validators.required]],
-      sign: [1, [Validators.required]],
+      sign: ['', [Validators.required]],
       quotation: [1, [Validators.required]],
       name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z\s]+$/)]],
     });
