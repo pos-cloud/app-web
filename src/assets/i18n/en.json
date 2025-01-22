@@ -1,6 +1,9 @@
 {
-    "code": "code EN",
-    "articles": "Articles EN",
-    "description": "Description EN",
-    "return": "Return EN"
+  "code": "code EN",
+  "articles": "Articles EN",
+  "description": "Description EN",
+  "return": "Return EN",
+  "currency": "Currency ",
+  "currencies": "Currencies ",
+  "add-currency": "Add currency"
 }
