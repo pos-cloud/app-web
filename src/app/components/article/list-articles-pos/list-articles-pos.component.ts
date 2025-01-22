@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -36,10 +29,7 @@ import { FilterPipe } from 'app/shared/pipes/filter.pipe';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import {
-  StockMovement,
-  TransactionMovement,
-} from '../../transaction-type/transaction-type';
+import { StockMovement, TransactionMovement } from '../../transaction-type/transaction-type';
 
 import { Claim, ClaimPriority, ClaimType } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
@@ -115,12 +105,7 @@ export class ListArticlesPosComponent implements OnInit {
       this.config = config;
     });
 
-    if (
-      (!this.transaction ||
-        !this.transaction._id ||
-        this.transaction._id === '') &&
-      this.transactionId
-    ) {
+    if ((!this.transaction || !this.transaction._id || this.transaction._id === '') && this.transactionId) {
       await this.getTransaction().then(async (transaction) => {
         if (transaction) {
           this.transaction = transaction;
@@ -130,20 +115,14 @@ export class ListArticlesPosComponent implements OnInit {
             this.transaction.company.priceList &&
             this.transaction.company.type === CompanyType.Client
           ) {
-            this.priceList = await this.getPriceList(
-              this.transaction.company.priceList._id
-            );
+            this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
           } else if (this.transaction.priceList) {
             this.priceList = this.transaction.priceList;
           }
         }
       });
     }
-    if (
-      this.transaction.company &&
-      this.transaction.company.discount > 0 &&
-      this.transaction.type.allowCompanyDiscount
-    )
+    if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount)
       this.discountCompany = this.transaction.company.discount;
     if (
       this.transaction.company &&
@@ -275,12 +254,7 @@ export class ListArticlesPosComponent implements OnInit {
             ) {
               increasePrice = rule.percentage + this.priceList.percentage;
             }
-            if (
-              rule.make &&
-              article.make &&
-              rule.category == null &&
-              rule.make._id === article.make._id
-            ) {
+            if (rule.make && article.make && rule.category == null && rule.make._id === article.make._id) {
               increasePrice = rule.percentage + this.priceList.percentage;
             }
             if (
@@ -303,11 +277,7 @@ export class ListArticlesPosComponent implements OnInit {
       if (this.priceList.exceptions && this.priceList.exceptions.length > 0) {
         this.priceList.exceptions.forEach((exception) => {
           if (exception) {
-            if (
-              article &&
-              exception.article &&
-              exception.article._id === article._id
-            ) {
+            if (article && exception.article && exception.article._id === article._id) {
               increasePrice = exception.percentage;
             }
           }
@@ -319,14 +289,10 @@ export class ListArticlesPosComponent implements OnInit {
     increasePrice -= this.discountCompanyGroup;
 
     if (this.database == 'sangenemi' || this.database == 'globalstore') {
-      return this.roundNumber.transform(
-        article.costPrice + (article.costPrice * increasePrice) / 100
-      );
+      return this.roundNumber.transform(article.costPrice + (article.costPrice * increasePrice) / 100);
     }
 
-    return this.roundNumber.transform(
-      article.salePrice + (article.salePrice * increasePrice) / 100
-    );
+    return this.roundNumber.transform(article.salePrice + (article.salePrice * increasePrice) / 100);
   }
 
   public getPriceList(id: string): Promise<PriceList> {
@@ -347,12 +313,7 @@ export class ListArticlesPosComponent implements OnInit {
     });
   }
 
-  async addItem(
-    articleSelected: Article,
-    amount?: number,
-    salePrice?: number,
-    stockMovement?: StockMovement
-  ) {
+  async addItem(articleSelected: Article, amount?: number, salePrice?: number, stockMovement?: StockMovement) {
     let err: boolean = false;
 
     return new Promise<MovementOfArticle>(async (resolve, reject) => {
@@ -368,13 +329,9 @@ export class ListArticlesPosComponent implements OnInit {
             this.transaction.priceList
           ) {
             if (this.transaction && this.transaction.priceList) {
-              priceList = await this.getPriceList(
-                this.transaction.priceList._id
-              );
+              priceList = await this.getPriceList(this.transaction.priceList._id);
             } else {
-              priceList = await this.getPriceList(
-                this.transaction.company.priceList._id
-              );
+              priceList = await this.getPriceList(this.transaction.company.priceList._id);
             }
             if (priceList) {
               if (priceList.allowSpecialRules) {
@@ -390,12 +347,7 @@ export class ListArticlesPosComponent implements OnInit {
                     ) {
                       increasePrice = rule.percentage + priceList.percentage;
                     }
-                    if (
-                      rule.make &&
-                      article.make &&
-                      rule.category == null &&
-                      rule.make._id === article.make._id
-                    ) {
+                    if (rule.make && article.make && rule.category == null && rule.make._id === article.make._id) {
                       increasePrice = rule.percentage + priceList.percentage;
                     }
                     if (
@@ -418,11 +370,7 @@ export class ListArticlesPosComponent implements OnInit {
               if (priceList.exceptions && priceList.exceptions.length > 0) {
                 priceList.exceptions.forEach((exception) => {
                   if (exception) {
-                    if (
-                      article &&
-                      exception.article &&
-                      exception.article._id === article._id
-                    ) {
+                    if (article && exception.article && exception.article._id === article._id) {
                       increasePrice = exception.percentage;
                     }
                   }
@@ -443,63 +391,43 @@ export class ListArticlesPosComponent implements OnInit {
           movementOfArticle.transaction = this.transaction;
           movementOfArticle.modifyStock = this.transaction.type.modifyStock;
           movementOfArticle.otherFields = article.otherFields;
-          movementOfArticle.op =
-            Date.now() + Math.floor(Math.random() * 100000);
+          movementOfArticle.op = Date.now() + Math.floor(Math.random() * 100000);
 
           if (this.movementOfArticleOrigin) {
             movementOfArticle.movementOrigin = this.movementOfArticleOrigin;
           }
 
           if (amount && amount > 0) movementOfArticle.amount = amount;
-          movementOfArticle.stockMovement = stockMovement
-            ? stockMovement
-            : this.transaction.type.stockMovement;
+          movementOfArticle.stockMovement = stockMovement ? stockMovement : this.transaction.type.stockMovement;
 
           let quotation = 1;
           if (this.transaction.quotation) {
             quotation = this.transaction.quotation;
           }
 
-          movementOfArticle.basePrice = this.roundNumber.transform(
-            article.basePrice
-          );
+          movementOfArticle.basePrice = this.roundNumber.transform(article.basePrice);
 
-          if (
-            article.currency &&
-            Config.currency &&
-            Config.currency._id !== article.currency._id
-          ) {
-            movementOfArticle.basePrice = this.roundNumber.transform(
-              movementOfArticle.basePrice * quotation
-            );
+          if (article.currency && Config.currency && Config.currency._id !== article.currency._id) {
+            movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
           }
 
           if (
             this.transaction &&
             this.transaction.type &&
-            this.transaction.type.transactionMovement ===
-              TransactionMovement.Sale
+            this.transaction.type.transactionMovement === TransactionMovement.Sale
           ) {
             let fields: ArticleFields[] = new Array();
-            if (
-              movementOfArticle.otherFields &&
-              movementOfArticle.otherFields.length > 0
-            ) {
+            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
               for (const field of movementOfArticle.otherFields) {
                 if (
                   field.articleField.datatype === ArticleFieldType.Percentage ||
                   field.articleField.datatype === ArticleFieldType.Number
                 ) {
-                  if (
-                    field.articleField.datatype === ArticleFieldType.Percentage
-                  ) {
+                  if (field.articleField.datatype === ArticleFieldType.Percentage) {
                     field.amount = this.roundNumber.transform(
-                      (movementOfArticle.basePrice * parseFloat(field.value)) /
-                        100
+                      (movementOfArticle.basePrice * parseFloat(field.value)) / 100
                     );
-                  } else if (
-                    field.articleField.datatype === ArticleFieldType.Number
-                  ) {
+                  } else if (field.articleField.datatype === ArticleFieldType.Number) {
                     field.amount = parseFloat(field.value);
                   }
                 }
@@ -508,62 +436,34 @@ export class ListArticlesPosComponent implements OnInit {
             }
 
             movementOfArticle.otherFields = fields;
-            movementOfArticle.costPrice = this.roundNumber.transform(
-              article.costPrice
-            );
+            movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
             movementOfArticle.markupPercentage = article.markupPercentage;
-            movementOfArticle.markupPrice = this.roundNumber.transform(
-              article.markupPrice
-            );
+            movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
             if (salePrice) article.salePrice = salePrice;
-            movementOfArticle.unitPrice = this.roundNumber.transform(
-              article.salePrice / movementOfArticle.amount
-            );
-            movementOfArticle.salePrice = this.roundNumber.transform(
-              article.salePrice
-            );
+            movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice / movementOfArticle.amount);
+            movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
 
-            if (
-              article.currency &&
-              Config.currency &&
-              Config.currency._id !== article.currency._id
-            ) {
-              movementOfArticle.unitPrice = this.roundNumber.transform(
-                movementOfArticle.salePrice * quotation
-              );
-              movementOfArticle.salePrice = this.roundNumber.transform(
-                movementOfArticle.salePrice * quotation
-              );
+            if (article.currency && Config.currency && Config.currency._id !== article.currency._id) {
+              movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
+              movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
             }
 
             if (increasePrice != 0) {
               movementOfArticle.markupPrice = this.roundNumber.transform(
-                movementOfArticle.markupPrice +
-                  (movementOfArticle.markupPrice * increasePrice) / 100
+                movementOfArticle.markupPrice + (movementOfArticle.markupPrice * increasePrice) / 100
               );
               movementOfArticle.unitPrice = this.roundNumber.transform(
-                movementOfArticle.unitPrice +
-                  (movementOfArticle.unitPrice * increasePrice) / 100
+                movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice) / 100
               );
               movementOfArticle.salePrice = this.roundNumber.transform(
-                movementOfArticle.salePrice +
-                  (movementOfArticle.salePrice * increasePrice) / 100
+                movementOfArticle.salePrice + (movementOfArticle.salePrice * increasePrice) / 100
               );
             }
 
-            if (
-              (this.database == 'sangenemi' ||
-                this.database == 'globalstore') &&
-              priceList
-            ) {
-              movementOfArticle.markupPrice = this.roundNumber.transform(
-                priceList.percentage
-              );
-              let aux =
-                (movementOfArticle.costPrice * priceList.percentage) / 100;
-              movementOfArticle.salePrice = this.roundNumber.transform(
-                movementOfArticle.costPrice + aux
-              );
+            if ((this.database == 'sangenemi' || this.database == 'globalstore') && priceList) {
+              movementOfArticle.markupPrice = this.roundNumber.transform(priceList.percentage);
+              let aux = (movementOfArticle.costPrice * priceList.percentage) / 100;
+              movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + aux);
               movementOfArticle.unitPrice = this.roundNumber.transform(
                 movementOfArticle.salePrice / movementOfArticle.amount
               );
@@ -576,49 +476,25 @@ export class ListArticlesPosComponent implements OnInit {
                   let tax: Taxes = new Taxes();
                   if (taxAux.tax && taxAux.tax._id) {
                     tax.tax = taxAux.tax;
-                  } else if (
-                    taxAux.tax &&
-                    typeof taxAux.tax === 'string' &&
-                    taxAux.tax != ''
-                  ) {
-                    this.saveClaim(
-                      'ERROR ARTICLE NULL - LINEA 510 -',
-                      JSON.stringify(article)
-                    );
+                  } else if (taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
+                    this.saveClaim('ERROR ARTICLE NULL - LINEA 510 -', JSON.stringify(article));
                     let query = `where="_id":"${taxAux.tax}"`;
                     await this.getTaxes(query).then((taxes) => {
                       if (taxes && taxes.length > 0) {
                         tax.tax = taxes[0];
                       } else {
                         err = true;
-                        this.showMessage(
-                          'Error interno de la aplicación, comunicarse con Soporte.',
-                          'danger',
-                          false
-                        );
+                        this.showMessage('Error interno de la aplicación, comunicarse con Soporte.', 'danger', false);
                       }
                     });
                   } else if (taxAux.tax === null) {
-                    this.saveClaim(
-                      'ERROR ARTICLE NULL - LINEA 523 -',
-                      JSON.stringify(article)
-                    );
+                    this.saveClaim('ERROR ARTICLE NULL - LINEA 523 -', JSON.stringify(article));
                     err = true;
-                    this.showMessage(
-                      'Error interno de la aplicación, comunicarse con Soporte.',
-                      'danger',
-                      false
-                    );
+                    this.showMessage('Error interno de la aplicación, comunicarse con Soporte.', 'danger', false);
                   }
-                  tax.percentage = this.roundNumber.transform(
-                    taxAux.percentage
-                  );
-                  tax.taxAmount = this.roundNumber.transform(
-                    taxAux.taxAmount * movementOfArticle.amount
-                  );
-                  tax.taxBase = this.roundNumber.transform(
-                    taxAux.taxBase * movementOfArticle.amount
-                  );
+                  tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                  tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+                  tax.taxBase = this.roundNumber.transform(taxAux.taxBase * movementOfArticle.amount);
                   taxes.push(tax);
                 }
               }
@@ -632,25 +508,17 @@ export class ListArticlesPosComponent implements OnInit {
             movementOfArticle.costPrice = 0;
 
             let fields: ArticleFields[] = new Array();
-            if (
-              movementOfArticle.otherFields &&
-              movementOfArticle.otherFields.length > 0
-            ) {
+            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
               for (const field of movementOfArticle.otherFields) {
                 if (
                   field.articleField.datatype === ArticleFieldType.Percentage ||
                   field.articleField.datatype === ArticleFieldType.Number
                 ) {
-                  if (
-                    field.articleField.datatype === ArticleFieldType.Percentage
-                  ) {
+                  if (field.articleField.datatype === ArticleFieldType.Percentage) {
                     field.amount = this.roundNumber.transform(
-                      (movementOfArticle.basePrice * parseFloat(field.value)) /
-                        100
+                      (movementOfArticle.basePrice * parseFloat(field.value)) / 100
                     );
-                  } else if (
-                    field.articleField.datatype === ArticleFieldType.Number
-                  ) {
+                  } else if (field.articleField.datatype === ArticleFieldType.Number) {
                     field.amount = parseFloat(field.value);
                   }
                   if (field.articleField.modifyVAT) {
@@ -669,45 +537,25 @@ export class ListArticlesPosComponent implements OnInit {
                 for (let taxAux of article.taxes) {
                   if (taxAux.tax && taxAux.tax._id) {
                     taxAux.tax = taxAux.tax;
-                  } else if (
-                    taxAux.tax &&
-                    typeof taxAux.tax === 'string' &&
-                    taxAux.tax != ''
-                  ) {
-                    this.saveClaim(
-                      'ERROR ARTICLE NULL - LINEA 572 -',
-                      JSON.stringify(article)
-                    );
+                  } else if (taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
+                    this.saveClaim('ERROR ARTICLE NULL - LINEA 572 -', JSON.stringify(article));
                     let query = `where="_id":"${taxAux.tax}"`;
                     await this.getTaxes(query).then((taxes) => {
                       if (taxes && taxes.length > 0) {
                         taxAux.tax = taxes[0];
                       } else {
                         err = true;
-                        this.showMessage(
-                          'Error interno de la aplicación, comunicarse con Soporte.',
-                          'danger',
-                          false
-                        );
+                        this.showMessage('Error interno de la aplicación, comunicarse con Soporte.', 'danger', false);
                       }
                     });
                   } else if (taxAux.tax === null) {
-                    this.saveClaim(
-                      'ERROR ARTICLE NULL - LINEA 585 -',
-                      JSON.stringify(article)
-                    );
+                    this.saveClaim('ERROR ARTICLE NULL - LINEA 585 -', JSON.stringify(article));
                     err = true;
-                    this.showMessage(
-                      'Error interno de la aplicación, comunicarse con Soporte.',
-                      'danger',
-                      false
-                    );
+                    this.showMessage('Error interno de la aplicación, comunicarse con Soporte.', 'danger', false);
                   }
                   taxAux.taxBase = this.roundNumber.transform(taxedAmount);
                   if (taxAux.percentage !== 0) {
-                    taxAux.taxAmount = this.roundNumber.transform(
-                      (taxAux.taxBase * taxAux.percentage) / 100
-                    );
+                    taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage) / 100);
                   }
                   taxes.push(taxAux);
                   movementOfArticle.costPrice += taxAux.taxAmount;
@@ -715,8 +563,7 @@ export class ListArticlesPosComponent implements OnInit {
                 movementOfArticle.taxes = taxes;
               }
             }
-            movementOfArticle.costPrice +=
-              this.roundNumber.transform(taxedAmount);
+            movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
             movementOfArticle.unitPrice = movementOfArticle.basePrice;
             movementOfArticle.salePrice = movementOfArticle.costPrice;
           }
@@ -729,11 +576,7 @@ export class ListArticlesPosComponent implements OnInit {
     });
   }
 
-  async getStructureForStock(
-    articleSelected: Article,
-    amount?: number,
-    salePrice?: number
-  ) {
+  async getStructureForStock(articleSelected: Article, amount?: number, salePrice?: number) {
     this.loading = true;
 
     /// ORDENAMOS LA CONSULTA
@@ -788,15 +631,10 @@ export class ListArticlesPosComponent implements OnInit {
               parent = await this.addItem(articleSelected, amount, salePrice);
               for (const struct of structures) {
                 if (struct.utilization == Utilization.Production) {
-                  child.push(
-                    await this.addItem(
-                      struct.child,
-                      struct.quantity,
-                      null,
-                      StockMovement.Outflows
-                    )
-                  );
-                } else {
+                  child.push(await this.addItem(struct.child, struct.quantity, null, StockMovement.Outflows));
+                }
+
+                if (struct.utilization == Utilization.Sale) {
                   child.push(await this.addItem(struct.child, struct.quantity));
                 }
               }
@@ -822,8 +660,7 @@ export class ListArticlesPosComponent implements OnInit {
       this._taxService.getTaxes(query).subscribe(
         (result) => {
           if (!result.taxes) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.taxes);
@@ -842,8 +679,7 @@ export class ListArticlesPosComponent implements OnInit {
       this._articleService.getArticle(articleId).subscribe(
         (result) => {
           if (!result.article) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.article);
@@ -871,10 +707,8 @@ export class ListArticlesPosComponent implements OnInit {
       this.config.tradeBalance.codePrefix !== 0
     ) {
       if (
-        this.filterArticle.slice(
-          0,
-          this.config.tradeBalance.codePrefix.toString().length
-        ) === this.config.tradeBalance.codePrefix.toString()
+        this.filterArticle.slice(0, this.config.tradeBalance.codePrefix.toString().length) ===
+        this.config.tradeBalance.codePrefix.toString()
       ) {
         this.filterArticle = this.padNumber(
           this.filterArticle.slice(
@@ -894,45 +728,20 @@ export class ListArticlesPosComponent implements OnInit {
     if (article) {
       // CORTAMOS EL CÓDIGO SI MANDA CANTIDAD *
       let amount = 1;
-      if (
-        this.filterArticle &&
-        this.filterArticle !== '' &&
-        this.filterArticle.slice(0, 1) === '*'
-      ) {
-        amount = parseFloat(
-          this.filterArticle.slice(1, this.filterArticle.length)
-        );
+      if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
+        amount = parseFloat(this.filterArticle.slice(1, this.filterArticle.length));
       }
       await this.getStructureForStock(article, amount);
     } else if (category) {
-      this.filteredArticles = this.filterPipe.transform(
-        this.articles,
-        category._id,
-        'category'
-      );
-      this.filteredArticles = this.filterPipe.transform(
-        this.filteredArticles,
-        Type.Final.toString(),
-        'type'
-      );
+      this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
+      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
       if (this.filterArticle && this.filterArticle !== '') {
-        this.filteredArticles = this.filterPipe.transform(
-          this.filteredArticles,
-          this.filterArticle
-        );
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
       }
     } else if (this.filterArticle && this.filterArticle !== '') {
-      this.filteredArticles = this.filterPipe.transform(
-        this.articles,
-        this.filterArticle
-      );
+      this.filteredArticles = this.filterPipe.transform(this.articles, this.filterArticle);
 
-      if (
-        this.filteredArticles &&
-        this.filteredArticles.length > 0 &&
-        this.articles &&
-        this.articles.length >= 2
-      ) {
+      if (this.filteredArticles && this.filteredArticles.length > 0 && this.articles && this.articles.length >= 2) {
         this.hideMessage();
 
         let count = 1;
@@ -945,14 +754,8 @@ export class ListArticlesPosComponent implements OnInit {
             if (art.type === Type.Final) {
               if (
                 isCodePrefix &&
-                this.padNumber(
-                  art.code,
-                  this.config.article.code.validators.maxLength
-                ) ===
-                  this.padNumber(
-                    this.filterArticle,
-                    this.config.article.code.validators.maxLength
-                  )
+                this.padNumber(art.code, this.config.article.code.validators.maxLength) ===
+                  this.padNumber(this.filterArticle, this.config.article.code.validators.maxLength)
               ) {
                 count++;
                 article = art;
@@ -966,23 +769,13 @@ export class ListArticlesPosComponent implements OnInit {
         if (
           count === 1 &&
           this.filterArticle &&
-          ((article &&
-            article.barcode &&
-            article.barcode === this.filterArticle) ||
-            (article.description &&
-              article.description.toUpperCase() ===
-                this.filterArticle.toUpperCase()) ||
-            (article.posDescription &&
-              article.posDescription.toUpperCase() ===
-                this.filterArticle.toUpperCase()) ||
+          ((article && article.barcode && article.barcode === this.filterArticle) ||
+            (article.description && article.description.toUpperCase() === this.filterArticle.toUpperCase()) ||
+            (article.posDescription && article.posDescription.toUpperCase() === this.filterArticle.toUpperCase()) ||
             (article.code && article.code === this.filterArticle))
         ) {
           this.filterArticle = '';
-          if (
-            this.transaction.type.transactionMovement ===
-              TransactionMovement.Sale &&
-            isCodePrefix
-          ) {
+          if (this.transaction.type.transactionMovement === TransactionMovement.Sale && isCodePrefix) {
             let wholePart = originalFilter.slice(
               originalFilter.length -
                 this.config.tradeBalance.numberOfDecimals -
@@ -995,9 +788,7 @@ export class ListArticlesPosComponent implements OnInit {
                 this.config.tradeBalance.numberOfIntegers
             );
             let decimalPart = originalFilter.slice(
-              originalFilter.length -
-                this.config.tradeBalance.numberOfDecimals -
-                1,
+              originalFilter.length - this.config.tradeBalance.numberOfDecimals - 1,
               originalFilter.length - 1
             );
             let salePrice = parseFloat(wholePart + '.' + decimalPart);
@@ -1005,14 +796,10 @@ export class ListArticlesPosComponent implements OnInit {
               salePrice = article.salePrice;
             }
             let amount = 1;
-            if (
-              this.config.tradeBalance.numberOfQuantity &&
-              this.config.tradeBalance.numberOfQuantity != 0
-            ) {
+            if (this.config.tradeBalance.numberOfQuantity && this.config.tradeBalance.numberOfQuantity != 0) {
               // for ajonjoli
               wholePart = originalFilter.substring(
-                this.config.tradeBalance.codePrefix.toString().length +
-                  this.config.tradeBalance.numberOfCode,
+                this.config.tradeBalance.codePrefix.toString().length + this.config.tradeBalance.numberOfCode,
                 this.config.tradeBalance.codePrefix.toString().length +
                   this.config.tradeBalance.numberOfCode +
                   this.config.tradeBalance.numberOfQuantity
@@ -1035,19 +822,11 @@ export class ListArticlesPosComponent implements OnInit {
             await this.getStructureForStock(article);
           }
         } else {
-          this.filteredArticles = this.filterPipe.transform(
-            this.filteredArticles,
-            Type.Final.toString(),
-            'type'
-          );
+          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
           this.eventAddItem.emit(null);
         }
       } else {
-        this.filteredArticles = this.filterPipe.transform(
-          this.filteredArticles,
-          Type.Final.toString(),
-          'type'
-        );
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
         this._toastService.showToast({
           type: 'warning',
           message: 'No se encontro ningun producto.',
@@ -1083,11 +862,7 @@ export class ListArticlesPosComponent implements OnInit {
     this._claimService.saveClaim(claim).subscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
