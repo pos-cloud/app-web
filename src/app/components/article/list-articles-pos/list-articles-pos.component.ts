@@ -627,19 +627,25 @@ export class ListArticlesPosComponent implements OnInit {
           let child: MovementOfArticle[] = new Array();
           if (result && result[0] && result[0].structures) {
             let structures: Structure[] = result[0].structures;
+            parent = await this.addItem(articleSelected, amount, salePrice);
             if (structures.length > 0) {
-              parent = await this.addItem(articleSelected, amount, salePrice);
               for (const struct of structures) {
-                if (struct.utilization == Utilization.Production) {
+                console.log(this.transaction);
+
+                if (
+                  struct.utilization == Utilization.Production &&
+                  this.transaction?.type?.transactionMovement == TransactionMovement.Production
+                ) {
                   child.push(await this.addItem(struct.child, struct.quantity, null, StockMovement.Outflows));
                 }
 
-                if (struct.utilization == Utilization.Sale) {
+                if (
+                  struct.utilization == Utilization.Sale &&
+                  this.transaction?.type?.transactionMovement == TransactionMovement.Sale
+                ) {
                   child.push(await this.addItem(struct.child, struct.quantity));
                 }
               }
-            } else {
-              parent = await this.addItem(articleSelected, amount, salePrice);
             }
 
             this.eventAddItem.emit({ parent, child });
