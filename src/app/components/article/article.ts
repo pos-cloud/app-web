@@ -18,7 +18,7 @@ import { VariantValue } from '../variant-value/variant-value';
 
 export class Article {
   public _id: string;
-  public tiendaNubeId: string;
+  public tiendaNubeId: number;
   public type: Type = Type.Final;
   public containsVariants: boolean = false;
   public containsStructure: boolean = false;
@@ -92,7 +92,7 @@ export class Article {
   public applications: Application[];
   public salesAccount: Account;
   public purchaseAccount: Account;
-  public wooId: string;
+  public wooId: number;
   public meliId: string;
   public meliAttrs: IMeliAttrs;
   public minStock: number;
@@ -485,7 +485,7 @@ export let attributesVariant = [
     visible: false,
     disabled: false,
     filter: true,
-    datatype: 'string',
+    datatype: 'number',
     project: null,
     align: 'left',
     required: true,
@@ -505,7 +505,7 @@ export let attributesVariant = [
     visible: false,
     disabled: false,
     filter: true,
-    datatype: 'string',
+    datatype: 'number',
     project: null,
     align: 'left',
     required: true,

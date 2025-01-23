@@ -648,8 +648,8 @@ export class ArticleComponent implements OnInit {
             this.article.code = '';
             this.article.posDescription = '';
             this.article.url = '';
-            this.article.wooId = '';
-            this.article.tiendaNubeId = '';
+            this.article.wooId = null;
+            this.article.tiendaNubeId = null;
             this.article.creationDate = '';
             this.article.creationUser = null;
             this.article.updateDate = '';
