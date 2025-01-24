@@ -630,8 +630,6 @@ export class ListArticlesPosComponent implements OnInit {
             parent = await this.addItem(articleSelected, amount, salePrice);
             if (structures.length > 0) {
               for (const struct of structures) {
-                console.log(this.transaction);
-
                 if (
                   struct.utilization == Utilization.Production &&
                   this.transaction?.type?.transactionMovement == TransactionMovement.Production
