@@ -22,28 +22,23 @@ db['article-stocks'].aggregate([
 ]);
 
 // update variant
-db.articles
-  .find({ type: 'Final', operationType: { $ne: 'D' } })
-  .forEach(function (article) {
-    let variants = [];
-    variants = db.variants
-      .find({ articleParent: article._id, operationType: { $ne: 'D' } })
-      .toArray()
-      .map(function (variant) {
-        return {
-          type: variant.type,
-          value: variant.value,
-          articleId: variant.articleChild,
-        };
-      });
+db.articles.find({ type: 'Final', operationType: { $ne: 'D' } }).forEach(function (article) {
+  let variants = [];
+  variants = db.variants
+    .find({ articleParent: article._id, operationType: { $ne: 'D' } })
+    .toArray()
+    .map(function (variant) {
+      return {
+        type: variant.type,
+        value: variant.value,
+        articleId: variant.articleChild,
+      };
+    });
 
-    if (variants.length > 0) {
-      db.articles.updateOne(
-        { _id: article._id },
-        { $set: { variants: variants } }
-      );
-    }
-  });
+  if (variants.length > 0) {
+    db.articles.updateOne({ _id: article._id }, { $set: { variants: variants } });
+  }
+});
 
 // crear el stock
 db['articles']
@@ -114,15 +109,9 @@ db.articles.find({ type: 'Variante' }).forEach((article) => {
   }
 
   // Verifica si los tipos son Color o Tela y asigna el valor correspondiente
-  if (
-    variantType1 &&
-    (variantType1.name === 'Color' || variantType1.name === 'Tela')
-  ) {
+  if (variantType1 && (variantType1.name === 'Color' || variantType1.name === 'Tela')) {
     color = variantValue1 ? variantValue1.description : '';
-  } else if (
-    variantType2 &&
-    (variantType2.name === 'Color' || variantType2.name === 'Tela')
-  ) {
+  } else if (variantType2 && (variantType2.name === 'Color' || variantType2.name === 'Tela')) {
     color = variantValue2 ? variantValue2.description : '';
   }
 
@@ -141,7 +130,6 @@ db.articles.find({ type: 'Variante' }).forEach((article) => {
 });
 
 // ultimos codigo de barra
-
 db.articles.find({ type: 'Variante' }).forEach(function (article) {
   const code = Number(article.code);
 
@@ -191,3 +179,9 @@ db.transactions.updateMany(
   { balance: { $lt: 10 } }, // Filtro: balance menor a 10
   { $set: { balance: 0 } } // Actualización: balance a 0
 );
+
+// image article for localhost
+db.articles.find({}).forEach((article) => {
+  const newPictureUrl = 'https://poscloud.s3.sa-east-1.amazonaws.com/granpaso/' + article.picture;
+  db.articles.updateOne({ _id: article._id }, { $set: { picture: newPictureUrl } });
+});
