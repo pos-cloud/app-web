@@ -1,4 +1,4 @@
-import { Make } from '@types';
+import { Currency, Make } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Category } from '../category/category';
 import { Deposit } from '../deposit/deposit';
@@ -12,7 +12,6 @@ import { Account } from '../account/account';
 import { Application } from '../application/application.model';
 import { Classification } from '../classification/classification';
 import { Company } from '../company/company';
-import { Currency } from '../currency/currency';
 import { VariantType } from '../variant-type/variant-type';
 import { VariantValue } from '../variant-value/variant-value';
 

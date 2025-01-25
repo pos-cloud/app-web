@@ -54,8 +54,17 @@
               formControlName="code"
               name="code"
               id="code"
+              [ngClass]="{
+                'is-invalid': currencyForm.get('code')?.touched && currencyForm.get('code')?.invalid,
+              }"
               [readonly]="readonly"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="currencyForm.get('code')?.touched && currencyForm.get('code')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
           </div>
           <div class="form-group col-md-2">
             <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
@@ -73,7 +82,7 @@
             />
             <div
               class="invalid-feedback"
-              *ngIf="currencyForm.get('code')?.touched && currencyForm.get('code')?.hasError('required')"
+              *ngIf="currencyForm.get('name')?.touched && currencyForm.get('name')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
@@ -109,8 +118,17 @@
               formControlName="quotation"
               name="quotation"
               id="quotation"
+              [ngClass]="{
+                'is-invalid': currencyForm.get('quotation')?.touched && currencyForm.get('quotation')?.invalid,
+              }"
               [readonly]="readonly"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="currencyForm.get('quotation')?.touched && currencyForm.get('quotation')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
           </div>
         </div>
         <hr />

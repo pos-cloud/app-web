@@ -14,7 +14,6 @@ import { ListCompanyFieldsComponent } from './components/company/list-company-fi
 import { ConfigComponent } from './components/config/config.component';
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
 import { ListCurrencyValuesComponent } from './components/currency-value/list-currency-values/list-currency-values.component';
-import { ListCurrenciesComponent } from './components/currency/list-currencies/list-currencies.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListDepositsComponent } from './components/deposit/list-deposits/list-deposits.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
@@ -200,11 +199,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/monedas',
-    component: ListCurrenciesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'admin/states',
     component: ListStatesComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -219,12 +213,6 @@ export const _routes: Routes = [
     component: ListPriceListsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  // {
-  //   path: 'admin/mesas',
-  //   component: ListTablesComponent,
-  //   canActivate: [AuthGuard, LicenseGuard],
-  //   //   data: { module: 'config.modules.sale.resto' },
-  // },
   {
     path: 'admin/ventas',
     component: ListTransactionsComponent,
@@ -639,8 +627,7 @@ export const _routes: Routes = [
   {
     path: 'entities',
     canActivate: [AuthGuard, LicenseGuard],
-    loadChildren: () =>
-      import('./entities/entities.module').then((m) => m.EntitiesModule),
+    loadChildren: () => import('./entities/entities.module').then((m) => m.EntitiesModule),
   },
   {
     path: 'modules',

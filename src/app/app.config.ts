@@ -1,7 +1,6 @@
-import { IService } from '@types';
+import { Currency, IService } from '@types';
 import * as moment from 'moment';
 import { Account } from './components/account/account';
-import { Currency } from './components/currency/currency';
 import { IdentificationType } from './components/identification-type/identification-type';
 import { VATCondition } from './components/vat-condition/vat-condition';
 
@@ -29,9 +28,7 @@ export class Config {
   static companyVatCondition: VATCondition;
   static companyIdentificationType: IdentificationType;
   static companyIdentificationValue: string;
-  static companyStartOfActivity: string = moment().format(
-    'YYYY-MM-DDTHH:mm:ssZ'
-  );
+  static companyStartOfActivity: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   static companyGrossIncome: string;
   static companyPostalCode: string;
   static footerInvoice: string;

@@ -3,10 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { Currency } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
 import { Config } from '../../app.config';
-import { Currency } from '../../components/currency/currency';
 import { AuthService } from './auth.service';
 
 @Injectable({

@@ -65,8 +65,6 @@ import { CountryComponent } from './components/country/country/country.component
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
 import { CurrencyValueComponent } from './components/currency-value/currency-value/currency-value.component';
 import { ListCurrencyValuesComponent } from './components/currency-value/list-currency-values/list-currency-values.component';
-import { CurrencyComponent } from './components/currency/currency/currency.component';
-import { ListCurrenciesComponent } from './components/currency/list-currencies/list-currencies.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { DepositComponent } from './components/deposit/deposit/deposit.component';
 import { ListDepositsComponent } from './components/deposit/list-deposits/list-deposits.component';
@@ -162,7 +160,6 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { NotificationGuard } from './core/guards/notification.guard';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { HeaderComponent } from './layout/header/header.component';
 import { Header2Component } from './layout/header2/header2.component';
 import { HomeComponent } from './layout/home/home.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
@@ -179,7 +176,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ToastComponent,
     AppComponent,
     HomeComponent,
-    HeaderComponent,
     Header2Component,
     ListTablesComponent,
     ListCashBoxesComponent,
@@ -258,8 +254,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     CancellationTypeComponent,
     ListCancellationTypeComponent,
     MovementOfCancellationComponent,
-    CurrencyComponent,
-    ListCurrenciesComponent,
     ReportKardexComponent,
     StateComponent,
     ListStatesComponent,

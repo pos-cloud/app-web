@@ -1,21 +1,14 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormArray,
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyType, PaymentMethod } from '../payment-method';
 
-import { ApiResponse } from '@types';
+import { ApiResponse, Currency } from '@types';
 import { Account } from 'app/components/account/account';
 import { Application } from 'app/components/application/application.model';
 import { Article } from 'app/components/article/article';
-import { Currency } from 'app/components/currency/currency';
 import { AccountService } from 'app/core/services/account.service';
 import { ApplicationService } from 'app/core/services/application.service';
 import { ArticleService } from 'app/core/services/article.service';
@@ -23,12 +16,7 @@ import { CurrencyService } from 'app/core/services/currency.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subject, Subscription } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
 
 @Component({
@@ -47,11 +35,7 @@ export class PaymentMethodComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public companyTypes: CompanyType[] = [
-    CompanyType.None,
-    CompanyType.Client,
-    CompanyType.Provider,
-  ];
+  public companyTypes: CompanyType[] = [CompanyType.None, CompanyType.Client, CompanyType.Provider];
   public applications: Application[];
   private subscription: Subscription = new Subscription();
   public focus$: Subject<string>[] = new Array();
@@ -76,10 +60,7 @@ export class PaymentMethodComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== ''
-            ? { description: { $regex: term, $options: 'i' } }
-            : {};
+        let match: {} = term && term !== '' ? { description: { $regex: term, $options: 'i' } } : {};
         return await this.getAllArticles(match).then((result) => {
           return result;
         });
@@ -96,8 +77,7 @@ export class PaymentMethodComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
+        let match: {} = term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
         return await this.getAllCurrencies(match).then((result) => {
           return result;
         });
@@ -199,10 +179,7 @@ export class PaymentMethodComponent implements OnInit {
       commission: [this.paymentMethod.commission, []],
       commissionArticle: [this.paymentMethod.commissionArticle, []],
       administrativeExpense: [this.paymentMethod.administrativeExpense, []],
-      administrativeExpenseArticle: [
-        this.paymentMethod.administrativeExpenseArticle,
-        [],
-      ],
+      administrativeExpenseArticle: [this.paymentMethod.administrativeExpenseArticle, []],
       otherExpense: [this.paymentMethod.otherExpense, []],
       otherExpenseArticle: [this.paymentMethod.otherExpenseArticle, []],
       isCurrentAccount: [this.paymentMethod.isCurrentAccount, []],
@@ -229,9 +206,7 @@ export class PaymentMethodComponent implements OnInit {
       expirationDays: [this.paymentMethod.expirationDays, []],
     });
 
-    this.paymentMethodForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.paymentMethodForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
     this.focusEvent.emit(true);
@@ -258,33 +233,17 @@ export class PaymentMethodComponent implements OnInit {
 
   public addPaymentMethod() {
     this.paymentMethod = this.paymentMethodForm.value;
-    if (
-      !this.paymentMethod.discountArticle ||
-      !this.paymentMethod.discountArticle._id
-    )
+    if (!this.paymentMethod.discountArticle || !this.paymentMethod.discountArticle._id)
       this.paymentMethod.discountArticle = null;
-    if (
-      !this.paymentMethod.surchargeArticle ||
-      !this.paymentMethod.surchargeArticle._id
-    )
+    if (!this.paymentMethod.surchargeArticle || !this.paymentMethod.surchargeArticle._id)
       this.paymentMethod.surchargeArticle = null;
-    if (
-      !this.paymentMethod.commissionArticle ||
-      !this.paymentMethod.commissionArticle._id
-    )
+    if (!this.paymentMethod.commissionArticle || !this.paymentMethod.commissionArticle._id)
       this.paymentMethod.commissionArticle = null;
-    if (
-      !this.paymentMethod.administrativeExpenseArticle ||
-      !this.paymentMethod.administrativeExpenseArticle._id
-    )
+    if (!this.paymentMethod.administrativeExpenseArticle || !this.paymentMethod.administrativeExpenseArticle._id)
       this.paymentMethod.administrativeExpenseArticle = null;
-    if (
-      !this.paymentMethod.otherExpenseArticle ||
-      !this.paymentMethod.otherExpenseArticle._id
-    )
+    if (!this.paymentMethod.otherExpenseArticle || !this.paymentMethod.otherExpenseArticle._id)
       this.paymentMethod.otherExpenseArticle = null;
-    if (!this.paymentMethod.currency || !this.paymentMethod.currency._id)
-      this.paymentMethod.currency = null;
+    if (!this.paymentMethod.currency || !this.paymentMethod.currency._id) this.paymentMethod.currency = null;
 
     const selectedOrderIds = this.paymentMethodForm.value.applications
       .map((v, i) => (v ? this.applications[i] : null))
@@ -352,59 +311,36 @@ export class PaymentMethodComponent implements OnInit {
     if (!this.paymentMethod.order) this.paymentMethod.order = 1;
     if (!this.paymentMethod.name) this.paymentMethod.name = '';
     if (!this.paymentMethod.discount) this.paymentMethod.discount = 0.0;
-    if (!this.paymentMethod.discountArticle)
-      this.paymentMethod.discountArticle = null;
+    if (!this.paymentMethod.discountArticle) this.paymentMethod.discountArticle = null;
     if (!this.paymentMethod.surcharge) this.paymentMethod.surcharge = 0.0;
-    if (!this.paymentMethod.surchargeArticle)
-      this.paymentMethod.surchargeArticle = null;
+    if (!this.paymentMethod.surchargeArticle) this.paymentMethod.surchargeArticle = null;
     if (!this.paymentMethod.commission) this.paymentMethod.commission = 0.0;
-    if (!this.paymentMethod.commissionArticle)
-      this.paymentMethod.commissionArticle = null;
-    if (!this.paymentMethod.administrativeExpense)
-      this.paymentMethod.administrativeExpense = 0.0;
-    if (!this.paymentMethod.administrativeExpenseArticle)
-      this.paymentMethod.administrativeExpenseArticle = null;
+    if (!this.paymentMethod.commissionArticle) this.paymentMethod.commissionArticle = null;
+    if (!this.paymentMethod.administrativeExpense) this.paymentMethod.administrativeExpense = 0.0;
+    if (!this.paymentMethod.administrativeExpenseArticle) this.paymentMethod.administrativeExpenseArticle = null;
     if (!this.paymentMethod.otherExpense) this.paymentMethod.otherExpense = 0.0;
-    if (!this.paymentMethod.otherExpenseArticle)
-      this.paymentMethod.otherExpenseArticle = null;
-    if (this.paymentMethod.isCurrentAccount === undefined)
-      this.paymentMethod.isCurrentAccount = false;
-    if (this.paymentMethod.acceptReturned === undefined)
-      this.paymentMethod.acceptReturned = false;
-    if (this.paymentMethod.inputAndOuput === undefined)
-      this.paymentMethod.inputAndOuput = false;
-    if (this.paymentMethod.checkDetail === undefined)
-      this.paymentMethod.checkDetail = false;
-    if (this.paymentMethod.checkPerson === undefined)
-      this.paymentMethod.checkPerson = false;
-    if (this.paymentMethod.cardDetail === undefined)
-      this.paymentMethod.cardDetail = false;
-    if (this.paymentMethod.allowToFinance === undefined)
-      this.paymentMethod.allowToFinance = false;
-    if (this.paymentMethod.payFirstQuota === undefined)
-      this.paymentMethod.payFirstQuota = false;
-    if (this.paymentMethod.cashBoxImpact === undefined)
-      this.paymentMethod.cashBoxImpact = false;
-    if (this.paymentMethod.bankReconciliation === undefined)
-      this.paymentMethod.bankReconciliation = false;
-    if (this.paymentMethod.allowCurrencyValue === undefined)
-      this.paymentMethod.allowCurrencyValue = false;
-    if (this.paymentMethod.allowBank === undefined)
-      this.paymentMethod.allowBank = false;
+    if (!this.paymentMethod.otherExpenseArticle) this.paymentMethod.otherExpenseArticle = null;
+    if (this.paymentMethod.isCurrentAccount === undefined) this.paymentMethod.isCurrentAccount = false;
+    if (this.paymentMethod.acceptReturned === undefined) this.paymentMethod.acceptReturned = false;
+    if (this.paymentMethod.inputAndOuput === undefined) this.paymentMethod.inputAndOuput = false;
+    if (this.paymentMethod.checkDetail === undefined) this.paymentMethod.checkDetail = false;
+    if (this.paymentMethod.checkPerson === undefined) this.paymentMethod.checkPerson = false;
+    if (this.paymentMethod.cardDetail === undefined) this.paymentMethod.cardDetail = false;
+    if (this.paymentMethod.allowToFinance === undefined) this.paymentMethod.allowToFinance = false;
+    if (this.paymentMethod.payFirstQuota === undefined) this.paymentMethod.payFirstQuota = false;
+    if (this.paymentMethod.cashBoxImpact === undefined) this.paymentMethod.cashBoxImpact = false;
+    if (this.paymentMethod.bankReconciliation === undefined) this.paymentMethod.bankReconciliation = false;
+    if (this.paymentMethod.allowCurrencyValue === undefined) this.paymentMethod.allowCurrencyValue = false;
+    if (this.paymentMethod.allowBank === undefined) this.paymentMethod.allowBank = false;
     if (!this.paymentMethod.company) this.paymentMethod.company = null;
-    if (!this.paymentMethod.mercadopagoAPIKey)
-      this.paymentMethod.mercadopagoAPIKey = null;
-    if (!this.paymentMethod.mercadopagoClientId)
-      this.paymentMethod.mercadopagoClientId = null;
-    if (!this.paymentMethod.mercadopagoAccessToken)
-      this.paymentMethod.mercadopagoAccessToken = null;
-    if (!this.paymentMethod.whatsappNumber)
-      this.paymentMethod.whatsappNumber = null;
+    if (!this.paymentMethod.mercadopagoAPIKey) this.paymentMethod.mercadopagoAPIKey = null;
+    if (!this.paymentMethod.mercadopagoClientId) this.paymentMethod.mercadopagoClientId = null;
+    if (!this.paymentMethod.mercadopagoAccessToken) this.paymentMethod.mercadopagoAccessToken = null;
+    if (!this.paymentMethod.whatsappNumber) this.paymentMethod.whatsappNumber = null;
     if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
     if (!this.paymentMethod.currency) this.paymentMethod.currency = null;
     if (!this.paymentMethod.account) this.paymentMethod.account = null;
-    if (!this.paymentMethod.expirationDays)
-      this.paymentMethod.expirationDays = 30;
+    if (!this.paymentMethod.expirationDays) this.paymentMethod.expirationDays = 30;
 
     this.paymentMethodForm.patchValue({
       _id: this.paymentMethod._id,
@@ -418,8 +354,7 @@ export class PaymentMethodComponent implements OnInit {
       commission: this.paymentMethod.commission,
       commissionArticle: this.paymentMethod.commissionArticle,
       administrativeExpense: this.paymentMethod.administrativeExpense,
-      administrativeExpenseArticle:
-        this.paymentMethod.administrativeExpenseArticle,
+      administrativeExpenseArticle: this.paymentMethod.administrativeExpenseArticle,
       otherExpense: this.paymentMethod.otherExpense,
       otherExpenseArticle: this.paymentMethod.otherExpenseArticle,
       isCurrentAccount: this.paymentMethod.isCurrentAccount,
@@ -455,17 +390,13 @@ export class PaymentMethodComponent implements OnInit {
             if (x._id === y._id) {
               exists = true;
               const control = new UntypedFormControl(y); // if first item set to true, else false
-              (
-                this.paymentMethodForm.controls.applications as UntypedFormArray
-              ).push(control);
+              (this.paymentMethodForm.controls.applications as UntypedFormArray).push(control);
             }
           });
         }
         if (!exists) {
           const control = new UntypedFormControl(false); // if first item set to true, else false
-          (
-            this.paymentMethodForm.controls.applications as UntypedFormArray
-          ).push(control);
+          (this.paymentMethodForm.controls.applications as UntypedFormArray).push(control);
         }
       });
     }
@@ -512,45 +443,40 @@ export class PaymentMethodComponent implements OnInit {
   public updatePaymentMethod(): void {
     this.loading = true;
 
-    this._paymentMethodService
-      .updatePaymentMethod(this.paymentMethod)
-      .subscribe(
-        (result) => {
-          if (!result.paymentMethod) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
-            this.loading = false;
-          } else {
-            this.paymentMethod = result.paymentMethod;
-            this._toastService.showToast({
-              type: 'success',
-              message: 'El método de pago se ha actualizado con éxito.',
-            });
-          }
+    this._paymentMethodService.updatePaymentMethod(this.paymentMethod).subscribe(
+      (result) => {
+        if (!result.paymentMethod) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+        } else {
+          this.paymentMethod = result.paymentMethod;
+          this._toastService.showToast({
+            type: 'success',
+            message: 'El método de pago se ha actualizado con éxito.',
+          });
         }
-      );
+        this.loading = false;
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public deletePaymentMethod(): void {
     this.loading = true;
 
-    this._paymentMethodService
-      .deletePaymentMethod(this.paymentMethodId)
-      .subscribe(
-        (result) => {
-          this.activeModal.close('delete_close');
-          this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
-      );
+    this._paymentMethodService.deletePaymentMethod(this.paymentMethodId).subscribe(
+      (result) => {
+        this.activeModal.close('delete_close');
+        this.loading = false;
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public savePaymentMethod(): void {
@@ -559,8 +485,7 @@ export class PaymentMethodComponent implements OnInit {
     this._paymentMethodService.savePaymentMethod(this.paymentMethod).subscribe(
       (result) => {
         if (!result.paymentMethod) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.paymentMethod = result.paymentMethod;
@@ -580,11 +505,7 @@ export class PaymentMethodComponent implements OnInit {
     );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

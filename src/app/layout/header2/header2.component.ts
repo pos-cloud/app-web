@@ -290,7 +290,7 @@ export class Header2Component implements OnInit {
           label: 'Monedas y Bancos',
           children: [
             { label: 'Bancos', link: 'entities/banks' },
-            { label: 'Monedas', link: 'admin/monedas' },
+            { label: 'Monedas', link: 'entities/currencies' },
             { label: 'Tipos de Monedas', link: 'admin/currency-values' },
             { label: 'Provincias', link: 'admin/states' },
             { label: 'Países', link: 'admin/countries' },
@@ -756,7 +756,7 @@ export class Header2Component implements OnInit {
               label: 'Monedas y Bancos',
               children: [
                 { label: 'Bancos', link: 'entities/banks' },
-                { label: 'Monedas', link: 'admin/monedas' },
+                { label: 'Monedas', link: 'entities/currencies' },
                 { label: 'Tipos de Monedas', link: 'admin/currency-values' },
                 { label: 'Provincias', link: 'admin/states' },
                 { label: 'Países', link: 'admin/countries' },

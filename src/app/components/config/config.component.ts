@@ -19,8 +19,7 @@ import { UserService } from '../../core/services/user.service';
 import { VATConditionService } from '../../core/services/vat-condition.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 
-import { MediaCategory } from '@types';
-import { Currency } from 'app/components/currency/currency';
+import { Currency, MediaCategory } from '@types';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { FileService } from 'app/core/services/file.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';

@@ -2,7 +2,6 @@ import { Component, ElementRef, EventEmitter, ViewChild, ViewEncapsulation } fro
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
-import { Currency } from 'app/components/currency/currency';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { PriceList } from 'app/components/price-list/price-list';
@@ -75,7 +74,7 @@ import {
 import { Transaction, TransactionState } from '../transaction/transaction';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
 
-import { ApiResponse, EmailProps } from '@types';
+import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';

@@ -41,7 +41,6 @@ import { ConfigService } from '../../../core/services/config.service';
 import { Account } from '../../account/account';
 import { Application } from '../../application/application.model';
 import { Classification } from '../../classification/classification';
-import { Currency } from '../../currency/currency';
 
 // Services
 
@@ -49,7 +48,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
 
 // Pipes
 import { TranslateService } from '@ngx-translate/core';
-import { ApiResponse, MediaCategory } from '@types';
+import { ApiResponse, Currency, MediaCategory } from '@types';
 import { User } from 'app/components/user/user';
 import { VariantType } from 'app/components/variant-type/variant-type';
 import { VariantValue } from 'app/components/variant-value/variant-value';
