@@ -21,24 +21,35 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._authService.getIdentity.subscribe(
-      (identity) => {
+    this._authService.getIdentity.subscribe({
+      next: (identity) => {
         this.user = identity;
 
         if (this.swUpdate.isEnabled) {
-          this.swUpdate.available.subscribe(() => {
-            this.openUpdateModal();
-          });
+          this.swUpdate
+            .checkForUpdate()
+            .then((updateFound) => {
+              if (updateFound) this.openUpdateModal();
+            })
+            .catch((err) => {
+              console.error('Error al buscar actualizaciones:', err);
+            });
         }
       },
-      (error) => {
-        console.error('Error al obtener el usuario:', error);
-      }
-    );
+      error: (err) => {
+        console.error('Error al obtener el usuario:', err);
+      },
+    });
   }
 
   openUpdateModal() {
-    const modalRef = this.modalService.open(UpgradeVersionComponent);
-    modalRef.componentInstance.onReload.subscribe(() => window.location.reload());
+    const modalRef = this.modalService.open(UpgradeVersionComponent, {
+      backdrop: 'static',
+      keyboard: false,
+    });
+
+    modalRef.componentInstance.onReload.subscribe(() => {
+      window.location.reload();
+    });
   }
 }
