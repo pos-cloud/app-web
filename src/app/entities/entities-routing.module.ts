@@ -5,6 +5,11 @@ import { LicenseGuard } from 'app/core/guards/license.guard';
 
 const routes: Routes = [
   {
+    path: 'banks',
+    loadChildren: () => import('./bank/bank.module').then((m) => m.BankModule),
+    canActivate: [AuthGuard, LicenseGuard],
+  },
+  {
     path: 'makes',
     loadChildren: () => import('./make/make.module').then((m) => m.MakeModule),
     canActivate: [AuthGuard, LicenseGuard],
