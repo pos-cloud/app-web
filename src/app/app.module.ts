@@ -160,7 +160,8 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { NotificationGuard } from './core/guards/notification.guard';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { Header2Component } from './layout/header2/header2.component';
+import { FooterComponent } from './layout/footer/footer.component';
+import { HeaderComponent } from './layout/header/header.component';
 import { HomeComponent } from './layout/home/home.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
@@ -176,7 +177,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ToastComponent,
     AppComponent,
     HomeComponent,
-    Header2Component,
+    HeaderComponent,
+    FooterComponent,
     ListTablesComponent,
     ListCashBoxesComponent,
     ListTransactionsComponent,
