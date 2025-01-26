@@ -185,3 +185,8 @@ db.articles.find({}).forEach((article) => {
   const newPictureUrl = 'https://poscloud.s3.sa-east-1.amazonaws.com/granpaso/' + article.picture;
   db.articles.updateOne({ _id: article._id }, { $set: { picture: newPictureUrl } });
 });
+
+db.categories.find({}).forEach((category) => {
+  const newPictureUrl = 'https://poscloud.s3.sa-east-1.amazonaws.com/granpaso/' + category.picture;
+  db.categories.updateOne({ _id: category._id }, { $set: { picture: newPictureUrl } });
+});

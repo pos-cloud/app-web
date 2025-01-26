@@ -91,25 +91,16 @@ import { Config } from './../../app.config';
 export class AddSaleOrderComponent {
   @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
   @ViewChild('contentMessage', { static: true }) contentMessage: ElementRef;
-  @ViewChild('contentChangeDate', { static: true })
-  contentChangeDate: ElementRef;
-  @ViewChild('contentOptionalAFIP', { static: true })
-  contentChangeOptionalAFIP: ElementRef;
-  @ViewChild('contentChangeObservation', { static: true })
-  contentChangeObservation: ElementRef;
-  @ViewChild('contentBusinessRulesCode', { static: true })
-  contentBusinessRulesCode: ElementRef;
-  @ViewChild('contentChangeQuotation', { static: true })
-  contentChangeQuotation: ElementRef;
-  @ViewChild('contentInformCancellation', { static: true })
-  contentInformCancellation: ElementRef;
-  @ViewChild('containerMovementsOfArticles', { static: true })
-  containerMovementsOfArticles: ElementRef;
+  @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
+  @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
+  @ViewChild('contentChangeObservation', { static: true }) contentChangeObservation: ElementRef;
+  @ViewChild('contentBusinessRulesCode', { static: true }) contentBusinessRulesCode: ElementRef;
+  @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
+  @ViewChild('contentInformCancellation', { static: true }) contentInformCancellation: ElementRef;
+  @ViewChild('containerMovementsOfArticles', { static: true }) containerMovementsOfArticles: ElementRef;
   @ViewChild('containerTaxes', { static: true }) containerTaxes: ElementRef;
-  @ViewChild(ListArticlesPosComponent)
-  listArticlesComponent: ListArticlesPosComponent;
-  @ViewChild(ListCategoriesPosComponent)
-  listCategoriesComponent: ListCategoriesPosComponent;
+  @ViewChild(ListArticlesPosComponent) listArticlesComponent: ListArticlesPosComponent;
+  @ViewChild(ListCategoriesPosComponent) listCategoriesComponent: ListCategoriesPosComponent;
   optional: string = '';
   transaction: Transaction;
   transactionId: string;
@@ -128,7 +119,6 @@ export class AddSaleOrderComponent {
   showButtonInformCancellation: boolean;
   printerSelected: Printer;
   printersAux: Printer[]; //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
-  userType: string;
   posType: string;
   loading: boolean;
   isCharge: boolean;
@@ -247,7 +237,7 @@ export class AddSaleOrderComponent {
   async ngOnInit() {
     this.database = localStorage.getItem('company');
 
-    await this._configService.getConfig.subscribe((config) => {
+    this._configService.getConfig.subscribe((config) => {
       this.config = config;
       this.userCountry = this.config['country'];
       if (this.userCountry === 'MX') {
@@ -271,8 +261,6 @@ export class AddSaleOrderComponent {
     });
 
     let pathLocation: string[] = this._router.url.split('/');
-
-    this.userType = pathLocation[1];
     this.posType = pathLocation[2];
 
     this.initComponent();
