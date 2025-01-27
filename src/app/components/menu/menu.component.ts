@@ -67,11 +67,7 @@ export class MenuComponent implements OnInit {
   }
 
   getProduct(category: string) {
-    if (
-      this.menu &&
-      this.menu[category] &&
-      Object.keys(this.menu[category]).length > 0
-    ) {
+    if (this.menu && this.menu[category] && Object.keys(this.menu[category]).length > 0) {
       return Object.keys(this.menu[category]);
     }
     return [];
@@ -114,5 +110,10 @@ export class MenuComponent implements OnInit {
         // this.styleMenu = result.result[0]
         // }
       });
+  }
+
+  getCategoryImage(category: string): string {
+    // Generar dinámicamente la URL de la imagen según la categoría
+    return `assets/images/categorias/${category.toLowerCase()}.jpg`;
   }
 }

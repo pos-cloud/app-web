@@ -1,53 +1,26 @@
 <div>
   <img class="presentation-image" src="assets/image.png" alt="Presentación" />
   <div class="align-items-start">
-    <div
-      *ngFor="let category of getMenuCategories()"
-      class="category col-md-12"
-    >
+    <div *ngFor="let category of getMenuCategories()" class="category col-md-12">
       <div class="card m-3">
         <div class="card-body">
-          <div
-            class="col-md-12"
-            style="background-color: #666; font-size: 15px"
-          >
-            <h5
-              class="card-title text-center"
-              style="color: #fff; padding: 8px 8px; font-weight: 400"
-            >
+          <!-- Título con imagen de fondo -->
+          <div class="category-title" [style.background-image]="'url(' + getCategoryImage(category) + ')'">
+            <h5 class="card-title text-center">
               {{ category }}
             </h5>
           </div>
+          <!-- Lista de productos -->
           <div *ngFor="let product of getProduct(category)">
             <div class="d-flex justify-content-between align-items-center">
-              <p
-                class="card-text mb-0"
-                style="
-                  font-size: 15px;
-                  color: black;
-                  font-weight: 500;
-                  font-family: poppins, sans-serif;
-                "
-              >
+              <p class="card-text mb-0">
                 {{ product }}
               </p>
               <div class="product-price-line">
-                <span
-                  class="product-price"
-                  style="
-                    color: black;
-                    font-size: 20px;
-                    font-weight: 500;
-                    font-family: poppins, sans-serif;
-                  "
-                  >${{ menu[category][product].price }}</span
-                >
+                <span class="product-price"> ${{ menu[category][product].price }} </span>
               </div>
             </div>
-            <!-- Agregar puntos debajo del producto -->
-            <div
-              style="border-bottom: 3px dotted #ccc; margin-bottom: 10px"
-            ></div>
+            <div class="product-divider"></div>
           </div>
         </div>
       </div>

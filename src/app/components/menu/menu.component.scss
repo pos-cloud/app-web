@@ -4,18 +4,43 @@
 
 .product-price {
   min-width: 3rem;
-  bottom: 0;
-  right: 0;
   padding-left: 0.2rem;
   text-align: right;
   z-index: 2;
 }
 
 .card-body {
-  background-color: #f1e8de;
+  background-color: #e0d7d7;
+}
+
+.card {
+  min-height: unset;
+  max-height: unset;
 }
 
 .category {
   padding-left: 1px;
   padding-right: 1px;
+}
+
+/* Estilos para el título de la categoría */
+.category-title {
+  background-size: cover; /* La imagen ocupa todo el espacio */
+  background-position: center; /* Centrar la imagen */
+  padding: 8px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); /* Sombra para mejor legibilidad */
+  font-size: 15px;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px; /* Altura fija para mantener uniformidad */
+  border-radius: 8px; /* Bordes redondeados para un diseño moderno */
+}
+
+/* Divisor para los productos */
+.product-divider {
+  border-bottom: 3px dotted #ccc;
+  margin-bottom: 10px;
 }
