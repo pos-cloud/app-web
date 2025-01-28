@@ -121,6 +121,15 @@
                     class="btn-group"
                     ngbDropdown
                     role="group"
+                    [ngClass]="{
+                      'state-en-proceso': transaction?.state === 'En proceso',
+                      'state-pendiente': transaction?.state === 'Pendiente',
+                      'state-en-espera': transaction?.state === 'En espera',
+                      'state-cerrado': transaction?.state === 'Cerrado',
+                      'state-cancelado': transaction?.state === 'Cancelado',
+                      'state-reembolsado': transaction?.state === 'Reembolsado',
+                      'state-fallado': transaction?.state === 'Fallado',
+                    }"
                     [placement]="isLastTransaction(transaction) ? 'top' : 'bottom'"
                     aria-label="Button group with nested dropdown"
                   >
@@ -167,6 +176,13 @@
                         (click)="changeStateOfTransaction(transaction, 'refunded')"
                       >
                         Reembolsado
+                      </button>
+                      <button
+                        ngbDropdownItem
+                        [ngClass]="'state-fallado'"
+                        (click)="changeStateOfTransaction(transaction, 'refunded')"
+                      >
+                        Fallado
                       </button>
                     </div>
                   </div>
