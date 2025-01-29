@@ -13,11 +13,11 @@ app-list-order-woo-commerce {
     background-color: #ffc107;
     border-color: #ffc107;
   }
-  .btn-state-canceled,
-  .btn-state-canceled:hover {
+  .state-fallado,
+  .state-fallado:hover {
     color: #fff;
-    background-color: #c82333;
-    border-color: #bd2130;
+    background-color: #e03b4c;
+    border-color: #e03b4c;
   }
   .btn-state-sent,
   .btn-state-sent:hover {
@@ -77,5 +77,97 @@ app-list-order-woo-commerce {
     height: 50vh;
     overflow-y: auto;
     padding: 1px;
+  }
+
+  /* Botón principal: Colores dinámicos según el estado */
+  .state-cerrado {
+    background-color: #6c757d; /* Gris oscuro */
+    color: white;
+  }
+
+  .state-en-proceso {
+    background-color: #28a745; /* Verde */
+    color: white;
+  }
+
+  .state-pendiente {
+    background-color: #ffc107; /* Amarillo intenso */
+    color: black;
+  }
+
+  .state-en-espera {
+    background-color: #ffeeba; /* Amarillo claro */
+    color: black;
+  }
+
+  .state-cancelado {
+    background-color: #adb5bd; /* Gris claro */
+    color: white;
+  }
+
+  .state-reembolsado {
+    background-color: #17a2b8; /* Cian */
+    color: white;
+  }
+
+  /* Piquito del dropdown-toggle-split: Color igual al del botón principal */
+  .state-cerrado + .btn.dropdown-toggle-split,
+  .state-en-proceso + .btn.dropdown-toggle-split,
+  .state-pendiente + .btn.dropdown-toggle-split,
+  .state-en-espera + .btn.dropdown-toggle-split,
+  .state-cancelado + .btn.dropdown-toggle-split,
+  .state-reembolsado + .btn.dropdown-toggle-split {
+    background-color: inherit; /* Hereda el color de fondo del estado */
+    color: inherit; /* Hereda el color del texto */
+    border-left: 1px solid white; /* Línea divisoria */
+  }
+
+  /* Hover: Color del piquito igual al estado */
+  .state-cerrado + .btn.dropdown-toggle-split:hover,
+  .state-en-proceso + .btn.dropdown-toggle-split:hover,
+  .state-pendiente + .btn.dropdown-toggle-split:hover,
+  .state-en-espera + .btn.dropdown-toggle-split:hover,
+  .state-cancelado + .btn.dropdown-toggle-split:hover,
+  .state-reembolsado + .btn.dropdown-toggle-split:hover {
+    background-color: inherit; /* Hereda el color de fondo del estado */
+    color: inherit; /* Hereda el color del texto */
+  }
+
+  /* Menú desplegable: Fondo dinámico según estado */
+  .dropdown-menu button {
+    background-color: white; /* Fondo base */
+    color: black; /* Texto base */
+    border: none; /* Sin bordes */
+  }
+
+  .dropdown-menu button:hover {
+    color: white; /* Texto blanco en hover */
+  }
+
+  /* Hover dinámico con los mismos tonos del estado */
+  .state-processing:hover {
+    background-color: #28a745; /* Verde */
+  }
+
+  .state-pending:hover {
+    background-color: #ffc107; /* Amarillo intenso */
+    color: black;
+  }
+
+  .state-on-hold:hover {
+    background-color: #ffeeba; /* Amarillo claro */
+    color: black;
+  }
+
+  .state-completed:hover {
+    background-color: #6c757d; /* Gris oscuro */
+  }
+
+  .state-cancelled:hover {
+    background-color: #adb5bd; /* Gris claro */
+  }
+
+  .state-refunded:hover {
+    background-color: #17a2b8; /* Cian */
   }
 }

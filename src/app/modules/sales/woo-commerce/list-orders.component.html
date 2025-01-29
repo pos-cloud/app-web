@@ -113,16 +113,7 @@
                   <button
                     type="button"
                     class="btn"
-                    [ngClass]="{
-                      'btn-state-close': transaction?.state?.toString() === 'Cerrado',
-                      'btn-state-open':
-                        transaction?.state?.toString() === 'En espera' ||
-                        transaction?.state?.toString() === 'Pendiente' ||
-                        transaction?.state?.toString() === 'En proceso',
-                      'btn-state-canceled':
-                        transaction?.state?.toString() === 'Reembolsado' ||
-                        transaction?.state?.toString() === 'Cancelado',
-                    }"
+                    [ngClass]="'state-' + transaction?.state?.toString()?.toLowerCase().replace(' ', '-')"
                   >
                     {{ transaction?.state }}
                   </button>
@@ -130,42 +121,68 @@
                     class="btn-group"
                     ngbDropdown
                     role="group"
+                    [ngClass]="{
+                      'state-en-proceso': transaction?.state === 'En proceso',
+                      'state-pendiente': transaction?.state === 'Pendiente',
+                      'state-en-espera': transaction?.state === 'En espera',
+                      'state-cerrado': transaction?.state === 'Cerrado',
+                      'state-cancelado': transaction?.state === 'Cancelado',
+                      'state-reembolsado': transaction?.state === 'Reembolsado',
+                      'state-fallado': transaction?.state === 'Fallado',
+                    }"
                     [placement]="isLastTransaction(transaction) ? 'top' : 'bottom'"
                     aria-label="Button group with nested dropdown"
                   >
-                    <button
-                      class="btn dropdown-toggle-split"
-                      ngbDropdownToggle
-                      id="dropdownConfig"
-                      [ngClass]="{
-                        'btn-state-close': transaction?.state?.toString() === 'Cerrado',
-                        'btn-state-open':
-                          transaction?.state?.toString() === 'En espera' ||
-                          transaction?.state?.toString() === 'Pendiente' ||
-                          transaction?.state?.toString() === 'En proceso',
-                        'btn-state-canceled':
-                          transaction?.state?.toString() === 'Reembolsado' ||
-                          transaction?.state?.toString() === 'Cancelado',
-                      }"
-                    ></button>
+                    <button class="btn dropdown-toggle-split" ngbDropdownToggle id="dropdownConfig"></button>
                     <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdownConfig">
-                      <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'processing')">
+                      <button
+                        ngbDropdownItem
+                        [ngClass]="'state-processing'"
+                        (click)="changeStateOfTransaction(transaction, 'processing')"
+                      >
                         En proceso
                       </button>
-                      <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'pending')">
+                      <button
+                        ngbDropdownItem
+                        [ngClass]="'state-pending'"
+                        (click)="changeStateOfTransaction(transaction, 'pending')"
+                      >
                         Pendiente
                       </button>
-                      <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'on-hold')">
+                      <button
+                        ngbDropdownItem
+                        [ngClass]="'state-on-hold'"
+                        (click)="changeStateOfTransaction(transaction, 'on-hold')"
+                      >
                         En espera
                       </button>
-                      <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'completed')">
+                      <button
+                        ngbDropdownItem
+                        [ngClass]="'state-completed'"
+                        (click)="changeStateOfTransaction(transaction, 'completed')"
+                      >
                         Cerrado
                       </button>
-                      <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'cancelled')">
+                      <button
+                        ngbDropdownItem
+                        [ngClass]="'state-cancelled'"
+                        (click)="changeStateOfTransaction(transaction, 'cancelled')"
+                      >
                         Cancelado
                       </button>
-                      <button ngbDropdownItem (click)="changeStateOfTransaction(transaction, 'refunded')">
+                      <button
+                        ngbDropdownItem
+                        [ngClass]="'state-refunded'"
+                        (click)="changeStateOfTransaction(transaction, 'refunded')"
+                      >
                         Reembolsado
+                      </button>
+                      <button
+                        ngbDropdownItem
+                        [ngClass]="'state-fallado'"
+                        (click)="changeStateOfTransaction(transaction, 'refunded')"
+                      >
+                        Fallado
                       </button>
                     </div>
                   </div>
