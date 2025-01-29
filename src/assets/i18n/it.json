@@ -9,5 +9,7 @@
   "save": "Salve",
   "currency": "Valuta",
   "currencies": "Valute",
-  "add-currency": "aggiungere valuta"
+  "add-currency": "aggiungere valuta",
+  "UploadImage": "Carica Immagine",
+  "RemoveImage": "Rimuovi immagine"
 }

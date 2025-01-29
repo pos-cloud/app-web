@@ -5,5 +5,7 @@
   "return": "Return EN",
   "currency": "Currency ",
   "currencies": "Currencies ",
-  "add-currency": "Add currency"
+  "add-currency": "Add currency",
+  "UploadImage": "Upload Image",
+  "RemoveImage": "Remove Image"
 }

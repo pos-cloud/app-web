@@ -1,9 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ApiResponse, Make } from '@types';
@@ -23,6 +19,7 @@ export class MakeComponent implements OnInit, OnDestroy {
   public makeForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public previewImage: string | null = null; // Para la vista previa de la imagen
 
   private makeId: string;
   public make: Make;
@@ -108,9 +105,6 @@ export class MakeComponent implements OnInit, OnDestroy {
           break;
       }
     } else {
-      this._toastService.showToast({
-        message: 'Por favor, revisa los campos en rojo para continuar.',
-      });
       this.loading = false;
     }
   }
@@ -172,5 +166,22 @@ export class MakeComponent implements OnInit, OnDestroy {
           this.returnTo();
         },
       });
+  }
+
+  // Función para manejar la carga de la imagen
+  onImageUpload(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewImage = e.target.result; // Establece la vista previa de la imagen
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  // Función para eliminar la imagen
+  removeImage(): void {
+    this.previewImage = null; // Elimina la vista previa de la imagen
   }
 }
