@@ -15,9 +15,10 @@ app-list-order-woo-commerce {
   }
   .state-fallado,
   .state-fallado:hover {
-    color: #fff;
-    background-color: #e03b4c;
-    border-color: #e03b4c;
+    background: #eba3a3;
+    color: #761919;
+    border-top-right-radius: 13%;
+    border-bottom-right-radius: 13%;
   }
   .btn-state-sent,
   .btn-state-sent:hover {
@@ -81,33 +82,45 @@ app-list-order-woo-commerce {
 
   /* Botón principal: Colores dinámicos según el estado */
   .state-cerrado {
-    background-color: #6c757d; /* Gris oscuro */
-    color: white;
+    background-color: #c8d7e1;
+    color: #2e4453;
+    border-top-right-radius: 13%;
+    border-bottom-right-radius: 13%;
   }
 
   .state-en-proceso {
-    background-color: #28a745; /* Verde */
-    color: white;
+    background: #c6e1c6;
+    color: #5b841b;
+    border-top-right-radius: 13%;
+    border-bottom-right-radius: 13%;
   }
 
   .state-pendiente {
-    background-color: #ffc107; /* Amarillo intenso */
-    color: black;
+    background-color: #e5e5e5;
+    color: #777777;
+    border-top-right-radius: 13%;
+    border-bottom-right-radius: 13%;
   }
 
   .state-en-espera {
-    background-color: #ffeeba; /* Amarillo claro */
-    color: black;
+    background: #f8dda7;
+    color: #94660c;
+    border-top-right-radius: 13%;
+    border-bottom-right-radius: 13%;
   }
 
   .state-cancelado {
-    background-color: #adb5bd; /* Gris claro */
-    color: white;
+    color: #777;
+    background: #e5e5e5;
+    border-top-right-radius: 13%;
+    border-bottom-right-radius: 13%;
   }
 
   .state-reembolsado {
-    background-color: #17a2b8; /* Cian */
-    color: white;
+    color: #777;
+    background: #e5e5e5;
+    border-top-right-radius: 13%;
+    border-bottom-right-radius: 13%;
   }
 
   /* Piquito del dropdown-toggle-split: Color igual al del botón principal */
@@ -150,7 +163,7 @@ app-list-order-woo-commerce {
   }
 
   .state-pending:hover {
-    background-color: #ffc107; /* Amarillo intenso */
+    background-color: #bec5cc;
     color: black;
   }
 

@@ -42,7 +42,7 @@
                     'has-data': filters[column.name],
                   }"
                   [(ngModel)]="filters[column.name]"
-                  (keydown.enter)="getTransactions()"
+                  (keydown.enter)="addFilters()"
                   placeholder="{{ column.name | translate }}"
                   [disabled]="!column.filter || loading"
                 />
@@ -52,7 +52,7 @@
                   class="form-control"
                   *ngIf="column.datatype === 'boolean'"
                   [(ngModel)]="filters[column.name]"
-                  (change)="getTransactions()"
+                  (change)="addFilters()"
                 >
                   <option
                     value=""
