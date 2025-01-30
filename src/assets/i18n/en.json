@@ -6,6 +6,6 @@
   "currency": "Currency ",
   "currencies": "Currencies ",
   "add-currency": "Add currency",
-  "UploadImage": "Upload Image",
-  "RemoveImage": "Remove Image"
+  "uploadImage": "Upload Image",
+  "removeImage": "Remove Image"
 }

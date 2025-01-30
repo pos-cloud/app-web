@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiResponse, Make } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -19,7 +19,7 @@ export class MakeComponent implements OnInit, OnDestroy {
   public makeForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public previewImage: string | null = null; // Para la vista previa de la imagen
+  public previewImage: string | null = null;
 
   private makeId: string;
   public make: Make;
@@ -29,6 +29,7 @@ export class MakeComponent implements OnInit, OnDestroy {
     private _makeService: MakeService,
     private _fb: UntypedFormBuilder,
     private _router: Router,
+    private _route: ActivatedRoute,
     private _toastService: ToastService
   ) {
     this.makeForm = this._fb.group({
@@ -39,14 +40,15 @@ export class MakeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    let pathUrl = this._router.url.split('/');
-    this.operation = pathUrl[3];
-    this.makeId = pathUrl[4];
+    this._route.params.subscribe((params) => {
+      this.operation = params['operation'];
+      this.makeId = params['id'];
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
-    if (this.makeId) {
-      this.getMake();
-    }
+      this.readonly = this.operation === 'view' || this.operation === 'delete';
+      if (this.makeId) {
+        this.getMake();
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -79,7 +81,7 @@ export class MakeComponent implements OnInit, OnDestroy {
   setValueForm(): void {
     this.makeForm.patchValue({
       _id: this.make._id ?? '',
-      description: this.make.description ?? null,
+      description: this.make.description ?? '',
       visibleSale: this.make.visibleSale ?? true,
     });
   }
@@ -101,6 +103,7 @@ export class MakeComponent implements OnInit, OnDestroy {
           break;
         case 'delete':
           this.deleteMake();
+          break;
         default:
           break;
       }
@@ -111,77 +114,79 @@ export class MakeComponent implements OnInit, OnDestroy {
 
   saveMake(): void {
     this.loading = true;
-
     this._makeService
       .save(this.make)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this._toastService.showToast(result);
+          if (result.status === 200) {
+            this._toastService.showToast(result);
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
 
   updateMake(): void {
     this.loading = true;
-
     this._makeService
       .update(this.make)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this._toastService.showToast(result);
+          if (result.status === 200) {
+            this._toastService.showToast(result);
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
 
-  deleteMake() {
+  deleteMake(): void {
     this.loading = true;
     this._makeService
       .delete(this.make._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this._toastService.showToast(result);
+          if (result.status === 200) {
+            this._toastService.showToast(result);
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
 
-  // Función para manejar la carga de la imagen
   onImageUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.previewImage = e.target.result; // Establece la vista previa de la imagen
+        this.previewImage = e.target.result;
       };
       reader.readAsDataURL(input.files[0]);
     }
   }
 
-  // Función para eliminar la imagen
   removeImage(): void {
-    this.previewImage = null; // Elimina la vista previa de la imagen
+    this.previewImage = null;
   }
 }

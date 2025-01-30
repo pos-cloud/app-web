@@ -39,7 +39,7 @@ export class ListMakesComponent {
         datatype: 'string',
         project: null,
         align: 'left',
-        required: false,
+        required: true,
       },
       {
         name: 'visibleSale',
@@ -59,7 +59,7 @@ export class ListMakesComponent {
         datatype: 'date',
         project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
         align: 'left',
-        required: false,
+        required: true,
       },
       {
         name: 'creationUser.name',
@@ -68,7 +68,7 @@ export class ListMakesComponent {
         filter: true,
         datatype: 'string',
         align: 'left',
-        required: false,
+        required: true,
       },
       {
         name: 'updateUser.name',
@@ -77,7 +77,7 @@ export class ListMakesComponent {
         filter: true,
         datatype: 'string',
         align: 'left',
-        required: false,
+        required: true,
       },
       {
         name: 'updateDate',
@@ -87,7 +87,7 @@ export class ListMakesComponent {
         datatype: 'string',
         project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
         align: 'left',
-        required: false,
+        required: true,
       },
       {
         name: 'operationType',
