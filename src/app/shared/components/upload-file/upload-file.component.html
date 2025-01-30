@@ -1,0 +1,12 @@
+<div class="upload-container">
+  <label for="fileInput" class="custom-file-label">Seleccionar archivo</label>
+  <input type="file" id="fileInput" (change)="onFileSelected($event)" />
+
+  <div *ngIf="imageUrl">
+    <img [src]="imageUrl" alt="Vista previa de la imagen" class="preview-image" />
+  </div>
+
+  <div *ngIf="!imageUrl">
+    <img src="./../../../assets/img/default.jpg" alt="No hay imagen" class="preview-image" />
+  </div>
+</div>

@@ -93,10 +93,10 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         name: 'state',
         visible: true,
         disabled: false,
-        filter: false,
+        filter: true,
         datatype: 'string',
         project: null,
-        defaultFilter: `{ "$nin": ["Anulado"] }`,
+        // defaultFilter: ``,
         align: 'left',
         required: true,
       },
@@ -427,7 +427,6 @@ export class ListOrdersWooCommerceComponent implements OnInit {
           }
         }
         break;
-
       case 'sync-orders':
         modalRef = this._modalService.open(SyncOrderComponent, {
           size: 'lg',
@@ -437,7 +436,6 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         modalRef.result.then(() => {
           this.getTransactions();
         });
-        break;
         break;
     }
   }
@@ -482,6 +480,11 @@ export class ListOrdersWooCommerceComponent implements OnInit {
       this.sort = JSON.parse('{"' + term + '": 1 }');
     }
 
+    this.getTransactions();
+  }
+
+  public addFilters(): void {
+    this.currentPage = 1;
     this.getTransactions();
   }
 

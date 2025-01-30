@@ -1,13 +1,9 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse, MediaCategory, Resource } from '@types';
+import { ApiResponse, Resource } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ResourceService } from '../../../core/services/resource.service';
@@ -17,44 +13,34 @@ import { ResourceService } from '../../../core/services/resource.service';
   templateUrl: './resource.component.html',
 })
 export class ResourceComponent implements OnInit {
+  @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
   public operation: string;
-  public readonly: boolean;
-  public resourceId: string;
   public resource: Resource;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public resourceForm: UntypedFormGroup;
-
-  public selectedFile: File = null;
-  public typeSelectFile: string;
-  public message: string;
-  public src: any = './../../../assets/img/default.jpg';
-
   private destroy$ = new Subject<void>();
+
   constructor(
     private _resourceService: ResourceService,
     private _fb: UntypedFormBuilder,
-    public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    public _toastr: ToastService,
-    public _router: Router,
+    private _router: Router,
     private _toastService: ToastService
   ) {
     this.resourceForm = this._fb.group({
       _id: ['', []],
       name: ['', [Validators.required]],
+      file: ['', [Validators.required]],
     });
   }
 
   ngOnInit() {
-    let pathUrl = this._router.url.split('/');
+    const pathUrl = this._router.url.split('/');
+    const resourceId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.resourceId = pathUrl[4];
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
-    if (this.resourceId) {
-      this.getResource();
-    }
+    if (this.operation === 'view' || this.operation === 'delete') this.resourceForm.disable();
+    if (resourceId) this.getResource(resourceId);
   }
 
   ngAfterViewInit() {
@@ -64,18 +50,17 @@ export class ResourceComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
-  public getResource() {
+  public getResource(id: string) {
     this.loading = true;
     this._resourceService
-      .getById(this.resourceId)
+      .getById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this.resource = result.result;
-          if (this.resource?.file) this.src = this.resource.file;
-          this._toastService.showToast(result);
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -88,14 +73,27 @@ export class ResourceComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    this.resourceForm.setValue({
+    this.resourceForm.patchValue({
       _id: this.resource?._id ?? '',
       name: this.resource?.name ?? '',
+      file: this.resource?.file ?? '',
     });
   }
 
-  public addResource() {
-    this.resource = { ...this.resource, ...this.resourceForm.value };
+  public returnTo() {
+    return this._router.navigate(['/entities/resources']);
+  }
+
+  async handleCurrencyOperation() {
+    this.loading = true;
+    await this.uploadFileComponent.uploadImages();
+    this.resourceForm.markAllAsTouched();
+    if (this.resourceForm.invalid) {
+      this.loading = false;
+      return;
+    }
+
+    this.resource = this.resourceForm.value;
 
     switch (this.operation) {
       case 'add':
@@ -106,72 +104,51 @@ export class ResourceComponent implements OnInit {
         break;
       case 'delete':
         this.deleteResource();
-      default:
         break;
     }
   }
 
   async updateResource() {
     this.loading = true;
-
-    if (this.selectedFile) {
-      this.resource.file = await this.uploadFile(this.resource.file);
-    }
     this._resourceService
       .update(this.resource)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
-  }
-
-  returnTo() {
-    return this._router.navigate(['/entities/resources']);
   }
 
   async saveResource() {
     this.loading = true;
 
-    if (this.selectedFile) {
-      if (this.selectedFile)
-        this.resource.file = await this.uploadFile(this.resource.file);
-
-      this._resourceService
-        .save(this.resource)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result: ApiResponse) => {
-            this._toastService.showToast(result);
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-          },
-          complete: () => {
-            this.loading = false;
-            this.returnTo();
-          },
-        });
-    } else {
-      this.loading = false;
-      this._toastService.showToast({
-        message: 'Debe seleccionar un archivo.',
+    this._resourceService
+      .save(this.resource)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
       });
-    }
   }
 
   async deleteResource() {
     this.loading = true;
-
-    await this.deleteFile(this.resource.file);
 
     this._resourceService
       .delete(this.resource._id)
@@ -179,73 +156,20 @@ export class ResourceComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
 
-  public onFileSelected(event) {
-    this.selectedFile = <File>event.target.files[0];
-
-    let reader = new FileReader();
-    reader.readAsDataURL(this.selectedFile);
-    reader.onload = (_event) => {
-      this.src = reader.result;
-      this.typeSelectFile = reader.result.toString().substring(5, 10);
-    };
-  }
-
-  public getFile(): void {
-    if (this.resource.file) {
-      this.src = `${this.resource.file}`;
-    } else {
-      this._toastService.showToast({
-        message: 'No se encontro el archivo',
-      });
-      this.loading = true;
+  onImagesUploaded(urls: string[]): void {
+    if (urls && urls.length > 0) {
+      this.resourceForm.get('file')?.setValue(urls[0]);
     }
-  }
-
-  async uploadFile(pictureDelete: string): Promise<string> {
-    return new Promise<string>(async (resolve, reject) => {
-      if (
-        pictureDelete &&
-        pictureDelete.includes('https://storage.googleapis')
-      ) {
-        await this.deleteFile(pictureDelete);
-      }
-      this._resourceService
-        .makeFileRequest(MediaCategory.RESOURCE, this.selectedFile)
-        .then(
-          (result: string) => {
-            this.resource.file = result;
-            resolve(result);
-          },
-          (error) => this._toastService.showToast(error)
-        );
-    });
-  }
-
-  async deleteFile(pictureDelete: string): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      this._resourceService
-        .deleteImageGoogle(pictureDelete)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          (result) => {
-            resolve(true);
-          },
-          (error) => {
-            this._toastService.showToast(error);
-            resolve(true);
-          }
-        );
-    });
   }
 }

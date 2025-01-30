@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
+import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -24,6 +25,7 @@ import { EntitiesRoutingModule } from './entities-routing.module';
     NgbDropdownModule,
     NgbModule,
     TypeaheadDropdownComponent,
+    UploadFileComponent,
     DatatableModule,
     EntitiesRoutingModule,
   ],
@@ -38,6 +40,7 @@ import { EntitiesRoutingModule } from './entities-routing.module';
     TranslateModule,
     NgbModule,
     TypeaheadDropdownComponent,
+    UploadFileComponent,
     DatatableModule,
   ],
 })
