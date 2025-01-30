@@ -10,6 +10,6 @@
   "currency": "Valuta",
   "currencies": "Valute",
   "add-currency": "aggiungere valuta",
-  "UploadImage": "Carica Immagine",
-  "RemoveImage": "Rimuovi immagine"
+  "uploadImage": "Carica Immagine",
+  "removeImage": "Rimuovi immagine"
 }
