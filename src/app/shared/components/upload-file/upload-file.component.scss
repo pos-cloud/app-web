@@ -1,0 +1,28 @@
+app-upload-file {
+  .upload-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+
+  .custom-file-label {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .custom-file-label:hover {
+    background-color: #0056b3;
+  }
+
+  img {
+    width: 600px;
+    height: 400px;
+  }
+}

@@ -13,7 +13,7 @@ export { Gallery } from './entities/gallery.interface';
 export { Make } from './entities/make.interface';
 export { MovementOfCash } from './entities/movement-of-cash.interface';
 export { Printer } from './entities/printer.interface';
-export { Resource } from './entities/resource.iterface';
+export { Resource } from './entities/resource.interface';
 export { Room } from './entities/room.interface';
 export { TableState } from './entities/table.enum';
 export { Table } from './entities/table.interface';

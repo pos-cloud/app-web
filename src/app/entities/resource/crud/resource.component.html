@@ -15,7 +15,7 @@
           class="btn"
           [disabled]="loading"
           *ngIf="operation !== 'delete' && operation !== 'view'"
-          (click)="addResource()"
+          (click)="handleCurrencyOperation()"
         >
           <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
@@ -26,7 +26,7 @@
           class="btn btn-danger active"
           *ngIf="operation === 'delete'"
           [disabled]="loading"
-          (click)="deleteResource()"
+          (click)="handleCurrencyOperation()"
         >
           <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
@@ -34,119 +34,92 @@
         </button>
       </div>
     </div>
-    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
       <form [formGroup]="resourceForm" autocomplete="off">
-        <div class="modal-body">
-          <div class="row">
-            <label class="form-group col-md-12">
-              <b>{{ 'mainData' | translate | capitalize }}</b>
-            </label>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-12">
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label for="name" class="control-label">{{ 'name' | translate | capitalize }}</label>
-                  <div class="input-group">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="name"
-                      name="name"
-                      id="name"
-                      [readonly]="readonly"
-                      [focus]="focusEvent"
-                    />
-                  </div>
-                  <div
-                    class="invalid-feedback"
-                    *ngIf="
-                      resourceForm.get('description')?.touched && resourceForm.get('description')?.hasError('required')
-                    "
-                  >
-                    Este campo es obligatorio.
-                  </div>
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="name" class="control-label">{{ 'name' | translate | capitalize }}</label>
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="name"
+                    name="name"
+                    id="name"
+                    [ngClass]="{
+                      'is-invalid': resourceForm.get('name')?.touched && resourceForm.get('name')?.invalid,
+                    }"
+                    [focus]="focusEvent"
+                  />
+                </div>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="resourceForm.get('name')?.touched && resourceForm.get('name')?.hasError('required')"
+                >
+                  {{ 'fieldRequired' | translate | capitalize }}
                 </div>
               </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <div class="custom-file">
-                    <label *ngIf="!readonly" class="custom-file-label" for="customFileLang">Seleccionar Imagen</label>
-                    <input
-                      *ngIf="!readonly"
-                      type="file"
-                      class="custom-file-input"
-                      lang="es"
-                      id="customFileLang"
-                      (change)="onFileSelected($event)"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <img width="600" height="400" [src]="src" />
-
-                <audio
-                  controls
-                  *ngIf="(resource && resource.type == 'audio' && src) || (src && typeSelectFile == 'audio')"
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <app-upload-file
+                  (uploadedUrls)="onImagesUploaded($event)"
+                  [folder]="'resources'"
+                  [existingImageUrl]="resourceForm.get('file')?.value"
                 >
-                  <source [src]="src" type="audio/ogg" />
-                </audio>
-
-                <video
-                  controls
-                  width="600"
-                  height="400"
-                  *ngIf="(resource && resource.type == 'video' && src) || (src && typeSelectFile == 'video')"
-                >
-                  <source [src]="src" type="video/mp4" />
-                </video>
+                </app-upload-file>
               </div>
             </div>
           </div>
-          <hr />
-          <div class="row">
-            <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
-              <b>{{ 'audit' | translate | capitalize }}</b>
-            </label>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-12">
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">
-                    {{ 'creationUser.name' | translate | capitalize }}:
-                    <b>{{ resource?.creationUser?.name || '' }}</b>
-                  </label>
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">
-                    {{ 'theDay' | translate | capitalize }}:
-                    <b>{{ resource?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
-                  </label>
-                </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ resource?.creationUser?.name || '' }}</b>
+                </label>
               </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">
-                    {{ 'updateUser.name' | translate | capitalize }}:
-                    <b>{{ resource?.updateUser?.name || '' }}</b>
-                  </label>
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">
-                    {{ 'theDay' | translate | capitalize }}:
-                    <b>{{ resource?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
-                  </label>
-                </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ resource?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
               </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">
-                    ID:<b>{{ resource?._id || '' }}</b>
-                  </label>
-                </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ resource?.updateUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ resource?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  ID:<b>{{ resource?._id || '' }}</b>
+                </label>
               </div>
             </div>
           </div>
