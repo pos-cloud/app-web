@@ -1,11 +1,7 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BusinessRule } from 'app/components/business-rules/business-rules';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { TaxClassification } from 'app/components/tax/tax';
@@ -35,11 +31,7 @@ import { Company } from '../../company/company';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { Printer, PrinterPrintIn, PrinterType } from '../../printer/printer';
-import {
-  DescriptionType,
-  TransactionMovement,
-  TransactionType,
-} from '../../transaction-type/transaction-type';
+import { DescriptionType, TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
 
 //Paquetes de terceros
 
@@ -54,13 +46,7 @@ import { Transaction } from '../../transaction/transaction';
 
 let splitRegex = /\r\n|\r|\n/g;
 
-jsPDF.API['textEx'] = function (
-  text: any,
-  x: number,
-  y: number,
-  hAlign?: string,
-  vAlign?: string
-) {
+jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
   let fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
   // As defined in jsPDF source code
@@ -69,12 +55,7 @@ jsPDF.API['textEx'] = function (
   let splittedText: string[];
   let lineCount: number = 1;
 
-  if (
-    vAlign === 'middle' ||
-    vAlign === 'bottom' ||
-    hAlign === 'center' ||
-    hAlign === 'right'
-  ) {
+  if (vAlign === 'middle' || vAlign === 'bottom' || hAlign === 'center' || hAlign === 'right') {
     splittedText = typeof text === 'string' ? text.split(splitRegex) : text;
 
     lineCount = splittedText.length || 1;
@@ -93,11 +74,7 @@ jsPDF.API['textEx'] = function (
 
     if (lineCount > 1) {
       for (let iLine = 0; iLine < splittedText.length; iLine++) {
-        this.text(
-          splittedText[iLine],
-          x - this.getStringUnitWidth(splittedText[iLine]) * alignSize,
-          y
-        );
+        this.text(splittedText[iLine], x - this.getStringUnitWidth(splittedText[iLine]) * alignSize, y);
         y += fontSize;
       }
 
@@ -223,9 +200,7 @@ export class PrintComponent implements OnInit {
 
     this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
     if (this.transactionId) {
-      this.movementsOfCancellation = await this.getCancellationsOfMovements(
-        this.transactionId
-      );
+      this.movementsOfCancellation = await this.getCancellationsOfMovements(this.transactionId);
       this.printOriginCount = 0;
     }
 
@@ -333,8 +308,7 @@ export class PrintComponent implements OnInit {
     this._configService.getConfigApi().subscribe(
       (result) => {
         if (!result.configs) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -475,21 +449,14 @@ export class PrintComponent implements OnInit {
       )
       .subscribe(
         async (result) => {
-          if (
-            result &&
-            result.transactions &&
-            result.transactions.length === 1
-          ) {
+          if (result && result.transactions && result.transactions.length === 1) {
             this.transaction = result.transactions[0];
 
             if (this.transaction.type.printOrigin) {
               this.printOrigin = true;
             }
 
-            if (
-              this.transaction.branchDestination &&
-              this.transaction.branchDestination.image
-            ) {
+            if (this.transaction.branchDestination && this.transaction.branchDestination.image) {
               this.branchImagen = this.transaction.branchDestination.image;
             }
             /*if (this.transaction && this.transaction.type && this.transaction.type.defectPrinter && !this.printer) {
@@ -562,11 +529,7 @@ export class PrintComponent implements OnInit {
     this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
       (result) => {
         if (!result.movementsOfArticles) {
-          this.showMessage(
-            'No se encontraron productos en la transacción',
-            'info',
-            false
-          );
+          this.showMessage('No se encontraron productos en la transacción', 'info', false);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -574,11 +537,7 @@ export class PrintComponent implements OnInit {
 
           if (!this.transaction.type.requestPaymentMethods) {
             if (this.transaction.type.electronics) {
-              if (
-                Config.country === 'AR' &&
-                this.transaction.CAE &&
-                this.transaction.CAEExpirationDate
-              ) {
+              if (Config.country === 'AR' && this.transaction.CAE && this.transaction.CAEExpirationDate) {
                 //this.calculateBarcodeAR();
                 this.calculateQRAR();
               } else if (
@@ -636,11 +595,7 @@ export class PrintComponent implements OnInit {
             this.toPrintPayment();
           }
         } else {
-          if (
-            Config.country === 'AR' &&
-            this.transaction.CAE &&
-            this.transaction.CAEExpirationDate
-          ) {
+          if (Config.country === 'AR' && this.transaction.CAE && this.transaction.CAEExpirationDate) {
             //this.calculateBarcodeAR();
             this.calculateQRAR();
           } else if (
@@ -682,10 +637,7 @@ export class PrintComponent implements OnInit {
     // Numeración de la transacción
     this.doc.setFontSize(this.fontSizes.extraLarge);
 
-    if (
-      this.transaction.type.labelPrint &&
-      this.transaction.type.labelPrint !== ''
-    ) {
+    if (this.transaction.type.labelPrint && this.transaction.type.labelPrint !== '') {
       this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
     } else {
       this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
@@ -696,9 +648,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFont(undefined, 'normal');
     if (Config.country === 'AR') {
       this.doc.text(
-        this.padString(this.transaction.origin, 4) +
-          '-' +
-          this.padString(this.transaction.number, 10),
+        this.padString(this.transaction.origin, 4) + '-' + this.padString(this.transaction.number, 10),
         130,
         20
       );
@@ -731,15 +681,7 @@ export class PrintComponent implements OnInit {
             this.transaction.letter === this.transaction.type.codes[i].letter
           ) {
             this.doc.setFontSize('8');
-            this.doc.text(
-              'Cod:' +
-                this.padString(
-                  this.transaction.type.codes[i].code.toString(),
-                  2
-                ),
-              101,
-              16
-            );
+            this.doc.text('Cod:' + this.padString(this.transaction.type.codes[i].code.toString(), 2), 101, 16);
           }
         }
       }
@@ -779,8 +721,7 @@ export class PrintComponent implements OnInit {
     if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
       for (let i = 0; i < this.movementsOfCashes.length; i++) {
         commissionAmount += this.movementsOfCashes[0].commissionAmount;
-        administrativeExpenseAmount +=
-          this.movementsOfCashes[0].administrativeExpenseAmount;
+        administrativeExpenseAmount += this.movementsOfCashes[0].administrativeExpenseAmount;
         otherExpenseAmount += this.movementsOfCashes[0].otherExpenseAmount;
 
         if (!this.movementsOfCashes[0].type.allowToFinance) {
@@ -789,14 +730,7 @@ export class PrintComponent implements OnInit {
           }
 
           if (this.movementsOfCashes[i].expirationDate) {
-            this.doc.text(
-              this.dateFormat.transform(
-                this.movementsOfCashes[i].expirationDate,
-                'DD/MM/YYYY'
-              ),
-              75,
-              row
-            );
+            this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 75, row);
           } else {
             this.doc.text('-', 75, row);
           }
@@ -816,22 +750,14 @@ export class PrintComponent implements OnInit {
           this.doc.text(this.movementsOfCashes[i].quota.toString(), 10, row);
 
           if (this.movementsOfCashes[i].expirationDate) {
-            this.doc.text(
-              this.dateFormat.transform(
-                this.movementsOfCashes[i].expirationDate,
-                'DD/MM/YYYY'
-              ),
-              30,
-              row
-            );
+            this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 30, row);
           } else {
             this.doc.text('-', 30, row);
           }
 
           if (this.movementsOfCashes[i].capital) {
             this.doc.textEx(
-              '$ ' +
-                this.roundNumber.transform(this.movementsOfCashes[i].capital),
+              '$ ' + this.roundNumber.transform(this.movementsOfCashes[i].capital),
               80,
               row,
               'right',
@@ -843,10 +769,7 @@ export class PrintComponent implements OnInit {
 
           if (this.movementsOfCashes[i].interestAmount) {
             this.doc.textEx(
-              '$ ' +
-                this.roundNumber.transform(
-                  this.movementsOfCashes[i].interestAmount
-                ),
+              '$ ' + this.roundNumber.transform(this.movementsOfCashes[i].interestAmount),
               110,
               row,
               'right',
@@ -858,8 +781,7 @@ export class PrintComponent implements OnInit {
 
           if (this.movementsOfCashes[i].taxAmount) {
             this.doc.textEx(
-              '$ ' +
-                this.roundNumber.transform(this.movementsOfCashes[0].taxAmount),
+              '$ ' + this.roundNumber.transform(this.movementsOfCashes[0].taxAmount),
               150,
               row,
               'right',
@@ -873,8 +795,7 @@ export class PrintComponent implements OnInit {
         if (this.movementsOfCashes[i].amountPaid) {
           this.doc.setFont(undefined, 'normal');
           this.doc.textEx(
-            '$ ' +
-              this.roundNumber.transform(this.movementsOfCashes[i].amountPaid),
+            '$ ' + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid),
             200,
             row,
             'right',
@@ -895,11 +816,7 @@ export class PrintComponent implements OnInit {
         if (i % 21 == 0 && i != 0) {
           this.doc.setFont('helvetica', 'bold');
           this.doc.text('TRANSPORTE:'.toString(), 25, row);
-          this.doc.text(
-            this.roundNumber.transform(transport).toString(),
-            185,
-            row
-          );
+          this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
 
           this.doc.addPage();
 
@@ -910,18 +827,8 @@ export class PrintComponent implements OnInit {
           // Numeración de la transacción
           this.doc.setFontSize(this.fontSizes.extraLarge);
 
-          if (
-            this.transaction.type.labelPrint &&
-            this.transaction.type.labelPrint !== ''
-          ) {
-            this.centerText(
-              5,
-              5,
-              105,
-              105,
-              10,
-              this.transaction.type.labelPrint
-            );
+          if (this.transaction.type.labelPrint && this.transaction.type.labelPrint !== '') {
+            this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
           } else {
             this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
           }
@@ -931,9 +838,7 @@ export class PrintComponent implements OnInit {
           this.doc.setFont(undefined, 'normal');
           if (Config.country === 'AR') {
             this.doc.text(
-              this.padString(this.transaction.origin, 4) +
-                '-' +
-                this.padString(this.transaction.number, 10),
+              this.padString(this.transaction.origin, 4) + '-' + this.padString(this.transaction.number, 10),
               130,
               20
             );
@@ -961,20 +866,9 @@ export class PrintComponent implements OnInit {
             this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
             if (this.transaction.type.codes && Config.country === 'AR') {
               for (let i = 0; i < this.transaction.type.codes.length; i++) {
-                if (
-                  this.transaction.letter ===
-                  this.transaction.type.codes[i].letter
-                ) {
+                if (this.transaction.letter === this.transaction.type.codes[i].letter) {
                   this.doc.setFontSize('8');
-                  this.doc.text(
-                    'Cod:' +
-                      this.padString(
-                        this.transaction.type.codes[i].code.toString(),
-                        2
-                      ),
-                    101,
-                    16
-                  );
+                  this.doc.text('Cod:' + this.padString(this.transaction.type.codes[i].code.toString(), 2), 101, 16);
                 }
               }
             }
@@ -1002,11 +896,7 @@ export class PrintComponent implements OnInit {
 
           this.doc.setFont('helvetica', 'bold');
           this.doc.text('TRANSPORTE:'.toString(), 25, row);
-          this.doc.text(
-            this.roundNumber.transform(transport).toString(),
-            185,
-            row
-          );
+          this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
           this.doc.setFont(undefined, 'normal');
 
           row = 95;
@@ -1019,56 +909,31 @@ export class PrintComponent implements OnInit {
       this.doc.setFont('helvetica', 'bold');
       this.doc.text('Tasa de Servicios Diaria:', 145, row);
       this.doc.setFont(undefined, 'normal');
-      this.doc.text(
-        '$ (' + this.roundNumber.transform(commissionAmount) + ')',
-        202,
-        row,
-        'right',
-        'right'
-      );
+      this.doc.text('$ (' + this.roundNumber.transform(commissionAmount) + ')', 202, row, 'right', 'right');
     }
     if (administrativeExpenseAmount > 0) {
       row += 8;
       this.doc.setFont('helvetica', 'bold');
       this.doc.text('Gastos administrativos:', 145, row);
       this.doc.setFont(undefined, 'normal');
-      this.doc.text(
-        '$ (' + this.roundNumber.transform(administrativeExpenseAmount) + ')',
-        202,
-        row,
-        'right',
-        'right'
-      );
+      this.doc.text('$ (' + this.roundNumber.transform(administrativeExpenseAmount) + ')', 202, row, 'right', 'right');
     }
     if (otherExpenseAmount > 0) {
       row += 8;
       this.doc.setFont('helvetica', 'bold');
       this.doc.text('Otros gastos:', 145, row);
       this.doc.setFont(undefined, 'normal');
-      this.doc.text(
-        '$ (' + this.roundNumber.transform(otherExpenseAmount) + ')',
-        202,
-        row,
-        'right',
-        'right'
-      );
+      this.doc.text('$ (' + this.roundNumber.transform(otherExpenseAmount) + ')', 202, row, 'right', 'right');
     }
     row += 8;
     this.doc.setFont('helvetica', 'bold');
     this.doc.text('TOTAL:', 145, row);
     this.doc.setFont(undefined, 'normal');
-    this.doc.text(
-      '$ ' + this.roundNumber.transform(this.transaction.totalPrice),
-      200,
-      row,
-      'right',
-      'right'
-    );
+    this.doc.text('$ ' + this.roundNumber.transform(this.transaction.totalPrice), 200, row, 'right', 'right');
     this.doc.setFontSize(this.fontSizes.normal);
     row += 5;
 
-    let movCancelation: MovementOfCancellation[] =
-      await this.getCancellationsOfMovements(this.transactionId);
+    let movCancelation: MovementOfCancellation[] = await this.getCancellationsOfMovements(this.transactionId);
 
     if (movCancelation) {
       this.doc.setFont('helvetica', 'bold');
@@ -1095,27 +960,15 @@ export class PrintComponent implements OnInit {
         );
         //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
         this.doc.textEx(
-          '$ ' +
-            this.roundNumber.transform(
-              movCancelation[index].transactionOrigin.totalPrice
-            ),
+          '$ ' + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice),
           95,
           row,
           'right',
           'middle'
         );
+        this.doc.textEx('$ ' + this.roundNumber.transform(movCancelation[index].balance), 130, row, 'right', 'middle');
         this.doc.textEx(
-          '$ ' + this.roundNumber.transform(movCancelation[index].balance),
-          130,
-          row,
-          'right',
-          'middle'
-        );
-        this.doc.textEx(
-          '$ ' +
-            this.roundNumber.transform(
-              movCancelation[index].transactionOrigin.balance
-            ),
+          '$ ' + this.roundNumber.transform(movCancelation[index].transactionOrigin.balance),
           175,
           row,
           'right',
@@ -1134,18 +987,8 @@ export class PrintComponent implements OnInit {
           // Numeración de la transacción
           this.doc.setFontSize(this.fontSizes.extraLarge);
 
-          if (
-            this.transaction.type.labelPrint &&
-            this.transaction.type.labelPrint !== ''
-          ) {
-            this.centerText(
-              5,
-              5,
-              105,
-              105,
-              10,
-              this.transaction.type.labelPrint
-            );
+          if (this.transaction.type.labelPrint && this.transaction.type.labelPrint !== '') {
+            this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
           } else {
             this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
           }
@@ -1155,9 +998,7 @@ export class PrintComponent implements OnInit {
           this.doc.setFont(undefined, 'normal');
           if (Config.country === 'AR') {
             this.doc.text(
-              this.padString(this.transaction.origin, 4) +
-                '-' +
-                this.padString(this.transaction.number, 10),
+              this.padString(this.transaction.origin, 4) + '-' + this.padString(this.transaction.number, 10),
               130,
               20
             );
@@ -1185,20 +1026,9 @@ export class PrintComponent implements OnInit {
             this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
             if (this.transaction.type.codes && Config.country === 'AR') {
               for (let i = 0; i < this.transaction.type.codes.length; i++) {
-                if (
-                  this.transaction.letter ===
-                  this.transaction.type.codes[i].letter
-                ) {
+                if (this.transaction.letter === this.transaction.type.codes[i].letter) {
                   this.doc.setFontSize('8');
-                  this.doc.text(
-                    'Cod:' +
-                      this.padString(
-                        this.transaction.type.codes[i].code.toString(),
-                        2
-                      ),
-                    101,
-                    16
-                  );
+                  this.doc.text('Cod:' + this.padString(this.transaction.type.codes[i].code.toString(), 2), 101, 16);
                 }
               }
             }
@@ -1234,18 +1064,12 @@ export class PrintComponent implements OnInit {
     this.getGreeting();
     this.getFooter();
 
-    if (
-      this.transaction.type.name === 'Préstamo' &&
-      Config.database === 'borita'
-    ) {
+    if (this.transaction.type.name === 'Préstamo' && Config.database === 'borita') {
       this.toPrintPagare();
       this.toPrintMutuo();
     }
 
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
       if (this.branchImagen && this.branchImagen !== 'default.jpg') {
@@ -1265,24 +1089,14 @@ export class PrintComponent implements OnInit {
     this.doc.setFont('', this.fontSizes.large);
     this.centerText(5, 5, 210, 0, 10, 'PAGARÉ');
     this.doc.text(
-      `${this.currencyPipe.transform(
-        this.transaction.totalPrice,
-        'USD',
-        'symbol-narrow',
-        '1.2-2'
-      )}`,
+      `${this.currencyPipe.transform(this.transaction.totalPrice, 'USD', 'symbol-narrow', '1.2-2')}`,
       margin,
       18
     );
     this.doc.text(
       `${this.transaction.company.address} (${
-        this.transaction.company.state
-          ? this.transaction.company.state.name
-          : ''
-      }) ${
-        moment().format('DD [de]') +
-        this.capitalizePipe.transform(moment().format(' MMMM [de] YYYY'))
-      }`,
+        this.transaction.company.state ? this.transaction.company.state.name : ''
+      }) ${moment().format('DD [de]') + this.capitalizePipe.transform(moment().format(' MMMM [de] YYYY'))}`,
       margin,
       26
     );
@@ -1296,9 +1110,7 @@ export class PrintComponent implements OnInit {
       'symbol-narrow',
       '1.2-2'
     )} (${this.capitalizePipe.transform(
-      this.getNumeroALetras(
-        this.roundNumber.transform(this.transaction.totalPrice)
-      ).toLowerCase()
+      this.getNumeroALetras(this.roundNumber.transform(this.transaction.totalPrice)).toLowerCase()
     )})
     Conforme a lo establecido por el art. 5 del Decreto 5965/63 el presente pagaré devengará a
     partir de la fecha de libramiento y hasta su efectivo pago un interés compensatorio noventa y
@@ -1309,56 +1121,26 @@ export class PrintComponent implements OnInit {
     establecido por el artículo 36 del Decreto-Ley 5.965/63, ampliamos el plazo de presentación para
     el pago de este pagaré hasta diez (10) años a contar de la fecha de libramiento.
     Lugar de pago: ${
-      this.transaction.company &&
-      this.transaction.company.city &&
-      this.transaction.company.city != ''
+      this.transaction.company && this.transaction.company.city && this.transaction.company.city != ''
         ? this.transaction.company.city
         : '..................'
-    }, ${
-      this.transaction.company.state
-        ? this.transaction.company.state.name
-        : '..................'
-    }.
+    }, ${this.transaction.company.state ? this.transaction.company.state.name : '..................'}.
     `;
     let row: number = 34;
 
     this.doc.text(text, margin, row);
     row += 60;
-    this.doc.text(
-      `Firma del deudor: ........................................`,
-      margin,
-      row
-    );
+    this.doc.text(`Firma del deudor: ........................................`, margin, row);
     row += 8;
-    this.doc.text(
-      `Nombre: ......................................................`,
-      margin,
-      row
-    );
+    this.doc.text(`Nombre: ......................................................`, margin, row);
     row += 8;
-    this.doc.text(
-      `D.N.I. - L.C. - L.E.: ....................................`,
-      margin,
-      row
-    );
+    this.doc.text(`D.N.I. - L.C. - L.E.: ....................................`, margin, row);
     row += 8;
-    this.doc.text(
-      `Domicilio: ...................................................`,
-      margin,
-      row
-    );
+    this.doc.text(`Domicilio: ...................................................`, margin, row);
     row += 8;
-    this.doc.text(
-      `Localidad: ...................................................`,
-      margin,
-      row
-    );
+    this.doc.text(`Localidad: ...................................................`, margin, row);
     row += 8;
-    this.doc.text(
-      `Teléfono: .....................................................`,
-      margin,
-      row
-    );
+    this.doc.text(`Teléfono: .....................................................`, margin, row);
   }
 
   toPrintMutuo() {
@@ -1371,44 +1153,28 @@ export class PrintComponent implements OnInit {
     this.doc.setFont('', this.fontSizes.normal);
     this.doc.line(0, 15, this.printer.pageWidth - 5, 15);
     let text: string = `En la ciudad de ${
-      this.transaction.company &&
-      this.transaction.company.city &&
-      this.transaction.company.city != ''
+      this.transaction.company && this.transaction.company.city && this.transaction.company.city != ''
         ? this.transaction.company.city
         : '..................'
     }, Prov. de ${
-      this.transaction.company.state
-        ? this.transaction.company.state.name
-        : '..................'
-    } a los ${moment().format(
-      'DD [días del mes de]'
-    )} ${this.capitalizePipe.transform(
+      this.transaction.company.state ? this.transaction.company.state.name : '..................'
+    } a los ${moment().format('DD [días del mes de]')} ${this.capitalizePipe.transform(
       moment().format('MMMM [de]')
-    )} ${this.getNumeroALetras(
-      moment().format('YYYY')
-    ).toLowerCase()} entre BORITA S.A., representada en este
+    )} ${this.getNumeroALetras(moment().format('YYYY')).toLowerCase()} entre BORITA S.A., representada en este
     acto por su PRESIDENTE Sr. DANIEL CAFFE D.N.I. Nº 20188385, con domicilio en calle ${
       Config.companyAddress ? Config.companyAddress : '..................'
     }, por
     una parte y en adelante denominada LA ACREEDORA y por la otra el Sr./a ${
-      this.transaction.company
-        ? this.transaction.company.name
-        : '..................'
+      this.transaction.company ? this.transaction.company.name : '..................'
     } L.C./L.E./D.N.I. Nº ${
-      this.transaction.company
-        ? this.transaction.company.identificationValue
-        : '..................'
+      this.transaction.company ? this.transaction.company.identificationValue : '..................'
     }
     denominado/s en adelante EL/LOS DEUDOR/ES, han convenido en celebrar el presente contrato de mutuo oneroso sujeto a las cláusulas que a
     continuación se transcriben: PRIMERA: BORITA S.A. otorga en préstamo a ${
-      this.transaction.company
-        ? this.transaction.company.name
-        : '..................'
+      this.transaction.company ? this.transaction.company.name : '..................'
     } y éste/estos lo acepta/n, la suma de
     Pesos ${this.capitalizePipe.transform(
-      this.getNumeroALetras(
-        this.roundNumber.transform(this.transaction.totalPrice)
-      ).toLowerCase()
+      this.getNumeroALetras(this.roundNumber.transform(this.transaction.totalPrice)).toLowerCase()
     )} (${this.currencyPipe.transform(
       this.roundNumber.transform(this.transaction.totalPrice),
       'USD',
@@ -1420,16 +1186,12 @@ export class PrintComponent implements OnInit {
     plazo y condiciones: ${this.movementsOfCashes.length} ${
       this.movementsOfCashes.length <= 1 ? 'CUOTA' : 'CUOTAS'
     }, mensuales y consecutivas de ${this.currencyPipe.transform(
-      this.roundNumber.transform(
-        this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid
-      ),
+      this.roundNumber.transform(this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid),
       'USD',
       'symbol-narrow',
       '1.2-2'
     )} (Pesos ${this.capitalizePipe.transform(
-      this.getNumeroALetras(
-        this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid
-      ).toLowerCase()
+      this.getNumeroALetras(this.movementsOfCashes[this.movementsOfCashes.length - 1].amountPaid).toLowerCase()
     )})
     cada una venciendo la primera el día ${moment(
       this.movementsOfCashes[0].expirationDate,
@@ -1492,49 +1254,33 @@ export class PrintComponent implements OnInit {
     causídicos y costas, sobre la base del presente instrumento y sin necesidad de aviso previo. A tal efecto, la liquidación que practique
     la ACREEDORA, acompañada de este instrumento será TITULO EJECUTIVO suficiente para accionar en contra del DEUDOR/ES .DECIMA
     SEGUNDA: El Sr/a. ${
-      this.transaction.company
-        ? this.transaction.company.name
-        : '..................'
+      this.transaction.company ? this.transaction.company.name : '..................'
     } L.C./L.E./D.N.I. Nº ${
-      this.transaction.company
-        ? this.transaction.company.identificationValue
-        : '..................'
+      this.transaction.company ? this.transaction.company.identificationValue : '..................'
     }, con domicilio en calle ........................., se constituyen en fiador/es y
     garante/s solidario/s, liso/s y llano/s principal/es pagador/es y con el carácter de codeudor solidario de todas las obligaciones asumidas
     por el/los DEUDOR/E en el presente contrato, renunciando expresamente a los beneficios de excusión y/o división que
     pudiere/n corresponderle/s.-DECIMO TERCERA: En las condiciones expresadas, la ACREEDORA y el DEUDOR/ES y GARANTE/S o
     FIADOR/ES solidarios, aceptan en todas sus partes las cláusulas que anteceden y declaran expresamente someterse a la jurisdicción de los
     Tribunales Ordinarios de la ciudad de ${
-      this.transaction.company &&
-      this.transaction.company.city &&
-      this.transaction.company.city != ''
+      this.transaction.company && this.transaction.company.city && this.transaction.company.city != ''
         ? this.transaction.company.city
         : '..................'
     }, Prov. de ${
-      this.transaction.company.state
-        ? this.transaction.company.state.name
-        : '..................'
+      this.transaction.company.state ? this.transaction.company.state.name : '..................'
     }, renunciando expresamente a cualquier otro fuero que les pudiera corresponder,
     en especial el fuero Federal, constituyendo domicilio especial para todas las notificaciones y demás efectos legales la ACREEDORA
     en calle ${
       Config.companyAddress ? Config.companyAddress : '..................'
     } y el DEUDOR/ES en calle , de la ciudad de ${
-      this.transaction.company &&
-      this.transaction.company.addressNumber &&
-      this.transaction.company.addressNumber != ''
+      this.transaction.company && this.transaction.company.addressNumber && this.transaction.company.addressNumber != ''
         ? this.transaction.company.addressNumber + ' - '
         : '............ - '
     } ${
-      this.transaction.company &&
-      this.transaction.company.city &&
-      this.transaction.company.city != ''
+      this.transaction.company && this.transaction.company.city && this.transaction.company.city != ''
         ? this.transaction.company.city
         : '..................'
-    }, Prov. de ${
-      this.transaction.company.state
-        ? this.transaction.company.state.name
-        : '..................'
-    }
+    }, Prov. de ${this.transaction.company.state ? this.transaction.company.state.name : '..................'}
     y el/los GARANTE/S o FIADOR/ES en calle ${
       Config.companyAddress ? Config.companyAddress : '..................'
     }, los que subsistirán a todos los efectos hasta que obre
@@ -1544,9 +1290,7 @@ export class PrintComponent implements OnInit {
     this.doc.text(text, 0, 20);
   }
 
-  async getCancellationsOfMovements(
-    transactionDestinationViewId
-  ): Promise<MovementOfCancellation[]> {
+  async getCancellationsOfMovements(transactionDestinationViewId): Promise<MovementOfCancellation[]> {
     return new Promise<MovementOfCancellation[]>((resolve, reject) => {
       this.loading = true;
 
@@ -1585,11 +1329,7 @@ export class PrintComponent implements OnInit {
         )
         .subscribe(
           async (result) => {
-            if (
-              result &&
-              result.movementsOfCancellations &&
-              result.movementsOfCancellations.length > 0
-            ) {
+            if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
               resolve(result.movementsOfCancellations);
             } else {
               resolve(null);
@@ -1616,14 +1356,10 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    let date = this.transaction.CAEExpirationDate.split('T')[0]
-      .replace('-', '')
-      .replace('-', '');
+    let date = this.transaction.CAEExpirationDate.split('T')[0].replace('-', '').replace('-', '');
 
     let digit =
-      this.config[0].companyIdentificationValue
-        .replace('-', '')
-        .replace('-', '') +
+      this.config[0].companyIdentificationValue.replace('-', '').replace('-', '') +
       codeInvoice +
       this.transaction.origin +
       this.transaction.CAE +
@@ -1652,9 +1388,7 @@ export class PrintComponent implements OnInit {
 
     this.getBarcode64(
       'interleaved2of5?value=' +
-        this.config[0].companyIdentificationValue
-          .replace('-', '')
-          .replace('-', '') +
+        this.config[0].companyIdentificationValue.replace('-', '').replace('-', '') +
         codeInvoice +
         this.transaction.origin +
         this.transaction.CAE +
@@ -1732,22 +1466,14 @@ export class PrintComponent implements OnInit {
     }
     if (this.cashBox.openingDate) {
       this.doc.text(
-        'Apertura: ' +
-          this.dateFormat.transform(
-            this.cashBox.openingDate,
-            'DD/MM/YYYY HH:mm:ss'
-          ),
+        'Apertura: ' + this.dateFormat.transform(this.cashBox.openingDate, 'DD/MM/YYYY HH:mm:ss'),
         margin,
         (row += 5)
       );
     }
     if (this.cashBox.closingDate) {
       this.doc.text(
-        'Cierre: ' +
-          this.dateFormat.transform(
-            this.cashBox.closingDate,
-            'DD/MM/YYYY HH:mm:ss'
-          ),
+        'Cierre: ' + this.dateFormat.transform(this.cashBox.closingDate, 'DD/MM/YYYY HH:mm:ss'),
         margin,
         (row += 5)
       );
@@ -1769,22 +1495,18 @@ export class PrintComponent implements OnInit {
         // SUMA MONTO APERTURA
         if (close[i].type.cashOpening && close[i].state === 'Cerrado') {
           if (openingAmounts[close[i]['movement-of-cash']['type']['name']]) {
-            openingAmounts[close[i]['movement-of-cash']['type']['name']] +=
-              close[i]['movement-of-cash']['amountPaid'];
+            openingAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            openingAmounts[close[i]['movement-of-cash']['type']['name']] =
-              close[i]['movement-of-cash']['amountPaid'];
+            openingAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
 
         // SUMA MONTO CIERRE
         if (close[i].type.cashClosing && close[i].state === 'Cerrado') {
           if (closingAmounts[close[i]['movement-of-cash']['type']['name']]) {
-            closingAmounts[close[i]['movement-of-cash']['type']['name']] +=
-              close[i]['movement-of-cash']['amountPaid'];
+            closingAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            closingAmounts[close[i]['movement-of-cash']['type']['name']] =
-              close[i]['movement-of-cash']['amountPaid'];
+            closingAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
 
@@ -1796,11 +1518,9 @@ export class PrintComponent implements OnInit {
           close[i].state === 'Cerrado'
         ) {
           if (inputAmounts[close[i]['movement-of-cash']['type']['name']]) {
-            inputAmounts[close[i]['movement-of-cash']['type']['name']] +=
-              close[i]['movement-of-cash']['amountPaid'];
+            inputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            inputAmounts[close[i]['movement-of-cash']['type']['name']] =
-              close[i]['movement-of-cash']['amountPaid'];
+            inputAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
 
@@ -1812,11 +1532,9 @@ export class PrintComponent implements OnInit {
           close[i].state === 'Cerrado'
         ) {
           if (outputAmounts[close[i]['movement-of-cash']['type']['name']]) {
-            outputAmounts[close[i]['movement-of-cash']['type']['name']] +=
-              close[i]['movement-of-cash']['amountPaid'];
+            outputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            outputAmounts[close[i]['movement-of-cash']['type']['name']] =
-              close[i]['movement-of-cash']['amountPaid'];
+            outputAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
 
@@ -1855,12 +1573,9 @@ export class PrintComponent implements OnInit {
           close[i].type.movement === 'Entrada' &&
           close[i].state === 'Anulado'
         ) {
-          if (
-            amountsInputCanceled[close[i]['movement-of-cash']['type']['name']]
-          ) {
-            amountsInputCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] += close[i]['movement-of-cash']['amountPaid'];
+          if (amountsInputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] +=
+              close[i]['movement-of-cash']['amountPaid'];
           } else {
             amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] =
               close[i]['movement-of-cash']['amountPaid'];
@@ -1874,16 +1589,10 @@ export class PrintComponent implements OnInit {
           close[i].type.movement === 'Salida' &&
           close[i].state === 'Anulado'
         ) {
-          if (
-            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]
-          ) {
-            amountsOutputCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] += 1;
+          if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
           } else {
-            amountsOutputCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] = 1;
+            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
 
@@ -1894,12 +1603,9 @@ export class PrintComponent implements OnInit {
           close[i].type.movement === 'Entrada' &&
           close[i].state === 'Anulado'
         ) {
-          if (
-            inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]
-          ) {
-            inputAmountsCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] += close[i]['movement-of-cash']['amountPaid'];
+          if (inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] +=
+              close[i]['movement-of-cash']['amountPaid'];
           } else {
             inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] =
               close[i]['movement-of-cash']['amountPaid'];
@@ -1913,16 +1619,10 @@ export class PrintComponent implements OnInit {
           close[i].type.movement === 'Salida' &&
           close[i].state === 'Anulado'
         ) {
-          if (
-            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]
-          ) {
-            outputAmountsCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] += 1;
+          if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
           } else {
-            outputAmountsCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] = 1;
+            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
       }
@@ -1939,11 +1639,7 @@ export class PrintComponent implements OnInit {
     if (Object.keys(openingAmounts).length > 0) {
       for (let k of Object.keys(openingAmounts)) {
         this.doc.text('- ' + k, margin + 5, (row += 5));
-        this.doc.text(
-          '$ ' + openingAmounts[k].toLocaleString('de-DE'),
-          55,
-          row
-        );
+        this.doc.text('$ ' + openingAmounts[k].toLocaleString('de-DE'), 55, row);
         openCash += openingAmounts[k];
       }
     } else {
@@ -1966,17 +1662,9 @@ export class PrintComponent implements OnInit {
         input += inputAmounts[k];
         this.doc.setFont(undefined, 'italic');
         if (amountsInput[k] === 1) {
-          this.doc.text(
-            amountsInput[k] + ' operación',
-            margin + 10,
-            (row += 5)
-          );
+          this.doc.text(amountsInput[k] + ' operación', margin + 10, (row += 5));
         } else {
-          this.doc.text(
-            amountsInput[k] + ' operaciones',
-            margin + 10,
-            (row += 5)
-          );
+          this.doc.text(amountsInput[k] + ' operaciones', margin + 10, (row += 5));
         }
         this.doc.setFont(undefined, 'normal');
       }
@@ -2000,17 +1688,9 @@ export class PrintComponent implements OnInit {
         output += outputAmounts[k];
         this.doc.setFont(undefined, 'italic');
         if (amountsOutput[k] === 1) {
-          this.doc.text(
-            amountsOutput[k] + ' operación',
-            margin + 10,
-            (row += 5)
-          );
+          this.doc.text(amountsOutput[k] + ' operación', margin + 10, (row += 5));
         } else {
-          this.doc.text(
-            amountsOutput[k] + ' operaciones',
-            margin + 10,
-            (row += 5)
-          );
+          this.doc.text(amountsOutput[k] + ' operaciones', margin + 10, (row += 5));
         }
         this.doc.setFont(undefined, 'normal');
       }
@@ -2030,11 +1710,7 @@ export class PrintComponent implements OnInit {
     if (Object.keys(closingAmounts).length > 0) {
       for (let k of Object.keys(closingAmounts)) {
         this.doc.text('- ' + k, margin + 5, (row += 5));
-        this.doc.text(
-          '$ ' + closingAmounts[k].toLocaleString('de-DE'),
-          55,
-          row
-        );
+        this.doc.text('$ ' + closingAmounts[k].toLocaleString('de-DE'), 55, row);
         closeCash += closingAmounts[k];
       }
     } else {
@@ -2079,11 +1755,7 @@ export class PrintComponent implements OnInit {
         if (!outputAmounts[k]) outputAmounts[k] = 0;
         if (!closingAmounts[k]) closingAmounts[k] = 0;
         this.doc.text(
-          '$ ' +
-            (
-              closingAmounts[k] -
-              (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
-            ).toLocaleString('de-DE'),
+          '$ ' + (closingAmounts[k] - (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])).toLocaleString('de-DE'),
           55,
           row
         );
@@ -2091,11 +1763,7 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont('helvetica', 'bold');
     this.doc.text('Total:', margin + 10, (row += 5));
-    this.doc.text(
-      '$ ' + (closeCash - (openCash + input - output)).toLocaleString('de-DE'),
-      55,
-      row
-    );
+    this.doc.text('$ ' + (closeCash - (openCash + input - output)).toLocaleString('de-DE'), 55, row);
     // this.doc.setFont(undefined,'normal');
 
     // // Pie de la impresión
@@ -2132,32 +1800,17 @@ export class PrintComponent implements OnInit {
     this.doc.setFont('helvetica', 'bold');
     this.doc.text('Cajero:', margin, row);
     this.doc.setFont(undefined, 'normal');
-    if (this.cashBox.employee)
-      this.doc.text(this.cashBox.employee.name, 40, row);
+    if (this.cashBox.employee) this.doc.text(this.cashBox.employee.name, 40, row);
     this.doc.setFont('helvetica', 'bold');
     this.doc.text('Apertura:', margin, (row += 5));
     this.doc.setFont(undefined, 'normal');
     if (this.cashBox.openingDate)
-      this.doc.text(
-        this.dateFormat.transform(
-          this.cashBox.openingDate,
-          'DD/MM/YYYY HH:mm:ss'
-        ),
-        40,
-        row
-      );
+      this.doc.text(this.dateFormat.transform(this.cashBox.openingDate, 'DD/MM/YYYY HH:mm:ss'), 40, row);
     this.doc.setFont('helvetica', 'bold');
     this.doc.text('Cierre:', margin, (row += 5));
     this.doc.setFont(undefined, 'normal');
     if (this.cashBox.closingDate)
-      this.doc.text(
-        this.dateFormat.transform(
-          this.cashBox.closingDate,
-          'DD/MM/YYYY HH:mm:ss'
-        ),
-        40,
-        row
-      );
+      this.doc.text(this.dateFormat.transform(this.cashBox.closingDate, 'DD/MM/YYYY HH:mm:ss'), 40, row);
 
     let openingAmounts = [];
     let closingAmounts = [];
@@ -2175,22 +1828,18 @@ export class PrintComponent implements OnInit {
         // SUMA MONTO APERTURA
         if (close[i].type.cashOpening && close[i].state === 'Cerrado') {
           if (openingAmounts[close[i]['movement-of-cash']['type']['name']]) {
-            openingAmounts[close[i]['movement-of-cash']['type']['name']] +=
-              close[i]['movement-of-cash']['amountPaid'];
+            openingAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            openingAmounts[close[i]['movement-of-cash']['type']['name']] =
-              close[i]['movement-of-cash']['amountPaid'];
+            openingAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
 
         // SUMA MONTO CIERRE
         if (close[i].type.cashClosing && close[i].state === 'Cerrado') {
           if (closingAmounts[close[i]['movement-of-cash']['type']['name']]) {
-            closingAmounts[close[i]['movement-of-cash']['type']['name']] +=
-              close[i]['movement-of-cash']['amountPaid'];
+            closingAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            closingAmounts[close[i]['movement-of-cash']['type']['name']] =
-              close[i]['movement-of-cash']['amountPaid'];
+            closingAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
 
@@ -2202,11 +1851,9 @@ export class PrintComponent implements OnInit {
           close[i].state === 'Cerrado'
         ) {
           if (inputAmounts[close[i]['movement-of-cash']['type']['name']]) {
-            inputAmounts[close[i]['movement-of-cash']['type']['name']] +=
-              close[i]['movement-of-cash']['amountPaid'];
+            inputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            inputAmounts[close[i]['movement-of-cash']['type']['name']] =
-              close[i]['movement-of-cash']['amountPaid'];
+            inputAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
 
@@ -2218,11 +1865,9 @@ export class PrintComponent implements OnInit {
           close[i].state === 'Cerrado'
         ) {
           if (outputAmounts[close[i]['movement-of-cash']['type']['name']]) {
-            outputAmounts[close[i]['movement-of-cash']['type']['name']] +=
-              close[i]['movement-of-cash']['amountPaid'];
+            outputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            outputAmounts[close[i]['movement-of-cash']['type']['name']] =
-              close[i]['movement-of-cash']['amountPaid'];
+            outputAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
 
@@ -2261,12 +1906,9 @@ export class PrintComponent implements OnInit {
           close[i].type.movement === 'Entrada' &&
           close[i].state === 'Anulado'
         ) {
-          if (
-            amountsInputCanceled[close[i]['movement-of-cash']['type']['name']]
-          ) {
-            amountsInputCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] += close[i]['movement-of-cash']['amountPaid'];
+          if (amountsInputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] +=
+              close[i]['movement-of-cash']['amountPaid'];
           } else {
             amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] =
               close[i]['movement-of-cash']['amountPaid'];
@@ -2280,16 +1922,10 @@ export class PrintComponent implements OnInit {
           close[i].type.movement === 'Salida' &&
           close[i].state === 'Anulado'
         ) {
-          if (
-            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]
-          ) {
-            amountsOutputCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] += 1;
+          if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
           } else {
-            amountsOutputCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] = 1;
+            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
 
@@ -2300,12 +1936,9 @@ export class PrintComponent implements OnInit {
           close[i].type.movement === 'Entrada' &&
           close[i].state === 'Anulado'
         ) {
-          if (
-            inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]
-          ) {
-            inputAmountsCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] += close[i]['movement-of-cash']['amountPaid'];
+          if (inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] +=
+              close[i]['movement-of-cash']['amountPaid'];
           } else {
             inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] =
               close[i]['movement-of-cash']['amountPaid'];
@@ -2319,16 +1952,10 @@ export class PrintComponent implements OnInit {
           close[i].type.movement === 'Salida' &&
           close[i].state === 'Anulado'
         ) {
-          if (
-            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]
-          ) {
-            outputAmountsCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] += 1;
+          if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
           } else {
-            outputAmountsCanceled[
-              close[i]['movement-of-cash']['type']['name']
-            ] = 1;
+            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
       }
@@ -2345,11 +1972,7 @@ export class PrintComponent implements OnInit {
     if (Object.keys(openingAmounts).length > 0) {
       for (let k of Object.keys(openingAmounts)) {
         this.doc.text('- ' + k, margin + 5, (row += 5));
-        this.doc.text(
-          '$ ' + openingAmounts[k].toLocaleString('de-DE'),
-          60,
-          row
-        );
+        this.doc.text('$ ' + openingAmounts[k].toLocaleString('de-DE'), 60, row);
         openCash += openingAmounts[k];
       }
     } else {
@@ -2372,17 +1995,9 @@ export class PrintComponent implements OnInit {
         input += inputAmounts[k];
         this.doc.setFont(undefined, 'italic');
         if (amountsInput[k] === 1) {
-          this.doc.text(
-            amountsInput[k] + ' operación',
-            margin + 10,
-            (row += 5)
-          );
+          this.doc.text(amountsInput[k] + ' operación', margin + 10, (row += 5));
         } else {
-          this.doc.text(
-            amountsInput[k] + ' operaciones',
-            margin + 10,
-            (row += 5)
-          );
+          this.doc.text(amountsInput[k] + ' operaciones', margin + 10, (row += 5));
         }
         this.doc.setFont(undefined, 'normal');
       }
@@ -2406,17 +2021,9 @@ export class PrintComponent implements OnInit {
         output += outputAmounts[k];
         this.doc.setFont(undefined, 'italic');
         if (amountsOutput[k] === 1) {
-          this.doc.text(
-            amountsOutput[k] + ' operación',
-            margin + 10,
-            (row += 5)
-          );
+          this.doc.text(amountsOutput[k] + ' operación', margin + 10, (row += 5));
         } else {
-          this.doc.text(
-            amountsOutput[k] + ' operaciones',
-            margin + 10,
-            (row += 5)
-          );
+          this.doc.text(amountsOutput[k] + ' operaciones', margin + 10, (row += 5));
         }
         this.doc.setFont(undefined, 'normal');
       }
@@ -2436,11 +2043,7 @@ export class PrintComponent implements OnInit {
     if (Object.keys(closingAmounts).length > 0) {
       for (let k of Object.keys(closingAmounts)) {
         this.doc.text('- ' + k, margin + 5, (row += 5));
-        this.doc.text(
-          '$ ' + closingAmounts[k].toLocaleString('de-DE'),
-          60,
-          row
-        );
+        this.doc.text('$ ' + closingAmounts[k].toLocaleString('de-DE'), 60, row);
         closeCash += closingAmounts[k];
       }
     } else {
@@ -2484,18 +2087,14 @@ export class PrintComponent implements OnInit {
         if (!outputAmounts[k]) outputAmounts[k] = 0;
         if (!closingAmounts[k]) closingAmounts[k] = 0;
         let dif: number = this.roundNumber.transform(
-          closingAmounts[k] -
-            (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
+          closingAmounts[k] - (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
         );
 
         if (dif != 0) {
           this.doc.text('- ' + k, margin + 5, (row += 5));
           this.doc.text(
             '$ ' +
-              (
-                closingAmounts[k] -
-                (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])
-              ).toLocaleString('de-DE'),
+              (closingAmounts[k] - (openingAmounts[k] + inputAmounts[k] - outputAmounts[k])).toLocaleString('de-DE'),
             60,
             row
           );
@@ -2504,22 +2103,14 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont('helvetica', 'bold');
     this.doc.text('Total:', margin + 10, (row += 5));
-    this.doc.text(
-      '$ ' + (closeCash - (openCash + input - output)).toLocaleString('de-DE'),
-      60,
-      row
-    );
+    this.doc.text('$ ' + (closeCash - (openCash + input - output)).toLocaleString('de-DE'), 60, row);
     this.doc.setFont(undefined, 'normal');
 
     // Pie de la impresión
     this.doc.setFont(undefined, 'normal');
     this.doc.setTextColor(164, 164, 164);
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text(
-      'Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.',
-      5,
-      290
-    );
+    this.doc.text('Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.', 5, 290);
     this.doc.setTextColor(0, 0, 0);
 
     this.finishImpression();
@@ -2538,11 +2129,7 @@ export class PrintComponent implements OnInit {
 
         if (this.config[0].companyIdentificationType) {
           this.doc.setFont('helvetica', 'bold');
-          this.doc.text(
-            this.config[0].companyIdentificationType.name + ':',
-            110,
-            35
-          );
+          this.doc.text(this.config[0].companyIdentificationType.name + ':', 110, 35);
           this.doc.setFont(undefined, 'normal');
           this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
         }
@@ -2560,22 +2147,11 @@ export class PrintComponent implements OnInit {
         this.doc.text('Inicio de Actividades:', 110, 45);
         this.doc.setFont(undefined, 'normal');
         if (this.config[0].companyStartOfActivity) {
-          this.doc.text(
-            this.dateFormat.transform(
-              this.config[0].companyStartOfActivity,
-              'DD/MM/YYYY'
-            ),
-            149,
-            45
-          );
+          this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
         }
 
         // DATOS DE LA EMPRESA O IMAGEN
-        if (
-          !logoPrint ||
-          !this.config[0].companyPicture ||
-          this.config[0].companyPicture === 'default.jpg'
-        ) {
+        if (!logoPrint || !this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
           this.getCompanyData();
         } else {
           if (this.branchImagen && this.branchImagen !== 'default.jpg') {
@@ -2599,14 +2175,7 @@ export class PrintComponent implements OnInit {
     if (this.config[0].companyFantasyName) {
       if (this.config[0].companyFantasyName.length > 23) {
         this.doc.setFontSize(this.fontSizes.normal);
-        this.centerText(
-          margin,
-          margin,
-          105,
-          0,
-          20,
-          this.config[0].companyFantasyName
-        );
+        this.centerText(margin, margin, 105, 0, 20, this.config[0].companyFantasyName);
       } else {
         this.doc.text(this.config[0].companyFantasyName, 19, 20);
         // this.centerText(margin, margin, 105, 0, 20, this.config[0].companyFantasyName);
@@ -2650,21 +2219,11 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont(undefined, 'normal');
     if (this.config[0].companyVatCondition) {
-      this.doc.text(
-        this.config[0].companyVatCondition.description.slice(0, 31),
-        36,
-        45
-      );
+      this.doc.text(this.config[0].companyVatCondition.description.slice(0, 31), 36, 45);
     }
   }
 
-  async getBranchPicture(
-    lmargin,
-    rmargin,
-    width,
-    height,
-    finish: boolean = false
-  ) {
+  async getBranchPicture(lmargin, rmargin, width, height, finish: boolean = false) {
     return new Promise((resolve, reject) => {
       this.loading = true;
       this._branchService.getPicture(this.branchImagen).subscribe((result) => {
@@ -2690,35 +2249,27 @@ export class PrintComponent implements OnInit {
     });
   }
 
-  async getCompanyPicture(
-    lmargin,
-    rmargin,
-    width,
-    height,
-    finish: boolean = false
-  ) {
+  async getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false) {
     return new Promise((resolve, reject) => {
-      this._configService
-        .getCompanyPicture(this.config[0].companyPicture)
-        .subscribe((result) => {
-          if (!result.imageBase64) {
-            this.getCompanyData();
-            if (finish) {
-              this.finishImpression();
-            }
-            this.loading = false;
-            resolve(true);
-          } else {
-            this.hideMessage();
-            let imageURL = result.imageBase64;
-            this.doc.addImage(imageURL, 'png', lmargin, rmargin, width, height);
-            if (finish) {
-              this.finishImpression();
-            }
-            resolve(true);
+      this._configService.getCompanyPicture(this.config[0].companyPicture).subscribe((result) => {
+        if (!result.imageBase64) {
+          this.getCompanyData();
+          if (finish) {
+            this.finishImpression();
           }
           this.loading = false;
-        });
+          resolve(true);
+        } else {
+          this.hideMessage();
+          let imageURL = result.imageBase64;
+          this.doc.addImage(imageURL, 'png', lmargin, rmargin, width, height);
+          if (finish) {
+            this.finishImpression();
+          }
+          resolve(true);
+        }
+        this.loading = false;
+      });
     });
   }
 
@@ -2777,28 +2328,17 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('helvetica', 'bold');
         this.doc.text(this.company.identificationType.name + ':', margin, 60);
       }
-      if (
-        this.company.identificationValue &&
-        this.company.identificationValue !== ''
-      ) {
+      if (this.company.identificationValue && this.company.identificationValue !== '') {
         this.doc.setFont(undefined, 'normal');
         this.doc.text(this.company.identificationValue, 42, 60);
       }
       if (this.company.vatCondition && this.company.vatCondition.description) {
         this.doc.setFont(undefined, 'normal');
-        this.doc.text(
-          this.company.vatCondition.description.slice(0, 40),
-          42,
-          65
-        );
+        this.doc.text(this.company.vatCondition.description.slice(0, 40), 42, 65);
       }
       if (this.company.address) {
         if (this.company.addressNumber) {
-          this.doc.text(
-            this.company.address + ' ' + this.company.addressNumber,
-            130,
-            53
-          );
+          this.doc.text(this.company.address + ' ' + this.company.addressNumber, 130, 53);
         } else {
           this.doc.text(this.company.address, 130, 53);
         }
@@ -2878,22 +2418,11 @@ export class PrintComponent implements OnInit {
 
       for (let item of this.items) {
         if (item.transactionEndDate) {
-          this.doc.text(
-            this.dateFormat.transform(item.transactionEndDate, 'DD/MM/YYYY'),
-            margin,
-            row
-          );
+          this.doc.text(this.dateFormat.transform(item.transactionEndDate, 'DD/MM/YYYY'), margin, row);
         } else {
-          this.doc.text(
-            this.dateFormat.transform(item.transactionStartDate, 'DD/MM/YYYY'),
-            margin,
-            row
-          );
+          this.doc.text(this.dateFormat.transform(item.transactionStartDate, 'DD/MM/YYYY'), margin, row);
         }
-        if (
-          item.transactionTypeLabelPrint &&
-          item.transactionTypeLabelPrint !== ''
-        ) {
+        if (item.transactionTypeLabelPrint && item.transactionTypeLabelPrint !== '') {
           this.doc.text(item.transactionTypeLabelPrint.slice(0, 15), 25, row);
         } else {
           this.doc.text(item.transactionTypeName.slice(0, 15), 25, row);
@@ -2909,37 +2438,23 @@ export class PrintComponent implements OnInit {
             row
           );
         } else {
-          this.doc.text(
-            item.transactionLetter +
-              '-' +
-              this.padString(item.transactionNumber, 10),
-            90,
-            row
-          );
+          this.doc.text(item.transactionLetter + '-' + this.padString(item.transactionNumber, 10), 90, row);
         }
-        item.transactionTotalPrice = this.roundNumber
-          .transform(item.transactionTotalPrice, 2)
-          .toFixed(2);
+        item.transactionTotalPrice = this.roundNumber.transform(item.transactionTotalPrice, 2).toFixed(2);
 
         item.debe = this.roundNumber.transform(item.debe, 2).toFixed(2);
         item.haber = this.roundNumber.transform(item.haber, 2).toFixed(2);
         item.balance = this.roundNumber.transform(item.balance, 2).toFixed(2);
 
         this.doc.textEx(
-          '$ ' +
-            new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(
-              item.debe
-            ),
+          '$ ' + new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(item.debe),
           160,
           row,
           'right',
           'middle'
         );
         this.doc.textEx(
-          '$ ' +
-            new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(
-              item.haber
-            ),
+          '$ ' + new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(item.haber),
           180,
           row,
           'right',
@@ -2947,10 +2462,7 @@ export class PrintComponent implements OnInit {
         );
         this.doc.setFont('helvetica', 'bold');
         this.doc.textEx(
-          '$ ' +
-            new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(
-              item.balance
-            ),
+          '$ ' + new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(item.balance),
           205,
           row,
           'right',
@@ -3029,10 +2541,7 @@ export class PrintComponent implements OnInit {
     this.doc.text('Saldo de la Cuenta Corriente', margin, 246);
     this.balance = this.roundNumber.transform(this.balance, 2).toFixed(2);
     this.doc.textEx(
-      '$ ' +
-        new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(
-          this.balance
-        ),
+      '$ ' + new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(this.balance),
       175,
       246,
       'right',
@@ -3051,10 +2560,7 @@ export class PrintComponent implements OnInit {
 
     // Encabezado de la transacción
     if (!this.transaction.type.isPreprinted) {
-      if (
-        this.config[0].companyPicture &&
-        this.config[0].companyPicture !== 'default.jpg'
-      ) {
+      if (this.config[0].companyPicture && this.config[0].companyPicture !== 'default.jpg') {
         if (this.branchImagen && this.branchImagen !== 'default.jpg') {
           await this.getBranchPicture(10, 5, 80, 40);
         } else {
@@ -3074,11 +2580,7 @@ export class PrintComponent implements OnInit {
 
         if (this.config[0].companyIdentificationType) {
           this.doc.setFont('helvetica', 'bold');
-          this.doc.text(
-            this.config[0].companyIdentificationType.name + ':',
-            110,
-            35
-          );
+          this.doc.text(this.config[0].companyIdentificationType.name + ':', 110, 35);
           this.doc.setFont(undefined, 'normal');
           this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
         }
@@ -3096,14 +2598,7 @@ export class PrintComponent implements OnInit {
         this.doc.text('Inicio de Actividades:', 110, 45);
         this.doc.setFont(undefined, 'normal');
         if (this.config[0].companyStartOfActivity) {
-          this.doc.text(
-            this.dateFormat.transform(
-              this.config[0].companyStartOfActivity,
-              'DD/MM/YYYY'
-            ),
-            149,
-            45
-          );
+          this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
         }
       }
 
@@ -3113,10 +2608,7 @@ export class PrintComponent implements OnInit {
       // Numeración de la transacción
       this.doc.setFontSize(this.fontSizes.extraLarge);
 
-      if (
-        this.transaction.type.labelPrint &&
-        this.transaction.type.labelPrint !== ''
-      ) {
+      if (this.transaction.type.labelPrint && this.transaction.type.labelPrint !== '') {
         this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
       } else {
         this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
@@ -3127,9 +2619,7 @@ export class PrintComponent implements OnInit {
       this.doc.setFont(undefined, 'normal');
       if (Config.country === 'AR') {
         this.doc.text(
-          this.padString(this.transaction.origin, 4) +
-            '-' +
-            this.padString(this.transaction.number, 8),
+          this.padString(this.transaction.origin, 4) + '-' + this.padString(this.transaction.number, 8),
           130,
           25
         );
@@ -3156,15 +2646,9 @@ export class PrintComponent implements OnInit {
         this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
         if (this.transaction.type.codes && Config.country === 'AR') {
           for (let i = 0; i < this.transaction.type.codes.length; i++) {
-            if (
-              this.transaction.letter === this.transaction.type.codes[i].letter
-            ) {
+            if (this.transaction.letter === this.transaction.type.codes[i].letter) {
               this.doc.setFontSize('8');
-              this.doc.text(
-                'Cod:' + this.transaction.type.codes[i].code,
-                101,
-                16
-              );
+              this.doc.text('Cod:' + this.transaction.type.codes[i].code, 101, 16);
             }
           }
         }
@@ -3210,8 +2694,8 @@ export class PrintComponent implements OnInit {
           }
         });
       }
-      this.doc.text('Desc.', 170, 77);
-      this.doc.text('Total', 192, 77);
+      this.doc.text('Desc.', 175, 77);
+      this.doc.text('Total', 190, 77);
     }
     this.doc.setFont(undefined, 'normal');
 
@@ -3223,26 +2707,16 @@ export class PrintComponent implements OnInit {
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let i = 0; i < this.movementsOfArticles.length; i++) {
         if (this.movementsOfArticles[i].movementParent) {
-          const estr = await this.getStructure(
-            this.movementsOfArticles[i].article._id
-          );
+          const estr = await this.getStructure(this.movementsOfArticles[i].article._id);
           if (!estr) continue;
         }
         if (this.movementsOfArticles[i].amount > 0) {
           if (this.movementsOfArticles[i].amount) {
             totalArticle = totalArticle + this.movementsOfArticles[i].amount;
-            this.doc.text(
-              this.movementsOfArticles[i].amount.toString(),
-              6,
-              row
-            );
+            this.doc.text(this.movementsOfArticles[i].amount.toString(), 6, row);
           }
           if (this.movementsOfArticles[i].code) {
-            this.doc.text(
-              this.movementsOfArticles[i].code.toString().slice(0, 15),
-              15,
-              row
-            );
+            this.doc.text(this.movementsOfArticles[i].code.toString().slice(0, 15), 16, row);
           }
 
           let detalle = '';
@@ -3251,8 +2725,7 @@ export class PrintComponent implements OnInit {
             this.transaction &&
             this.transaction.type &&
             this.transaction.type.printDescriptionType &&
-            this.transaction.type.printDescriptionType ===
-              DescriptionType.Description
+            this.transaction.type.printDescriptionType === DescriptionType.Description
           ) {
             if (this.movementsOfArticles[i].description) {
               if (
@@ -3276,17 +2749,13 @@ export class PrintComponent implements OnInit {
                   !this.movementsOfArticles[i].make.visibleSale
                 ) {
                   detalle =
-                    this.movementsOfArticles[i].description +
-                    ' - ' +
-                    this.movementsOfArticles[i].category.description;
+                    this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
                 } else if (
                   this.movementsOfArticles[i].make.visibleSale &&
                   !this.movementsOfArticles[i].category.visibleInvoice
                 ) {
                   detalle =
-                    this.movementsOfArticles[i].description +
-                    ' - ' +
-                    this.movementsOfArticles[i].make.description;
+                    this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
                 }
               } else {
                 if (
@@ -3295,18 +2764,14 @@ export class PrintComponent implements OnInit {
                   this.movementsOfArticles[i].category.visibleInvoice
                 ) {
                   detalle =
-                    this.movementsOfArticles[i].description +
-                    ' - ' +
-                    this.movementsOfArticles[i].category.description;
+                    this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
                 } else if (
                   this.movementsOfArticles[i].make &&
                   this.movementsOfArticles[i].make.visibleSale &&
                   this.movementsOfArticles[i].make.visibleSale
                 ) {
                   detalle =
-                    this.movementsOfArticles[i].description +
-                    ' - ' +
-                    this.movementsOfArticles[i].make.description;
+                    this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
                 } else detalle = this.movementsOfArticles[i].description;
               }
             }
@@ -3346,24 +2811,17 @@ export class PrintComponent implements OnInit {
                     this.movementsOfArticles[i].make.description;
                 }
               } else {
-                if (
-                  this.movementsOfArticles[i].category &&
-                  this.movementsOfArticles[i].category.visibleInvoice
-                ) {
+                if (this.movementsOfArticles[i].category && this.movementsOfArticles[i].category.visibleInvoice) {
                   detalle =
                     this.movementsOfArticles[i].article.posDescription +
                     ' - ' +
                     this.movementsOfArticles[i].category.description;
-                } else if (
-                  this.movementsOfArticles[i].make &&
-                  this.movementsOfArticles[i].make.visibleSale
-                ) {
+                } else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale) {
                   detalle =
                     this.movementsOfArticles[i].article.posDescription +
                     ' - ' +
                     this.movementsOfArticles[i].make.description;
-                } else
-                  detalle = this.movementsOfArticles[i].article.posDescription;
+                } else detalle = this.movementsOfArticles[i].article.posDescription;
               }
             }
           }
@@ -3371,22 +2829,44 @@ export class PrintComponent implements OnInit {
           if (
             this.movementsOfArticles[i].otherFields &&
             this.movementsOfArticles[i].otherFields !== null &&
-            this.transaction.type.printDescriptionType ===
-              DescriptionType.PosDescription
+            this.transaction.type.printDescriptionType === DescriptionType.PosDescription
           ) {
-            let temp =
-              this.movementsOfArticles[i].article.description.split(' ');
+            let temp = this.movementsOfArticles[i].article.description.split(' ');
 
             detalle += ' Talle:' + temp.pop();
           }
 
-          this.doc.text(
-            this.movementsOfArticles[i].salePrice == 0
-              ? detalle.slice(0, 40)
-              : detalle.slice(0, 45),
-            this.movementsOfArticles[i].salePrice == 0 ? 50 : 46,
-            row
-          );
+          // this.doc.text(
+          //   this.movementsOfArticles[i].salePrice == 0
+          //     ? detalle.slice(0, 40).replace(/\n/g, ' ')
+          //     : detalle.slice(0, 45).replace(/\n/g, ' '),
+          //   this.movementsOfArticles[i].salePrice == 0 ? 50 : 45,
+          //   row
+          // );
+
+          let maxChars = this.movementsOfArticles[i].salePrice == 0 ? 40 : 45;
+          let xPos = this.movementsOfArticles[i].salePrice == 0 ? 50 : 45;
+          let text = detalle.replace(/\n/g, ' ');
+          let currentLine = '';
+
+          for (let j = 0; j < text.length; j++) {
+            currentLine += text[j];
+
+            if (currentLine.length === maxChars - 1) {
+              // Ajuste para el guion sin exceder el límite
+              if (j < text.length - 1) {
+                currentLine += '-'; // Agrega guion si no es el último carácter
+              }
+              this.doc.text(currentLine, xPos, row);
+              row += 5; // Salto de línea
+              currentLine = '';
+            }
+          }
+
+          // Imprimir la última línea restante
+          if (currentLine.trim()) {
+            this.doc.text(currentLine.trim(), xPos, row);
+          }
 
           if (this.transaction.type && this.transaction.type.showPrices) {
             if (
@@ -3420,176 +2900,75 @@ export class PrintComponent implements OnInit {
                 colum = colum + 13;
               }
               try {
-                this.doc.textEx(
+                this.doc.text(
                   this.movementsOfArticles[i].salePrice == 0
                     ? ''
-                    : '$ ' +
-                        this.roundNumber
-                          .transform(
-                            taxesBase / this.movementsOfArticles[i].amount,
-                            2
-                          )
-                          .toFixed(2),
-                  160,
-                  row,
-                  'right',
-                  'middle'
+                    : '$ ' + this.roundNumber.transform(taxesBase / this.movementsOfArticles[i].amount, 2),
+                  145,
+                  row
                 );
               } catch (error) {
-                this.doc.textEx(
-                  this.movementsOfArticles[i].salePrice == 0 ? '' : '$ 0.00',
-                  160,
-                  row,
-                  'right',
-                  'middle'
-                );
+                this.doc.text(this.movementsOfArticles[i].salePrice == 0 ? '' : '$ 0.00', 145, row);
               }
 
-              this.doc.textEx(
+              this.doc.text(
                 this.movementsOfArticles[i].salePrice == 0
                   ? ''
-                  : '$ ' +
-                      this.roundNumber
-                        .transform(this.movementsOfArticles[i].salePrice, 2)
-                        .toFixed(2),
-                207,
-                row,
-                'right',
-                'middle'
+                  : '$ ' + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2),
+                190,
+                row
               );
             } else {
-              // this.doc.textEx(
-              //   this.movementsOfArticles[i].salePrice == 0
-              //     ? ''
-              //     : '$ ' +
-              //     this.roundNumber.transform(
-              //       this.movementsOfArticles[i].salePrice /
-              //       this.movementsOfArticles[i].amount,
-              //       2,
-              //     ),
-              //   160,
-              //   row,
-              //   'right',
-              //   'middle',
-              // );
-              // this.doc.textEx(
-              //   this.movementsOfArticles[i].costPrice == 0
-              //     ? ''
-              //     : '$ ' +
-              //     this.roundNumber.transform(
-              //       this.movementsOfArticles[i].discountAmount ?
-              //         (this.movementsOfArticles[i].salePrice + this.movementsOfArticles[i].discountAmount) / this.movementsOfArticles[i].amount :
-              //         this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount,
-              //       2,
-              //     ),
-              //   160,
-              //   row,
-              //   'right',
-              //   'middle',
-              // );
               if (
-                this.movementsOfArticles[i].unitPrice /
-                  this.movementsOfArticles[i].amount ==
+                this.movementsOfArticles[i].unitPrice / this.movementsOfArticles[i].amount ==
                 this.movementsOfArticles[i].discountAmount
               ) {
-                this.doc.textEx(
+                this.doc.text(
                   '$ ' +
-                    this.roundNumber
-                      .transform(
-                        this.movementsOfArticles[i].unitPrice +
-                          this.movementsOfArticles[i].discountAmount,
-                        2
-                      )
-                      .toFixed(2),
-                  160,
-                  row,
-                  'right',
-                  'middle'
+                    this.roundNumber.transform(
+                      this.movementsOfArticles[i].unitPrice + this.movementsOfArticles[i].discountAmount,
+                      2
+                    ),
+                  175,
+                  row
                 );
               } else if (this.movementsOfArticles[i].discountRate == 100) {
-                this.doc.textEx(
+                this.doc.text(
                   '$ ' +
-                    this.roundNumber
-                      .transform(
-                        this.movementsOfArticles[i].discountAmount /
-                          this.movementsOfArticles[i].amount,
-                        2
-                      )
-                      .toFixed(2),
-                  160,
-                  row,
-                  'right',
-                  'middle'
+                    this.roundNumber.transform(
+                      this.movementsOfArticles[i].discountAmount / this.movementsOfArticles[i].amount,
+                      2
+                    ),
+                  175,
+                  row
                 );
               } else {
-                this.doc.textEx(
-                  '$ ' +
-                    this.roundNumber
-                      .transform(this.movementsOfArticles[i].unitPrice, 2)
-                      .toFixed(2),
-                  160,
-                  row,
-                  'right',
-                  'middle'
-                );
+                this.doc.text('$ ' + this.roundNumber.transform(this.movementsOfArticles[i].unitPrice, 2), 145, row);
               }
-              this.doc.textEx(
-                '$ ' +
-                  this.roundNumber
-                    .transform(this.movementsOfArticles[i].salePrice, 2)
-                    .toFixed(2),
-                207,
-                row,
-                'right',
-                'middle'
-              );
+              this.doc.text('$ ' + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 190, row);
             }
             if (this.movementsOfArticles[i].discountRate > 0) {
-              this.doc.text(
-                `$ ${this.movementsOfArticles[i].discountAmount.toFixed(2)}`,
-                165,
-                row + 1.5
-              );
+              this.doc.text(`$ ${this.movementsOfArticles[i].discountAmount}`, 165, row + 1.5);
             }
           }
           if (this.movementsOfArticles[i].notes) {
             this.doc.setFont(undefined, 'italic');
-            this.doc.text(
-              this.movementsOfArticles[i].notes.slice(0, 55),
-              46,
-              row + 5
-            );
+            this.doc.text(this.movementsOfArticles[i].notes.slice(0, 55), 46, row + 5);
             if (this.movementsOfArticles[i].notes.slice(55, 110) != '') {
               row += 5;
-              this.doc.text(
-                this.movementsOfArticles[i].notes.slice(55, 110),
-                46,
-                row + 5
-              );
+              this.doc.text(this.movementsOfArticles[i].notes.slice(55, 110), 46, row + 5);
             }
             if (this.movementsOfArticles[i].notes.slice(110, 165) != '') {
               row += 5;
-              this.doc.text(
-                this.movementsOfArticles[i].notes.slice(110, 165),
-                46,
-                row + 5
-              );
+              this.doc.text(this.movementsOfArticles[i].notes.slice(110, 165), 46, row + 5);
             }
             if (this.movementsOfArticles[i].notes.slice(165, 220) != '') {
               row += 5;
-              this.doc.text(
-                this.movementsOfArticles[i].notes.slice(165, 220),
-                46,
-                row + 5
-              );
+              this.doc.text(this.movementsOfArticles[i].notes.slice(165, 220), 46, row + 5);
             }
             if (this.movementsOfArticles[i].notes.slice(220, 275) != '') {
               row += 5;
-              this.doc.text(
-                this.movementsOfArticles[i].notes.slice(220, 275),
-                46,
-                row + 5
-              );
+              this.doc.text(this.movementsOfArticles[i].notes.slice(220, 275), 46, row + 5);
             }
             this.doc.setFont(undefined, 'normal');
             row += 5;
@@ -3602,22 +2981,14 @@ export class PrintComponent implements OnInit {
           if (row > 240) {
             this.doc.setFont('helvetica', 'bold');
             this.doc.text('TRANSPORTE:'.toString(), 25, row);
-            this.doc.text(
-              this.roundNumber.transform(transport).toString(),
-              185,
-              row
-            );
+            this.doc.text('$ ' + this.roundNumber.transform(transport).toString(), 185, row);
             row = 95;
             this.doc.addPage();
 
             this.doc.setFont('helvetica', 'bold');
 
             this.doc.text('TRANSPORTE:'.toString(), 25, 85);
-            this.doc.text(
-              this.roundNumber.transform(transport).toString(),
-              185,
-              85
-            );
+            this.doc.text('$ ' + this.roundNumber.transform(transport).toString(), 185, 85);
 
             if (!this.transaction.type.isPreprinted) {
               //this.getHeader(true);
@@ -3632,17 +3003,9 @@ export class PrintComponent implements OnInit {
 
                 if (this.config[0].companyIdentificationType) {
                   this.doc.setFont('helvetica', 'bold');
-                  this.doc.text(
-                    this.config[0].companyIdentificationType.name + ':',
-                    110,
-                    35
-                  );
+                  this.doc.text(this.config[0].companyIdentificationType.name + ':', 110, 35);
                   this.doc.setFont(undefined, 'normal');
-                  this.doc.text(
-                    this.config[0].companyIdentificationValue,
-                    122,
-                    35
-                  );
+                  this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
                 }
 
                 if (this.config[0].country === 'AR') {
@@ -3659,10 +3022,7 @@ export class PrintComponent implements OnInit {
                 this.doc.setFont(undefined, 'normal');
                 if (this.config[0].companyStartOfActivity) {
                   this.doc.text(
-                    this.dateFormat.transform(
-                      this.config[0].companyStartOfActivity,
-                      'DD/MM/YYYY'
-                    ),
+                    this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'),
                     149,
                     45
                   );
@@ -3678,18 +3038,8 @@ export class PrintComponent implements OnInit {
               // Numeración de la transacción
               this.doc.setFontSize(this.fontSizes.extraLarge);
 
-              if (
-                this.transaction.type.labelPrint &&
-                this.transaction.type.labelPrint !== ''
-              ) {
-                this.centerText(
-                  5,
-                  5,
-                  105,
-                  105,
-                  10,
-                  this.transaction.type.labelPrint
-                );
+              if (this.transaction.type.labelPrint && this.transaction.type.labelPrint !== '') {
+                this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
               } else {
                 this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
               }
@@ -3699,18 +3049,12 @@ export class PrintComponent implements OnInit {
               this.doc.setFont(undefined, 'normal');
               if (Config.country === 'AR') {
                 this.doc.text(
-                  this.padString(this.transaction.origin, 4) +
-                    '-' +
-                    this.padString(this.transaction.number, 10),
+                  this.padString(this.transaction.origin, 4) + '-' + this.padString(this.transaction.number, 10),
                   130,
                   20
                 );
               } else {
-                this.doc.text(
-                  this.padString(this.transaction.number, 10),
-                  130,
-                  20
-                );
+                this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
               }
               this.doc.setFont('helvetica', 'bold');
               this.doc.text('Fecha:', 110, 25);
@@ -3718,11 +3062,7 @@ export class PrintComponent implements OnInit {
               if (this.transaction.endDate) {
                 this.doc.text(this.transaction.endDate.split(' ')[0], 125, 25);
               } else {
-                this.doc.text(
-                  this.transaction.startDate.split(' ')[0],
-                  125,
-                  25
-                );
+                this.doc.text(this.transaction.startDate.split(' ')[0], 125, 25);
               }
 
               // Letra de transacción
@@ -3736,12 +3076,29 @@ export class PrintComponent implements OnInit {
               // Encabezado de la tabla de Detalle de Productos
               this.doc.setFont('helvetica', 'bold');
               this.doc.setFontSize(this.fontSizes.normal);
-              this.doc.text('Cant', 5, 77);
-              this.doc.text('Detalle', 25, 77);
+              this.doc.text('Cant.', 5, 77);
+              this.doc.text('Código', 16, 77);
+              this.doc.text('Detalle', 45, 77);
               if (this.transaction.type && this.transaction.type.showPrices) {
-                this.doc.text('Precio', 155, 77);
-                this.doc.text('Total', 185, 77);
-                this.doc.setFont(undefined, 'normal');
+                this.doc.text('Precio U.', 145, 77);
+                if (
+                  this.transaction.type.requestTaxes &&
+                  this.transaction.company &&
+                  this.transaction.company.vatCondition &&
+                  this.transaction.company.vatCondition.discriminate
+                ) {
+                  let col = 165;
+
+                  this.doc.text('IVA', col, 77);
+                  this.transaction.taxes.forEach((element) => {
+                    if (element.tax.code === '04') {
+                      col = col + 10;
+                      this.doc.text('Imp Int', col, 77);
+                    }
+                  });
+                }
+                this.doc.text('Desc.', 175, 77);
+                this.doc.text('Total', 190, 77);
               }
             }
             this.getClient();
@@ -3750,8 +3107,7 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    let movCancelation: MovementOfCancellation[] =
-      await this.getCancellationsOfMovements(this.transactionId);
+    let movCancelation: MovementOfCancellation[] = await this.getCancellationsOfMovements(this.transactionId);
 
     if (movCancelation && this.printOrigin) {
       this.doc.setFont('helvetica', 'bold');
@@ -3770,10 +3126,7 @@ export class PrintComponent implements OnInit {
           this.doc.text(
             movCancelation[index].transactionOrigin.type.name +
               '   ' +
-              this.padString(
-                movCancelation[index].transactionOrigin.origin,
-                4
-              ) +
+              this.padString(movCancelation[index].transactionOrigin.origin, 4) +
               '-' +
               this.padString(movCancelation[index].transactionOrigin.number, 8),
             10,
@@ -3781,20 +3134,13 @@ export class PrintComponent implements OnInit {
           );
           //this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
           this.doc.textEx(
-            '$ ' +
-              this.roundNumber.transform(
-                movCancelation[index].transactionOrigin.totalPrice
-              ),
+            '$ ' + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice),
             95,
             row,
             'right',
             'middle'
           );
-          this.doc.text(
-            movCancelation[index].transactionOrigin.company.name,
-            110,
-            row
-          );
+          this.doc.text(movCancelation[index].transactionOrigin.company.name, 110, row);
 
           row += 5;
         }
@@ -3817,17 +3163,9 @@ export class PrintComponent implements OnInit {
 
               if (this.config[0].companyIdentificationType) {
                 this.doc.setFont('helvetica', 'bold');
-                this.doc.text(
-                  this.config[0].companyIdentificationType.name + ':',
-                  110,
-                  35
-                );
+                this.doc.text(this.config[0].companyIdentificationType.name + ':', 110, 35);
                 this.doc.setFont(undefined, 'normal');
-                this.doc.text(
-                  this.config[0].companyIdentificationValue,
-                  122,
-                  35
-                );
+                this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
               }
 
               if (this.config[0].country === 'AR') {
@@ -3843,14 +3181,7 @@ export class PrintComponent implements OnInit {
               this.doc.text('Inicio de Actividades:', 110, 45);
               this.doc.setFont(undefined, 'normal');
               if (this.config[0].companyStartOfActivity) {
-                this.doc.text(
-                  this.dateFormat.transform(
-                    this.config[0].companyStartOfActivity,
-                    'DD/MM/YYYY'
-                  ),
-                  149,
-                  45
-                );
+                this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
               }
             }
 
@@ -3863,18 +3194,8 @@ export class PrintComponent implements OnInit {
             // Numeración de la transacción
             this.doc.setFontSize(this.fontSizes.extraLarge);
 
-            if (
-              this.transaction.type.labelPrint &&
-              this.transaction.type.labelPrint !== ''
-            ) {
-              this.centerText(
-                5,
-                5,
-                105,
-                105,
-                10,
-                this.transaction.type.labelPrint
-              );
+            if (this.transaction.type.labelPrint && this.transaction.type.labelPrint !== '') {
+              this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
             } else {
               this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
             }
@@ -3884,18 +3205,12 @@ export class PrintComponent implements OnInit {
             this.doc.setFont(undefined, 'normal');
             if (Config.country === 'AR') {
               this.doc.text(
-                this.padString(this.transaction.origin, 4) +
-                  '-' +
-                  this.padString(this.transaction.number, 10),
+                this.padString(this.transaction.origin, 4) + '-' + this.padString(this.transaction.number, 10),
                 130,
                 20
               );
             } else {
-              this.doc.text(
-                this.padString(this.transaction.number, 10),
-                130,
-                20
-              );
+              this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
             }
             this.doc.setFont('helvetica', 'bold');
             this.doc.text('Fecha:', 110, 25);
@@ -3948,16 +3263,11 @@ export class PrintComponent implements OnInit {
 
       this.doc.text('Descuento:', 140, rowTotals);
       this.doc.setFont(undefined, 'normal');
-      if (
-        this.transaction.discountAmount &&
-        this.transaction.taxes &&
-        this.transaction.taxes.length > 0
-      ) {
+      if (this.transaction.discountAmount && this.transaction.taxes && this.transaction.taxes.length > 0) {
         this.doc.text(
           '$ (' +
             this.roundNumber.transform(
-              this.transaction.discountAmount /
-                (1 + this.transaction.taxes[0].percentage / 100),
+              this.transaction.discountAmount / (1 + this.transaction.taxes[0].percentage / 100),
               2
             ) +
             ')',
@@ -3965,13 +3275,7 @@ export class PrintComponent implements OnInit {
           rowTotals
         );
       } else {
-        this.doc.text(
-          '$ (' +
-            this.roundNumber.transform(this.transaction.discountAmount, 2) +
-            ')',
-          173,
-          rowTotals
-        );
+        this.doc.text('$ (' + this.roundNumber.transform(this.transaction.discountAmount, 2) + ')', 173, rowTotals);
       }
       let subtotal = this.transaction.totalPrice;
       let neto = 0;
@@ -3996,14 +3300,9 @@ export class PrintComponent implements OnInit {
             this.doc.setFont('helvetica', 'bold');
             this.doc.text(tax.tax.name + ':', 140, rowTotals);
             this.doc.setFont(undefined, 'normal');
-            this.doc.text(
-              '$ ' + this.roundNumber.transform(tax.taxAmount),
-              173,
-              rowTotals
-            );
+            this.doc.text('$ ' + this.roundNumber.transform(tax.taxAmount), 173, rowTotals);
             subtotal -= this.roundNumber.transform(tax.taxAmount);
-            if (tax.tax.classification === TaxClassification.Tax)
-              neto = neto + this.roundNumber.transform(tax.taxBase);
+            if (tax.tax.classification === TaxClassification.Tax) neto = neto + this.roundNumber.transform(tax.taxBase);
           }
         }
 
@@ -4012,39 +3311,21 @@ export class PrintComponent implements OnInit {
           this.doc.setFont('helvetica', 'bold');
           this.doc.text('Exento:', 140, rowTotals);
           this.doc.setFont(undefined, 'normal');
-          this.doc.text(
-            '$ ' + this.roundNumber.transform(this.transaction.exempt, 2),
-            173,
-            rowTotals
-          );
+          this.doc.text('$ ' + this.roundNumber.transform(this.transaction.exempt, 2), 173, rowTotals);
         }
       }
 
       if (this.transaction.discountAmount) {
-        if (
-          this.transaction.discountAmount &&
-          this.transaction.taxes &&
-          this.transaction.taxes.length > 0
-        ) {
-          subtotal +=
-            this.transaction.discountAmount /
-            (1 + this.transaction.taxes[0].percentage / 100);
+        if (this.transaction.discountAmount && this.transaction.taxes && this.transaction.taxes.length > 0) {
+          subtotal += this.transaction.discountAmount / (1 + this.transaction.taxes[0].percentage / 100);
         } else {
           subtotal += this.transaction.discountAmount;
         }
       }
 
-      this.doc.text(
-        '$ ' + this.roundNumber.transform(subtotal, 2).toString(),
-        173,
-        247
-      );
+      this.doc.text('$ ' + this.roundNumber.transform(subtotal, 2).toString(), 173, 247);
       if (neto > 0) {
-        this.doc.text(
-          '$ ' + this.roundNumber.transform(neto, 2).toString(),
-          173,
-          rowNet
-        );
+        this.doc.text('$ ' + this.roundNumber.transform(neto, 2).toString(), 173, rowNet);
       }
       rowTotals += space;
       //this.doc.setFontSize(this.fontSizes.extraLarge);
@@ -4052,14 +3333,7 @@ export class PrintComponent implements OnInit {
       //this.doc.setFontSize(this.fontSizes.large);
       this.doc.text('Total:', 140, rowTotals);
       this.doc.setFont(undefined, 'normal');
-      this.doc.text(
-        '$ ' +
-          parseFloat(
-            this.roundNumber.transform(this.transaction.totalPrice, 2)
-          ),
-        173,
-        rowTotals
-      );
+      this.doc.text('$ ' + parseFloat(this.roundNumber.transform(this.transaction.totalPrice, 2)), 173, rowTotals);
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
@@ -4080,13 +3354,7 @@ export class PrintComponent implements OnInit {
         row += 5;
 
         for (let movementOfCash of this.movementsOfCashes) {
-          this.doc.text(
-            `$ ${parseFloat(
-              this.roundNumber.transform(movementOfCash.amountPaid)
-            )}`,
-            35,
-            row
-          );
+          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid))}`, 35, row);
           this.doc.text(`${movementOfCash.type.name}.`, 65, row);
           row += 5;
         }
@@ -4098,13 +3366,7 @@ export class PrintComponent implements OnInit {
         row += 5;
 
         for (let movementOfCash of this.movementsOfCashes) {
-          this.doc.text(
-            `$ ${parseFloat(
-              this.roundNumber.transform(movementOfCash.amountPaid)
-            )}`,
-            margin,
-            row
-          );
+          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid))}`, margin, row);
           this.doc.text(`${movementOfCash.type.name}.`, 28, row);
           row += 5;
         }
@@ -4114,11 +3376,7 @@ export class PrintComponent implements OnInit {
     // FIN FORMA DE PAGO
     if (totalArticle > 0) {
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(
-        'Total de Productos: ' + this.roundNumber.transform(totalArticle),
-        margin + 70,
-        247
-      );
+      this.doc.text('Total de Productos: ' + this.roundNumber.transform(totalArticle), margin + 70, 247);
       this.doc.setFont(undefined, 'normal');
     }
 
@@ -4159,12 +3417,8 @@ export class PrintComponent implements OnInit {
         this.doc.setFont(undefined, 'normal');
         row += 4;
 
-        observation.length > 0
-          ? this.doc.text(observation.slice(0, 45) + '-', 65, row)
-          : '';
-        observation.length > 45
-          ? this.doc.text(observation.slice(45, 105) + '-', 35, (row += 4))
-          : '';
+        observation.length > 0 ? this.doc.text(observation.slice(0, 45) + '-', 65, row) : '';
+        observation.length > 45 ? this.doc.text(observation.slice(45, 105) + '-', 35, (row += 4)) : '';
       } else {
         row += 4;
         this.doc.setFont('helvetica', 'bold');
@@ -4172,44 +3426,12 @@ export class PrintComponent implements OnInit {
         this.doc.setFont(undefined, 'normal');
         row += 4;
 
-        observation.length > 0
-          ? this.doc.text(observation.slice(0, 60) + '-', margin + 35, row)
-          : '';
-        observation.length > 60
-          ? this.doc.text(
-              observation.slice(60, 120) + '-',
-              margin + 35,
-              (row += 4)
-            )
-          : '';
-        observation.length > 120
-          ? this.doc.text(
-              observation.slice(120, 180) + '-',
-              margin + 35,
-              (row += 4)
-            )
-          : '';
-        observation.length > 180
-          ? this.doc.text(
-              observation.slice(180, 220) + '-',
-              margin + 35,
-              (row += 4)
-            )
-          : '';
-        observation.length > 220
-          ? this.doc.text(
-              observation.slice(220, 260) + '-',
-              margin + 35,
-              (row += 4)
-            )
-          : '';
-        observation.length > 260
-          ? this.doc.text(
-              observation.slice(260, 320) + '-',
-              margin + 35,
-              (row += 4)
-            )
-          : '';
+        observation.length > 0 ? this.doc.text(observation.slice(0, 60) + '-', margin + 35, row) : '';
+        observation.length > 60 ? this.doc.text(observation.slice(60, 120) + '-', margin + 35, (row += 4)) : '';
+        observation.length > 120 ? this.doc.text(observation.slice(120, 180) + '-', margin + 35, (row += 4)) : '';
+        observation.length > 180 ? this.doc.text(observation.slice(180, 220) + '-', margin + 35, (row += 4)) : '';
+        observation.length > 220 ? this.doc.text(observation.slice(220, 260) + '-', margin + 35, (row += 4)) : '';
+        observation.length > 260 ? this.doc.text(observation.slice(260, 320) + '-', margin + 35, (row += 4)) : '';
       }
     }
 
@@ -4219,19 +3441,11 @@ export class PrintComponent implements OnInit {
       this.doc.text('VALOR DECLARADO:', margin, row + 20);
       if (this.transaction.package) {
         this.doc.setFont(undefined, 'normal');
-        this.doc.text(
-          this.transaction.package.toString(),
-          margin + 45,
-          row + 16
-        );
+        this.doc.text(this.transaction.package.toString(), margin + 45, row + 16);
       }
       if (this.transaction.declaredValue) {
         this.doc.setFont(undefined, 'normal');
-        this.doc.text(
-          this.transaction.declaredValue.toString(),
-          margin + 45,
-          row + 20
-        );
+        this.doc.text(this.transaction.declaredValue.toString(), margin + 45, row + 20);
       }
       this.doc.setFont(undefined, 'normal');
       if (this.transaction.transport.name) {
@@ -4257,11 +3471,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('helvetica', 'bold');
         this.doc.text('CUIT:', margin, row + 12);
         this.doc.setFont(undefined, 'normal');
-        this.doc.text(
-          this.transaction.transport.identificationValue,
-          margin + 30,
-          row + 12
-        );
+        this.doc.text(this.transaction.transport.identificationValue, margin + 30, row + 12);
       }
       if (!this.transaction.declaredValue) {
         if (this.transaction.taxes && this.transaction.taxes.length > 0) {
@@ -4271,19 +3481,13 @@ export class PrintComponent implements OnInit {
             priceWhitoutTaxes = iterator.taxBase;
           }
           this.doc.text(
-            '$' +
-              parseFloat(
-                this.roundNumber.transform(priceWhitoutTaxes, 2)
-              ).toString(),
+            '$' + parseFloat(this.roundNumber.transform(priceWhitoutTaxes, 2)).toString(),
             margin + 40,
             row + 20
           );
         } else {
           this.doc.text(
-            '$' +
-              parseFloat(
-                this.roundNumber.transform(this.transaction.totalPrice, 2)
-              ).toString(),
+            '$' + parseFloat(this.roundNumber.transform(this.transaction.totalPrice, 2)).toString(),
             margin + 40,
             row + 20
           );
@@ -4299,11 +3503,7 @@ export class PrintComponent implements OnInit {
     }
 
     // FIN OBSERVATION
-    if (
-      Config.country === 'AR' &&
-      this.transaction.CAE &&
-      this.transaction.CAEExpirationDate
-    ) {
+    if (Config.country === 'AR' && this.transaction.CAE && this.transaction.CAEExpirationDate) {
       this.doc.setFont('helvetica', 'bold');
       this.doc.text('CAE:', 50, 282);
       this.doc.text('Fecha Vto:', 50, 287);
@@ -4351,10 +3551,7 @@ export class PrintComponent implements OnInit {
 
     this.getGreeting();
     this.getFooter();
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
       if (this.branchImagen && this.branchImagen !== 'default.jpg') {
@@ -4371,51 +3568,20 @@ export class PrintComponent implements OnInit {
     let row = 40;
     let width = this.printer.pageWidth;
 
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(this.fontSizes.large);
       if (this.config[0].companyFantasyName) {
-        this.centerText(
-          margin,
-          margin,
-          width,
-          0,
-          row,
-          this.config[0].companyFantasyName
-        );
+        this.centerText(margin, margin, width, 0, row, this.config[0].companyFantasyName);
       } else {
-        this.centerText(
-          margin,
-          margin,
-          width,
-          0,
-          row,
-          this.config[0].companyName
-        );
+        this.centerText(margin, margin, width, 0, row, this.config[0].companyName);
       }
       this.doc.setFont('', 'small');
       this.doc.setFontSize(this.fontSizes.normal);
       row += 3;
-      this.centerText(
-        margin,
-        margin,
-        width,
-        0,
-        row,
-        this.config[0].companyAddress
-      );
+      this.centerText(margin, margin, width, 0, row, this.config[0].companyAddress);
       row += 3;
-      this.centerText(
-        margin,
-        margin,
-        width,
-        0,
-        row,
-        'Tel: ' + this.config[0].companyPhone
-      );
+      this.centerText(margin, margin, width, 0, row, 'Tel: ' + this.config[0].companyPhone);
       row += 3;
       this.centerText(
         margin,
@@ -4430,14 +3596,7 @@ export class PrintComponent implements OnInit {
           this.config[0].companyIdentificationValue
       );
       row += 3;
-      this.centerText(
-        margin,
-        margin,
-        width,
-        0,
-        row,
-        'Ingresos Brutos: ' + this.config[0].companyGrossIncome
-      );
+      this.centerText(margin, margin, width, 0, row, 'Ingresos Brutos: ' + this.config[0].companyGrossIncome);
       row += 3;
     } else {
       row += 15;
@@ -4476,10 +3635,7 @@ export class PrintComponent implements OnInit {
 
     if (Config.country === 'AR') {
       this.doc.text(
-        'N°:' +
-          this.padString(this.transaction.origin, 4) +
-          '-' +
-          this.padString(this.transaction.number, 8),
+        'N°:' + this.padString(this.transaction.origin, 4) + '-' + this.padString(this.transaction.number, 8),
         45,
         65
       );
@@ -4501,62 +3657,37 @@ export class PrintComponent implements OnInit {
         this.doc.text('Razón Social : ' + company.name, margin, row);
         row += 3;
       }
-      if (
-        company.identificationType &&
-        company.identificationType.name &&
-        company.identificationValue
-      ) {
+      if (company.identificationType && company.identificationType.name && company.identificationValue) {
         this.doc.text(
-          this.transaction.company.identificationType.name +
-            ' :' +
-            this.transaction.company.identificationValue,
+          this.transaction.company.identificationType.name + ' :' + this.transaction.company.identificationValue,
           margin,
           row
         );
         row += 3;
       }
       if (company.vatCondition && company.vatCondition.description) {
-        this.doc.text(
-          'Condición de IVA : ' +
-            this.transaction.company.vatCondition.description,
-          margin,
-          row
-        );
+        this.doc.text('Condición de IVA : ' + this.transaction.company.vatCondition.description, margin, row);
         row += 3;
       }
       if (company.address && company.addressNumber) {
         this.doc.text(
-          'Dirección : ' +
-            this.transaction.company.address +
-            ' ' +
-            this.transaction.company.addressNumber,
+          'Dirección : ' + this.transaction.company.address + ' ' + this.transaction.company.addressNumber,
           margin,
           row
         );
         row += 3;
       }
       if (company.phones) {
-        this.doc.text(
-          'Telefono : ' + this.transaction.company.phones,
-          margin,
-          row
-        );
+        this.doc.text('Telefono : ' + this.transaction.company.phones, margin, row);
         row += 3;
       }
       if (company.city) {
-        this.doc.text(
-          'Localidad : ' + this.transaction.company.city,
-          margin,
-          row
-        );
+        this.doc.text('Localidad : ' + this.transaction.company.city, margin, row);
         row += 3;
       }
       this.doc.setFont(undefined, 'normal');
     } else {
-      if (
-        this.transaction.madein == 'resto' ||
-        this.transaction.madein == 'mostrador'
-      ) {
+      if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
         this.doc.setFont('helvetica', 'bold');
         this.doc.text('Cliente : ' + 'Consumidor Final', margin, row);
         this.doc.setFont(undefined, 'normal');
@@ -4586,14 +3717,7 @@ export class PrintComponent implements OnInit {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.salePrice > 0) {
           row += 3;
-          this.centerText(
-            margin,
-            margin,
-            15,
-            0,
-            row,
-            movementOfArticle.amount.toString()
-          );
+          this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
           this.doc.text(movementOfArticle.description.slice(0, 20), 13, row);
 
           if (this.transaction.type && this.transaction.type.showPrices) {
@@ -4608,41 +3732,24 @@ export class PrintComponent implements OnInit {
               for (let tax of movementOfArticle.taxes) {
                 prUnit = prUnit + tax.taxBase / movementOfArticle.amount;
               }
-              this.doc.text(
-                '$ ' + this.roundNumber.transform(prUnit, 2),
-                50,
-                row
-              );
+              this.doc.text('$ ' + this.roundNumber.transform(prUnit, 2), 50, row);
             } else {
               this.doc.text(
-                '$ ' +
-                  this.roundNumber.transform(
-                    movementOfArticle.salePrice / movementOfArticle.amount,
-                    2
-                  ),
+                '$ ' + this.roundNumber.transform(movementOfArticle.salePrice / movementOfArticle.amount, 2),
                 50,
                 row
               );
             }
           }
 
-          this.doc.text(
-            '$' +
-              this.roundNumber
-                .transform(movementOfArticle.salePrice)
-                .toString(),
-            width / 1.18,
-            row
-          );
+          this.doc.text('$' + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width / 1.18, row);
           row += 3;
           if (movementOfArticle.article) {
             movementOfArticle.article.taxes.forEach((element) => {
               if (element.percentage >= 0) {
                 this.doc.text(
                   '( IVA: ' +
-                    this.roundNumber
-                      .transform(movementOfArticle.article.taxes[0].percentage)
-                      .toFixed(2) +
+                    this.roundNumber.transform(movementOfArticle.article.taxes[0].percentage).toFixed(2) +
                     ' %)',
                   13,
                   row
@@ -4675,14 +3782,7 @@ export class PrintComponent implements OnInit {
       this.doc.setFont('', 'small');
       this.transaction.taxes.forEach((element) => {
         row += 3;
-        this.doc.text(
-          element.tax.name +
-            ': ' +
-            '$' +
-            this.roundNumber.transform(element.taxAmount).toString(),
-          5,
-          row
-        );
+        this.doc.text(element.tax.name + ': ' + '$' + this.roundNumber.transform(element.taxAmount).toString(), 5, row);
       });
     }
 
@@ -4709,13 +3809,7 @@ export class PrintComponent implements OnInit {
         row += 5;
 
         for (let movementOfCash of this.movementsOfCashes) {
-          this.doc.text(
-            `$ ${parseFloat(
-              this.roundNumber.transform(movementOfCash.amountPaid)
-            )}`,
-            5,
-            row
-          );
+          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid))}`, 5, row);
           this.doc.text(`${movementOfCash.type.name}.`, 5, row);
           row += 5;
         }
@@ -4726,13 +3820,7 @@ export class PrintComponent implements OnInit {
         row += 5;
 
         for (let movementOfCash of this.movementsOfCashes) {
-          this.doc.text(
-            `$ ${parseFloat(
-              this.roundNumber.transform(movementOfCash.amountPaid)
-            )}`,
-            margin,
-            row
-          );
+          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid))}`, margin, row);
           this.doc.text(`${movementOfCash.type.name}.`, 28, row);
           row += 5;
         }
@@ -4763,22 +3851,14 @@ export class PrintComponent implements OnInit {
     this.doc.line(0, row, width, row);
     row += 4;
 
-    if (
-      Config.country === 'AR' &&
-      this.transaction.CAE &&
-      this.transaction.CAEExpirationDate
-    ) {
+    if (Config.country === 'AR' && this.transaction.CAE && this.transaction.CAEExpirationDate) {
       this.doc.setFont('helvetica', 'bold');
       this.doc.text('CAE: ' + this.transaction.CAE, margin, row);
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
       this.doc.addImage(imgdata, 'PNG', margin + 40, row - 3, 20, 20);
       row += 4;
-      this.doc.text(
-        'Fecha Vto: ' + this.transaction.CAEExpirationDate.split('T')[0],
-        margin,
-        row
-      );
+      this.doc.text('Fecha Vto: ' + this.transaction.CAEExpirationDate.split('T')[0], margin, row);
     } else if (
       Config.country === 'MX' &&
       this.transaction.stringSAT &&
@@ -4817,20 +3897,10 @@ export class PrintComponent implements OnInit {
     //Pie del ticket
     this.doc.setFontSize(this.fontSizes.xsmall);
     row += 15;
-    this.centerText(
-      margin,
-      margin,
-      width,
-      0,
-      row,
-      'Generado en POSCLOUD.com.ar'
-    );
+    this.centerText(margin, margin, width, 0, row, 'Generado en POSCLOUD.com.ar');
     this.doc.setTextColor(0, 0, 0);
 
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
       if (this.branchImagen && this.branchImagen !== 'default.jpg') {
@@ -4847,10 +3917,7 @@ export class PrintComponent implements OnInit {
       this.movementsOfCancellation.length !== this.printOriginCount &&
       this.printOrigin
     ) {
-      this.transactionId =
-        this.movementsOfCancellation[
-          this.printOriginCount
-        ].transactionOrigin._id;
+      this.transactionId = this.movementsOfCancellation[this.printOriginCount].transactionOrigin._id;
       this.printOriginCount++;
       this.doc.addPage();
       this.getConfig();
@@ -4858,55 +3925,29 @@ export class PrintComponent implements OnInit {
 
     if (!this.source && this.printer && !this.printer.url) {
       this.doc.autoPrint();
-      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
-        this.doc.output('bloburl')
-      );
+      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
     }
 
     if (this.printer.url && this.typePrint) {
-      this._printService
-        .saveFile(this.doc.output('blob'), this.typePrint, this.transactionId)
-        .then((result) => {
-          if (result) {
-            this._printService
-              .toPrintURL(
-                this.printer.url,
-                '/home/clients/' +
-                  Config.database +
-                  '/' +
-                  this.typePrint +
-                  '/' +
-                  this.transactionId +
-                  '.pdf'
-              )
-              .subscribe();
-          }
-        });
+      this._printService.saveFile(this.doc.output('blob'), this.typePrint, this.transactionId).then((result) => {
+        if (result) {
+          this._printService
+            .toPrintURL(
+              this.printer.url,
+              '/home/clients/' + Config.database + '/' + this.typePrint + '/' + this.transactionId + '.pdf'
+            )
+            .subscribe();
+        }
+      });
     }
 
-    if (
-      this.transaction &&
-      this.transaction.type &&
-      this.transaction.type.electronics
-    ) {
-      this._printService.saveFile(
-        this.doc.output('blob'),
-        'invoice',
-        this.transactionId
-      );
+    if (this.transaction && this.transaction.type && this.transaction.type.electronics) {
+      this._printService.saveFile(this.doc.output('blob'), 'invoice', this.transactionId);
     } else if (this.source === 'mail') {
       if (this.transaction) {
-        this._printService.saveFile(
-          this.doc.output('blob'),
-          'others',
-          this.transactionId
-        );
+        this._printService.saveFile(this.doc.output('blob'), 'others', this.transactionId);
       } else if (!this.transaction && this.typePrint === 'current-account') {
-        this._printService.saveFile(
-          this.doc.output('blob'),
-          'others',
-          this.typePrint
-        );
+        this._printService.saveFile(this.doc.output('blob'), 'others', this.typePrint);
       }
     }
   }
@@ -4936,27 +3977,17 @@ export class PrintComponent implements OnInit {
     }
     row += 5;
     this.doc.setFont(undefined, 'normal');
-    this.doc.text(
-      'Fecha: ' + this.transaction.startDate.substring(0, 5),
-      margin,
-      row
-    );
+    this.doc.text('Fecha: ' + this.transaction.startDate.substring(0, 5), margin, row);
     row += 5;
     if (this.transaction.updateDate) {
       this.doc.text(
-        'Hora: ' +
-          this.transaction.updateDate.substring(11, 13) +
-          ':' +
-          this.transaction.updateDate.substring(15, 17),
+        'Hora: ' + this.transaction.updateDate.substring(11, 13) + ':' + this.transaction.updateDate.substring(15, 17),
         margin,
         row
       );
     } else {
       this.doc.text(
-        'Hora: ' +
-          this.transaction.startDate.substring(11, 13) +
-          ':' +
-          this.transaction.startDate.substring(15, 17),
+        'Hora: ' + this.transaction.startDate.substring(11, 13) + ':' + this.transaction.startDate.substring(15, 17),
         margin,
         row
       );
@@ -4966,11 +3997,7 @@ export class PrintComponent implements OnInit {
       row += 5;
       this.doc.setFont('helvetica', 'bold');
       if (this.transaction.employeeOpening) {
-        this.doc.text(
-          'Mozo: ' + this.transaction.employeeOpening.name,
-          margin,
-          row
-        );
+        this.doc.text('Mozo: ' + this.transaction.employeeOpening.name, margin, row);
         row += 5;
       }
       this.doc.text('Mesa: ' + this.transaction.table.description, margin, row);
@@ -4978,11 +4005,7 @@ export class PrintComponent implements OnInit {
     } else if (this.transaction.employeeOpening) {
       row += 5;
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(
-        'Empleado: ' + this.transaction.employeeOpening.name,
-        margin,
-        row
-      );
+      this.doc.text('Empleado: ' + this.transaction.employeeOpening.name, margin, row);
       this.doc.setFont(undefined, 'normal');
     }
 
@@ -5011,9 +4034,7 @@ export class PrintComponent implements OnInit {
           15,
           0,
           row,
-          this.roundNumber
-            .transform(movementOfArticle.amount - movementOfArticle.printed)
-            .toString()
+          this.roundNumber.transform(movementOfArticle.amount - movementOfArticle.printed).toString()
         );
         if (movementOfArticle.article) {
           this.doc.text(movementOfArticle.article.posDescription, 15, row);
@@ -5035,14 +4056,7 @@ export class PrintComponent implements OnInit {
             }
           } else {
             while (movementOfArticle.notes.length > slice) {
-              this.doc.text(
-                movementOfArticle.notes.slice(
-                  slice,
-                  this.printer.pageWidth - 40 + slice
-                ) + '-',
-                5,
-                row
-              );
+              this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 40 + slice) + '-', 5, row);
               row += 5;
               slice = slice + this.printer.pageWidth - 40;
             }
@@ -5084,10 +4098,7 @@ export class PrintComponent implements OnInit {
     this.doc.text('Pedido Nº: ' + this.transaction.number, margin, row);
     this.doc.setFont(undefined, 'normal');
     this.doc.text(
-      'Fecha: ' +
-        this.transaction.startDate.substring(11, 13) +
-        ':' +
-        this.transaction.startDate.substring(15, 17),
+      'Fecha: ' + this.transaction.startDate.substring(11, 13) + ':' + this.transaction.startDate.substring(15, 17),
       40,
       row
     );
@@ -5096,22 +4107,14 @@ export class PrintComponent implements OnInit {
       row += 5;
       this.doc.setFont('helvetica', 'bold');
       if (this.transaction.employeeOpening) {
-        this.doc.text(
-          'Mozo: ' + this.transaction.employeeOpening.name,
-          margin,
-          row
-        );
+        this.doc.text('Mozo: ' + this.transaction.employeeOpening.name, margin, row);
       }
       this.doc.text('Mesa: ' + this.transaction.table.description, 40, row);
       this.doc.setFont(undefined, 'normal');
     } else if (this.transaction.employeeOpening) {
       row += 5;
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(
-        'Empleado: ' + this.transaction.employeeOpening.name,
-        margin,
-        row
-      );
+      this.doc.text('Empleado: ' + this.transaction.employeeOpening.name, margin, row);
       this.doc.setFont(undefined, 'normal');
     }
 
@@ -5136,9 +4139,7 @@ export class PrintComponent implements OnInit {
           15,
           0,
           row,
-          this.roundNumber
-            .transform(movementOfArticle.amount - movementOfArticle.printed)
-            .toString()
+          this.roundNumber.transform(movementOfArticle.amount - movementOfArticle.printed).toString()
         );
         if (movementOfArticle.article) {
           this.doc.text(movementOfArticle.article.posDescription, 20, row);
@@ -5153,14 +4154,7 @@ export class PrintComponent implements OnInit {
           let slice = 0;
 
           while (movementOfArticle.notes.length > slice) {
-            this.doc.text(
-              movementOfArticle.notes.slice(
-                slice,
-                this.printer.pageWidth - 30 + slice
-              ) + '-',
-              5,
-              row
-            );
+            this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + '-', 5, row);
             row += 4;
             slice = slice + this.printer.pageWidth - 30;
           }
@@ -5181,30 +4175,13 @@ export class PrintComponent implements OnInit {
     let margin = 5;
     let row = 10;
 
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(this.fontSizes.large);
       if (this.config[0].companyFantasyName) {
-        this.centerText(
-          margin,
-          margin,
-          this.printer.pageWidth,
-          0,
-          row,
-          this.config[0].companyFantasyName
-        );
+        this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyFantasyName);
       } else {
-        this.centerText(
-          margin,
-          margin,
-          this.printer.pageWidth,
-          0,
-          row,
-          this.config[0].companyName
-        );
+        this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyName);
       }
       this.doc.setFont(undefined, 'normal');
       this.doc.setFontSize(this.fontSizes.normal);
@@ -5215,39 +4192,18 @@ export class PrintComponent implements OnInit {
         this.printer.pageWidth,
         0,
         row,
-        this.config[0].companyAddress
-          .toString()
-          .slice(0, this.roundNumber.transform(this.printer.pageWidth / 2))
+        this.config[0].companyAddress.toString().slice(0, this.roundNumber.transform(this.printer.pageWidth / 2))
       );
       row += 5;
-      this.centerText(
-        margin,
-        margin,
-        this.printer.pageWidth,
-        0,
-        row,
-        'tel: ' + this.config[0].companyPhone
-      );
+      this.centerText(margin, margin, this.printer.pageWidth, 0, row, 'tel: ' + this.config[0].companyPhone);
     } else {
       row += 30;
       this.doc.setFont(undefined, 'normal');
       this.doc.setFontSize(this.fontSizes.normal);
       if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-        await this.getBranchPicture(
-          3,
-          3,
-          this.printer.pageWidth - 4,
-          40,
-          false
-        );
+        await this.getBranchPicture(3, 3, this.printer.pageWidth - 4, 40, false);
       } else {
-        await this.getCompanyPicture(
-          3,
-          3,
-          this.printer.pageWidth - 4,
-          40,
-          false
-        );
+        await this.getCompanyPicture(3, 3, this.printer.pageWidth - 4, 40, false);
       }
     }
 
@@ -5260,10 +4216,7 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFont(undefined, 'normal');
     this.doc.text(
-      'Hora: ' +
-        this.transaction.startDate.substring(11, 13) +
-        ':' +
-        this.transaction.startDate.substring(15, 17),
+      'Hora: ' + this.transaction.startDate.substring(11, 13) + ':' + this.transaction.startDate.substring(15, 17),
       40,
       row
     );
@@ -5272,22 +4225,14 @@ export class PrintComponent implements OnInit {
       row += 5;
       this.doc.setFont('helvetica', 'bold');
       if (this.transaction.employeeOpening) {
-        this.doc.text(
-          'Mozo: ' + this.transaction.employeeOpening.name,
-          margin,
-          row
-        );
+        this.doc.text('Mozo: ' + this.transaction.employeeOpening.name, margin, row);
       }
       this.doc.text('Mesa: ' + this.transaction.table.description, 40, row);
       this.doc.setFont(undefined, 'normal');
     } else if (this.transaction.employeeOpening) {
       row += 5;
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(
-        'Empleado: ' + this.transaction.employeeOpening.name,
-        margin,
-        row
-      );
+      this.doc.text('Empleado: ' + this.transaction.employeeOpening.name, margin, row);
       this.doc.setFont(undefined, 'normal');
     }
 
@@ -5314,9 +4259,7 @@ export class PrintComponent implements OnInit {
           15,
           0,
           row,
-          this.roundNumber
-            .transform(movementOfArticle.amount - movementOfArticle.printed)
-            .toString()
+          this.roundNumber.transform(movementOfArticle.amount - movementOfArticle.printed).toString()
         );
         if (movementOfArticle.article) {
           this.doc.text(movementOfArticle.description, 20, row);
@@ -5328,14 +4271,7 @@ export class PrintComponent implements OnInit {
           let slice = 0;
 
           while (movementOfArticle.notes.length > slice) {
-            this.doc.text(
-              movementOfArticle.notes.slice(
-                slice,
-                this.printer.pageWidth - 30 + slice
-              ) + '-',
-              5,
-              row
-            );
+            this.doc.text(movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + '-', 5, row);
             row += 4;
             slice = slice + this.printer.pageWidth - 30;
           }
@@ -5353,27 +4289,16 @@ export class PrintComponent implements OnInit {
       .format('YYYY-MM-DDTHH:mm:ssZ');
     await this.saveVoucher(voucher).then(async (voucher) => {
       if (voucher) {
-        this.barcode64 = await this.getBarcode(
-          'qr?value=' + this.transactionId
-        );
+        this.barcode64 = await this.getBarcode('qr?value=' + this.transactionId);
 
         let imgdata = 'data:image/png;base64,' + this.barcode64;
         let imgWidth = 50;
 
-        margin = this.roundNumber.transform(
-          (this.printer.pageWidth - imgWidth) / 2
-        );
+        margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
         this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
         row += 60;
         this.doc.setFont('helvetica', 'bold');
-        this.centerText(
-          margin,
-          margin,
-          this.printer.pageWidth,
-          0,
-          row,
-          this.transactionId
-        );
+        this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.transactionId);
         this.doc.setFont(undefined, 'normal');
         this.finishImpression();
       }
@@ -5388,28 +4313,17 @@ export class PrintComponent implements OnInit {
     let margin = 5;
     let row = 10;
 
-    this.barcode64 = await this.getBarcode(
-      'qr?value=' + this.businessRule.code
-    );
+    this.barcode64 = await this.getBarcode('qr?value=' + this.businessRule.code);
 
     let imgdata = 'data:image/png;base64,' + this.barcode64;
     let imgWidth = this.printer.pageWidth - 30;
 
-    margin = this.roundNumber.transform(
-      (this.printer.pageWidth - imgWidth) / 2
-    );
+    margin = this.roundNumber.transform((this.printer.pageWidth - imgWidth) / 2);
     this.doc.addImage(imgdata, 'PNG', margin, row + 5, imgWidth, imgWidth);
     row += imgWidth + imgWidth / 5;
     this.doc.setFontSize(imgWidth / 3);
     this.doc.setFont('helvetica', 'bold');
-    this.centerText(
-      margin,
-      margin,
-      this.printer.pageWidth,
-      0,
-      row,
-      this.businessRule.code
-    );
+    this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.businessRule.code);
     this.doc.setFont(undefined, 'normal');
     this.doc.setFontSize(this.fontSizes.normal);
     row += 8;
@@ -5441,8 +4355,7 @@ export class PrintComponent implements OnInit {
         async (result) => {
           this.loading = false;
           if (!result.voucher) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.voucher);
@@ -5465,51 +4378,20 @@ export class PrintComponent implements OnInit {
 
     let width = this.printer.pageWidth;
 
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(this.fontSizes.large);
       if (this.config[0].companyFantasyName) {
-        this.centerText(
-          margin,
-          margin,
-          width,
-          0,
-          this.row,
-          this.config[0].companyFantasyName
-        );
+        this.centerText(margin, margin, width, 0, this.row, this.config[0].companyFantasyName);
       } else {
-        this.centerText(
-          margin,
-          margin,
-          width,
-          0,
-          this.row,
-          this.config[0].companyName
-        );
+        this.centerText(margin, margin, width, 0, this.row, this.config[0].companyName);
       }
       this.doc.setFont(undefined, 'normal');
       this.doc.setFontSize(this.fontSizes.normal);
       this.row += 5;
-      this.centerText(
-        margin,
-        margin,
-        width,
-        0,
-        this.row,
-        this.config[0].companyAddress
-      );
+      this.centerText(margin, margin, width, 0, this.row, this.config[0].companyAddress);
       this.row += 5;
-      this.centerText(
-        margin,
-        margin,
-        width,
-        0,
-        this.row,
-        'tel: ' + this.config[0].companyPhone
-      );
+      this.centerText(margin, margin, width, 0, this.row, 'tel: ' + this.config[0].companyPhone);
       this.row += 8;
     } else {
       this.row += 30;
@@ -5519,22 +4401,14 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFont('helvetica', 'bold');
     if (this.transaction.orderNumber && this.transaction.orderNumber > 0) {
-      this.doc.text(
-        'Pedido Nº: ' + this.transaction.orderNumber.toString(),
-        margin,
-        this.row
-      );
+      this.doc.text('Pedido Nº: ' + this.transaction.orderNumber.toString(), margin, this.row);
     } else {
       this.doc.text('Pedido Nº: ' + this.transaction.number, margin, this.row);
     }
     this.doc.setFont(undefined, 'normal');
 
     if (this.transaction?.endDate) {
-      this.doc.text(
-        `Fecha:${this.transaction?.endDate?.substring(0, 5) ?? ''}`,
-        width / 1.6,
-        this.row
-      );
+      this.doc.text(`Fecha:${this.transaction?.endDate?.substring(0, 5) ?? ''}`, width / 1.6, this.row);
       this.row += 5;
       this.doc.text(
         'Hora: ' +
@@ -5559,21 +4433,13 @@ export class PrintComponent implements OnInit {
         this.row += 5;
         this.doc.setFont('helvetica', 'bold');
         if (this.transaction.company.name !== undefined) {
-          this.doc.text(
-            'Cliente : ' + this.transaction.company.name,
-            margin,
-            this.row
-          );
+          this.doc.text('Cliente : ' + this.transaction.company.name, margin, this.row);
         } else {
           this.doc.text('Cliente : Consumidor Final', margin, this.row);
         }
         this.row += 5;
         if (this.transaction.company.phones) {
-          this.doc.text(
-            'Telefono : ' + this.transaction.company.phones,
-            margin,
-            this.row
-          );
+          this.doc.text('Telefono : ' + this.transaction.company.phones, margin, this.row);
         }
 
         this.doc.setFont(undefined, 'normal');
@@ -5581,17 +4447,10 @@ export class PrintComponent implements OnInit {
       if (this.transaction.madein == 'delivery') {
         this.row += 5;
         this.doc.setFont('helvetica', 'bold');
-        this.doc.text(
-          'Entregar a: ' + this.transaction.company.address,
-          margin,
-          this.row
-        );
+        this.doc.text('Entregar a: ' + this.transaction.company.address, margin, this.row);
         this.doc.setFont(undefined, 'normal');
       }
-      if (
-        this.transaction.madein == 'pedidos-web' &&
-        this.transaction.deliveryAddress
-      ) {
+      if (this.transaction.madein == 'pedidos-web' && this.transaction.deliveryAddress) {
         this.row += 5;
         let direccion = '';
 
@@ -5601,56 +4460,30 @@ export class PrintComponent implements OnInit {
           direccion = direccion + ' ' + this.transaction.deliveryAddress.name;
         }
         if (this.transaction.deliveryAddress.number) {
-          direccion =
-            direccion + ' N°' + this.transaction.deliveryAddress.number;
+          direccion = direccion + ' N°' + this.transaction.deliveryAddress.number;
         }
 
         if (direccion.length > 27) {
-          this.doc.text(
-            'Entregar a: ' + direccion.slice(0, 25) + '-',
-            margin,
-            this.row
-          );
+          this.doc.text('Entregar a: ' + direccion.slice(0, 25) + '-', margin, this.row);
           this.row += 5;
-          this.doc.text(
-            direccion.slice(25, direccion.length),
-            margin,
-            this.row
-          );
+          this.doc.text(direccion.slice(25, direccion.length), margin, this.row);
         } else {
           this.doc.text('Entregar a: ' + direccion, margin, this.row);
         }
 
         if (this.transaction.deliveryAddress.floor) {
           this.row += 5;
-          this.doc.text(
-            'Piso: ' + this.transaction.deliveryAddress.floor,
-            margin + 5,
-            this.row
-          );
+          this.doc.text('Piso: ' + this.transaction.deliveryAddress.floor, margin + 5, this.row);
         }
         if (this.transaction.deliveryAddress.flat) {
           this.row += 5;
-          this.doc.text(
-            ' Departamento: ' + this.transaction.deliveryAddress.flat,
-            margin + 5,
-            this.row
-          );
+          this.doc.text(' Departamento: ' + this.transaction.deliveryAddress.flat, margin + 5, this.row);
         }
 
-        if (
-          this.transaction.deliveryAddress &&
-          this.transaction.deliveryAddress.observation
-        ) {
+        if (this.transaction.deliveryAddress && this.transaction.deliveryAddress.observation) {
           if (this.transaction.deliveryAddress.observation.length > 30) {
             this.row += 5;
-            this.doc.text(
-              'Obs: ' +
-                this.transaction.deliveryAddress.observation.slice(0, 29) +
-                '-',
-              margin,
-              this.row
-            );
+            this.doc.text('Obs: ' + this.transaction.deliveryAddress.observation.slice(0, 29) + '-', margin, this.row);
             this.row += 5;
             this.doc.text(
               this.transaction.deliveryAddress.observation.slice(
@@ -5662,21 +4495,14 @@ export class PrintComponent implements OnInit {
             );
           } else {
             this.row += 5;
-            this.doc.text(
-              'Obs: ' + this.transaction.deliveryAddress.observation,
-              margin,
-              this.row
-            );
+            this.doc.text('Obs: ' + this.transaction.deliveryAddress.observation, margin, this.row);
           }
         }
 
         this.doc.setFont(undefined, 'normal');
       }
     } else {
-      if (
-        this.transaction.madein == 'resto' ||
-        this.transaction.madein == 'mostrador'
-      ) {
+      if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
         this.row += 5;
         this.doc.setFont('helvetica', 'bold');
         this.doc.text('Cliente : ' + 'Consumidor Final', margin, this.row);
@@ -5688,28 +4514,16 @@ export class PrintComponent implements OnInit {
       this.row += 5;
       this.doc.setFont('helvetica', 'bold');
       if (this.transaction.employeeOpening) {
-        this.doc.text(
-          'Mozo: ' + this.transaction.employeeOpening.name,
-          margin,
-          this.row
-        );
+        this.doc.text('Mozo: ' + this.transaction.employeeOpening.name, margin, this.row);
       }
       if (this.transaction.table) {
-        this.doc.text(
-          'Mesa: ' + this.transaction.table.description,
-          40,
-          this.row
-        );
+        this.doc.text('Mesa: ' + this.transaction.table.description, 40, this.row);
       }
       this.doc.setFont(undefined, 'normal');
     } else if (this.transaction.employeeOpening) {
       this.row += 5;
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(
-        'Empleado: ' + this.transaction.employeeOpening.name,
-        margin,
-        this.row
-      );
+      this.doc.text('Empleado: ' + this.transaction.employeeOpening.name, margin, this.row);
       this.doc.setFont(undefined, 'normal');
     }
 
@@ -5729,19 +4543,14 @@ export class PrintComponent implements OnInit {
         if (movementOfArticle.salePrice > 0) {
           this.doc.setFont(undefined, 'normal');
           this.row += 6;
-          this.doc.text(
-            movementOfArticle.description.slice(0, 25),
-            margin,
-            this.row
-          );
+          this.doc.text(movementOfArticle.description.slice(0, 25), margin, this.row);
           this.doc.text(
             this.roundNumber.transform(movementOfArticle.amount) +
               ' x ' +
               this.roundNumber
                 .transform(
                   (movementOfArticle.salePrice +
-                    movementOfArticle.transactionDiscountAmount *
-                      movementOfArticle.amount) /
+                    movementOfArticle.transactionDiscountAmount * movementOfArticle.amount) /
                     movementOfArticle.amount
                 )
                 .toString(),
@@ -5752,9 +4561,7 @@ export class PrintComponent implements OnInit {
             '$' +
               this.roundNumber
                 .transform(
-                  movementOfArticle.salePrice +
-                    movementOfArticle.transactionDiscountAmount *
-                      movementOfArticle.amount
+                  movementOfArticle.salePrice + movementOfArticle.transactionDiscountAmount * movementOfArticle.amount
                 )
                 .toString(),
             width - 13,
@@ -5777,10 +4584,7 @@ export class PrintComponent implements OnInit {
             } else {
               while (movementOfArticle.notes.length > slice) {
                 this.doc.text(
-                  movementOfArticle.notes.slice(
-                    slice,
-                    this.printer.pageWidth - 30 + slice
-                  ) + '-',
+                  movementOfArticle.notes.slice(slice, this.printer.pageWidth - 30 + slice) + '-',
                   5,
                   this.row
                 );
@@ -5791,24 +4595,15 @@ export class PrintComponent implements OnInit {
               this.doc.setTextColor(0, 0, 0);
             }
           }
-          if (
-            movementOfArticle.article &&
-            movementOfArticle.article.containsStructure
-          ) {
-            let movArticle: MovementOfArticle[] = await this.getMovArticleChild(
-              movementOfArticle._id
-            );
+          if (movementOfArticle.article && movementOfArticle.article.containsStructure) {
+            let movArticle: MovementOfArticle[] = await this.getMovArticleChild(movementOfArticle._id);
 
             if (movArticle && movArticle.length > 0) {
               this.doc.setFont(undefined, 'italic');
               for (const iterator of movArticle) {
                 if (iterator.salePrice === 0) {
                   this.row += 6;
-                  this.doc.text(
-                    '- ' + iterator.description.trim(),
-                    7,
-                    this.row
-                  );
+                  this.doc.text('- ' + iterator.description.trim(), 7, this.row);
                 }
               }
             }
@@ -5824,10 +4619,7 @@ export class PrintComponent implements OnInit {
       this.row += 5;
       this.doc.text('DESCUENTO', margin, this.row);
       this.doc.text(
-        '- $' +
-          this.roundNumber
-            .transform(this.transaction.discountAmount)
-            .toString(),
+        '- $' + this.roundNumber.transform(this.transaction.discountAmount).toString(),
         width - 15,
         this.row
       );
@@ -5842,27 +4634,16 @@ export class PrintComponent implements OnInit {
         this.row += 5;
         this.doc.setFont(undefined, 'normal');
         this.doc.text(
-          `${element.type.name} : $ ${parseFloat(
-            this.roundNumber.transform(element.amountPaid)
-          )}`,
+          `${element.type.name} : $ ${parseFloat(this.roundNumber.transform(element.amountPaid))}`,
           margin,
           this.row
         );
 
         if (element && element.paymentChange > 0) {
           this.row += 5;
-          this.doc.text(
-            'Paga con: $ ' +
-              (element.paymentChange + element.amountPaid).toString(),
-            margin + 5,
-            this.row
-          );
+          this.doc.text('Paga con: $ ' + (element.paymentChange + element.amountPaid).toString(), margin + 5, this.row);
           this.row += 5;
-          this.doc.text(
-            'Su vuelto es: $ ' + element.paymentChange.toString(),
-            margin + 5,
-            this.row
-          );
+          this.doc.text('Su vuelto es: $ ' + element.paymentChange.toString(), margin + 5, this.row);
           this.row += 5;
         }
       });
@@ -5875,11 +4656,7 @@ export class PrintComponent implements OnInit {
 
       this.row += 5;
       this.doc.setFont(undefined, 'normal');
-      this.doc.text(
-        `${this.transaction.shipmentMethod.name}`,
-        margin,
-        this.row
-      );
+      this.doc.text(`${this.transaction.shipmentMethod.name}`, margin, this.row);
     }
 
     if (this.transaction.observation) {
@@ -5893,10 +4670,7 @@ export class PrintComponent implements OnInit {
 
       while (this.transaction.observation.length > slice) {
         this.doc.text(
-          this.transaction.observation.slice(
-            slice,
-            this.printer.pageWidth - 30 + slice
-          ) + '-',
+          this.transaction.observation.slice(slice, this.printer.pageWidth - 30 + slice) + '-',
           5,
           this.row
         );
@@ -5909,14 +4683,7 @@ export class PrintComponent implements OnInit {
     this.row += 5;
 
     this.doc.setFontSize(15);
-    this.centerText(
-      margin,
-      margin,
-      width,
-      2,
-      this.row,
-      'TOTAL $ ' + this.transaction.totalPrice
-    );
+    this.centerText(margin, margin, width, 2, this.row, 'TOTAL $ ' + this.transaction.totalPrice);
     //this.doc.text("$ " + this.transaction.totalPrice, width/1.4, this.row);
 
     this.doc.setFontSize(10);
@@ -5929,42 +4696,17 @@ export class PrintComponent implements OnInit {
     //Pie del ticket
     this.doc.setFontSize(this.fontSizes.xsmall);
     this.row += 5;
-    this.centerText(
-      margin,
-      margin,
-      width,
-      0,
-      this.row,
-      'Generado en POSCLOUD.com.ar'
-    );
+    this.centerText(margin, margin, width, 0, this.row, 'Generado en POSCLOUD.com.ar');
     this.doc.setTextColor(0, 0, 0);
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
       if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-        await this.getBranchPicture(
-          5,
-          5,
-          this.printer.pageWidth - 4,
-          45,
-          false
-        );
+        await this.getBranchPicture(5, 5, this.printer.pageWidth - 4, 45, false);
       } else {
-        await this.getCompanyPicture(
-          5,
-          5,
-          this.printer.pageWidth - 4,
-          45,
-          false
-        );
+        await this.getCompanyPicture(5, 5, this.printer.pageWidth - 4, 45, false);
       }
-      if (
-        this.transaction.type.numberPrint &&
-        this.count < this.transaction.type.numberPrint
-      ) {
+      if (this.transaction.type.numberPrint && this.count < this.transaction.type.numberPrint) {
         this.row += 5;
         this.doc.setLineWidth(1.5);
         this.doc.line(0, this.row, width, this.row);
@@ -5985,51 +4727,20 @@ export class PrintComponent implements OnInit {
 
     let width = this.printer.pageWidth;
 
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(this.fontSizes.large);
       if (this.config[0].companyFantasyName) {
-        this.centerText(
-          margin,
-          margin,
-          width,
-          0,
-          this.row,
-          this.config[0].companyFantasyName
-        );
+        this.centerText(margin, margin, width, 0, this.row, this.config[0].companyFantasyName);
       } else {
-        this.centerText(
-          margin,
-          margin,
-          width,
-          0,
-          this.row,
-          this.config[0].companyName
-        );
+        this.centerText(margin, margin, width, 0, this.row, this.config[0].companyName);
       }
       this.doc.setFont(undefined, 'normal');
       this.doc.setFontSize(this.fontSizes.normal);
       this.row += 5;
-      this.centerText(
-        margin,
-        margin,
-        width,
-        0,
-        this.row,
-        this.config[0].companyAddress
-      );
+      this.centerText(margin, margin, width, 0, this.row, this.config[0].companyAddress);
       this.row += 5;
-      this.centerText(
-        margin,
-        margin,
-        width,
-        0,
-        this.row,
-        'tel: ' + this.config[0].companyPhone
-      );
+      this.centerText(margin, margin, width, 0, this.row, 'tel: ' + this.config[0].companyPhone);
       this.row += 8;
     } else {
       this.row += 30;
@@ -6039,27 +4750,13 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFont('helvetica', 'bold');
     if (this.transaction.orderNumber && this.transaction.orderNumber > 0) {
-      this.doc.text(
-        this.transaction.type.name +
-          ' Nº: ' +
-          this.transaction.orderNumber.toString(),
-        margin,
-        this.row
-      );
+      this.doc.text(this.transaction.type.name + ' Nº: ' + this.transaction.orderNumber.toString(), margin, this.row);
     } else {
-      this.doc.text(
-        this.transaction.type.name + ' Nº: ' + this.transaction.number,
-        margin,
-        this.row
-      );
+      this.doc.text(this.transaction.type.name + ' Nº: ' + this.transaction.number, margin, this.row);
     }
     this.doc.setFont(undefined, 'normal');
 
-    this.doc.text(
-      'Fecha: ' + this.transaction.endDate.substring(0, 5),
-      width / 1.6,
-      this.row
-    );
+    this.doc.text('Fecha: ' + this.transaction.endDate.substring(0, 5), width / 1.6, this.row);
     this.row += 5;
     this.doc.text(
       'Hora: ' +
@@ -6083,21 +4780,13 @@ export class PrintComponent implements OnInit {
         this.row += 5;
         this.doc.setFont('helvetica', 'bold');
         if (this.transaction.company.name !== undefined) {
-          this.doc.text(
-            'Cliente : ' + this.transaction.company.name,
-            margin,
-            this.row
-          );
+          this.doc.text('Cliente : ' + this.transaction.company.name, margin, this.row);
         } else {
           this.doc.text('Cliente : Consumidor Final', margin, this.row);
         }
         this.row += 5;
         if (this.transaction.company.phones) {
-          this.doc.text(
-            'Telefono : ' + this.transaction.company.phones,
-            margin,
-            this.row
-          );
+          this.doc.text('Telefono : ' + this.transaction.company.phones, margin, this.row);
         }
 
         this.doc.setFont(undefined, 'normal');
@@ -6105,17 +4794,10 @@ export class PrintComponent implements OnInit {
       if (this.transaction.madein == 'delivery') {
         this.row += 5;
         this.doc.setFont('helvetica', 'bold');
-        this.doc.text(
-          'Entregar a: ' + this.transaction.company.address,
-          margin,
-          this.row
-        );
+        this.doc.text('Entregar a: ' + this.transaction.company.address, margin, this.row);
         this.doc.setFont(undefined, 'normal');
       }
-      if (
-        this.transaction.madein == 'pedidos-web' &&
-        this.transaction.deliveryAddress
-      ) {
+      if (this.transaction.madein == 'pedidos-web' && this.transaction.deliveryAddress) {
         this.row += 5;
         let direccion = '';
 
@@ -6125,56 +4807,30 @@ export class PrintComponent implements OnInit {
           direccion = direccion + ' ' + this.transaction.deliveryAddress.name;
         }
         if (this.transaction.deliveryAddress.number) {
-          direccion =
-            direccion + ' N°' + this.transaction.deliveryAddress.number;
+          direccion = direccion + ' N°' + this.transaction.deliveryAddress.number;
         }
 
         if (direccion.length > 27) {
-          this.doc.text(
-            'Entregar a: ' + direccion.slice(0, 25) + '-',
-            margin,
-            this.row
-          );
+          this.doc.text('Entregar a: ' + direccion.slice(0, 25) + '-', margin, this.row);
           this.row += 5;
-          this.doc.text(
-            direccion.slice(25, direccion.length),
-            margin,
-            this.row
-          );
+          this.doc.text(direccion.slice(25, direccion.length), margin, this.row);
         } else {
           this.doc.text('Entregar a: ' + direccion, margin, this.row);
         }
 
         if (this.transaction.deliveryAddress.floor) {
           this.row += 5;
-          this.doc.text(
-            'Piso: ' + this.transaction.deliveryAddress.floor,
-            margin + 5,
-            this.row
-          );
+          this.doc.text('Piso: ' + this.transaction.deliveryAddress.floor, margin + 5, this.row);
         }
         if (this.transaction.deliveryAddress.flat) {
           this.row += 5;
-          this.doc.text(
-            ' Departamento: ' + this.transaction.deliveryAddress.flat,
-            margin + 5,
-            this.row
-          );
+          this.doc.text(' Departamento: ' + this.transaction.deliveryAddress.flat, margin + 5, this.row);
         }
 
-        if (
-          this.transaction.deliveryAddress &&
-          this.transaction.deliveryAddress.observation
-        ) {
+        if (this.transaction.deliveryAddress && this.transaction.deliveryAddress.observation) {
           if (this.transaction.deliveryAddress.observation.length > 30) {
             this.row += 5;
-            this.doc.text(
-              'Obs: ' +
-                this.transaction.deliveryAddress.observation.slice(0, 29) +
-                '-',
-              margin,
-              this.row
-            );
+            this.doc.text('Obs: ' + this.transaction.deliveryAddress.observation.slice(0, 29) + '-', margin, this.row);
             this.row += 5;
             this.doc.text(
               this.transaction.deliveryAddress.observation.slice(
@@ -6186,21 +4842,14 @@ export class PrintComponent implements OnInit {
             );
           } else {
             this.row += 5;
-            this.doc.text(
-              'Obs: ' + this.transaction.deliveryAddress.observation,
-              margin,
-              this.row
-            );
+            this.doc.text('Obs: ' + this.transaction.deliveryAddress.observation, margin, this.row);
           }
         }
 
         this.doc.setFont(undefined, 'normal');
       }
     } else {
-      if (
-        this.transaction.madein == 'resto' ||
-        this.transaction.madein == 'mostrador'
-      ) {
+      if (this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
         this.row += 5;
         this.doc.setFont('helvetica', 'bold');
         this.doc.text('Cliente : ' + 'Consumidor Final', margin, this.row);
@@ -6212,28 +4861,16 @@ export class PrintComponent implements OnInit {
       this.row += 5;
       this.doc.setFont('helvetica', 'bold');
       if (this.transaction.employeeOpening) {
-        this.doc.text(
-          'Mozo: ' + this.transaction.employeeOpening.name,
-          margin,
-          this.row
-        );
+        this.doc.text('Mozo: ' + this.transaction.employeeOpening.name, margin, this.row);
       }
       if (this.transaction.table) {
-        this.doc.text(
-          'Mesa: ' + this.transaction.table.description,
-          40,
-          this.row
-        );
+        this.doc.text('Mesa: ' + this.transaction.table.description, 40, this.row);
       }
       this.doc.setFont(undefined, 'normal');
     } else if (this.transaction.employeeOpening) {
       this.row += 5;
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(
-        'Empleado: ' + this.transaction.employeeOpening.name,
-        margin,
-        this.row
-      );
+      this.doc.text('Empleado: ' + this.transaction.employeeOpening.name, margin, this.row);
       this.doc.setFont(undefined, 'normal');
     }
 
@@ -6253,17 +4890,8 @@ export class PrintComponent implements OnInit {
         if (movementOfcash.amountPaid > 0) {
           this.doc.setFont(undefined, 'normal');
           this.row += 6;
-          this.doc.text(
-            movementOfcash.type.name.slice(0, 25),
-            margin,
-            this.row
-          );
-          this.doc.text(
-            '$' +
-              this.roundNumber.transform(movementOfcash.amountPaid).toString(),
-            width - 20,
-            this.row
-          );
+          this.doc.text(movementOfcash.type.name.slice(0, 25), margin, this.row);
+          this.doc.text('$' + this.roundNumber.transform(movementOfcash.amountPaid).toString(), width - 20, this.row);
         }
       }
     }
@@ -6275,10 +4903,7 @@ export class PrintComponent implements OnInit {
       this.row += 5;
       this.doc.text('DESCUENTO', margin, this.row);
       this.doc.text(
-        '- $' +
-          this.roundNumber
-            .transform(this.transaction.discountAmount)
-            .toString(),
+        '- $' + this.roundNumber.transform(this.transaction.discountAmount).toString(),
         width - 15,
         this.row
       );
@@ -6291,11 +4916,7 @@ export class PrintComponent implements OnInit {
 
       this.row += 5;
       this.doc.setFont(undefined, 'normal');
-      this.doc.text(
-        `${this.transaction.shipmentMethod.name}`,
-        margin,
-        this.row
-      );
+      this.doc.text(`${this.transaction.shipmentMethod.name}`, margin, this.row);
     }
 
     if (this.transaction.observation) {
@@ -6309,10 +4930,7 @@ export class PrintComponent implements OnInit {
 
       while (this.transaction.observation.length > slice) {
         this.doc.text(
-          this.transaction.observation.slice(
-            slice,
-            this.printer.pageWidth - 30 + slice
-          ) + '-',
+          this.transaction.observation.slice(slice, this.printer.pageWidth - 30 + slice) + '-',
           5,
           this.row
         );
@@ -6325,19 +4943,11 @@ export class PrintComponent implements OnInit {
     this.row += 7;
 
     this.doc.setFontSize(15);
-    this.centerText(
-      margin,
-      margin,
-      width,
-      2,
-      this.row,
-      'TOTAL $ ' + this.transaction.totalPrice
-    );
+    this.centerText(margin, margin, width, 2, this.row, 'TOTAL $ ' + this.transaction.totalPrice);
     //this.doc.text("$ " + this.transaction.totalPrice, width/1.4, this.row);
     this.row += 5;
 
-    let movCancelation: MovementOfCancellation[] =
-      await this.getCancellationsOfMovements(this.transactionId);
+    let movCancelation: MovementOfCancellation[] = await this.getCancellationsOfMovements(this.transactionId);
 
     if (movCancelation) {
       this.doc.setFont('helvetica', 'bold');
@@ -6362,22 +4972,12 @@ export class PrintComponent implements OnInit {
           this.row
         );
         this.doc.text(
-          '$ ' +
-            this.roundNumber.transform(
-              movCancelation[index].transactionOrigin.totalPrice
-            ),
+          '$ ' + this.roundNumber.transform(movCancelation[index].transactionOrigin.totalPrice),
           40,
           this.row
         );
 
-        this.doc.text(
-          '$ ' +
-            this.roundNumber.transform(
-              movCancelation[index].transactionOrigin.balance
-            ),
-          53,
-          this.row
-        );
+        this.doc.text('$ ' + this.roundNumber.transform(movCancelation[index].transactionOrigin.balance), 53, this.row);
 
         this.row += 5;
       }
@@ -6393,42 +4993,17 @@ export class PrintComponent implements OnInit {
     //Pie del ticket
     this.doc.setFontSize(this.fontSizes.xsmall);
     this.row += 5;
-    this.centerText(
-      margin,
-      margin,
-      width,
-      0,
-      this.row,
-      'Generado en POSCLOUD.com.ar'
-    );
+    this.centerText(margin, margin, width, 0, this.row, 'Generado en POSCLOUD.com.ar');
     this.doc.setTextColor(0, 0, 0);
-    if (
-      !this.config[0].companyPicture ||
-      this.config[0].companyPicture === 'default.jpg'
-    ) {
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
       if (this.branchImagen && this.branchImagen !== 'default.jpg') {
-        await this.getBranchPicture(
-          5,
-          5,
-          this.printer.pageWidth - 4,
-          45,
-          false
-        );
+        await this.getBranchPicture(5, 5, this.printer.pageWidth - 4, 45, false);
       } else {
-        await this.getCompanyPicture(
-          5,
-          5,
-          this.printer.pageWidth - 4,
-          45,
-          false
-        );
+        await this.getCompanyPicture(5, 5, this.printer.pageWidth - 4, 45, false);
       }
-      if (
-        this.transaction.type.numberPrint &&
-        this.count < this.transaction.type.numberPrint
-      ) {
+      if (this.transaction.type.numberPrint && this.count < this.transaction.type.numberPrint) {
         this.row += 5;
         this.doc.setLineWidth(1.5);
         this.doc.line(0, this.row, width, this.row);
@@ -6459,20 +5034,18 @@ export class PrintComponent implements OnInit {
         operationType: { $ne: 'D' },
       };
 
-      this._movementOfArticleService
-        .getMovementsOfArticlesV2(project, match, { description: 1 }, {})
-        .subscribe(
-          (result) => {
-            if (result && result.movementsOfArticles) {
-              resolve(result.movementsOfArticles);
-            } else {
-              resolve(null);
-            }
-          },
-          (error) => {
+      this._movementOfArticleService.getMovementsOfArticlesV2(project, match, { description: 1 }, {}).subscribe(
+        (result) => {
+          if (result && result.movementsOfArticles) {
+            resolve(result.movementsOfArticles);
+          } else {
             resolve(null);
           }
-        );
+        },
+        (error) => {
+          resolve(null);
+        }
+      );
     });
   }
 
@@ -6493,11 +5066,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFont(undefined, 'normal');
     this.doc.setTextColor(164, 164, 164);
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text(
-      'Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.',
-      5,
-      293
-    );
+    this.doc.text('Generado en http://poscloud.com.ar, tu Punto de Venta en la NUBE.', 5, 293);
     this.doc.setTextColor(0, 0, 0);
   }
 
@@ -6748,39 +5317,15 @@ export class PrintComponent implements OnInit {
       data.letrasCentavos =
         'CON ' +
         (() => {
-          if (data.centavos == 1)
-            return (
-              this.getMillones(data.centavos) +
-              ' ' +
-              data.letrasMonedaCentavoSingular
-            );
-          else
-            return (
-              this.getMillones(data.centavos) +
-              ' ' +
-              data.letrasMonedaCentavoPlural
-            );
+          if (data.centavos == 1) return this.getMillones(data.centavos) + ' ' + data.letrasMonedaCentavoSingular;
+          else return this.getMillones(data.centavos) + ' ' + data.letrasMonedaCentavoPlural;
         })();
     }
 
-    if (data.enteros == 0)
-      return 'CERO ' + data.letrasMonedaPlural + ' ' + data.letrasCentavos;
+    if (data.enteros == 0) return 'CERO ' + data.letrasMonedaPlural + ' ' + data.letrasCentavos;
     if (data.enteros == 1)
-      return (
-        this.getMillones(data.enteros) +
-        ' ' +
-        data.letrasMonedaSingular +
-        ' ' +
-        data.letrasCentavos
-      );
-    else
-      return (
-        this.getMillones(data.enteros) +
-        ' ' +
-        data.letrasMonedaPlural +
-        ' ' +
-        data.letrasCentavos
-      );
+      return this.getMillones(data.enteros) + ' ' + data.letrasMonedaSingular + ' ' + data.letrasCentavos;
+    else return this.getMillones(data.enteros) + ' ' + data.letrasMonedaPlural + ' ' + data.letrasCentavos;
   }
 
   private getStructure(childId: string): Promise<boolean> {
