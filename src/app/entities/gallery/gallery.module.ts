@@ -6,11 +6,7 @@ import { ListGalleriesComponent } from './list-galleries/list-galleries.componen
 import { ViewGalleryComponent } from './view-gallery/view-gallery.component';
 
 @NgModule({
-  declarations: [
-    GalleryComponent,
-    ListGalleriesComponent,
-    ViewGalleryComponent,
-  ],
+  declarations: [GalleryComponent, ListGalleriesComponent, ViewGalleryComponent],
   imports: [EntitiesModule, GalleryRoutingModule],
   providers: [],
 })

@@ -1,16 +1,9 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import {
-  NgForm,
-  UntypedFormArray,
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { NgForm, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiResponse, Resource } from '@types';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { GalleryService } from '../../../core/services/gallery.service';
@@ -40,8 +33,7 @@ export class GalleryComponent implements OnInit {
     public _resourceService: ResourceService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
-    private _toastService: ToastService,
-    public translatePipe: TranslateMePipe
+    private _toastService: ToastService
   ) {
     this.galleryForm = this._fb.group({
       _id: ['', []],
@@ -101,20 +93,16 @@ export class GalleryComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this.gallery = result.result;
-          this.gallery.resources = this.gallery.resources.map(
-            (galleryResource) => {
-              const completeResource = this.resources.find(
-                (res) => res._id === galleryResource.resource
-              );
-              if (completeResource) {
-                return {
-                  ...galleryResource,
-                  resource: completeResource,
-                };
-              }
-              return galleryResource;
+          this.gallery.resources = this.gallery.resources.map((galleryResource) => {
+            const completeResource = this.resources.find((res) => res._id === galleryResource.resource);
+            if (completeResource) {
+              return {
+                ...galleryResource,
+                resource: completeResource,
+              };
             }
-          );
+            return galleryResource;
+          });
         },
         error: (error) => {
           this._toastService.showToast(error);

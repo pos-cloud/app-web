@@ -1,23 +1,18 @@
 <section class="container-fluid">
   <div class="card">
     <div class="card-header">
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'add' || operation === 'copy'"
-        >{{ 'add-galery' | translate | capitalize }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-galery' | translate | capitalize
+      }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
         >{{ 'edit' | translate | capitalize }} {{ gallery.name }}</span
       >
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'view' || operation === 'delete'"
-        >{{ gallery.name }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{
+        gallery?.name ?? ''
+      }}</span>
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
-          <i class="fa fa-arrow-left"></i
-          ><span>{{ 'return' | translate | capitalize }}</span>
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
         </button>
         <button
           type="button"
@@ -26,10 +21,7 @@
           *ngIf="operation !== 'delete' && operation !== 'view'"
           (click)="addGallery()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -40,10 +32,7 @@
           [disabled]="loading"
           (click)="deleteGallery()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
           <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -59,9 +48,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-8">
-            <label for="name" class="control-label"
-              >{{ 'name' | translate | capitalize }}:</label
-            >
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <div class="input-group">
               <input
                 type="text"
@@ -72,27 +59,20 @@
                 [focus]="focusEvent"
                 [readonly]="readonly"
                 [ngClass]="{
-                  'is-invalid':
-                    galleryForm.get('name')?.touched &&
-                    galleryForm.get('name')?.hasError('required'),
+                  'is-invalid': galleryForm.get('name')?.touched && galleryForm.get('name')?.hasError('required'),
                 }"
               />
             </div>
             <div
               class="invalid-feedback"
-              *ngIf="
-                galleryForm.get('name')?.touched &&
-                galleryForm.get('name')?.hasError('required')
-              "
+              *ngIf="galleryForm.get('name')?.touched && galleryForm.get('name')?.hasError('required')"
             >
               Este campo es obligatorio.
             </div>
           </div>
 
           <div class="form-group col-md-2">
-            <label for="interval" class="control-label"
-              >{{ 'interval' | translate | capitalize }}:</label
-            >
+            <label for="interval" class="control-label">{{ 'interval' | translate | capitalize }}:</label>
             <div class="input-group">
               <input
                 type="number"
@@ -109,9 +89,7 @@
             </div>
           </div>
           <div class="form-group col-md-2">
-            <label for="barcode" class="control-label"
-              >Tiene Codigo de Barra</label
-            >
+            <label for="barcode" class="control-label">Tiene Codigo de Barra</label>
             <select class="form-control" formControlName="barcode">
               <option [ngValue]="true" [disabled]="readonly">
                 {{ 'true' | translate | capitalize }}
@@ -125,41 +103,21 @@
         <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm)">
           <div class="row">
             <div class="form-group col-md-5">
-              <label for="resource" class="control-label">
-                {{ 'resource' | translate | capitalize }}:</label
-              >
-              <select
-                class="form-control"
-                [(ngModel)]="selectedResource"
-                name="resource"
-              >
-                <option
-                  *ngFor="let resource of resources"
-                  [value]="resource._id"
-                  [disabled]="readonly"
-                >
+              <label for="resource" class="control-label"> {{ 'resource' | translate | capitalize }}:</label>
+              <select class="form-control" [(ngModel)]="selectedResource" name="resource">
+                <option *ngFor="let resource of resources" [value]="resource._id" [disabled]="readonly">
                   {{ resource.name }}
                 </option>
               </select>
             </div>
             <div class="form-group col-md-3">
-              <label for="order" class="control-label"
-                >{{ 'order' | translate | capitalize }}:</label
-              >
+              <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
               <div class="input-group">
-                <input
-                  type="number"
-                  class="form-control"
-                  ngModel
-                  name="order"
-                  [readonly]="readonly"
-                />
+                <input type="number" class="form-control" ngModel name="order" [readonly]="readonly" />
               </div>
             </div>
             <div class="form-group col-md-2">
-              <label class="control-label">{{
-                'add' | translate | capitalize
-              }}</label>
+              <label class="control-label">{{ 'add' | translate | capitalize }}</label>
               <div class="input-group">
                 <button type="summit" class="btn btn-success btn-sm especial">
                   <i class="fa fa-plus"></i>
@@ -176,13 +134,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              class="separation"
-              *ngFor="
-                let resourceAux of galleryForm.get('resources')['controls'];
-                let i = index
-              "
-            >
+            <tr class="separation" *ngFor="let resourceAux of galleryForm.get('resources')['controls']; let i = index">
               <div *ngFor="let resource of resources; let i = index">
                 <td
                   *ngIf="
@@ -197,11 +149,7 @@
               </div>
               <td>{{ resourceAux.value.order }}</td>
               <td align="right" width="10">
-                <button
-                  type="button"
-                  class="btn btn-danger btn-sm"
-                  (click)="deleteResource(i)"
-                >
+                <button type="button" class="btn btn-danger btn-sm" (click)="deleteResource(i)">
                   <i class="fa fa-trash-o"></i>
                 </button>
               </td>
@@ -226,10 +174,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    gallery?.creationDate ?? null
-                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ gallery?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -243,10 +188,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    gallery?.updateDate ?? null
-                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ gallery?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
