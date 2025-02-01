@@ -388,12 +388,9 @@ td {
 
 .btn-action {
   width: 100%;
-  border: 1px solid white;
-  padding: 10px;
   cursor: pointer;
   background-color: #0275d8;
   color: white;
-  height: 40px;
   text-align: center;
 }
 
