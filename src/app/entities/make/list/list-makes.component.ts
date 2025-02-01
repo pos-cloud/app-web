@@ -42,6 +42,16 @@ export class ListMakesComponent {
         required: false,
       },
       {
+        name: 'picture',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: true,
+      },
+      {
         name: 'visibleSale',
         visible: false,
         disabled: false,

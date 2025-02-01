@@ -3,7 +3,7 @@
   <input type="file" id="fileInput" (change)="onFileSelected($event)" />
 
   <div *ngIf="imageUrl">
-    <img [src]="imageUrl" alt="Vista previa de la imagen" class="preview-image" />
+    <img [src]="imageUrl" alt="Imagen no disponible" class="preview-image" />
   </div>
 
   <div *ngIf="!imageUrl">

@@ -1,10 +1,11 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ApiResponse, Make } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 
+import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MakeService } from '../../../core/services/make.service';
@@ -14,14 +15,12 @@ import { MakeService } from '../../../core/services/make.service';
   templateUrl: './make.component.html',
 })
 export class MakeComponent implements OnInit, OnDestroy {
+  @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
+
   public operation: string;
-  public readonly: boolean;
   public makeForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public previewImage: string | null = null; // Para la vista previa de la imagen
-
-  private makeId: string;
   public make: Make;
   private destroy$ = new Subject<void>();
 
@@ -34,18 +33,19 @@ export class MakeComponent implements OnInit, OnDestroy {
     this.makeForm = this._fb.group({
       _id: ['', []],
       description: ['', [Validators.required]],
+      picture: ['', []],
       visibleSale: [true, []],
     });
   }
 
   ngOnInit() {
-    let pathUrl = this._router.url.split('/');
+    const pathUrl = this._router.url.split('/');
     this.operation = pathUrl[3];
-    this.makeId = pathUrl[4];
+    const makeId = pathUrl[4];
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
-    if (this.makeId) {
-      this.getMake();
+    if (this.operation === 'view' || this.operation === 'delete') this.makeForm.disable();
+    if (makeId) {
+      this.getMake(makeId);
     }
   }
 
@@ -56,11 +56,12 @@ export class MakeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
-  getMake(): void {
+  getMake(id: string): void {
     this._makeService
-      .getById(this.makeId)
+      .getById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
@@ -80,6 +81,7 @@ export class MakeComponent implements OnInit, OnDestroy {
     this.makeForm.patchValue({
       _id: this.make._id ?? '',
       description: this.make.description ?? null,
+      picture: this.make.picture ?? null,
       visibleSale: this.make.visibleSale ?? true,
     });
   }
@@ -88,100 +90,91 @@ export class MakeComponent implements OnInit, OnDestroy {
     return this._router.navigate(['/entities/makes']);
   }
 
-  addMake(): void {
+  async handleMakeOperation() {
     this.loading = true;
-    this.make = this.makeForm.value;
-    if (this.makeForm.valid) {
-      switch (this.operation) {
-        case 'add':
-          this.saveMake();
-          break;
-        case 'update':
-          this.updateMake();
-          break;
-        case 'delete':
-          this.deleteMake();
-        default:
-          break;
-      }
-    } else {
+
+    this.makeForm.markAllAsTouched();
+    if (this.makeForm.invalid) {
       this.loading = false;
+      return;
+    }
+
+    if (this.makeForm.get('picture')?.value) {
+      await this.uploadFileComponent.uploadImages();
+    }
+
+    this.make = this.makeForm.value;
+
+    switch (this.operation) {
+      case 'add':
+        this.saveMake();
+        break;
+      case 'update':
+        this.updateMake();
+        break;
+      case 'delete':
+        this.deleteMake();
+        break;
     }
   }
 
   saveMake(): void {
-    this.loading = true;
-
     this._makeService
       .save(this.make)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
 
   updateMake(): void {
-    this.loading = true;
-
     this._makeService
       .update(this.make)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
 
   deleteMake() {
-    this.loading = true;
     this._makeService
       .delete(this.make._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
 
-  // Función para manejar la carga de la imagen
-  onImageUpload(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.previewImage = e.target.result; // Establece la vista previa de la imagen
-      };
-      reader.readAsDataURL(input.files[0]);
+  onImagesUploaded(urls: string[]): void {
+    if (urls && urls.length > 0) {
+      this.makeForm.get('picture')?.setValue(urls[0]);
     }
-  }
-
-  // Función para eliminar la imagen
-  removeImage(): void {
-    this.previewImage = null; // Elimina la vista previa de la imagen
   }
 }
