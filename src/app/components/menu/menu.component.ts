@@ -15,7 +15,7 @@ import { Application, ApplicationType } from '../application/application.model';
 })
 export class MenuComponent implements OnInit {
   database: string;
-  menu: {};
+  menu: [];
   styleMenu: Application;
 
   constructor(
@@ -34,47 +34,37 @@ export class MenuComponent implements OnInit {
   }
 
   getMenu() {
-    const organizedData = {};
-
     this._menu.getMenu(this.database).subscribe((result) => {
       if (result?.result) {
-        result.result.forEach((product) => {
+        // Mapeamos y organizamos la data en un array en vez de objeto
+        this.menu = result.result.reduce((acc, product) => {
           const category = product.category.description;
+          const categoryPicture = product.category.picture;
           const description = product.description;
           const price = product.salePrice || 0;
           const observation = product.observation || '';
 
-          if (!organizedData[category]) {
-            organizedData[category] = {};
+          let categoryData = acc.find((cat) => cat.name === category);
+
+          if (!categoryData) {
+            categoryData = {
+              name: category,
+              picture: categoryPicture,
+              products: [],
+            };
+            acc.push(categoryData);
           }
 
-          organizedData[category][description] = {
-            price: price,
-            observation: observation,
-          };
-        });
+          categoryData.products.push({
+            description,
+            price,
+            observation,
+          });
 
-        this.menu = organizedData;
+          return acc;
+        }, []);
       }
     });
-  }
-
-  getMenuCategories() {
-    if (this.menu && Object.keys(this.menu).length > 0) {
-      return Object.keys(this.menu);
-    }
-    return [];
-  }
-
-  getProduct(category: string) {
-    if (
-      this.menu &&
-      this.menu[category] &&
-      Object.keys(this.menu[category]).length > 0
-    ) {
-      return Object.keys(this.menu[category]);
-    }
-    return [];
   }
 
   getApplication() {
