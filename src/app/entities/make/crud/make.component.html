@@ -70,7 +70,7 @@
             <label for="picture" class="control-label">{{ 'picture' | translate | capitalize }}:</label>
             <app-upload-file
               (uploadedUrls)="onImagesUploaded($event)"
-              [folder]="'make'"
+              [folder]="'makes'"
               [existingImageUrl]="makeForm.get('picture')?.value"
             >
             </app-upload-file>
