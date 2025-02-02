@@ -35,25 +35,4 @@ export class ReportSystemService {
         })
       );
   }
-
-  public getReportSystem(data: {}): Observable<any> {
-    const URL = `${environment.apiv2}/reports-system/${data['reportType']}`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, data, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
 }
