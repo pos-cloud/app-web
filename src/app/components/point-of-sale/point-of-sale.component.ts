@@ -51,8 +51,6 @@ import { UserService } from '../../core/services/user.service';
 import { CancelComponent } from '../../modules/sales/tienda-nube/tienda-nube-cancel/cancel.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
-import { padNumber } from '../../util/functions/pad/padNumber';
-import { removeParam } from '../../util/functions/removeParam';
 import { SelectBranchComponent } from '../branch/select-branch/select-branch.component';
 import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
@@ -1096,7 +1094,7 @@ export class PointOfSaleComponent implements OnInit {
 
           let queryParams = {
             transactionId: this.transaction._id,
-            returnURL: removeParam(this._router.url, 'automaticCreation'),
+            returnURL: this.removeParam(this._router.url, 'automaticCreation'),
           };
 
           if (this.transaction.type.automaticCreation && this.posType !== 'resto') {
@@ -1633,10 +1631,10 @@ export class PointOfSaleComponent implements OnInit {
         if (this.transaction.type.labelPrint) {
           labelPrint = this.transaction.type.labelPrint;
         }
-        modalRef.componentInstance.subject = `${labelPrint} ${padNumber(
+        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(
           this.transaction.origin,
           4
-        )}-${this.transaction.letter}-${padNumber(this.transaction.number, 8)}`;
+        )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
         if (this.transaction.type.electronics) {
           // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${this.transaction._id}">Su comprobante</a>`
           modalRef.componentInstance.body = ' ';
@@ -2395,6 +2393,26 @@ export class PointOfSaleComponent implements OnInit {
       this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
+  }
+
+  public removeParam(sourceURL: string, key: string) {
+    let rtn = sourceURL.split('?')[0],
+      param,
+      params_arr = [],
+      queryString = sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
+
+    if (queryString !== '') {
+      params_arr = queryString.split('&');
+      for (let i = params_arr.length - 1; i >= 0; i -= 1) {
+        param = params_arr[i].split('=')[0];
+        if (param === key) {
+          params_arr.splice(i, 1);
+        }
+      }
+      rtn = rtn + '?' + params_arr.join('&');
+    }
+
+    return rtn;
   }
 
   public sendEmail(body: EmailProps): void {
