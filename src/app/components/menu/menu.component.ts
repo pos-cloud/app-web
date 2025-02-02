@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
@@ -14,6 +14,8 @@ import { Application, ApplicationType } from '../application/application.model';
   encapsulation: ViewEncapsulation.None,
 })
 export class MenuComponent implements OnInit {
+  @ViewChild('menuSection') menuSection!: ElementRef;
+
   database: string;
   menu: [];
   styleMenu: Application;
@@ -65,6 +67,10 @@ export class MenuComponent implements OnInit {
         }, []);
       }
     });
+  }
+
+  scrollToMenu() {
+    this.menuSection.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 
   getApplication() {

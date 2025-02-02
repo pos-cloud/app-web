@@ -1,7 +1,9 @@
 <div *ngIf="menu?.length">
   <img class="presentation-image" src="assets/image.png" alt="Presentación" />
 
-  <div class="align-items-start">
+  <button class="menu-button" (click)="scrollToMenu()">Menú</button>
+
+  <div class="align-items-start" #menuSection>
     <div *ngFor="let category of menu" class="category">
       <div class="card m-3">
         <div class="category-header" [style.backgroundImage]="'url(' + category.picture + ')'">

@@ -1,7 +1,26 @@
 .presentation-image {
   width: 100%;
-  max-height: 300px;
-  object-fit: cover;
+  height: 100vh; /* Ocupa toda la altura del viewport */
+  //object-fit: cover; /* Ajusta la imagen para cubrir sin deformarse */
+}
+
+.menu-button {
+  position: absolute;
+  bottom: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f1e8de;
+  color: black;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.menu-button:hover {
+  background-color: #f1e8de;
 }
 
 .category-header {
@@ -9,12 +28,16 @@
   background-position: center;
   position: relative;
   padding: 1.5rem;
+  height: 120px;
   color: white;
-  text-align: center;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
   background-blend-mode: overlay;
   background-color: rgba(0, 0, 0, 0.4);
+
+  display: flex; /* Habilitar Flexbox */
+  align-items: center; /* Centrar verticalmente */
+  justify-content: center; /* Centrar horizontalmente */
 }
 
 .card-title {
