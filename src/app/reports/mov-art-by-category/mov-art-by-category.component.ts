@@ -190,7 +190,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
 
     this.subscription.add(
       this._service
-        .getReport(requestPayload)
+        .getReportSystem(requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
