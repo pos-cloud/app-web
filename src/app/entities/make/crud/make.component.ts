@@ -98,10 +98,7 @@ export class MakeComponent implements OnInit, OnDestroy {
       this.loading = false;
       return;
     }
-
-    if (this.makeForm.get('picture')?.value) {
-      await this.uploadFileComponent.uploadImages();
-    }
+    await this.uploadFileComponent.uploadImages();
 
     this.make = this.makeForm.value;
 
