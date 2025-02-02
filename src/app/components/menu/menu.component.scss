@@ -1,6 +1,7 @@
 .presentation-image {
   width: 100%;
-  height: 100vh; /* Ocupa toda la altura del viewport */
+  height: 100dvh; /* Ajuste dinámico para incluir la barra de navegación */
+  max-height: calc(100vh - 56px); /* Backup para navegadores que no soporten dvh */
   //object-fit: cover; /* Ajusta la imagen para cubrir sin deformarse */
 }
 
