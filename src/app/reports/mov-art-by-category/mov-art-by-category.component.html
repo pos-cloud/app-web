@@ -1,16 +1,12 @@
 <section class="container-fluid">
   <div class="row container-filter">
-    <div class="col-md-2">
+    <div class="col-md-1">
       <label for="branch" class="control-label">
         <b>{{ 'agency' | translate | capitalize }}</b>
       </label>
       <select class="form-control" [(ngModel)]="branchSelectedId">
         <option [ngValue]="null" [disabled]="!allowChangeBranch">Todas</option>
-        <option
-          *ngFor="let branch of branches"
-          [ngValue]="branch._id"
-          [disabled]="!allowChangeBranch"
-        >
+        <option *ngFor="let branch of branches" [ngValue]="branch._id" [disabled]="!allowChangeBranch">
           {{ branch.number }} - {{ branch.name }}
         </option>
       </select>
@@ -27,95 +23,64 @@
       >
       </ng-multiselect-dropdown>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
       <label for="startDate" class="control-label">
         <b>{{ 'startDate' | translate | capitalize }}:</b>
       </label>
-      <input
-        type="date"
-        class="form-control"
-        name="startDate"
-        min="2000-01-01"
-        [(ngModel)]="startDate"
-      />
+      <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
       <label for="endDate" class="control-label">
         <b>{{ 'endDate' | translate | capitalize }}:</b>
       </label>
-      <input
-        type="date"
-        class="form-control"
-        name="endDate"
-        min="2000-01-01"
-        [(ngModel)]="endDate"
-      />
+      <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
     </div>
-    <div class="col-md-2" (click)="getSalesByCategory()">
-      <label for="action" class="control-label">
-        <b>{{ 'action' | translate | capitalize }}:</b>
-      </label>
-      <span class="form-control btn-action center-content">
-        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i
-        >{{ 'refresh' | translate | capitalize }}
+    <div class="col-md-1" (click)="getSalesByCategory()">
+      <label for="action" class="control-label"> </label>
+      <span class="form-control btn-action">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i>{{ 'refresh' | translate | capitalize }}
       </span>
     </div>
   </div>
   <div class="card card-large">
-    <div class="card-header">Categorias por {{ transactionMovement }}</div>
+    <div class="card-header">Categorías por {{ transactionMovement }}</div>
     <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>
           <tr>
-            <th (click)="orderBy('category.description')">
-              {{ 'article.category.description' | translate | capitalize }}
-            </th>
-            <th (click)="orderBy('article.category.parent.description')">
-              {{
-                'article.category.parent.description' | translate | capitalize
-              }}
-            </th>
-            <th class="align-right" (click)="orderBy('count')">
-              {{ 'count' | translate | capitalize }}
-            </th>
-            <th class="align-right" (click)="orderBy('total')">Total</th>
+            <ng-container *ngFor="let column of columns">
+              <th>{{ column.label | translate | capitalize }}</th>
+            </ng-container>
           </tr>
         </thead>
+
         <tbody>
-          <tr>
+          <tr *ngIf="loading">
             <td colspan="99" style="padding: 0px">
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="let item of items">
-            <td class="flat">{{ item.category.description }}</td>
-            <td class="flat">{{ item?.category?.parent?.description }}</td>
-            <td class="align-right">
-              {{ item.count }}
-            </td>
-            <td class="align-right">
-              {{ item.total | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+
+          <tr *ngFor="let item of data">
+            <td *ngFor="let column of columns">
+              {{ item[column.key] }}
             </td>
           </tr>
 
-          <tr align="center" *ngIf="!items?.length && !loading">
-            <td colspan="4">{{ 'no data found' | translate | capitalize }}.</td>
+          <tr *ngIf="!data?.length && !loading">
+            <td colspan="{{ columns?.length || 1 }}" class="text-center">
+              {{ 'no data found' | translate | capitalize }}.
+            </td>
           </tr>
         </tbody>
-        <tfoot *ngIf="items?.length">
+
+        <tfoot *ngIf="data?.length">
           <tr>
-            <th>
-              <strong>{{ 'total' | translate | capitalize }}</strong>
-            </th>
-            <th></th>
-            <th class="align-right">
-              <strong>{{ totalItem }}</strong>
-            </th>
-            <th class="align-right">
-              <strong>{{
-                totalAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-              }}</strong>
-            </th>
+            <td *ngFor="let column of columns; let i = index">
+              <strong *ngIf="i > 0 && totals[column.key] !== undefined">
+                {{ totals[column.key] | number: '1.2-2' }}
+              </strong>
+            </td>
           </tr>
         </tfoot>
       </table>

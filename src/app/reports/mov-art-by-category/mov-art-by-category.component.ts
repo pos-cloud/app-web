@@ -40,7 +40,10 @@ import { MovArtByCategoryService } from './mov-art-by-category.service';
   providers: [MovArtByCategoryService],
 })
 export class ReportSalesByCategoryComponent implements OnInit {
-  public items: any[] = [];
+  public data: any[] = [];
+  public columns: any[] = [];
+  public totals: any = {};
+
   public loading: boolean = false;
   public startDate: string = moment().format('YYYY-MM-DD');
   public endDate: string = moment().format('YYYY-MM-DD');
@@ -110,7 +113,7 @@ export class ReportSalesByCategoryComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public getBranches(): Promise<Branch[]> {
+  private getBranches(): Promise<Branch[]> {
     return new Promise<Branch[]>((resolve, reject) => {
       this._branchService
         .getAll({
@@ -135,47 +138,7 @@ export class ReportSalesByCategoryComponent implements OnInit {
     });
   }
 
-  public getSalesByCategory(): void {
-    this.loading = true;
-    let types = this.transactionTypesSelect?.map((item) => item._id);
-    let data = {
-      branch: this.branchSelectedId,
-      type: this.transactionMovement,
-      startDate: this.startDate,
-      endDate: this.endDate,
-      transactionTypes: types ?? [],
-    };
-
-    this.subscription.add(
-      this._service
-        .getMovArtByCategory(data)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.items = result.result;
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-          },
-          complete: () => {
-            this.loading = false;
-            this.calculateTotal();
-          },
-        })
-    );
-  }
-
-  public calculateTotal(): void {
-    this.totalItem = 0;
-    this.totalAmount = 0;
-
-    for (let index = 0; index < this.items?.length; index++) {
-      this.totalItem = this.totalItem + this.items[index]['count'];
-      this.totalAmount = this.totalAmount + this.items[index]['total'];
-    }
-  }
-
-  getTransactionTypes() {
+  private getTransactionTypes() {
     let match = {
       transactionMovement: this.transactionMovement,
       operationType: { $ne: 'D' },
@@ -201,6 +164,50 @@ export class ReportSalesByCategoryComponent implements OnInit {
           this._toastService.showToast(error);
         },
       });
+  }
+
+  public getSalesByCategory(): void {
+    this.loading = true;
+    let types = this.transactionTypesSelect?.map((item) => item._id);
+
+    const requestPayload = {
+      reportType: 'mov-art-by-category',
+      filters: {
+        branch: this.branchSelectedId,
+        type: this.transactionMovement,
+        transactionTypes: types ?? [],
+        startDate: this.startDate,
+        endDate: this.endDate,
+      },
+      pagination: {
+        page: this.currentPage,
+        pageSize: 10,
+      },
+      sorting: {
+        column: 'category',
+        direction: 'asd',
+      },
+    };
+
+    this.subscription.add(
+      this._service
+        .getReportSystem(requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            this._toastService.showToast(result);
+            this.data = result.result.data;
+            this.columns = result.result.columns;
+            this.totals = result.result.totals;
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        })
+    );
   }
 
   public orderBy(term: string): void {
