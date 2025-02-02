@@ -1,6 +1,7 @@
 <section class="container-fluid">
-  <div class="row container-filter">
-    <div class="col-md-1">
+  <!-- Filtros -->
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
       <label for="branch" class="control-label">
         <b>{{ 'agency' | translate | capitalize }}</b>
       </label>
@@ -11,7 +12,8 @@
         </option>
       </select>
     </div>
-    <div class="col-md-2">
+
+    <div class="form-group mr-2">
       <label for="transactionType" class="control-label">
         <b>Tipo de Transacción</b>
       </label>
@@ -23,23 +25,27 @@
       >
       </ng-multiselect-dropdown>
     </div>
-    <div class="col-md-1">
+
+    <div class="form-group mr-2">
       <label for="startDate" class="control-label">
         <b>{{ 'startDate' | translate | capitalize }}:</b>
       </label>
       <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
     </div>
-    <div class="col-md-1">
+
+    <div class="form-group mr-2">
       <label for="endDate" class="control-label">
         <b>{{ 'endDate' | translate | capitalize }}:</b>
       </label>
       <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
     </div>
-    <div class="col-md-1" (click)="getSalesByCategory()">
-      <label for="action" class="control-label"> </label>
-      <span class="form-control btn-action">
-        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i>{{ 'refresh' | translate | capitalize }}
-      </span>
+
+    <!-- Botón de Actualizar -->
+    <div class="form-group ml-auto">
+      <label class="control-label"> </label>
+      <button class="btn btn-primary" (click)="getSalesByCategory()">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+      </button>
     </div>
   </div>
   <div class="card card-large">

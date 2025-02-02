@@ -12,6 +12,7 @@ import { Branch } from '@types';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
+import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -20,11 +21,10 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MovArtByCategoryService } from './mov-art-by-category.service';
 
 @Component({
   standalone: true,
-  selector: 'app-report-sales-by-category',
+  selector: 'app-mov-art-by-category',
   templateUrl: './mov-art-by-category.component.html',
   imports: [
     CommonModule,
@@ -37,9 +37,8 @@ import { MovArtByCategoryService } from './mov-art-by-category.service';
     NgxPaginationModule,
     ExportersModule,
   ],
-  providers: [MovArtByCategoryService],
 })
-export class ReportSalesByCategoryComponent implements OnInit {
+export class ReportMovArtByCategoryComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
@@ -74,7 +73,7 @@ export class ReportSalesByCategoryComponent implements OnInit {
   };
 
   constructor(
-    public _service: MovArtByCategoryService,
+    public _service: ReportSystemService,
     public _router: Router,
     private _branchService: BranchService,
     private _authService: AuthService,
@@ -185,13 +184,13 @@ export class ReportSalesByCategoryComponent implements OnInit {
       },
       sorting: {
         column: 'category',
-        direction: 'asd',
+        direction: 'asc',
       },
     };
 
     this.subscription.add(
       this._service
-        .getReportSystem(requestPayload)
+        .getReport(requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
