@@ -1,9 +1,5 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiResponse, Employee, EmployeeType } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -48,7 +44,7 @@ export class EmployeeComponent implements OnInit {
     const employeeId = pathUrl[4];
     this.operation = pathUrl[3];
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
+    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.employeeForm.disable();
     if (employeeId) this.getEmployee(employeeId);
   }
 
@@ -59,12 +55,11 @@ export class EmployeeComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
   public setValueForm() {
-    const type = this.employeeTypes?.find(
-      (item) => item._id == this.employee.type.toString()
-    );
+    const type = this.employeeTypes?.find((item) => item._id == this.employee.type.toString());
 
     this.employeeForm.setValue({
       _id: this.employee._id ?? '',
@@ -80,30 +75,20 @@ export class EmployeeComponent implements OnInit {
   }
 
   public getAllEmployeeTypes(): Promise<void> {
-    const match = {
-      operationType: { $ne: 'D' },
-    };
-
     this.loading = true;
-    return new Promise((resolve, reject) => {
+    return new Promise(() => {
       this._employeeTypeService
         .getAll({
-          match,
+          match: { operationType: { $ne: 'D' } },
         })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {
-            if (result.status == 200) {
-              this.employeeTypes = result.result;
-              resolve();
-            } else {
-              this._toastService.showToast(result.message);
-              reject();
-            }
+            this._toastService.showToast(result);
+            this.employeeTypes = result.result;
           },
           error: (error) => {
             this._toastService.showToast(error);
-            reject();
           },
           complete: () => {
             this.loading = false;
@@ -119,18 +104,15 @@ export class EmployeeComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          if (result.status == 200) {
-            this.employee = result.result;
-            this.setValueForm();
-          } else {
-            this._toastService.showToast(result.message);
-          }
+          this._toastService.showToast(result);
+          this.employee = result.result;
         },
         error: (error) => {
           this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;
+          this.setValueForm();
         },
       });
   }

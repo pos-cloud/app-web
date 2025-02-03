@@ -1,9 +1,5 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { BankService } from '../../../core/services/bank.service';
@@ -55,6 +51,7 @@ export class BankComponent implements OnInit {
     this.operation = pathUrl[3];
     await this.getAccount();
 
+    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.bankForm.disable();
     if (bankId) this.getBank(bankId);
   }
 
@@ -65,12 +62,11 @@ export class BankComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
   public setValueForm(): void {
-    const account = this.accounts?.find(
-      (item) => item._id === this.bank?.account?.toString()
-    );
+    const account = this.accounts?.find((item) => item._id === this.bank?.account?.toString());
 
     const values = {
       _id: this.bank._id ?? '',
@@ -88,9 +84,9 @@ export class BankComponent implements OnInit {
 
   getAccount(): Promise<void> {
     this.loading = true;
-    return new Promise((resolve, reject) => {
+    return new Promise(() => {
       this._accountService
-        .getAll({})
+        .getAll({ match: { operationType: { $ne: 'D' } } })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {
@@ -101,7 +97,6 @@ export class BankComponent implements OnInit {
           },
           complete: () => {
             this.loading = false;
-            resolve();
           },
         });
     });
