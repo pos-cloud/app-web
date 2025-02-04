@@ -73,10 +73,8 @@
             </td>
           </tr>
 
-          <tr *ngIf="!data?.length && !loading">
-            <td colspan="{{ columns?.length || 1 }}" class="text-center">
-              {{ 'no data found' | translate | capitalize }}.
-            </td>
+          <tr align="center" *ngIf="(!data || data.length === 0) && !loading">
+            <td colspan="10">{{ 'no data found' | translate | capitalize }}</td>
           </tr>
         </tbody>
 

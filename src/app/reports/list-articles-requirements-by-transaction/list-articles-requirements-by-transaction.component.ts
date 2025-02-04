@@ -1,28 +1,25 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbAlertConfig, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
-import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { ExportersModule } from 'app/components/export/exporters.module';
-import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
+import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as moment from 'moment';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { Observable, of as observableOf, Subscription } from 'rxjs';
-import { Config } from '../../app.config';
-import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
-import { attributes } from './list-articles.requirements-by-transaction';
-import { ListArticlesRequirementsByTransactionService } from './list-articles.requirements-by-transaction.service';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
@@ -41,34 +38,29 @@ import { ListArticlesRequirementsByTransactionService } from './list-articles.re
   ],
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
-  private subscription: Subscription = new Subscription();
-  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
-  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+  public data: any[] = [];
+  public columns: any[] = [];
 
-  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
-  title: string = 'Requerimientos de producción';
-  branches: Branch[];
-  branchSelectedId: string;
-  allowChangeBranch: boolean;
-  alertMessage: string = '';
-  loading: boolean = false;
-  dateFormat = new DateFormatPipe();
-  columns = attributes;
-  filters: { [key: string]: string } = {};
-  employeeClosingId: string;
-  origin: any;
-  listType: string = 'statistics';
-  transactionMovement: TransactionMovement;
-  stateSelect: string = '';
-  startDate: string;
-  endDate: string;
-  dateSelect: string;
-  timezone: string = '-03:00';
-  transactionTypes: TransactionType[];
+  public loading: boolean = false;
+  private destroy$ = new Subject<void>();
+  private subscription: Subscription = new Subscription();
+  public startDate: string = moment().format('YYYY-MM-DD');
+  public endDate: string = moment().format('YYYY-MM-DD');
+  public itemsPerPage: string = '5';
+  public currentPage: number = 1;
+  public sort = { count: -1 };
+  public transactionMovement: string;
+  public totalItem: number = 0;
+  public totalAmount: number = 0;
+  public branches: Branch[];
+  public branchSelectedId: string;
+  public allowChangeBranch: boolean;
+  public dateFormat = new DateFormatPipe();
+  public statusSelect: string = '';
+
+  public dateSelect: string;
+  public transactionTypes: TransactionType[];
   transactionTypesSelect;
-  itemsPerPage = 10;
-  currentPage: number = 1;
-  modules: Observable<{}>;
   dropdownSettings = {
     singleSelection: false,
     defaultOpen: false,
@@ -80,300 +72,141 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     itemsShowLimit: 3,
     allowSearchFilter: true,
   };
-  items: any[] = [];
-  filterItems: any[] = [];
-  totalItems: number = 0;
-
-  config: Config;
-
-  deleteTransaction = true;
-  editTransaction = true;
 
   constructor(
+    private _service: ReportSystemService,
     private _branchService: BranchService,
-    public alertConfig: NgbAlertConfig,
-    public _modalService: NgbModal,
     public _transactionTypeService: TransactionTypeService,
     private _authService: AuthService,
     public _router: Router,
-    public _reportsService: ListArticlesRequirementsByTransactionService
+    private _toastService: ToastService
   ) {
-    this.transactionTypesSelect = new Array();
-    this.filters = {};
-    for (let field of this.columns) {
-      if (field.defaultFilter) {
-        this.filters[field.name] = field.defaultFilter;
-      } else {
-        this.filters[field.name] = '';
-      }
-    }
     this.startDate = moment().format('YYYY-MM-DD');
     this.endDate = moment().format('YYYY-MM-DD');
     this.dateSelect = 'creationDate';
   }
 
   async ngOnInit() {
-    await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
-      this.branches = branches;
-    });
-
-    let pathLocation: string[] = this._router.url.split('/');
-
-    this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    this.modules = observableOf(Config.modules);
-    if (this.listType === 'Compras') {
-      this.transactionMovement = TransactionMovement.Purchase;
-    } else if (this.listType === 'Ventas') {
-      this.transactionMovement = TransactionMovement.Sale;
-    } else if (this.listType === 'Stock') {
-      this.transactionMovement = TransactionMovement.Stock;
-    } else if (this.listType === 'Fondos') {
-      this.transactionMovement = TransactionMovement.Money;
-    } else if (this.listType === 'Production') {
-      this.transactionMovement = TransactionMovement.Production;
+    if (!this.branchSelectedId) {
+      await this.getBranches().then((branches) => {
+        this.branches = branches;
+        if (this.branches && this.branches.length > 1) {
+          this.branchSelectedId = this.branches[0]._id;
+        }
+      });
+      this._authService.getIdentity.subscribe(async (identity) => {
+        if (identity && identity.origin) {
+          this.allowChangeBranch = false;
+          this.branchSelectedId = identity.origin.branch._id;
+        } else {
+          this.allowChangeBranch = true;
+          this.branchSelectedId = null;
+        }
+      });
     }
 
-    this._authService.getIdentity.subscribe(async (identity) => {
-      // get permision
-
-      if (identity?.permission?.collections.some((collection) => collection.name === 'transacciones')) {
-        // Encontrar el objeto con name igual a "transacciones"
-        const transactionObject = identity.permission.collections.find(
-          (collection) => collection.name === 'transacciones'
-        );
-
-        // Guardar los valores de 'actions' en las variables correspondientes
-        this.deleteTransaction = transactionObject.actions.delete;
-        this.editTransaction = transactionObject.actions.edit;
-      }
-
-      if (identity && identity.origin) {
-        this.branchSelectedId = identity.origin.branch._id;
-        this.allowChangeBranch = false;
-
-        for (let index = 0; index < this.columns.length; index++) {
-          if (this.columns[index].name === 'branchDestination') {
-            this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
-          }
-        }
-      } else {
-        this.allowChangeBranch = true;
-        this.branchSelectedId = null;
-      }
-    });
-
-    await this.getTransactionTypes().then((result) => {
-      if (result) {
-        this.transactionTypes = result;
-      }
-    });
-
-    this.getItems();
+    this.getTransactionTypes();
+    this.getArticleRequirements();
   }
 
-  public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve) => {
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  private getBranches(): Promise<Branch[]> {
+    return new Promise<Branch[]>((resolve, reject) => {
       this._branchService
-        .getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            if (result && result.branches) {
-              resolve(result.branches);
-            } else {
-              resolve(null);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            resolve(null);
-          }
-        );
-    });
-  }
-
-  public getTransactionTypes(): Promise<TransactionType[]> {
-    return new Promise<TransactionType[]>((resolve, reject) => {
-      let match = {};
-
-      match = {
-        transactionMovement: this.transactionMovement,
-        operationType: { $ne: 'D' },
-      };
-
-      this._transactionTypeService
         .getAll({
           project: {
             _id: 1,
-            transactionMovement: 1,
-            requestArticles: 1,
             operationType: 1,
-            name: 1,
-            branch: 1,
           },
-          match: match,
+          match: {
+            operationType: { $ne: 'D' },
+          },
         })
-        .subscribe(
-          (result) => {
-            if (result) {
-              resolve(result.result);
-            } else {
-              resolve(null);
-            }
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            resolve(result.result);
           },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
+          error: (error) => {
             resolve(null);
-          }
-        );
+          },
+          complete: () => {},
+        });
     });
   }
 
-  public getItems(): void {
+  private getTransactionTypes() {
+    this._transactionTypeService
+      .getAll({
+        project: {
+          _id: 1,
+          transactionMovement: 1,
+          requestArticles: 1,
+          operationType: 1,
+          name: 1,
+          branch: 1,
+        },
+        match: {
+          transactionMovement: 'Producción',
+          operationType: { $ne: 'D' },
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.transactionTypes = result.result;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
+  }
+
+  public getArticleRequirements(): void {
     this.loading = true;
+    let types = this.transactionTypesSelect?.map((item) => item._id);
 
-    this.items = [];
-
-    const transactionTypesId = this.transactionTypesSelect.map((id) => id._id);
+    const requestPayload = {
+      reportType: 'art-requirements-by-transactions',
+      filters: {
+        branch: this.branchSelectedId,
+        type: this.transactionMovement,
+        transactionTypes: types ?? [],
+        status: this.statusSelect ?? [],
+        startDate: this.startDate,
+        dateSelect: this.dateSelect,
+        endDate: this.endDate,
+      },
+      pagination: {
+        page: this.currentPage,
+        pageSize: 10,
+      },
+      sorting: {
+        column: 'article',
+        direction: 'asc',
+      },
+    };
 
     this.subscription.add(
-      this._reportsService
-        .getRequirementByTransaction(
-          this.startDate,
-          this.endDate,
-          [this.stateSelect],
-          transactionTypesId.length > 0 ? transactionTypesId : [''],
-          this.dateSelect,
-          this.branchSelectedId
-        )
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (result.result) {
-              if (this.itemsPerPage === 0) {
-                this.itemsPerPage = 10;
-                this.getItems();
-              } else {
-                this.items = result.result;
-                this.filterItems = result.result;
-                this.totalItems = result.result.length;
-              }
-            } else {
-              this.items = new Array();
-              this.filterItems = new Array();
-              this.totalItems = 0;
-            }
+      this._service
+        .getReport(requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            this._toastService.showToast(result);
+            this.data = result.result.data;
+            this.columns = result.result.columns;
           },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
             this.loading = false;
-            this.totalItems = 0;
-          }
-        )
+          },
+        })
     );
-  }
-
-  filterItem() {
-    let filteredList = this.items;
-    for (const column of this.columns) {
-      const filterValue = this.filters[column.name]?.toString().trim();
-      if (filterValue !== undefined && filterValue !== '' && column.filter) {
-        filteredList = filteredList.filter((dato) => {
-          const columnValue = dato[column.name];
-          if (typeof columnValue === 'string') {
-            return columnValue.toLowerCase().includes(filterValue.toLowerCase());
-          } else if (typeof columnValue === 'number') {
-            return columnValue.toString() === filterValue;
-          }
-
-          return false;
-        });
-      }
-    }
-
-    this.filterItems = filteredList;
-    this.totalItems = filteredList.length;
-  }
-
-  public getColumnsVisibles(): number {
-    let count: number = 0;
-
-    for (let column of this.columns) {
-      if (column.visible) {
-        count++;
-      }
-    }
-
-    return count;
-  }
-
-  public getValue(item, column): any {
-    let val: string = 'item';
-    let exists: boolean = true;
-    let value: any = '';
-    for (let a of column.name.split('.')) {
-      val += '.' + a;
-      if (exists && !eval(val)) {
-        exists = false;
-      }
-    }
-    if (exists) {
-      switch (column.datatype) {
-        case 'number':
-          value = this.roundNumberPipe.transform(eval(val));
-          break;
-        case 'currency':
-          value = this.currencyPipe.transform(
-            this.roundNumberPipe.transform(eval(val)),
-            'USD',
-            'symbol-narrow',
-            '1.2-2'
-          );
-          break;
-        case 'percent':
-          value = this.roundNumberPipe.transform(eval(val)) + '%';
-          break;
-        case 'date':
-          value = this.dateFormat.transform(eval(val), 'DD/MM/YYYY');
-          break;
-        default:
-          value = eval(val);
-          break;
-      }
-    }
-
-    return value;
-  }
-
-  public refresh(): void {
-    this.getItems();
-  }
-
-  public exportItems(): void {
-    this.exportExcelComponent.items = this.items;
-    this.exportExcelComponent.export();
-  }
-
-  public drop(event: CdkDragDrop<string[]>): void {
-    moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
-  }
-
-  public pageChange(page): void {
-    this.currentPage = page;
-  }
-
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-  public hideMessage(): void {
-    this.alertMessage = '';
   }
 }

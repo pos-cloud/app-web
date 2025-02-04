@@ -46,7 +46,6 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   public loading: boolean = false;
   public startDate: string = moment().format('YYYY-MM-DD');
   public endDate: string = moment().format('YYYY-MM-DD');
-  public limit: number = 0;
   public itemsPerPage: string = '5';
   public currentPage: number = 1;
   public sort = { count: -1 };
