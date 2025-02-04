@@ -146,6 +146,7 @@ export class PrintComponent implements OnInit {
     large: 15,
     extraLarge: 20,
   };
+  database: string;
 
   constructor(
     public _cashBoxService: CashBoxService,
@@ -170,6 +171,8 @@ export class PrintComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.database = localStorage.getItem('company');
+
     if (!this.printer || !this.printer.printIn) {
       this.printer = new Printer();
       this.printer.name = 'PDF';
@@ -2978,7 +2981,7 @@ export class PrintComponent implements OnInit {
 
           row += 5;
 
-          if (row > 240) {
+          if (row >= 240) {
             this.doc.setFont('helvetica', 'bold');
             this.doc.text('TRANSPORTE:'.toString(), 25, row);
             this.doc.text('$ ' + this.roundNumber.transform(transport).toString(), 185, row);
@@ -3257,26 +3260,8 @@ export class PrintComponent implements OnInit {
       let rowTotals = 247;
 
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text('Subtotal:', 140, rowTotals);
+      if (this.database !== 'borlaschic') this.doc.text('Subtotal:', 140, rowTotals);
 
-      rowTotals += space;
-
-      this.doc.text('Descuento:', 140, rowTotals);
-      this.doc.setFont(undefined, 'normal');
-      if (this.transaction.discountAmount && this.transaction.taxes && this.transaction.taxes.length > 0) {
-        this.doc.text(
-          '$ (' +
-            this.roundNumber.transform(
-              this.transaction.discountAmount / (1 + this.transaction.taxes[0].percentage / 100),
-              2
-            ) +
-            ')',
-          173,
-          rowTotals
-        );
-      } else {
-        this.doc.text('$ (' + this.roundNumber.transform(this.transaction.discountAmount, 2) + ')', 173, rowTotals);
-      }
       let subtotal = this.transaction.totalPrice;
       let neto = 0;
 
@@ -3321,9 +3306,30 @@ export class PrintComponent implements OnInit {
         } else {
           subtotal += this.transaction.discountAmount;
         }
+
+        rowTotals += space;
+
+        this.doc.setFont('helvetica', 'bold');
+        this.doc.text('Descuento:', 140, rowTotals);
+        this.doc.setFont(undefined, 'normal');
+        if (this.transaction.discountAmount && this.transaction.taxes && this.transaction.taxes.length > 0) {
+          this.doc.text(
+            '$ (' +
+              this.roundNumber.transform(
+                this.transaction.discountAmount / (1 + this.transaction.taxes[0].percentage / 100),
+                2
+              ) +
+              ')',
+            173,
+            rowTotals
+          );
+        } else {
+          this.doc.text('$ (' + this.roundNumber.transform(this.transaction.discountAmount, 2) + ')', 173, rowTotals);
+        }
       }
 
-      this.doc.text('$ ' + this.roundNumber.transform(subtotal, 2).toString(), 173, 247);
+      if (this.database !== 'borlaschic')
+        this.doc.text('$ ' + this.roundNumber.transform(subtotal, 2).toString(), 173, 247);
       if (neto > 0) {
         this.doc.text('$ ' + this.roundNumber.transform(neto, 2).toString(), 173, rowNet);
       }

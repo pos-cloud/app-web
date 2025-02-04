@@ -302,7 +302,7 @@
         </table>
       </div>
       <div class="row table-totals" *ngIf="transaction.type && transaction.type.showPrices">
-        <table class="table table-striped">
+        <table *ngIf="database !== 'borlaschic'" class="table table-striped">
           <tbody>
             <tr class="totals">
               <td align="left">
@@ -355,6 +355,124 @@
               </td>
               <td align="right">
                 <strong>{{ totalTaxesBase | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+              </td>
+            </tr>
+
+            <tr
+              *ngIf="
+                (transactionMovement !== 'Stock' || transactionMovement !== 'Producción') &&
+                transaction.type.requestTaxes
+              "
+              (click)="!loading ? openModal('change-taxes') : $event.stopPropagation()"
+              [ngClass]="{ disabled: loading, enabled: !loading }"
+              class="pointer totals"
+            >
+              <td align="left"></td>
+              <td align="left"></td>
+              <td align="left">
+                <strong>Impuestos</strong>
+              </td>
+              <td align="right">
+                <strong>{{ totalTaxesAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+              </td>
+            </tr>
+            <tr
+              *ngIf="
+                transaction.exempt > 0 &&
+                transactionMovement !== 'Stock' &&
+                transactionMovement !== 'Producción' &&
+                transaction.type.requestTaxes
+              "
+              [ngClass]="{ disabled: loading, enabled: !loading }"
+              class="pointer totals"
+            >
+              <td align="left"></td>
+              <td align="left"></td>
+              <td align="left">
+                <strong>Exento</strong>
+              </td>
+              <td align="right">
+                <strong>{{ transaction.exempt | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <div *ngIf="m3 > 0">
+                  <strong>M3</strong>
+                </div>
+              </td>
+              <td align="left">
+                <div *ngIf="m3 > 0">
+                  <strong>{{ m3 }}</strong>
+                </div>
+              </td>
+              <td align="left">
+                <h6>
+                  <b>TOTAL</b>
+                </h6>
+              </td>
+              <td align="right">
+                <h5>
+                  <b>{{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</b>
+                </h5>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table *ngIf="database === 'borlaschic'" class="table table-striped">
+          <tbody>
+            <tr class="totals">
+              <td align="left">
+                <strong>Productos</strong>
+              </td>
+              <td align="left">
+                <strong>{{ quantity }}</strong>
+              </td>
+            </tr>
+
+            <tr
+              *ngIf="
+                (transactionMovement !== 'Stock' || transactionMovement !== 'Producción') &&
+                transaction.type.requestTaxes
+              "
+              [ngClass]="{ disabled: loading, enabled: !loading }"
+              class="pointer totals"
+            >
+              <td align="left"></td>
+              <td align="left"></td>
+              <td align="left">
+                <strong>Neto Gravado</strong>
+              </td>
+              <td align="right">
+                <strong>{{ totalTaxesBase | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+              </td>
+            </tr>
+            <!-- 
+              <td align="left">
+                <strong>Subtotal</strong>
+              </td>
+              <td align="right">
+                <strong>{{
+                  transaction.totalPrice - transaction.discountAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                }}</strong>
+              </td> -->
+
+            <tr
+              class="totals"
+              *ngIf="
+                transaction.discountAmount > 0 &&
+                transactionMovement !== 'Stock' &&
+                transactionMovement !== 'Producción'
+              "
+            >
+              <td align="left"></td>
+              <td align="left"></td>
+              <td align="left">
+                <strong>Descuento</strong>
+              </td>
+              <td align="right">
+                <strong>({{ transaction.discountAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }})</strong>
               </td>
             </tr>
 

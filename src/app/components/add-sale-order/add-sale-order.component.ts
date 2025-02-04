@@ -108,6 +108,7 @@ export class AddSaleOrderComponent {
   transactionMovement: string;
   alertMessage: string = '';
   display = true;
+  discountApply = 0;
   movementsOfArticles: MovementOfArticle[];
   movementsOfCashes: MovementOfCash[];
   usesOfCFDI: UseOfCFDI[];
@@ -558,6 +559,15 @@ export class AddSaleOrderComponent {
 
   saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
     for (let mov of movementsOfCancellations) {
+      if (
+        mov.transactionOrigin.discountAmount > 0 &&
+        (this.database === 'borlaschic' || this.database === 'insumosmaxs')
+      ) {
+        this.discountApply =
+          (mov.transactionOrigin.totalPrice + mov.transactionOrigin.discountAmount) /
+          mov.transactionOrigin.discountAmount;
+      }
+
       let transOrigin = new Transaction();
 
       transOrigin._id = mov.transactionOrigin._id;
@@ -682,8 +692,12 @@ export class AddSaleOrderComponent {
           this.containerMovementsOfArticles.nativeElement.scrollTop =
             this.containerMovementsOfArticles.nativeElement.scrollHeight;
           this.updateQuantity();
-          this.updatePrices();
-
+          if (this.discountApply > 0) {
+            // esto es solo para borlaschic e insumosmaxs
+            this.updatePrices(this.discountApply);
+          } else {
+            this.updatePrices();
+          }
           // esto para bardo solamente por que necesita que se haga la lectura de uno y se vuelva a crear automaticamente.
           if (
             result.movementsOfArticles.length == 1 &&
