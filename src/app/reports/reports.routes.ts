@@ -18,10 +18,10 @@ export const REPORTS_ROUTES: Routes = [
       ),
   },
   {
-    path: 'sales/payment-method/:module',
+    path: 'transactions-payment-method/:module',
     loadComponent: () =>
-      import('./report-sales-by-payment-method/report-sales-by-payment-method.component').then(
-        (m) => m.ReportSalesByPaymentMethod
+      import('./transactions-by-payment-method/transactions-by-payment-method.component').then(
+        (m) => m.TransactionsByPaymentMethod
       ),
   },
 ];

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
@@ -26,7 +25,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   standalone: true,
   selector: 'app-report-sales-by-payment-method.ts',
-  templateUrl: './report-sales-by-payment-method.component.html',
+  templateUrl: './transactions-by-payment-method.component.html',
   imports: [
     CommonModule,
     FormsModule,
@@ -40,14 +39,14 @@ import { takeUntil } from 'rxjs/operators';
     DateTimePickerComponent,
   ],
 })
-export class ReportSalesByPaymentMethod implements OnInit {
+export class TransactionsByPaymentMethod implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
 
   public loading: boolean = false;
-  public startDate: string = moment().format('YYYY-MM-DD');
-  public endDate: string = moment().format('YYYY-MM-DD');
+  public startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  public endDate: string = new Date().toISOString();
   public itemsPerPage: string = '5';
   public currentPage: number = 1;
   public sort = { count: -1 };
@@ -199,7 +198,6 @@ export class ReportSalesByPaymentMethod implements OnInit {
             this.data = result.result.data;
             this.columns = result.result.columns;
             this.totals = result.result.totals;
-            console.log(this.totals);
           },
           error: (error) => {
             this._toastService.showToast(error);
