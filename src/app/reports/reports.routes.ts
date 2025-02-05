@@ -17,4 +17,11 @@ export const REPORTS_ROUTES: Routes = [
         (m) => m.ListArticlesRequirementsByTransactionComponent
       ),
   },
+  {
+    path: 'sales/payment-method/:module',
+    loadComponent: () =>
+      import('./report-sales-by-payment-method/report-sales-by-payment-method.component').then(
+        (m) => m.ReportSalesByPaymentMethod
+      ),
+  },
 ];

@@ -1,0 +1,107 @@
+<section class="container-fluid">
+  <!-- Filtros -->
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
+      <label for="branch" class="control-label">
+        <b>{{ 'agency' | translate | capitalize }}</b>
+      </label>
+      <select class="form-control" [(ngModel)]="branchSelectedId">
+        <option [ngValue]="null" [disabled]="!allowChangeBranch">Todas</option>
+        <option *ngFor="let branch of branches" [ngValue]="branch._id" [disabled]="!allowChangeBranch">
+          {{ branch.number }} - {{ branch.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group mr-2">
+      <label for="transactionType" class="control-label">
+        <b>Tipo de Transacción</b>
+      </label>
+      <ng-multiselect-dropdown
+        [placeholder]="'Tipo de Transacción'"
+        [settings]="dropdownSettings"
+        [data]="transactionTypes"
+        [(ngModel)]="transactionTypesSelect"
+      >
+      </ng-multiselect-dropdown>
+    </div>
+
+    <div class="form-group mr-2">
+      <label for="startDate" class="control-label">
+        <b>{{ 'startDate' | translate | capitalize }}:</b>
+      </label>
+      <app-date-time-picker [(ngModel)]="startDate" name="startDate"></app-date-time-picker>
+    </div>
+
+    <div class="form-group mr-2">
+      <label for="endDate" class="control-label">
+        <b>{{ 'endDate' | translate | capitalize }}:</b>
+      </label>
+      <app-date-time-picker [(ngModel)]="endDate" name="endDate"></app-date-time-picker>
+    </div>
+
+    <!-- <div class="form-group mr-2">
+      <label for="startDate" class="control-label">
+        <b>{{ 'startDate' | translate | capitalize }}:</b>
+      </label>
+      <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
+    </div>
+
+    <div class="form-group mr-2">
+      <label for="endDate" class="control-label">
+        <b>{{ 'endDate' | translate | capitalize }}:</b>
+      </label>
+      <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
+    </div> -->
+
+    <!-- Botón de Actualizar -->
+    <div class="form-group ml-auto">
+      <label class="control-label"> </label>
+      <button class="btn btn-primary" (click)="getSalesByPaymentMethod()">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+      </button>
+    </div>
+  </div>
+  <div class="card card-large">
+    <div class="card-header">Categorías por {{ transactionMovement }}</div>
+    <div class="card-block table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <ng-container *ngFor="let column of columns">
+              <th>{{ column.name | translate | capitalize }}</th>
+            </ng-container>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngIf="loading">
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
+
+          <tr *ngFor="let item of data">
+            <td *ngFor="let column of columns">
+              {{ item[column.name] }}
+            </td>
+          </tr>
+
+          <tr align="center" *ngIf="(!data || data.length === 0) && !loading">
+            <td colspan="10">{{ 'no data found' | translate | capitalize }}</td>
+          </tr>
+        </tbody>
+
+        <tfoot *ngIf="data?.length">
+          <tr>
+            <td *ngFor="let column of columns; let i = index">
+              <strong *ngIf="i > 0 && totals[column.name] !== undefined">
+                {{ totals[column.name] | number: '1.2-2' }}
+              </strong>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</section>
