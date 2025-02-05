@@ -124,14 +124,13 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
     }
   }
 
-  onDateChange($event: string | NgbDateStruct) {
-    // if ($event.year) {
-    //   $event = `${$event.year}-${$event.month}-${$event.day}`;
-    // }
+  onDateChange($event: NgbDateStruct) {
+    let newDate: string;
+    if ($event.year) {
+      newDate = `${$event.year}-${$event.month}-${$event.day}`;
+    }
 
-    console.log('entro');
-
-    const date = DateTimeModel.fromLocalString($event.toString());
+    const date = DateTimeModel.fromLocalString(newDate.toString());
 
     if (!date) {
       this.dateString = this.dateString;
@@ -160,16 +159,15 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
 
   setDateStringModel() {
     this.dateString = this.datetime.toString();
-    this.onChange(this.dateString);
 
-    // if (!this.firstTimeAssign) {
-    //   this.onChange(this.dateString);
-    // } else {
-    //   // Skip very first assignment to null done by Angular
-    //   if (this.dateString !== null) {
-    //     this.firstTimeAssign = false;
-    //   }
-    // }
+    if (!this.firstTimeAssign) {
+      this.onChange(this.dateString);
+    } else {
+      // Skip very first assignment to null done by Angular
+      if (this.dateString !== null) {
+        this.firstTimeAssign = false;
+      }
+    }
   }
 
   inputBlur($event) {
