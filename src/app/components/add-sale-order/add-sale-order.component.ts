@@ -3603,7 +3603,8 @@ export class AddSaleOrderComponent {
       if (this.config['country'] === 'AR') {
         if (
           this.config['companyVatCondition'] &&
-          this.config['companyVatCondition'].description === 'Responsable Inscripto'
+          (this.config['companyVatCondition'].description === 'Responsable Inscripto' ||
+            this.config['companyVatCondition'].description === 'Resp.Insc.')
         ) {
           if (this.transaction.company && this.transaction.company.vatCondition) {
             this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
@@ -3612,7 +3613,8 @@ export class AddSaleOrderComponent {
           }
         } else if (
           this.config['companyVatCondition'] &&
-          this.config['companyVatCondition'].description === 'Monotributista'
+          (this.config['companyVatCondition'].description === 'Monotributista' ||
+            this.config['companyVatCondition'].description === 'Monotributo')
         ) {
           this.transaction.letter = 'C';
         } else {
