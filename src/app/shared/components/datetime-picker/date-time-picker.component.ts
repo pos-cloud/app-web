@@ -129,6 +129,8 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
     //   $event = `${$event.year}-${$event.month}-${$event.day}`;
     // }
 
+    console.log('entro');
+
     const date = DateTimeModel.fromLocalString($event.toString());
 
     if (!date) {
@@ -144,7 +146,7 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
     this.datetime.month = date.month;
     this.datetime.day = date.day;
 
-    this.dp.navigateTo({ year: this.datetime.year, month: this.datetime.month });
+    //this.dp.navigateTo({ year: this.datetime.year, month: this.datetime.month });
     this.setDateStringModel();
   }
 
@@ -158,15 +160,16 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
 
   setDateStringModel() {
     this.dateString = this.datetime.toString();
+    this.onChange(this.dateString);
 
-    if (!this.firstTimeAssign) {
-      this.onChange(this.dateString);
-    } else {
-      // Skip very first assignment to null done by Angular
-      if (this.dateString !== null) {
-        this.firstTimeAssign = false;
-      }
-    }
+    // if (!this.firstTimeAssign) {
+    //   this.onChange(this.dateString);
+    // } else {
+    //   // Skip very first assignment to null done by Angular
+    //   if (this.dateString !== null) {
+    //     this.firstTimeAssign = false;
+    //   }
+    // }
   }
 
   inputBlur($event) {
