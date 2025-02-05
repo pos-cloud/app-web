@@ -1,0 +1,28 @@
+.dropdown-container {
+  position: relative;
+  width: 200px;
+}
+
+.dropdown-header {
+  border: 1px solid #ddd;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-list {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1;
+}
+
+.dropdown-item {
+  padding: 8px;
+}
+
+.search-box {
+  padding: 8px;
+}
