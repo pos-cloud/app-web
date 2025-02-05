@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
@@ -14,6 +13,7 @@ import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -36,6 +36,7 @@ import { takeUntil } from 'rxjs/operators';
     NgMultiSelectDropDownModule,
     NgxPaginationModule,
     ExportersModule,
+    DateTimePickerComponent,
   ],
 })
 export class ReportMovArtByCategoryComponent implements OnInit {
@@ -44,8 +45,8 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   public totals: any = {};
 
   public loading: boolean = false;
-  public startDate: string = moment().format('YYYY-MM-DD');
-  public endDate: string = moment().format('YYYY-MM-DD');
+  public startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  public endDate: string = new Date().toISOString();
   public itemsPerPage: string = '5';
   public currentPage: number = 1;
   public sort = { count: -1 };

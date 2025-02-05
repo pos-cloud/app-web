@@ -46,8 +46,8 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
-  public startDate: string = moment().format('YYYY-MM-DD');
-  public endDate: string = moment().format('YYYY-MM-DD');
+  public startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  public endDate: string = new Date().toISOString();
   public itemsPerPage: string = '5';
   public currentPage: number = 1;
   public sort = { count: -1 };
