@@ -70,6 +70,13 @@
       <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
     </div>
 
+    <div class="form-group mr-2">
+      <label for="endDate" class="control-label">
+        <b>{{ 'endDate' | translate | capitalize }}:</b>
+      </label>
+      <app-date-time-picker [(ngModel)]="dateModel" name="activeEndDate"></app-date-time-picker>
+    </div>
+
     <!-- Botón de Actualizar -->
     <div class="form-group ml-auto">
       <label class="control-label"> </label>

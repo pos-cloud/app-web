@@ -11,6 +11,7 @@ import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
@@ -35,12 +36,13 @@ import { takeUntil } from 'rxjs/operators';
     NgMultiSelectDropDownModule,
     NgxPaginationModule,
     ExportersModule,
+    DateTimePickerComponent,
   ],
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
-
+  public dateModel: Date = new Date();
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
@@ -166,6 +168,8 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   }
 
   public getArticleRequirements(): void {
+    console.log(this.dateModel);
+
     this.loading = true;
     let types = this.transactionTypesSelect?.map((item) => item._id);
 
