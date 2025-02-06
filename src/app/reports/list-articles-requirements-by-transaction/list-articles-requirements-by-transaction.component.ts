@@ -14,7 +14,6 @@ import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/d
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Subject, Subscription } from 'rxjs';
@@ -39,22 +38,18 @@ import { takeUntil } from 'rxjs/operators';
   ],
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
+  // date table
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
 
+  public transactionMovement: string;
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
-  public startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  public endDate: string = new Date().toISOString();
-  public transactionMovement: string;
-  public branches: Branch[];
-  public branchSelectedId: string;
-  public allowChangeBranch: boolean;
-  public dateFormat = new DateFormatPipe();
-  public statusSelect: string[] = [];
 
+  // filters
+  statusSelect: string[] = [];
   statusOptions = [
     { _id: '', name: 'Todos' },
     { _id: 'Abierto', name: 'Abierto' },
@@ -70,9 +65,10 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     { _id: 'Preparando', name: 'Preparando' },
   ];
 
-  dateSelect: string[] = [];
-  public transactionTypes: TransactionType[];
+  transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
+
+  dateSelect: string[] = [];
   dateSelected: any[] = [
     {
       _id: 'creationDate',
@@ -88,6 +84,12 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     },
   ];
 
+  branches: Branch[];
+  branchSelectedId: string[] = [];
+
+  startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  endDate: string = new Date().toISOString();
+
   constructor(
     private _service: ReportSystemService,
     private _branchService: BranchService,
@@ -97,24 +99,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    if (!this.branchSelectedId) {
-      await this.getBranches().then((branches) => {
-        this.branches = branches;
-        if (this.branches && this.branches.length > 1) {
-          this.branchSelectedId = this.branches[0]._id;
-        }
-      });
-      this._authService.getIdentity.subscribe(async (identity) => {
-        if (identity && identity.origin) {
-          this.allowChangeBranch = false;
-          this.branchSelectedId = identity.origin.branch._id;
-        } else {
-          this.allowChangeBranch = true;
-          this.branchSelectedId = null;
-        }
-      });
-    }
-
+    this.getBranches();
     this.getTransactionTypes();
     this.getReport();
   }
@@ -139,7 +124,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            resolve(result.result);
+            this.branches = result.result;
           },
           error: (error) => {
             resolve(null);
@@ -169,8 +154,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this.transactionTypes = result.result;
-          console.log(this.transactionTypes);
-          console.log(this.dateSelected);
         },
         error: (error) => {
           this._toastService.showToast(error);
