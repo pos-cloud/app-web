@@ -4,17 +4,23 @@
 }
 
 .dropdown-header {
-  border: 1px solid #ddd;
-  padding: 10px;
+  padding: 8px;
   cursor: pointer;
+  background-color: white;
+  font-weight: normal;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dropdown-list {
   position: absolute;
   background: white;
   border: 1px solid #ddd;
+  max-height: 250px;
   width: 100%;
-  max-height: 200px;
   overflow-y: auto;
   z-index: 1;
 }
@@ -25,4 +31,18 @@
 
 .search-box {
   padding: 8px;
+}
+
+.dropdown-item-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdown-item-label input {
+  margin-right: 8px;
+}
+
+label {
+  margin-bottom: 0px;
 }

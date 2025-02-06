@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 
 @Component({
   selector: 'app-multi-select-dropdown',
@@ -10,26 +10,37 @@ import { Component, Input } from '@angular/core';
 })
 export class MultiSelectDropdownComponent {
   @Input() data: any[] = [];
-  @Input() placeholder: string = 'Selecciona elementos';
-  @Input() textField: string = 'name'; // Lo que se mostrará en el dropdown (ej. 'descripcion' o 'name')
+  @Input() placeholder: string = '-';
+  @Input() textField: string = 'name';
   @Input() allowSearch: boolean = true;
 
+  uniqueId: string;
   selectedItems: any[] = [];
   isOpen = false;
   searchTerm = '';
 
   @Input() set ngModel(value: any[]) {
-    // Cuando el ngModel cambia, se asegura de que solo estamos guardando los _id en selectedItems
     this.selectedItems = value || [];
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent): void {
+    const dropdownElement = document.querySelector(`#${this.uniqueId}`);
+    if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
+      this.isOpen = false;
+    }
+  }
+
+  constructor() {
+    this.uniqueId = `dropdown-${Math.floor(Math.random() * 1000000)}-${Date.now()}`;
   }
 
   toggleDropdown() {
     this.isOpen = !this.isOpen;
   }
 
-  // Función para verificar si un ítem está seleccionado
   isSelected(item: any): boolean {
-    return this.selectedItems.includes(item._id); // Comparamos por _id
+    return this.selectedItems.includes(item._id);
   }
 
   // Función para alternar la selección
@@ -43,8 +54,10 @@ export class MultiSelectDropdownComponent {
 
   // Función para obtener los elementos seleccionados como texto
   getSelectedItemsText(): string {
-    const selectedItems = this.data.filter((item) => this.selectedItems.includes(item._id));
-    return selectedItems.map((item) => item[this.textField]).join(', ');
+    const selectedCount = this.selectedItems.length; // Contamos la cantidad de elementos seleccionados
+    return selectedCount > 0
+      ? `${selectedCount} elemento${selectedCount > 1 ? 's' : ''} seleccionado${selectedCount > 1 ? 's' : ''}`
+      : this.placeholder;
   }
 
   // Filtrar los elementos basados en la búsqueda

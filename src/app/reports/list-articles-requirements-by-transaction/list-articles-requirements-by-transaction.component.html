@@ -4,56 +4,37 @@
       <label for="branch" class="control-label">
         <b>{{ 'agency' | translate | capitalize }}</b>
       </label>
-      <select class="form-control" [(ngModel)]="branchSelectedId">
-        <option [ngValue]="null" [disabled]="!allowChangeBranch">Todas</option>
-        <option *ngFor="let branch of branches" [ngValue]="branch._id" [disabled]="!allowChangeBranch">
-          {{ branch.number }} - {{ branch.name }}
-        </option>
-      </select>
+      <app-multi-select-dropdown [data]="branches" [(ngModel)]="branchSelectedId" placeholder="Sucursal">
+      </app-multi-select-dropdown>
     </div>
 
     <div class="form-group mr-2">
       <label for="transactionType" class="control-label">
         <b>Tipo de Transacción</b>
       </label>
-      <ng-multiselect-dropdown
-        [placeholder]="'Tipo de Transacción'"
-        [settings]="dropdownSettings"
+      <app-multi-select-dropdown
         [data]="transactionTypes"
         [(ngModel)]="transactionTypesSelect"
+        placeholder="Tipo de Transacción"
       >
-      </ng-multiselect-dropdown>
+      </app-multi-select-dropdown>
     </div>
 
     <div class="form-group mr-2">
       <label class="control-label">
         <b>Estado:</b>
       </label>
-      <select class="form-control" [(ngModel)]="statusSelect">
-        <option value="">Todos</option>
-        <option value="Abierto">Abierto</option>
-        <option value="Anulado">Anulado</option>
-        <option value="Armando">Armando</option>
-        <option value="Cerrado">Cerrado</option>
-        <option value="Entregado">Entregado</option>
-        <option value="Enviado">Enviado</option>
-        <option value="Pago Confirmado">Pago Confirmado</option>
-        <option value="Pago Rechazado">Pago Rechazado</option>
-        <option value="Pendiente">Pendiente</option>
-        <option value="Pendiente de pago">Pendiente de pago</option>
-        <option value="Preparando">Preparando</option>
-      </select>
+
+      <app-multi-select-dropdown [data]="statusOptions" [(ngModel)]="statusSelect" placeholder="Estado">
+      </app-multi-select-dropdown>
     </div>
 
     <div class="form-group mr-2">
-      <label for="dateSelect" class="control-label">
+      <label for="transactionType" class="control-label">
         <b>Por Fecha de:</b>
       </label>
-      <select class="form-control" [(ngModel)]="dateSelect">
-        <option value="creationDate">Creación</option>
-        <option value="updateDate">Modificación</option>
-        <option value="endDate2">Finalización</option>
-      </select>
+      <app-multi-select-dropdown [data]="dateSelected" [(ngModel)]="dateSelect" placeholder="Por Fecha de">
+      </app-multi-select-dropdown>
     </div>
 
     <div class="form-group mr-2">
@@ -73,42 +54,12 @@
     <!-- Botón de Actualizar -->
     <div class="form-group ml-auto">
       <label class="control-label"> </label>
-      <button class="btn btn-primary" (click)="getArticleRequirements()">
+      <button class="btn btn-primary" (click)="getReport()">
         <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
       </button>
     </div>
   </div>
 
-  <div class="card card-large">
-    <div class="card-header">Requisitos de producción</div>
-    <div class="card-block table-responsive">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <ng-container *ngFor="let column of columns">
-              <th>{{ column.name | translate | capitalize }}</th>
-            </ng-container>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr *ngIf="loading">
-            <td colspan="99" style="padding: 0px">
-              <app-progressbar [loading]="loading"></app-progressbar>
-            </td>
-          </tr>
-
-          <tr *ngFor="let item of data">
-            <td *ngFor="let column of columns">
-              {{ item[column.name] }}
-            </td>
-          </tr>
-
-          <tr align="center" *ngIf="(!data || data.length === 0) && !loading">
-            <td colspan="10">{{ 'no data found' | translate | capitalize }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <app-data-table-reports [data]="data" [columns]="columns" [totals]="totals" [title]="'Requerimientos de produccion'">
+  </app-data-table-reports>
 </section>

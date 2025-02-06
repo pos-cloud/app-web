@@ -1,30 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
-import { ExportersModule } from 'app/components/export/exporters.module';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
+import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import * as moment from 'moment';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-articles-requirements-by-transaction',
   templateUrl: './list-articles-requirements-by-transaction.component.html',
+  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
     CommonModule,
@@ -34,59 +33,68 @@ import { takeUntil } from 'rxjs/operators';
     PipesModule,
     NgbModule,
     NgMultiSelectDropDownModule,
-    NgxPaginationModule,
-    ExportersModule,
     DateTimePickerComponent,
+    MultiSelectDropdownComponent,
+    DataTableReportsComponent,
   ],
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
-  public dateModel: Date = new Date();
+  public totals: any = {};
+
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
   public startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   public endDate: string = new Date().toISOString();
-  public itemsPerPage: string = '5';
-  public currentPage: number = 1;
-  public sort = { count: -1 };
   public transactionMovement: string;
-  public totalItem: number = 0;
-  public totalAmount: number = 0;
   public branches: Branch[];
   public branchSelectedId: string;
   public allowChangeBranch: boolean;
   public dateFormat = new DateFormatPipe();
-  public statusSelect: string = '';
+  public statusSelect: string[] = [];
 
-  public dateSelect: string;
+  statusOptions = [
+    { _id: '', name: 'Todos' },
+    { _id: 'Abierto', name: 'Abierto' },
+    { _id: 'Anulado', name: 'Anulado' },
+    { _id: 'Armando', name: 'Armando' },
+    { _id: 'Cerrado', name: 'Cerrado' },
+    { _id: 'Entregado', name: 'Entregado' },
+    { _id: 'Enviado', name: 'Enviado' },
+    { _id: 'Pago Confirmado', name: 'Pago Confirmado' },
+    { _id: 'Pago Rechazado', name: 'Pago Rechazado' },
+    { _id: 'Pendiente', name: 'Pendiente' },
+    { _id: 'Pendiente de pago', name: 'Pendiente de pago' },
+    { _id: 'Preparando', name: 'Preparando' },
+  ];
+
+  dateSelect: string[] = [];
   public transactionTypes: TransactionType[];
-  transactionTypesSelect;
-  dropdownSettings = {
-    singleSelection: false,
-    defaultOpen: false,
-    idField: '_id',
-    textField: 'name',
-    selectAllText: 'Select All',
-    unSelectAllText: 'UnSelect All',
-    enableCheckAll: true,
-    itemsShowLimit: 3,
-    allowSearchFilter: true,
-  };
+  transactionTypesSelect: string[] = [];
+  dateSelected: any[] = [
+    {
+      _id: 'creationDate',
+      name: 'Creación',
+    },
+    {
+      _id: 'updateDate',
+      name: 'Modificación',
+    },
+    {
+      _id: 'endDate2',
+      name: 'Finalización',
+    },
+  ];
 
   constructor(
     private _service: ReportSystemService,
     private _branchService: BranchService,
-    public _transactionTypeService: TransactionTypeService,
+    private _transactionTypeService: TransactionTypeService,
     private _authService: AuthService,
-    public _router: Router,
     private _toastService: ToastService
-  ) {
-    this.startDate = moment().format('YYYY-MM-DD');
-    this.endDate = moment().format('YYYY-MM-DD');
-    this.dateSelect = 'creationDate';
-  }
+  ) {}
 
   async ngOnInit() {
     if (!this.branchSelectedId) {
@@ -108,7 +116,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     }
 
     this.getTransactionTypes();
-    this.getArticleRequirements();
+    this.getReport();
   }
 
   public ngOnDestroy(): void {
@@ -122,6 +130,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
           project: {
             _id: 1,
             operationType: 1,
+            name: 1,
           },
           match: {
             operationType: { $ne: 'D' },
@@ -160,6 +169,8 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this.transactionTypes = result.result;
+          console.log(this.transactionTypes);
+          console.log(this.dateSelected);
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -167,25 +178,22 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
       });
   }
 
-  public getArticleRequirements(): void {
-    console.log(this.dateModel);
-
+  public getReport(): void {
     this.loading = true;
-    let types = this.transactionTypesSelect?.map((item) => item._id);
 
     const requestPayload = {
       reportType: 'art-requirements-by-transactions',
       filters: {
         branch: this.branchSelectedId,
         type: this.transactionMovement,
-        transactionTypes: types ?? [],
+        transactionTypes: this.transactionTypesSelect ?? [],
         status: this.statusSelect ?? [],
         startDate: this.startDate,
         dateSelect: this.dateSelect,
         endDate: this.endDate,
       },
       pagination: {
-        page: this.currentPage,
+        page: 1,
         pageSize: 10,
       },
       sorting: {
@@ -203,6 +211,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
             this._toastService.showToast(result);
             this.data = result.result.data;
             this.columns = result.result.columns;
+            this.totals = result.result.totals;
           },
           error: (error) => {
             this._toastService.showToast(error);
