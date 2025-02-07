@@ -228,7 +228,9 @@ export class ArticleComponent implements OnInit {
         (term === ''
           ? this.categories
           : this.categories.filter((v) => v.description.toLowerCase().includes(term.toLowerCase()))
-        ).slice()
+        )
+          .slice()
+          .sort((a, b) => a.description.localeCompare(b.description))
       )
     );
   };
@@ -260,10 +262,9 @@ export class ArticleComponent implements OnInit {
 
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       map((term) =>
-        (term === ''
-          ? this.makes
-          : this.makes.filter((v) => v.description.toLowerCase().includes(term.toLowerCase()))
-        ).slice()
+        (term === '' ? this.makes : this.makes.filter((v) => v.description.toLowerCase().includes(term.toLowerCase())))
+          .slice()
+          .sort((a, b) => a.description.localeCompare(b.description))
       )
     );
   };
