@@ -190,3 +190,54 @@ db.categories.find({}).forEach((category) => {
   const newPictureUrl = 'https://poscloud.s3.sa-east-1.amazonaws.com/granpaso/' + category.picture;
   db.categories.updateOne({ _id: category._id }, { $set: { picture: newPictureUrl } });
 });
+
+//update category
+db['movements-of-articles'].find({}).forEach((movement) => {
+  const article = db.articles.findOne({ _id: movement.article });
+
+  if (article && article.category && movement.category && article.category !== movement.category) {
+    // Si article.category y movement.category existen y son diferentes, actualiza el movimiento
+    db['movements-of-articles'].updateOne({ _id: movement._id }, { $set: { category: article.category } });
+  }
+});
+
+// creacion de stock para articulos sin stock
+db.articles
+  .find({ type: 'Final', containsVariants: false, $or: [{ variants: { $exists: false } }, { variants: { $size: 0 } }] })
+  .forEach(function (article) {
+    const exists = db['article-stocks'].findOne({ article: article._id });
+
+    if (!exists) {
+      db['article-stocks'].insertOne({
+        realStock: 0,
+        minStock: 0,
+        maxStock: 0,
+        audits: [],
+        code: article.code,
+        article: article._id,
+        branch: ObjectId('66d1b6d32d74e50027417ef2'),
+        deposit: ObjectId('66d1b6d32d74e50027417ef4'),
+        creationDate: ISODate('2024-09-11T17:13:25.000Z'),
+        operationType: 'C',
+      });
+    }
+  });
+
+db.articles.find({ type: 'Variante' }).forEach(function (article) {
+  const exists = db['article-stocks'].findOne({ article: article._id });
+
+  if (!exists) {
+    db['article-stocks'].insertOne({
+      realStock: 0,
+      minStock: 0,
+      maxStock: 0,
+      audits: [],
+      code: article.code,
+      article: article._id,
+      branch: ObjectId('66d1b6d32d74e50027417ef2'),
+      deposit: ObjectId('66d1b6d32d74e50027417ef4'),
+      creationDate: ISODate('2024-09-11T17:13:25.000Z'),
+      operationType: 'C',
+    });
+  }
+});
