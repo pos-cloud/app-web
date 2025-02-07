@@ -43,4 +43,8 @@ export const REPORTS_ROUTES: Routes = [
         (m) => m.transactionsByEmployeeComponent
       ),
   },
+  {
+    path: 'kardex-articles/:module',
+    loadComponent: () => import('./kardex-articles/kardex-article.component').then((m) => m.KardexArticleComponent),
+  },
 ];
