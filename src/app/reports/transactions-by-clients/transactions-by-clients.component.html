@@ -1,5 +1,4 @@
 <section class="container-fluid">
-  <!-- Filtros -->
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
     <div class="form-group mr-2">
       <label for="branch" class="control-label">
@@ -18,6 +17,15 @@
         [(ngModel)]="transactionTypesSelect"
         placeholder="Tipo de Transacción"
       >
+      </app-multi-select-dropdown>
+    </div>
+
+    <div class="form-group mr-2">
+      <label class="control-label">
+        <b>Estado:</b>
+      </label>
+
+      <app-multi-select-dropdown [data]="statusOptions" [(ngModel)]="statusSelect" placeholder="Estado">
       </app-multi-select-dropdown>
     </div>
 
@@ -43,6 +51,7 @@
       </button>
     </div>
   </div>
-  <app-data-table-reports [data]="data" [columns]="columns" [totals]="totals" [title]="'Transacciones por categorías'">
+
+  <app-data-table-reports [data]="data" [columns]="columns" [totals]="totals" [title]="'Transacciones por clientes'">
   </app-data-table-reports>
 </section>

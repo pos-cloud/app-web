@@ -1,5 +1,4 @@
 <section class="container-fluid">
-  <!-- Filtros -->
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
     <div class="form-group mr-2">
       <label for="branch" class="control-label">
@@ -43,6 +42,7 @@
       </button>
     </div>
   </div>
-  <app-data-table-reports [data]="data" [columns]="columns" [totals]="totals" [title]="'Transacciones por categorías'">
+
+  <app-data-table-reports [data]="data" [columns]="columns" [totals]="totals" [title]="'Transacciones por empleados'">
   </app-data-table-reports>
 </section>

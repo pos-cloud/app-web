@@ -1,31 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import 'moment/locale/es';
-
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
-import { ExportersModule } from 'app/components/export/exporters.module';
-import { AuthService } from 'app/core/services/auth.service';
+import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
+import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  standalone: true,
   selector: 'app-mov-art-by-category',
   templateUrl: './mov-art-by-category.component.html',
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -34,50 +32,38 @@ import { takeUntil } from 'rxjs/operators';
     PipesModule,
     NgbModule,
     NgMultiSelectDropDownModule,
-    NgxPaginationModule,
-    ExportersModule,
     DateTimePickerComponent,
+    MultiSelectDropdownComponent,
+    DataTableReportsComponent,
+    ReactiveFormsModule,
   ],
 })
 export class ReportMovArtByCategoryComponent implements OnInit {
+  // date table
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
 
-  public loading: boolean = false;
-  public startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  public endDate: string = new Date().toISOString();
-  public itemsPerPage: string = '5';
-  public currentPage: number = 1;
-  public sort = { count: -1 };
   public transactionMovement: string;
-  public totalItem: number = 0;
-  public totalAmount: number = 0;
-  public branches: Branch[];
-  public branchSelectedId: string;
-  public allowChangeBranch: boolean;
-  private subscription: Subscription = new Subscription();
-  transactionTypes: any;
+  public loading: boolean = false;
   private destroy$ = new Subject<void>();
-  transactionTypesSelect;
-  dropdownSettings = {
-    singleSelection: false,
-    defaultOpen: false,
-    idField: '_id',
-    textField: 'name',
-    selectAllText: 'Select All',
-    unSelectAllText: 'UnSelect All',
-    enableCheckAll: true,
-    itemsShowLimit: 3,
-    allowSearchFilter: true,
-  };
+  private subscription: Subscription = new Subscription();
+
+  // filters
+
+  transactionTypes: TransactionType[];
+  transactionTypesSelect: string[] = [];
+
+  branches: Branch[];
+  branchSelectedId: string[] = [];
+
+  startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  endDate: string = new Date().toISOString();
 
   constructor(
-    public _service: ReportSystemService,
-    public _router: Router,
+    private _service: ReportSystemService,
     private _branchService: BranchService,
-    private _authService: AuthService,
-    public _transactionTypeService: TransactionTypeService,
+    private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute
   ) {}
@@ -87,25 +73,9 @@ export class ReportMovArtByCategoryComponent implements OnInit {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
     });
 
-    if (!this.branchSelectedId) {
-      await this.getBranches().then((branches) => {
-        this.branches = branches;
-        if (this.branches && this.branches.length > 1) {
-          this.branchSelectedId = this.branches[0]._id;
-        }
-      });
-      this._authService.getIdentity.subscribe(async (identity) => {
-        if (identity && identity.origin) {
-          this.allowChangeBranch = false;
-          this.branchSelectedId = identity.origin.branch._id;
-        } else {
-          this.allowChangeBranch = true;
-          this.branchSelectedId = null;
-        }
-      });
-    }
+    this.getBranches();
     this.getTransactionTypes();
-    this.getSalesByCategory();
+    this.getReport();
   }
 
   public ngOnDestroy(): void {
@@ -119,6 +89,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
           project: {
             _id: 1,
             operationType: 1,
+            name: 1,
           },
           match: {
             operationType: { $ne: 'D' },
@@ -127,7 +98,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            resolve(result.result);
+            this.branches = result.result;
           },
           error: (error) => {
             resolve(null);
@@ -138,10 +109,6 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   }
 
   private getTransactionTypes() {
-    let match = {
-      transactionMovement: this.transactionMovement,
-      operationType: { $ne: 'D' },
-    };
     this._transactionTypeService
       .getAll({
         project: {
@@ -152,7 +119,10 @@ export class ReportMovArtByCategoryComponent implements OnInit {
           name: 1,
           branch: 1,
         },
-        match: match,
+        match: {
+          transactionMovement: this.transactionMovement,
+          operationType: { $ne: 'D' },
+        },
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -165,21 +135,20 @@ export class ReportMovArtByCategoryComponent implements OnInit {
       });
   }
 
-  public getSalesByCategory(): void {
+  public getReport(): void {
     this.loading = true;
-    let types = this.transactionTypesSelect?.map((item) => item._id);
 
     const requestPayload = {
       reportType: 'mov-art-by-category',
       filters: {
         branch: this.branchSelectedId,
         type: this.transactionMovement,
-        transactionTypes: types ?? [],
+        transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
       },
       pagination: {
-        page: this.currentPage,
+        page: 1,
         pageSize: 10,
       },
       sorting: {
@@ -207,15 +176,5 @@ export class ReportMovArtByCategoryComponent implements OnInit {
           },
         })
     );
-  }
-
-  public orderBy(term: string): void {
-    if (this.sort[term]) {
-      this.sort[term] *= -1;
-    } else {
-      this.sort = JSON.parse('{"' + term + '": 1 }');
-    }
-
-    this.getSalesByCategory();
   }
 }

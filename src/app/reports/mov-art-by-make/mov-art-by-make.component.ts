@@ -24,8 +24,8 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   standalone: true,
-  selector: 'app-transactions-by-payment-method',
-  templateUrl: './transactions-by-payment-method.component.html',
+  selector: 'app-mov-art-by-make',
+  templateUrl: './mov-art-by-make.component.html',
   imports: [
     CommonModule,
     FormsModule,
@@ -40,7 +40,7 @@ import { takeUntil } from 'rxjs/operators';
     DataTableReportsComponent,
   ],
 })
-export class TransactionsByPaymentMethod implements OnInit {
+export class ReportMovArtByMakeComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
@@ -139,7 +139,7 @@ export class TransactionsByPaymentMethod implements OnInit {
     this.loading = true;
 
     const requestPayload = {
-      reportType: 'transactions-by-payment-method',
+      reportType: 'mov-art-by-make',
       filters: {
         branch: this.branchSelectedId,
         type: this.transactionMovement,
@@ -152,7 +152,7 @@ export class TransactionsByPaymentMethod implements OnInit {
         pageSize: 10,
       },
       sorting: {
-        column: 'payment-method',
+        column: 'make',
         direction: 'asc',
       },
     };

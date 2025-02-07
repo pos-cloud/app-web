@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
@@ -35,6 +34,7 @@ import { takeUntil } from 'rxjs/operators';
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
+    ReactiveFormsModule,
   ],
 })
 export class ListArticlesRequirementsByTransactionComponent implements OnInit {
@@ -51,7 +51,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
   // filters
   statusSelect: string[] = [];
   statusOptions = [
-    { _id: '', name: 'Todos' },
     { _id: 'Abierto', name: 'Abierto' },
     { _id: 'Anulado', name: 'Anulado' },
     { _id: 'Armando', name: 'Armando' },
@@ -94,7 +93,6 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     private _service: ReportSystemService,
     private _branchService: BranchService,
     private _transactionTypeService: TransactionTypeService,
-    private _authService: AuthService,
     private _toastService: ToastService
   ) {}
 

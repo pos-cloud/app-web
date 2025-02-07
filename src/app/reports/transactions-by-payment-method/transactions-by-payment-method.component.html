@@ -5,25 +5,20 @@
       <label for="branch" class="control-label">
         <b>{{ 'agency' | translate | capitalize }}</b>
       </label>
-      <select class="form-control" [(ngModel)]="branchSelectedId">
-        <option [ngValue]="null" [disabled]="!allowChangeBranch">Todas</option>
-        <option *ngFor="let branch of branches" [ngValue]="branch._id" [disabled]="!allowChangeBranch">
-          {{ branch.number }} - {{ branch.name }}
-        </option>
-      </select>
+      <app-multi-select-dropdown [data]="branches" [(ngModel)]="branchSelectedId" placeholder="Sucursal">
+      </app-multi-select-dropdown>
     </div>
 
     <div class="form-group mr-2">
       <label for="transactionType" class="control-label">
         <b>Tipo de Transacción</b>
       </label>
-      <ng-multiselect-dropdown
-        [placeholder]="'Tipo de Transacción'"
-        [settings]="dropdownSettings"
+      <app-multi-select-dropdown
         [data]="transactionTypes"
         [(ngModel)]="transactionTypesSelect"
+        placeholder="Tipo de Transacción"
       >
-      </ng-multiselect-dropdown>
+      </app-multi-select-dropdown>
     </div>
 
     <div class="form-group mr-2">
@@ -43,13 +38,14 @@
     <!-- Botón de Actualizar -->
     <div class="form-group ml-auto">
       <label class="control-label"> </label>
-      <button class="btn btn-primary" (click)="getSalesByPaymentMethod()">
+      <button class="btn btn-primary" (click)="getReport()">
         <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
       </button>
     </div>
   </div>
+
   <div class="card card-large">
-    <div class="card-header">Categorías por {{ transactionMovement }}</div>
+    <div class="card-header">Método de pago por {{ transactionMovement }}</div>
     <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>

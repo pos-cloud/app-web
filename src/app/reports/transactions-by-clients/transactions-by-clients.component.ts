@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from 'app/components/branch/branch';
+import { CompanyType } from 'app/components/payment-method/payment-method';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -24,8 +25,8 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   standalone: true,
-  selector: 'app-transactions-by-payment-method',
-  templateUrl: './transactions-by-payment-method.component.html',
+  selector: 'app-transactions-by-clients',
+  templateUrl: './transactions-by-clients.component.html',
   imports: [
     CommonModule,
     FormsModule,
@@ -40,7 +41,7 @@ import { takeUntil } from 'rxjs/operators';
     DataTableReportsComponent,
   ],
 })
-export class TransactionsByPaymentMethod implements OnInit {
+export class transactionsByClientsComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
@@ -52,6 +53,22 @@ export class TransactionsByPaymentMethod implements OnInit {
 
   branches: Branch[];
   branchSelectedId: string[] = [];
+
+  statusSelect: string[] = [];
+  statusOptions = [
+    { _id: '', name: 'Todos' },
+    { _id: 'Abierto', name: 'Abierto' },
+    { _id: 'Anulado', name: 'Anulado' },
+    { _id: 'Armando', name: 'Armando' },
+    { _id: 'Cerrado', name: 'Cerrado' },
+    { _id: 'Entregado', name: 'Entregado' },
+    { _id: 'Enviado', name: 'Enviado' },
+    { _id: 'Pago Confirmado', name: 'Pago Confirmado' },
+    { _id: 'Pago Rechazado', name: 'Pago Rechazado' },
+    { _id: 'Pendiente', name: 'Pendiente' },
+    { _id: 'Pendiente de pago', name: 'Pendiente de pago' },
+    { _id: 'Preparando', name: 'Preparando' },
+  ];
 
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
@@ -138,11 +155,18 @@ export class TransactionsByPaymentMethod implements OnInit {
   public getReport(): void {
     this.loading = true;
 
+    let companyType: CompanyType;
+    if (this.transactionMovement === 'Venta') {
+      companyType = CompanyType.Client;
+    } else if (this.transactionMovement === 'Compra') {
+      companyType = CompanyType.Provider;
+    }
     const requestPayload = {
-      reportType: 'transactions-by-payment-method',
+      reportType: 'transactions-by-client',
       filters: {
         branch: this.branchSelectedId,
-        type: this.transactionMovement,
+        type: companyType,
+        status: this.statusSelect ?? [],
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
@@ -152,7 +176,7 @@ export class TransactionsByPaymentMethod implements OnInit {
         pageSize: 10,
       },
       sorting: {
-        column: 'payment-method',
+        column: 'clients',
         direction: 'asc',
       },
     };
