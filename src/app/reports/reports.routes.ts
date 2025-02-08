@@ -2,9 +2,13 @@ import { Routes } from '@angular/router';
 
 export const REPORTS_ROUTES: Routes = [
   {
-    path: 'mov-art-by-category/:module',
+    path: 'dashboard/:module',
+    loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DasboardComponent),
+  },
+  {
+    path: 'mov-art-by-article/:module',
     loadComponent: () =>
-      import('./mov-art-by-category/mov-art-by-category.component').then((m) => m.ReportMovArtByCategoryComponent),
+      import('./mov-art-by-article/mov-art-by-article.component').then((m) => m.ReportMovArtByArticleComponent),
   },
   {
     path: 'mov-art-by-make/:module',
@@ -12,39 +16,54 @@ export const REPORTS_ROUTES: Routes = [
       import('./mov-art-by-make/mov-art-by-make.component').then((m) => m.ReportMovArtByMakeComponent),
   },
   {
-    path: 'current-account/:id',
-    loadComponent: () => import('./current-account/current-account.component').then((m) => m.CurrentAccountComponent),
+    path: 'mov-art-by-category/:module',
+    loadComponent: () =>
+      import('./mov-art-by-category/mov-art-by-category.component').then((m) => m.ReportMovArtByCategoryComponent),
   },
   {
-    path: 'production/requierements',
+    path: 'mov-cash-by-type/:module',
     loadComponent: () =>
-      import('./list-articles-requirements-by-transaction/list-articles-requirements-by-transaction.component').then(
-        (m) => m.ListArticlesRequirementsByTransactionComponent
-      ),
+      import('./mov-cash-by-type/mov-cash-by-type.component').then((m) => m.ReportMovCashByTypeComponent),
   },
   {
-    path: 'transactions-payment-method/:module',
+    path: 'transaction-by-company/:module',
     loadComponent: () =>
-      import('./transactions-by-payment-method/transactions-by-payment-method.component').then(
-        (m) => m.TransactionsByPaymentMethod
-      ),
-  },
-  {
-    path: 'transactions-by-clients/:module',
-    loadComponent: () =>
-      import('./transactions-by-clients/transactions-by-clients.component').then(
-        (m) => m.transactionsByClientsComponent
+      import('./transactions-by-company/transactions-by-company.component').then(
+        (m) => m.ReportTransactionsByCompanyComponent
       ),
   },
   {
     path: 'transactions-by-employee/:module',
     loadComponent: () =>
       import('./transactions-by-employee/transactions-by-employee.component').then(
-        (m) => m.transactionsByEmployeeComponent
+        (m) => m.ReportTransactionsByEmployeeComponent
       ),
   },
   {
-    path: 'kardex-articles/:module',
-    loadComponent: () => import('./kardex-articles/kardex-article.component').then((m) => m.KardexArticleComponent),
+    path: 'transactions-by-type',
+    loadComponent: () =>
+      import('./transactions-by-type/transactions-by-type.component').then((m) => m.ReportTransactionsByTypeComponent),
+  },
+
+  {
+    path: 'article-ledger',
+    loadComponent: () =>
+      import('./article-ledger/article-ledger.component').then((m) => m.ReportArticleLedgerComponent),
+  },
+  {
+    path: 'check-wallet',
+    loadComponent: () => import('./check-wallet/check-wallet.component').then((m) => m.ReportCheckWalletComponent),
+  },
+  {
+    path: 'check-ledger',
+    loadComponent: () => import('./check-ledger/check-ledger.component').then((m) => m.ReportCheckLedgerComponent),
+  },
+  {
+    path: 'birthday',
+    loadComponent: () => import('./birthday/birthday.component').then((m) => m.ReportBirthdayComponent),
+  },
+  {
+    path: 'current-account/:id',
+    loadComponent: () => import('./current-account/current-account.component').then((m) => m.CurrentAccountComponent),
   },
 ];

@@ -7,8 +7,8 @@ import 'moment/locale/es';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from 'app/components/branch/branch';
-import { CompanyType } from 'app/components/payment-method/payment-method';
+import { Branch } from '@types';
+import { CompanyType } from 'app/components/company/company';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -25,8 +25,8 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   standalone: true,
-  selector: 'app-transactions-by-clients',
-  templateUrl: './transactions-by-clients.component.html',
+  selector: 'app-transactions-by-company',
+  templateUrl: './transactions-by-company.component.html',
   imports: [
     CommonModule,
     FormsModule,
@@ -41,7 +41,7 @@ import { takeUntil } from 'rxjs/operators';
     DataTableReportsComponent,
   ],
 })
-export class transactionsByClientsComponent implements OnInit {
+export class ReportTransactionsByCompanyComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};

@@ -24,8 +24,8 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   standalone: true,
-  selector: 'app-transactions-by-payment-method',
-  templateUrl: './transactions-by-payment-method.component.html',
+  selector: 'app-mov-cash-by-type',
+  templateUrl: './mov-cash-by-type.component.html',
   imports: [
     CommonModule,
     FormsModule,
@@ -40,7 +40,7 @@ import { takeUntil } from 'rxjs/operators';
     DataTableReportsComponent,
   ],
 })
-export class TransactionsByPaymentMethod implements OnInit {
+export class ReportMovCashByTypeComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};

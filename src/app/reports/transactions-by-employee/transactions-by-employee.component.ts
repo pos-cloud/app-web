@@ -40,7 +40,7 @@ import { takeUntil } from 'rxjs/operators';
     DataTableReportsComponent,
   ],
 })
-export class transactionsByEmployeeComponent implements OnInit {
+export class ReportTransactionsByEmployeeComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
