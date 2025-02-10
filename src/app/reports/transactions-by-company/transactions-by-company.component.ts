@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
@@ -16,10 +15,8 @@ import { TransactionTypeService } from 'app/core/services/transaction-type.servi
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
-import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -31,11 +28,8 @@ import { takeUntil } from 'rxjs/operators';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ProgressbarModule,
     TranslateModule,
     PipesModule,
-    NgbModule,
-    NgMultiSelectDropDownModule,
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
@@ -76,11 +70,11 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   endDate: string = new Date().toISOString();
 
+  companyType: CompanyType;
   constructor(
-    public _service: ReportSystemService,
-    public _router: Router,
+    private _service: ReportSystemService,
     private _branchService: BranchService,
-    public _transactionTypeService: TransactionTypeService,
+    private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute
   ) {}
@@ -154,18 +148,16 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   public getReport(): void {
     this.loading = true;
-
-    let companyType: CompanyType;
     if (this.transactionMovement === 'Venta') {
-      companyType = CompanyType.Client;
+      this.companyType = CompanyType.Client;
     } else if (this.transactionMovement === 'Compra') {
-      companyType = CompanyType.Provider;
+      this.companyType = CompanyType.Provider;
     }
     const requestPayload = {
-      reportType: 'transactions-by-client',
+      reportType: 'transactions-by-company',
       filters: {
         branch: this.branchSelectedId,
-        type: companyType,
+        type: this.companyType,
         status: this.statusSelect ?? [],
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
@@ -176,7 +168,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
         pageSize: 10,
       },
       sorting: {
-        column: 'clients',
+        column: 'name',
         direction: 'asc',
       },
     };
