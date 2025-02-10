@@ -43,6 +43,12 @@
       </button>
     </div>
   </div>
-  <app-data-table-reports [data]="data" [columns]="columns" [totals]="totals" [title]="'Transacciones por categorías'">
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="'Transacciones por categorías'"
+    [loading]="loading"
+  >
   </app-data-table-reports>
 </section>

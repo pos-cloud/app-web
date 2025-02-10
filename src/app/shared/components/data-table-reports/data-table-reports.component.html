@@ -36,11 +36,11 @@
         </tr>
 
         <tr align="center" *ngIf="(!data || data.length === 0) && !loading">
-          <td colspan="10">{{ 'no data found' | translate | capitalize }}</td>
+          <td colspan="99">{{ 'no data found' | translate | capitalize }}</td>
         </tr>
       </tbody>
 
-      <tfoot *ngIf="data?.length">
+      <tfoot *ngIf="data?.length > 0">
         <tr>
           <td *ngFor="let column of columns; let i = index">
             <strong *ngIf="i > 0 && totals[column.name] !== undefined">

@@ -43,6 +43,12 @@
     </div>
   </div>
 
-  <app-data-table-reports [data]="data" [columns]="columns" [totals]="totals" [title]="'Transacciones por empleados'">
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="'Transacciones por empleados'"
+    [loading]="loading"
+  >
   </app-data-table-reports>
 </section>

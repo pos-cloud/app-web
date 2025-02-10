@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { ProgressbarModule } from '../progressbar/progressbar.module';
 
 @Component({
   selector: 'app-data-table-reports',
@@ -12,7 +13,7 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
   styleUrls: ['./data-table-reports.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, ExportersModule, TranslateModule, PipesModule],
+  imports: [CommonModule, ExportersModule, TranslateModule, PipesModule, ProgressbarModule],
 })
 export class DataTableReportsComponent implements OnInit {
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
@@ -21,8 +22,7 @@ export class DataTableReportsComponent implements OnInit {
   @Input() columns: any[] = [];
   @Input() totals = {};
   @Input() title: string = '';
-
-  loading: boolean = false;
+  @Input() loading: boolean = true;
 
   public exportItems(): void {
     this.exportExcelComponent.items = this.data;

@@ -40,11 +40,10 @@ export const REPORTS_ROUTES: Routes = [
       ),
   },
   {
-    path: 'transactions-by-type',
+    path: 'transactions-by-type/:module',
     loadComponent: () =>
       import('./transactions-by-type/transactions-by-type.component').then((m) => m.ReportTransactionsByTypeComponent),
   },
-
   {
     path: 'article-ledger',
     loadComponent: () =>
