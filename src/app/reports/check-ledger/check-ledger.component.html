@@ -1,0 +1,33 @@
+<section class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between flex-wrap">
+    <div class="form-group mr-2 pt-3">
+      <label for="article" class="control-label">
+        <b>{{ 'check' | translate | capitalize }}</b></label
+      >
+      <input
+        type="text"
+        class="form-control"
+        formControlName="checkNumber"
+        name="checkNumber"
+        id="checkNumber"
+        [(ngModel)]="checkNumber"
+      />
+    </div>
+
+    <!-- Botón de Actualizar -->
+    <div class="form-group ml-auto">
+      <label class="control-label"> </label>
+      <button class="btn btn-primary" (click)="getReport()">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+      </button>
+    </div>
+  </div>
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="'Kardex artículo'"
+    [loading]="loading"
+  >
+  </app-data-table-reports>
+</section>

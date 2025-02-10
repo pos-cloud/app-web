@@ -10,11 +10,9 @@ import { DepositService } from 'app/core/services/deposit.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
-import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -26,10 +24,8 @@ import { takeUntil } from 'rxjs/operators';
   imports: [
     CommonModule,
     FormsModule,
-    ProgressbarModule,
     TranslateModule,
     PipesModule,
-    NgMultiSelectDropDownModule,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
     ReactiveFormsModule,

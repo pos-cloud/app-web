@@ -5,7 +5,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -14,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './birthday.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, NgbModule, NgMultiSelectDropDownModule, ReactiveFormsModule, DataTableReportsComponent],
+  imports: [CommonModule, NgbModule, ReactiveFormsModule, DataTableReportsComponent],
 })
 export class ReportBirthdayComponent {
   public data: any[] = [];
