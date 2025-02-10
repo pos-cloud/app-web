@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
@@ -15,10 +14,8 @@ import { TransactionTypeService } from 'app/core/services/transaction-type.servi
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
-import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -30,11 +27,8 @@ import { takeUntil } from 'rxjs/operators';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ProgressbarModule,
     TranslateModule,
     PipesModule,
-    NgbModule,
-    NgMultiSelectDropDownModule,
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
@@ -152,7 +146,7 @@ export class ReportMovArtByMakeComponent implements OnInit {
         pageSize: 10,
       },
       sorting: {
-        column: 'make',
+        column: 'name',
         direction: 'asc',
       },
     };
