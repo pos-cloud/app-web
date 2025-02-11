@@ -1,15 +1,15 @@
-import { Activity } from '@types';
-import { Category } from './category.interface';
-import { Classification } from './classification.interface';
-import { Make } from './make.interface';
-import { UnitOfMeasurement } from './unit-of-measurement.interface';
-import { User } from './user.interface';
-import { VariantType } from './variant-type.interface';
-import { VariantValue } from './variant-value.interface';
+import {
+  Activity,
+  Category,
+  Classification,
+  Currency,
+  Make,
+  UnitOfMeasurement,
+  VariantType,
+  VariantValue,
+} from '@types';
 
 export interface Article extends Activity {
-  creationDate: string;
-  creationUser: User;
   type: string;
   order: number;
   containsVariants: boolean;
@@ -31,7 +31,7 @@ export interface Article extends Activity {
   markupPercentage: number;
   markupPrice: number;
   salePrice: number;
-  currency: any; //Currency;
+  currency: Currency;
   make: Make;
   category: Category;
   deposits: {

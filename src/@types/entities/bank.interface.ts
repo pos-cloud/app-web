@@ -1,4 +1,4 @@
-import { Activity } from '../common/activity.interface';
+import { Activity } from '@types';
 
 export interface Bank extends Activity {
   _id: string;

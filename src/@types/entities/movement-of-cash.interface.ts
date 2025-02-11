@@ -1,6 +1,6 @@
-import { Bank } from './bank.interface';
+import { Activity, Bank } from '@types';
 
-export interface MovementOfCash {
+export interface MovementOfCash extends Activity {
   _id: string;
   date: string;
   quota: number;

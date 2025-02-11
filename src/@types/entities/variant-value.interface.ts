@@ -1,8 +1,8 @@
-import { VariantType } from "./variant-type.interface";
+import { Activity, VariantType } from '@types';
 
-export interface VariantValue{
-     _id: string;
-	 type: VariantType;
-	 order: number;
-	 description: string;
+export interface VariantValue extends Activity {
+  _id: string;
+  type: VariantType;
+  order: number;
+  description: string;
 }

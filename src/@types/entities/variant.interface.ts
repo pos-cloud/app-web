@@ -1,11 +1,9 @@
-import { Article } from "./article.interface";
-import { VariantType } from "./variant-type.interface";
-import { VariantValue } from "./variant-value.interface";
+import { Activity, Article, VariantType, VariantValue } from '@types';
 
-export interface Variant {
-     _id: string;
-	 type: VariantType;
-	 value: VariantValue;
-	 articleParent: Article;
-	 articleChild: Article;
+export interface Variant extends Activity {
+  _id: string;
+  type: VariantType;
+  value: VariantValue;
+  articleParent: Article;
+  articleChild: Article;
 }

@@ -1,5 +1,4 @@
-import { Activity } from '@types';
-import { Branch } from './branch.interface';
+import { Activity, Branch } from '@types';
 
 export interface Deposit extends Activity {
   _id: string;
