@@ -119,7 +119,11 @@
         </thead>
         <tbody>
           <tr>
-            <td [attr.colspan]="_datatableService.getColumnsVisibles() + 1" style="padding: 0px; height: 5px">
+            <td
+              *ngIf="loading"
+              [attr.colspan]="_datatableService.getColumnsVisibles() + 1"
+              style="padding: 0px; height: 5px"
+            >
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
