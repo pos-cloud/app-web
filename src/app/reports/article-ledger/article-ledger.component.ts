@@ -43,6 +43,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
+  public header: any[] = [];
 
   // filters
   branches: Branch[];
@@ -53,12 +54,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
 
   articles: Article[];
   articleControl: any;
-
-  headerDetails = [
-    { label: 'Proveedor', value: 'Proveedor XYZ' },
-    { label: 'Número de Cheque', value: '12345678' },
-    { label: 'Fecha de Emisión', value: '01/01/2025' },
-  ];
 
   constructor(
     private _service: ReportSystemService,
@@ -189,6 +184,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
             this.data = result.result.data;
             this.columns = result.result.columns;
             this.totals = result.result.totals;
+            this.header = result.result.header;
           },
           error: (error) => {
             this._toastService.showToast(error);

@@ -38,10 +38,10 @@
     </div>
   </div>
 
-  <div class="card bg-light mb-3 p-3" *ngIf="headerDetails?.length">
+  <div class="card bg-light mb-3 p-3" *ngIf="header?.length">
     <div class="d-flex flex-wrap">
-      <div class="p-2" *ngFor="let detail of headerDetails">
-        <strong>{{ detail.label }}:</strong> {{ detail.value }}
+      <div class="p-2" *ngFor="let detail of header">
+        <strong>{{ detail.label | translate | capitalize }}:</strong> {{ detail.value }}
       </div>
     </div>
   </div>
