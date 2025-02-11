@@ -37,6 +37,21 @@
       </button>
     </div>
   </div>
-  <app-data-table-reports [data]="data" [columns]="columns" [totals]="totals" [title]="'Kardex artículo'">
+
+  <div class="card bg-light mb-3 p-3" *ngIf="headerDetails?.length">
+    <div class="d-flex flex-wrap">
+      <div class="p-2" *ngFor="let detail of headerDetails">
+        <strong>{{ detail.label }}:</strong> {{ detail.value }}
+      </div>
+    </div>
+  </div>
+
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="'Kardex artículo'"
+    [loading]="loading"
+  >
   </app-data-table-reports>
 </section>

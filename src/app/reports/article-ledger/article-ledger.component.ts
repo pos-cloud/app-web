@@ -19,6 +19,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-article-ledger',
   templateUrl: './article-ledger.component.html',
+  styleUrls: ['./article-ledger.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -52,6 +53,12 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
 
   articles: Article[];
   articleControl: any;
+
+  headerDetails = [
+    { label: 'Proveedor', value: 'Proveedor XYZ' },
+    { label: 'Número de Cheque', value: '12345678' },
+    { label: 'Fecha de Emisión', value: '01/01/2025' },
+  ];
 
   constructor(
     private _service: ReportSystemService,
