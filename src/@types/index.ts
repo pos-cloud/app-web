@@ -5,6 +5,7 @@ export { Branch } from './entities/branch.interface';
 export { Category } from './entities/category.interface';
 export { Claim, ClaimPriority, ClaimType } from './entities/claim.interface';
 export { Classification } from './entities/classification.interface';
+export { CurrencyValue } from './entities/currency-value.interface';
 export { Currency } from './entities/currency.interface';
 export { Deposit } from './entities/deposit.interface';
 export { EmployeeType } from './entities/employee-type.interface';
@@ -21,7 +22,6 @@ export { User } from './entities/user.interface';
 export { VariantType } from './entities/variant-type.interface';
 export { VariantValue } from './entities/variant-value.interface';
 export { Variant } from './entities/variant.interface';
-
 // common
 export { Activity } from './common/activity.interface';
 export { ApiResponse } from './common/api-response.interface';
