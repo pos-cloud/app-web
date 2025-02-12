@@ -33,7 +33,6 @@ import { ListMovementOfCashesComponent } from './components/movement-of-cash/lis
 import { ListOriginsComponent } from './components/origin/list-origins/list-origins.component';
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
-import { WebTransactionsComponent } from './components/point-of-sale/web-transactions/web-transactions.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
@@ -530,12 +529,6 @@ export const _routes: Routes = [
     path: 'pos',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'pos/pedidos-web',
-    component: WebTransactionsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.app' },
   },
   {
     path: 'pos/mostrador/venta',

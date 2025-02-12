@@ -45,11 +45,12 @@ export class BankComponent implements OnInit {
     });
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     const pathUrl = this._router.url.split('/');
+
     const bankId = pathUrl[4];
     this.operation = pathUrl[3];
-    await this.getAccount();
+    this.getAccount();
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.bankForm.disable();
     if (bankId) this.getBank(bankId);

@@ -97,7 +97,6 @@ import { SelectOriginComponent } from './components/origin/select-origin/select-
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
 import { PaymentMethodComponent } from './components/payment-method/payment-method/payment-method.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
-import { WebTransactionsComponent } from './components/point-of-sale/web-transactions/web-transactions.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
@@ -308,7 +307,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectPriceListComponent,
     KardexCheckComponent,
     MenuComponent,
-    WebTransactionsComponent,
   ],
   imports: [
     BrowserModule,
