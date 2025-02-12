@@ -9,6 +9,11 @@
   "save": "Salve",
   "currency": "Valuta",
   "currencies": "Valute",
+  "createdBy": "Creato da",
+  "createdAt": "Creato",
+  "updatedBy": "Aggiornato da",
+  "updatedAt": "Aggiornato",
+  "add-currency-value": "Aggiungi valore valuta",
   "add-currency": "aggiungere valuta",
   "UploadImage": "Carica Immagine",
   "RemoveImage": "Rimuovi immagine"

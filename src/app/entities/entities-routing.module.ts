@@ -19,6 +19,11 @@ const routes: Routes = [
     loadChildren: () => import('./currency/currency.module').then((m) => m.CurrencyModule),
     canActivate: [AuthGuard, LicenseGuard],
   },
+  {
+    path: 'currency-values',
+    loadChildren: () => import('./currency-value/currency-value.module').then((m) => m.CurrencyValueModule),
+    canActivate: [AuthGuard, LicenseGuard],
+  },
 
   {
     path: 'galleries',

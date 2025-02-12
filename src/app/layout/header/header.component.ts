@@ -291,7 +291,7 @@ export class HeaderComponent implements OnInit {
           children: [
             { label: 'Bancos', link: 'entities/banks' },
             { label: 'Monedas', link: 'entities/currencies' },
-            { label: 'Tipos de Monedas', link: 'admin/currency-values' },
+            { label: 'Tipos de Monedas', link: 'entities/currency-values' },
             { label: 'Provincias', link: 'admin/states' },
             { label: 'Países', link: 'admin/countries' },
           ],
@@ -718,7 +718,6 @@ export class HeaderComponent implements OnInit {
                 { label: 'Métodos de pago', link: 'admin/metodos-de-pago' },
                 { label: 'Métodos de entrega', link: 'shipment-methods' },
                 { label: 'Lista de Precios', link: 'admin/price-list' },
-                { label: 'Feriados', link: 'holidays' },
                 { label: 'Reports', link: 'reports' },
                 { label: 'Historial', link: 'histories' },
               ],
@@ -742,6 +741,7 @@ export class HeaderComponent implements OnInit {
                 { label: 'Impuestos', link: 'admin/impuestos' },
                 { label: 'Tipos de cajas', link: 'cash-box-types' },
                 { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
+                { label: 'Feriados', link: 'holidays' },
               ],
             },
             {
@@ -757,7 +757,7 @@ export class HeaderComponent implements OnInit {
               children: [
                 { label: 'Bancos', link: 'entities/banks' },
                 { label: 'Monedas', link: 'entities/currencies' },
-                { label: 'Tipos de Monedas', link: 'admin/currency-values' },
+                { label: 'Tipos de Monedas', link: 'entities/currency-values' },
                 { label: 'Provincias', link: 'admin/states' },
                 { label: 'Países', link: 'admin/countries' },
               ],

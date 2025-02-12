@@ -13,7 +13,6 @@ import { ListCompaniesComponent } from './components/company/list-companies/list
 import { ListCompanyFieldsComponent } from './components/company/list-company-fields/list-company-fields.component';
 import { ConfigComponent } from './components/config/config.component';
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
-import { ListCurrencyValuesComponent } from './components/currency-value/list-currency-values/list-currency-values.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListDepositsComponent } from './components/deposit/list-deposits/list-deposits.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
@@ -474,11 +473,6 @@ export const _routes: Routes = [
   {
     path: 'admin/template-emails',
     component: ListEmailTemplatesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/currency-values',
-    component: ListCurrencyValuesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
