@@ -80,8 +80,8 @@ export class MakeComponent implements OnInit, OnDestroy {
   setValueForm(): void {
     this.makeForm.patchValue({
       _id: this.make._id ?? '',
-      description: this.make.description ?? null,
-      picture: this.make.picture ?? null,
+      description: this.make.description ?? '',
+      picture: this.make.picture ?? '',
       visibleSale: this.make.visibleSale ?? true,
     });
   }
