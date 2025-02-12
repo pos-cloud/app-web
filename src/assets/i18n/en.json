@@ -5,6 +5,10 @@
   "return": "Return EN",
   "currency": "Currency ",
   "currencies": "Currencies ",
+  "createdBy": "created by",
+  "createdAt": "created in",
+  "updatedBy": "Updated by",
+  "updatedAt": "updated in",
   "add-currency": "Add currency",
   "add-currency-value": "Add currency value",
 

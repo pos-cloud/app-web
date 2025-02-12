@@ -84,15 +84,57 @@
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
-            <div
-              class="invalid-feedback"
-              *ngIf="currencyValueForm.get('value')?.touched && currencyValueForm.get('value')?.hasError('pattern')"
-            >
+            <div class="invalid-feedback">
               {{ 'invalidNumber' | translate | capitalize }}
             </div>
           </div>
         </div>
         <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ currencyValue?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ currencyValue?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ currencyValue?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ currencyValue?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ currencyValue?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>

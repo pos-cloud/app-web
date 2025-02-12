@@ -28,7 +28,7 @@ export class CurrencyValueComponent implements OnInit, OnDestroy {
     this.currencyValueForm = this._fb.group({
       _id: ['', []],
       name: ['', [Validators.required]],
-      value: [null, [Validators.required, Validators.pattern('^[0-9]*$')]],
+      value: [0, [Validators.required]],
     });
   }
 

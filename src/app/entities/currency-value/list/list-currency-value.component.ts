@@ -16,7 +16,7 @@ import { DatatableComponent } from 'app/components/datatable/datatable.component
 })
 export class ListCurrencyValueComponent {
   public title: string;
-  public sort = { name: 1 }; // Ordenamos por nombre en lugar de 'currency'
+  public sort = { name: 1 };
   public columns: IAttribute[];
   public pathLocation: string[] = [];
   public loading: boolean = false;
@@ -31,7 +31,7 @@ export class ListCurrencyValueComponent {
   ) {
     this.columns = [
       {
-        name: 'name', // Cambiamos 'currency' a 'name' para mostrar el nombre de la moneda
+        name: 'name',
         visible: true,
         disabled: false,
         filter: true,
@@ -48,6 +48,55 @@ export class ListCurrencyValueComponent {
         datatype: 'number',
         project: null,
         align: 'center',
+        required: true,
+      },
+      {
+        name: 'creationUser.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updateUser.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'creationDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'date',
+        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updateDate',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
         required: true,
       },
     ];
