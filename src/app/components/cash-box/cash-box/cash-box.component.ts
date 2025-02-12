@@ -1,31 +1,14 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import {
-  MovementOfCash,
-  currencyValue,
-} from '../../movement-of-cash/movement-of-cash';
+import { MovementOfCash, currencyValue } from '../../movement-of-cash/movement-of-cash';
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { CashBox, CashBoxState } from '../cash-box';
@@ -38,9 +21,8 @@ import { PaymentMethodService } from '../../../core/services/payment-method.serv
 import { TransactionService } from '../../../core/services/transaction.service';
 
 //Componentes
-import { ApiResponse } from '@types';
+import { ApiResponse, CurrencyValue } from '@types';
 import { Config } from 'app/app.config';
-import { CurrencyValue } from 'app/components/currency-value/currency-value';
 import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
@@ -119,81 +101,71 @@ export class CashBoxComponent implements OnInit {
     await this._authService.getIdentity.subscribe((identity) => {
       this.identity = identity;
     });
-    await this.getPaymentMethods('where="cashBoxImpact":true').then(
-      async (paymentMethods) => {
-        if (paymentMethods) {
-          this.paymentMethods = paymentMethods;
-          this.setValueForm();
-          let query = 'where="state":"' + CashBoxState.Open + '"';
+    await this.getPaymentMethods('where="cashBoxImpact":true').then(async (paymentMethods) => {
+      if (paymentMethods) {
+        this.paymentMethods = paymentMethods;
+        this.setValueForm();
+        let query = 'where="state":"' + CashBoxState.Open + '"';
 
-          if (this.identity) {
-            if (this.config.cashBox.perUser) {
-              if (this.identity.employee) {
-                query += ',"employee":"' + this.identity.employee._id + '"';
+        if (this.identity) {
+          if (this.config.cashBox.perUser) {
+            if (this.identity.employee) {
+              query += ',"employee":"' + this.identity.employee._id + '"';
+            }
+          } else if (this.identity.cashBoxType) {
+            query += ',"type":"' + this.identity.cashBoxType._id + '"';
+          } else {
+            query += ',"type":null';
+          }
+        }
+
+        query += '&sort="number":-1&limit=1';
+        await this.getCashBoxes(query).then(async (cashBoxes) => {
+          if (cashBoxes) {
+            this.cashBox = cashBoxes[0];
+            if (this.transactionType.cashOpening) {
+              this.showMessage('La caja ya se encuentra abierta.', 'info', true);
+            } else if (this.transactionType.cashClosing) {
+              let query =
+                'where="$and":[{"state":{"$ne": "' +
+                TransactionState.Closed +
+                '"}},{"state":{"$ne": "' +
+                TransactionState.Canceled +
+                '"}},{"state":{"$ne": "' +
+                TransactionState.PaymentDeclined +
+                '"}},{"cashBox":"' +
+                this.cashBox._id +
+                '"}]';
+              await this.getTransactions(query).then(async (transactions) => {
+                if (transactions) {
+                  this.showMessage(
+                    'No puede cerrar la caja. La transacción: ' +
+                      transactions[0].type.name +
+                      ' ' +
+                      transactions[0].origin +
+                      '-' +
+                      transactions[0].letter +
+                      '-' +
+                      transactions[0].number +
+                      ' se encuentra abierta.',
+                    'info',
+                    true
+                  );
+                }
+              });
+            }
+          } else {
+            if (this.transactionType.cashOpening) {
+              if (this.identity && this.identity.employee) {
+                this.cashBox.employee = this.identity.employee;
               }
-            } else if (this.identity.cashBoxType) {
-              query += ',"type":"' + this.identity.cashBoxType._id + '"';
-            } else {
-              query += ',"type":null';
+            } else if (this.transactionType.cashClosing) {
+              this.showMessage('No se encuentran cajas abiertas.', 'info', true);
             }
           }
-
-          query += '&sort="number":-1&limit=1';
-          await this.getCashBoxes(query).then(async (cashBoxes) => {
-            if (cashBoxes) {
-              this.cashBox = cashBoxes[0];
-              if (this.transactionType.cashOpening) {
-                this.showMessage(
-                  'La caja ya se encuentra abierta.',
-                  'info',
-                  true
-                );
-              } else if (this.transactionType.cashClosing) {
-                let query =
-                  'where="$and":[{"state":{"$ne": "' +
-                  TransactionState.Closed +
-                  '"}},{"state":{"$ne": "' +
-                  TransactionState.Canceled +
-                  '"}},{"state":{"$ne": "' +
-                  TransactionState.PaymentDeclined +
-                  '"}},{"cashBox":"' +
-                  this.cashBox._id +
-                  '"}]';
-                await this.getTransactions(query).then(async (transactions) => {
-                  if (transactions) {
-                    this.showMessage(
-                      'No puede cerrar la caja. La transacción: ' +
-                        transactions[0].type.name +
-                        ' ' +
-                        transactions[0].origin +
-                        '-' +
-                        transactions[0].letter +
-                        '-' +
-                        transactions[0].number +
-                        ' se encuentra abierta.',
-                      'info',
-                      true
-                    );
-                  }
-                });
-              }
-            } else {
-              if (this.transactionType.cashOpening) {
-                if (this.identity && this.identity.employee) {
-                  this.cashBox.employee = this.identity.employee;
-                }
-              } else if (this.transactionType.cashClosing) {
-                this.showMessage(
-                  'No se encuentran cajas abiertas.',
-                  'info',
-                  true
-                );
-              }
-            }
-          });
-        }
+        });
       }
-    );
+    });
   }
 
   ngAfterViewInit() {
@@ -222,9 +194,7 @@ export class CashBoxComponent implements OnInit {
       currencyAmount: [0, []],
     });
 
-    this.cashBoxForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.cashBoxForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
   }
@@ -251,8 +221,7 @@ export class CashBoxComponent implements OnInit {
   public setValueForm(): void {
     let paymentMethod = this.cashBoxForm.value.paymentMethod;
 
-    if (!paymentMethod && this.paymentMethods && this.paymentMethods.length > 0)
-      paymentMethod = this.paymentMethods[0];
+    if (!paymentMethod && this.paymentMethods && this.paymentMethods.length > 0) paymentMethod = this.paymentMethods[0];
 
     let values = {
       paymentMethod: paymentMethod,
@@ -285,8 +254,7 @@ export class CashBoxComponent implements OnInit {
       this._cashBoxService.saveCashBox(this.cashBox).subscribe(
         (result) => {
           if (!result.cashBox) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.cashBox);
@@ -305,51 +273,49 @@ export class CashBoxComponent implements OnInit {
   async openCashBox() {
     this.loading = true;
     if (!this.cashBox || !this.cashBox._id) {
-      await this.getCashBoxes('sort="number":-1&limit=1').then(
-        async (cashBoxes) => {
-          if (cashBoxes) {
-            this.cashBox.number = cashBoxes[0].number + 1;
-          } else {
-            this.cashBox.number = 1;
-          }
-          this._authService.getIdentity.subscribe((identity) => {
-            if (identity.cashBoxType) {
-              this.cashBox.type = identity.cashBoxType;
-            }
-          });
-          await this.saveCashBox().then(async (cashBox) => {
-            if (cashBox) {
-              this.cashBox = cashBox;
-              if (this.cashBox) {
-                if (this.transactionType.fixedOrigin) {
-                  this.transaction.origin = this.transactionType.fixedOrigin;
-                } else {
-                  this.transaction.origin = 0;
-                }
-                if (this.transactionType.fixedLetter) {
-                  this.transaction.letter = this.transactionType.fixedLetter;
-                } else {
-                  if (Config.country === 'AR') {
-                    this.transaction.letter = 'X';
-                  } else {
-                    this.transaction.letter = '';
-                  }
-                }
-                await this.getLastTransactionByType().then((transaction) => {
-                  if (transaction) {
-                    this.transaction.number = transaction.number + 1;
-                  } else {
-                    this.transaction.number = 1;
-                  }
-                  this.addTransaction();
-                });
-              } else {
-                this.activeModal.close({ cashBox: this.cashBox });
-              }
-            }
-          });
+      await this.getCashBoxes('sort="number":-1&limit=1').then(async (cashBoxes) => {
+        if (cashBoxes) {
+          this.cashBox.number = cashBoxes[0].number + 1;
+        } else {
+          this.cashBox.number = 1;
         }
-      );
+        this._authService.getIdentity.subscribe((identity) => {
+          if (identity.cashBoxType) {
+            this.cashBox.type = identity.cashBoxType;
+          }
+        });
+        await this.saveCashBox().then(async (cashBox) => {
+          if (cashBox) {
+            this.cashBox = cashBox;
+            if (this.cashBox) {
+              if (this.transactionType.fixedOrigin) {
+                this.transaction.origin = this.transactionType.fixedOrigin;
+              } else {
+                this.transaction.origin = 0;
+              }
+              if (this.transactionType.fixedLetter) {
+                this.transaction.letter = this.transactionType.fixedLetter;
+              } else {
+                if (Config.country === 'AR') {
+                  this.transaction.letter = 'X';
+                } else {
+                  this.transaction.letter = '';
+                }
+              }
+              await this.getLastTransactionByType().then((transaction) => {
+                if (transaction) {
+                  this.transaction.number = transaction.number + 1;
+                } else {
+                  this.transaction.number = 1;
+                }
+                this.addTransaction();
+              });
+            } else {
+              this.activeModal.close({ cashBox: this.cashBox });
+            }
+          }
+        });
+      });
     } else {
       this.loading = false;
       this.showMessage('La caja ya se encuentra abierta.', 'info', true);
@@ -409,8 +375,7 @@ export class CashBoxComponent implements OnInit {
       this._cashBoxService.updateCashBox(this.cashBox).subscribe(
         (result) => {
           if (!result.cashBox) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.cashBox);
@@ -433,11 +398,7 @@ export class CashBoxComponent implements OnInit {
           if (user) {
             if (user.printers && user.printers.length > 0) {
               for (const element of user.printers) {
-                if (
-                  element &&
-                  element.printer &&
-                  element.printer.printIn === PrinterPrintIn.Counter
-                ) {
+                if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
                   this.printerSelected = element.printer;
                 }
               }
@@ -450,8 +411,7 @@ export class CashBoxComponent implements OnInit {
           if (this.printerSelected) {
             modalRef.componentInstance.printer = this.printerSelected;
           } else {
-            modalRef.componentInstance.printer =
-              this.transactionType.defectPrinter;
+            modalRef.componentInstance.printer = this.transactionType.defectPrinter;
           }
           modalRef.result.then(
             (result) => {
@@ -501,8 +461,7 @@ export class CashBoxComponent implements OnInit {
       this._paymentMethodService.getPaymentMethods(query).subscribe(
         (result) => {
           if (!result.paymentMethods) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.paymentMethods);
@@ -518,12 +477,7 @@ export class CashBoxComponent implements OnInit {
 
   public getCurrencyValues(): void {
     this._currencyValueService
-      .getCurrencyValues(
-        { value: 1, name: 1, operationType: 1 },
-        { operationType: { $ne: 'D' } },
-        {},
-        {}
-      )
+      .getCurrencyValues({ value: 1, name: 1, operationType: 1 }, { operationType: { $ne: 'D' } }, {}, {})
       .subscribe(
         (result) => {
           if (result && result.currencyValues) {
@@ -547,8 +501,7 @@ export class CashBoxComponent implements OnInit {
       });
       this.totalCurrencyValue = 0;
       for (const iterator of this.currencyValuesForm) {
-        this.totalCurrencyValue =
-          this.totalCurrencyValue + iterator.quantity * iterator.value;
+        this.totalCurrencyValue = this.totalCurrencyValue + iterator.quantity * iterator.value;
       }
     } else {
       this.showMessage('Debe completar todos los campos', 'info', true);
@@ -559,8 +512,7 @@ export class CashBoxComponent implements OnInit {
     this.totalCurrencyValue = 0;
     this.currencyValuesForm.splice(e, 1);
     for (const iterator of this.currencyValuesForm) {
-      this.totalCurrencyValue =
-        this.totalCurrencyValue + iterator.quantity * iterator.value;
+      this.totalCurrencyValue = this.totalCurrencyValue + iterator.quantity * iterator.value;
     }
   }
 
@@ -601,13 +553,7 @@ export class CashBoxComponent implements OnInit {
       this.movementsOfCashes.push(mov);
       this.currencyValuesForm = null;
     } else {
-      this.showMessage(
-        'El método de pago ' +
-          this.movementOfCash.type.name +
-          ' no impacta en la caja.',
-        'info',
-        true
-      );
+      this.showMessage('El método de pago ' + this.movementOfCash.type.name + ' no impacta en la caja.', 'info', true);
     }
   }
 
@@ -684,9 +630,7 @@ export class CashBoxComponent implements OnInit {
               if (this.transactionType.cashOpening) {
                 this.activeModal.close({ cashBox: this.cashBox });
               } else {
-                this.cashBox.closingDate = moment().format(
-                  'YYYY-MM-DDTHH:mm:ssZ'
-                );
+                this.cashBox.closingDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
                 this.cashBox.state = CashBoxState.Closed;
                 await this.resetOrderNumber();
                 await this.updateCashBox().then((cashBox) => {
@@ -742,23 +686,20 @@ export class CashBoxComponent implements OnInit {
 
   async saveMovementsOfCashes(): Promise<MovementOfCash[]> {
     return new Promise<MovementOfCash[]>((resolve, reject) => {
-      this._movementOfCashService
-        .saveMovementsOfCashes(this.movementsOfCashes)
-        .subscribe(
-          async (result) => {
-            if (!result.movementsOfCashes) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
-              resolve(null);
-            } else {
-              resolve(result.movementsOfCashes);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
+      this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashes).subscribe(
+        async (result) => {
+          if (!result.movementsOfCashes) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
+          } else {
+            resolve(result.movementsOfCashes);
           }
-        );
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
     });
   }
 
@@ -804,9 +745,7 @@ export class CashBoxComponent implements OnInit {
                     this._toastService.showToast({
                       type: 'success',
                       message:
-                        'La numeracion del tipo de transaccion: ' +
-                        result.result.name +
-                        ' se reinicio correctamente',
+                        'La numeracion del tipo de transaccion: ' + result.result.name + ' se reinicio correctamente',
                     });
                   } else {
                     this._toastService.showToast(result.error);
@@ -827,11 +766,7 @@ export class CashBoxComponent implements OnInit {
       );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

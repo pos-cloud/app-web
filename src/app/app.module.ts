@@ -63,8 +63,6 @@ import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
 import { CountryComponent } from './components/country/country/country.component';
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
-import { CurrencyValueComponent } from './components/currency-value/currency-value/currency-value.component';
-import { ListCurrencyValuesComponent } from './components/currency-value/list-currency-values/list-currency-values.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { DepositComponent } from './components/deposit/deposit/deposit.component';
 import { ListDepositsComponent } from './components/deposit/list-deposits/list-deposits.component';
@@ -292,8 +290,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PosClientViewComponent,
     PosPackingComponent,
     ListChecksComponent,
-    CurrencyValueComponent,
-    ListCurrencyValuesComponent,
     SelectCompanyComponent,
     SelectTableComponent,
     EmailTemplateComponent,
