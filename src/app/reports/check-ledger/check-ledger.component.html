@@ -4,14 +4,9 @@
       <label for="article" class="control-label">
         <b>{{ 'check' | translate | capitalize }}</b></label
       >
-      <input
-        type="text"
-        class="form-control"
-        formControlName="checkNumber"
-        name="checkNumber"
-        id="checkNumber"
-        [(ngModel)]="checkNumber"
-      />
+      <form [formGroup]="form">
+        <input type="text" class="form-control" formControlName="checkNumber" name="checkNumber" id="checkNumber" />
+      </form>
     </div>
 
     <!-- Botón de Actualizar -->
@@ -22,6 +17,15 @@
       </button>
     </div>
   </div>
+
+  <div class="card bg-light mb-3 p-3" *ngIf="header?.length">
+    <div class="d-flex flex-wrap">
+      <div class="p-2" *ngFor="let detail of header">
+        <strong>{{ detail.label | translate | capitalize }}:</strong> {{ detail.value }}
+      </div>
+    </div>
+  </div>
+
   <app-data-table-reports
     [data]="data"
     [columns]="columns"

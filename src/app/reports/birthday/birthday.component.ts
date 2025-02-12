@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -15,7 +15,7 @@ import { takeUntil } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule, NgbModule, ReactiveFormsModule, DataTableReportsComponent],
 })
-export class ReportBirthdayComponent {
+export class ReportBirthdayComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
@@ -33,6 +33,10 @@ export class ReportBirthdayComponent {
     this.subscription.unsubscribe();
   }
 
+  async ngOnInit() {
+    this.getReport();
+  }
+
   public getReport(): void {
     this.loading = true;
     const requestPayload = {
@@ -47,7 +51,6 @@ export class ReportBirthdayComponent {
         direction: 'asc',
       },
     };
-
     this.subscription.add(
       this._service
         .getReport(requestPayload)
