@@ -559,13 +559,17 @@ export class AddSaleOrderComponent {
 
   saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
     for (let mov of movementsOfCancellations) {
-      if (
-        mov.transactionOrigin.discountAmount > 0 &&
-        (this.database === 'borlaschic' || this.database === 'insumosmaxs')
-      ) {
+      if (mov.transactionOrigin.discountAmount > 0 && this.database === 'borlaschic') {
         this.discountApply =
           (mov.transactionOrigin.totalPrice + mov.transactionOrigin.discountAmount) /
           mov.transactionOrigin.discountAmount;
+      }
+
+      if (mov.transactionOrigin.discountAmount > 0 && this.database === 'insumosmaxs') {
+        this.discountApply =
+          (mov.transactionOrigin.discountAmount /
+            (mov.transactionOrigin.totalPrice + mov.transactionOrigin.discountAmount)) *
+          100;
       }
 
       let transOrigin = new Transaction();
@@ -577,7 +581,7 @@ export class AddSaleOrderComponent {
       mov.transactionOrigin = transOrigin;
       mov.transactionDestination = transDestino;
     }
-
+    console.log(this.discountApply);
     return new Promise<MovementOfCancellation[]>((resolve) => {
       this.loading = true;
 
