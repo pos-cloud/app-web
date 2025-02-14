@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -50,7 +50,8 @@ export class ReportTransactionsByTypeComponent {
     private _service: ReportSystemService,
     private _branchService: BranchService,
     private _toastService: ToastService,
-    private _activatedRoute: ActivatedRoute
+    private _activatedRoute: ActivatedRoute,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -123,12 +124,14 @@ export class ReportTransactionsByTypeComponent {
             this.data = result.result.data;
             this.columns = result.result.columns;
             this.totals = result.result.totals;
+            this.cdRef.detectChanges();
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
+            this.cdRef.detectChanges();
           },
         })
     );

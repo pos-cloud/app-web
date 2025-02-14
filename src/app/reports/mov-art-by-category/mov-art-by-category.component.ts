@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -59,7 +59,8 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     private _branchService: BranchService,
     private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
-    private _activatedRoute: ActivatedRoute
+    private _activatedRoute: ActivatedRoute,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -161,12 +162,14 @@ export class ReportMovArtByCategoryComponent implements OnInit {
             this.data = result.result.data;
             this.columns = result.result.columns;
             this.totals = result.result.totals;
+            this.cdRef.detectChanges();
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
+            this.cdRef.detectChanges();
           },
         })
     );
