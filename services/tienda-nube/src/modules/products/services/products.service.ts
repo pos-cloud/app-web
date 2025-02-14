@@ -392,13 +392,18 @@ export class ProductsService {
         ];
       }
 
+      let description = {};
+
+      if (foundArticle.observation) {
+        description = {
+          es: foundArticle.observation,
+        };
+      }
       const dataUpdateProductTiendaNube = {
         name: {
           es: foundArticle.description,
         },
-        description: {
-          es: foundArticle.observation || '',
-        },
+        description: description,
       };
 
       if (foundArticle.category) {
@@ -510,9 +515,7 @@ export class ProductsService {
               name: {
                 es: foundArticle.description,
               },
-              description: {
-                es: foundArticle.observation || '',
-              },
+              description: description,
             };
             await this.tiendaNubeService.updateProduct(
               token,
