@@ -1,11 +1,15 @@
 import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ApiResponse, Branch } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { BranchService } from '../../../core/services/branch.service';
@@ -13,6 +17,8 @@ import { BranchService } from '../../../core/services/branch.service';
 @Component({
   selector: 'app-branch',
   templateUrl: './branch.component.html',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule, UploadFileComponent],
 })
 export class BranchComponent implements OnInit, OnDestroy {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
@@ -89,7 +95,7 @@ export class BranchComponent implements OnInit, OnDestroy {
   }
 
   returnTo() {
-    return this._router.navigate(['/entities/branch']);
+    return this._router.navigate(['/entities/branches']);
   }
 
   async handleBranchOperation() {

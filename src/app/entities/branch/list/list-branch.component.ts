@@ -1,18 +1,17 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { BranchService } from '../../../core/services/branch.service';
 
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 
 @Component({
   selector: 'app-list-branch',
   templateUrl: './list-branch.component.html',
-  providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListBranchComponent {
   public title: string;

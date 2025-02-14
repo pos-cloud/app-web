@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { IAttribute, IButton } from '@types';
@@ -9,7 +9,6 @@ import { BankService } from 'app/core/services/bank.service';
 @Component({
   selector: 'app-list-banks',
   templateUrl: './list-bank.component.html',
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [DatatableModule],
 })
