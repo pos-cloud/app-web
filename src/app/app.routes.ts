@@ -62,9 +62,7 @@ import { ListVariantTypesComponent } from './components/variant-type/list-varian
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
-import { ENTITIES_ROUTES } from './entities/entities.routes';
 import { HomeComponent } from './layout/home/home.component';
-import { MODULES_ROUTES } from './modules/modules.routes';
 import { REPORTS_ROUTES } from './reports/reports.routes';
 
 export const _routes: Routes = [
@@ -615,12 +613,12 @@ export const _routes: Routes = [
   {
     path: 'entities',
     canActivate: [AuthGuard, LicenseGuard],
-    children: ENTITIES_ROUTES,
+    loadChildren: () => import('./entities/entities.routes').then((m) => m.ENTITIES_ROUTES),
   },
   {
     path: 'modules',
     canActivate: [AuthGuard, LicenseGuard],
-    children: MODULES_ROUTES,
+    loadChildren: () => import('./modules/modules.routes').then((m) => m.MODULES_ROUTES),
   },
   {
     path: 'reports',

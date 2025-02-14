@@ -1,59 +1,48 @@
 import { Routes } from '@angular/router';
-import { BANK_ROUTES } from './bank/bank.routes';
-import { CATEGORY_ROUTES } from './category/category.routes';
-import { CURRENCY_VALUE_ROUTES } from './currency-value/currency-value.routes';
-import { CURRENCY_ROUTES } from './currency/currency.routes';
-import { EMPLOYEE_TYPES_ROUTES } from './employee-type/employee-type.routes';
-import { EMPLOYEE_ROUTES } from './employee/employee.routes';
-import { GALLERY_ROUTES } from './gallery/gallery.routes';
-import { MAKE_ROUTES } from './make/make.routes';
-import { RESOURCE_ROUTES } from './resource/resource.routes';
-import { ROOM_ROUTES } from './room/room.routes';
-import { TABLE_ROUTES } from './table/table.routes';
 
 export const ENTITIES_ROUTES: Routes = [
   {
     path: 'banks',
-    children: BANK_ROUTES,
+    loadChildren: () => import('./bank/bank.routes').then((m) => m.BANK_ROUTES),
   },
   {
     path: 'categories',
-    children: CATEGORY_ROUTES,
+    loadChildren: () => import('./category/category.routes').then((m) => m.CATEGORY_ROUTES),
   },
   {
     path: 'currencies',
-    children: CURRENCY_ROUTES,
+    loadChildren: () => import('./currency/currency.routes').then((m) => m.CURRENCY_ROUTES),
   },
   {
     path: 'currency-values',
-    children: CURRENCY_VALUE_ROUTES,
+    loadChildren: () => import('./currency-value/currency-value.routes').then((m) => m.CURRENCY_VALUE_ROUTES),
   },
   {
     path: 'employees',
-    children: EMPLOYEE_ROUTES,
+    loadChildren: () => import('./employee/employee.routes').then((m) => m.EMPLOYEE_ROUTES),
   },
   {
     path: 'employee-types',
-    children: EMPLOYEE_TYPES_ROUTES,
+    loadChildren: () => import('./employee-type/employee-type.routes').then((m) => m.EMPLOYEE_TYPES_ROUTES),
   },
   {
     path: 'galleries',
-    children: GALLERY_ROUTES,
+    loadChildren: () => import('./gallery/gallery.routes').then((m) => m.GALLERY_ROUTES),
   },
   {
     path: 'makes',
-    children: MAKE_ROUTES,
+    loadChildren: () => import('./make/make.routes').then((m) => m.MAKE_ROUTES),
   },
   {
     path: 'resources',
-    children: RESOURCE_ROUTES,
+    loadChildren: () => import('./resource/resource.routes').then((m) => m.RESOURCE_ROUTES),
   },
   {
     path: 'rooms',
-    children: ROOM_ROUTES,
+    loadChildren: () => import('./room/room.routes').then((m) => m.ROOM_ROUTES),
   },
   {
     path: 'tables',
-    children: TABLE_ROUTES,
+    loadChildren: () => import('./table/table.routes').then((m) => m.TABLE_ROUTES),
   },
 ];

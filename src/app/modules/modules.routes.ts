@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
-import { SALES_ROUTES } from './sales/sales.routes';
 
 export const MODULES_ROUTES: Routes = [
   {
     path: 'sales',
-    children: SALES_ROUTES,
+    loadChildren: () => import('./sales/sales.routes').then((m) => m.SALES_ROUTES),
   },
   //   {
   //     path: 'purchase',
