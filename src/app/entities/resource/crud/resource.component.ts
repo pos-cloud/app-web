@@ -1,9 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ApiResponse, Resource } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ResourceService } from '../../../core/services/resource.service';
@@ -11,6 +15,8 @@ import { ResourceService } from '../../../core/services/resource.service';
 @Component({
   selector: 'app-resource',
   templateUrl: './resource.component.html',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule, UploadFileComponent],
 })
 export class ResourceComponent implements OnInit {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;

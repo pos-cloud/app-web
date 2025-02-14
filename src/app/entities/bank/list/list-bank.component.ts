@@ -3,12 +3,15 @@ import { Router } from '@angular/router';
 
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { BankService } from 'app/core/services/bank.service';
 
 @Component({
   selector: 'app-list-banks',
   templateUrl: './list-bank.component.html',
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListBankComponent {
   public title: string = 'banks';

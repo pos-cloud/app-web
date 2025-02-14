@@ -1,8 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ApiResponse, CurrencyValue } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CurrencyValueService } from '../../../core/services/currency-value.service';
@@ -10,6 +14,8 @@ import { CurrencyValueService } from '../../../core/services/currency-value.serv
 @Component({
   selector: 'app-currency-value',
   templateUrl: './currency-value.component.html',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
 })
 export class CurrencyValueComponent implements OnInit, OnDestroy {
   public operation: string;

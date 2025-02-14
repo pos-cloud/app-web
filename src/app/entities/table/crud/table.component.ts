@@ -1,13 +1,13 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { Room, Table, TableState } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs/internal/Subject';
 import { takeUntil } from 'rxjs/operators';
 import { RoomService } from '../../../core/services/room.service';
@@ -16,21 +16,18 @@ import { TableService } from '../../../core/services/table.service';
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
 })
 export class TableComponent implements OnInit {
   public operation: string;
-  public readonly: boolean;
   public table: Table;
   public rooms: Room[] = new Array();
   public tableForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   private destroy$ = new Subject<void>();
-  public states: TableState[] = [
-    TableState.Available,
-    TableState.Disabled,
-    TableState.Reserved,
-  ];
+  public states: TableState[] = [TableState.Available, TableState.Disabled, TableState.Reserved];
 
   constructor(
     private _tableService: TableService,
@@ -52,7 +49,7 @@ export class TableComponent implements OnInit {
     const pathUrl = this._router.url.split('/');
     const tableId = pathUrl[4];
     this.operation = pathUrl[3];
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
+    if (this.operation === 'view' || this.operation === 'delete') this.tableForm.disable();
 
     this.getRooms();
     if (tableId) {
@@ -67,6 +64,7 @@ export class TableComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
   public getRooms(): Promise<void> {
@@ -117,9 +115,7 @@ export class TableComponent implements OnInit {
   }
 
   public setValueForm() {
-    const room = this.rooms?.find(
-      (item) => item._id == this.table.room.toString()
-    );
+    const room = this.rooms?.find((item) => item._id == this.table.room.toString());
 
     this.tableForm.setValue({
       _id: this.table._id ?? '',

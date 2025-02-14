@@ -1,8 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ApiResponse, Employee, EmployeeType } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EmployeeTypeService } from '../../../core/services/employee-type.service';
@@ -11,10 +16,18 @@ import { EmployeeService } from '../../../core/services/employee.service';
 @Component({
   selector: 'app-add-employee',
   templateUrl: './employee.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FocusDirective,
+    PipesModule,
+    TranslateModule,
+    TypeaheadDropdownComponent,
+  ],
 })
 export class EmployeeComponent implements OnInit {
   public operation: string;
-  public readonly: boolean;
   public employee: Employee;
   public employeeTypes: EmployeeType[];
   public employeeForm: UntypedFormGroup;

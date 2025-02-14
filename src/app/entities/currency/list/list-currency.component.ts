@@ -3,12 +3,15 @@ import { Router } from '@angular/router';
 
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { CurrencyService } from 'app/core/services/currency.service';
 
 @Component({
   selector: 'app-list-currency',
   templateUrl: './list-currency.component.html',
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListCurrencyComponent {
   public title: string = 'currencies';

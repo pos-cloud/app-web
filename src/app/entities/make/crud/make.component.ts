@@ -1,11 +1,15 @@
 import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ApiResponse, Make } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MakeService } from '../../../core/services/make.service';
@@ -13,6 +17,8 @@ import { MakeService } from '../../../core/services/make.service';
 @Component({
   selector: 'app-make',
   templateUrl: './make.component.html',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule, UploadFileComponent],
 })
 export class MakeComponent implements OnInit, OnDestroy {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;

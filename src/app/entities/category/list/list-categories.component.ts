@@ -2,11 +2,14 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { CategoryService } from '../../../core/services/category.service';
 
 @Component({
   selector: 'app-list-categories',
   templateUrl: './list-categories.component.html',
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListCategoriesComponent {
   public title: string = 'categories';

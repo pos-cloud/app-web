@@ -2,11 +2,14 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { EmployeeService } from 'app/core/services/employee.service';
 
 @Component({
   selector: 'app-list-employee',
   templateUrl: './list-employee.component.html',
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListEmployeeComponent {
   public title: string = 'Lista de empleados';

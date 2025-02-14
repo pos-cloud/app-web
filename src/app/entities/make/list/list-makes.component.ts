@@ -1,25 +1,22 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { MakeService } from '../../../core/services/make.service';
 
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 
 @Component({
   selector: 'app-list-makes',
   templateUrl: './list-makes.component.html',
-  providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListMakesComponent {
   public title: string;
   public sort = { description: 1 };
   public columns: IAttribute[];
-  public pathLocation: string[];
-  public priceListId: string;
   public loading: boolean = false;
   public headerButtons: IButton[];
   public rowButtons: IButton[];

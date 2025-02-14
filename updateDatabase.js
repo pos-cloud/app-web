@@ -241,3 +241,31 @@ db.articles.find({ type: 'Variante' }).forEach(function (article) {
     });
   }
 });
+
+// poner allow stock si hay stock
+db['article-stocks'].find().forEach((stock) => {
+  const article = db.articles.findOne({ code: stock.code });
+
+  if (article) {
+    // Primero, si el artículo existe, actualizamos 'allowWithoutStock' a true
+    db.articles.updateOne(
+      { _id: article._id }, // Filtramos por el _id del artículo
+      { $set: { allowWithoutStock: false } } // Actualizamos el campo 'allowWithoutStock'
+    );
+  }
+});
+
+db['article-stocks'].find().forEach((stock) => {
+  const article = db.articles.findOne({ code: stock.code });
+
+  if (article) {
+    // Si el artículo existe, verificamos el realStock
+    if (stock.realStock > 0) {
+      // Si el realStock es mayor a 0, no se puede vender sin stock
+      db.articles.updateOne({ _id: article._id }, { $set: { allowWithoutStock: false } });
+    } else {
+      // Si el realStock es 0 o menor, se puede vender sin stock
+      db.articles.updateOne({ _id: article._id }, { $set: { allowWithoutStock: true } });
+    }
+  }
+});

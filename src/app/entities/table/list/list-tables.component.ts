@@ -3,11 +3,14 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { TableService } from 'app/core/services/table.service';
 
 @Component({
   selector: 'app-list-tables',
   templateUrl: './list-tables.component.html',
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListTablesComponent {
   public loading: boolean = false;

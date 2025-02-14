@@ -1,14 +1,11 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 import { GalleryService } from '../../../core/services/gallery.service';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Gallery, Resource } from '@types';
 import { Article } from 'app/components/article/article';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
@@ -16,6 +13,7 @@ import { ArticleService } from 'app/core/services/article.service';
 import { PaymentMethodService } from 'app/core/services/payment-method.service';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import 'hammerjs';
 @Component({
@@ -24,6 +22,8 @@ import 'hammerjs';
   styleUrls: ['./view-gallery.component.scss'],
   providers: [NgbAlertConfig, TranslateMePipe],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbCarouselModule, FocusDirective],
 })
 export class ViewGalleryComponent implements OnInit {
   public src: string;
@@ -77,9 +77,7 @@ export class ViewGalleryComponent implements OnInit {
           this.gallery = result.result;
           this.gallery.resources.forEach((element) => {
             let fileImg = this.resource.find((file) =>
-              typeof element.resource === 'string'
-                ? element.resource === file._id
-                : element.resource._id === file._id
+              typeof element.resource === 'string' ? element.resource === file._id : element.resource._id === file._id
             );
             this.src = fileImg.file;
             this.images.push(this.src);
@@ -116,10 +114,7 @@ export class ViewGalleryComponent implements OnInit {
             picture: 1,
           },
           match: {
-            $or: [
-              { barcode: this.filterArticle },
-              { code: this.filterArticle },
-            ],
+            $or: [{ barcode: this.filterArticle }, { code: this.filterArticle }],
             operationType: { $ne: 'D' },
           },
         })
@@ -135,10 +130,7 @@ export class ViewGalleryComponent implements OnInit {
             }
 
             if (this.article !== null) {
-              if (
-                this.article.picture === './../../../assets/img/default.jpg' ||
-                !this.article.picture
-              ) {
+              if (this.article.picture === './../../../assets/img/default.jpg' || !this.article.picture) {
                 this.articleImage = null;
                 if (this.article.make && this.article.make.picture) {
                   this.makeImage = this.article.make.picture;

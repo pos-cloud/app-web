@@ -1,9 +1,21 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { NgForm, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  NgForm,
+  ReactiveFormsModule,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ApiResponse, Resource } from '@types';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { GalleryService } from '../../../core/services/gallery.service';
@@ -11,10 +23,11 @@ import { GalleryService } from '../../../core/services/gallery.service';
 @Component({
   selector: 'app-gallery',
   templateUrl: './gallery.component.html',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
 })
 export class GalleryComponent implements OnInit {
   public operation: string;
-  public readonly: boolean;
   public userType: string;
   public loading: boolean = false;
 
@@ -46,15 +59,14 @@ export class GalleryComponent implements OnInit {
 
   async ngOnInit() {
     await this.getResources();
-    const URL = this._router.url.split('/');
-    this.operation = URL[3].split('?')[0];
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
-    if (this.operation !== 'add') {
-      this.galleryId = URL[4].split('?')[0];
-    }
-    if (this.galleryId) {
-      this.getGallery();
+
+    const pathUrl = this._router.url.split('/');
+    const galleryId = pathUrl[4];
+    this.operation = pathUrl[3];
+
+    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.galleryForm.disable();
+    if (galleryId) {
+      this.getGallery(galleryId);
     }
   }
 
@@ -67,6 +79,7 @@ export class GalleryComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
   addResource(resourceForm: NgForm): void {
@@ -84,11 +97,11 @@ export class GalleryComponent implements OnInit {
     }
   }
 
-  getGallery() {
+  getGallery(id: string) {
     this.loading = true;
 
     this._galleryService
-      .getById(this.galleryId)
+      .getById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {

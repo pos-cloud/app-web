@@ -1,27 +1,38 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { BankService } from '../../../core/services/bank.service';
 
 import { ApiResponse, Bank } from '@types';
 
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { Account } from 'app/components/account/account';
 import { AccountService } from 'app/core/services/account.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-bank',
   templateUrl: './bank.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FocusDirective,
+    PipesModule,
+    TranslateModule,
+    TypeaheadDropdownComponent,
+  ],
 })
 export class BankComponent implements OnInit {
   public operation: string;
   public readonly: boolean;
-  public bankId: string;
-  public alertMessage: string = '';
-  public userType: string;
   public bank: Bank;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -103,11 +114,11 @@ export class BankComponent implements OnInit {
     });
   }
 
-  public getBank(bankId: string) {
+  public getBank(id: string) {
     this.loading = true;
 
     this._bankService
-      .getById(bankId)
+      .getById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {

@@ -38,7 +38,6 @@
         </button>
       </div>
     </div>
-    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body">
       <form [formGroup]="galleryForm" autocomplete="off">
         <div class="row">
@@ -57,7 +56,6 @@
                 name="name"
                 id="name"
                 [focus]="focusEvent"
-                [readonly]="readonly"
                 [ngClass]="{
                   'is-invalid': galleryForm.get('name')?.touched && galleryForm.get('name')?.hasError('required'),
                 }"
@@ -81,7 +79,6 @@
                 name="interval"
                 id="interval"
                 value="interval"
-                [readonly]="readonly"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">seg</span>
@@ -91,10 +88,10 @@
           <div class="form-group col-md-2">
             <label for="barcode" class="control-label">Tiene Codigo de Barra</label>
             <select class="form-control" formControlName="barcode">
-              <option [ngValue]="true" [disabled]="readonly">
+              <option [ngValue]="true">
                 {{ 'true' | translate | capitalize }}
               </option>
-              <option [ngValue]="false" [disabled]="readonly">
+              <option [ngValue]="false">
                 {{ 'false' | translate | capitalize }}
               </option>
             </select>
@@ -105,7 +102,7 @@
             <div class="form-group col-md-5">
               <label for="resource" class="control-label"> {{ 'resource' | translate | capitalize }}:</label>
               <select class="form-control" [(ngModel)]="selectedResource" name="resource">
-                <option *ngFor="let resource of resources" [value]="resource._id" [disabled]="readonly">
+                <option *ngFor="let resource of resources" [value]="resource._id">
                   {{ resource.name }}
                 </option>
               </select>
@@ -113,7 +110,7 @@
             <div class="form-group col-md-3">
               <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
               <div class="input-group">
-                <input type="number" class="form-control" ngModel name="order" [readonly]="readonly" />
+                <input type="number" class="form-control" ngModel name="order" />
               </div>
             </div>
             <div class="form-group col-md-2">

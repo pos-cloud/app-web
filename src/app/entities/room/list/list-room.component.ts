@@ -3,11 +3,14 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { RoomService } from 'app/core/services/room.service';
 
 @Component({
   selector: 'app-list-room',
   templateUrl: './list-room.component.html',
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListRoomsComponent {
   public title: string = 'Salones';

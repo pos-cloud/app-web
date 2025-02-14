@@ -1,24 +1,18 @@
 <section class="container-fluid">
   <div class="card">
     <div class="card-header">
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'add' || operation === 'copy'"
-        >{{ 'add-employee' | translate | capitalize }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-employee' | translate | capitalize
+      }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }}
-        {{ employeeType?.description }}</span
+        >{{ 'edit' | translate | capitalize }} {{ employeeType?.description }}</span
       >
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'view' || operation === 'delete'"
-        >{{ employeeType?.description }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{
+        employeeType?.description
+      }}</span>
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
-          <i class="fa fa-arrow-left"></i
-          ><span>{{ 'return' | translate | capitalize }}</span>
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
         </button>
         <button
           type="button"
@@ -27,10 +21,7 @@
           *ngIf="operation !== 'delete' && operation !== 'view'"
           (click)="handleEmployeeTypeOperation()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -41,22 +32,14 @@
           [disabled]="loading"
           (click)="handleEmployeeTypeOperation()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
           <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
         </button>
       </div>
     </div>
-    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
-      <form
-        [formGroup]="employeeTypeForm"
-        (ngSubmit)="handleEmployeeTypeOperation()"
-        autocomplete="off"
-      >
+      <form [formGroup]="employeeTypeForm" (ngSubmit)="handleEmployeeTypeOperation()" autocomplete="off">
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
@@ -64,9 +47,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-3">
-            <label class="control-label"
-              >{{ 'description' | translate | capitalize }}:</label
-            >
+            <label class="control-label">{{ 'description' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
@@ -76,10 +57,8 @@
               [focus]="focusEvent"
               [ngClass]="{
                 'is-invalid':
-                  employeeTypeForm.get('description')?.touched &&
-                  employeeTypeForm.get('description')?.invalid,
+                  employeeTypeForm.get('description')?.touched && employeeTypeForm.get('description')?.invalid,
               }"
-              [readonly]="readonly"
             />
             <div
               class="invalid-feedback"
@@ -110,10 +89,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    employeeType?.creationDate ?? null
-                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ employeeType?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -127,10 +103,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    employeeType?.updateDate ?? null
-                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ employeeType?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

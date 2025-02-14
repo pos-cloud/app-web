@@ -1,23 +1,16 @@
 <section class="container-fluid">
   <div class="card">
     <div class="card-header">
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'add' || operation === 'copy'"
-        >{{ 'add-room' | translate | capitalize }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-room' | translate | capitalize
+      }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
         >{{ 'edit' | translate | capitalize }} {{ room?.description }}</span
       >
-      <span
-        style="color: #607d8b"
-        *ngIf="operation === 'view' || operation === 'delete'"
-        >{{ room?.description }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{ room?.description }}</span>
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
-          <i class="fa fa-arrow-left"></i
-          ><span>{{ 'return' | translate | capitalize }}</span>
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
         </button>
         <button
           type="button"
@@ -26,10 +19,7 @@
           *ngIf="operation !== 'delete' && operation !== 'view'"
           (click)="addRoom()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -40,16 +30,12 @@
           [disabled]="loading"
           (click)="addRoom()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
           <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
         </button>
       </div>
     </div>
-    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
       <form [formGroup]="roomForm" (ngSubmit)="addRoom()" autocomplete="off">
         <div class="row">
@@ -59,9 +45,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-12">
-            <label class="control-label"
-              >{{ 'description' | translate | capitalize }}:</label
-            >
+            <label class="control-label">{{ 'description' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
@@ -70,18 +54,12 @@
               id="description"
               [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid':
-                  roomForm.get('description')?.touched &&
-                  roomForm.get('description')?.invalid,
+                'is-invalid': roomForm.get('description')?.touched && roomForm.get('description')?.invalid,
               }"
-              [readonly]="readonly"
             />
             <div
               class="invalid-feedback"
-              *ngIf="
-                roomForm.get('description')?.touched &&
-                roomForm.get('description')?.hasError('required')
-              "
+              *ngIf="roomForm.get('description')?.touched && roomForm.get('description')?.hasError('required')"
             >
               Este campo es obligatorio.
             </div>
@@ -105,10 +83,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    room?.creationDate ?? null
-                      | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ room?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -122,9 +97,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{
-                    room?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss'
-                  }}</b>
+                  <b>{{ room?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

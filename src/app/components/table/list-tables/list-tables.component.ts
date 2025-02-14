@@ -10,11 +10,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Table, TableState } from '@types';
 
@@ -23,7 +19,6 @@ import { TransactionTypeService } from '../../../core/services/transaction-type.
 import { TransactionService } from '../../../core/services/transaction.service';
 import { UserService } from '../../../core/services/user.service';
 
-import { TableComponent } from 'app/entities/table/crud/table.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { PrintQRComponent } from './../../../components/print/print-qr/print-qr.component';
@@ -128,43 +123,35 @@ export class ListTablesComponent implements OnInit {
 
     if (this.states) match['state'] = { $in: this.states };
 
-    this._tableService
-      .getTablesV2(project, match, { description: 1 }, {})
-      .subscribe(
-        (result) => {
-          if (!result.tables) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
-            this.tables = new Array();
-            this.areTablesEmpty = true;
-          } else {
-            this.hideMessage();
-            this.tables = result.tables;
-            this.totalItems = this.tables.length;
-            this.areTablesEmpty = false;
-            this.calculateAmountOfDiners();
-          }
-        },
-        (error) => {
-          if (error.status === 0) {
-            this.showMessage(
-              'Error al conectar con el servidor. Corroborar que este encendido.',
-              'danger',
-              false
-            );
-          } else {
-            this.showMessage(error._body, 'danger', false);
-          }
+    this._tableService.getTablesV2(project, match, { description: 1 }, {}).subscribe(
+      (result) => {
+        if (!result.tables) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.tables = new Array();
+          this.areTablesEmpty = true;
+        } else {
+          this.hideMessage();
+          this.tables = result.tables;
+          this.totalItems = this.tables.length;
+          this.areTablesEmpty = false;
+          this.calculateAmountOfDiners();
         }
-      );
+      },
+      (error) => {
+        if (error.status === 0) {
+          this.showMessage('Error al conectar con el servidor. Corroborar que este encendido.', 'danger', false);
+        } else {
+          this.showMessage(error._body, 'danger', false);
+        }
+      }
+    );
   }
 
   public async selectTable(table: Table) {
     this.loading = true;
     try {
       table = await this.getTable(table._id);
-      if (table.state === TableState.Pending)
-        this.openModal('change-state', table);
+      if (table.state === TableState.Pending) this.openModal('change-state', table);
       else this.eventTableSelected.emit(table);
     } catch (error) {
       this._toastService.showToast(error);
@@ -189,10 +176,7 @@ export class ListTablesComponent implements OnInit {
 
     for (let table of this.tables) {
       this.amountOfDiners += table.chair;
-      if (
-        table.state === TableState.Busy ||
-        table.state === TableState.Pending
-      ) {
+      if (table.state === TableState.Busy || table.state === TableState.Pending) {
         this.amountOfDinersNow += table.diners;
       }
     }
@@ -215,65 +199,6 @@ export class ListTablesComponent implements OnInit {
     let modalRef;
 
     switch (op) {
-      case 'view':
-        modalRef = this._modalService.open(TableComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.tableId = table._id;
-        modalRef.componentInstance.readonly = true;
-        modalRef.componentInstance.operation = op;
-        break;
-      case 'add':
-        modalRef = this._modalService.open(TableComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.operation = op;
-        modalRef.componentInstance.readonly = false;
-        modalRef.result.then(
-          (result) => {
-            this.getTables();
-          },
-          (reason) => {
-            this.getTables();
-          }
-        );
-        break;
-      case 'update':
-        modalRef = this._modalService.open(TableComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.operation = op;
-        modalRef.componentInstance.tableId = table._id;
-        modalRef.componentInstance.readonly = false;
-        modalRef.result.then(
-          (result) => {
-            this.getTables();
-          },
-          (reason) => {
-            this.getTables();
-          }
-        );
-        break;
-      case 'delete':
-        modalRef = this._modalService.open(TableComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.operation = op;
-        modalRef.componentInstance.tableId = table._id;
-        modalRef.componentInstance.readonly = true;
-        modalRef.result.then(
-          (result) => {
-            this.getTables();
-          },
-          (reason) => {
-            this.getTables();
-          }
-        );
-        break;
       case 'change-state':
         modalRef = this._modalService.open(this.contentChangeState, {
           backdrop: 'static',
@@ -323,11 +248,7 @@ export class ListTablesComponent implements OnInit {
     );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

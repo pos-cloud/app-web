@@ -1,14 +1,14 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Room } from '@types';
 
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RoomService } from '../../../core/services/room.service';
@@ -16,11 +16,12 @@ import { RoomService } from '../../../core/services/room.service';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
 })
 export class RoomComponent implements OnInit {
   public roomId: string;
   public operation: string;
-  public readonly: boolean;
   public room: Room;
   public roomForm: UntypedFormGroup;
   public loading: boolean = false;
@@ -44,7 +45,7 @@ export class RoomComponent implements OnInit {
     this.operation = pathUrl[3];
     this.roomId = pathUrl[4];
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
+    if (this.operation === 'view' || this.operation === 'delete') this.roomForm.disable();
 
     if (this.roomId) {
       this.getRoom();
@@ -58,6 +59,7 @@ export class RoomComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
   public setValueForm(): void {

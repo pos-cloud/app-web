@@ -1,13 +1,13 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ApiResponse, EmployeeType } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { FocusDirective } from 'app/shared/directives/focus.directive';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EmployeeTypeService } from '../../../core/services/employee-type.service';
@@ -15,13 +15,14 @@ import { EmployeeTypeService } from '../../../core/services/employee-type.servic
 @Component({
   selector: 'app-employee-type',
   templateUrl: './employee-type.component.html',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
 })
 export class EmployeeTypeComponent implements OnInit {
-  public readonly: boolean;
+  public loading: boolean;
   public operation: string;
   public employeeType: EmployeeType;
   public employeeTypeForm: UntypedFormGroup;
-  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
   private destroy$ = new Subject<void>();
@@ -43,7 +44,7 @@ export class EmployeeTypeComponent implements OnInit {
     const employeeTypeId = pathUrl[4];
     this.operation = pathUrl[3];
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.readonly = true;
+    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.employeeTypeForm.disable();
     if (employeeTypeId) this.getEmployeeType(employeeTypeId);
   }
 
@@ -54,6 +55,7 @@ export class EmployeeTypeComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
   returnTo() {

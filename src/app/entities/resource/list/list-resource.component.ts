@@ -3,11 +3,14 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { ResourceService } from '../../../core/services/resource.service';
 
 @Component({
   selector: 'app-list-resources',
   templateUrl: './list-resource.component.html',
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListResourcesComponent {
   public title: string = 'Recursos';

@@ -36,7 +36,6 @@
         </button>
       </div>
     </div>
-    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
       <form [formGroup]="employeeForm" (ngSubmit)="handleEmployeeOperation()" autocomplete="off">
         <div class="row">
@@ -57,7 +56,6 @@
               [ngClass]="{
                 'is-invalid': employeeForm.get('name')?.touched && employeeForm.get('name')?.invalid,
               }"
-              [readonly]="readonly"
             />
             <div
               class="invalid-feedback"
@@ -68,25 +66,11 @@
           </div>
           <div class="form-group col-md-3">
             <label class="control-label">{{ 'contact.phone' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="phone"
-              name="phone"
-              id="phone"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="phone" name="phone" id="phone" />
           </div>
           <div class="form-group col-md-3">
             <label class="control-label">{{ 'address' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="address"
-              name="address"
-              id="address"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="address" name="address" id="address" />
           </div>
         </div>
 

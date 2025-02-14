@@ -1,13 +1,15 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { EmployeeTypeService } from '../../../core/services/employee-type.service';
 
 @Component({
   selector: 'app-list-employee-types',
   templateUrl: './list-employee-types.component.html',
-  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [DatatableModule],
 })
 export class ListEmployeeTypesComponent {
   public title: string = 'employee-types';
