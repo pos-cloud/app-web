@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -26,7 +26,8 @@ export class ReportBirthdayComponent implements OnInit {
 
   constructor(
     private _service: ReportSystemService,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   public ngOnDestroy(): void {
@@ -61,12 +62,14 @@ export class ReportBirthdayComponent implements OnInit {
             this.data = result.result.data;
             this.columns = result.result.columns;
             this.totals = result.result.totals;
+            this.cdRef.detectChanges();
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
+            this.cdRef.detectChanges();
           },
         })
     );

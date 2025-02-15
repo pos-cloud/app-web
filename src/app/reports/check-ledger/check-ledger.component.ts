@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -32,7 +32,8 @@ export class ReportCheckLedgerComponent {
   constructor(
     private _service: ReportSystemService,
     private _toastService: ToastService,
-    public _fb: UntypedFormBuilder
+    private _fb: UntypedFormBuilder,
+    private cdRef: ChangeDetectorRef
   ) {
     this.form = this._fb.group({
       checkNumber: [''],
@@ -73,12 +74,14 @@ export class ReportCheckLedgerComponent {
             this.columns = result.result.columns;
             this.totals = result.result.totals;
             this.header = result.result.header;
+            this.cdRef.detectChanges();
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
+            this.cdRef.detectChanges();
           },
         })
     );

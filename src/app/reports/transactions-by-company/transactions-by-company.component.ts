@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import 'moment/locale/es';
@@ -76,7 +76,8 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
     private _branchService: BranchService,
     private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
-    private _activatedRoute: ActivatedRoute
+    private _activatedRoute: ActivatedRoute,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -183,12 +184,14 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
             this.data = result.result.data;
             this.columns = result.result.columns;
             this.totals = result.result.totals;
+            this.cdRef.detectChanges();
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
+            this.cdRef.detectChanges();
           },
         })
     );

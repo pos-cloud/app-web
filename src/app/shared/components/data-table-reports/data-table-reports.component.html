@@ -16,7 +16,11 @@
       <thead>
         <tr>
           <ng-container *ngFor="let column of columns">
-            <th>{{ column.name | translate | capitalize }}</th>
+            <th>
+              <b>
+                {{ column.name | translate | capitalize }}
+              </b>
+            </th>
           </ng-container>
         </tr>
       </thead>

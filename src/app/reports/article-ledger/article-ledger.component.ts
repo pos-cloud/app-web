@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Article } from '@types';
@@ -61,7 +61,8 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     private _depositService: DepositService,
     private _toastService: ToastService,
     private _articleService: ArticleService,
-    public _fb: UntypedFormBuilder
+    public _fb: UntypedFormBuilder,
+    private cdRef: ChangeDetectorRef
   ) {
     this.articleForm = this._fb.group({ article: [null] });
     this.articleControl = this.articleForm.get('article');
@@ -185,12 +186,14 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
             this.columns = result.result.columns;
             this.totals = result.result.totals;
             this.header = result.result.header;
+            this.cdRef.detectChanges();
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
+            this.cdRef.detectChanges();
           },
         })
     );
