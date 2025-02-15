@@ -523,6 +523,7 @@
   "total": "Total",
   "totalPrice": "Precio Total",
   "totalStock": "Stock Total",
+  "totalTaxAmount": "Impuesto",
   "transaction": "Transacción",
   "transaction-type": "Tipo de Transacción",
   "transaction-types": "Tipos de Transacciones",

@@ -30,7 +30,7 @@
 
         <tr *ngFor="let item of data">
           <td *ngFor="let column of columns">
-            {{ item[column.name] | dynamicFormat: column.datatype }}
+            {{ item[column.name] | dynamicFormat: column.dataType }}
           </td>
         </tr>
 
@@ -43,7 +43,7 @@
         <tr>
           <td *ngFor="let column of columns; let i = index">
             <strong *ngIf="i > 0 && totals[column.name] !== undefined">
-              {{ totals[column.name] | dynamicFormat: column.datatype }}
+              {{ totals[column.name] | dynamicFormat: column.dataType }}
             </strong>
           </td>
         </tr>
