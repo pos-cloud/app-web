@@ -62,7 +62,6 @@ import { ListVATConditionsComponent } from './components/vat-condition/list-vat-
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
-import { REPORTS_ROUTES } from './reports/reports.routes';
 
 export const _routes: Routes = [
   {
@@ -617,7 +616,7 @@ export const _routes: Routes = [
   {
     path: 'reports',
     canActivate: [AuthGuard, LicenseGuard],
-    children: REPORTS_ROUTES,
+    loadChildren: () => import('./reports/reports.routes').then((m) => m.REPORTS_ROUTES),
   },
   {
     path: '**',
