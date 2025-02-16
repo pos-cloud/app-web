@@ -54,6 +54,12 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   endDate: string = new Date().toISOString();
 
+  // sort
+  public sort = {
+    column: 'category',
+    direction: 'asc',
+  };
+
   constructor(
     private _service: ReportSystemService,
     private _branchService: BranchService,
@@ -146,10 +152,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
         page: 1,
         pageSize: 10,
       },
-      sorting: {
-        column: 'category',
-        direction: 'asc',
-      },
+      sorting: this.sort,
     };
 
     this.subscription.add(
@@ -173,5 +176,14 @@ export class ReportMovArtByCategoryComponent implements OnInit {
           },
         })
     );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+
+    this.getReport();
   }
 }

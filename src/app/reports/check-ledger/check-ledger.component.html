@@ -30,8 +30,10 @@
     [data]="data"
     [columns]="columns"
     [totals]="totals"
-    [title]="'Kardex artículo'"
+    [title]="'Kardex de cheque'"
     [loading]="loading"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
   >
   </app-data-table-reports>
 </section>

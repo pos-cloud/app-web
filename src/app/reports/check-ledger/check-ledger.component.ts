@@ -29,6 +29,12 @@ export class ReportCheckLedgerComponent {
   public totals: any = {};
   public header: any[] = [];
 
+  // sort
+  public sort = {
+    column: 'description',
+    direction: 'asc',
+  };
+
   constructor(
     private _service: ReportSystemService,
     private _toastService: ToastService,
@@ -57,10 +63,7 @@ export class ReportCheckLedgerComponent {
         page: 1,
         pageSize: 10,
       },
-      sorting: {
-        column: 'endDate',
-        direction: 'asc',
-      },
+      sorting: this.sort,
     };
 
     this.subscription.add(
@@ -85,5 +88,13 @@ export class ReportCheckLedgerComponent {
           },
         })
     );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+    this.getReport();
   }
 }

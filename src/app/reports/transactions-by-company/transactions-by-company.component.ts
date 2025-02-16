@@ -45,6 +45,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
+  //filter
   branches: Branch[];
   branchSelectedId: string[] = [];
 
@@ -71,6 +72,13 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   endDate: string = new Date().toISOString();
 
   companyType: CompanyType;
+
+  // sort
+  sort = {
+    column: 'description',
+    direction: 'asc',
+  };
+
   constructor(
     private _service: ReportSystemService,
     private _branchService: BranchService,
@@ -168,10 +176,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
         page: 1,
         pageSize: 10,
       },
-      sorting: {
-        column: 'name',
-        direction: 'asc',
-      },
+      sorting: this.sort,
     };
 
     this.subscription.add(
@@ -195,5 +200,14 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
           },
         })
     );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+
+    this.getReport();
   }
 }

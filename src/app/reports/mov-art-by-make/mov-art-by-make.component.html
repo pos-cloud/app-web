@@ -49,6 +49,8 @@
     [totals]="totals"
     [title]="'Movimientos de articulos por Marcas'"
     [loading]="loading"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
   >
   </app-data-table-reports>
 </section>

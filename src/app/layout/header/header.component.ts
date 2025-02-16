@@ -437,22 +437,22 @@ export class HeaderComponent implements OnInit {
     if (user.permission) {
       this.menu = [];
 
-      if (user.permission.menu.sales) {
+      if (user?.permission?.menu?.sales) {
         let child = [];
 
-        if (user.permission.menu.sales.counter) {
+        if (user?.permission?.menu?.sales?.counter) {
           child.push({ label: 'Mostrador', link: 'pos/mostrador/venta' });
         }
 
-        if (user.permission.menu.sales.resto) {
+        if (user?.permission?.menu?.sales?.resto) {
           child.push({ label: 'Resto', link: 'pos/resto' });
         }
 
-        if (user.permission.menu.sales.delivery) {
+        if (user?.permission?.menu?.sales?.delivery) {
           child.push({ label: 'Delivery', link: 'pos/delivery' });
         }
 
-        if (user.permission.menu.sales.voucherReader) {
+        if (user?.permission?.menu?.sales?.voucherReader) {
           child.push({ label: 'Lector de Vouchers', link: 'pos/lector-de-vouchers' });
         }
 
@@ -695,13 +695,19 @@ export class HeaderComponent implements OnInit {
                 },
               ],
             },
-            {
-              label: 'Contable',
-              children: [
-                { label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' },
-                { label: 'Asientos contables', link: 'admin/accountant/ledger' },
-              ],
-            },
+            // {
+            //   label: 'Contable',
+            //   children: [
+            //     {
+            //       label: 'Listados',
+            //       children: [{ label: 'Asientos contables', link: 'admin/accountant/ledger' }],
+            //     },
+            //     {
+            //       label: 'Reportes',
+            //       children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }],
+            //     },
+            //   ],
+            // },
             {
               label: 'Otros',
               children: [{ label: 'Cumpleaños', link: 'reports/birthday' }],

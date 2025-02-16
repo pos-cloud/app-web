@@ -55,6 +55,12 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
   articles: Article[];
   articleControl: any;
 
+  // sort
+  public sort = {
+    column: 'description',
+    direction: 'asc',
+  };
+
   constructor(
     private _service: ReportSystemService,
     private _branchService: BranchService,
@@ -169,10 +175,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
         page: 1,
         pageSize: 10,
       },
-      sorting: {
-        column: 'endDate',
-        direction: 'asc',
-      },
+      sorting: this.sort,
     };
 
     this.subscription.add(
@@ -197,5 +200,13 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
           },
         })
     );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+    this.getReport();
   }
 }

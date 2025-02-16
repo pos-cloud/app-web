@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
@@ -24,6 +24,9 @@ export class DataTableReportsComponent implements OnInit {
   @Input() title: string = '';
   @Input() loading: boolean = true;
 
+  @Input() sorting: { column: string; direction: string };
+  @Output() sortingChange = new EventEmitter<{ column: string; direction: string }>();
+
   public exportItems(): void {
     this.exportExcelComponent.items = this.data;
     this.exportExcelComponent.export();
@@ -33,5 +36,19 @@ export class DataTableReportsComponent implements OnInit {
 
   ngOnInit(): void {
     this._title.setTitle(this.title);
+  }
+
+  changeSorting(column: any): void {
+    if (this.sorting.column === column.name) {
+      this.sorting.direction = this.sorting.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sorting = {
+        column: column.name,
+        direction: 'asc',
+      };
+    }
+
+    // Esto actualiza automáticamente el valor en el padre
+    this.sortingChange.emit(this.sorting);
   }
 }

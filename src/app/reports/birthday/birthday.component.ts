@@ -24,6 +24,12 @@ export class ReportBirthdayComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
+  // sort
+  public sort = {
+    column: 'name',
+    direction: 'asc',
+  };
+
   constructor(
     private _service: ReportSystemService,
     private _toastService: ToastService,
@@ -47,10 +53,7 @@ export class ReportBirthdayComponent implements OnInit {
         page: 1,
         pageSize: 10,
       },
-      sorting: {
-        column: 'endDate',
-        direction: 'asc',
-      },
+      sorting: this.sort,
     };
     this.subscription.add(
       this._service
@@ -73,5 +76,13 @@ export class ReportBirthdayComponent implements OnInit {
           },
         })
     );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+    this.getReport();
   }
 }

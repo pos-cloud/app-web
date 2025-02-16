@@ -58,6 +58,8 @@
     [totals]="totals"
     [title]="'Transacciones por ' + companyType"
     [loading]="loading"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
   >
   </app-data-table-reports>
 </section>

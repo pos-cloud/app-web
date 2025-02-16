@@ -44,6 +44,8 @@ export class ReportMovArtByMakeComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
+  //filters
+
   branches: Branch[];
   branchSelectedId: string[] = [];
 
@@ -52,6 +54,12 @@ export class ReportMovArtByMakeComponent implements OnInit {
 
   startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   endDate: string = new Date().toISOString();
+
+  // sort
+  sort = {
+    column: 'description',
+    direction: 'asc',
+  };
 
   constructor(
     public _service: ReportSystemService,
@@ -146,10 +154,7 @@ export class ReportMovArtByMakeComponent implements OnInit {
         page: 1,
         pageSize: 10,
       },
-      sorting: {
-        column: 'name',
-        direction: 'asc',
-      },
+      sorting: this.sort,
     };
 
     this.subscription.add(
@@ -173,5 +178,14 @@ export class ReportMovArtByMakeComponent implements OnInit {
           },
         })
     );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+
+    this.getReport();
   }
 }

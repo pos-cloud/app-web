@@ -54,6 +54,12 @@ export class ReportMovArtByArticleComponent {
   startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   endDate: string = new Date().toISOString();
 
+  // sort
+  public sort = {
+    column: 'amount',
+    direction: 'asc',
+  };
+
   constructor(
     private _service: ReportSystemService,
     private _branchService: BranchService,
@@ -146,10 +152,7 @@ export class ReportMovArtByArticleComponent {
         page: 1,
         pageSize: 10,
       },
-      sorting: {
-        column: 'description',
-        direction: 'asc',
-      },
+      sorting: this.sort,
     };
 
     this.subscription.add(
@@ -173,5 +176,13 @@ export class ReportMovArtByArticleComponent {
           },
         })
     );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+    this.getReport();
   }
 }

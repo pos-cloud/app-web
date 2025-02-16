@@ -11,14 +11,22 @@
       ></app-export-excel>
     </div>
   </div>
-  <div class="card-block table-responsive">
+  <div class="table-responsive">
     <table class="table table-striped">
       <thead>
         <tr>
           <ng-container *ngFor="let column of columns">
-            <th>
+            <th (click)="changeSorting(column)">
               <b>
                 {{ column.name | translate | capitalize }}
+                <i
+                  class="fa"
+                  [ngClass]="{
+                    'fa-sort': sorting.column !== column.name,
+                    'fa-sort-asc': sorting.column === column.name && sorting.direction === 'asc',
+                    'fa-sort-desc': sorting.column === column.name && sorting.direction === 'desc',
+                  }"
+                ></i>
               </b>
             </th>
           </ng-container>
@@ -34,7 +42,7 @@
 
         <tr *ngFor="let item of data">
           <td *ngFor="let column of columns">
-            {{ item[column.name] | dynamicFormat: column.dataType }}
+            {{ item?.[column.name] | dynamicFormat: column.dataType }}
           </td>
         </tr>
 
@@ -46,7 +54,7 @@
       <tfoot *ngIf="data?.length > 0">
         <tr>
           <td *ngFor="let column of columns; let i = index">
-            <strong *ngIf="i > 0 && totals[column.name] !== undefined">
+            <strong *ngIf="i > 0 && totals?.[column.name]">
               {{ totals[column.name] | dynamicFormat: column.dataType }}
             </strong>
           </td>

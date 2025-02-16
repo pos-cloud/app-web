@@ -3,4 +3,14 @@ app-data-table-reports {
     min-height: calc(100vh - 225px);
     max-height: calc(100vh - 225px);
   }
+
+  .table-responsive {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  th {
+    cursor: pointer;
+    user-select: none;
+  }
 }

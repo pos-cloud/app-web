@@ -52,6 +52,8 @@
     [totals]="totals"
     [title]="'Kardex artículo'"
     [loading]="loading"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
   >
   </app-data-table-reports>
 </section>

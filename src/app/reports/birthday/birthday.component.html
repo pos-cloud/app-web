@@ -5,6 +5,8 @@
     [totals]="totals"
     [title]="'Cumpleaños'"
     [loading]="loading"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
   >
   </app-data-table-reports>
 </section>
