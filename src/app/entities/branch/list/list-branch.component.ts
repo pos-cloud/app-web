@@ -29,16 +29,6 @@ export class ListBranchComponent {
   ) {
     this.columns = [
       {
-        name: 'number',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'number',
-        project: null,
-        align: 'left',
-        required: true,
-      },
-      {
         name: 'name',
         visible: true,
         disabled: false,
@@ -46,17 +36,27 @@ export class ListBranchComponent {
         datatype: 'string',
         project: null,
         align: 'left',
-        required: true,
+        required: false,
+      },
+      {
+        name: 'number',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'number',
+        project: null,
+        align: 'left',
+        required: false,
       },
       {
         name: 'default',
-        visible: true,
+        visible: false,
         disabled: false,
         filter: true,
         datatype: 'boolean',
         project: null,
-        align: 'center',
-        required: true,
+        align: 'left',
+        required: false,
       },
       {
         name: 'image',
@@ -65,6 +65,24 @@ export class ListBranchComponent {
         filter: false,
         datatype: 'string',
         project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'creationUser.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updateUser.name',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
         align: 'left',
         required: false,
       },
@@ -88,28 +106,7 @@ export class ListBranchComponent {
         align: 'left',
         required: false,
       },
-      {
-        name: 'createdBy',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'updatedBy',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
     ];
-
     this.rowButtons = [
       {
         title: 'view',
@@ -130,7 +127,6 @@ export class ListBranchComponent {
         click: `this.emitEvent('delete', item)`,
       },
     ];
-
     this.headerButtons = [
       {
         title: 'add',
@@ -145,8 +141,7 @@ export class ListBranchComponent {
         click: `this.refresh()`,
       },
     ];
-
-    this.title = 'Sucursales';
+    this.title = 'Branches';
   }
 
   public async emitEvent(event) {
