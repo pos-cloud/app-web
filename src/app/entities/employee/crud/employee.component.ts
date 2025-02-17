@@ -51,7 +51,7 @@ export class EmployeeComponent implements OnInit {
     });
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.getAllEmployeeTypes();
     const pathUrl = this._router.url.split('/');
     const employeeId = pathUrl[4];
