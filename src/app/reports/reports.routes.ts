@@ -49,11 +49,10 @@ export const REPORTS_ROUTES: Routes = [
     loadComponent: () =>
       import('./article-ledger/article-ledger.component').then((m) => m.ReportArticleLedgerComponent),
   },
-  // {
-  //   path: 'inventory',
-  //   loadComponent: () =>
-  //     import('./').then((m) => m.ReportArticleLedgerComponent),
-  // },
+  {
+    path: 'inventory',
+    loadComponent: () => import('./inventory/inventory.comonent').then((m) => m.InventoryComponent),
+  },
   {
     path: 'check-wallet',
     loadComponent: () => import('./check-wallet/check-wallet.component').then((m) => m.ReportCheckWalletComponent),
