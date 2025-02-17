@@ -88,6 +88,26 @@ export class ListBranchComponent {
         align: 'left',
         required: false,
       },
+      {
+        name: 'createdBy',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
+        name: 'updatedBy',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
     ];
 
     this.rowButtons = [

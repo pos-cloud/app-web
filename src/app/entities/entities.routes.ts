@@ -46,7 +46,7 @@ export const ENTITIES_ROUTES: Routes = [
     loadChildren: () => import('./table/table.routes').then((m) => m.TABLE_ROUTES),
   },
   {
-    path: 'branches',
+    path: 'branch',
     loadChildren: () => import('./branch/branch.routes').then((m) => m.BRANCH_ROUTES),
   },
 ];
