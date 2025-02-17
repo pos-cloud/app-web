@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { Room, Table, TableState } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs/internal/Subject';
@@ -17,7 +18,14 @@ import { TableService } from '../../../core/services/table.service';
   selector: 'app-table',
   templateUrl: './table.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FocusDirective,
+    PipesModule,
+    TranslateModule,
+    TypeaheadDropdownComponent,
+  ],
 })
 export class TableComponent implements OnInit {
   public operation: string;

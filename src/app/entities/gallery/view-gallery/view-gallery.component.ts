@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbAlertConfig, NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 import { GalleryService } from '../../../core/services/gallery.service';
 
@@ -14,13 +14,10 @@ import { PaymentMethodService } from 'app/core/services/payment-method.service';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
-import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import 'hammerjs';
 @Component({
   selector: 'app-view-gallery',
   templateUrl: './view-gallery.component.html',
   styleUrls: ['./view-gallery.component.scss'],
-  providers: [NgbAlertConfig, TranslateMePipe],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbCarouselModule, FocusDirective],
@@ -49,10 +46,8 @@ export class ViewGalleryComponent implements OnInit {
     private _galleryService: GalleryService,
     private _articleService: ArticleService,
     private _resourceService: ResourceService,
-    public alertConfig: NgbAlertConfig,
     private _toastr: ToastService,
-    public translatePipe: TranslateMePipe,
-    public _paymentMethod: PaymentMethodService
+    private _paymentMethod: PaymentMethodService
   ) {
     this.getResource();
   }
@@ -75,13 +70,15 @@ export class ViewGalleryComponent implements OnInit {
           this._toastr.showToast(result);
         } else {
           this.gallery = result.result;
-          this.gallery.resources.forEach((element) => {
-            let fileImg = this.resource.find((file) =>
-              typeof element.resource === 'string' ? element.resource === file._id : element.resource._id === file._id
-            );
-            this.src = fileImg.file;
-            this.images.push(this.src);
-          });
+          if (this.gallery?.resources?.length > 0) {
+            this.gallery.resources.forEach((element) => {
+              let fileImg = this.resource.find((file) =>
+                typeof element.resource === 'string' ? element.resource === file._id : element.resource._id === file._id
+              );
+              this.src = fileImg.file;
+              this.images.push(this.src);
+            });
+          }
 
           if (this.gallery.barcode) {
             this.focusEvent.emit(true);

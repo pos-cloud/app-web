@@ -52,7 +52,7 @@ export class EmployeeComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.getAllEmployeeTypes();
+    this.getAllEmployeeTypes();
     const pathUrl = this._router.url.split('/');
     const employeeId = pathUrl[4];
     this.operation = pathUrl[3];
@@ -72,13 +72,13 @@ export class EmployeeComponent implements OnInit {
   }
 
   public setValueForm() {
-    const type = this.employeeTypes?.find((item) => item._id == this.employee.type.toString());
+    const type = this.employeeTypes?.find((item) => item._id == this.employee?.type?.toString());
 
     this.employeeForm.setValue({
-      _id: this.employee._id ?? '',
-      name: this.employee.name ?? '',
-      phone: this.employee.phone ?? '',
-      address: this.employee.address ?? '',
+      _id: this.employee?._id ?? '',
+      name: this.employee?.name ?? '',
+      phone: this.employee?.phone ?? '',
+      address: this.employee?.address ?? '',
       type: type ?? null,
     });
   }
@@ -97,7 +97,6 @@ export class EmployeeComponent implements OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {
-            this._toastService.showToast(result);
             this.employeeTypes = result.result;
           },
           error: (error) => {
@@ -105,6 +104,7 @@ export class EmployeeComponent implements OnInit {
           },
           complete: () => {
             this.loading = false;
+            this.setValueForm();
           },
         });
     });
