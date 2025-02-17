@@ -8,7 +8,7 @@ import 'moment/locale/es';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from 'app/components/branch/branch';
+import { Branch } from '@types';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
@@ -82,8 +82,7 @@ export class ReportSalesByCategoryComponent implements OnInit {
 
   async ngOnInit() {
     this._activatedRoute.params.subscribe((params) => {
-      this.transactionMovement =
-        params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
     });
 
     if (!this.branchSelectedId) {

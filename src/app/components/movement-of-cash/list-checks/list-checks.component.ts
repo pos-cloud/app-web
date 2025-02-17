@@ -1,23 +1,11 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
-import { Branch } from 'app/components/branch/branch';
+import { Branch } from '@types';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
@@ -46,8 +34,7 @@ export class ListChecksComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible = false;
   public loading = false;
-  @Output() eventAddItem: EventEmitter<MovementOfCash> =
-    new EventEmitter<MovementOfCash>();
+  @Output() eventAddItem: EventEmitter<MovementOfCash> = new EventEmitter<MovementOfCash>();
   public itemsPerPage = 10;
   public totalItems = 0;
   public transactionMovement: string;
@@ -288,14 +275,12 @@ export class ListChecksComponent implements OnInit {
 
   async ngOnInit() {
     if (!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        (branches) => {
-          this.branches = branches;
-          if (this.branches && this.branches.length > 1) {
-            this.branchSelectedId = this.branches[0]._id;
-          }
+      await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
+        this.branches = branches;
+        if (this.branches && this.branches.length > 1) {
+          this.branchSelectedId = this.branches[0]._id;
         }
-      );
+      });
       this._authService.getIdentity.subscribe(async (identity) => {
         if (identity && identity.origin) {
           this.allowChangeBranch = false;
@@ -308,9 +293,7 @@ export class ListChecksComponent implements OnInit {
     }
 
     this.pathLocation = this._router.url.split('/');
-    this.transactionMovement =
-      this.pathLocation[2].charAt(0).toUpperCase() +
-      this.pathLocation[2].slice(1);
+    this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
     this.getItems();
     this.initDragHorizontalScroll();
   }
@@ -397,8 +380,7 @@ export class ListChecksComponent implements OnInit {
     }
 
     match += `"statusCheck": "Disponible","type.inputAndOuput" : true`;
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
 
@@ -566,8 +548,7 @@ export class ListChecksComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionId =
-          movementOfCash.transaction._id;
+        modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
         modalRef.componentInstance.readonly = true;
         break;
       case 'edit':
@@ -597,11 +578,7 @@ export class ListChecksComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

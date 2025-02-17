@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from 'app/components/branch/branch';
+import { Branch } from '@types';
 import { Deposit } from 'app/components/deposit/deposit';
 import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';

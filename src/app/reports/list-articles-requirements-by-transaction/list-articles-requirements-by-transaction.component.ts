@@ -3,19 +3,12 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  NgbAlertConfig,
-  NgbModal,
-  NgbModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from 'app/components/branch/branch';
+import { Branch } from '@types';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { ExportersModule } from 'app/components/export/exporters.module';
-import {
-  TransactionMovement,
-  TransactionType,
-} from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
@@ -126,8 +119,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
 
-    this.listType =
-      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.modules = observableOf(Config.modules);
     if (this.listType === 'Compras') {
       this.transactionMovement = TransactionMovement.Purchase;
@@ -144,11 +136,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this._authService.getIdentity.subscribe(async (identity) => {
       // get permision
 
-      if (
-        identity?.permission?.collections.some(
-          (collection) => collection.name === 'transacciones'
-        )
-      ) {
+      if (identity?.permission?.collections.some((collection) => collection.name === 'transacciones')) {
         // Encontrar el objeto con name igual a "transacciones"
         const transactionObject = identity.permission.collections.find(
           (collection) => collection.name === 'transacciones'
@@ -165,8 +153,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
 
         for (let index = 0; index < this.columns.length; index++) {
           if (this.columns[index].name === 'branchDestination') {
-            this.columns[index].defaultFilter =
-              `{ "${identity.origin.branch._id}" }`;
+            this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
           }
         }
       } else {
@@ -300,9 +287,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
         filteredList = filteredList.filter((dato) => {
           const columnValue = dato[column.name];
           if (typeof columnValue === 'string') {
-            return columnValue
-              .toLowerCase()
-              .includes(filterValue.toLowerCase());
+            return columnValue.toLowerCase().includes(filterValue.toLowerCase());
           } else if (typeof columnValue === 'number') {
             return columnValue.toString() === filterValue;
           }
@@ -383,11 +368,7 @@ export class ListArticlesRequirementsByTransactionComponent implements OnInit {
     this.currentPage = page;
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

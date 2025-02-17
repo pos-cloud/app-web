@@ -14,7 +14,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Currency, Room } from '@types';
+import { Branch, Currency, Room } from '@types';
 import { Printer, PrinterPrintIn } from '../printer/printer';
 import {
   CurrentAccount,
@@ -65,7 +65,6 @@ import { SendEmailComponent } from '../send-email/send-email.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { Config } from './../../app.config';
-import { Branch } from './../../components/branch/branch';
 import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
 import { Company, CompanyType } from './../../components/company/company';
 import { Deposit } from './../../components/deposit/deposit';

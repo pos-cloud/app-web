@@ -10,8 +10,8 @@ import 'moment/locale/es';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
+import { Branch } from '@types';
 import { Config } from 'app/app.config';
-import { Branch } from 'app/components/branch/branch';
 import { Deposit } from 'app/components/deposit/deposit';
 import { ArticleStockService } from 'app/core/services/article-stock.service';
 import { ArticleService } from 'app/core/services/article.service';
@@ -729,7 +729,6 @@ export class ReportKardexComponent implements OnInit {
         if (!result.articleStocks || result.articleStocks.length <= 0) {
           let articleStock = new ArticleStock();
           articleStock.article = this.articleSelected;
-          articleStock.branch = new Branch();
           articleStock.branch._id = this.branchSelectedId;
           articleStock.deposit = new Deposit();
           articleStock.deposit._id = this.depositSelectedId;

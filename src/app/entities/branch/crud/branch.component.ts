@@ -95,7 +95,7 @@ export class BranchComponent implements OnInit, OnDestroy {
   }
 
   returnTo() {
-    return this._router.navigate(['/entities/branch']);
+    return this._router.navigate(['/entities/branches']);
   }
 
   async handleBranchOperation() {

@@ -2,12 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
-import { Branch } from 'app/components/branch/branch';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
@@ -30,14 +25,12 @@ import { ExportIvaComponent } from '../../export/export-iva/export-iva.component
 import { PrintTransactionTypeComponent } from '../../print/print-transaction-type/print-transaction-type.component';
 import { Printer, PrinterPrintIn } from '../../printer/printer';
 import { SendEmailComponent } from '../../send-email/send-email.component';
-import {
-  TransactionMovement,
-  TransactionType,
-} from '../../transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
+import { Branch } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import 'moment/locale/es';
 
@@ -141,8 +134,7 @@ export class ListTransactionsComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
 
-    this.listType =
-      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.modules = observableOf(Config.modules);
 
     if (this.listType === 'Compras') {
@@ -160,11 +152,7 @@ export class ListTransactionsComponent implements OnInit {
     this._authService.getIdentity.subscribe(async (identity) => {
       // get permision
 
-      if (
-        identity?.permission?.collections.some(
-          (collection) => collection.name === 'transacciones'
-        )
-      ) {
+      if (identity?.permission?.collections.some((collection) => collection.name === 'transacciones')) {
         // Encontrar el objeto con name igual a "transacciones"
         const transactionObject = identity.permission.collections.find(
           (collection) => collection.name === 'transacciones'
@@ -181,8 +169,7 @@ export class ListTransactionsComponent implements OnInit {
 
         for (let index = 0; index < this.columns.length; index++) {
           if (this.columns[index].name === 'branchDestination') {
-            this.columns[index].defaultFilter =
-              `{ "${identity.origin.branch._id}" }`;
+            this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
           }
         }
       } else {
@@ -270,8 +257,7 @@ export class ListTransactionsComponent implements OnInit {
         this.employeeClosingId = params['employeeClosingId'];
         this.origin = params['origin'];
         let pathLocation: string[] = this._router.url.split('/');
-        let listType =
-          pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+        let listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
 
         this.modules = observableOf(Config.modules);
 
@@ -390,15 +376,13 @@ export class ListTransactionsComponent implements OnInit {
 
     if (match.charAt(match.length - 1) === '}') match += ',';
     match += `"type.transactionMovement": "${this.transactionMovement}",`;
-    if (this.stateSelect && this.stateSelect !== '')
-      match += `"state": "${this.stateSelect}",`;
+    if (this.stateSelect && this.stateSelect !== '') match += `"state": "${this.stateSelect}",`;
     match += `"${this.dateSelect}" : {
                     "$gte" : { "$date" : "${this.startDate}T00:00:00${this.timezone}" },
                     "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
                 }`;
 
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
 
@@ -586,16 +570,10 @@ export class ListTransactionsComponent implements OnInit {
         break;
       case 'print':
         //this.printTransaction(transaction)
-        if (
-          transaction.type.transactionMovement ===
-          TransactionMovement.Production
-        ) {
+        if (transaction.type.transactionMovement === TransactionMovement.Production) {
           this.printTransaction(transaction);
         } else {
-          if (
-            transaction.type.expirationDate &&
-            moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0
-          ) {
+          if (transaction.type.expirationDate && moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0) {
             this.showMessage('El documento esta vencido', 'danger', true);
           } else {
             if (transaction.type.readLayout) {
@@ -607,11 +585,7 @@ export class ListTransactionsComponent implements OnInit {
               await this.getUser().then(async (user) => {
                 if (user && user.printers && user.printers.length > 0) {
                   for (const element of user.printers) {
-                    if (
-                      element &&
-                      element.printer &&
-                      element.printer.printIn === PrinterPrintIn.Counter
-                    ) {
+                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
                       printer = element.printer;
                     }
                   }
@@ -641,11 +615,8 @@ export class ListTransactionsComponent implements OnInit {
                   if (transaction.taxes && transaction.taxes.length > 0) {
                     for (const tax of transaction.taxes) {
                       if (tax.tax.printer) {
-                        modalRef = this._modalService.open(
-                          PrintTransactionTypeComponent
-                        );
-                        modalRef.componentInstance.transactionId =
-                          transaction._id;
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                        modalRef.componentInstance.transactionId = transaction._id;
                         modalRef.componentInstance.printerID = tax.tax.printer;
                       }
                     }
@@ -655,11 +626,8 @@ export class ListTransactionsComponent implements OnInit {
                   if (transaction.taxes && transaction.taxes.length > 0) {
                     for (const tax of transaction.taxes) {
                       if (tax.tax.printer) {
-                        modalRef = this._modalService.open(
-                          PrintTransactionTypeComponent
-                        );
-                        modalRef.componentInstance.transactionId =
-                          transaction._id;
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                        modalRef.componentInstance.transactionId = transaction._id;
                         modalRef.componentInstance.printerID = tax.tax.printer;
                       }
                     }
@@ -752,18 +720,14 @@ export class ListTransactionsComponent implements OnInit {
 
           attachments.push({
             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-            path:
-              `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` +
-              transaction.number +
-              `.xml`,
+            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`,
           });
         }
 
         if (transaction.type.defectEmailTemplate) {
           if (transaction.type.electronics) {
             // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body =
-              transaction.type.defectEmailTemplate.design;
+            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
             attachments = [];
             attachments.push({
               filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
@@ -771,8 +735,7 @@ export class ListTransactionsComponent implements OnInit {
             });
           } else {
             // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body =
-              transaction.type.defectEmailTemplate.design;
+            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
             attachments = [];
             attachments.push({
               filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
@@ -786,10 +749,7 @@ export class ListTransactionsComponent implements OnInit {
             attachments = [];
             attachments.push({
               filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-              path:
-                `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` +
-                transaction.number +
-                `.xml`,
+              path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`,
             });
           }
         }
@@ -903,11 +863,7 @@ export class ListTransactionsComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,7 +6,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 import { TransactionService } from 'app/core/services/transaction.service';
 
-import { Branch } from 'app/components/branch/branch';
+import { Branch } from '@types';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
@@ -21,10 +14,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { Observable } from 'rxjs';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
-import {
-  TransactionMovement,
-  TransactionType,
-} from '../transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from '../transaction-type/transaction-type';
 import { Transaction } from '../transaction/transaction';
 
 @Component({
@@ -45,8 +35,7 @@ export class ReportTransactionTypeComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Output() eventAddItem: EventEmitter<TransactionType> =
-    new EventEmitter<TransactionType>();
+  @Output() eventAddItem: EventEmitter<TransactionType> = new EventEmitter<TransactionType>();
   public itemsPerPage = 10;
   public totalItems = 0;
   public userCountry: string;
@@ -176,8 +165,7 @@ export class ReportTransactionTypeComponent implements OnInit {
       .subscribe(
         (result) => {
           if (result.status != 200) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
             this.transactionTypes = new Array();
             this.areTransactionTypesEmpty = true;
@@ -334,11 +322,7 @@ export class ReportTransactionTypeComponent implements OnInit {
     this.eventAddItem.emit(transactionTypeSelected);
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

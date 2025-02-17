@@ -1,5 +1,4 @@
-import { Employee } from '@types';
-import { Branch } from '../branch/branch';
+import { Branch, Employee } from '@types';
 import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 import { Company } from '../company/company';
 import { Origin } from '../origin/origin';

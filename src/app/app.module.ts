@@ -35,8 +35,6 @@ import { AddArticleStockComponent } from './components/article-stock/article-sto
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
-import { BranchComponent } from './components/branch/branch/branch.component';
-import { ListBranchComponent } from './components/branch/list-branches/list-branches.component';
 import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type/cancellation-type.component';
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
@@ -257,8 +255,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListStatesComponent,
     CountryComponent,
     ListCountriesComponent,
-    BranchComponent,
-    ListBranchComponent,
     ListOriginsComponent,
     OriginComponent,
     SelectOriginComponent,

@@ -13,8 +13,7 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { User, UserState } from '../user';
 
-import { Employee } from '@types';
-import { Branch } from 'app/components/branch/branch';
+import { Branch, Employee } from '@types';
 import { CashBoxType } from 'app/components/cash-box-type/cash-box-type.model';
 import { Company } from 'app/components/company/company';
 import { Origin } from 'app/components/origin/origin';
@@ -28,12 +27,7 @@ import { OriginService } from 'app/core/services/origin.service';
 import { PermissionService } from 'app/core/services/permission.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { Observable, Subscription } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { EmployeeService } from '../../../core/services/employee.service';
 import { UserService } from '../../../core/services/user.service';
 
@@ -67,14 +61,7 @@ export class AddUserComponent implements OnInit {
   public table;
   public tables: string[] = ['Empresa', 'Producto'];
   public action;
-  public actions: string[] = [
-    'Agregar',
-    'Modificar',
-    'Eliminar',
-    'Ver',
-    'Exportar',
-    'Listado',
-  ];
+  public actions: string[] = ['Agregar', 'Modificar', 'Eliminar', 'Ver', 'Exportar', 'Listado'];
   public level = 0;
 
   public searchCashBoxTypes = (text$: Observable<string>) =>
@@ -83,8 +70,7 @@ export class AddUserComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
+        let match: {} = term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
         return await this.getAllCashBoxTypes(match).then((result) => {
           return result;
         });
@@ -127,9 +113,7 @@ export class AddUserComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => (this.loading = true)),
       switchMap((term) =>
-        this.getCompanies(
-          `where="name": { "$regex": "${term}", "$options": "i" }&limit=10`
-        ).then((companies) => {
+        this.getCompanies(`where="name": { "$regex": "${term}", "$options": "i" }&limit=10`).then((companies) => {
           return companies;
         })
       ),
@@ -252,8 +236,7 @@ export class AddUserComponent implements OnInit {
     this._userService.getUser(this.userId).subscribe(
       (result) => {
         if (!result.user) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.user = result.user;
           this.setValuesForm();
@@ -287,8 +270,7 @@ export class AddUserComponent implements OnInit {
     if (!this.user.state) this.user.state = UserState.Enabled;
     if (!this.user.company) this.user.company = null;
     if (this.user.level === undefined) this.user.level = 99;
-    if (this.user.tokenExpiration === undefined)
-      this.user.tokenExpiration = 1440;
+    if (this.user.tokenExpiration === undefined) this.user.tokenExpiration = 1440;
 
     let employee;
     if (!this.user.employee) {
@@ -406,11 +388,7 @@ export class AddUserComponent implements OnInit {
 
       if (printerAux.printIn === printer.printIn) {
         valid = false;
-        this.showMessage(
-          'Solo puede tener una impresora de cada tipo.',
-          'info',
-          true
-        );
+        this.showMessage('Solo puede tener una impresora de cada tipo.', 'info', true);
       }
     }
 
@@ -448,8 +426,7 @@ export class AddUserComponent implements OnInit {
     this._employeeService.getEmployees().subscribe(
       (result) => {
         if (!result.employees) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.employees = null;
         } else {
@@ -516,8 +493,7 @@ export class AddUserComponent implements OnInit {
     this._printerService.getPrinters().subscribe(
       (result) => {
         if (!result.printers) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.AuxPrinters = new Array();
         } else {
@@ -592,8 +568,7 @@ export class AddUserComponent implements OnInit {
     let shortcuts = this.user.shortcuts;
     this.user = this.userForm.value;
     this.user.shortcuts = shortcuts;
-    if (this.user.cashBoxType && this.user.cashBoxType.toString() === '')
-      this.user.cashBoxType = null;
+    if (this.user.cashBoxType && this.user.cashBoxType.toString() === '') this.user.cashBoxType = null;
     if (this.operation === 'add') {
       this.saveUser();
     } else if (this.operation === 'update') {
@@ -607,15 +582,10 @@ export class AddUserComponent implements OnInit {
     this._userService.saveUser(this.user).subscribe(
       (result) => {
         if (!result.user) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.user = result.user;
-          this.showMessage(
-            'El usuario se ha añadido con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El usuario se ha añadido con éxito.', 'success', false);
           this.user = new User();
           this.buildForm();
         }
@@ -632,16 +602,11 @@ export class AddUserComponent implements OnInit {
     this._userService.updateUser(this.user).subscribe(
       (result) => {
         if (!result.user) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.user = result.user;
-          this.showMessage(
-            'El usuario se ha actualizado con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El usuario se ha actualizado con éxito.', 'success', false);
           if (this.identity._id === this.user._id) {
             let userStorage = new User();
             userStorage._id = result.user._id;
@@ -652,8 +617,7 @@ export class AddUserComponent implements OnInit {
               userStorage.employee.name = result.user.employee.name;
               // userStorage.employee.type = new EmployeeType();
               userStorage.employee.type._id = result.user.employee.type._id;
-              userStorage.employee.type.description =
-                result.user.employee.type.description;
+              userStorage.employee.type.description = result.user.employee.type.description;
             }
             sessionStorage.setItem('user', JSON.stringify(userStorage));
           }
@@ -667,11 +631,7 @@ export class AddUserComponent implements OnInit {
     );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

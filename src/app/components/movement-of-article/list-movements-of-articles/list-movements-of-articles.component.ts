@@ -1,24 +1,15 @@
 import { CurrencyPipe } from '@angular/common';
-import {
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Branch } from '@types';
 import { Config } from 'app/app.config';
-import { Branch } from 'app/components/branch/branch';
 import { Category } from 'app/components/category/category';
-import {
-  attributes,
-  MovementOfArticle,
-} from 'app/components/movement-of-article/movement-of-article';
+import { attributes, MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
@@ -126,14 +117,12 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     }
 
     if (!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        (branches) => {
-          this.branches = branches;
-          if (this.branches && this.branches.length > 1) {
-            this.branchSelectedId = this.branches[0]._id;
-          }
+      await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
+        this.branches = branches;
+        if (this.branches && this.branches.length > 1) {
+          this.branchSelectedId = this.branches[0]._id;
         }
-      );
+      });
       this._authService.getIdentity.subscribe(async (identity) => {
         if (identity && identity.origin) {
           this.allowChangeBranch = false;
@@ -146,16 +135,10 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     }
 
     this.pathLocation = this._router.url.split('/');
-    if (
-      this.pathLocation[2].charAt(0).toUpperCase() +
-        this.pathLocation[2].slice(1) ===
-      'Produccion'
-    ) {
+    if (this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1) === 'Produccion') {
       this.transactionMovement = 'Producción';
     } else {
-      this.transactionMovement =
-        this.pathLocation[2].charAt(0).toUpperCase() +
-        this.pathLocation[2].slice(1);
+      this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
     }
     await this.getTransactionTypes().then((result) => {
       if (result) {
@@ -216,8 +199,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionId =
-          movementOfArticle.transaction._id;
+        modalRef.componentInstance.transactionId = movementOfArticle.transaction._id;
         modalRef.componentInstance.readonly = true;
         break;
       default:
@@ -269,18 +251,14 @@ export class ListMovementsOfArticlesComponent implements OnInit {
                     "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
                 }`;
 
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
     match = JSON.parse(match);
 
     let transactionTypes = [];
 
-    if (
-      this.transactionTypesSelect &&
-      this.transactionTypesSelect.length !== 0
-    ) {
+    if (this.transactionTypesSelect && this.transactionTypesSelect.length !== 0) {
       this.transactionTypesSelect.forEach((element) => {
         transactionTypes.push({ $oid: element._id });
       });
@@ -549,11 +527,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

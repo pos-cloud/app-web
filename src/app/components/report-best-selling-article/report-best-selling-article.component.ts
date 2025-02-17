@@ -1,13 +1,6 @@
 import { registerLocaleData } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
-import {
-  Component,
-  Input,
-  LOCALE_ID,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, Input, LOCALE_ID, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 registerLocaleData(localeEsAr, 'es-Ar');
 
@@ -17,13 +10,9 @@ import 'moment/locale/es';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
+import { Branch } from '@types';
 import { Config } from 'app/app.config';
-import { Branch } from 'app/components/branch/branch';
-import {
-  Movements,
-  TransactionMovement,
-  TransactionType,
-} from 'app/components/transaction-type/transaction-type';
+import { Movements, TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
@@ -241,19 +230,16 @@ export class ReportBestSellingArticleComponent implements OnInit {
 
   async ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
-    this.transactionMovement =
-      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.listType = pathLocation[3];
 
     if (!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        (branches) => {
-          this.branches = branches;
-          if (this.branches && this.branches.length > 1) {
-            this.branchSelectedId = this.branches[0]._id;
-          }
+      await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
+        this.branches = branches;
+        if (this.branches && this.branches.length > 1) {
+          this.branchSelectedId = this.branches[0]._id;
         }
-      );
+      });
       this._authService.getIdentity.subscribe(async (identity) => {
         if (identity && identity.origin) {
           this.allowChangeBranch = false;
@@ -340,9 +326,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
     if (this.transactionMovement === TransactionMovement.Sale.toString()) {
       movement = Movements.Inflows.toString();
       this.title = 'Productos más vendidos';
-    } else if (
-      this.transactionMovement === TransactionMovement.Purchase.toString()
-    ) {
+    } else if (this.transactionMovement === TransactionMovement.Purchase.toString()) {
       movement = Movements.Inflows.toString();
       this.title = 'Productos más comprados';
     }
@@ -600,8 +584,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
             this.areArticlesEmpty = false;
             this.calculateTotal();
           } else {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
             this.items = new Array();
             this.areArticlesEmpty = true;
@@ -762,11 +745,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

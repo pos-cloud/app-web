@@ -1,22 +1,12 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Deposit } from '../deposit';
 
-import { Branch } from 'app/components/branch/branch';
+import { Branch } from '@types';
 import { BranchService } from 'app/core/services/branch.service';
 import { DepositService } from '../../../core/services/deposit.service';
 
@@ -110,9 +100,7 @@ export class DepositComponent implements OnInit {
       default: [this.deposit.default, []],
     });
 
-    this.depositForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.depositForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
     this.focusEvent.emit(true);
@@ -196,11 +184,7 @@ export class DepositComponent implements OnInit {
 
   public isValid(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      if (
-        this.deposits &&
-        this.deposits.length > 0 &&
-        this.deposit.default !== null
-      ) {
+      if (this.deposits && this.deposits.length > 0 && this.deposit.default !== null) {
         for (const element of this.deposits) {
           if (
             this.operation === 'add' &&
@@ -208,11 +192,7 @@ export class DepositComponent implements OnInit {
             element.default === this.deposit.default &&
             element.branch._id === this.deposit.branch.toString()
           ) {
-            this.showMessage(
-              'Solo puede existir un depósito principal por sucursal.',
-              'danger',
-              true
-            );
+            this.showMessage('Solo puede existir un depósito principal por sucursal.', 'danger', true);
             resolve(false);
           }
 
@@ -223,11 +203,7 @@ export class DepositComponent implements OnInit {
             element.branch._id === this.deposit.branch.toString() &&
             element._id !== this.deposit._id
           ) {
-            this.showMessage(
-              'Solo puede existir un depósito principal por sucursal.',
-              'danger',
-              true
-            );
+            this.showMessage('Solo puede existir un depósito principal por sucursal.', 'danger', true);
             resolve(false);
           }
         }
@@ -284,16 +260,11 @@ export class DepositComponent implements OnInit {
       this._depositService.updateDeposit(this.deposit).subscribe(
         (result) => {
           if (!result.deposit) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
           } else {
             this.deposit = result.deposit;
-            this.showMessage(
-              'El depósito se ha actualizado con éxito.',
-              'success',
-              false
-            );
+            this.showMessage('El depósito se ha actualizado con éxito.', 'success', false);
           }
           this.loading = false;
         },
@@ -316,16 +287,11 @@ export class DepositComponent implements OnInit {
       this._depositService.saveDeposit(this.deposit).subscribe(
         (result) => {
           if (!result.deposit) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
           } else {
             this.deposit = result.deposit;
-            this.showMessage(
-              'El depósito se ha añadido con éxito.',
-              'success',
-              true
-            );
+            this.showMessage('El depósito se ha añadido con éxito.', 'success', true);
             this.deposit = new Deposit();
             this.buildForm();
           }
@@ -341,11 +307,7 @@ export class DepositComponent implements OnInit {
     }
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

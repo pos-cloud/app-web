@@ -3,7 +3,6 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { ListArticleFieldsComponent } from './components/article-field/list-article-fields/list-article-fields.component';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
-import { ListBranchComponent } from './components/branch/list-branches/list-branches.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-cash-box.component';
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
@@ -364,11 +363,6 @@ export const _routes: Routes = [
   {
     path: 'admin/impuestos',
     component: ListTaxesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/sucursales',
-    component: ListBranchComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

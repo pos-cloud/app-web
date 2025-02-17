@@ -1,9 +1,8 @@
-import { IAttribute } from '@types';
+import { Branch, IAttribute } from '@types';
 import * as moment from 'moment';
 
 import { EmployeeType } from '@types';
 import { Application } from '../application/application.model';
-import { Branch } from '../branch/branch';
 import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 import { Company, CompanyType } from '../company/company';
 import { EmailTemplate } from '../email-template/email-template';

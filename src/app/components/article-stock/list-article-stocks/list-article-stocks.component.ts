@@ -3,7 +3,6 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Branch } from 'app/components/branch/branch';
 import { Deposit } from 'app/components/deposit/deposit';
 import { PriceList } from 'app/components/price-list/price-list';
 import { BranchService } from 'app/core/services/branch.service';
@@ -21,7 +20,7 @@ import { Printer } from '../../printer/printer';
 import { ArticleStock, attributes } from '../article-stock';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 
-import { ApiResponse } from '@types';
+import { ApiResponse, Branch } from '@types';
 import { PrintLabelComponent } from 'app/components/article/actions/print-label/print-label.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';

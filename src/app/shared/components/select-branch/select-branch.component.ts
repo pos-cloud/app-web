@@ -4,8 +4,8 @@ import { FormsModule, UntypedFormBuilder } from '@angular/forms';
 
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { Branch } from '@types';
 
-import { Branch } from 'app/components/branch/branch';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -33,7 +33,6 @@ export class SelectBranchComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.branchSelected = new Branch();
     await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
       if (branches && branches.length > 0) {
         this.branches = branches;

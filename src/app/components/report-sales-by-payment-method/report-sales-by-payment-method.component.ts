@@ -5,8 +5,8 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
+import { Branch } from '@types';
 import { Config } from 'app/app.config';
-import { Branch } from 'app/components/branch/branch';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { Subscription } from 'rxjs';
@@ -60,14 +60,12 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
 
   async ngOnInit() {
     if (!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then(
-        (branches) => {
-          this.branches = branches;
-          if (this.branches && this.branches.length > 1) {
-            this.branchSelectedId = this.branches[0]._id;
-          }
+      await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
+        this.branches = branches;
+        if (this.branches && this.branches.length > 1) {
+          this.branchSelectedId = this.branches[0]._id;
         }
-      );
+      });
       this._authService.getIdentity.subscribe(async (identity) => {
         if (identity && identity.origin) {
           this.allowChangeBranch = false;
@@ -112,8 +110,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
   public getSalesByPaymentMethod(): void {
     this.loading = true;
     let pathLocation: string[] = this._router.url.split('/');
-    this.transactionMovement =
-      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.listType = pathLocation[3];
 
     let movement;
@@ -139,29 +136,26 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
     };
 
     this.subscription.add(
-      this._paymentMethodService
-        .getSalesByPaymentMethod(JSON.stringify(query))
-        .subscribe(
-          (result) => {
-            if (!result || result.length <= 0) {
-              if (result.message && result.message !== '')
-                this.showMessage(result.message, 'info', true);
-              this.loading = false;
-              this.items = new Array();
-              this.arePaymentMethodsEmpty = true;
-            } else {
-              this.hideMessage();
-              this.loading = false;
-              this.items = result;
-              this.arePaymentMethodsEmpty = false;
-              this.calculateTotal();
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
+      this._paymentMethodService.getSalesByPaymentMethod(JSON.stringify(query)).subscribe(
+        (result) => {
+          if (!result || result.length <= 0) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
+            this.items = new Array();
+            this.arePaymentMethodsEmpty = true;
+          } else {
+            this.hideMessage();
+            this.loading = false;
+            this.items = result;
+            this.arePaymentMethodsEmpty = false;
+            this.calculateTotal();
           }
-        )
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      )
     );
   }
 
@@ -193,11 +187,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

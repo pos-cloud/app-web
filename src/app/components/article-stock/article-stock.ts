@@ -1,5 +1,5 @@
+import { Branch } from '@types';
 import { Article } from '../article/article';
-import { Branch } from '../branch/branch';
 import { Deposit } from '../deposit/deposit';
 
 export class ArticleStock {

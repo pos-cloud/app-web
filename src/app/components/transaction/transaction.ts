@@ -1,9 +1,8 @@
 import * as moment from 'moment';
 
-import { Currency, Employee, Table } from '@types';
+import { Branch, Currency, Employee, Table } from '@types';
 import { Account } from '../account/account';
 import { Address } from '../address/address.model';
-import { Branch } from '../branch/branch';
 import { BusinessRule } from '../business-rules/business-rules';
 import { CashBox } from '../cash-box/cash-box';
 import { Company } from '../company/company';

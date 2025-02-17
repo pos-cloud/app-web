@@ -151,16 +151,16 @@ export class ListBranchComponent {
   public async openModal(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('entities/branch/view/' + obj._id);
+        this._router.navigateByUrl('entities/branches/view/' + obj._id);
         break;
       case 'update':
-        this._router.navigateByUrl('entities/branch/update/' + obj._id);
+        this._router.navigateByUrl('entities/branches/update/' + obj._id);
         break;
       case 'delete':
-        this._router.navigateByUrl('entities/branch/delete/' + obj._id);
+        this._router.navigateByUrl('entities/branches/delete/' + obj._id);
         break;
       case 'add':
-        this._router.navigateByUrl('entities/branch/add');
+        this._router.navigateByUrl('entities/branches/add');
         break;
     }
   }

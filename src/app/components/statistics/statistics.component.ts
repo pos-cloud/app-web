@@ -5,8 +5,8 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { Router } from '@angular/router';
+import { Branch } from '@types';
 import { Config } from 'app/app.config';
-import { Branch } from 'app/components/branch/branch';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { CompanyService } from '../../core/services/company.service';
@@ -58,8 +58,7 @@ export class StatisticsComponent implements OnInit {
     private _branchService: BranchService
   ) {
     let pathLocation: string[] = this._router.url.split('/');
-    this.transactionMovement =
-      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
   }
 
   async ngOnInit() {
@@ -270,11 +269,7 @@ export class StatisticsComponent implements OnInit {
     );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

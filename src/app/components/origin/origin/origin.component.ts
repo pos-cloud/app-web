@@ -1,9 +1,5 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { OriginService } from '../../../core/services/origin.service';
@@ -11,8 +7,8 @@ import { OriginService } from '../../../core/services/origin.service';
 import { Origin } from '../origin';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Branch } from '@types';
 import { Config } from 'app/app.config';
-import { Branch } from 'app/components/branch/branch';
 import { BranchService } from 'app/core/services/branch.service';
 
 @Component({
@@ -88,8 +84,7 @@ export class OriginComponent implements OnInit {
     this._originService.getOrigin(this.originId).subscribe(
       (result) => {
         if (!result.origin) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.origin = result.origin;
@@ -218,11 +213,7 @@ export class OriginComponent implements OnInit {
           }
         } else {
           this.loading = false;
-          this.showMessage(
-            'El punto de venta se ha actualizado con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El punto de venta se ha actualizado con éxito.', 'success', false);
         }
       },
       (error) => {
@@ -246,11 +237,7 @@ export class OriginComponent implements OnInit {
           }
         } else {
           this.loading = false;
-          this.showMessage(
-            'El punto de venta se ha añadido con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El punto de venta se ha añadido con éxito.', 'success', false);
           this.origin = new Origin();
           this.buildForm();
         }
@@ -283,11 +270,7 @@ export class OriginComponent implements OnInit {
     );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

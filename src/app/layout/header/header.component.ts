@@ -747,7 +747,7 @@ export class HeaderComponent implements OnInit {
             {
               label: 'Sucursales y Puntos de Venta',
               children: [
-                { label: 'Sucursales', link: 'admin/sucursales' },
+                { label: 'Sucursales', link: 'entities/branches' },
                 { label: 'Puntos de venta', link: 'admin/puntos-de-venta' },
                 { label: 'Transportes', link: 'admin/transports' },
               ],
