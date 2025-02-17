@@ -37,7 +37,6 @@ import { UpdateArticleStockComponent } from './components/article-stock/update-a
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
 import { BranchComponent } from './components/branch/branch/branch.component';
 import { ListBranchComponent } from './components/branch/list-branches/list-branches.component';
-import { SelectBranchComponent } from './components/branch/select-branch/select-branch.component';
 import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type/cancellation-type.component';
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
@@ -262,7 +261,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListBranchComponent,
     ListOriginsComponent,
     OriginComponent,
-    SelectBranchComponent,
     SelectOriginComponent,
     TransportComponent,
     ListTransportComponent,

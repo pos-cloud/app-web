@@ -1,20 +1,20 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormsModule, UntypedFormBuilder } from '@angular/forms';
 
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { Branch } from 'app/components/branch/branch';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 
 @Component({
   selector: 'app-select-branch',
   templateUrl: './select-branch.component.html',
-  styleUrls: ['./select-branch.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, PipesModule, TranslateModule],
 })
 export class SelectBranchComponent implements OnInit {
   public branches: Branch[] = new Array();
@@ -77,11 +77,7 @@ export class SelectBranchComponent implements OnInit {
     this.activeModal.close({ branch: this.branchSelected });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
