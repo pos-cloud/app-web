@@ -499,7 +499,7 @@ export class ArticleComponent implements OnInit {
       unitOfMeasurement: [this.article.unitOfMeasurement, []],
       children: this._fb.array([]),
       observation: [this.article.observation, []],
-      barcode: [this.article.barcode, [Validators.pattern(/^[a-zA-Z0-9]*$/)]],
+      barcode: [this.article.barcode, []],
       printIn: [this.article.printIn, []],
       allowPurchase: [this.article.allowPurchase, []],
       allowSale: [this.article.allowSale, []],
