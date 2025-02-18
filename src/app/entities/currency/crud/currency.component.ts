@@ -25,7 +25,6 @@ export class CurrencyComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public currencyForm: UntypedFormGroup;
-  public quotation: any;
 
   private destroy$ = new Subject<void>();
 
@@ -66,15 +65,14 @@ export class CurrencyComponent implements OnInit {
 
   public setValueForm(): void {
     const values = {
-      _id: this.currency._id ?? '',
-      code: this.currency.code ?? '',
-      name: this.currency.name ?? '',
-      sign: this.currency.sign ?? '',
-      quotation: this.currency.quotation ?? 0,
+      _id: this.currency?._id ?? '',
+      code: this.currency?.code ?? '',
+      name: this.currency?.name ?? '',
+      sign: this.currency?.sign ?? '',
+      quotation: this.currency?.quotation ?? 0,
     };
 
     this.currencyForm.setValue(values);
-    this.quotation = values.quotation;
   }
 
   returnTo() {

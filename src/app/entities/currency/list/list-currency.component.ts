@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { IAttribute, IButton } from '@types';
@@ -9,7 +9,6 @@ import { CurrencyService } from 'app/core/services/currency.service';
 @Component({
   selector: 'app-list-currency',
   templateUrl: './list-currency.component.html',
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [DatatableModule],
 })
