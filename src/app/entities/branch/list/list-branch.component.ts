@@ -14,7 +14,7 @@ import { DatatableModule } from 'app/components/datatable/datatable.module';
   imports: [DatatableModule],
 })
 export class ListBranchComponent {
-  public title: string;
+  public title: string = 'branches';
   public sort = { name: 1 };
   public columns: IAttribute[];
   public loading: boolean = false;
@@ -141,7 +141,6 @@ export class ListBranchComponent {
         click: `this.refresh()`,
       },
     ];
-    this.title = 'Branches';
   }
 
   public async emitEvent(event) {
