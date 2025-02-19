@@ -594,7 +594,7 @@ export class HeaderComponent implements OnInit {
                 {
                   label: 'Reportes',
                   children: [
-                    { label: 'Dashboard', link: 'reports/dashboard/venta' },
+                    { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
                     { label: 'Por productos', link: 'reports/mov-art-by-article/venta' },
                     { label: 'Por marcas', link: 'reports/mov-art-by-make/venta' },
                     { label: 'Por categorias', link: 'reports/mov-art-by-category/venta' },
@@ -621,7 +621,7 @@ export class HeaderComponent implements OnInit {
                 {
                   label: 'Reportes',
                   children: [
-                    { label: 'Dashboard', link: 'reports/dashboard/compra' },
+                    { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
                     { label: 'Por productos', link: 'reports/mov-art-by-article/compra' },
                     { label: 'Por marcas', link: 'reports/mov-art-by-make/compra' },
                     { label: 'Por categorias', link: 'reports/mov-art-by-category/compra' },
@@ -689,8 +689,8 @@ export class HeaderComponent implements OnInit {
                 {
                   label: 'Reportes',
                   children: [
-                    { label: 'Cartera de cheques', link: 'reports/check-wallet' },
-                    { label: 'Kardex de cheques', link: 'reports/check-ledger' },
+                    { label: 'Cartera de cheques', link: 'report/cartera-de-cheques' },
+                    { label: 'Kardex de cheques', link: 'cheque' },
                   ],
                 },
               ],
@@ -710,7 +710,10 @@ export class HeaderComponent implements OnInit {
             // },
             {
               label: 'Otros',
-              children: [{ label: 'Cumpleaños', link: 'reports/birthday' }],
+              children: [
+                { label: 'Cumpleaños', link: 'reports/birthday' },
+                { label: 'Dashboard', link: 'reports/dashboard' },
+              ],
             },
           ],
         });
