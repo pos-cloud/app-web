@@ -51,8 +51,8 @@ export class ReportMovArtByArticleComponent {
   branches: Branch[];
   branchSelectedId: string[] = [];
 
-  startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  endDate: string = new Date().toISOString();
+  startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+  endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
   // sort
   public sort = {
