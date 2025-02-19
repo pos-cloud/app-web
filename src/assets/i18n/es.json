@@ -523,6 +523,7 @@
   "total": "Total",
   "totalPrice": "Precio Total",
   "totalStock": "Stock Total",
+  "totalTaxAmount": "Impuesto",
   "transaction": "Transacción",
   "transaction-type": "Tipo de Transacción",
   "transaction-types": "Tipos de Transacciones",
@@ -656,5 +657,9 @@
   "height": "Alto",
   "tiendaNubeId": "Tienda Nube ID",
   "fieldRequired": "Campo requerido",
-  "publishWooCommerce": "Publicar en WooCommerce"
+  "publishWooCommerce": "Publicar en WooCommerce",
+  "day": "Día",
+  "month": "Mes",
+  "week": "Semana",
+  "year": "Año"
 }

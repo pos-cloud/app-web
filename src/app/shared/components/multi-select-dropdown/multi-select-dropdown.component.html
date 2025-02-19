@@ -1,0 +1,16 @@
+<div class="dropdown-container" [id]="uniqueId">
+  <div class="dropdown-header" (click)="toggleDropdown()">
+    {{ getSelectedItemsText() }} <i class="fa" [ngClass]="{ 'fa-arrow-down': !isOpen, 'fa-arrow-up': isOpen }"></i>
+  </div>
+  <div *ngIf="isOpen" class="dropdown-list">
+    <!-- <div *ngIf="allowSearch" class="search-box">
+      <input class="form-control" type="text" [(ngModel)]="searchTerm" placeholder="Buscar..." />
+    </div> -->
+    <div *ngFor="let item of filteredItems()" class="dropdown-item">
+      <label class="dropdown-item-label">
+        <input type="checkbox" [checked]="isSelected(item)" (change)="toggleSelection(item)" />
+        <span>{{ item[textField] }}</span>
+      </label>
+    </div>
+  </div>
+</div>

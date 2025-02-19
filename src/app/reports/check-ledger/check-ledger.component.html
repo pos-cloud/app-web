@@ -1,0 +1,39 @@
+<section class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between flex-wrap">
+    <div class="form-group mr-2 pt-3">
+      <label for="article" class="control-label">
+        <b>{{ 'check' | translate | capitalize }}</b></label
+      >
+      <form [formGroup]="form">
+        <input type="text" class="form-control" formControlName="checkNumber" name="checkNumber" id="checkNumber" />
+      </form>
+    </div>
+
+    <!-- Botón de Actualizar -->
+    <div class="form-group ml-auto">
+      <label class="control-label"> </label>
+      <button class="btn btn-primary" (click)="getReport()">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+      </button>
+    </div>
+  </div>
+
+  <div class="card bg-light mb-3 p-3" *ngIf="header?.length">
+    <div class="d-flex flex-wrap">
+      <div class="p-2" *ngFor="let detail of header">
+        <strong>{{ detail.label | translate | capitalize }}:</strong> {{ detail.value }}
+      </div>
+    </div>
+  </div>
+
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="'Kardex de cheque'"
+    [loading]="loading"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
+  >
+  </app-data-table-reports>
+</section>

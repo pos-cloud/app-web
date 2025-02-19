@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
-import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
-import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
@@ -17,8 +16,8 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-mov-art-by-category',
-  templateUrl: './mov-art-by-category.component.html',
+  selector: 'app-transactions-by-type',
+  templateUrl: './transactions-by-type.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -29,25 +28,19 @@ import { takeUntil } from 'rxjs/operators';
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
-    ReactiveFormsModule,
   ],
 })
-export class ReportMovArtByCategoryComponent implements OnInit {
-  // date table
+export class ReportTransactionsByTypeComponent {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
 
-  public transactionMovement: string;
+  public transactionMovement: TransactionMovement;
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
-  // filters
-
-  transactionTypes: TransactionType[];
-  transactionTypesSelect: string[] = [];
-
+  // filter
   branches: Branch[];
   branchSelectedId: string[] = [];
 
@@ -55,15 +48,14 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   endDate: string = new Date().toISOString();
 
   // sort
-  public sort = {
-    column: 'category',
+  sort = {
+    column: 'description',
     direction: 'asc',
   };
 
   constructor(
     private _service: ReportSystemService,
     private _branchService: BranchService,
-    private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private cdRef: ChangeDetectorRef
@@ -75,7 +67,6 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     });
 
     this.getBranches();
-    this.getTransactionTypes();
     this.getReport();
   }
 
@@ -109,42 +100,14 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     });
   }
 
-  private getTransactionTypes() {
-    this._transactionTypeService
-      .getAll({
-        project: {
-          _id: 1,
-          transactionMovement: 1,
-          requestArticles: 1,
-          operationType: 1,
-          name: 1,
-          branch: 1,
-        },
-        match: {
-          transactionMovement: this.transactionMovement,
-          operationType: { $ne: 'D' },
-        },
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          this.transactionTypes = result.result;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-      });
-  }
-
   public getReport(): void {
     this.loading = true;
 
     const requestPayload = {
-      reportType: 'mov-art-by-category',
+      reportType: 'transactions-by-type',
       filters: {
         branch: this.branchSelectedId,
         type: this.transactionMovement,
-        transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
       },

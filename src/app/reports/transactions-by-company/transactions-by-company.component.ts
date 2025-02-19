@@ -1,9 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
+import 'moment/locale/es';
+
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
+import { CompanyType } from 'app/components/company/company';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -17,23 +21,21 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-mov-art-by-category',
-  templateUrl: './mov-art-by-category.component.html',
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
+  selector: 'app-transactions-by-company',
+  templateUrl: './transactions-by-company.component.html',
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     TranslateModule,
     PipesModule,
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
-    ReactiveFormsModule,
   ],
 })
-export class ReportMovArtByCategoryComponent implements OnInit {
-  // date table
+export class ReportTransactionsByCompanyComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
@@ -43,20 +45,37 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
-  // filters
+  //filter
+  branches: Branch[];
+  branchSelectedId: string[] = [];
+
+  statusSelect: string[] = [];
+  statusOptions = [
+    { _id: '', name: 'Todos' },
+    { _id: 'Abierto', name: 'Abierto' },
+    { _id: 'Anulado', name: 'Anulado' },
+    { _id: 'Armando', name: 'Armando' },
+    { _id: 'Cerrado', name: 'Cerrado' },
+    { _id: 'Entregado', name: 'Entregado' },
+    { _id: 'Enviado', name: 'Enviado' },
+    { _id: 'Pago Confirmado', name: 'Pago Confirmado' },
+    { _id: 'Pago Rechazado', name: 'Pago Rechazado' },
+    { _id: 'Pendiente', name: 'Pendiente' },
+    { _id: 'Pendiente de pago', name: 'Pendiente de pago' },
+    { _id: 'Preparando', name: 'Preparando' },
+  ];
 
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
 
-  branches: Branch[];
-  branchSelectedId: string[] = [];
-
   startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   endDate: string = new Date().toISOString();
 
+  companyType: CompanyType;
+
   // sort
-  public sort = {
-    column: 'category',
+  sort = {
+    column: 'description',
     direction: 'asc',
   };
 
@@ -138,12 +157,17 @@ export class ReportMovArtByCategoryComponent implements OnInit {
 
   public getReport(): void {
     this.loading = true;
-
+    if (this.transactionMovement === 'Venta') {
+      this.companyType = CompanyType.Client;
+    } else if (this.transactionMovement === 'Compra') {
+      this.companyType = CompanyType.Provider;
+    }
     const requestPayload = {
-      reportType: 'mov-art-by-category',
+      reportType: 'transactions-by-company',
       filters: {
         branch: this.branchSelectedId,
-        type: this.transactionMovement,
+        type: this.companyType,
+        status: this.statusSelect ?? [],
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,

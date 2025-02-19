@@ -1,9 +1,13 @@
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import 'moment/locale/es';
+
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from '@types';
+import { Branch } from 'app/components/branch/branch';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -11,29 +15,32 @@ import { TransactionTypeService } from 'app/core/services/transaction-type.servi
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
+import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-mov-art-by-category',
-  templateUrl: './mov-art-by-category.component.html',
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
+  selector: 'app-transactions-by-employee',
+  templateUrl: './transactions-by-employee.component.html',
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
+    ProgressbarModule,
     TranslateModule,
     PipesModule,
+    NgbModule,
+    NgMultiSelectDropDownModule,
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
-    ReactiveFormsModule,
   ],
 })
-export class ReportMovArtByCategoryComponent implements OnInit {
-  // date table
+export class ReportTransactionsByEmployeeComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
@@ -43,27 +50,26 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
-  // filters
+  //filter
+  branches: Branch[];
+  branchSelectedId: string[] = [];
 
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
-
-  branches: Branch[];
-  branchSelectedId: string[] = [];
 
   startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   endDate: string = new Date().toISOString();
 
   // sort
-  public sort = {
-    column: 'category',
+  sort = {
+    column: 'description',
     direction: 'asc',
   };
-
   constructor(
-    private _service: ReportSystemService,
+    public _service: ReportSystemService,
+    public _router: Router,
     private _branchService: BranchService,
-    private _transactionTypeService: TransactionTypeService,
+    public _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private cdRef: ChangeDetectorRef
@@ -140,7 +146,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     this.loading = true;
 
     const requestPayload = {
-      reportType: 'mov-art-by-category',
+      reportType: 'transactions-by-employee',
       filters: {
         branch: this.branchSelectedId,
         type: this.transactionMovement,

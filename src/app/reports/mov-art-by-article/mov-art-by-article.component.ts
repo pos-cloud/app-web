@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,8 +17,8 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-mov-art-by-category',
-  templateUrl: './mov-art-by-category.component.html',
+  selector: 'app-mov-art-by-article',
+  templateUrl: './mov-art-by-article.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -32,7 +32,7 @@ import { takeUntil } from 'rxjs/operators';
     ReactiveFormsModule,
   ],
 })
-export class ReportMovArtByCategoryComponent implements OnInit {
+export class ReportMovArtByArticleComponent {
   // date table
   public data: any[] = [];
   public columns: any[] = [];
@@ -56,7 +56,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
 
   // sort
   public sort = {
-    column: 'category',
+    column: 'amount',
     direction: 'asc',
   };
 
@@ -140,7 +140,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     this.loading = true;
 
     const requestPayload = {
-      reportType: 'mov-art-by-category',
+      reportType: 'mov-art-by-article',
       filters: {
         branch: this.branchSelectedId,
         type: this.transactionMovement,
@@ -183,7 +183,6 @@ export class ReportMovArtByCategoryComponent implements OnInit {
       column: event.column,
       direction: event.direction,
     };
-
     this.getReport();
   }
 }

@@ -43,14 +43,17 @@
       </button>
     </div>
   </div>
-  <app-data-table-reports
-    [data]="data"
-    [columns]="columns"
-    [totals]="totals"
-    [title]="'Transacciones por categorías'"
-    [loading]="loading"
-    [(sorting)]="sort"
-    (sortingChange)="onSortingChange($event)"
-  >
-  </app-data-table-reports>
+
+  <div class="card card-large">
+    <app-data-table-reports
+      [data]="data"
+      [columns]="columns"
+      [totals]="totals"
+      [title]="'Transacciones por metodo de pago'"
+      [loading]="loading"
+      [(sorting)]="sort"
+      (sortingChange)="onSortingChange($event)"
+    >
+    </app-data-table-reports>
+  </div>
 </section>

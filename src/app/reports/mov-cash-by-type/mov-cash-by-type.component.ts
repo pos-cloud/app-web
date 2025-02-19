@@ -1,9 +1,12 @@
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import 'moment/locale/es';
+
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from '@types';
+import { Branch } from 'app/components/branch/branch';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -17,23 +20,21 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-mov-art-by-category',
-  templateUrl: './mov-art-by-category.component.html',
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
+  selector: 'app-mov-cash-by-type',
+  templateUrl: './mov-cash-by-type.component.html',
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     TranslateModule,
     PipesModule,
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
-    ReactiveFormsModule,
   ],
 })
-export class ReportMovArtByCategoryComponent implements OnInit {
-  // date table
+export class ReportMovCashByTypeComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
@@ -43,27 +44,27 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
-  // filters
+  //filter
+  branches: Branch[];
+  branchSelectedId: string[] = [];
 
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
-
-  branches: Branch[];
-  branchSelectedId: string[] = [];
 
   startDate: string = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   endDate: string = new Date().toISOString();
 
   // sort
-  public sort = {
-    column: 'category',
+  sort = {
+    column: 'description',
     direction: 'asc',
   };
 
   constructor(
-    private _service: ReportSystemService,
+    public _service: ReportSystemService,
+    public _router: Router,
     private _branchService: BranchService,
-    private _transactionTypeService: TransactionTypeService,
+    public _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private cdRef: ChangeDetectorRef
@@ -140,7 +141,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     this.loading = true;
 
     const requestPayload = {
-      reportType: 'mov-art-by-category',
+      reportType: 'mov-cash-by-type',
       filters: {
         branch: this.branchSelectedId,
         type: this.transactionMovement,

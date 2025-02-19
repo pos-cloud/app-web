@@ -1,0 +1,65 @@
+<div class="card card-large">
+  <div class="card-header">
+    <span style="color: #607d8b">{{ title | translate | capitalize }}</span>
+    <div class="pull-right">
+      <app-export-excel
+        #exportExcelComponent
+        [title]="title"
+        [loading]="loading"
+        [columns]="columns"
+        (eventExport)="exportItems()"
+      ></app-export-excel>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <ng-container *ngFor="let column of columns">
+            <th (click)="changeSorting(column)">
+              <b>
+                {{ column.name | translate | capitalize }}
+                <i
+                  class="fa"
+                  [ngClass]="{
+                    'fa-sort': sorting.column !== column.name,
+                    'fa-sort-asc': sorting.column === column.name && sorting.direction === 'asc',
+                    'fa-sort-desc': sorting.column === column.name && sorting.direction === 'desc',
+                  }"
+                ></i>
+              </b>
+            </th>
+          </ng-container>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngIf="loading">
+          <td colspan="99" style="padding: 0px">
+            <app-progressbar [loading]="loading"></app-progressbar>
+          </td>
+        </tr>
+
+        <tr *ngFor="let item of data">
+          <td *ngFor="let column of columns">
+            {{ item?.[column.name] | dynamicFormat: column.dataType }}
+          </td>
+        </tr>
+
+        <tr align="center" *ngIf="(!data || data.length === 0) && !loading">
+          <td colspan="99">{{ 'no data found' | translate | capitalize }}</td>
+        </tr>
+      </tbody>
+
+      <tfoot *ngIf="data?.length > 0">
+        <tr>
+          <td *ngFor="let column of columns; let i = index">
+            <strong *ngIf="i > 0 && totals?.[column.name]">
+              {{ totals[column.name] | dynamicFormat: column.dataType }}
+            </strong>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
