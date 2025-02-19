@@ -6,7 +6,7 @@ import 'moment/locale/es';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from 'app/components/branch/branch';
+import { Branch } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
