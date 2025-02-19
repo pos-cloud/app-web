@@ -26,7 +26,7 @@ export const REPORTS_ROUTES: Routes = [
       import('./mov-cash-by-type/mov-cash-by-type.component').then((m) => m.ReportMovCashByTypeComponent),
   },
   {
-    path: 'transaction-by-company/:module',
+    path: 'transactions-by-company/:module',
     loadComponent: () =>
       import('./transactions-by-company/transactions-by-company.component').then(
         (m) => m.ReportTransactionsByCompanyComponent
