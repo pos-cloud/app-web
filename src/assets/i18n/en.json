@@ -9,9 +9,14 @@
   "createdAt": "created in",
   "updatedBy": "Updated by",
   "updatedAt": "updated in",
+  "UploadImage": "Upload Image",
+  "unit-of-measurement": "Unit of measurement",
+  "unitOfMeasurement": "Unit of measurement",
+  "unitOfMeasurement.abbreviation": "Unit of measurement abbreviation",
+  "unitOfMeasurement.name": "Unit of measurement name",
   "add-currency": "Add currency",
   "add-currency-value": "Add currency value",
-  "UploadImage": "Upload Image",
-  "RemoveImage": "Remove Image",
+  "add-unit-of-measurement": "Add unit of measurement",
+  "removeImage": "Remove Image",
   "visibleSale": "Visible Sale"
 }

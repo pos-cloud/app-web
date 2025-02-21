@@ -15,6 +15,11 @@
   "updatedAt": "Aggiornato",
   "add-currency-value": "Aggiungi valore valuta",
   "add-currency": "aggiungere valuta",
+  "add-unit-of-measurement": "Aggiungi unitá di misura",
   "UploadImage": "Carica Immagine",
+  "unit-of-measurement": "Unitá di misura",
+  "unitOfMeasurement": "Unitá di misura",
+  "unitOfMeasurement.abbreviation": "Unità di misura abbreviazione",
+  "unitOfMeasurement.name": "Unita di misura nome",
   "RemoveImage": "Rimuovi immagine"
 }
