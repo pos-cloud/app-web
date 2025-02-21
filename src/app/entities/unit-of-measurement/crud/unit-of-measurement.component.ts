@@ -14,12 +14,12 @@ import { takeUntil } from 'rxjs/operators';
 import { UnitOfMeasurementService } from '../../../core/services/unit-of-measurement.service';
 
 @Component({
-  selector: 'app-unit-of-measurements',
-  templateUrl: './unit-of-measurements.component.html',
+  selector: 'app-unit-of-measurement',
+  templateUrl: './unit-of-measurement.component.html',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
 })
-export class UnitOfMeasurementsComponent implements OnInit, OnDestroy {
+export class UnitOfMeasurementComponent implements OnInit, OnDestroy {
   public operation: string;
   public unitForm: UntypedFormGroup;
   public loading: boolean = false;
@@ -82,10 +82,10 @@ export class UnitOfMeasurementsComponent implements OnInit, OnDestroy {
 
   setValueForm(): void {
     this.unitForm.patchValue({
-      _id: this.unit._id ?? '',
-      code: this.unit.code ?? '',
-      abbreviation: this.unit.abbreviation ?? '',
-      name: this.unit.name ?? '',
+      _id: this.unit?._id ?? '',
+      code: this.unit?.code ?? '',
+      abbreviation: this.unit?.abbreviation ?? '',
+      name: this.unit?.name ?? '',
     });
   }
 

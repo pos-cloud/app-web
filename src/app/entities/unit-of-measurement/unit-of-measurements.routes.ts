@@ -8,18 +8,18 @@ export const UNIT_OF_MEASUREMENTS_ROUTES: Routes = [
   },
   {
     path: 'add',
-    loadComponent: () => import('./crud/unit-of-measurements.component').then((m) => m.UnitOfMeasurementsComponent),
+    loadComponent: () => import('./crud/unit-of-measurement.component').then((m) => m.UnitOfMeasurementComponent),
   },
   {
     path: 'view/:id',
-    loadComponent: () => import('./crud/unit-of-measurements.component').then((m) => m.UnitOfMeasurementsComponent),
+    loadComponent: () => import('./crud/unit-of-measurement.component').then((m) => m.UnitOfMeasurementComponent),
   },
   {
     path: 'update/:id',
-    loadComponent: () => import('./crud/unit-of-measurements.component').then((m) => m.UnitOfMeasurementsComponent),
+    loadComponent: () => import('./crud/unit-of-measurement.component').then((m) => m.UnitOfMeasurementComponent),
   },
   {
     path: 'delete/:id',
-    loadComponent: () => import('./crud/unit-of-measurements.component').then((m) => m.UnitOfMeasurementsComponent),
+    loadComponent: () => import('./crud/unit-of-measurement.component').then((m) => m.UnitOfMeasurementComponent),
   },
 ];

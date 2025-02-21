@@ -661,5 +661,6 @@
   "day": "Día",
   "month": "Mes",
   "week": "Semana",
-  "year": "Año"
+  "year": "Año",
+  "unit-of-measurements": "Unidades de medida"
 }

@@ -14,7 +14,7 @@ import { DatatableModule } from 'app/components/datatable/datatable.module';
   imports: [DatatableModule],
 })
 export class ListUnitOfMeasurementsComponent {
-  public title: string = 'Unidades de Medida';
+  public title: string = 'unit-of-measurements';
   public sort = { name: 1 };
   public columns: IAttribute[];
   public loading: boolean = false;

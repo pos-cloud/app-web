@@ -1,10 +1,9 @@
-import { Currency, Make } from '@types';
+import { Currency, Make, UnitOfMeasurement } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Category } from '../category/category';
 import { Deposit } from '../deposit/deposit';
 import { Location } from '../location/location';
 import { Taxes } from '../tax/taxes';
-import { UnitOfMeasurement } from '../unit-of-measurement/unit-of-measurement.model';
 import { User } from '../user/user';
 
 import * as moment from 'moment';
