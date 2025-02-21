@@ -648,6 +648,8 @@ export class HeaderComponent implements OnInit {
                   children: [
                     { label: 'Inventario', link: 'admin/stock-de-productos' },
                     { label: 'Kardex de producto', link: 'reports/article-ledger' },
+                    { label: 'stock valorizado', link: 'reports/inventory-valued' },
+                    { label: 'Inventario por fecha', link: 'reports/inventory-for-date' },
                   ],
                 },
               ],

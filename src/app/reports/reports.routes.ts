@@ -69,4 +69,14 @@ export const REPORTS_ROUTES: Routes = [
     path: 'current-account/:id',
     loadComponent: () => import('./current-account/current-account.component').then((m) => m.CurrentAccountComponent),
   },
+  {
+    path: 'inventory-valued',
+    loadComponent: () =>
+      import('./inventory-valued/inventory-valued.component').then((m) => m.InventoryValuedComponent),
+  },
+  {
+    path: 'inventory-for-date',
+    loadComponent: () =>
+      import('./inventory-for-date/inventory-for-date.component').then((m) => m.InventoryForDateComponent),
+  },
 ];
