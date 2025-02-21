@@ -49,4 +49,9 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'branches',
     loadChildren: () => import('./branch/branch.routes').then((m) => m.BRANCH_ROUTES),
   },
+  {
+    path: 'unit-of-measurements',
+    loadChildren: () =>
+      import('./unit-of-measurement/unit-of-measurements.routes').then((m) => m.UNIT_OF_MEASUREMENTS_ROUTES),
+  },
 ];

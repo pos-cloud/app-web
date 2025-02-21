@@ -17,13 +17,11 @@ import { PermissionModule } from './permission/permission.module';
 import { ReportModule } from './report/report.module';
 import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
 import { TransactionTypeModule } from './transaction-type/transaction-type.module';
-import { UnitOfMeasurementModule } from './unit-of-measurement/unit-of-measurement.module';
 import { VariantValueModule } from './variant-value/variant-value.module';
 
 @NgModule({
   imports: [
     DatatableModule,
-    UnitOfMeasurementModule,
     ExportersModule,
     ApplicationModule,
     PermissionModule,

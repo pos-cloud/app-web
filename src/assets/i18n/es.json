@@ -27,6 +27,7 @@
   "add-currency-value": "Añadir valor a la moneda",
   "add-room": "Agregar Salones",
   "add-table": "Agregar Mesas",
+  "add-unit-of-measurement": "Añadir unidad de medida",
   "address": "Dirección",
   "addressNumber": "Número",
   "agency": "Sucursal",
@@ -609,10 +610,9 @@
   "uploaded Images": "Imagenes Cargadas",
   "unit-of-measurement": "Unidad de medida",
   "unitOfMeasurement": "Unidad de medida",
-  "unitOfMeasurement.abbreviation": "Unidad de Medida",
-  "unitOfMeasurement.name": "Unidad de Medida",
+  "unitOfMeasurement.abbreviation": "Unidad de medida. Abreviatura ",
+  "unitOfMeasurement.name": "Unidad de medida. Nombre",
   "unitPrice": "Precio Unitario",
-  "units-of-measurement": "Unidades de medida",
   "update": "Modificar",
   "updateArticle": "Atajo Producto",
   "updateDate": "Fecha de Modificación",
@@ -661,5 +661,6 @@
   "day": "Día",
   "month": "Mes",
   "week": "Semana",
-  "year": "Año"
+  "year": "Año",
+  "unit-of-measurements": "Unidades de medida"
 }
