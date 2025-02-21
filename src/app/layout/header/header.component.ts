@@ -86,7 +86,7 @@ export class HeaderComponent implements OnInit {
         { label: '', isDivider: true },
         { label: 'Estructura', link: 'admin/structures' },
         { label: 'Clasificaciones', link: 'admin/classifications' },
-        { label: 'Unidad de medida', link: 'units-of-measurement' },
+        { label: 'Unidad de medida', link: 'entities/unit-of-measurements' },
       ],
     },
     {
@@ -527,7 +527,7 @@ export class HeaderComponent implements OnInit {
             { label: '', isDivider: true },
             { label: 'Estructura', link: 'admin/structures' },
             { label: 'Clasificaciones', link: 'admin/classifications' },
-            { label: 'Unidad de medida', link: 'units-of-measurement' },
+            { label: 'Unidad de medida', link: 'entities/unit-of-measurements' },
           ],
         });
       }
