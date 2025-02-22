@@ -70,7 +70,6 @@ import { ExportersModule } from './components/export/exporters.module';
 import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
-import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
 import { ListLocationsComponent } from './components/location/list-locations/list-locations.component';
 import { LocationComponent } from './components/location/location/location.component';
 import { LoginComponent } from './components/login/login.component';
@@ -233,7 +232,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     UpdateArticleFieldComponent,
     DeleteArticleFieldComponent,
     ListArticleFieldsComponent,
-    ListSummaryOfAccountsComponent,
     CompanyContactComponent,
     ListIdentificationTypesComponent,
     AddIdentificationTypeComponent,

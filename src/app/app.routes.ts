@@ -20,7 +20,6 @@ import { ExportIvaComponent } from './components/export/export-iva/export-iva.co
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
-import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
 import { ListLocationsComponent } from './components/location/list-locations/list-locations.component';
 import { LoginComponent } from './components/login/login.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -245,18 +244,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     //data: { module: 'config.modules.production' }
   },
-
-  {
-    path: 'admin/resumenes-de-cuentas',
-    component: ListSummaryOfAccountsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  // {
-  //   path: 'admin/salones',
-  //   //  component: ListRoomsComponent,
-  //   canActivate: [AuthGuard, LicenseGuard],
-  //   // data: { module: 'config.modules.sale.resto' },
-  // },
   {
     path: 'admin/condiciones-de-iva',
     component: ListVATConditionsComponent,

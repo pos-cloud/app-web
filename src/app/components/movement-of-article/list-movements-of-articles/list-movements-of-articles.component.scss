@@ -1,11 +1,17 @@
 app-list-movement-of-article {
-    .row-active {
-        background-color: #0275D8 !important;
-        color: #fff !important;
-    }
-    
-    .row-inactive {
-        background-color: #fff !important;
-        color: #000 !important;
-    }
+  .row-active {
+    background-color: #0275d8 !important;
+    color: #fff !important;
+  }
+
+  .row-inactive {
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+
+  .example-list {
+    height: 50vh;
+    overflow-y: auto;
+    padding: 1px;
+  }
 }
