@@ -19,7 +19,6 @@ import {
   ApexYAxis,
   NgApexchartsModule,
 } from 'ng-apexcharts';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -50,7 +49,7 @@ const sparkLineData = [47, 45, 54, 38, 56, 24, 65, 31, 37, 39, 62, 51, 35, 41, 3
   styleUrls: ['./dashboard.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, NgbModule, NgMultiSelectDropDownModule, ReactiveFormsModule, NgApexchartsModule],
+  imports: [CommonModule, NgbModule, ReactiveFormsModule, NgApexchartsModule],
 })
 export class DasboardComponent {
   salesTotal: Partial<ChartOptions>;
