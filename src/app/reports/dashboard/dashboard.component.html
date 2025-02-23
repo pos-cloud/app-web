@@ -1,0 +1,70 @@
+<section class="container-fluid dashboard">
+  <div class="row">
+    <div class="col-md-4">
+      <div id="chart-spark1">
+        <apx-chart
+          #chartspark1
+          [series]="salesTotal?.series"
+          [chart]="salesTotal?.chart"
+          [stroke]="salesTotal?.stroke"
+          [yaxis]="salesTotal?.yaxis"
+          [fill]="salesTotal?.fill"
+          [title]="salesTotal?.title"
+          [subtitle]="salesTotal?.subtitle"
+        ></apx-chart>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div id="chart-spark2">
+        <apx-chart
+          #chartspark2
+          [series]="inventoryTotal.series"
+          [chart]="inventoryTotal.chart"
+          [stroke]="inventoryTotal.stroke"
+          [yaxis]="inventoryTotal.yaxis"
+          [fill]="inventoryTotal.fill"
+          [title]="inventoryTotal.title"
+          [subtitle]="inventoryTotal.subtitle"
+        ></apx-chart>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div id="chart-spark3">
+        <apx-chart
+          #chartspark3
+          [series]="accountReveivable.series"
+          [chart]="accountReveivable.chart"
+          [stroke]="accountReveivable.stroke"
+          [yaxis]="accountReveivable.yaxis"
+          [fill]="accountReveivable.fill"
+          [title]="accountReveivable.title"
+          [subtitle]="accountReveivable.subtitle"
+        ></apx-chart>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <apx-chart
+        [series]="salesByMonth.series"
+        [chart]="salesByMonth.chart"
+        [dataLabels]="salesByMonth.dataLabels"
+        [plotOptions]="salesByMonth.plotOptions"
+        [yaxis]="salesByMonth.yaxis"
+        [legend]="salesByMonth.legend"
+        [fill]="salesByMonth.fill"
+        [stroke]="salesByMonth.stroke"
+        [tooltip]="salesByMonth.tooltip"
+        [xaxis]="salesByMonth.xaxis"
+      ></apx-chart>
+    </div>
+    <div class="col-md-6">
+      <apx-chart
+        [series]="salesByCategory.series"
+        [chart]="salesByCategory.chart"
+        [labels]="salesByCategory.labels"
+        [responsive]="salesByCategory.responsive"
+      ></apx-chart>
+    </div>
+  </div>
+</section>

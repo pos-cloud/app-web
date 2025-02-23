@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
-import { ListArticleFieldsComponent } from './components/article-field/list-article-fields/list-article-fields.component';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
@@ -20,7 +19,6 @@ import { ExportIvaComponent } from './components/export/export-iva/export-iva.co
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
-import { ListLocationsComponent } from './components/location/list-locations/list-locations.component';
 import { LoginComponent } from './components/login/login.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { ListMovementsOfArticlesComponent } from './components/movement-of-article/list-movements-of-articles/list-movements-of-articles.component';
@@ -372,18 +370,8 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/ubicaciones',
-    component: ListLocationsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'admin/tipos-de-identificacion',
     component: ListIdentificationTypesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/campos-de-productos',
-    component: ListArticleFieldsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

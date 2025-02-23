@@ -27,10 +27,6 @@ import { _routes } from './app.routes';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { AddressModule } from './components/address/address.module';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
-import { AddArticleFieldComponent } from './components/article-field/article-field/add-article-field.component';
-import { DeleteArticleFieldComponent } from './components/article-field/delete-article-field/delete-article-field.component';
-import { ListArticleFieldsComponent } from './components/article-field/list-article-fields/list-article-fields.component';
-import { UpdateArticleFieldComponent } from './components/article-field/update-article-field/update-article-field.component';
 import { AddArticleStockComponent } from './components/article-stock/article-stock/add-article-stock.component';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
@@ -70,8 +66,6 @@ import { ExportersModule } from './components/export/exporters.module';
 import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
 import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
-import { ListLocationsComponent } from './components/location/list-locations/list-locations.component';
-import { LocationComponent } from './components/location/location/location.component';
 import { LoginComponent } from './components/login/login.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
@@ -224,14 +218,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
-    LocationComponent,
-    ListLocationsComponent,
     CompanyNewsComponent,
     ListMovementOfCashesComponent,
-    AddArticleFieldComponent,
-    UpdateArticleFieldComponent,
-    DeleteArticleFieldComponent,
-    ListArticleFieldsComponent,
     CompanyContactComponent,
     ListIdentificationTypesComponent,
     AddIdentificationTypeComponent,

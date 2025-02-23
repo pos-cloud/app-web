@@ -4,10 +4,8 @@ import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from 
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReportSystemService } from 'app/core/services/report-system.service';
-import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
-import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject, Subscription } from 'rxjs';
@@ -16,7 +14,6 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-inventory-for-date',
   templateUrl: './inventory-for-date.component.html',
-  styleUrls: ['./inventory-for-date.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -25,7 +22,6 @@ import { takeUntil } from 'rxjs/operators';
     TranslateModule,
     PipesModule,
     DateTimePickerComponent,
-    MultiSelectDropdownComponent,
     DataTableReportsComponent,
     ReactiveFormsModule,
   ],
@@ -54,7 +50,6 @@ export class InventoryForDateComponent {
 
   constructor(
     private _service: ReportSystemService,
-    private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private cdRef: ChangeDetectorRef,

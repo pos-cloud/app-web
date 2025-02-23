@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export const REPORTS_ROUTES: Routes = [
   {
-    path: 'dashboard/:module',
+    path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DasboardComponent),
   },
   {
@@ -51,7 +51,7 @@ export const REPORTS_ROUTES: Routes = [
   },
   {
     path: 'inventory',
-    loadComponent: () => import('./inventory/inventory.comonent').then((m) => m.InventoryComponent),
+    loadComponent: () => import('./inventory/inventory.component').then((m) => m.InventoryComponent),
   },
   {
     path: 'check-wallet',
