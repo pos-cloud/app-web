@@ -127,17 +127,7 @@
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr
-            *ngFor="
-              let item of items
-                | paginate
-                  : {
-                      itemsPerPage: itemsPerPage,
-                      currentPage: currentPage,
-                      totalItems: totalItems,
-                    }
-            "
-          >
+          <tr *ngFor="let item of items">
             <td align="left">
               <button
                 *ngFor="let button of rowButtons"
