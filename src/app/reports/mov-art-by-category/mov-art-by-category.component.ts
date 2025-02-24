@@ -70,13 +70,12 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this._activatedRoute.params.subscribe((params) => {
+    this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      this.getBranches();
+      this.getTransactionTypes();
+      this.getReport();
     });
-
-    this.getBranches();
-    this.getTransactionTypes();
-    this.getReport();
   }
 
   public ngOnDestroy(): void {
