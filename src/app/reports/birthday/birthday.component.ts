@@ -19,6 +19,7 @@ export class ReportBirthdayComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
+  public title: string = '';
 
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
@@ -62,9 +63,10 @@ export class ReportBirthdayComponent implements OnInit {
         .subscribe({
           next: (result) => {
             this._toastService.showToast(result);
-            this.data = result.result.data;
-            this.columns = result.result.columns;
-            this.totals = result.result.totals;
+            this.data = result?.result?.data ?? [];
+            this.columns = result?.result?.columns ?? [];
+            this.totals = result?.result?.totals ?? {};
+            this.title = result?.info?.title ?? 'Cumpleaños';
             this.cdRef.detectChanges();
           },
           error: (error) => {

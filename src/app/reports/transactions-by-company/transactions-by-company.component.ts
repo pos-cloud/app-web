@@ -39,6 +39,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
+  public title: string = '';
 
   public transactionMovement: string;
   public loading: boolean = false;
@@ -95,7 +96,6 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
       this.getTransactionTypes();
       this.getReport();
     });
-
   }
 
   public ngOnDestroy(): void {
@@ -186,9 +186,10 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
         .subscribe({
           next: (result) => {
             this._toastService.showToast(result);
-            this.data = result.result.data;
-            this.columns = result.result.columns;
-            this.totals = result.result.totals;
+            this.data = result?.result?.data ?? [];
+            this.columns = result?.result?.columns ?? [];
+            this.totals = result?.result?.totals ?? {};
+            this.title = result?.result?.title ?? `Transacciones por ${this.companyType} `;
             this.cdRef.detectChanges();
           },
           error: (error) => {

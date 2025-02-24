@@ -28,7 +28,7 @@ export class ReportCheckLedgerComponent {
   public columns: any[] = [];
   public totals: any = {};
   public header: any[] = [];
-
+  public title: '';
   // sort
   public sort = {
     column: 'description',
@@ -73,10 +73,11 @@ export class ReportCheckLedgerComponent {
         .subscribe({
           next: (result) => {
             this._toastService.showToast(result);
-            this.data = result.result.data;
-            this.columns = result.result.columns;
-            this.totals = result.result.totals;
-            this.header = result.result.header;
+            this.data = result?.result?.data ?? [];
+            this.columns = result?.result?.columns ?? [];
+            this.totals = result?.result?.totals ?? {};
+            this.header = result?.result?.header ?? {};
+            this.title = result?.result?.info?.title ?? 'Kadex de cheque';
             this.cdRef.detectChanges();
           },
           error: (error) => {

@@ -34,6 +34,7 @@ export class ReportTransactionsByTypeComponent {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
+  public title: string = '';
 
   public transactionMovement: TransactionMovement;
   public loading: boolean = false;
@@ -124,9 +125,10 @@ export class ReportTransactionsByTypeComponent {
         .subscribe({
           next: (result) => {
             this._toastService.showToast(result);
-            this.data = result.result.data;
-            this.columns = result.result.columns;
-            this.totals = result.result.totals;
+            this.data = result?.result?.data ?? [];
+            this.columns = result?.result?.columns ?? [];
+            this.totals = result?.result?.totals ?? {};
+            this.title = result?.result?.title ?? 'Transacciones por tipo';
             this.cdRef.detectChanges();
           },
           error: (error) => {

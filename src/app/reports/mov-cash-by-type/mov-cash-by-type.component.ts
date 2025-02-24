@@ -38,6 +38,7 @@ export class ReportMovCashByTypeComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
+  public title: string = '';
 
   public transactionMovement: string;
   public loading: boolean = false;
@@ -162,9 +163,10 @@ export class ReportMovCashByTypeComponent implements OnInit {
         .subscribe({
           next: (result) => {
             this._toastService.showToast(result);
-            this.data = result.result.data;
-            this.columns = result.result.columns;
-            this.totals = result.result.totals;
+            this.data = result?.result?.data ?? [];
+            this.columns = result?.result?.columns ?? [];
+            this.totals = result?.result?.totals ?? {};
+            this.title = result?.result?.title ?? `Movimientos de caja por tipo por ${this.transactionMovement}`;
             this.cdRef.detectChanges();
           },
           error: (error) => {
