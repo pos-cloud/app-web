@@ -1,7 +1,7 @@
 <section class="container-fluid dashboard">
   <div class="row">
     <div class="col-md-4">
-      <div id="chart-spark1">
+      <div class="chart">
         <apx-chart
           #chartspark1
           [series]="salesTotal?.series"
@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div id="chart-spark2">
+      <div class="chart">
         <apx-chart
           #chartspark2
           [series]="inventoryTotal.series"
@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div id="chart-spark3">
+      <div class="chart">
         <apx-chart
           #chartspark3
           [series]="accountReveivable.series"
@@ -44,7 +44,8 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-7 chart">
+      <span>Ventas por mes</span>
       <apx-chart
         [series]="salesByMonth?.series"
         [chart]="salesByMonth?.chart"
@@ -58,7 +59,8 @@
         [xaxis]="salesByMonth?.xaxis"
       ></apx-chart>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4 chart">
+      <span>Ventas por categoria</span>
       <apx-chart
         [series]="salesByCategory.series"
         [chart]="salesByCategory.chart"

@@ -41,8 +41,6 @@ export type ChartOptions = {
   tooltip: ApexTooltip;
 };
 
-const sparkLineData = [47, 45, 54, 38, 56, 24, 65, 31, 37, 39, 62, 51, 35, 41, 35, 27, 93, 53, 61, 27, 54, 43, 19, 46];
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -61,10 +59,7 @@ export class DasboardComponent {
   private subscription: Subscription = new Subscription();
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private _service: ReportSystemService,
-    private _toastService: ToastService
-  ) {}
+  constructor(private _service: ReportSystemService, private _toastService: ToastService) {}
 
   ngOnInit(): void {
     this.getSalesTotal();
