@@ -192,7 +192,26 @@ export class ListArticlesComponent {
       align: 'right',
       required: false,
     },
-
+    {
+      name: 'unitOfMeasurement.name',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'unitOfMeasurement.abbreviation',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
     {
       name: 'showMenu',
       visible: false,
@@ -651,10 +670,7 @@ export class ListArticlesComponent {
         break;
       case 'print-label':
         this.loading = true;
-        const printLabelComponent = new PrintLabelComponent(
-          this._printerService,
-          this._alertConfig
-        );
+        const printLabelComponent = new PrintLabelComponent(this._printerService, this._alertConfig);
         printLabelComponent.articleId = obj._id;
         printLabelComponent.ngOnInit();
         this.loading = false;
@@ -662,10 +678,7 @@ export class ListArticlesComponent {
       case 'print-labels':
         this.loading = true;
         const articlesIds: string[] = items.map((objeto) => objeto._id);
-        const printLabelsComponent = new PrintLabelsComponent(
-          this._printerService,
-          this._alertConfig
-        );
+        const printLabelsComponent = new PrintLabelsComponent(this._printerService, this._alertConfig);
         printLabelsComponent.articleIds = articlesIds;
         printLabelsComponent.ngOnInit();
         this.loading = false;
