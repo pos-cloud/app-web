@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export const VARIANT_VALUE_ROUTES: Routes = [
   {
-    path: 'add',
+    path: '',
     loadComponent: () => import('./list/list-variant-values.component').then((m) => m.ListVariantValuesComponent),
   },
   {
