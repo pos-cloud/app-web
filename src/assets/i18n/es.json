@@ -627,6 +627,8 @@
   "users": "Usuarios",
   "variants": "Variantes",
   "variant": "Variantes",
+  "variant-type": "Tipo de variante",
+  "variant-types": "Tipos de variantes",
   "variant-value": "Valor de la Variante",
   "variantValue1.description": "Valor de Variante 1",
   "variantValue2.description": "Valor de Variante 2",

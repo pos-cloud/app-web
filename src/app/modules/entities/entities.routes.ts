@@ -54,4 +54,12 @@ export const ENTITIES_ROUTES: Routes = [
     loadChildren: () =>
       import('./unit-of-measurement/unit-of-measurements.routes').then((m) => m.UNIT_OF_MEASUREMENTS_ROUTES),
   },
+  {
+    path: 'variant-values',
+    loadChildren: () => import('./variant-value/variant-value.routes').then((m) => m.VARIANT_VALUE_ROUTES),
+  },
+  {
+    path: 'variant-types',
+    loadChildren: () => import('./variant-type/variant-type.routes').then((m) => m.VARIANT_TYPE_ROUTES),
+  },
 ];

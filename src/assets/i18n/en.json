@@ -18,5 +18,10 @@
   "add-currency-value": "Add currency value",
   "add-unit-of-measurement": "Add unit of measurement",
   "removeImage": "Remove Image",
+  "uploadImage": "Upload Image",
+  "variant-type": "variant type",
+  "vatiant-types": "variant types",
+  "variant-value": "variant value",
+  "variant-values": "variant values",
   "visibleSale": "Visible Sale"
 }
