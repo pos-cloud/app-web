@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
@@ -65,7 +64,6 @@ export class InventoryValuedComponent {
     private _service: ReportSystemService,
     private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
-    private _activatedRoute: ActivatedRoute,
     private cdRef: ChangeDetectorRef,
     private _fb: UntypedFormBuilder
   ) {
@@ -75,10 +73,6 @@ export class InventoryValuedComponent {
   }
 
   async ngOnInit() {
-    this._activatedRoute.params.subscribe((params) => {
-      this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
-    });
-
     this.getTransactionTypes();
     this.getReport();
   }

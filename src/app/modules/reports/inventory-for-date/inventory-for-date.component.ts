@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -52,7 +51,6 @@ export class InventoryForDateComponent {
   constructor(
     private _service: ReportSystemService,
     private _toastService: ToastService,
-    private _activatedRoute: ActivatedRoute,
     private cdRef: ChangeDetectorRef,
     private _fb: UntypedFormBuilder
   ) {
@@ -62,10 +60,6 @@ export class InventoryForDateComponent {
   }
 
   async ngOnInit() {
-    this._activatedRoute.params.subscribe((params) => {
-      this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
-    });
-
     this.getReport();
   }
 
