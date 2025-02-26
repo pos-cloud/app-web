@@ -32,7 +32,6 @@ import { TransactionService } from '../../core/services/transaction.service';
 import { ApiResponse, Claim, ClaimPriority, ClaimType, EmailProps, EmployeeType, Table, TableState } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
-import { FulfilledComponent } from 'app/modules/sales/tienda-nube/tienda-nube-fulfilled/fulfilled.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subscription } from 'rxjs';
@@ -48,7 +47,6 @@ import { OriginService } from '../../core/services/origin.service';
 import { EmailService } from '../../core/services/send-email.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
-import { CancelComponent } from '../../modules/sales/tienda-nube/tienda-nube-cancel/cancel.component';
 import { SelectBranchComponent } from '../../shared/components/select-branch/select-branch.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
@@ -1280,24 +1278,6 @@ export class PointOfSaleComponent implements OnInit {
           );
         }
         break;
-      case 'canceledTn':
-        modalRef = this._modalService.open(CancelComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.transaction = this.transaction;
-        modalRef.componentInstance.config = this.config;
-        modalRef.componentInstance.state = state;
-        break;
-      case 'fulfilledTn':
-        modalRef = this._modalService.open(FulfilledComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.transaction = this.transaction;
-        modalRef.componentInstance.config = this.config;
-        modalRef.componentInstance.state = state;
-        break;
       case 'print':
         if (this.transaction.type.readLayout) {
           modalRef = this._modalService.open(PrintTransactionTypeComponent);
@@ -1630,10 +1610,9 @@ export class PointOfSaleComponent implements OnInit {
         if (this.transaction.type.labelPrint) {
           labelPrint = this.transaction.type.labelPrint;
         }
-        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(
-          this.transaction.origin,
-          4
-        )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
+        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
+          this.transaction.letter
+        }-${this.padNumber(this.transaction.number, 8)}`;
         if (this.transaction.type.electronics) {
           // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${this.transaction._id}">Su comprobante</a>`
           modalRef.componentInstance.body = ' ';
@@ -1998,10 +1977,9 @@ export class PointOfSaleComponent implements OnInit {
 
         const email: EmailProps = {
           to: this.transaction?.company?.emails,
-          subject: `${labelPrint} ${this.padNumber(
-            this.transaction.origin,
-            4
-          )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`,
+          subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
+            this.transaction.letter
+          }-${this.padNumber(this.transaction.number, 8)}`,
           body: this.transaction?.type?.defectEmailTemplate?.design || '',
           attachments: attachments,
         };

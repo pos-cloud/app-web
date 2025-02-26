@@ -6,7 +6,9 @@
     "allowJs": true,
     "baseUrl": "src",
     "paths": {
-      "@types/*": ["types/*"]
+      "@types/*": ["types/*"],
+      "@core/*": ["app/core/*"],
+      "@shared/*": ["app/shared/*"]
     },
     "sourceMap": true,
     "declaration": false,

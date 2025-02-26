@@ -457,11 +457,11 @@ export class HeaderComponent implements OnInit {
         }
 
         if (user?.permission?.menu?.sales?.tiendaNube) {
-          child.push({ label: 'Tienda Nube', link: 'modules/sales/tienda-nube' });
+          child.push({ label: 'Tienda Nube', link: 'pos/tienda-nube' });
         }
 
         if (user?.permission?.menu?.sales?.wooCommerce) {
-          child.push({ label: 'Woo Commerce', link: 'modules/sales/woo-commerce' });
+          child.push({ label: 'Woo Commerce', link: 'pos/woo-commerce' });
         }
 
         this.menu.push({

@@ -574,25 +574,31 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.production.kitchen' },
   },
+
   {
     path: 'menu/:database',
     component: MenuComponent,
   },
+
+  // MODULES ROUTES
   {
     path: 'entities',
     canActivate: [AuthGuard, LicenseGuard],
-    loadChildren: () => import('./entities/entities.routes').then((m) => m.ENTITIES_ROUTES),
-  },
-  {
-    path: 'modules',
-    canActivate: [AuthGuard, LicenseGuard],
-    loadChildren: () => import('./modules/modules.routes').then((m) => m.MODULES_ROUTES),
+    loadChildren: () => import('./modules/entities/entities.routes').then((m) => m.ENTITIES_ROUTES),
   },
   {
     path: 'reports',
     canActivate: [AuthGuard, LicenseGuard],
-    loadChildren: () => import('./reports/reports.routes').then((m) => m.REPORTS_ROUTES),
+    loadChildren: () => import('./modules/reports/reports.routes').then((m) => m.REPORTS_ROUTES),
   },
+  {
+    path: 'pos',
+    canActivate: [AuthGuard, LicenseGuard],
+    loadChildren: () => import('./modules/pos/pos.routes').then((m) => m.POS_ROUTES),
+  },
+  // {
+  //   path: 'transaction',
+  // },
   {
     path: '**',
     pathMatch: 'full',
