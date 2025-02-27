@@ -1657,8 +1657,10 @@ export class AddMovementOfCashComponent implements OnInit {
               }
 
               if (paid != this.transaction.totalPrice) {
+                this.amountDiscount = paid - this.transaction.totalPrice;
                 this.transaction.totalPrice = paid;
                 this.transaction = await this.updateTransaction();
+                this.addMovementOfArticle();
               }
               let movementsOfCashes: MovementOfCash[] = await this.saveMovementsOfCashes();
 
