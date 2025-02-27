@@ -574,153 +574,6 @@ export class HeaderComponent implements OnInit {
         });
       }
 
-      if (user.permission.menu.report) {
-        this.menu.push({
-          label: 'Reportes',
-          icon: 'fa fa-bar-chart',
-          children: [
-            {
-              label: 'Ventas',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/ventas' },
-                    { label: 'Movimientos de Productos', link: 'admin/venta/movimientos-de-productos' },
-                    { label: 'Movimientos de Medios', link: 'admin/venta/movimientos-de-medios' },
-                    { label: 'Cancelaciones', link: 'admin/venta/movimientos-de-cancellaciones' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
-                    { label: 'Por productos', link: 'reports/mov-art-by-article/venta' },
-                    { label: 'Por marcas', link: 'reports/mov-art-by-make/venta' },
-                    { label: 'Por categorias', link: 'reports/mov-art-by-category/venta' },
-                    { label: 'Por método de pago', link: 'reports/mov-cash-by-type/venta' },
-                    { label: 'Por cliente', link: 'reports/transaction-by-company/venta' },
-                    { label: 'Por empleado', link: 'reports/transactions-by-employee/venta' },
-                    { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/venta' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Compras',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/compras' },
-                    { label: 'Movimientos de Productos', link: 'admin/compra/movimientos-de-productos' },
-                    { label: 'Movimientos de Medios', link: 'admin/compra/movimientos-de-medios' },
-                    { label: 'Cancelaciones', link: 'report/compra/movimientos-de-cancellaciones' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
-                    { label: 'Por productos', link: 'reports/mov-art-by-article/compra' },
-                    { label: 'Por marcas', link: 'reports/mov-art-by-make/compra' },
-                    { label: 'Por categorias', link: 'reports/mov-art-by-category/compra' },
-                    { label: 'Por método de pago', link: 'reports/mov-cash-by-type/compra' },
-                    { label: 'Por proveedor', link: 'reports/transactions-by-company/compra' },
-                    { label: 'Por empleado', link: 'reports/transactions-by-employee/compra' },
-                    { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/compra' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Stock',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/stock' },
-                    { label: 'Movimientos de Productos', link: 'admin/stock/movimientos-de-productos' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Inventario', link: 'admin/stock-de-productos' },
-                    { label: 'Kardex de producto', link: 'reports/article-ledger' },
-                    { label: 'Stock Valorizado', link: 'reports/inventory-valued' },
-                    { label: 'Inventario por fecha', link: 'reports/inventory-for-date' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Producción',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/production' },
-                    { label: 'Movimientos de Productos', link: 'admin/production/movimientos-de-productos' },
-                    { label: 'Movimientos de Medios', link: 'admin/production/movimientos-de-medios' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Por productos', link: 'reports/mov-art-by-article/produccion' },
-                    { label: 'Por marcas', link: 'reports/mov-art-by-make/produccion' },
-                    { label: 'Por categorias', link: 'reports/mov-art-by-category/produccion' },
-                    { label: 'Por empleado', link: 'reports/transactions-by-employee/produccion' },
-                    { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/produccion' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Fondos',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/fondos' },
-                    { label: 'Movimientos de Medios', link: 'admin/fondos/movimientos-de-medios' },
-                    { label: 'Cajas', link: 'admin/cajas' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Cartera de cheques', link: 'report/cartera-de-cheques' },
-                    { label: 'Kardex de cheques', link: 'cheque' },
-                  ],
-                },
-              ],
-            },
-            // {
-            //   label: 'Contable',
-            //   children: [
-            //     {
-            //       label: 'Listados',
-            //       children: [{ label: 'Asientos contables', link: 'admin/accountant/ledger' }],
-            //     },
-            //     {
-            //       label: 'Reportes',
-            //       children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }],
-            //     },
-            //   ],
-            // },
-            {
-              label: 'Otros',
-              children: [
-                { label: 'Cumpleaños', link: 'reports/birthday' },
-                { label: 'Dashboard', link: 'reports/dashboard' },
-              ],
-            },
-          ],
-        });
-      }
-
       // if (user.permission.menu.report) {
       //   this.menu.push({
       //     label: 'Reportes',
@@ -742,13 +595,13 @@ export class HeaderComponent implements OnInit {
       //             label: 'Reportes',
       //             children: [
       //               { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
-      //               { label: 'Productos más vendidos', link: 'admin/venta/productos-mas-vendidos' },
-      //               { label: 'Ventas por medio de pago', link: 'reports/transactions-payment-method/venta' },
-      //               { label: 'Marcas más vendidas', link: 'reports/mov-art-by-make/venta' },
-      //               { label: 'Categorias más vendidos', link: 'reports/mov-art-by-category/venta' },
-      //               { label: 'Ventas por cliente', link: 'reports/transactions-by-clients/venta' },
-      //               { label: 'Ventas por empleado', link: 'reports/transactions-by-employee/venta' },
-      //               { label: 'Ventas por tipo de transacciones', link: 'report/venta/ventas-por-tipo-de-transacción' },
+      //               { label: 'Por productos', link: 'reports/mov-art-by-article/venta' },
+      //               { label: 'Por marcas', link: 'reports/mov-art-by-make/venta' },
+      //               { label: 'Por categorias', link: 'reports/mov-art-by-category/venta' },
+      //               { label: 'Por método de pago', link: 'reports/mov-cash-by-type/venta' },
+      //               { label: 'Por cliente', link: 'reports/transaction-by-company/venta' },
+      //               { label: 'Por empleado', link: 'reports/transactions-by-employee/venta' },
+      //               { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/venta' },
       //             ],
       //           },
       //         ],
@@ -768,17 +621,14 @@ export class HeaderComponent implements OnInit {
       //           {
       //             label: 'Reportes',
       //             children: [
-      //               { label: 'Estadísticas Generales', link: 'admin/compra/statistics' },
-      //               { label: 'Productos más comprados', link: 'admin/compra/productos-mas-comprados' },
-      //               { label: 'Compras por medio de pago', link: 'reports/transactions-payment-method/compra' },
-      //               { label: 'Marcas', link: 'reports/mov-art-by-make/compra' },
-      //               { label: 'Categorias más vendidos', link: 'reports/mov-art-by-category/compra' },
-      //               { label: 'Compras por proveedor', link: 'reports/transactions-by-clients/compra' },
-      //               { label: 'Compras por empleado', link: 'reports/transactions-by-employee/compra' },
-      //               {
-      //                 label: 'Compras por tipo de transacciones',
-      //                 link: 'report/compra/compras-por-tipo-de-transacción',
-      //               },
+      //               { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
+      //               { label: 'Por productos', link: 'reports/mov-art-by-article/compra' },
+      //               { label: 'Por marcas', link: 'reports/mov-art-by-make/compra' },
+      //               { label: 'Por categorias', link: 'reports/mov-art-by-category/compra' },
+      //               { label: 'Por método de pago', link: 'reports/mov-cash-by-type/compra' },
+      //               { label: 'Por proveedor', link: 'reports/transactions-by-company/compra' },
+      //               { label: 'Por empleado', link: 'reports/transactions-by-employee/compra' },
+      //               { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/compra' },
       //             ],
       //           },
       //         ],
@@ -791,12 +641,16 @@ export class HeaderComponent implements OnInit {
       //             children: [
       //               { label: 'Transacciones', link: 'admin/stock' },
       //               { label: 'Movimientos de Productos', link: 'admin/stock/movimientos-de-productos' },
-      //               { label: 'Movimientos de Medios', link: 'admin/stock/movimientos-de-medios' },
       //             ],
       //           },
       //           {
       //             label: 'Reportes',
-      //             children: [{ label: 'Inventario', link: 'admin/stock-de-productos' }],
+      //             children: [
+      //               { label: 'Inventario', link: 'admin/stock-de-productos' },
+      //               { label: 'Kardex de producto', link: 'reports/article-ledger' },
+      //               { label: 'Stock Valorizado', link: 'reports/inventory-valued' },
+      //               { label: 'Inventario por fecha', link: 'reports/inventory-for-date' },
+      //             ],
       //           },
       //         ],
       //       },
@@ -813,7 +667,13 @@ export class HeaderComponent implements OnInit {
       //           },
       //           {
       //             label: 'Reportes',
-      //             children: [{ label: 'Requerimientos de producción', link: 'reports/production/requierements' }],
+      //             children: [
+      //               { label: 'Por productos', link: 'reports/mov-art-by-article/produccion' },
+      //               { label: 'Por marcas', link: 'reports/mov-art-by-make/produccion' },
+      //               { label: 'Por categorias', link: 'reports/mov-art-by-category/produccion' },
+      //               { label: 'Por empleado', link: 'reports/transactions-by-employee/produccion' },
+      //               { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/produccion' },
+      //             ],
       //           },
       //         ],
       //       },
@@ -837,14 +697,154 @@ export class HeaderComponent implements OnInit {
       //           },
       //         ],
       //       },
-      //       { label: 'Contable', children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }] },
+      //       // {
+      //       //   label: 'Contable',
+      //       //   children: [
+      //       //     {
+      //       //       label: 'Listados',
+      //       //       children: [{ label: 'Asientos contables', link: 'admin/accountant/ledger' }],
+      //       //     },
+      //       //     {
+      //       //       label: 'Reportes',
+      //       //       children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }],
+      //       //     },
+      //       //   ],
+      //       // },
       //       {
       //         label: 'Otros',
-      //         children: [{ label: 'Cumpleaños', link: 'admin/cumpleaños' }],
+      //         children: [
+      //           { label: 'Cumpleaños', link: 'reports/birthday' },
+      //           { label: 'Dashboard', link: 'reports/dashboard' },
+      //         ],
       //       },
       //     ],
       //   });
       // }
+
+      if (user.permission.menu.report) {
+        this.menu.push({
+          label: 'Reportes',
+          icon: 'fa fa-bar-chart',
+          children: [
+            {
+              label: 'Ventas',
+              children: [
+                {
+                  label: 'Listados',
+                  children: [
+                    { label: 'Transacciones', link: 'admin/ventas' },
+                    { label: 'Movimientos de Productos', link: 'admin/venta/movimientos-de-productos' },
+                    { label: 'Movimientos de Medios', link: 'admin/venta/movimientos-de-medios' },
+                    { label: 'Cancelaciones', link: 'admin/venta/movimientos-de-cancellaciones' },
+                  ],
+                },
+                {
+                  label: 'Reportes',
+                  children: [
+                    { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
+                    { label: 'Productos más vendidos', link: 'admin/venta/productos-mas-vendidos' },
+                    { label: 'Ventas por medio de pago', link: 'reports/transactions-payment-method/venta' },
+                    { label: 'Marcas más vendidas', link: 'reports/mov-art-by-make/venta' },
+                    { label: 'Categorias más vendidos', link: 'reports/mov-art-by-category/venta' },
+                    { label: 'Ventas por cliente', link: 'reports/transactions-by-clients/venta' },
+                    { label: 'Ventas por empleado', link: 'reports/transactions-by-employee/venta' },
+                    { label: 'Ventas por tipo de transacciones', link: 'report/venta/ventas-por-tipo-de-transacción' },
+                  ],
+                },
+              ],
+            },
+            {
+              label: 'Compras',
+              children: [
+                {
+                  label: 'Listados',
+                  children: [
+                    { label: 'Transacciones', link: 'admin/compras' },
+                    { label: 'Movimientos de Productos', link: 'admin/compra/movimientos-de-productos' },
+                    { label: 'Movimientos de Medios', link: 'admin/compra/movimientos-de-medios' },
+                    { label: 'Cancelaciones', link: 'report/compra/movimientos-de-cancellaciones' },
+                  ],
+                },
+                {
+                  label: 'Reportes',
+                  children: [
+                    { label: 'Estadísticas Generales', link: 'admin/compra/statistics' },
+                    { label: 'Productos más comprados', link: 'admin/compra/productos-mas-comprados' },
+                    { label: 'Compras por medio de pago', link: 'reports/transactions-payment-method/compra' },
+                    { label: 'Marcas', link: 'reports/mov-art-by-make/compra' },
+                    { label: 'Categorias más vendidos', link: 'reports/mov-art-by-category/compra' },
+                    { label: 'Compras por proveedor', link: 'reports/transactions-by-clients/compra' },
+                    { label: 'Compras por empleado', link: 'reports/transactions-by-employee/compra' },
+                    {
+                      label: 'Compras por tipo de transacciones',
+                      link: 'report/compra/compras-por-tipo-de-transacción',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: 'Stock',
+              children: [
+                {
+                  label: 'Listados',
+                  children: [
+                    { label: 'Transacciones', link: 'admin/stock' },
+                    { label: 'Movimientos de Productos', link: 'admin/stock/movimientos-de-productos' },
+                    { label: 'Movimientos de Medios', link: 'admin/stock/movimientos-de-medios' },
+                  ],
+                },
+                {
+                  label: 'Reportes',
+                  children: [{ label: 'Inventario', link: 'admin/stock-de-productos' }],
+                },
+              ],
+            },
+            {
+              label: 'Producción',
+              children: [
+                {
+                  label: 'Listados',
+                  children: [
+                    { label: 'Transacciones', link: 'admin/production' },
+                    { label: 'Movimientos de Productos', link: 'admin/production/movimientos-de-productos' },
+                    { label: 'Movimientos de Medios', link: 'admin/production/movimientos-de-medios' },
+                  ],
+                },
+                {
+                  label: 'Reportes',
+                  children: [{ label: 'Requerimientos de producción', link: 'reports/production/requierements' }],
+                },
+              ],
+            },
+            {
+              label: 'Fondos',
+              children: [
+                {
+                  label: 'Listados',
+                  children: [
+                    { label: 'Transacciones', link: 'admin/fondos' },
+                    { label: 'Movimientos de Medios', link: 'admin/fondos/movimientos-de-medios' },
+                    { label: 'Cajas', link: 'admin/cajas' },
+                  ],
+                },
+                {
+                  label: 'Reportes',
+                  children: [
+                    { label: 'Cartera de cheques', link: 'report/cartera-de-cheques' },
+                    { label: 'Kardex de cheques', link: 'cheque' },
+                  ],
+                },
+              ],
+            },
+            { label: 'Contable', children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }] },
+            {
+              label: 'Otros',
+              children: [{ label: 'Cumpleaños', link: 'admin/cumpleaños' }],
+            },
+          ],
+        });
+      }
 
       if (user.permission.menu.config) {
         this.menu.push({
