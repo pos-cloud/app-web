@@ -333,8 +333,31 @@ export class TiendaNubeService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tiendaNube`;
+  async findOne(
+    tiendaNubeAccesstoken: string,
+    tiendaNubeUserId: string,
+    productId: string,
+  ) {
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .get(
+            `${this.tiendaNubeUrI}/${tiendaNubeUserId}/products/${productId}`,
+            {
+              headers: {
+                Authentication: `bearer ${tiendaNubeAccesstoken}`,
+              },
+            },
+          )
+          .pipe(map((resp) => resp.data)),
+      ).catch((e) => {
+        throw new Error('Error al actualizar producto con tiendaNube');
+      });
+
+      return data;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async removeProduct(

@@ -372,26 +372,6 @@ export class ProductsService {
         return this.create(database, productId);
       }
 
-      let images = null;
-      if (
-        foundArticle.picture.includes('amazonaws') &&
-        !foundArticle.containsVariants
-      ) {
-        await this.tiendaNubeService.uploadImageOfProduct(
-          foundArticle.tiendaNubeId,
-          foundArticle.picture,
-          token,
-          userID,
-        );
-      }
-      if (foundArticle.picture.includes('amazonaws')) {
-        images = [
-          {
-            src: foundArticle.picture,
-          },
-        ];
-      }
-
       let description = {};
 
       if (foundArticle.observation) {
@@ -422,6 +402,37 @@ export class ProductsService {
             foundCategoryTiendaMia.id,
           ];
         }
+      }
+
+      if (
+        foundArticle.picture.includes('poscloud') &&
+        !foundArticle.containsVariants
+      ) {
+        //buscar el producto en tn para borrar la imagen
+        let productTn = await this.tiendaNubeService.findOne(
+          token,
+          userID,
+          foundArticle.tiendaNubeId,
+        );
+        //borramos la imagen
+        if (
+          productTn?.images.length > 0 &&
+          productTn?.images[0]?.id !== foundArticle.picture
+        ) {
+          await this.tiendaNubeService.deleteImageOfProduct(
+            foundArticle.tiendaNubeId,
+            productTn.images[0].id,
+            token,
+            userID,
+          );
+        }
+        //subimos la nueva imagen
+        await this.tiendaNubeService.uploadImageOfProduct(
+          foundArticle.tiendaNubeId,
+          foundArticle.picture,
+          token,
+          userID,
+        );
       }
 
       const result = await this.tiendaNubeService.updateProduct(
