@@ -1650,8 +1650,15 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.transaction.totalPrice += this.totalInterestAmount + this.totalTaxAmount;
                 this.transaction = await this.updateTransaction();
               }
+              let paid = 0;
               for (let mov of this.movementsOfCashesToFinance) {
                 mov.expirationDate = moment(mov.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+                paid += mov.amountPaid;
+              }
+
+              if (paid != this.transaction.totalPrice) {
+                this.transaction.totalPrice = paid;
+                this.transaction = await this.updateTransaction();
               }
               let movementsOfCashes: MovementOfCash[] = await this.saveMovementsOfCashes();
 
