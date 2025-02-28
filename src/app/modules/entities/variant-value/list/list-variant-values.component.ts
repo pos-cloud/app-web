@@ -4,15 +4,15 @@ import { Router } from '@angular/router';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { VariantTypeService } from '../../../core/services/variant-type.service';
+import { VariantValueService } from '../../../../core/services/variant-value.service';
 
 @Component({
-  selector: 'app-list-variant-types',
-  templateUrl: './list-variant-types.component.html',
+  selector: 'app-list-variant-values',
+  templateUrl: './list-variant-values.component.html',
   standalone: true,
   imports: [DatatableModule],
 })
-export class ListVariantTypesComponent {
+export class ListVariantValuesComponent {
   public title: string;
   public sort = { name: 1 };
   public columns: IAttribute[];
@@ -23,13 +23,10 @@ export class ListVariantTypesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(
-    public _service: VariantTypeService,
-    private _router: Router
-  ) {
+  constructor(public _service: VariantValueService, private _router: Router) {
     this.columns = [
       {
-        name: 'name',
+        name: 'description',
         visible: true,
         disabled: false,
         filter: true,
@@ -45,15 +42,6 @@ export class ListVariantTypesComponent {
         datatype: 'number',
         align: 'center',
         required: true,
-      },
-      {
-        name: 'meliId',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        align: 'left',
-        required: false,
       },
       {
         name: 'creationUser.name',
@@ -139,7 +127,7 @@ export class ListVariantTypesComponent {
         click: `this.refresh()`,
       },
     ];
-    this.title = 'Tipos de Variantes';
+    this.title = 'Valores de Variantes';
   }
 
   public async refresh() {
@@ -155,16 +143,16 @@ export class ListVariantTypesComponent {
   public async openModal(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('entities/variant-types/view/' + obj._id);
+        this._router.navigateByUrl('entities/variant-values/view/' + obj._id);
         break;
       case 'update':
-        this._router.navigateByUrl('entities/variant-types/update/' + obj._id);
+        this._router.navigateByUrl('entities/variant-values/update/' + obj._id);
         break;
       case 'delete':
-        this._router.navigateByUrl('entities/variant-types/delete/' + obj._id);
+        this._router.navigateByUrl('entities/variant-values/delete/' + obj._id);
         break;
       case 'add':
-        this._router.navigateByUrl('entities/variant-types/add');
+        this._router.navigateByUrl('entities/variant-values/add');
         break;
     }
   }

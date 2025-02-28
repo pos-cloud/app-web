@@ -9,7 +9,7 @@ import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { VariantTypeService } from '../../../core/services/variant-type.service';
+import { VariantTypeService } from '../../../../core/services/variant-type.service';
 
 @Component({
   selector: 'app-variant-type',
