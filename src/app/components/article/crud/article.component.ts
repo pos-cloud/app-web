@@ -21,7 +21,7 @@ import { NgbActiveModal, NgbModal, NgbTypeahead, NgbTypeaheadConfig } from '@ng-
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
-import { Make, UnitOfMeasurement } from '@types';
+import { Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
 import { Config } from '../../../app.config';
 import { ArticleService } from '../../../core/services/article.service';
 import { CategoryService } from '../../../core/services/category.service';
@@ -50,8 +50,6 @@ import { CurrencyService } from '../../../core/services/currency.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiResponse, Currency, MediaCategory } from '@types';
 import { User } from 'app/components/user/user';
-import { VariantType } from 'app/components/variant-type/variant-type';
-import { VariantValue } from 'app/components/variant-value/variant-value';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { CompanyService } from 'app/core/services/company.service';
 import { FileService } from 'app/core/services/file.service';
@@ -398,8 +396,9 @@ export class ArticleComponent implements OnInit {
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
       // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
-      this.validationMessages.code['maxlength'] =
-        `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
+      this.validationMessages.code[
+        'maxlength'
+      ] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
       this.articleForm.controls['code'].setValidators([
         Validators.maxLength(this.config.article.code.validators.maxLength),
       ]);
@@ -661,8 +660,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.creationUser === 'string'
                 ? this.article.creationUser
                 : typeof this.article.creationUser !== 'undefined'
-                  ? this.article.creationUser._id
-                  : '')
+                ? this.article.creationUser._id
+                : '')
           );
           this.updateUser = this.users.find(
             (user: User) =>
@@ -670,8 +669,8 @@ export class ArticleComponent implements OnInit {
               (typeof this.article.updateUser === 'string'
                 ? this.article.updateUser
                 : typeof this.article.updateUser !== 'undefined'
-                  ? this.article.updateUser._id
-                  : '')
+                ? this.article.updateUser._id
+                : '')
           );
           if (this.article.variants.length > 0) {
             const types = this.article.variants.map((item) => item.type);

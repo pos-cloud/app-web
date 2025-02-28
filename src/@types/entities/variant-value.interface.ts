@@ -5,4 +5,5 @@ export interface VariantValue extends Activity {
   type: VariantType;
   order: number;
   description: string;
+  picture: string;
 }

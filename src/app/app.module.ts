@@ -133,10 +133,6 @@ import { DeleteUserComponent } from './components/user/delete-user/delete-user.c
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ShortcutComponent } from './components/user/shortcut/shortcut.component';
 import { AddUserComponent } from './components/user/user/add-user.component';
-import { DeleteVariantTypeComponent } from './components/variant-type/delete-variant-type/delete-variant-type.component';
-import { ListVariantTypesComponent } from './components/variant-type/list-variant-types/list-variant-types.component';
-import { UpdateVariantTypeComponent } from './components/variant-type/update-variant-type/update-variant-type.component';
-import { AddVariantTypeComponent } from './components/variant-type/variant-type/add-variant-type.component';
 import { AddVariantComponent } from './components/variant/add-variant/add-variant.component';
 import { DeleteVariantComponent } from './components/variant/delete-variant/delete-variant.component';
 import { ListVariantsComponent } from './components/variant/list-variants/list-variants.component';
@@ -196,10 +192,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddVariantComponent,
     DeleteVariantComponent,
     ListVariantsComponent,
-    AddVariantTypeComponent,
-    UpdateVariantTypeComponent,
-    DeleteVariantTypeComponent,
-    ListVariantTypesComponent,
     AddMovementOfArticleComponent,
     TaxComponent,
     ListTaxesComponent,

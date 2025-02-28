@@ -21,5 +21,12 @@
   "unitOfMeasurement": "Unitá di misura",
   "unitOfMeasurement.abbreviation": "Unità di misura abbreviazione",
   "unitOfMeasurement.name": "Unita di misura nome",
-  "RemoveImage": "Rimuovi immagine"
+  "add-variant-type": "Aggiungi tipo variante",
+  "add-variant-value": "Aggiungi valore variante",
+  "uploadImage": "Carica Immagine",
+  "removeImage": "Rimuovi immagine",
+  "variant-value": "Valore variante",
+  "variant-values": "Valori variante",
+  "variant-type": "Tipo variante",
+  "variant-types": "Tipi variante"
 }

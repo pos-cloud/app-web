@@ -103,6 +103,7 @@ export class BankComponent implements OnInit {
         .subscribe({
           next: (result: ApiResponse) => {
             this.accounts = result.result;
+            this.setValueForm();
           },
           error: (error) => {
             this._toastService.showToast(error);

@@ -1,22 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article } from '../../article/article';
-import { VariantType } from '../../variant-type/variant-type';
-import { VariantValue } from '../../variant-value/variant-value';
 import { Variant } from '../variant';
 
+import { VariantType, VariantValue } from '@types';
 import { OrderByPipe } from 'app/shared/pipes/order-by.pipe';
 import { VariantTypeService } from '../../../core/services/variant-type.service';
 import { VariantValueService } from '../../../core/services/variant-value.service';
@@ -34,9 +25,7 @@ export class AddVariantComponent implements OnInit {
   public variantsByTypes: any[];
   @Input() operation: string;
   @Input() article: Article;
-  @Output() eventAddVariants: EventEmitter<Variant[]> = new EventEmitter<
-    Variant[]
-  >();
+  @Output() eventAddVariants: EventEmitter<Variant[]> = new EventEmitter<Variant[]>();
   public variantTypes: VariantType[];
   public variantTypeSelected: VariantType;
   public variantValues: VariantValue[];
@@ -98,9 +87,7 @@ export class AddVariantComponent implements OnInit {
       value: [this.variant.value, [Validators.required]],
     });
 
-    this.variantForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.variantForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
   }
@@ -178,8 +165,7 @@ export class AddVariantComponent implements OnInit {
   public getVariantValuesByType(variantType: VariantType): void {
     this.loading = true;
 
-    let query =
-      'where="type":"' + variantType._id + '"&sort="order":1,"description":1';
+    let query = 'where="type":"' + variantType._id + '"&sort="order":1,"description":1';
 
     this._variantValueService.getVariantValues(query).subscribe(
       (result) => {
@@ -216,11 +202,7 @@ export class AddVariantComponent implements OnInit {
       this.buildForm();
     } else {
       this.showMessage(
-        'La variante ' +
-          this.variant.type.name +
-          ' ' +
-          this.variant.value.description +
-          ' ya existe',
+        'La variante ' + this.variant.type.name + ' ' + this.variant.value.description + ' ya existe',
         'info',
         true
       );
@@ -244,16 +226,8 @@ export class AddVariantComponent implements OnInit {
         type: variant.type,
         value: [variant.value],
       });
-      this.variantsByTypes = this.orderByPipe.transform(
-        this.variantsByTypes,
-        ['type'],
-        'name'
-      );
-      this.variantsByTypes = this.orderByPipe.transform(
-        this.variantsByTypes,
-        ['type'],
-        'order'
-      );
+      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
+      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
     }
   }
 
@@ -305,10 +279,7 @@ export class AddVariantComponent implements OnInit {
 
     if (this.variants && this.variants.length > 0) {
       for (let variantAux of this.variants) {
-        if (
-          variantAux.type._id === variant.type._id &&
-          variantAux.value._id === variant.value._id
-        ) {
+        if (variantAux.type._id === variant.type._id && variantAux.value._id === variant.value._id) {
           exists = true;
         }
       }
@@ -317,11 +288,7 @@ export class AddVariantComponent implements OnInit {
     return exists;
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
