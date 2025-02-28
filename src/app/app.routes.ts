@@ -54,7 +54,6 @@ import { ListTransactionsComponent } from './components/transaction/list-transac
 import { ListTransportComponent } from './components/transport/list-transports/list-transports.component';
 import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
-import { ListVariantTypesComponent } from './components/variant-type/list-variant-types/list-variant-types.component';
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
@@ -283,11 +282,6 @@ export const _routes: Routes = [
   {
     path: 'admin/impresoras',
     component: ListPrintersComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/tipos-de-variantes',
-    component: ListVariantTypesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

@@ -1,4 +1,4 @@
-import { Currency, Make, UnitOfMeasurement } from '@types';
+import { Currency, Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Category } from '../category/category';
 import { Deposit } from '../deposit/deposit';
@@ -11,8 +11,6 @@ import { Account } from '../account/account';
 import { Application } from '../application/application.model';
 import { Classification } from '../classification/classification';
 import { Company } from '../company/company';
-import { VariantType } from '../variant-type/variant-type';
-import { VariantValue } from '../variant-value/variant-value';
 
 export class Article {
   public _id: string;
@@ -47,27 +45,27 @@ export class Article {
       _id: string;
       deposit: Deposit;
       capacity: number;
-    },
+    }
   ];
   public locations: [
     {
       _id: string;
       location: Location;
-    },
+    }
   ];
   public children: [
     {
       _id: string;
       article: Article;
       quantity: number;
-    },
+    }
   ];
   public pictures: [
     {
       _id: string;
       picture: string;
       meliId: string;
-    },
+    }
   ];
   public url: string;
   public category: Category;
@@ -118,7 +116,7 @@ export class Article {
     {
       value: VariantValue;
       type: VariantType;
-    },
+    }
   ];
 
   constructor() {}
