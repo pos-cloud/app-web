@@ -26,6 +26,15 @@ export class ListVariantValuesComponent {
   constructor(public _service: VariantValueService, private _router: Router) {
     this.columns = [
       {
+        name: 'order',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'number',
+        align: 'center',
+        required: true,
+      },
+      {
         name: 'description',
         visible: true,
         disabled: false,
@@ -35,13 +44,22 @@ export class ListVariantValuesComponent {
         required: true,
       },
       {
-        name: 'order',
+        name: 'type.name',
         visible: true,
         disabled: false,
         filter: true,
-        datatype: 'number',
-        align: 'center',
+        datatype: 'string',
+        align: 'left',
         required: true,
+      },
+      {
+        name: 'picture',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        align: 'center',
+        required: false,
       },
       {
         name: 'creationUser.name',

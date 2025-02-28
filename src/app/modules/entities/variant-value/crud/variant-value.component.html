@@ -48,6 +48,24 @@
           </label>
         </div>
         <div class="row">
+          <div class="form-group col-md-1">
+            <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="order"
+              id="order"
+              [ngClass]="{
+                'is-invalid': variantValueForm.get('order')?.touched && variantValueForm.get('order')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="variantValueForm.get('order')?.touched && variantValueForm.get('order')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
           <div class="form-group col-md-3">
             <label for="description" class="control-label">{{ 'description' | translate | capitalize }}:</label>
             <input
@@ -72,37 +90,13 @@
             </div>
           </div>
           <div class="form-group col-md-3">
-            <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="order"
-              id="order"
-              [ngClass]="{
-                'is-invalid': variantValueForm.get('order')?.touched && variantValueForm.get('order')?.invalid,
-              }"
-            />
-            <div
-              class="invalid-feedback"
-              *ngIf="variantValueForm.get('order')?.touched && variantValueForm.get('order')?.hasError('required')"
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
-            </div>
-            <div class="invalid-feedback">
-              {{ 'invalidNumber' | translate | capitalize }}
-            </div>
-          </div>
-          <div class="form-group col-md-3">
             <label for="type" class="control-label">{{ 'type' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="type"
-              id="type"
-              [ngClass]="{
-                'is-invalid': variantValueForm.get('type')?.touched && variantValueForm.get('type')?.invalid,
-              }"
-            />
+            <app-typeahead-dropdown
+              [control]="variantValueForm.get('type')"
+              [data]="variantTypes"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
             <div
               class="invalid-feedback"
               *ngIf="variantValueForm.get('type')?.touched && variantValueForm.get('type')?.hasError('required')"
@@ -112,21 +106,15 @@
           </div>
         </div>
         <hr />
-        <!-- Campo de carga de imagen -->
         <div class="row">
-          <div class="form-group col-md-12">
+          <div class="form-group col-md-3">
             <label for="picture" class="control-label">{{ 'picture' | translate | capitalize }}:</label>
-            <input
-              type="file"
-              class="form-control"
-              id="picture"
-              formControlName="picture"
-              (change)="onFileSelected($event)"
-            />
-            <!-- Previsualización de la imagen si existe -->
-            <div *ngIf="imageURL" class="mt-2">
-              <img [src]="imageURL" alt="Preview" style="max-width: 200px; max-height: 200px" />
-            </div>
+            <app-upload-file
+              (uploadedUrls)="onImagesUploaded($event)"
+              [folder]="'variant-values'"
+              [existingImageUrl]="variantValueForm.get('picture')?.value"
+            >
+            </app-upload-file>
           </div>
         </div>
         <hr />
@@ -148,7 +136,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ variantValue?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ variantValue?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -162,7 +150,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ variantValue?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ variantValue?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

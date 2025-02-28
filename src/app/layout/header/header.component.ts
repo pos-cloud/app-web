@@ -507,7 +507,7 @@ export class HeaderComponent implements OnInit {
         });
       }
 
-      if (user.permission.menu.articles) {
+      if (user?.permission?.menu?.articles) {
         this.menu.push({
           label: 'Productos',
           icon: 'fa fa-shopping-basket',
@@ -517,8 +517,8 @@ export class HeaderComponent implements OnInit {
             { label: 'Marcas', link: 'entities/makes' },
             { label: 'Categoria', link: 'admin/categories' },
             { label: '', isDivider: true },
-            { label: 'Tipos de Variantes', link: 'admin/tipos-de-variantes' },
-            { label: 'Valores de Variantes', link: 'variant-values' },
+            { label: 'Tipos de Variantes', link: 'entities/variant-types' },
+            { label: 'Valores de Variantes', link: 'entities/variant-values' },
             { label: '', isDivider: true },
             { label: 'Depositos', link: 'admin/depositos' },
             { label: 'Ubicaciones', link: 'admin/ubicaciones' },

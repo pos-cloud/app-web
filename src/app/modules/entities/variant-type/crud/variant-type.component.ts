@@ -35,7 +35,6 @@ export class VariantTypeComponent implements OnInit, AfterViewInit, OnDestroy {
       _id: ['', []],
       order: [0, [Validators.required]],
       name: ['', [Validators.required]],
-      meliId: ['', [Validators.required]],
     });
   }
 
@@ -82,10 +81,10 @@ export class VariantTypeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setValueForm(): void {
     this.variantTypeForm.patchValue({
-      _id: this.variantType._id ?? '',
-      order: this.variantType.order ?? 0,
-      name: this.variantType.name ?? '',
-      meliId: this.variantType.meliId ?? '',
+      _id: this.variantType?._id ?? '',
+      order: this.variantType?.order ?? 0,
+      name: this.variantType?.name ?? '',
+      meliId: this.variantType?.meliId ?? '',
     });
   }
 

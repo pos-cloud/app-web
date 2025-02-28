@@ -47,25 +47,7 @@
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-3">
-            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="name"
-              id="name"
-              [ngClass]="{
-                'is-invalid': variantTypeForm.get('name')?.touched && variantTypeForm.get('name')?.invalid,
-              }"
-            />
-            <div
-              class="invalid-feedback"
-              *ngIf="variantTypeForm.get('name')?.touched && variantTypeForm.get('name')?.hasError('required')"
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
-            </div>
-          </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-1">
             <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
             <input
               type="number"
@@ -84,19 +66,20 @@
             </div>
           </div>
           <div class="form-group col-md-3">
-            <label for="meliId" class="control-label">{{ 'meliId' | translate | capitalize }}:</label>
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
-              formControlName="meliId"
-              id="meliId"
+              formControlName="name"
+              id="name"
+              [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid': variantTypeForm.get('meliId')?.touched && variantTypeForm.get('meliId')?.invalid,
+                'is-invalid': variantTypeForm.get('name')?.touched && variantTypeForm.get('name')?.invalid,
               }"
             />
             <div
               class="invalid-feedback"
-              *ngIf="variantTypeForm.get('meliId')?.touched && variantTypeForm.get('meliId')?.hasError('required')"
+              *ngIf="variantTypeForm.get('name')?.touched && variantTypeForm.get('name')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
@@ -120,7 +103,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ variantType?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ variantType?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -134,7 +117,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ variantType?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ variantType?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -143,6 +126,12 @@
                 <label class="control-label">
                   {{ 'id' | translate | capitalize }}:
                   <b>{{ variantType?._id ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'meliId' | translate | capitalize }}:
+                  <b>{{ variantType?.meliId ?? '' }}</b>
                 </label>
               </div>
             </div>

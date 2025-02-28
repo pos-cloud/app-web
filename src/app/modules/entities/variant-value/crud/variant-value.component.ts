@@ -1,23 +1,36 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { VariantTypeService } from '@core/services/variant-type.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { ApiResponse, VariantValue } from '@types';
+import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
+import { UploadFileComponent } from '@shared/components/upload-file/upload-file.component';
+import { ApiResponse, VariantType, VariantValue } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { VariantValueService } from '../../../../core/services/variant-value.service';
-
 @Component({
   selector: 'app-variant-value',
   templateUrl: './variant-value.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FocusDirective,
+    PipesModule,
+    TranslateModule,
+    UploadFileComponent,
+    TypeaheadDropdownComponent,
+  ],
 })
 export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
+
+  public variantTypes: VariantType[] = [];
   public operation: string;
   public variantValueForm: UntypedFormGroup;
   public loading: boolean = false;
@@ -30,15 +43,16 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private _variantValueService: VariantValueService,
+    private _variantTypeService: VariantTypeService,
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _toastService: ToastService
   ) {
     this.variantValueForm = this._fb.group({
       _id: ['', []],
-      type: ['', [Validators.required]],
       order: [0, [Validators.required]],
       description: ['', [Validators.required]],
+      type: ['', [Validators.required]],
       picture: [''],
     });
   }
@@ -47,6 +61,8 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
     const pathUrl = this._router.url.split('/');
     this.operation = pathUrl[3];
     const variantValueId = pathUrl[4];
+
+    this.getVariantTypes();
 
     if (this.operation === 'view' || this.operation === 'delete') {
       this.variantValueForm.disable();
@@ -85,33 +101,37 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  setValueForm(): void {
-    this.variantValueForm.patchValue({
-      _id: this.variantValue._id ?? '',
-      type: this.variantValue.type ?? '',
-      order: this.variantValue.order ?? 0,
-      description: this.variantValue.description ?? '',
-      picture: this.variantValue.picture ?? '',
+  getVariantTypes(): Promise<void> {
+    this.loading = true;
+    return new Promise(() => {
+      this._variantTypeService
+        .getAll({ match: { operationType: { $ne: 'D' } } })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this.variantTypes = result.result;
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.setValueForm();
+          },
+        });
     });
-
-    this.imageURL = this.variantValue.picture ?? '';
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
+  setValueForm(): void {
+    const type = this.variantTypes?.find((item) => item._id === this.variantValue?.type?.toString());
 
-      this.variantValueForm.patchValue({
-        picture: this.selectedFile.name,
-      });
-
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imageURL = e.target.result;
-      };
-      reader.readAsDataURL(this.selectedFile);
-    }
+    this.variantValueForm.patchValue({
+      _id: this.variantValue?._id ?? '',
+      order: this.variantValue?.order ?? 0,
+      description: this.variantValue?.description ?? '',
+      type: type ?? null,
+      picture: this.variantValue?.picture ?? '',
+    });
   }
 
   returnTo() {
@@ -126,6 +146,8 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loading = false;
       return;
     }
+
+    await this.uploadFileComponent.uploadImages();
 
     this.variantValue = this.variantValueForm.value;
 
@@ -148,9 +170,8 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          if (result.status === 200) {
-            this.returnTo();
-          }
+          this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -167,9 +188,8 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          if (result.status === 200) {
-            this.returnTo();
-          }
+          this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -186,9 +206,8 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          if (result.status === 200) {
-            this.returnTo();
-          }
+          this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -197,5 +216,11 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loading = false;
         },
       });
+  }
+
+  onImagesUploaded(urls: string[]): void {
+    if (urls && urls.length > 0) {
+      this.variantValueForm.get('picture')?.setValue(urls[0]);
+    }
   }
 }
