@@ -105,6 +105,16 @@ export class ListEmployeeComponent {
       required: false,
     },
     {
+      name: '_id',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: `{ "$toString": "$_id" }`,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,
@@ -153,10 +163,7 @@ export class ListEmployeeComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(
-    public _service: EmployeeService,
-    private _router: Router
-  ) {}
+  constructor(public _service: EmployeeService, private _router: Router) {}
 
   public async emitEvent(event) {
     this.redirect(event.op, event.obj);

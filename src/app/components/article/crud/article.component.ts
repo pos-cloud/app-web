@@ -1000,6 +1000,7 @@ export class ArticleComponent implements OnInit {
         } else {
           this.loading = false;
           this.variantTypes = result.result;
+          this.setValuesArray();
         }
       },
       (error) => {
@@ -1179,7 +1180,7 @@ export class ArticleComponent implements OnInit {
       });
     }
 
-    if (this.article.variants && this.article.variants.length > 0) {
+    if (this.article?.variants?.length > 0 && this.variantTypes.length > 0) {
       let variants = this.articleForm.controls.variants as UntypedFormArray;
       this.article.variants.forEach((x) => {
         const selectedType = this.variantTypes.find(

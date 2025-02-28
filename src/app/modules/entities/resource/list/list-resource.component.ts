@@ -134,9 +134,20 @@ export class ListResourcesComponent {
         disabled: false,
         filter: true,
         datatype: 'string',
-        project: null,
+        project: `{ "$toString": "$_id" }`,
         align: 'left',
         required: false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
       },
     ];
   }

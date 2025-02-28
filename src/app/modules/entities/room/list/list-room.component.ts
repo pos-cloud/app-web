@@ -55,11 +55,7 @@ export class ListRoomsComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(
-    public _service: RoomService,
-    private _router: Router,
-    public _alertConfig: NgbAlertConfig
-  ) {
+  constructor(public _service: RoomService, private _router: Router, public _alertConfig: NgbAlertConfig) {
     this.columns = [
       {
         name: 'description',
@@ -128,9 +124,20 @@ export class ListRoomsComponent {
         disabled: false,
         filter: true,
         datatype: 'string',
-        project: null,
+        project: `{ "$toString": "$_id" }`,
         align: 'left',
         required: false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
       },
     ];
   }

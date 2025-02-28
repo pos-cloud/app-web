@@ -114,9 +114,20 @@ export class ListTablesComponent {
       disabled: false,
       filter: true,
       datatype: 'string',
-      project: null,
+      project: `{ "$toString": "$_id" }`,
       align: 'left',
       required: false,
+    },
+    {
+      name: 'operationType',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: `{ "$ne": "D" }`,
+      project: null,
+      align: 'left',
+      required: true,
     },
   ];
   public headerButtons: IButton[] = [
@@ -156,11 +167,7 @@ export class ListTablesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(
-    public _service: TableService,
-    private _router: Router,
-    public _alertConfig: NgbAlertConfig
-  ) {}
+  constructor(public _service: TableService, private _router: Router, public _alertConfig: NgbAlertConfig) {}
 
   public async emitEvent(event) {
     this.redirect(event.op, event.obj);
