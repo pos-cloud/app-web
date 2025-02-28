@@ -565,10 +565,9 @@ export class AddSaleOrderComponent {
           mov.transactionOrigin.discountAmount;
       }
 
-      if (
-        (mov.transactionOrigin.discountAmount > 0 && this.database === 'insumosmaxs') ||
-        this.database === 'arterama'
-      ) {
+      const validDatabases = ['insumosmaxs', 'arterama', 'globalstore', 'syp', 'polirrubrojb', 'laraherzig'];
+
+      if (mov.transactionOrigin.discountAmount > 0 && validDatabases.includes(this.database)) {
         this.discountApply =
           (mov.transactionOrigin.discountAmount /
             (mov.transactionOrigin.totalPrice + mov.transactionOrigin.discountAmount)) *
