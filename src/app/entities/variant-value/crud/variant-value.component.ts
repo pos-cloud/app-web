@@ -25,6 +25,9 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
   public variantValue: VariantValue;
   private destroy$ = new Subject<void>();
 
+  public selectedFile: File = null;
+  public imageURL: string = '';
+
   constructor(
     private _variantValueService: VariantValueService,
     private _fb: UntypedFormBuilder,
@@ -36,6 +39,7 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       type: ['', [Validators.required]],
       order: [0, [Validators.required]],
       description: ['', [Validators.required]],
+      picture: [''],
     });
   }
 
@@ -63,6 +67,7 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getVariantValue(id: string): void {
+    this.loading = true;
     this._variantValueService
       .getById(id)
       .pipe(takeUntil(this.destroy$))
@@ -86,7 +91,27 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       type: this.variantValue.type ?? '',
       order: this.variantValue.order ?? 0,
       description: this.variantValue.description ?? '',
+      picture: this.variantValue.picture ?? '',
     });
+
+    this.imageURL = this.variantValue.picture ?? '';
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+
+      this.variantValueForm.patchValue({
+        picture: this.selectedFile.name,
+      });
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imageURL = e.target.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 
   returnTo() {
@@ -123,8 +148,9 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this._toastService.showToast(result);
-          if (result.status === 200) this.returnTo();
+          if (result.status === 200) {
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -141,8 +167,9 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this._toastService.showToast(result);
-          if (result.status === 200) this.returnTo();
+          if (result.status === 200) {
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -159,8 +186,9 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this._toastService.showToast(result);
-          if (result.status === 200) this.returnTo();
+          if (result.status === 200) {
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);

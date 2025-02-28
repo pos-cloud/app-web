@@ -92,10 +92,6 @@
               {{ 'invalidNumber' | translate | capitalize }}
             </div>
           </div>
-        </div>
-        <hr />
-        <!-- Datos extra (tipo de variant) -->
-        <div class="row">
           <div class="form-group col-md-3">
             <label for="type" class="control-label">{{ 'type' | translate | capitalize }}:</label>
             <input
@@ -112,6 +108,24 @@
               *ngIf="variantValueForm.get('type')?.touched && variantValueForm.get('type')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+        <hr />
+        <!-- Campo de carga de imagen -->
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label for="picture" class="control-label">{{ 'picture' | translate | capitalize }}:</label>
+            <input
+              type="file"
+              class="form-control"
+              id="picture"
+              formControlName="picture"
+              (change)="onFileSelected($event)"
+            />
+            <!-- Previsualización de la imagen si existe -->
+            <div *ngIf="imageURL" class="mt-2">
+              <img [src]="imageURL" alt="Preview" style="max-width: 200px; max-height: 200px" />
             </div>
           </div>
         </div>
