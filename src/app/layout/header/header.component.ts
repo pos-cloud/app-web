@@ -597,7 +597,7 @@ export class HeaderComponent implements OnInit {
                     { label: 'Por marcas', link: 'reports/mov-art-by-make/venta' },
                     { label: 'Por categorias', link: 'reports/mov-art-by-category/venta' },
                     { label: 'Por método de pago', link: 'reports/mov-cash-by-type/venta' },
-                    { label: 'Por cliente', link: 'reports/transaction-by-company/venta' },
+                    { label: 'Por cliente', link: 'reports/transactions-by-company/venta' },
                     { label: 'Por empleado', link: 'reports/transactions-by-employee/venta' },
                     { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/venta' },
                   ],
