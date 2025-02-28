@@ -136,7 +136,7 @@ export class InventoryValuedComponent {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            this.title = result?.result?.info?.title ?? 'Inventario valorado';
+            this.title = result?.result?.info?.title ?? 'Stock valorizado';
             this.cdRef.detectChanges();
           },
           error: (error) => {
