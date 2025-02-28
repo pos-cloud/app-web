@@ -3,38 +3,44 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { environment } from 'environments/environment';
+import * as printJS from 'print-js';
 import { Config } from '../../app.config';
-import { Print } from '../../components/print/print';
 import { AuthService } from './auth.service';
+
+export enum PrintType {
+  Article = 'article',
+  PriceList = 'price-list',
+  Labels = 'labels',
+  Transaction = 'transaction',
+  Bar = 'Bar',
+  Kitchen = 'kitchen',
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class PrintService {
-  constructor(
-    private _http: HttpClient,
-    private _authService: AuthService
-  ) {}
+  constructor(private _http: HttpClient, private _authService: AuthService) {}
 
-  public toPrint(print: Print): Observable<any> {
-    const URL = `${Config.apiURL}to-print`;
-
+  public toPrint(type: PrintType, body: {}) {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    return this._http
-      .post(URL, print, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
+    this._http.post(`${environment.apiv2}/to-print/${type}`, body, { headers, responseType: 'blob' }).subscribe(
+      (res: Blob) => {
+        if (res) {
+          const blobUrl = URL.createObjectURL(res);
+          printJS(blobUrl);
+        } else {
+          console.error('Error al generar el PDF');
+        }
+      },
+      (error) => {
+        console.error('Error en la impresión:', error);
+      }
+    );
   }
 
   public toPrintURL(url: string, file: string): Observable<any> {
@@ -87,11 +93,7 @@ export class PrintService {
       let data = new FormData();
       data.append('file', file);
       let xhr = new XMLHttpRequest();
-      xhr.open(
-        'POST',
-        Config.apiURL + 'upload-file/' + folder + '/' + name,
-        true
-      );
+      xhr.open('POST', Config.apiURL + 'upload-file/' + folder + '/' + name, true);
       xhr.setRequestHeader('Authorization', this._authService.getToken());
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
