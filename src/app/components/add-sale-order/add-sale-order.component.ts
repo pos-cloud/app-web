@@ -565,7 +565,10 @@ export class AddSaleOrderComponent {
           mov.transactionOrigin.discountAmount;
       }
 
-      if (mov.transactionOrigin.discountAmount > 0 && this.database === 'insumosmaxs') {
+      if (
+        (mov.transactionOrigin.discountAmount > 0 && this.database === 'insumosmaxs') ||
+        this.database === 'arterama'
+      ) {
         this.discountApply =
           (mov.transactionOrigin.discountAmount /
             (mov.transactionOrigin.totalPrice + mov.transactionOrigin.discountAmount)) *
@@ -2167,10 +2170,9 @@ export class AddSaleOrderComponent {
 
         this.email = {
           to: this.transaction?.company?.emails,
-          subject: `${labelPrint} ${this.padNumber(
-            this.transaction.origin,
-            4
-          )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`,
+          subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
+            this.transaction.letter
+          }-${this.padNumber(this.transaction.number, 8)}`,
           body: this.transaction?.type?.defectEmailTemplate?.design || '',
           attachments: attachments,
         };
