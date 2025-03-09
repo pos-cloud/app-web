@@ -79,4 +79,9 @@ export const REPORTS_ROUTES: Routes = [
     loadComponent: () =>
       import('./inventory-for-date/inventory-for-date.component').then((m) => m.InventoryForDateComponent),
   },
+  {
+    path: 'account-receivables/:module',
+    loadComponent: () =>
+      import('./account-receivables/account-receivables.component').then((m) => m.AccountReceivablesComponent),
+  },
 ];

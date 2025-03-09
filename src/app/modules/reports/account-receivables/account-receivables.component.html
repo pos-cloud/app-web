@@ -1,0 +1,21 @@
+<section class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <!-- Botón de Actualizar -->
+    <div class="form-group ml-auto">
+      <label class="control-label"> </label>
+      <button class="btn btn-primary" (click)="getReport()">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+      </button>
+    </div>
+  </div>
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="title"
+    [loading]="loading"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
+  >
+  </app-data-table-reports>
+</section>
