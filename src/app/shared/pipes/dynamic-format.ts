@@ -8,9 +8,9 @@ export class DynamicFormatPipe implements PipeTransform {
     if (dataType === 'currency') {
       return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
     } else if (dataType === 'number') {
-      return value.toLocaleString();
+      return value?.toLocaleString();
     } else if (dataType === 'string') {
-      return value.toString();
+      return value?.toString();
     }
     return value;
   }
