@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { CategoryService } from '@core/services/category.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
+import { Category } from 'app/components/category/category';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -49,6 +51,9 @@ export class ReportMovArtByArticleComponent {
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
 
+  categories: Category[];
+  categoriesSelect: string[] = [];
+
   branches: Branch[];
   branchSelectedId: string[] = [];
 
@@ -65,6 +70,7 @@ export class ReportMovArtByArticleComponent {
     private _service: ReportSystemService,
     private _branchService: BranchService,
     private _transactionTypeService: TransactionTypeService,
+    private _categoryService: CategoryService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private cdRef: ChangeDetectorRef
@@ -76,6 +82,7 @@ export class ReportMovArtByArticleComponent {
       this.getTransactionTypes();
       this.getReport();
       this.getBranches();
+      this.getCategories();
     });
   }
 
@@ -136,6 +143,36 @@ export class ReportMovArtByArticleComponent {
       });
   }
 
+  private getCategories() {
+    this._categoryService
+      .getAll({
+        project: {
+          _id: 1,
+          operationType: 1,
+          description: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          let category = result.result.map((cate) => {
+            return {
+              _id: cate._id,
+              name: cate.description,
+              operationType: cate.operationType,
+            };
+          });
+          this.categories = category;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
+  }
+
   public getReport(): void {
     this.loading = true;
 
@@ -147,6 +184,7 @@ export class ReportMovArtByArticleComponent {
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
+        category: this.categoriesSelect ?? [],
       },
       pagination: {
         page: 1,

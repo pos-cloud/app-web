@@ -10,6 +10,14 @@
     </div>
 
     <div class="form-group mr-2">
+      <label for="categories" class="control-label">
+        <b>Categoría</b>
+      </label>
+      <app-multi-select-dropdown [data]="categories" [(ngModel)]="categoriesSelect" placeholder="Categorías">
+      </app-multi-select-dropdown>
+    </div>
+
+    <div class="form-group mr-2">
       <label for="transactionType" class="control-label">
         <b>Tipo de Transacción</b>
       </label>
