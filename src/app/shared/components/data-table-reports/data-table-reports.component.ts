@@ -39,11 +39,11 @@ export class DataTableReportsComponent implements OnInit {
   }
 
   changeSorting(column: any): void {
-    if (this.sorting.column === column.key) {
+    if (this.sorting.column === column.label) {
       this.sorting.direction = this.sorting.direction === 'asc' ? 'desc' : 'asc';
     } else {
       this.sorting = {
-        column: column.key,
+        column: column.label,
         direction: 'asc',
       };
     }
