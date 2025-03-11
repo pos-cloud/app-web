@@ -6,7 +6,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { CompanyType } from 'app/components/company/company';
+import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -38,7 +39,7 @@ export class AccountReceivablesComponent implements OnInit {
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
-  public transactionMovement: TransactionMovement;
+  public companyType: CompanyType;
 
   transactionTypes: TransactionType[];
 
@@ -61,7 +62,7 @@ export class AccountReceivablesComponent implements OnInit {
 
   async ngOnInit() {
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      this.companyType = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
       this.getReport();
     });
   }
@@ -69,11 +70,11 @@ export class AccountReceivablesComponent implements OnInit {
   public getReport(): void {
     this.loading = true;
 
-    let movement = this.transactionMovement === TransactionMovement.Sale ? 'Entrada' : 'Salida';
+    let movement = this.companyType === CompanyType.Client ? 'Entrada' : 'Salida';
     const requestPayload = {
       reportType: 'account-receivables',
       filters: {
-        type: this.transactionMovement,
+        type: this.companyType,
         movement,
       },
       pagination: {
@@ -92,7 +93,7 @@ export class AccountReceivablesComponent implements OnInit {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            (this.title = result?.info?.title ?? `Cuenta Corriente por ${this.transactionMovement}`),
+            (this.title = result?.info?.title ?? `Cuenta Corriente por ${this.companyType}`),
               this.cdRef.detectChanges();
           },
           error: (error) => {
