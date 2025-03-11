@@ -57,7 +57,7 @@ export class ReportMovCashByTypeComponent implements OnInit {
 
   // sort
   sort = {
-    column: 'description',
+    column: 'type.name',
     direction: 'asc',
   };
 

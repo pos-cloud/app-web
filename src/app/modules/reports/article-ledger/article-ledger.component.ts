@@ -57,7 +57,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
 
   // sort
   public sort = {
-    column: 'description',
+    column: 'transaction.type.name',
     direction: 'asc',
   };
 

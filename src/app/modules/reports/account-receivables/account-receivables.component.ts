@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { TransactionTypeService } from '@core/services/transaction-type.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
@@ -45,7 +44,7 @@ export class AccountReceivablesComponent implements OnInit {
 
   // sort
   public sort = {
-    column: 'name',
+    column: 'transaction.company.name',
     direction: 'asc',
   };
 
@@ -53,8 +52,7 @@ export class AccountReceivablesComponent implements OnInit {
     private _service: ReportSystemService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
-    private _activatedRoute: ActivatedRoute,
-    private _transactionTypeService: TransactionTypeService
+    private _activatedRoute: ActivatedRoute
   ) {}
 
   public ngOnDestroy(): void {
@@ -94,8 +92,8 @@ export class AccountReceivablesComponent implements OnInit {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            this.title = result?.info?.title ?? 'Deudas';
-            this.cdRef.detectChanges();
+            (this.title = result?.info?.title ?? `Cuenta Corriente por ${this.transactionMovement}`),
+              this.cdRef.detectChanges();
           },
           error: (error) => {
             this._toastService.showToast(error);

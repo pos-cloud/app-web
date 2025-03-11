@@ -57,7 +57,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
 
   // sort
   public sort = {
-    column: 'category',
+    column: 'category.description',
     direction: 'asc',
   };
 

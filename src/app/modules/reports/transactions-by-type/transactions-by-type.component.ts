@@ -50,7 +50,7 @@ export class ReportTransactionsByTypeComponent {
 
   // sort
   sort = {
-    column: 'description',
+    column: 'type.name',
     direction: 'asc',
   };
 

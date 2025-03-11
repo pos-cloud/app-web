@@ -18,13 +18,13 @@
           <ng-container *ngFor="let column of columns">
             <th (click)="changeSorting(column)">
               <b>
-                {{ column.name | translate | capitalize }}
+                {{ column.label | translate | capitalize }}
                 <i
                   class="fa"
                   [ngClass]="{
-                    'fa-sort': sorting.column !== column.name,
-                    'fa-sort-asc': sorting.column === column.name && sorting.direction === 'asc',
-                    'fa-sort-desc': sorting.column === column.name && sorting.direction === 'desc',
+                    'fa-sort': sorting.column !== column.label,
+                    'fa-sort-asc': sorting.column === column.label && sorting.direction === 'asc',
+                    'fa-sort-desc': sorting.column === column.label && sorting.direction === 'desc',
                   }"
                 ></i>
               </b>
@@ -42,7 +42,7 @@
 
         <tr *ngFor="let item of data">
           <td *ngFor="let column of columns">
-            {{ item?.[column.name] | dynamicFormat: column.dataType }}
+            {{ item?.[column.label] | dynamicFormat: column.dataType }}
           </td>
         </tr>
 
@@ -54,8 +54,8 @@
       <tfoot *ngIf="data?.length > 0">
         <tr>
           <td *ngFor="let column of columns; let i = index">
-            <strong *ngIf="i > 0 && totals?.[column.name]">
-              {{ totals[column.name] | dynamicFormat: column.dataType }}
+            <strong *ngIf="i > 0 && totals?.[column.label]">
+              {{ totals[column.label] | dynamicFormat: column.dataType }}
             </strong>
           </td>
         </tr>
