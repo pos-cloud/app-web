@@ -3411,6 +3411,13 @@ export class PrintComponent implements OnInit {
       }
     }
 
+    if (this.database === 'insumosmaxs' && movCancelation.length === 1) {
+      observation +=
+        movCancelation[0].transactionOrigin.type.name +
+        '-' +
+        this.padString(movCancelation[0].transactionOrigin.number, 8);
+    }
+
     if (observation && observation !== '') {
       if (
         Config.country === 'MX' &&
