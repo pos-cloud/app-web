@@ -18,13 +18,13 @@
       <div class="chart">
         <apx-chart
           #chartspark2
-          [series]="inventoryTotal.series"
-          [chart]="inventoryTotal.chart"
-          [stroke]="inventoryTotal.stroke"
-          [yaxis]="inventoryTotal.yaxis"
-          [fill]="inventoryTotal.fill"
-          [title]="inventoryTotal.title"
-          [subtitle]="inventoryTotal.subtitle"
+          [series]="inventoryTotal?.series"
+          [chart]="inventoryTotal?.chart"
+          [stroke]="inventoryTotal?.stroke"
+          [yaxis]="inventoryTotal?.yaxis"
+          [fill]="inventoryTotal?.fill"
+          [title]="inventoryTotal?.title"
+          [subtitle]="inventoryTotal?.subtitle"
         ></apx-chart>
       </div>
     </div>
@@ -32,20 +32,20 @@
       <div class="chart">
         <apx-chart
           #chartspark3
-          [series]="accountReveivable.series"
-          [chart]="accountReveivable.chart"
-          [stroke]="accountReveivable.stroke"
-          [yaxis]="accountReveivable.yaxis"
-          [fill]="accountReveivable.fill"
-          [title]="accountReveivable.title"
-          [subtitle]="accountReveivable.subtitle"
+          [series]="accountReveivable?.series"
+          [chart]="accountReveivable?.chart"
+          [stroke]="accountReveivable?.stroke"
+          [yaxis]="accountReveivable?.yaxis"
+          [fill]="accountReveivable?.fill"
+          [title]="accountReveivable?.title"
+          [subtitle]="accountReveivable?.subtitle"
         ></apx-chart>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col-md-7 chart">
-      <span>Ventas por mes</span>
+      <span>Ingresos/Egresos de los últimos 12 meses</span>
       <apx-chart
         [series]="salesByMonth?.series"
         [chart]="salesByMonth?.chart"
@@ -63,9 +63,9 @@
       <span>Ventas por categoria</span>
       <apx-chart
         [series]="salesByCategory.series"
-        [chart]="salesByCategory.chart"
-        [labels]="salesByCategory.labels"
-        [responsive]="salesByCategory.responsive"
+        [chart]="salesByCategory?.chart"
+        [labels]="salesByCategory?.labels"
+        [responsive]="salesByCategory?.responsive"
       ></apx-chart>
     </div>
   </div>
