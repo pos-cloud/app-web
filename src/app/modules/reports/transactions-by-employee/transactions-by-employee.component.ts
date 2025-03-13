@@ -121,7 +121,7 @@ export class ReportTransactionsByEmployeeComponent implements OnInit {
         project: {
           _id: 1,
           transactionMovement: 1,
-          requestArticles: 1,
+          requestEmployee: 1,
           operationType: 1,
           name: 1,
           branch: 1,
@@ -129,6 +129,7 @@ export class ReportTransactionsByEmployeeComponent implements OnInit {
         match: {
           transactionMovement: this.transactionMovement,
           operationType: { $ne: 'D' },
+          requestEmployee: true,
         },
       })
       .pipe(takeUntil(this.destroy$))

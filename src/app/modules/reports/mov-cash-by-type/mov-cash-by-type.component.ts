@@ -120,10 +120,12 @@ export class ReportMovCashByTypeComponent implements OnInit {
           operationType: 1,
           name: 1,
           branch: 1,
+          requestPaymentMethods: 1,
         },
         match: {
           transactionMovement: this.transactionMovement,
           operationType: { $ne: 'D' },
+          requestPaymentMethods: true,
         },
       })
       .pipe(takeUntil(this.destroy$))

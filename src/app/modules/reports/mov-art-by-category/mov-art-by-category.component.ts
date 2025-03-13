@@ -123,6 +123,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
         match: {
           transactionMovement: this.transactionMovement,
           operationType: { $ne: 'D' },
+          requestArticles: true,
         },
       })
       .pipe(takeUntil(this.destroy$))
