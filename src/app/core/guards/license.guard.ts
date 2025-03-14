@@ -67,7 +67,7 @@ export class LicenseGuard implements CanActivate {
         } else if (eval(next.data.module)) return true;
         return false;
       } else {
-        this._router.navigate(['/admin/configuraciones']);
+        this._router.navigate(['/license']);
         return false;
       }
     } else {
