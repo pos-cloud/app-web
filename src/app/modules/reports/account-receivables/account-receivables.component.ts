@@ -3,8 +3,6 @@ import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angula
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
-import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { CompanyType } from 'app/components/company/company';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
@@ -19,16 +17,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './account-receivables.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    PipesModule,
-    DateTimePickerComponent,
-    MultiSelectDropdownComponent,
-    DataTableReportsComponent,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, PipesModule, DataTableReportsComponent],
 })
 export class AccountReceivablesComponent implements OnInit {
   public data: any[] = [];
@@ -45,8 +34,8 @@ export class AccountReceivablesComponent implements OnInit {
 
   // sort
   public sort = {
-    column: 'transaction.company.name',
-    direction: 'asc',
+    column: 'total',
+    direction: 'desc',
   };
 
   constructor(
