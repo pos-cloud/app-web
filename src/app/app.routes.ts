@@ -58,6 +58,7 @@ import { ListVATConditionsComponent } from './components/vat-condition/list-vat-
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
+import { LicenseComponent } from './layout/lciense/license.component';
 
 export const _routes: Routes = [
   {
@@ -567,6 +568,12 @@ export const _routes: Routes = [
     component: PosKitchenComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.production.kitchen' },
+  },
+  {
+    path: 'license',
+    component: LicenseComponent,
+    canActivate: [AuthGuard],
+    //data: { module: 'config.modules.production.kitchen' },
   },
 
   {
