@@ -62,8 +62,8 @@ export class ReportMovArtByArticleComponent {
 
   // sort
   public sort = {
-    column: 'description',
-    direction: 'asc',
+    column: 'amount',
+    direction: 'desc',
   };
 
   constructor(

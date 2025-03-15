@@ -52,7 +52,7 @@ export class InventoryForDateComponent {
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
   public form: FormGroup;
   // sort
-  public sort = { column: 'amount', direction: 'asc' };
+  public sort = { column: 'quantityForStock', direction: 'desc' };
 
   constructor(
     private _service: ReportSystemService,

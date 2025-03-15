@@ -57,7 +57,7 @@ export class InventoryValuedComponent {
   // sort
   public sort = {
     column: 'amount',
-    direction: 'asc',
+    direction: 'desc',
   };
 
   constructor(

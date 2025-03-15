@@ -63,8 +63,8 @@ export class ReportTransactionsByEmployeeComponent implements OnInit {
 
   // sort
   sort = {
-    column: 'employee.name',
-    direction: 'asc',
+    column: 'amount',
+    direction: 'desc',
   };
   constructor(
     public _service: ReportSystemService,

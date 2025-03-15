@@ -76,8 +76,8 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   // sort
   sort = {
-    column: 'company.name',
-    direction: 'asc',
+    column: 'amount',
+    direction: 'desc',
   };
 
   constructor(

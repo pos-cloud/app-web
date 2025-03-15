@@ -31,8 +31,8 @@ export class ReportCheckLedgerComponent {
   public title: '';
   // sort
   public sort = {
-    column: 'transaction.type.name',
-    direction: 'asc',
+    column: 'totalPrice',
+    direction: 'desc',
   };
 
   constructor(

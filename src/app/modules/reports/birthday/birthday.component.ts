@@ -27,8 +27,8 @@ export class ReportBirthdayComponent implements OnInit {
 
   // sort
   public sort = {
-    column: 'name',
-    direction: 'asc',
+    column: 'year',
+    direction: 'desc',
   };
 
   constructor(

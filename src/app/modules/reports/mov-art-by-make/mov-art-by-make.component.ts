@@ -58,8 +58,8 @@ export class ReportMovArtByMakeComponent implements OnInit {
 
   // sort
   sort = {
-    column: 'make.description',
-    direction: 'asc',
+    column: 'amount',
+    direction: 'desc',
   };
 
   constructor(
