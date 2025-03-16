@@ -30,7 +30,7 @@ export class AccountReceivablesComponent implements OnInit {
   public companyType: CompanyType;
 
   // filter
-  company: string;
+  company: string = '';
 
   // sort
   public sort = {
