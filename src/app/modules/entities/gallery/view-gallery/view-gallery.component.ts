@@ -2,7 +2,6 @@ import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/cor
 import { Router } from '@angular/router';
 import { GalleryService } from '@core/services/gallery.service';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
-import { Config } from 'app/app.config';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -34,7 +33,6 @@ export class ViewGalleryComponent implements OnInit {
   public filterArticle: string;
   public article: Article = null;
   focusEvent = new EventEmitter<boolean>();
-  public apiURL = Config.apiURL;
   public database: string;
   public resource: Resource[];
   public paymentMethod: PaymentMethod[];
