@@ -60,6 +60,7 @@ export class ReportMovArtByArticleComponent {
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
+  article: string;
   // sort
   public sort = {
     column: 'amount',
@@ -186,6 +187,7 @@ export class ReportMovArtByArticleComponent {
         startDate: this.startDate,
         endDate: this.endDate,
         category: this.categoriesSelect ?? [],
+        article: this.article,
       },
       pagination: {
         page: 1,
