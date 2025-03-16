@@ -1,5 +1,19 @@
 <section class="container-fluid">
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
+      <label for="article" class="control-label">
+        <b>{{ 'company' | translate | capitalize }}</b></label
+      >
+      <input
+        type="text"
+        class="form-control"
+        name="company"
+        id="company"
+        [(ngModel)]="company"
+        (keyup.enter)="getReport()"
+      />
+    </div>
+
     <!-- Botón de Actualizar -->
     <div class="form-group ml-auto">
       <label class="control-label"> </label>

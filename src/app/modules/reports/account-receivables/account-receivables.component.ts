@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { CompanyType } from 'app/components/company/company';
-import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -30,7 +29,8 @@ export class AccountReceivablesComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   public companyType: CompanyType;
 
-  transactionTypes: TransactionType[];
+  // filter
+  company: string;
 
   // sort
   public sort = {
@@ -58,13 +58,11 @@ export class AccountReceivablesComponent implements OnInit {
 
   public getReport(): void {
     this.loading = true;
-
-    let movement = this.companyType === CompanyType.Client ? 'Entrada' : 'Salida';
     const requestPayload = {
       reportType: 'account-receivables',
       filters: {
         type: this.companyType,
-        movement,
+        company: this.company,
       },
       pagination: {
         page: 1,
