@@ -129,7 +129,7 @@ export class DasboardComponent {
         .subscribe({
           next: (result) => {
             if (result) {
-              this.inventoryTotal = result;
+              this.inventoryTotal = result.result;
             }
           },
           error: (error) => {
@@ -152,7 +152,7 @@ export class DasboardComponent {
         .subscribe({
           next: (result) => {
             if (result) {
-              this.accountReveivable = result;
+              this.accountReveivable = result.result;
             }
           },
           error: (error) => {
