@@ -18,28 +18,24 @@
       <div class="chart">
         <apx-chart
           #chartspark2
-          [series]="inventoryTotal?.series"
-          [chart]="inventoryTotal?.chart"
-          [stroke]="inventoryTotal?.stroke"
-          [yaxis]="inventoryTotal?.yaxis"
-          [fill]="inventoryTotal?.fill"
-          [title]="inventoryTotal?.title"
-          [subtitle]="inventoryTotal?.subtitle"
+          [series]="purchaseTotal?.series"
+          [chart]="purchaseTotal?.chart"
+          [stroke]="purchaseTotal?.stroke"
+          [yaxis]="purchaseTotal?.yaxis"
+          [fill]="purchaseTotal?.fill"
+          [title]="purchaseTotal?.title"
+          [subtitle]="purchaseTotal?.subtitle"
         ></apx-chart>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="chart">
-        <apx-chart
-          #chartspark3
-          [series]="accountReveivable?.series"
-          [chart]="accountReveivable?.chart"
-          [stroke]="accountReveivable?.stroke"
-          [yaxis]="accountReveivable?.yaxis"
-          [fill]="accountReveivable?.fill"
-          [title]="accountReveivable?.title"
-          [subtitle]="accountReveivable?.subtitle"
-        ></apx-chart>
+      <div class="chart kpi">
+        <div class="kpi-value">{{ 123 }}</div>
+        <div class="kpi-title">{{ 'Inventario valorizado' }}</div>
+      </div>
+      <div class="chart kpi">
+        <div class="kpi-value">{{ 123 }}</div>
+        <div class="kpi-title">{{ 'Deudas totales de clientes' }}</div>
       </div>
     </div>
   </div>
@@ -60,7 +56,7 @@
       ></apx-chart>
     </div>
     <div class="col-md-4 chart">
-      <span>Ventas por categoria</span>
+      <span>Ventas por categoría</span>
       <apx-chart
         [series]="salesByCategory.series"
         [chart]="salesByCategory?.chart"

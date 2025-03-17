@@ -51,6 +51,7 @@ export type ChartOptions = {
 })
 export class DasboardComponent {
   salesTotal: Partial<ChartOptions>;
+  purchaseTotal: Partial<ChartOptions>;
   inventoryTotal: Partial<ChartOptions>;
   accountReveivable: Partial<ChartOptions>;
   salesByMonth: Partial<ChartOptions>;
@@ -63,6 +64,7 @@ export class DasboardComponent {
 
   ngOnInit(): void {
     this.getSalesTotal();
+    this.getPurchaseTotal();
     this.getInventoryTotal();
     this.getAccountReveivable();
     this.getSalesByMonth();
@@ -82,6 +84,29 @@ export class DasboardComponent {
           next: (result) => {
             if (result) {
               this.salesTotal = result;
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {},
+        })
+    );
+  }
+
+  private getPurchaseTotal(): void {
+    const requestPayload = {
+      type: 'purchase-totals',
+    };
+
+    this.subscription.add(
+      this._service
+        .getChart(requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            if (result) {
+              this.purchaseTotal = result;
             }
           },
           error: (error) => {

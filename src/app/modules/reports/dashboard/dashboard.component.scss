@@ -8,3 +8,23 @@
   padding: 10px;
   margin: 10px;
 }
+
+.kpi {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.kpi-value {
+  font-size: 30px;
+  font-weight: bold;
+  color: #333;
+}
+
+.kpi-title {
+  font-size: 15px;
+  color: #777;
+  margin-top: 5px;
+}
