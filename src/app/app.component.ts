@@ -98,29 +98,29 @@ export class AppComponent {
       if (!this.config['demo']) {
         if (days <= 0) {
           message = 'Su licencia expiró, por favor, regularice su pago.';
-          this._toastService.showToast({ message, type: 'danger' });
+          this._toastService.showToast({ message, type: 'danger' , redirect: '/license' });
         } else {
           if (days == 1) {
             message = 'Su licencia vence hoy.';
-            this._toastService.showToast({ message, type: 'warning' });
+            this._toastService.showToast({ message, type: 'warning' , redirect: '/license' });
           }
           if (days <= 5 && days > 1) {
             message = 'Su licencia vence en ' + days + ' días.';
-            this._toastService.showToast({ message, type: 'warning' });
+            this._toastService.showToast({ message, type: 'warning' , redirect: '/license' });
           }
           if (days <= 10 && days > 5) {
             message = 'Su licencia vence en ' + days + ' días.';
-            this._toastService.showToast({ message, type: 'info' });
+            this._toastService.showToast({ message, type: 'info' , redirect: '/license' });
           }
         }
       } else {
         if (days == 1) {
           message = 'Su licencia vence hoy.';
-          this._toastService.showToast({ message, type: 'warning' });
+          this._toastService.showToast({ message, type: 'warning' , redirect: '/license' });
         }
         if (days > 1) {
           message = 'Su licencia de prueba vence en ' + days + ' días.';
-          this._toastService.showToast({ message, type: 'info' });
+          this._toastService.showToast({ message, type: 'info' , redirect: '/license' });
         }
       }
 
