@@ -6,7 +6,7 @@
   [delay]="toast.delay || 5000"
   (hidden)="toastService.remove(toast)"
   aria-atomic="true"
-  (click)="toastService.remove(toast)"
+  (click)="toastService.handleClick(toast)"
 >
   {{ toast.textOrTpl }}
 </ngb-toast>
