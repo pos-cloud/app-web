@@ -573,7 +573,6 @@ export const _routes: Routes = [
     path: 'license',
     component: LicenseComponent,
     canActivate: [AuthGuard],
-    //data: { module: 'config.modules.production.kitchen' },
   },
 
   {
