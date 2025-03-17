@@ -11,6 +11,10 @@ export class DynamicFormatPipe implements PipeTransform {
       return value?.toLocaleString();
     } else if (dataType === 'string') {
       return value?.toString();
+    } else if (dataType === 'date') {
+      return value
+        ? new Date(value).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
+        : '';
     }
     return value;
   }
