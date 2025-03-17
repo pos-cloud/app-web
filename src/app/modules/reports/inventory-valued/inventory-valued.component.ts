@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
@@ -48,11 +47,6 @@ export class InventoryValuedComponent {
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
 
-  branches: Branch[];
-  branchSelectedId: string[] = [];
-
-  startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
-  endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
   public form: FormGroup;
   // sort
   public sort = {
@@ -116,8 +110,6 @@ export class InventoryValuedComponent {
       filters: {
         number: Number(this.form.value.number),
         transactionTypes: this.transactionTypesSelect ?? [],
-        startDate: this.startDate,
-        endDate: this.endDate,
       },
       pagination: {
         page: 1,
