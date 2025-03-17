@@ -14,16 +14,14 @@ export class ToastService {
   }
 
   // Elimina un toast de la lista
-  remove(toast) {
+  public remove(toast) {
     this.toasts = this.toasts.filter((t) => t !== toast);
   }
 
-  handleClick(toast) {
+  public handleClick(toast) {
+    this.remove(toast)
     if (toast.redirect !== ''){
-      this.remove(toast)
       this._router.navigate([toast.redirect])
-    }else{
-      this.remove(toast);
     }
   }
 
@@ -46,7 +44,7 @@ export class ToastService {
     type?: string,
     title: string = '',
     message: string = '',
-    redirect: string = ''
+    redirect?: string
   ): void {
     if (result) {
       if (result.status === 200) {
