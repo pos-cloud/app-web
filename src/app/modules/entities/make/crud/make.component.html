@@ -67,7 +67,6 @@
             </div>
           </div>
           <div class="form-group col-md-3">
-            <label for="picture" class="control-label">{{ 'picture' | translate | capitalize }}:</label>
             <app-upload-file
               (uploadedUrls)="onImagesUploaded($event)"
               [folder]="'makes'"
@@ -113,7 +112,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ make?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ make?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -127,7 +126,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ make?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ make?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

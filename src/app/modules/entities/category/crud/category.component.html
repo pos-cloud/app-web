@@ -5,10 +5,10 @@
         'add-category' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ category?.name ?? '' }}</span
+        >{{ 'edit' | translate | capitalize }} {{ category?.description ?? '' }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
-        {{ category?.name ?? '' }}</span
+        {{ category?.description ?? '' }}</span
       >
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
@@ -46,9 +46,10 @@
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-8">
+          <div class="col-md-8">
             <div class="row">
-              <div class="form-group col-md-1">
+              <!-- Orden -->
+              <div class="form-group col-md-2">
                 <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
                 <input
                   type="number"
@@ -59,7 +60,9 @@
                   [readonly]="readonly"
                 />
               </div>
-              <div class="form-group col-md-9">
+
+              <!-- Descripción -->
+              <div class="form-group col-md-8">
                 <label for="description" class="control-label">{{ 'description' | translate | capitalize }}:</label>
                 <input
                   type="text"
@@ -69,7 +72,7 @@
                   id="description"
                   [focus]="focusEvent"
                   [ngClass]="{
-                    'is-invalid': categoryForm.get('description')?.touched && categoryForm.get('description')?.invalid,
+                    'is-invalid': categoryForm.get('description')?.touched && categoryForm.get('description')?.invalid
                   }"
                   [readonly]="readonly"
                 />
@@ -83,7 +86,23 @@
                 </div>
               </div>
             </div>
+
             <div class="row">
+              <!-- Padre -->
+              <div class="form-group col-md-10">
+                <label for="parent" class="control-label">{{ 'parent' | translate | capitalize }}:</label>
+                <app-typeahead-dropdown
+                  [control]="categoryForm.get('parent')"
+                  [data]="categories"
+                  [readonly]="readonly"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Observación -->
               <div class="form-group col-md-10">
                 <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}:</label>
                 <input
@@ -96,54 +115,24 @@
                 />
               </div>
             </div>
-            <div class="row">
-              <div class="form-group col-md-5">
-                <label for="parent" class="control-label">{{ 'parent' | translate | capitalize }}:</label>
-                <app-typeahead-dropdown
-                  [control]="categoryForm.get('parent')"
-                  [data]="categories"
-                  [readonly]="readonly"
-                  [keyField]="'_id'"
-                  [displayField]="'description'"
-                ></app-typeahead-dropdown>
-              </div>
-            </div>
           </div>
-          <div class="form-group col-md-4 text-center">
-            <div class="custom-file">
-              <label *ngIf="operation !== 'view'" class="custom-file-label" for="customFileLang">{{
-                'category.picture' | translate | capitalize
-              }}</label>
-              <input
-                *ngIf="operation !== 'view'"
-                type="file"
-                lang="es"
-                placeholder="Buscar Imagen"
-                accept="image/*"
-                id="customFileLang"
-                (change)="fileChangeEvent($event, false)"
-              />
-              <div class="mt-2">
-                <img
-                  class="img-article"
-                  [src]="imageURL"
-                  style="height: 150px; width: 150px; display: block; margin: auto"
-                />
-              </div>
-              <button
-                class="btn btn-sm btn-danger mt-2"
-                (click)="deletePicture(null, article.picture)"
-                *ngIf="this.imageURL != './../../../assets/img/default.jpg' && operation != 'view'"
-              >
-                <i class="fa fa-trash-o"></i> Eliminar
-              </button>
-            </div>
+
+          <!-- Imagen -->
+          <div class="form-group col-md-4">
+            <!-- <label for="picture" class="control-label">{{ 'picture' | translate | capitalize }}:</label> -->
+            <app-upload-file
+              (uploadedUrls)="onImagesUploaded($event)"
+              [folder]="'category'"
+              [existingImageUrl]="categoryForm.get('picture')?.value"
+            >
+            </app-upload-file>
           </div>
         </div>
+
         <hr />
         <div class="row">
           <div class="form-group col-md-2">
-            <label for="favourite" class="control-label">Favourite</label>
+            <label for="favourite" class="control-label">Destacado</label>
             <select class="form-control" formControlName="favourite">
               <option [ngValue]="true" [disabled]="readonly">
                 {{ 'true' | translate | capitalize }}
@@ -165,7 +154,7 @@
             </select>
           </div>
           <div class="form-group col-md-2">
-            <label for="publishWooCommerce" class="control-label">Publicado en WooCommerce</label>
+            <label for="publishWooCommerce" class="control-label">WooCommerce</label>
             <select class="form-control" formControlName="publishWooCommerce">
               <option [ngValue]="true" [disabled]="readonly">
                 {{ 'true' | translate | capitalize }}
@@ -176,7 +165,7 @@
             </select>
           </div>
           <div class="form-group col-md-2">
-            <label for="publishTiendaNube" class="control-label">Publicado en Tienda Nube</label>
+            <label for="publishTiendaNube" class="control-label">Tienda Nube</label>
             <select class="form-control" formControlName="publishTiendaNube">
               <option [ngValue]="true" [disabled]="readonly">
                 {{ 'true' | translate | capitalize }}
@@ -187,7 +176,7 @@
             </select>
           </div>
           <div class="form-group col-md-2">
-            <label for="showMenu" class="control-label">Publicado en Carta Digital</label>
+            <label for="showMenu" class="control-label">Carta Digital</label>
             <select class="form-control" formControlName="showMenu">
               <option [ngValue]="true" [disabled]="readonly">
                 {{ 'true' | translate | capitalize }}
@@ -252,7 +241,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ category?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ category?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -266,7 +255,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ category?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ category?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

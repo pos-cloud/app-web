@@ -252,21 +252,13 @@ export class GalleryComponent implements OnInit {
   }
 
   getResources(): Promise<void> {
-    const match = { operationType: { $ne: 'D' } };
-
-    let project = {
-      name: 1,
-      type: 1,
-      file: 1,
-      operationType: 1,
-    };
     return new Promise((resolve, reject) => {
       this._resourceService
-        .getAll({ project, match })
+        .find({ query: { operationType: { $ne: 'D' } } })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (result: ApiResponse) => {
-            this.resources = result.result;
+          next: (result) => {
+            this.resources = result;
           },
           error: (error) => {
             this._toastService.showToast(error);

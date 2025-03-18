@@ -17,7 +17,9 @@ export class UploadFileComponent {
   @Output() uploadedUrls = new EventEmitter<string[]>();
   @Input() folder = '';
   @Input() set existingImageUrl(url: string) {
-    this.imageUrl = url;
+    if (url.includes('https')) {
+      this.imageUrl = url;
+    }
   }
   constructor(private uploadService: FileService) {}
 

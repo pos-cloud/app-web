@@ -105,11 +105,11 @@ export class VariantValueComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loading = true;
     return new Promise(() => {
       this._variantTypeService
-        .getAll({ match: { operationType: { $ne: 'D' } } })
+        .find({ query: { operationType: { $ne: 'D' } } })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (result: ApiResponse) => {
-            this.variantTypes = result.result;
+          next: (result) => {
+            this.variantTypes = result;
           },
           error: (error) => {
             this._toastService.showToast(error);

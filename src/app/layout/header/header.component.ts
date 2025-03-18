@@ -469,7 +469,7 @@ export class HeaderComponent implements OnInit {
         });
       }
 
-      if (user.permission.menu.purchases) {
+      if (user?.permission?.menu?.purchases) {
         this.menu.push({
           label: 'Compras',
           icon: 'fa fa-clipboard',
@@ -515,7 +515,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Productos', link: 'admin/articles' },
             { label: 'Variantes', link: 'admin/variants' },
             { label: 'Marcas', link: 'entities/makes' },
-            { label: 'Categoria', link: 'admin/categories' },
+            { label: 'Categoria', link: 'entities/categories' },
             { label: '', isDivider: true },
             { label: 'Tipos de Variantes', link: 'entities/variant-types' },
             { label: 'Valores de Variantes', link: 'entities/variant-values' },

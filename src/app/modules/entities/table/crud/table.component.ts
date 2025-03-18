@@ -60,6 +60,7 @@ export class TableComponent implements OnInit {
     if (this.operation === 'view' || this.operation === 'delete') this.tableForm.disable();
 
     this.getRooms();
+
     if (tableId) {
       this.getTable(tableId);
     }
@@ -78,21 +79,20 @@ export class TableComponent implements OnInit {
   public getRooms(): Promise<void> {
     this.loading = true;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(() => {
       this._roomService
-        .getAll({})
+        .find({ query: { operationType: { $ne: 'D' } } })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            this.rooms = result.result;
-            resolve();
+            this.rooms = result;
           },
           error: (error) => {
             this._toastService.showToast(error);
-            reject();
           },
           complete: () => {
             this.loading = false;
+            this.setValueForm();
           },
         });
     });

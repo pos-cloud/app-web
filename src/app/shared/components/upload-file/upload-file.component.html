@@ -1,12 +1,24 @@
-<div class="upload-container">
-  <label for="fileInput" class="custom-file-label">Seleccionar archivo</label>
-  <input type="file" id="fileInput" (change)="onFileSelected($event)" />
+<!-- <div class="upload-container flex">
+  <input type="file" #fileInput id="fileInput" (change)="onFileSelected($event)" hidden />
 
   <div *ngIf="imageUrl">
-    <img [src]="imageUrl" alt="Imagen no disponible" class="preview-image" />
+    <img [src]="imageUrl" alt="Imagen no disponible" class="preview-image" (click)="fileInput.click()" />
   </div>
 
   <div *ngIf="!imageUrl">
-    <img src="./../../../assets/img/default.jpg" alt="No hay imagen" class="preview-image" />
+    <img
+      src="./../../../assets/img/default.jpg"
+      alt="No hay imagen"
+      class="preview-image"
+      (click)="fileInput.click()"
+    />
+  </div>
+</div> -->
+
+<div class="upload-container flex">
+  <input type="file" #fileInput id="fileInput" (change)="onFileSelected($event)" hidden />
+
+  <div class="image-wrapper" (click)="fileInput.click()">
+    <img [src]="imageUrl || './../../../assets/img/default.jpg'" alt="No hay imagen" class="preview-image" />
   </div>
 </div>

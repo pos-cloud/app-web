@@ -30,6 +30,7 @@
   "add-unit-of-measurement": "Añadir unidad de medida",
   "add-variant-type": "Añadir tipo de variante",
   "add-variant-value": "Añadir valor de variante",
+  "add-category": "Agregar categoría",
   "address": "Dirección",
   "addressNumber": "Número",
   "agency": "Sucursal",
@@ -666,5 +667,6 @@
   "month": "Mes",
   "week": "Semana",
   "year": "Año",
-  "unit-of-measurements": "Unidades de medida"
+  "unit-of-measurements": "Unidades de medida",
+  "room": "Salón"
 }
