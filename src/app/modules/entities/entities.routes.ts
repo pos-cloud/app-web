@@ -62,4 +62,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'variant-types',
     loadChildren: () => import('./variant-type/variant-type.routes').then((m) => m.VARIANT_TYPE_ROUTES),
   },
+  {
+    path: 'articles',
+    loadChildren: () => import('./article/article.routes').then((m) => m.ARTICLE_ROUTES),
+  },
 ];

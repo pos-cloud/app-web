@@ -91,13 +91,12 @@ export class EmployeeComponent implements OnInit {
     this.loading = true;
     return new Promise(() => {
       this._employeeTypeService
-        .getAll({
-          match: { operationType: { $ne: 'D' } },
-        })
+        .find({ query: { operationType: { $ne: 'D' } } })
+
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (result: ApiResponse) => {
-            this.employeeTypes = result.result;
+          next: (result) => {
+            this.employeeTypes = result;
           },
           error: (error) => {
             this._toastService.showToast(error);

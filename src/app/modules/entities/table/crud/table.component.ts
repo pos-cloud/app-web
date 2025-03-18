@@ -80,11 +80,11 @@ export class TableComponent implements OnInit {
 
     return new Promise((resolve, reject) => {
       this._roomService
-        .getAll({})
+        .find({ query: { operationType: { $ne: 'D' } } })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            this.rooms = result.result;
+            this.rooms = result;
             resolve();
           },
           error: (error) => {

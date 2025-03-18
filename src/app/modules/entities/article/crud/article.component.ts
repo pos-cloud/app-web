@@ -2,14 +2,13 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { BankService } from '@core/services/bank.service';
-
-import { ApiResponse, Bank } from '@types';
+import { ApiResponse, Article } from '@types';
 
 import { CommonModule } from '@angular/common';
+import { ArticleService } from '@core/services/article.service';
+import { CategoryService } from '@core/services/category.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { Account } from 'app/components/account/account';
-import { AccountService } from 'app/core/services/account.service';
+import { Category } from 'app/components/category/category';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
@@ -18,8 +17,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-bank',
-  templateUrl: './bank.component.html',
+  selector: 'app-article',
+  templateUrl: './article.component.html',
   standalone: true,
   imports: [
     CommonModule,
@@ -30,41 +29,97 @@ import { takeUntil } from 'rxjs/operators';
     TypeaheadDropdownComponent,
   ],
 })
-export class BankComponent implements OnInit {
+export class ArticleComponent implements OnInit {
   public operation: string;
   public readonly: boolean;
-  public bank: Bank;
+  public article: Article;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public bankForm: UntypedFormGroup;
-  public accounts: Account[];
+  public articleForm: UntypedFormGroup;
   private destroy$ = new Subject<void>();
 
+  public categories: Category[] = [];
+
   constructor(
-    public _bankService: BankService,
-    public _accountService: AccountService,
+    public _articleService: ArticleService,
+    public _categoryService: CategoryService,
     public _router: Router,
     public _fb: UntypedFormBuilder,
     private _toastService: ToastService
   ) {
-    this.bankForm = this._fb.group({
+    this.articleForm = this._fb.group({
       _id: ['', []],
+      order: ['', []],
       code: ['', [Validators.required]],
-      name: ['', [Validators.required]],
-      agency: ['', []],
-      account: [null, []],
+      codeProvider: ['', []],
+      codeSAT: ['', []],
+      currency: ['', []],
+      make: ['', []],
+      description: ['', [Validators.required]],
+      posDescription: ['', [Validators.maxLength(20)]],
+      basePrice: ['', [Validators.required]],
+      costPrice: ['', [Validators.required]],
+      costPrice2: [''],
+      markupPercentage: ['', [Validators.required]],
+      markupPriceWithoutVAT: [''],
+      markupPrice: ['', [Validators.required]],
+      salePrice: ['', [Validators.required]],
+      salePriceWithoutVAT: [''],
+      category: ['', [Validators.required]],
+      quantityPerMeasure: ['', []],
+      unitOfMeasurement: ['', []],
+      children: this._fb.array([]),
+      observation: ['', []],
+      barcode: ['', []],
+      printIn: ['', []],
+      allowPurchase: ['', []],
+      allowSale: ['', []],
+      allowStock: ['', []],
+      allowSaleWithoutStock: ['', []],
+      allowMeasure: ['', []],
+      ecommerceEnabled: ['', []],
+      posKitchen: ['', []],
+      isWeigth: ['', []],
+      favourite: ['', []],
+      providers: ['', []],
+      provider: ['', []],
+      lastPricePurchase: [0.0, []],
+      lastDatePurchase: [0.0, []],
+      classification: ['', []],
+      pictures: this._fb.array([]),
+      applications: this._fb.array([]),
+      url: ['', []],
+      forShipping: ['', []],
+      salesAccount: ['', []],
+      purchaseAccount: ['', []],
+      minStock: ['', []],
+      maxStock: ['', []],
+      pointOfOrder: ['', []],
+      meliId: ['', []],
+      wooId: ['', []],
+      purchasePrice: ['', []],
+      m3: ['', []],
+      weight: ['', []],
+      width: ['', []],
+      height: ['', []],
+      depth: ['', []],
+      showMenu: ['', []],
+      tiendaNubeId: ['', []],
+      updateVariants: ['', []],
+      variants: this._fb.array([]),
+      salePriceTN: ['', []],
     });
   }
 
   ngOnInit() {
     const pathUrl = this._router.url.split('/');
 
-    const bankId = pathUrl[4];
+    const articleId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.getAccount();
+    this.getCategories();
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.bankForm.disable();
-    if (bankId) this.getBank(bankId);
+    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.articleForm.disable();
+    if (articleId) this.getArticle(articleId);
   }
 
   ngAfterViewInit() {
@@ -78,31 +133,29 @@ export class BankComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    const account = this.accounts?.find((item) => item._id === this.bank?.account?.toString());
+    const account = this.categories?.find((item) => item._id === this.article?.category?.toString());
 
     const values = {
-      _id: this.bank._id ?? '',
-      code: this.bank.code ?? 0,
-      name: this.bank.name ?? '',
-      agency: this.bank.agency ?? 0,
-      account: account ?? null,
+      _id: this.article._id ?? '',
+      code: this.article.code ?? 0,
+      category: account ?? null,
     };
-    this.bankForm.setValue(values);
+    this.articleForm.setValue(values);
   }
 
   returnTo() {
     return this._router.navigate(['/entities/banks']);
   }
 
-  getAccount(): Promise<void> {
+  getCategories(): Promise<void> {
     this.loading = true;
     return new Promise(() => {
-      this._accountService
-        .find({ query: { operationType: { $ne: 'D' } } })
+      this._categoryService
+        .getAll({ match: { operationType: { $ne: 'D' } } })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (result) => {
-            this.accounts = result;
+          next: (result: ApiResponse) => {
+            this.categories = result.result;
             this.setValueForm();
           },
           error: (error) => {
@@ -115,15 +168,15 @@ export class BankComponent implements OnInit {
     });
   }
 
-  public getBank(id: string) {
+  public getArticle(id: string) {
     this.loading = true;
 
-    this._bankService
+    this._articleService
       .getById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this.bank = result.result;
+          this.article = result.result;
           if (result.status == 200) this.setValueForm();
         },
         error: (error) => {
@@ -135,33 +188,33 @@ export class BankComponent implements OnInit {
       });
   }
 
-  public handleBankOperation() {
+  public handleArticleOperation() {
     this.loading = true;
-    this.bankForm.markAllAsTouched();
-    if (this.bankForm.invalid) {
+    this.articleForm.markAllAsTouched();
+    if (this.articleForm.invalid) {
       this.loading = false;
       return;
     }
 
-    this.bank = this.bankForm.value;
+    this.article = this.articleForm.value;
 
     switch (this.operation) {
       case 'add':
-        this.saveBank();
+        this.saveArticle();
         break;
       case 'update':
-        this.updateBank();
+        this.updateArticle();
         break;
       case 'delete':
-        this.deleteBank();
+        this.deleteArticle();
       default:
         break;
     }
   }
 
-  public updateBank() {
-    this._bankService
-      .update(this.bank)
+  public saveArticle() {
+    this._articleService
+      .save(this.article)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
@@ -177,9 +230,9 @@ export class BankComponent implements OnInit {
       });
   }
 
-  public saveBank() {
-    this._bankService
-      .save(this.bank)
+  public updateArticle() {
+    this._articleService
+      .update(this.article)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
@@ -195,9 +248,9 @@ export class BankComponent implements OnInit {
       });
   }
 
-  public deleteBank() {
-    this._bankService
-      .delete(this.bank._id)
+  public deleteArticle() {
+    this._articleService
+      .delete(this.article._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {

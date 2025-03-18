@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { UploadFileComponent } from '@shared/components/upload-file/upload-file.component';
 
 import { ApiResponse, Category } from '@types';
 
@@ -25,9 +26,12 @@ import { takeUntil } from 'rxjs/operators';
     PipesModule,
     TranslateModule,
     TypeaheadDropdownComponent,
+    UploadFileComponent,
   ],
 })
 export class CategoryComponent implements OnInit {
+  @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
+
   public operation: string;
   public readonly: boolean;
   public alertMessage: string = '';
@@ -60,14 +64,15 @@ export class CategoryComponent implements OnInit {
       visibleInvoice: [false, []],
       visibleOnSale: [false, []],
       visibleOnPurchase: [false, []],
+      showMenu: [false, []],
     });
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     const pathUrl = this._router.url.split('/');
     const categoryId = pathUrl[4];
     this.operation = pathUrl[3];
-    await this.getCategories();
+    this.getCategories();
 
     if (categoryId) this.getCategory(categoryId);
   }
@@ -86,19 +91,20 @@ export class CategoryComponent implements OnInit {
     const parent = this.categories?.find((item) => item._id === this.category?.parent?.toString());
 
     const values = {
-      _id: this.category._id ?? '',
-      order: this.category.order ?? 0,
-      description: this.category.description ?? '',
-      picture: this.category.picture ?? '',
+      _id: this.category?._id ?? '',
+      order: this.category?.order ?? 0,
+      description: this.category?.description ?? '',
+      picture: this.category?.picture ?? '',
       parent: parent ?? null,
-      favourite: this.category.favourite ?? false,
-      isRequiredOptional: this.category.isRequiredOptional ?? false,
-      observation: this.category.observation ?? '',
-      publishWooCommerce: this.category.publishWooCommerce ?? '',
-      publishTiendaNube: this.category.publishTiendaNube ?? '',
-      visibleInvoice: this.category.visibleInvoice ?? false,
-      visibleOnSale: this.category.visibleOnSale ?? false,
-      visibleOnPurchase: this.category.visibleOnPurchase ?? false,
+      favourite: this.category?.favourite ?? false,
+      isRequiredOptional: this.category?.isRequiredOptional ?? false,
+      observation: this.category?.observation ?? '',
+      publishWooCommerce: this.category?.publishWooCommerce ?? '',
+      publishTiendaNube: this.category?.publishTiendaNube ?? '',
+      visibleInvoice: this.category?.visibleInvoice ?? false,
+      visibleOnSale: this.category?.visibleOnSale ?? false,
+      visibleOnPurchase: this.category?.visibleOnPurchase ?? false,
+      showMenu: this.category?.showMenu ?? false,
     };
     this.categoryForm.setValue(values);
   }
@@ -111,18 +117,18 @@ export class CategoryComponent implements OnInit {
     this.loading = true;
     return new Promise((resolve, reject) => {
       this._categoryService
-        .getAll({})
+        .find({})
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (result: ApiResponse) => {
-            this.categories = result.result;
+          next: (result: any) => {
+            this.categories = result;
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
-            resolve();
+            this.setValueForm();
           },
         });
     });
@@ -224,5 +230,11 @@ export class CategoryComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  onImagesUploaded(urls: string[]): void {
+    if (urls && urls.length > 0) {
+      this.categoryForm.get('picture')?.setValue(urls[0]);
+    }
   }
 }
