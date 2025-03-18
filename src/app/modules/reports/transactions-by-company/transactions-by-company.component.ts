@@ -49,22 +49,6 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   branches: Branch[];
   branchSelectedId: string[] = [];
 
-  statusSelect: string[] = [];
-  statusOptions = [
-    { _id: '', name: 'Todos' },
-    { _id: 'Abierto', name: 'Abierto' },
-    { _id: 'Anulado', name: 'Anulado' },
-    { _id: 'Armando', name: 'Armando' },
-    { _id: 'Cerrado', name: 'Cerrado' },
-    { _id: 'Entregado', name: 'Entregado' },
-    { _id: 'Enviado', name: 'Enviado' },
-    { _id: 'Pago Confirmado', name: 'Pago Confirmado' },
-    { _id: 'Pago Rechazado', name: 'Pago Rechazado' },
-    { _id: 'Pendiente', name: 'Pendiente' },
-    { _id: 'Pendiente de pago', name: 'Pendiente de pago' },
-    { _id: 'Preparando', name: 'Preparando' },
-  ];
-
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
 
@@ -160,7 +144,6 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
       filters: {
         branches: this.branchSelectedId,
         companyType: this.companyType,
-        status: this.statusSelect ?? [],
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
