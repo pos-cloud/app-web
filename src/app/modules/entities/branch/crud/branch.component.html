@@ -85,7 +85,6 @@
             </div>
           </div>
           <div class="form-group col-md-3">
-            <label for="image" class="control-label">{{ 'image' | translate | capitalize }}:</label>
             <app-upload-file
               (uploadedUrls)="onImagesUploaded($event)"
               [folder]="'branches'"
@@ -126,7 +125,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ branch?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ branch?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -140,7 +139,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ branch?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ branch?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

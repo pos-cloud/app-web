@@ -5,10 +5,10 @@
         'add-category' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ category?.name ?? '' }}</span
+        >{{ 'edit' | translate | capitalize }} {{ category?.description ?? '' }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
-        {{ category?.name ?? '' }}</span
+        {{ category?.description ?? '' }}</span
       >
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">

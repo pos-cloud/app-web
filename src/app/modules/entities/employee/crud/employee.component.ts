@@ -92,7 +92,6 @@ export class EmployeeComponent implements OnInit {
     return new Promise(() => {
       this._employeeTypeService
         .find({ query: { operationType: { $ne: 'D' } } })
-
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {

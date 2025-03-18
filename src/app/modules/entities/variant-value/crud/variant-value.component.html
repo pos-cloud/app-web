@@ -48,67 +48,69 @@
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-1">
-            <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="order"
-              id="order"
-              [ngClass]="{
-                'is-invalid': variantValueForm.get('order')?.touched && variantValueForm.get('order')?.invalid,
-              }"
-            />
-            <div
-              class="invalid-feedback"
-              *ngIf="variantValueForm.get('order')?.touched && variantValueForm.get('order')?.hasError('required')"
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
+          <div class="col-md-8">
+            <div class="row">
+              <div class="form-group col-md-2">
+                <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="order"
+                  id="order"
+                  [ngClass]="{
+                    'is-invalid': variantValueForm.get('order')?.touched && variantValueForm.get('order')?.invalid,
+                  }"
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="variantValueForm.get('order')?.touched && variantValueForm.get('order')?.hasError('required')"
+                >
+                  {{ 'fieldRequired' | translate | capitalize }}
+                </div>
+              </div>
+              <div class="form-group col-md-8">
+                <label for="description" class="control-label">{{ 'description' | translate | capitalize }}:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="description"
+                  id="description"
+                  [focus]="focusEvent"
+                  [ngClass]="{
+                    'is-invalid':
+                      variantValueForm.get('description')?.touched && variantValueForm.get('description')?.invalid,
+                  }"
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    variantValueForm.get('description')?.touched &&
+                    variantValueForm.get('description')?.hasError('required')
+                  "
+                >
+                  {{ 'fieldRequired' | translate | capitalize }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-10">
+                <label for="type" class="control-label">{{ 'type' | translate | capitalize }}:</label>
+                <app-typeahead-dropdown
+                  [control]="variantValueForm.get('type')"
+                  [data]="variantTypes"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="variantValueForm.get('type')?.touched && variantValueForm.get('type')?.hasError('required')"
+                >
+                  {{ 'fieldRequired' | translate | capitalize }}
+                </div>
+              </div>
             </div>
           </div>
-          <div class="form-group col-md-3">
-            <label for="description" class="control-label">{{ 'description' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description"
-              id="description"
-              [focus]="focusEvent"
-              [ngClass]="{
-                'is-invalid':
-                  variantValueForm.get('description')?.touched && variantValueForm.get('description')?.invalid,
-              }"
-            />
-            <div
-              class="invalid-feedback"
-              *ngIf="
-                variantValueForm.get('description')?.touched &&
-                variantValueForm.get('description')?.hasError('required')
-              "
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
-            </div>
-          </div>
-          <div class="form-group col-md-3">
-            <label for="type" class="control-label">{{ 'type' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
-              [control]="variantValueForm.get('type')"
-              [data]="variantTypes"
-              [keyField]="'_id'"
-              [displayField]="'name'"
-            ></app-typeahead-dropdown>
-            <div
-              class="invalid-feedback"
-              *ngIf="variantValueForm.get('type')?.touched && variantValueForm.get('type')?.hasError('required')"
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
-            </div>
-          </div>
-        </div>
-        <hr />
-        <div class="row">
-          <div class="form-group col-md-3">
-            <label for="picture" class="control-label">{{ 'picture' | translate | capitalize }}:</label>
+          <div class="form-group col-md-4">
             <app-upload-file
               (uploadedUrls)="onImagesUploaded($event)"
               [folder]="'variant-values'"
