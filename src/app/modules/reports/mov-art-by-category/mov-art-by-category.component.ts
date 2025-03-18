@@ -144,7 +144,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
       reportType: 'mov-art-by-category',
       filters: {
         branch: this.branchSelectedId,
-        type: this.transactionMovement,
+        transactionMovement: this.transactionMovement,
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,

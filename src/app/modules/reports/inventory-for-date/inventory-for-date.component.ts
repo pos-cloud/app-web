@@ -114,7 +114,7 @@ export class InventoryForDateComponent {
 
     const requestPayload = {
       reportType: 'inventory-for-date',
-      filters: { branch: this.branchSelectedId, deposit: this.depositSelectedId, endDate: this.endDate },
+      filters: { branches: this.branchSelectedId, deposits: this.depositSelectedId, endDate: this.endDate },
       pagination: { page: 1, pageSize: 10 },
       sorting: this.sort,
     };

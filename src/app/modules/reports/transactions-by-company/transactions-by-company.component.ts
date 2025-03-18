@@ -7,7 +7,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
-import { CompanyType } from 'app/components/company/company';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -41,7 +40,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   public totals: any = {};
   public title: string = '';
 
-  public transactionMovement: string;
+  public companyType: string;
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
@@ -72,8 +71,6 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
-  companyType: CompanyType;
-
   // sort
   sort = {
     column: 'amount',
@@ -91,7 +88,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   async ngOnInit() {
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      this.companyType = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
       this.getBranches();
       this.getTransactionTypes();
       this.getReport();
@@ -129,6 +126,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   }
 
   private getTransactionTypes() {
+    const transactionMovement = this.companyType === 'Cliente' ? 'Vanta' : 'Compra';
     this._transactionTypeService
       .getAll({
         project: {
@@ -141,9 +139,9 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
           requestCompany: 1,
         },
         match: {
-          transactionMovement: this.transactionMovement,
+          transactionMovement: transactionMovement,
           operationType: { $ne: 'D' },
-          requestCompany: true,
+          requestCompany: this.companyType,
         },
       })
       .pipe(takeUntil(this.destroy$))
@@ -159,16 +157,11 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   public getReport(): void {
     this.loading = true;
-    if (this.transactionMovement === 'Venta') {
-      this.companyType = CompanyType.Client;
-    } else if (this.transactionMovement === 'Compra') {
-      this.companyType = CompanyType.Provider;
-    }
     const requestPayload = {
       reportType: 'transactions-by-company',
       filters: {
-        branch: this.branchSelectedId,
-        type: this.companyType,
+        branches: this.branchSelectedId,
+        typeCompany: this.companyType,
         status: this.statusSelect ?? [],
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,

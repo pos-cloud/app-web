@@ -168,8 +168,8 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
       reportType: 'article-ledger',
       filters: {
         article: this.articleControl?.value?._id,
-        branch: this.branchSelectedId,
-        deposit: this.depositSelectedId,
+        branches: this.branchSelectedId,
+        deposits: this.depositSelectedId,
       },
       pagination: {
         page: 1,

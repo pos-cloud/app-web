@@ -145,8 +145,8 @@ export class ReportMovArtByMakeComponent implements OnInit {
     const requestPayload = {
       reportType: 'mov-art-by-make',
       filters: {
-        branch: this.branchSelectedId,
-        type: this.transactionMovement,
+        branches: this.branchSelectedId,
+        transactionMovement: this.transactionMovement,
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,

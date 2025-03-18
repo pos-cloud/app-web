@@ -106,8 +106,8 @@ export class ReportTransactionsByTypeComponent {
     const requestPayload = {
       reportType: 'transactions-by-type',
       filters: {
-        branch: this.branchSelectedId,
-        type: this.transactionMovement,
+        branches: this.branchSelectedId,
+        transactionMovement: this.transactionMovement,
         startDate: this.startDate,
         endDate: this.endDate,
       },

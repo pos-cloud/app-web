@@ -182,12 +182,12 @@ export class ReportMovArtByArticleComponent {
     const requestPayload = {
       reportType: 'mov-art-by-article',
       filters: {
-        branch: this.branchSelectedId,
-        type: this.transactionMovement,
+        branches: this.branchSelectedId,
+        transactionMovement: this.transactionMovement,
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
-        category: this.categoriesSelect ?? [],
+        categories: this.categoriesSelect ?? [],
         article: this.article,
       },
       pagination: {

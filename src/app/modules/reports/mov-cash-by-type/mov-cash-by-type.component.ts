@@ -145,8 +145,8 @@ export class ReportMovCashByTypeComponent implements OnInit {
     const requestPayload = {
       reportType: 'mov-cash-by-type',
       filters: {
-        branch: this.branchSelectedId,
-        type: this.transactionMovement,
+        branches: this.branchSelectedId,
+        transactionMovement: this.transactionMovement,
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
