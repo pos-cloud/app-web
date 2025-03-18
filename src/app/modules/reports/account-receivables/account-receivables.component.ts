@@ -61,7 +61,7 @@ export class AccountReceivablesComponent implements OnInit {
     const requestPayload = {
       reportType: 'account-receivables',
       filters: {
-        typeCompany: this.companyType,
+        companyType: this.companyType,
         company: this.company,
       },
       pagination: {

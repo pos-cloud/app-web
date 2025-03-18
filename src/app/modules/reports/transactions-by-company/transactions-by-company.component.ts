@@ -126,7 +126,6 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   }
 
   private getTransactionTypes() {
-    const transactionMovement = this.companyType === 'Cliente' ? 'Vanta' : 'Compra';
     this._transactionTypeService
       .getAll({
         project: {
@@ -139,7 +138,6 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
           requestCompany: 1,
         },
         match: {
-          transactionMovement: transactionMovement,
           operationType: { $ne: 'D' },
           requestCompany: this.companyType,
         },
@@ -161,7 +159,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
       reportType: 'transactions-by-company',
       filters: {
         branches: this.branchSelectedId,
-        typeCompany: this.companyType,
+        companyType: this.companyType,
         status: this.statusSelect ?? [],
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
