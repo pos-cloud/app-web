@@ -1,8 +1,58 @@
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<h1>Hola mundo</h1>
+<div class="container-fluid my-5">
+    <div class="card card-large">
+        <div class="row">
+
+            <!-- Datos del Cliente -->
+            <div class="col-md-4 mb-4">
+                <h4 class="section-title">Estado de licencia</h4>
+                <div class="client-info">
+                    <p><strong>Fecha del prócimo cobro:</strong> {{licensePaymentDueDate}} </p>
+                    <p><strong>Finalización de licencia</strong> {{expirationLicenseDate}} </p>
+                    <p><strong>Típo de licencia</strong> {{licenseType}} </p>
+                </div>
+            </div>
+
+            <!-- Opciones de Licencia (consultar si se va a poder cambiar de licencia al pagar) -->
+            <div class="col-md-8 mb-4">
+                <h4 class="section-title">Opciones de Licencia</h4>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="license-card">
+                            <h5 class="license-title">Plan Básico</h5>
+                            <p class="license-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p>
+                            <p class="license-price"><strong>Precio mensual:</strong> $20.000</p>
+                            <button class="btn btn-primary">Seleccionar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="license-card">
+                            <h5 class="license-title">Plan Standard</h5>
+                            <p class="license-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
+                            <p class="license-price"><strong>Precio mensual:</strong> $35.000</p>
+                            <button class="btn btn-primary">Seleccionar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="license-card">
+                            <h5 class="license-title">Plan Premium</h5>
+                            <p class="license-description">Lorem ipsum, dolor sit amet consectetur adipisicing elit.</p>
+                            <p class="license-price"><strong>Precio mensual:</strong> $50.000</p>
+                            <button class="btn btn-primary">Seleccionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Pago (Brick de Mercado Pago) -->
+        <div class="row">
+            <div class="col-12">
+                <h4 class="section-title">Pago</h4>
+                <div id="mercadoPagoBrick">
+                    <!-- acá va el brick -->
+                    <p>Espacio para el brick de Mercado Pago.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
