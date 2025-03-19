@@ -1,0 +1,83 @@
+.card{
+    padding: 20px;
+    min-height: calc(100vh - 225px);
+    max-height: calc(100vh - 225px);
+}
+
+.container-fluid {
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #495057;
+}
+
+.client-info p {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.row {
+    margin-bottom: 2rem; /* Espacio entre las filas */
+}
+
+.license-card {
+    background: #f1f1f1;
+    padding: 1.25rem; /* Agregar padding adicional */
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Asegura que las tarjetas tengan el mismo alto */
+    transition: transform 0.2s ease-in-out;
+    
+    &:hover {
+        transform: translateY(-5px);
+    }
+}
+
+.license-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.license-description {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.license-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    
+    &:hover {
+        background-color: #0056b3;
+    }
+}
+
+#mercadoPagoBrick {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+}
