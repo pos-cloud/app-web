@@ -10,6 +10,19 @@
     </div>
 
     <div class="form-group mr-2">
+      <label for="article" class="control-label">
+        <b>{{ 'category' | translate | capitalize }}</b></label
+      >
+      <input
+        type="text"
+        class="form-control"
+        name="description"
+        id="description"
+        [(ngModel)]="category"
+        (keyup.enter)="getReport()"
+      />
+    </div>
+    <div class="form-group mr-2">
       <label for="transactionType" class="control-label">
         <b>Tipo de Transacción</b>
       </label>

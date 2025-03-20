@@ -56,6 +56,7 @@ export class ReportMovArtByMakeComponent implements OnInit {
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
+  make: string = '';
   // sort
   sort = {
     column: 'amount',
@@ -150,6 +151,7 @@ export class ReportMovArtByMakeComponent implements OnInit {
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
+        make: this.make,
       },
       pagination: {
         page: 1,
