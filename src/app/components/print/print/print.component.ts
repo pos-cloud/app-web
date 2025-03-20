@@ -3411,7 +3411,7 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    if (this.database === 'insumosmaxs' && movCancelation.length === 1) {
+    if (this.database === 'insumosmaxs' && movCancelation?.length === 1) {
       observation +=
         movCancelation[0].transactionOrigin.type.name +
         '-' +
