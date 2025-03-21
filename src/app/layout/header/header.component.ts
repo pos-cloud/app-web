@@ -620,7 +620,7 @@ export class HeaderComponent implements OnInit {
                 {
                   label: 'Reportes',
                   children: [
-                    { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
+                    { label: 'Estadísticas Generales', link: 'admin/compra/statistics' },
                     { label: 'Por productos', link: 'reports/mov-art-by-article/compra' },
                     { label: 'Por marcas', link: 'reports/mov-art-by-make/compra' },
                     { label: 'Por categorias', link: 'reports/mov-art-by-category/compra' },
