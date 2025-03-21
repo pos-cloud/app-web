@@ -701,7 +701,7 @@ export class HeaderComponent implements OnInit {
               label: 'Otros',
               children: [
                 { label: 'Cumpleaños', link: 'reports/birthday' },
-                // { label: 'Dashboard', link: 'reports/dashboard' },
+                { label: 'Dashboard', link: 'reports/dashboard' },
               ],
             },
           ],
