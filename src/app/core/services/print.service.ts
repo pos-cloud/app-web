@@ -24,11 +24,13 @@ export class PrintService {
   constructor(private _http: HttpClient, private _authService: AuthService) {}
 
   public toPrint(type: PrintType, body: {}) {
+    const URL_PRINT = `${environment.apiv2}/to-print/${type}`;
+
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    this._http.post(`${environment.apiv2}/to-print/${type}`, body, { headers, responseType: 'blob' }).subscribe(
+    this._http.post(URL_PRINT, body, { headers, responseType: 'blob' }).subscribe(
       (res: Blob) => {
         if (res) {
           const blobUrl = URL.createObjectURL(res);

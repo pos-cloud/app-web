@@ -8,7 +8,6 @@ import { ImportComponent } from 'app/shared/components/import/import.component';
 import { ArticleService } from '../../../core/services/article.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
-import { PrintLabelsComponent } from '../actions/print-labels/print-labels.component';
 import { UpdateArticlePriceComponent } from '../actions/update-article-price/update-article-price.component';
 @Component({
   selector: 'app-list-articles',
@@ -669,15 +668,18 @@ export class ListArticlesComponent {
         });
         break;
       case 'print-label':
-        this._printService.toPrint(PrintType.Article, {});
+        const datalabel = {
+          quantity: 1,
+          articleId: obj._id,
+        };
+        this._printService.toPrint(PrintType.Article, datalabel);
         this.loading = false;
         break;
       case 'print-labels':
-        this.loading = true;
-        const articlesIds: string[] = items.map((objeto) => objeto._id);
-        const printLabelsComponent = new PrintLabelsComponent(this._printerService, this._alertConfig);
-        printLabelsComponent.articleIds = articlesIds;
-        printLabelsComponent.ngOnInit();
+        const dataLabels = {
+          articlesIds: items.map((objeto) => objeto._id),
+        };
+        this._printService.toPrint(PrintType.Labels, dataLabels);
         this.loading = false;
         break;
       case 'copy':

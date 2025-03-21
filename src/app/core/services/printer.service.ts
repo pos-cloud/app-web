@@ -7,17 +7,13 @@ import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 
-import { environment } from 'environments/environment';
 import { Printer } from '../../components/printer/printer';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PrinterService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `printers`, // PATH
       _http,
@@ -168,80 +164,6 @@ export class PrinterService extends ModelService {
       .delete(URL, {
         headers: headers,
         params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public printArticle(articleId: string, quantity: number): Observable<any> {
-    const URL = `${environment.apiPrint}/article`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('articleId', articleId)
-      .set('quantity', quantity);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-        responseType: 'blob',
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public printLabels(articlesId: string[]): Observable<any> {
-    const URL = `${environment.apiPrint}/get-articles`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, articlesId, {
-        headers: headers,
-        responseType: 'blob',
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public printTransaction(transactionId: string): Observable<any> {
-    const URL = `${environment.apiPrint}/transaction`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('transactionId', transactionId);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-        responseType: 'blob',
       })
       .pipe(
         map((res) => {

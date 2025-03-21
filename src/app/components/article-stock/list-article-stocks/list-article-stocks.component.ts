@@ -20,8 +20,8 @@ import { Printer } from '../../printer/printer';
 import { ArticleStock, attributes } from '../article-stock';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 
-import { ApiResponse, Branch } from '@types';
-import { PrintLabelComponent } from 'app/components/article/actions/print-label/print-label.component';
+import { PrintService } from '@core/services/print.service';
+import { ApiResponse, Branch, PrintType } from '@types';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { AddArticleStockComponent } from '../article-stock/add-article-stock.component';
@@ -94,7 +94,8 @@ export class ListArticleStocksComponent implements OnInit {
     private _branchService: BranchService,
     private _depositService: DepositService,
     private _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _printService: PrintService
   ) {
     this.filters = new Array();
     for (let field of this.columns) {
@@ -369,17 +370,14 @@ export class ListArticleStocksComponent implements OnInit {
           (reason) => {}
         );
         break;
-      case 'print-label':
-        const printLabelComponent = new PrintLabelComponent(this._printerService, this.alertConfig);
-        printLabelComponent.articleId = articleStock.article._id;
-        printLabelComponent.quantity = articleStock.realStock;
-        printLabelComponent.ngOnInit();
-        break;
       case 'price-lists':
-        const printLabelComponent2 = new PrintLabelComponent(this._printerService, this.alertConfig);
-        printLabelComponent2.articleId = articleStock.article._id;
-        printLabelComponent.quantity = articleStock.realStock;
-        printLabelComponent2.ngOnInit();
+      case 'print-label':
+        const datalabel = {
+          quantity: articleStock.realStock,
+          articleId: articleStock.article._id,
+        };
+        this._printService.toPrint(PrintType.Article, datalabel);
+        this.loading = false;
         break;
       case 'print-inventario':
         modalRef = this._modalService.open(PrintArticlesStockComponent);

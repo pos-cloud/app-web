@@ -13,7 +13,6 @@ import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import * as moment from 'moment';
 import { Observable, Subscription, of as observableOf } from 'rxjs';
 
-import * as printJS from 'print-js';
 import { Config } from '../../../app.config';
 import { ConfigService } from '../../../core/services/config.service';
 import { PrinterService } from '../../../core/services/printer.service';
@@ -30,7 +29,8 @@ import { AddTransactionComponent } from '../add-transaction/add-transaction.comp
 import { Transaction, attributes } from '../transaction';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
-import { Branch } from '@types';
+import { PrintService } from '@core/services/print.service';
+import { Branch, PrintType } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import 'moment/locale/es';
 
@@ -106,7 +106,8 @@ export class ListTransactionsComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
     public _branchService: BranchService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    public _printService: PrintService
   ) {
     this.transactionTypesSelect = new Array();
     this.filters = new Array();
@@ -569,9 +570,11 @@ export class ListTransactionsComponent implements OnInit {
         );
         break;
       case 'print':
-        //this.printTransaction(transaction)
         if (transaction.type.transactionMovement === TransactionMovement.Production) {
-          this.printTransaction(transaction);
+          const data = {
+            transactionId: transaction._id,
+          };
+          this._printService.toPrint(PrintType.Transaction, data);
         } else {
           if (transaction.type.expirationDate && moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0) {
             this.showMessage('El documento esta vencido', 'danger', true);
@@ -692,10 +695,9 @@ export class ListTransactionsComponent implements OnInit {
         if (transaction.type.labelPrint) {
           labelPrint = transaction.type.labelPrint;
         }
-        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(
-          transaction.origin,
-          4
-        )}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
+        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${
+          transaction.letter
+        }-${this.padNumber(transaction.number, 8)}`;
 
         if (transaction.type.electronics) {
           // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
@@ -831,26 +833,6 @@ export class ListTransactionsComponent implements OnInit {
         }
       },
       (reason) => {}
-    );
-  }
-
-  public printTransaction(transaction: Transaction) {
-    this.loading = true;
-    this._printerService.printTransaction(transaction._id).subscribe(
-      (res: Blob) => {
-        if (res) {
-          const blobUrl = URL.createObjectURL(res);
-          printJS(blobUrl);
-          this.loading = false;
-        } else {
-          this.loading = false;
-          this.showMessage('Error al cargar el PDF', 'danger', false);
-        }
-      },
-      (error) => {
-        this.loading = false;
-        this.showMessage(error.message, 'danger', false);
-      }
     );
   }
 
