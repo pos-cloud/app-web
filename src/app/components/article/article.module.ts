@@ -14,8 +14,6 @@ import { QuillModule } from 'ngx-quill';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
 import { HistoryComponent } from './actions/history/history.component';
-import { PrintLabelComponent } from './actions/print-label/print-label.component';
-import { PrintLabelsComponent } from './actions/print-labels/print-labels.component';
 import { UpdateArticlePriceComponent } from './actions/update-article-price/update-article-price.component';
 import { AddArticleTaxComponent } from './add-article-tax/add-article-tax.component';
 import { ArticleComponent } from './crud/article.component';
@@ -107,18 +105,10 @@ const routes: Routes = [
     ListVariantsComponent,
     ArticleComponent,
     AddArticleTaxComponent,
-    PrintLabelComponent,
-    HistoryComponent,
-    PrintLabelsComponent,
-    UpdateArticlePriceComponent,
-  ],
-  exports: [
-    ArticleComponent,
-    AddArticleTaxComponent,
-    PrintLabelComponent,
     HistoryComponent,
     UpdateArticlePriceComponent,
   ],
+  exports: [ArticleComponent, AddArticleTaxComponent, HistoryComponent, UpdateArticlePriceComponent],
   providers: [],
 })
 export class ArticleModule {}

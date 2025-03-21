@@ -1,14 +1,13 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IButton } from '@types';
+import { PrintService } from '@core/services/print.service';
+import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { IButton, PrintType } from '@types';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { ArticleService } from '../../../core/services/article.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
-import { PrintLabelComponent } from '../actions/print-label/print-label.component';
-import { PrintLabelsComponent } from '../actions/print-labels/print-labels.component';
 import { attributesVariant } from '../article';
 
 @Component({
@@ -69,11 +68,11 @@ export class ListVariantsComponent {
 
   constructor(
     public _service: ArticleService,
-    private _modalService: NgbModal,
     private _router: Router,
     public _printerService: PrinterService,
     public _alertConfig: NgbAlertConfig,
-    public _priceListService: PriceListService
+    public _priceListService: PriceListService,
+    public _printService: PrintService
   ) {}
 
   public async emitEvent(event) {
@@ -108,24 +107,18 @@ export class ListVariantsComponent {
         });
         break;
       case 'print-label':
-        this.loading = true;
-        const printLabelComponent = new PrintLabelComponent(
-          this._printerService,
-          this._alertConfig
-        );
-        printLabelComponent.articleId = obj._id;
-        printLabelComponent.ngOnInit();
+        const datalabel = {
+          quantity: 1,
+          articleId: obj._id,
+        };
+        this._printService.toPrint(PrintType.Article, datalabel);
         this.loading = false;
         break;
       case 'print-labels':
-        this.loading = true;
-        const articlesIds: string[] = items.map((objeto) => objeto._id);
-        const printLabelsComponent = new PrintLabelsComponent(
-          this._printerService,
-          this._alertConfig
-        );
-        printLabelsComponent.articleIds = articlesIds;
-        printLabelsComponent.ngOnInit();
+        const dataLabels = {
+          articlesIds: items.map((objeto) => objeto._id),
+        };
+        this._printService.toPrint(PrintType.Labels, dataLabels);
         this.loading = false;
         break;
       default:

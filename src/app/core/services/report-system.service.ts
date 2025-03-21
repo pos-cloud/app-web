@@ -10,10 +10,7 @@ import { AuthService } from 'app/core/services/auth.service';
   providedIn: 'root',
 })
 export class ReportSystemService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {}
+  constructor(public _http: HttpClient, public _authService: AuthService) {}
 
   public getReport(data: {}): Observable<any> {
     const URL = `${environment.apiv2}/reports-system/${data['reportType']}`;
