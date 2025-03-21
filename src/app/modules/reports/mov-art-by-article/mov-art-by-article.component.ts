@@ -3,8 +3,9 @@ import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CategoryService } from '@core/services/category.service';
+import { MakeService } from '@core/services/make.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from '@types';
+import { Branch, Make } from '@types';
 import { Category } from 'app/components/category/category';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
@@ -62,6 +63,9 @@ export class ReportMovArtByArticleComponent {
 
   article: string = '';
 
+  makes: Make[];
+  makesSelect: string[] = [];
+
   // sort
   public sort = {
     column: 'amount',
@@ -73,6 +77,7 @@ export class ReportMovArtByArticleComponent {
     private _branchService: BranchService,
     private _transactionTypeService: TransactionTypeService,
     private _categoryService: CategoryService,
+    private _makeService: MakeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private cdRef: ChangeDetectorRef
@@ -85,6 +90,7 @@ export class ReportMovArtByArticleComponent {
       this.getReport();
       this.getBranches();
       this.getCategories();
+      this.getMakes();
     });
   }
 
@@ -176,6 +182,36 @@ export class ReportMovArtByArticleComponent {
       });
   }
 
+  private getMakes() {
+    this._makeService
+      .getAll({
+        project: {
+          _id: 1,
+          operationType: 1,
+          description: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          let makesList = result.result.map((make) => {
+            return {
+              _id: make._id,
+              name: make.description,
+              operationType: make.operationType,
+            };
+          });
+          this.makes = makesList;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
+  }
+
   public getReport(): void {
     this.loading = true;
 
@@ -189,6 +225,7 @@ export class ReportMovArtByArticleComponent {
         endDate: this.endDate,
         categories: this.categoriesSelect ?? [],
         article: this.article,
+        makes: this.makesSelect ?? [],
       },
       pagination: {
         page: 1,

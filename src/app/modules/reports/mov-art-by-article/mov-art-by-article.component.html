@@ -32,6 +32,14 @@
     </div>
 
     <div class="form-group mr-2">
+      <label for="makes" class="control-label">
+        <b>Marca</b>
+      </label>
+      <app-multi-select-dropdown [data]="makes" [(ngModel)]="makesSelect" placeholder="Marcas">
+      </app-multi-select-dropdown>
+    </div>
+
+    <div class="form-group mr-2">
       <label for="transactionType" class="control-label">
         <b>Tipo de Transacción</b>
       </label>
