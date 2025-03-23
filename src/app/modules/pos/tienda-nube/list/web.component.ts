@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { PrintService } from '@core/services/print.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ApiResponse, IAttribute, MovementOfCash } from '@types';
+import { ApiResponse, IAttribute, MovementOfCash, PrintType } from '@types';
 import { Config } from 'app/app.config';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
@@ -25,7 +26,6 @@ import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as moment from 'moment';
-import * as printJS from 'print-js';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CancelComponent } from '../tienda-nube-cancel/cancel.component';
@@ -70,7 +70,8 @@ export class WebComponent implements OnInit {
     private _toastService: ToastService,
     public _userService: UserService,
     private _configService: ConfigService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    public _printService: PrintService
   ) {
     this.columns = [
       {
@@ -416,7 +417,10 @@ export class WebComponent implements OnInit {
       case 'print':
         if (transaction) {
           if (transaction.type.transactionMovement === TransactionMovement.Production) {
-            this.printTransaction(transaction);
+            const data = {
+              transactionId: transaction._id,
+            };
+            this._printService.toPrint(PrintType.Transaction, data);
           } else {
             if (
               transaction.type.expirationDate &&
@@ -605,31 +609,6 @@ export class WebComponent implements OnInit {
     }
 
     this.getTransactions();
-  }
-
-  printTransaction(transaction: Transaction) {
-    this.loading = true;
-    this._printerService
-      .printTransaction(transaction._id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: Blob) => {
-          if (res) {
-            const blobUrl = URL.createObjectURL(res);
-            printJS(blobUrl);
-          } else {
-            this._toastService.showToast({
-              message: 'Error al cargar el PDF',
-            });
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
   }
 
   public pageChange(page): void {

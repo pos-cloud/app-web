@@ -14,10 +14,7 @@ import { AuthService } from './auth.service';
 export class ConfigService extends ModelService {
   private config: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `configs`, // PATH
       _http,
@@ -76,7 +73,7 @@ export class ConfigService extends ModelService {
   }
 
   public getCompanyPicture(picture: string): Observable<any> {
-    const URL = `${environment.apiPrint}/get-img`;
+    const URL = `${environment.apiv2}/to-print/get-img`;
 
     const params = new HttpParams().set('picture', picture);
 
@@ -151,10 +148,7 @@ export class ConfigService extends ModelService {
       );
   }
 
-  public generateCRS(
-    companyName: string,
-    companyCUIT: string
-  ): Observable<any> {
+  public generateCRS(companyName: string, companyCUIT: string): Observable<any> {
     const URL = `${environment.feAr}/cert`;
 
     const headers = new HttpHeaders()
@@ -209,11 +203,7 @@ export class ConfigService extends ModelService {
 
   public makeFileRequest(config, files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
-    xhr.open(
-      'POST',
-      Config.apiURL + 'upload-image-company/' + config._id,
-      true
-    );
+    xhr.open('POST', Config.apiURL + 'upload-image-company/' + config._id, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {
@@ -241,11 +231,7 @@ export class ConfigService extends ModelService {
 
   public uploadCRT(files: Array<File>, companyCUIT: string): Promise<any> {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
-    xhr.open(
-      'POST',
-      `${environment.feAr}/cert/upload-crt/${companyCUIT}`,
-      true
-    );
+    xhr.open('POST', `${environment.feAr}/cert/upload-crt/${companyCUIT}`, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     const formData: FormData = new FormData();

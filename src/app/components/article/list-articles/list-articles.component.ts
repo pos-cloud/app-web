@@ -1,16 +1,14 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
+import { PrintService } from '@core/services/print.service';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IAttribute, IButton } from '@types';
+import { IAttribute, IButton, PrintType } from '@types';
 import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import { ArticleService } from '../../../core/services/article.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
-import { PrintLabelComponent } from '../actions/print-label/print-label.component';
-import { PrintLabelsComponent } from '../actions/print-labels/print-labels.component';
 import { UpdateArticlePriceComponent } from '../actions/update-article-price/update-article-price.component';
-
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
@@ -610,6 +608,7 @@ export class ListArticlesComponent {
     private _modalService: NgbModal,
     private _router: Router,
     public _printerService: PrinterService,
+    public _printService: PrintService,
     public _alertConfig: NgbAlertConfig
   ) {}
 
@@ -669,18 +668,18 @@ export class ListArticlesComponent {
         });
         break;
       case 'print-label':
-        this.loading = true;
-        const printLabelComponent = new PrintLabelComponent(this._printerService, this._alertConfig);
-        printLabelComponent.articleId = obj._id;
-        printLabelComponent.ngOnInit();
+        const datalabel = {
+          quantity: 1,
+          articleId: obj._id,
+        };
+        this._printService.toPrint(PrintType.Article, datalabel);
         this.loading = false;
         break;
       case 'print-labels':
-        this.loading = true;
-        const articlesIds: string[] = items.map((objeto) => objeto._id);
-        const printLabelsComponent = new PrintLabelsComponent(this._printerService, this._alertConfig);
-        printLabelsComponent.articleIds = articlesIds;
-        printLabelsComponent.ngOnInit();
+        const dataLabels = {
+          articlesIds: items.map((objeto) => objeto._id),
+        };
+        this._printService.toPrint(PrintType.Labels, dataLabels);
         this.loading = false;
         break;
       case 'copy':

@@ -1,21 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormArray,
-  UntypedFormBuilder,
-  UntypedFormGroup,
-} from '@angular/forms';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FormField } from '@types';
+import { FormField, PrintType } from '@types';
 import { Config } from 'app/app.config';
 import { AccountPeriod } from 'app/components/account-period/account-period';
 import { AccountSeat } from 'app/components/account-seat/account-seat';
 import { Account } from 'app/components/account/account';
-import { Printer } from 'app/components/printer/printer';
 import { AccountPeriodService } from 'app/core/services/account-period.service';
 import { AccountSeatService } from 'app/core/services/account-seat.service';
 import { AccountService } from 'app/core/services/account.service';
@@ -24,12 +15,7 @@ import { UserService } from 'app/core/services/user.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import { Observable, Subject, Subscription } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
@@ -41,9 +27,9 @@ import { MovementOfArticle } from '../../movement-of-article/movement-of-article
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction';
 
+import { PrintService } from '@core/services/print.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'moment/locale/es';
-import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-view-transaction',
@@ -86,8 +72,7 @@ export class ViewTransactionComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
+        let match: {} = term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
 
         match['status'] = 'Abierto';
 
@@ -110,7 +95,7 @@ export class ViewTransactionComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public _userService: UserService,
     private _modalService: NgbModal,
-
+    public _printService: PrintService,
     private _objService: AccountSeatService,
     private _toast: ToastService,
     public _periodService: AccountPeriodService,
@@ -210,10 +195,7 @@ export class ViewTransactionComponent implements OnInit {
 
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (
-              eval(`this.obj${sumF}`) == null ||
-              eval(`this.obj${sumF}`) == undefined
-            ) {
+            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }
@@ -235,10 +217,7 @@ export class ViewTransactionComponent implements OnInit {
             break;
           default:
             if (field.tag !== 'separator')
-              values[field.name] =
-                eval('this.obj.' + field.name) !== undefined
-                  ? eval('this.obj.' + field.name)
-                  : null;
+              values[field.name] = eval('this.obj.' + field.name) !== undefined ? eval('this.obj.' + field.name) : null;
             break;
         }
       }
@@ -268,8 +247,7 @@ export class ViewTransactionComponent implements OnInit {
     };
 
     for (let field of this.formFields) {
-      if (field.tag !== 'separator')
-        fields[field.name] = [this.obj[field.name], field.validators];
+      if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators];
     }
 
     this.objForm = this._fb.group(fields);
@@ -330,9 +308,7 @@ export class ViewTransactionComponent implements OnInit {
           } else {
             this.hideMessage();
             this.transaction = result.transaction;
-            this.transaction.totalPrice = this.roundNumber.transform(
-              this.transaction.totalPrice
-            );
+            this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
             this.getMovementsOfArticlesByTransaction();
             this.getMovementsOfCashesByTransaction();
           }
@@ -396,28 +372,6 @@ export class ViewTransactionComponent implements OnInit {
     );
   }
 
-  public printArticle(movement: MovementOfArticle) {
-    this.loading = true;
-    this._printerService
-      .printArticle(movement.article._id, movement.amount)
-      .subscribe(
-        (res: Blob) => {
-          if (res) {
-            const blobUrl = URL.createObjectURL(res);
-            printJS(blobUrl);
-            this.loading = false;
-          } else {
-            this.loading = false;
-            this.showMessage('Error al cargar el PDF', 'danger', false);
-          }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error.message, 'danger', false);
-        }
-      );
-  }
-
   async openModal(op: string, movement?: MovementOfArticle) {
     let modalRef;
 
@@ -451,35 +405,15 @@ export class ViewTransactionComponent implements OnInit {
         modalRef.componentInstance.operation = 'update';
         break;
       case 'print-label':
-        this.printArticle(movement);
+        const data = {
+          quantity: movement.amount,
+          articleId: movement.article._id,
+        };
+        this._printService.toPrint(PrintType.Article, data);
         break;
       default:
         break;
     }
-  }
-
-  public getPrinters(): Promise<Printer[]> {
-    return new Promise<Printer[]>(async (resolve, reject) => {
-      this.loading = true;
-
-      this._printerService.getPrinters().subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.printers) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.printers);
-          }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
   }
 
   public orderBy(term: string, property?: string): void {
@@ -500,11 +434,7 @@ export class ViewTransactionComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
