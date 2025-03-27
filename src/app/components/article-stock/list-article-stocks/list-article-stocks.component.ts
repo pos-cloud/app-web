@@ -24,6 +24,9 @@ import { PrintService } from '@core/services/print.service';
 import { ApiResponse, Branch, PrintType } from '@types';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import * as printJS from 'print-js';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AddArticleStockComponent } from '../article-stock/add-article-stock.component';
 
 @Component({
@@ -84,6 +87,8 @@ export class ListArticleStocksComponent implements OnInit {
     itemsShowLimit: 3,
     allowSearchFilter: true,
   };
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private _articleStockService: ArticleStockService,
@@ -376,7 +381,7 @@ export class ListArticleStocksComponent implements OnInit {
           quantity: articleStock.realStock,
           articleId: articleStock.article._id,
         };
-        this._printService.toPrint(PrintType.Article, datalabel);
+        this.toPrint(PrintType.Article, datalabel);
         this.loading = false;
         break;
       case 'print-inventario':
@@ -446,6 +451,41 @@ export class ListArticleStocksComponent implements OnInit {
     }
 
     this.getItems();
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: async (result: Blob) => {
+          if (result) {
+            // Convertimos el Blob a texto para verificar si es un error
+            const text = await result.text();
+
+            try {
+              const json = JSON.parse(text); // Intentamos parsearlo como JSON
+
+              if (json.status === 400 || json.error) {
+                this._toastService.showToast(json);
+              }
+            } catch (e) {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            }
+          } else {
+            this._toastService.showToast('Error al generar el PDF');
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast('Error en la impresión');
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public getPrinters(): Promise<Printer[]> {

@@ -1,14 +1,19 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { PrintService } from '@core/services/print.service';
-import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastService } from '@shared/components/toast/toast.service';
 import { IAttribute, IButton, PrintType } from '@types';
 import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
+import * as printJS from 'print-js';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ArticleService } from '../../../core/services/article.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
 import { UpdateArticlePriceComponent } from '../actions/update-article-price/update-article-price.component';
+
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
@@ -19,6 +24,7 @@ export class ListArticlesComponent {
   public title: string = 'articles';
   public sort = { code: 1 };
   public loading: boolean = false;
+  private destroy$ = new Subject<void>();
   public columns: IAttribute[] = [
     {
       name: '_id',
@@ -609,7 +615,7 @@ export class ListArticlesComponent {
     private _router: Router,
     public _printerService: PrinterService,
     public _printService: PrintService,
-    public _alertConfig: NgbAlertConfig
+    private _toastService: ToastService
   ) {}
 
   public async emitEvent(event) {
@@ -672,15 +678,13 @@ export class ListArticlesComponent {
           quantity: 1,
           articleId: obj._id,
         };
-        this._printService.toPrint(PrintType.Article, datalabel);
-        this.loading = false;
+        this.toPrint(PrintType.Article, datalabel);
         break;
       case 'print-labels':
         const dataLabels = {
           articlesIds: items.map((objeto) => objeto._id),
         };
-        this._printService.toPrint(PrintType.Labels, dataLabels);
-        this.loading = false;
+        this.toPrint(PrintType.Labels, dataLabels);
         break;
       case 'copy':
         currentUrl = encodeURIComponent(this._router.url);
@@ -717,5 +721,40 @@ export class ListArticlesComponent {
 
   public refresh() {
     this.datatableComponent.refresh();
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: async (result: Blob) => {
+          if (result) {
+            // Convertimos el Blob a texto para verificar si es un error
+            const text = await result.text();
+
+            try {
+              const json = JSON.parse(text); // Intentamos parsearlo como JSON
+
+              if (json.status === 400 || json.error) {
+                this._toastService.showToast(json);
+              }
+            } catch (e) {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            }
+          } else {
+            this._toastService.showToast('Error al generar el PDF');
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast('Error en la impresión');
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 }

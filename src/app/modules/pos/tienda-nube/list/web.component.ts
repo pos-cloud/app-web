@@ -26,6 +26,7 @@ import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as moment from 'moment';
+import * as printJS from 'print-js';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CancelComponent } from '../tienda-nube-cancel/cancel.component';
@@ -420,7 +421,7 @@ export class WebComponent implements OnInit {
             const data = {
               transactionId: transaction._id,
             };
-            this._printService.toPrint(PrintType.Transaction, data);
+            this.toPrint(PrintType.Transaction, data);
           } else {
             if (
               transaction.type.expirationDate &&
@@ -568,6 +569,41 @@ export class WebComponent implements OnInit {
           this._toastService.showToast(error);
         },
         complete: () => {},
+      });
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: async (result: Blob) => {
+          if (result) {
+            // Convertimos el Blob a texto para verificar si es un error
+            const text = await result.text();
+
+            try {
+              const json = JSON.parse(text); // Intentamos parsearlo como JSON
+
+              if (json.status === 400 || json.error) {
+                this._toastService.showToast(json);
+              }
+            } catch (e) {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            }
+          } else {
+            this._toastService.showToast('Error al generar el PDF');
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast('Error en la impresión');
+        },
+        complete: () => {
+          this.loading = false;
+        },
       });
   }
 

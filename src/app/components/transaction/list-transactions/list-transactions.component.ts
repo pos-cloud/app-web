@@ -30,9 +30,13 @@ import { Transaction, attributes } from '../transaction';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
 import { PrintService } from '@core/services/print.service';
+import { ToastService } from '@shared/components/toast/toast.service';
 import { Branch, PrintType } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import 'moment/locale/es';
+import * as printJS from 'print-js';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-transactions',
@@ -94,6 +98,8 @@ export class ListTransactionsComponent implements OnInit {
   deleteTransaction = true;
   editTransaction = true;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
@@ -107,7 +113,8 @@ export class ListTransactionsComponent implements OnInit {
     public _printerService: PrinterService,
     public _branchService: BranchService,
     private _authService: AuthService,
-    public _printService: PrintService
+    public _printService: PrintService,
+    private _toastService: ToastService
   ) {
     this.transactionTypesSelect = new Array();
     this.filters = new Array();
@@ -574,7 +581,7 @@ export class ListTransactionsComponent implements OnInit {
           const data = {
             transactionId: transaction._id,
           };
-          this._printService.toPrint(PrintType.Transaction, data);
+          this.toPrint(PrintType.Transaction, data);
         } else {
           if (transaction.type.expirationDate && moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0) {
             this.showMessage('El documento esta vencido', 'danger', true);
@@ -798,6 +805,41 @@ export class ListTransactionsComponent implements OnInit {
         );
       }
     });
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: async (result: Blob) => {
+          if (result) {
+            // Convertimos el Blob a texto para verificar si es un error
+            const text = await result.text();
+
+            try {
+              const json = JSON.parse(text); // Intentamos parsearlo como JSON
+
+              if (json.status === 400 || json.error) {
+                this._toastService.showToast(json);
+              }
+            } catch (e) {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            }
+          } else {
+            this._toastService.showToast('Error al generar el PDF');
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast('Error en la impresión');
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public padNumber(n, length): string {

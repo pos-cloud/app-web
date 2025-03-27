@@ -4,7 +4,6 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from 'environments/environment';
-import * as printJS from 'print-js';
 import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 
@@ -23,25 +22,20 @@ export enum PrintType {
 export class PrintService {
   constructor(private _http: HttpClient, private _authService: AuthService) {}
 
-  public toPrint(type: PrintType, body: {}) {
+  public toPrint(type: string, body: {}): Observable<Blob> {
     const URL_PRINT = `${environment.apiv2}/to-print/${type}`;
-
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    this._http.post(URL_PRINT, body, { headers, responseType: 'blob' }).subscribe(
-      (res: Blob) => {
-        if (res) {
-          const blobUrl = URL.createObjectURL(res);
-          printJS(blobUrl);
-        } else {
-          console.error('Error al generar el PDF');
-        }
-      },
-      (error) => {
-        console.error('Error en la impresión:', error);
-      }
+    return this._http.post(URL_PRINT, body, { headers, responseType: 'blob' }).pipe(
+      map((res) => {
+        console.log(res);
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
     );
   }
 

@@ -30,6 +30,8 @@ import { Transaction } from '../transaction';
 import { PrintService } from '@core/services/print.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'moment/locale/es';
+import * as printJS from 'print-js';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-view-transaction',
@@ -65,6 +67,8 @@ export class ViewTransactionComponent implements OnInit {
     required: 'Este campo es requerido.',
   };
   formFields: FormField[] = [];
+
+  private destroy$ = new Subject<void>();
 
   searchPeriods = (text$: Observable<string>) =>
     text$.pipe(
@@ -409,7 +413,7 @@ export class ViewTransactionComponent implements OnInit {
           quantity: movement.amount,
           articleId: movement.article._id,
         };
-        this._printService.toPrint(PrintType.Article, data);
+        this.toPrint(PrintType.Article, data);
         break;
       default:
         break;
@@ -442,5 +446,40 @@ export class ViewTransactionComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: async (result: Blob) => {
+          if (result) {
+            // Convertimos el Blob a texto para verificar si es un error
+            const text = await result.text();
+
+            try {
+              const json = JSON.parse(text); // Intentamos parsearlo como JSON
+
+              if (json.status === 400 || json.error) {
+                this._toast.showToast(json);
+              }
+            } catch (e) {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            }
+          } else {
+            this._toast.showToast('Error al generar el PDF');
+          }
+        },
+        error: (error) => {
+          this._toast.showToast('Error en la impresión');
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 }
