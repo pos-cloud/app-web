@@ -672,5 +672,7 @@
   "price-list": "Lista de precios",
   "add-account-period": "Agregar período contable",
   "next": "Siguiente",
-  "select": "Seleccionar"
+  "select": "Seleccionar",
+  "add-article": "Agregar producto",
+  "max-length": "Máximo permitido: {{max}} caracteres"
 }

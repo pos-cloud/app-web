@@ -5,7 +5,7 @@
         'add-article' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ bank?.code ?? '' }}</span
+        >{{ 'edit' | translate | capitalize }} {{ article?.code ?? '' }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
         {{ article?.code ?? '' }}</span
@@ -19,7 +19,7 @@
           class="btn"
           [disabled]="loading"
           *ngIf="operation !== 'delete' && operation !== 'view'"
-          (click)="handleBankOperation()"
+          (click)="handleArticleOperation()"
         >
           <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
@@ -39,87 +39,277 @@
       </div>
     </div>
     <div class="card-body scroll">
-      <form [formGroup]="articleForm" (ngSubmit)="handleArticleOperation()" autocomplete="off">
+      <form [formGroup]="articleForm" (ngSubmit)="handleArticleOperation()" autocomplete="off" *ngIf="!loading">
         <div class="row">
-          <label class="form-group col-md-12">
+          <label class="col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-2">
-            <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
-            <input type="number" class="form-control" formControlName="order" name="order" id="order" />
-          </div>
-          <div class="form-group col-md-3">
-            <label for="code" class="control-label">{{ 'code' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="code"
-              name="code"
-              id="code"
-              [focus]="focusEvent"
-              [ngClass]="{
-                  'is-invalid': articleForm.get('code')?.touched && articleForm.get('code')?.invalid,
-                }"
-            />
-            <div
-              class="invalid-feedback"
-              *ngIf="articleForm.get('code')?.touched && articleForm.get('code')?.hasError('required')"
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-md-2">
+                <label for="order">{{ 'order' | translate | capitalize }}:</label>
+                <input type="number" class="form-control" formControlName="order" name="order" id="order" />
+              </div>
+              <div class="col-md-5">
+                <label for="code">{{ 'code' | translate | capitalize }}:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="code"
+                  name="code"
+                  id="code"
+                  [focus]="focusEvent"
+                  [ngClass]="{
+                      'is-invalid': articleForm.get('code')?.touched && articleForm.get('code')?.invalid,
+                    }"
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="articleForm.get('code')?.touched && articleForm.get('code')?.hasError('required')"
+                >
+                  {{ 'fieldRequired' | translate | capitalize }}
+                </div>
+              </div>
+              <div class="col-md-5">
+                <label for="barcode">{{ 'barcode' | translate | capitalize }}:</label>
+                <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label for="make"> {{ 'make' | translate | capitalize }}:</label>
+                <app-typeahead-dropdown
+                  [control]="articleForm.get('make')"
+                  [data]="makes"
+                  [readonly]="readonly"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+
+              <div class="col-md-6">
+                <label for="category">{{ 'category' | translate | capitalize }}:</label>
+                <app-typeahead-dropdown
+                  [control]="articleForm.get('category')"
+                  [data]="categories"
+                  [readonly]="readonly"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-7">
+                <label for="description">{{ 'description' | translate | capitalize }}:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="description"
+                  name="description"
+                  id="description"
+                  (blur)="loadPosDescription()"
+                  [ngClass]="{
+                      'is-invalid': articleForm.get('description')?.touched && articleForm.get('description')?.invalid,
+                    }"
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    articleForm.get('description')?.touched && articleForm.get('description')?.hasError('required')
+                  "
+                >
+                  {{ 'fieldRequired' | translate | capitalize }}
+                </div>
+              </div>
+              <div class="col-md-5">
+                <label for="posDescription">{{ 'posDescription' | translate | capitalize }}:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="posDescription"
+                  name="posDescription"
+                  id="posDescription"
+                  [ngClass]="{
+                      'is-invalid': articleForm.get('posDescription')?.touched && articleForm.get('posDescription')?.invalid,
+                    }"
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    articleForm.get('posDescription')?.touched &&
+                    articleForm.get('posDescription')?.hasError('required')
+                  "
+                >
+                  {{ 'fieldRequired' | translate | capitalize }}
+                </div>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    articleForm.get('posDescription')?.touched &&
+                    articleForm.get('posDescription')?.hasError('maxlength')
+                  "
+                >
+                  {{
+                    'max-length'
+                      | translate : { max: articleForm.get('posDescription')?.errors?.maxlength?.requiredLength || 0 }
+                      | capitalize
+                  }}
+                </div>
+              </div>
             </div>
           </div>
-          <div class="form-group col-md-2">
-            <label for="category" class="control-label">{{ 'category' | translate | capitalize }}:</label>
+
+          <div class="col-md-4" style="text-align: center">
+            <app-upload-file
+              (uploadedUrls)="onImagesUploaded($event)"
+              [folder]="'article'"
+              [existingImageUrl]="articleForm.get('picture')?.value"
+            >
+            </app-upload-file>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <label for="unitOfMeasurement">{{ 'unitOfMeasurement' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
-              [control]="articleForm.get('category')"
-              [data]="categories"
+              [control]="articleForm.get('unitOfMeasurement')"
+              [data]="unitOfMeasurements"
               [readonly]="readonly"
               [keyField]="'_id'"
-              [displayField]="'description'"
+              [displayField]="'name'"
             ></app-typeahead-dropdown>
+          </div>
+          <div class="col-md-4">
+            <label for="printIn">{{ 'printIn' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="printIn">
+              <option
+                *ngFor="let printIn of printIns"
+                [ngValue]="printIn"
+                [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')"
+              >
+                {{ printIn }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="favourite">{{ 'favourite' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="favourite">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="observation">{{ 'observation' | translate | capitalize }}</label>
+            <quill-editor
+              formControlName="observation"
+              [modules]="quillConfig.modules"
+              [theme]="quillConfig.theme"
+              style="width: 100%"
+            >
+            </quill-editor>
           </div>
         </div>
         <hr />
         <div class="row">
-          <label class="form-group col-md-12">
+          <label class="col-md-12">
+            <b>{{ 'price' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3">
+            <label for="basePrice">{{ 'basePrice' | translate | capitalize }}:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="basePrice"
+                name="basePrice"
+                (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
+                [ngClass]="{
+                  'is-invalid': articleForm.get('basePrice')?.touched && articleForm.get('basePrice')?.invalid,
+                }"
+              />
+            </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="articleForm.get('basePrice')?.touched && articleForm.get('basePrice')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label class="control-label">{{ 'lastPurchasePrice' | translate | capitalize }}:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input type="number" class="form-control" formControlName="purchasePrice" readonly />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label class="control-label">{{ 'priceCostStructure' | translate | capitalize }}:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input type="number" class="form-control" formControlName="costPrice2" readonly />
+            </div>
+          </div>
+        </div>
+
+        <div class="row"></div>
+
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
             <b>{{ 'audit' | translate | capitalize }}</b>
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-12">
+          <div class="col-md-12">
             <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">
+              <div class="col-md-6">
+                <label>
                   {{ 'creationUser.name' | translate | capitalize }}:
                   <b>{{ article?.creationUser?.name ?? '' }}</b>
                 </label>
               </div>
-              <div class="form-group col-md-6">
-                <label class="control-label">
+              <div class="col-md-6">
+                <label>
                   {{ 'theDay' | translate | capitalize }}:
                   <b>{{ article?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
             <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">
+              <div class="col-md-6">
+                <label>
                   {{ 'updateUser.name' | translate | capitalize }}:
                   <b>{{ article?.updateUser?.name ?? '' }}</b>
                 </label>
               </div>
-              <div class="form-group col-md-6">
-                <label class="control-label">
+              <div class="col-md-6">
+                <label>
                   {{ 'theDay' | translate | capitalize }}:
                   <b>{{ article?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
             <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">
+              <div class="col-md-6">
+                <label>
                   {{ 'id' | translate | capitalize }}:
                   <b>{{ article?._id ?? '' }}</b>
                 </label>

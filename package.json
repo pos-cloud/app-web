@@ -44,6 +44,7 @@
     "ngx-quill": "^21.0.2",
     "print-js": "^1.6.0",
     "quill": "^1.3.7",
+    "quill-image-resize": "^3.0.9",
     "rxjs": "^7.8.1",
     "simple-keyboard": "^2.27.56",
     "tether": "^1.4.0",
