@@ -510,7 +510,7 @@ export class HeaderComponent implements OnInit {
           label: 'Productos',
           icon: 'fa fa-shopping-basket',
           children: [
-            { label: 'Productos', link: 'admin/articles' },
+            { label: 'Productos', link: 'entities/articles' },
             { label: 'Variantes', link: 'admin/variants' },
             { label: 'Marcas', link: 'entities/makes' },
             { label: 'Categoria', link: 'entities/categories' },

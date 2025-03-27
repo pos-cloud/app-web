@@ -22,6 +22,7 @@ import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { TaxService } from '@core/services/tax.service';
+import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { Tax } from 'app/components/tax/tax';
 import Quill from 'quill';
 import ImageResize from 'quill-image-resize';
@@ -40,6 +41,7 @@ Quill.register('modules/imageResize', ImageResize);
     TypeaheadDropdownComponent,
     UploadFileComponent,
     QuillModule,
+    ProgressbarModule,
   ],
 })
 export class ArticleComponent implements OnInit {
@@ -122,6 +124,7 @@ export class ArticleComponent implements OnInit {
       printIn: [ArticlePrintIn.Counter, []],
       favourite: [false, []],
       basePrice: ['', [Validators.required]],
+      taxes: [this._fb.array([])],
 
       codeProvider: ['', []],
       codeSAT: ['', []],

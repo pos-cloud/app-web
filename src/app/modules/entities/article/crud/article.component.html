@@ -38,6 +38,7 @@
         </button>
       </div>
     </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
       <form [formGroup]="articleForm" (ngSubmit)="handleArticleOperation()" autocomplete="off" *ngIf="!loading">
         <div class="row">
