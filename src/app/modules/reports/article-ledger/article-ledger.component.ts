@@ -191,7 +191,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
             this.totals = result?.result?.totals ?? {};
             this.header = result?.result?.header ?? [];
             this.title = result?.result?.info?.title ?? 'Kadex de producto';
-
+            this.articleForm.get('article').setValue(null);
             this.cdRef.detectChanges();
           },
           error: (error) => {
