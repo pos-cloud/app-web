@@ -668,5 +668,7 @@
   "week": "Semana",
   "year": "Año",
   "unit-of-measurements": "Unidades de medida",
-  "room": "Salón"
+  "room": "Salón",
+  "add-article": "Agregar producto",
+  "max-length": "Máximo permitido: {{max}} caracteres"
 }

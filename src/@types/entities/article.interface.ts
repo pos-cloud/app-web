@@ -3,6 +3,7 @@ import {
   Category,
   Classification,
   Currency,
+  Deposit,
   Make,
   UnitOfMeasurement,
   VariantType,
@@ -35,7 +36,7 @@ export interface Article extends Activity {
   make: Make;
   category: Category;
   deposits: {
-    deposit: any; //Deposit;
+    deposit: Deposit;
     capacity: number;
   }[];
   locations: {
