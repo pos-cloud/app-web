@@ -239,6 +239,12 @@ export class ListCategoriesComponent {
       icon: 'fa fa-upload',
       click: `this.emitEvent('import', null)`,
     },
+    {
+      title: 'refresh',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.refresh()`,
+    },
   ];
 
   // EXCEL
