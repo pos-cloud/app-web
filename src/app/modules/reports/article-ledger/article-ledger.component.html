@@ -1,15 +1,28 @@
 <section class="container-fluid">
   <div class="d-flex align-items-center justify-content-between flex-wrap">
-    <div class="form-group mr-2 pt-3">
+    <div class="form-group mr-2 pt-3 w-20">
       <label for="article" class="control-label">
-        <b>{{ 'article' | translate | capitalize }}</b></label
+        <b>{{ 'code' | translate | capitalize }}</b></label
+      >
+      <app-typeahead-dropdown
+        [control]="articleControl"
+        [data]="articles"
+        [keyField]="'_id'"
+        [displayField]="'code'"
+        [placeholder]="''"
+      ></app-typeahead-dropdown>
+    </div>
+
+    <div class="form-group mr-2 pt-3 w-50">
+      <label for="article" class="control-label">
+        <b>{{ 'description' | translate | capitalize }}</b></label
       >
       <app-typeahead-dropdown
         [control]="articleControl"
         [data]="articles"
         [keyField]="'_id'"
         [displayField]="'description'"
-        [placeholder]="'Lista de arículos'"
+        [placeholder]="''"
       ></app-typeahead-dropdown>
     </div>
 

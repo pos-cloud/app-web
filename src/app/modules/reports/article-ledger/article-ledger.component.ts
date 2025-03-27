@@ -144,6 +144,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
             _id: 1,
             operationType: 1,
             description: 1,
+            code: 1,
           },
           match: {
             operationType: { $ne: 'D' },
