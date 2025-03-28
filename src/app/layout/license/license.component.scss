@@ -24,19 +24,19 @@
 }
 
 .row {
-    margin-bottom: 2rem; /* Espacio entre las filas */
+    margin-bottom: 2rem;
 }
 
 .license-card {
     background: #f1f1f1;
-    padding: 1.25rem; /* Agregar padding adicional */
+    padding: 1.25rem; 
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%; /* Asegura que las tarjetas tengan el mismo alto */
+    height: 100%;
     transition: transform 0.2s ease-in-out;
     
     &:hover {
@@ -76,8 +76,9 @@
     }
 }
 
-#mercadoPagoBrick {
+#mercado-pago-container {
     display: flex;
-    justify-content: center;
-    padding: 2rem 0;
+    min-height: calc(100vh - 250px);
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;  
 }
