@@ -15,7 +15,7 @@ declare global {
 @Injectable({
   providedIn: 'root',
 })
-export class MercadoPagoService {
+export class LicenseService {
   private mp: any;
 
   constructor(
@@ -96,7 +96,7 @@ export class MercadoPagoService {
               const headers = new HttpHeaders({
                 "Content-Type": "application/json",
               });
-
+              
               const data = await firstValueFrom(
                 this.http.post(
                   `${environment.apiLicense}/payments/create-payment`,

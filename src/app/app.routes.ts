@@ -569,11 +569,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.production.kitchen' },
   },
-  {
-    path: 'license',
-    component: LicenseComponent,
-    canActivate: [AuthGuard],
-  },
 
   {
     path: 'menu/:database',
@@ -595,6 +590,11 @@ export const _routes: Routes = [
     path: 'pos',
     canActivate: [AuthGuard, LicenseGuard],
     loadChildren: () => import('./modules/pos/pos.routes').then((m) => m.POS_ROUTES),
+  },
+  {
+    path: 'license',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./layout/license/license.component').then((m) => m.LicenseComponent),
   },
   // {
   //   path: 'transaction',
