@@ -1,84 +1,43 @@
-.card{
+.card {
     padding: 20px;
-    min-height: calc(100vh - 225px);
-    max-height: calc(100vh - 225px);
+    min-height: calc(109vh - 225px);
+    max-height: calc(109vh - 225px);
 }
 
 .container-fluid {
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding: 30px;
 }
 
-.section-title {
-    font-size: 1.25rem;
+.license-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
     font-weight: bold;
     margin-bottom: 1rem;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.license-header p {
+    margin: 0;
+    padding: 0 10px;
     color: #495057;
 }
 
-.client-info p {
-    font-size: 1rem;
-    color: #6c757d;
-}
-
-.row {
-    margin-bottom: 2rem;
-}
-
-.license-card {
-    background: #f1f1f1;
-    padding: 1.25rem; 
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.brick-container {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    transition: transform 0.2s ease-in-out;
-    
-    &:hover {
-        transform: translateY(-5px);
-    }
-}
-
-.license-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #007bff;
-}
-
-.license-description {
-    font-size: 1rem;
-    color: #6c757d;
-    margin-bottom: 1rem;
-}
-
-.license-price {
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border: none;
-    padding: 0.5rem 1.25rem;
-    border-radius: 5px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    
-    &:hover {
-        background-color: #0056b3;
-    }
+    justify-content: center;
+    align-items: center;
 }
 
 #mercado-pago-container {
+    width: 100%;
     display: flex;
     min-height: calc(100vh - 250px);
     max-height: calc(100vh - 250px);
-    overflow-y: auto;  
+    overflow-y: auto;
 }
