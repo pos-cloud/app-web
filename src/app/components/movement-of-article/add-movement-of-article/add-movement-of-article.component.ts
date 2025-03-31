@@ -1015,6 +1015,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.category = articleSelected.category;
     this.movementOfArticle.barcode = articleSelected.barcode;
     this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+    this.movementOfArticle.op = Date.now() + Math.floor(Math.random() * 100000);
 
     let quotation = 1;
 
@@ -1538,6 +1539,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             movArticle.category = article.category;
             movArticle.barcode = article.barcode;
             movArticle.isOptional = isOptional;
+            movArticle.op = Date.now() + Math.floor(Math.random() * 100000);
 
             //para stock y cocina
             movArticle.amount = quantity * this.movementOfArticle.amount;
