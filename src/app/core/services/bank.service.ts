@@ -1,20 +1,17 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { Bank } from '@types';
 import { Config } from 'app/app.config';
 import { ModelService } from 'app/core/services/model.service';
 import { catchError, map, Observable, of } from 'rxjs';
-import Bank from '../../../../services/print/app/models/bank';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BankService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `banks`, // PATH
       _http,
@@ -46,14 +43,7 @@ export class BankService extends ModelService {
       );
   }
 
-  public getBanks(
-    project: {},
-    match: {},
-    sort: {},
-    group: {},
-    limit: number = 0,
-    skip: number = 0
-  ): Observable<any> {
+  public getBanks(project: {}, match: {}, sort: {}, group: {}, limit: number = 0, skip: number = 0): Observable<any> {
     const URL = `${Config.apiURL}banks`;
 
     const headers = new HttpHeaders()
