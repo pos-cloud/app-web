@@ -522,7 +522,7 @@ export class WebComponent implements OnInit {
           });
         }
         break;
-      case 'dateTn':
+      case 'sync-orders':
         this.loading = true;
         modalRef = this._modalService.open(DateFromToComponent, {
           size: 'lg',
