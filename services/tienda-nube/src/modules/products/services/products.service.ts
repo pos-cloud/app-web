@@ -415,16 +415,15 @@ export class ProductsService {
           foundArticle.tiendaNubeId,
         );
         //borramos la imagen
-        if (
-          productTn?.images.length > 0 &&
-          productTn?.images[0]?.id !== foundArticle.picture
-        ) {
-          await this.tiendaNubeService.deleteImageOfProduct(
-            foundArticle.tiendaNubeId,
-            productTn.images[0].id,
-            token,
-            userID,
-          );
+        if (productTn?.images.length > 0) {
+          for (const element of productTn.images) {
+            await this.tiendaNubeService.deleteImageOfProduct(
+              foundArticle.tiendaNubeId,
+              element.id,
+              token,
+              userID,
+            );
+          }
         }
         //subimos la nueva imagen
         await this.tiendaNubeService.uploadImageOfProduct(
