@@ -270,7 +270,75 @@
           </div>
         </div>
 
-        <div class="row"></div>
+        <div class="row">
+          <div class="col-md-3">
+            <label for="tax" class="control-label">Impuesto:</label>
+            <select class="form-control">
+              <option value=""></option>
+              <option *ngFor="let tax of taxes" [disabled]="readonly">
+                {{ tax.name }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="percentage" class="control-label">Porcentaje:</label>
+            <div class="input-group">
+              <input type="number" class="form-control" name="percentage" id="percentage" step="1" />
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">%</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label for="taxAmount" class="control-label">Monto:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input type="number" class="form-control" name="taxAmount" id="taxAmount" step="1" />
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="value" class="control-label">Acción:</label>
+            <div class="input-group">
+              <button type="submit" class="btn btn-success">Agregar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th width="130">Acción</th>
+                <th>Impuesto</th>
+                <th>Base Imponible</th>
+                <th>Porcentaje</th>
+                <th>Monto del Impuesto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                [formGroup]="articleTaxAux"
+                *ngFor="let articleTaxAux of this.articleForm.get('taxes').controls; let i = index"
+              >
+                <td align="left" width="130">
+                  <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteArticleTax(i)">
+                    <i class="fa fa-trash-o"></i>
+                  </button>
+                </td>
+                <td class="flat">{{ articleTaxAux.get('tax').value?.name ?? '' }}</td>
+                <td class="flat">
+                  {{ articleTaxAux.get('taxBase').value | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                </td>
+                <td class="flat">{{ articleTaxAux.get('percentage').value }} %</td>
+                <td class="flat">
+                  {{ articleTaxAux.get('taxAmount').value | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <hr />
         <div class="row">

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormArray, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ApiResponse, Article, Make, UnitOfMeasurement } from '@types';
@@ -54,6 +54,8 @@ export class ArticleComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public articleForm: UntypedFormGroup;
   private destroy$ = new Subject<void>();
+
+  articleTaxes;
 
   public categories: Category[] = [];
   public makes: Make[] = [];
@@ -124,7 +126,7 @@ export class ArticleComponent implements OnInit {
       printIn: [ArticlePrintIn.Counter, []],
       favourite: [false, []],
       basePrice: ['', [Validators.required]],
-      taxes: [this._fb.array([])],
+      taxes: this._fb.array([]),
 
       codeProvider: ['', []],
       codeSAT: ['', []],
@@ -246,8 +248,26 @@ export class ArticleComponent implements OnInit {
       favourite: this.article?.favourite,
       observation: this.article?.observation,
       basePrice: this.article?.basePrice ?? 0,
+      taxes: [],
     };
     this.articleForm.patchValue(values);
+
+    const taxesArray = this.articleForm.get('taxes') as FormArray;
+    this.article?.taxes?.forEach((tax) => {
+      const taxObject = this.taxes?.find((t) => t._id === tax.tax.toString()) ?? null;
+      taxesArray.push(
+        this._fb.group({
+          tax: [taxObject, Validators.required],
+          percentage: [tax.percentage, Validators.required],
+          taxBase: [tax.taxBase, Validators.required],
+          taxAmount: [tax.taxAmount, Validators.required],
+        })
+      );
+    });
+  }
+
+  public deleteArticleTax(index: number): void {
+    (this.articleForm.get('taxes') as FormArray).removeAt(index);
   }
 
   returnTo() {
