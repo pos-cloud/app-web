@@ -124,6 +124,8 @@ export class Article {
       type: VariantType;
     }
   ];
+  public publishTiendaNube: Boolean = false;
+  public publishWooCommerce: Boolean = false;
 
   constructor() {}
 }
