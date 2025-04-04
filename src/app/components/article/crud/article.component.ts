@@ -37,7 +37,6 @@ import { AccountService } from '../../../core/services/account.service';
 import { ApplicationService } from '../../../core/services/application.service';
 import { ClassificationService } from '../../../core/services/classification.service';
 import { ConfigService } from '../../../core/services/config.service';
-import { Application } from '../../application/application.model';
 
 // Services
 
@@ -118,7 +117,6 @@ export class ArticleComponent implements OnInit {
   fileNameArray: string;
   formErrorsNote: string;
   formErrorsTag: string;
-  applications: Application[];
   focus$: Subject<string>[] = new Array();
   totalTaxes: number = 0;
   salePriceWithoutVAT: number = 0;
@@ -404,18 +402,6 @@ export class ArticleComponent implements OnInit {
       this.article.allowSaleWithoutStock = this.config.article.allowSaleWithoutStock.default || false;
     });
 
-    await this.getAllApplications({})
-      .then((result: Application[]) => {
-        this.applications = result;
-        if (!this.articleId) {
-          this.applications.forEach((x) => {
-            const control = new UntypedFormControl(false);
-
-            (this.articleForm.controls.applications as UntypedFormArray).push(control);
-          });
-        }
-      })
-      .catch((error: ApiResponse) => this._toastService.showToast(error));
     if (this.articleId && this.articleId !== '') {
       this.getArticle();
     } else {
@@ -511,7 +497,6 @@ export class ArticleComponent implements OnInit {
       lastDatePurchase: [0.0, []],
       classification: [this.article.classification, []],
       pictures: this._fb.array([]),
-      applications: this._fb.array([]),
       url: [this.article.url, []],
       forShipping: [this.article.forShipping, []],
       salesAccount: [this.article.salesAccount, []],
@@ -532,6 +517,8 @@ export class ArticleComponent implements OnInit {
       updateVariants: [this.article.updateVariants, []],
       variants: this._fb.array([]),
       salePriceTN: [this.article.salePriceTN, []],
+      publishTiendaNube: [[this.article.publishTiendaNube, []]],
+      publishWooCommerce: [[this.article.publishWooCommerce, []]],
     });
 
     this.articleForm.valueChanges.subscribe((data) => this.onValueChanged(data));
@@ -1116,7 +1103,6 @@ export class ArticleComponent implements OnInit {
   onAppChange(event: Event, index: number): void {
     const selectElement = event.target as HTMLSelectElement;
     const selectedValue = selectElement.value === 'true';
-    (this.articleForm.controls.applications as UntypedFormArray).at(index).setValue(selectedValue);
   }
 
   setValuesArray(): void {
@@ -1152,14 +1138,6 @@ export class ArticleComponent implements OnInit {
             value: [selectedValue],
           })
         );
-      });
-    }
-
-    if (this.applications && this.applications.length > 0) {
-      this.applications.forEach((app) => {
-        const exists = this.article.applications.toString().includes(app._id);
-        const control = new UntypedFormControl(exists);
-        (this.articleForm.controls.applications as UntypedFormArray).push(control);
       });
     }
   }
@@ -1434,10 +1412,12 @@ export class ArticleComponent implements OnInit {
       height: this.article.height ?? null,
       width: this.article.width ?? null,
       depth: this.article.depth ?? null,
-      showMenu: this.article.showMenu ?? '',
+      showMenu: this.article.showMenu ?? false,
       updateVariants: this.article.updateVariants ?? false,
       tiendaNubeId: this.article.tiendaNubeId ?? null,
       salePriceTN: this.roundNumber.transform(this.article.salePriceTN ?? 0.0),
+      publishTiendaNube: this.article.publishTiendaNube ?? false,
+      publishWooCommerce: this.article.publishWooCommerce ?? false,
     };
 
     this.articleForm.patchValue(values);
@@ -1474,11 +1454,6 @@ export class ArticleComponent implements OnInit {
       }
 
       this.article.taxes = this.taxes;
-      const selectedOrderIds = this.articleForm.value.applications
-        .map((v, i) => (v ? this.applications[i] : null))
-        .filter((v) => v !== null);
-
-      this.article.applications = selectedOrderIds;
 
       const pathLocation: string[] = this._router.url.split('/');
       if (pathLocation[2] === 'articles') {
@@ -1748,24 +1723,6 @@ export class ArticleComponent implements OnInit {
             match,
             sort: { name: 1 },
             limit: 10,
-          })
-          .subscribe(
-            (result) => {
-              result.status === 200 ? resolve(result.result) : reject(result);
-            },
-            (error) => reject(error)
-          )
-      );
-    });
-  }
-
-  getAllApplications(match: {}): Promise<Application[]> {
-    return new Promise<Application[]>((resolve, reject) => {
-      this.subscription.add(
-        this._applicationService
-          .getAll({
-            match,
-            sort: { name: 1 },
           })
           .subscribe(
             (result) => {
