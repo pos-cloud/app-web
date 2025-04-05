@@ -1,0 +1,12 @@
+<div class="container-fluid my-5">
+    <div class="card card-large">
+        <div class="license-header">
+            <p><strong>Próximo cobro:</strong> {{ licensePaymentDueDate | date:'dd/MM/yyyy' }}</p>
+            <p><strong>Fin de licencia:</strong> {{ expirationLicenseDate | date:'dd/MM/yyyy' }}</p>
+            <p><strong>Tipo de licencia:</strong> {{ licenseType }}</p>
+        </div>
+        <div class="brick-container">
+            <div #mercadoPagoContainer id="mercado-pago-container"></div>
+        </div>
+    </div>
+</div>
