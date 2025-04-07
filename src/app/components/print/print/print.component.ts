@@ -3797,6 +3797,17 @@ export class PrintComponent implements OnInit {
         row += 3;
         this.doc.text(element.tax.name + ': ' + '$' + this.roundNumber.transform(element.taxAmount).toString(), 5, row);
       });
+
+      if (
+        this.transaction.type.electronics &&
+        this.company &&
+        this.company.vatCondition &&
+        this.company.vatCondition.observation &&
+        this.company.vatCondition.observation != ''
+      ) {
+        row += 3;
+        this.doc.text(this.company.vatCondition.observation + '.- ', 5, row);
+      }
     }
 
     row += 3;
