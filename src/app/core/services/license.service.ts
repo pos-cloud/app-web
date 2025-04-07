@@ -24,6 +24,49 @@ export class LicenseService {
   ) {
   }
 
+  prepareLicenseData() {
+    let licenseData = {
+      id: "1",
+      title: "Plan Basico",
+      quantity: 1,
+      currency_id: "ARS",
+      unit_price: 100,
+    };
+    return licenseData;
+  }
+
+  getLicenseStatus(
+    fechaReferencia: Date,
+    licensePaymentDueDate: Date,
+    expirationLicenseDate: Date
+  ): {
+    status: string,
+    alertType: 'success' | 'warning' | 'danger'
+  } {
+    console.log(fechaReferencia, licensePaymentDueDate, expirationLicenseDate);
+    if (fechaReferencia < licensePaymentDueDate) {
+      return { status: 'Activa', alertType: 'success' };
+    } else if (fechaReferencia < expirationLicenseDate) {
+      return { status: 'Con recargo', alertType: 'warning' };
+    } else {
+      return { status: 'Vencida', alertType: 'danger' };
+    }
+  }
+  
+  getLicenseTypeLabel(type: number): string {
+    //este dato debería traerse desde la api license cuando se puedan traer los datos de licencia
+    switch (type) {
+      case 1:
+        return 'Básico';
+      case 2:
+        return 'Standard';
+      case 3:
+        return 'Premium';
+      default:
+        return 'Desconocido';
+    }
+  }
+
   async initializeMercadoPago() {
     await loadMercadoPago();
 
@@ -43,17 +86,6 @@ export class LicenseService {
       console.error("Error al crear la preferencia:", error);
       throw error;
     }
-  }
-
-  prepareLicenseData() {
-    let licenseData = {
-      id: "1",
-      title: "Plan Basico",
-      quantity: 1,
-      currency_id: "ARS",
-      unit_price: 100,
-    };
-    return licenseData;
   }
 
   async createPaymentBrick(containerId: string, payer: object) {
@@ -96,7 +128,7 @@ export class LicenseService {
               const headers = new HttpHeaders({
                 "Content-Type": "application/json",
               });
-              
+
               const data = await firstValueFrom(
                 this.http.post(
                   `${environment.apiLicense}/payments/create-payment`,
