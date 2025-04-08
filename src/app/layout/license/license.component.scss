@@ -1,26 +1,3 @@
-.card {
-    padding: 20px;
-    min-height: calc(109vh - 225px);
-    max-height: calc(109vh - 225px);
-}
-
-.container-fluid {
-    padding: 30px;
-}
-
-.license-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .license-header p {
     margin: 0;
     padding: 0 10px;
@@ -37,7 +14,14 @@
 #mercado-pago-container {
     width: 100%;
     display: flex;
-    min-height: calc(100vh - 250px);
-    max-height: calc(100vh - 250px);
+    min-height: calc(110vh - 250px);
+    max-height: calc(110vh - 250px);
     overflow-y: auto;
+}
+
+
+.card-header {
+    span {
+        color: #607d8b;
+    }
 }

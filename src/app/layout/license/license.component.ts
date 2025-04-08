@@ -3,19 +3,24 @@ import { ConfigService } from 'app/core/services/config.service';
 import { Config } from "app/app.config";
 import { CommonModule } from "@angular/common";
 import { LicenseService } from "@core/services/license.service";
+import { NgbAlertModule } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
     selector: 'app-license',
     templateUrl: './license.component.html',
     styleUrls: ['./license.component.scss'],
     standalone: true,
-    imports: [CommonModule]
+    imports: [CommonModule,NgbAlertModule]
 })
 export class LicenseComponent implements OnInit {
     config: Config;
     licensePaymentDueDate: Date | null = null;
     expirationLicenseDate: Date | null = null;
     licenseType: number = 1;
+
+    licenseStatus: string = '';
+    licenseAlertType: 'success' | 'warning' | 'danger' = 'success';
+    licenseTypeLabel: string = '';
 
     payer = {
         firstName: "",
@@ -31,18 +36,25 @@ export class LicenseComponent implements OnInit {
 
     ngOnInit(): void {
         this._configService.getConfig.subscribe((config) => {
-            this.config = config;
-            this.expirationLicenseDate = new Date(config.expirationLicenseDate);
-            this.licensePaymentDueDate = new Date(config.licensePaymentDueDate);
-            console.log(this.config);
-            this.payer = {
-                firstName: config.companyName,
-                email: config.emailAccount,
-            };
+          this.config = config;
+          this.expirationLicenseDate = new Date(config.expirationLicenseDate);
+          this.licensePaymentDueDate = new Date(config.licensePaymentDueDate);
+      
+          this.payer = {
+            firstName: config.companyName,
+            email: config.emailAccount,
+          };
+          
+          const { status, alertType } = this._licenseService.getLicenseStatus(new Date(),this.licensePaymentDueDate,this.expirationLicenseDate);
+          this.licenseStatus = status;
+          this.licenseAlertType = alertType;
+      
+          this.licenseTypeLabel = this._licenseService.getLicenseTypeLabel(this.licenseType);
         });
-
+      
         this.loadPaymentBrick();
-    }
+      }
+      
 
     private loadPaymentBrick() {
         if (this.containerRef?.nativeElement) {

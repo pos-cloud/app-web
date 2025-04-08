@@ -1,12 +1,30 @@
 <div class="container-fluid my-5">
     <div class="card card-large">
-        <div class="license-header">
-            <p><strong>Próximo cobro:</strong> {{ licensePaymentDueDate | date:'dd/MM/yyyy' }}</p>
-            <p><strong>Fin de licencia:</strong> {{ expirationLicenseDate | date:'dd/MM/yyyy' }}</p>
-            <p><strong>Tipo de licencia:</strong> {{ licenseType }}</p>
+        <div class="card-header">
+            <span>Licencia</span>
         </div>
-        <div class="brick-container">
-            <div #mercadoPagoContainer id="mercado-pago-container"></div>
+        <div class="row">
+            <div class="col-6">
+                <div class="container mt-5 mb-5 ">
+                    <p><strong>Fin de licencia:</strong> {{ expirationLicenseDate | date:'dd/MM/yyyy' }}</p>
+                    <p><strong>Próximo cobro:</strong> {{ licensePaymentDueDate | date:'dd/MM/yyyy' }}</p>
+                    <p><strong>Tipo de Plan:</strong>{{ licenseTypeLabel }}</p>
+
+                    <ngb-alert [type]="licenseAlertType" [dismissible]="false">
+                        Estado de licencia: <strong>{{ licenseStatus }}</strong>
+                    </ngb-alert>
+                    <ngb-alert [type]="'info'" [dismissible]="false">
+                        Las licencias POS Cloud se deben pagar entre el 1 y 10 de cada mes. Pasado el dia 10 habra una
+                        tolerancia de 5 dias con un RECARGO al pago. Luego del dia 15 el sistema se cortara
+                        AUTOMATICAMENTE. Para luego reestablecer el servicio se debera comunicar con nosstros.
+                    </ngb-alert>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="brick-container">
+                    <div #mercadoPagoContainer id="mercado-pago-container"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

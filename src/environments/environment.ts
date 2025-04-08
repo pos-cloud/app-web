@@ -7,7 +7,7 @@ export const environment = {
   // apiStorage: 'https://api-storage.poscloud.ar',
   // apiTiendaNube: 'http://localhost:305',
   // feAr: 'http://localhost:307',
-  apiLicense: 'http://localhost:311',
+  //apiLicense: 'http://localhost:311',
 
   // developer
   api: 'https://d-api-v1.poscloud.ar',
@@ -15,6 +15,5 @@ export const environment = {
   apiStorage: 'https://d-api-storage.poscloud.ar',
   apiTiendaNube: 'https://d-api-tiendanube.poscloud.ar',
   feAr: 'https://d-fe-ar.poscloud.ar',
-  // apiLicense: 'http://d-api-license.poscloud.ar',
-  apiLicense: 'http://localhost:311'
+  apiLicense: 'http://d-api-license.poscloud.ar',
 };
