@@ -1,24 +1,22 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { combineLatest, Subject, takeUntil } from 'rxjs';
+
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
-//model
-import { ApiResponse, Make, PrintType } from '@types';
-import { Category } from '../../../category/category';
-
-//service
-import { CommonModule } from '@angular/common';
-import { PrintService } from '@core/services/print.service';
 import { TranslateModule } from '@ngx-translate/core';
+import * as printJS from 'print-js';
+
+import { ApiResponse, Category, Make, PrintType } from '@types';
+import { PriceList } from 'app/components/price-list/price-list';
+
+import { PrintService } from '@core/services/print.service';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { PriceList } from 'app/components/price-list/price-list';
 import { MakeService } from 'app/core/services/make.service';
 import { PriceListService } from 'app/core/services/price-list.service';
-import * as printJS from 'print-js';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { CategoryService } from '../../../../core/services/category.service';
 
 @Component({
