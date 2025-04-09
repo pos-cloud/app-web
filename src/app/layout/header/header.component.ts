@@ -58,10 +58,11 @@ export class HeaderComponent implements OnInit {
     {
       label: 'Producción',
       icon: 'fa fa-paste',
-      children: [
-        { label: 'Cocina', link: 'pos/cocina' },
-        { label: 'Planta', link: 'pos/mostrador/production' },
-      ],
+      link: 'pos/mostrador/production',
+      // children: [
+      //   { label: 'Cocina', link: 'pos/cocina' },
+      //   { label: 'Planta', link: 'pos/mostrador/production' },
+      // ],
     },
     {
       label: 'Stock',
@@ -500,10 +501,11 @@ export class HeaderComponent implements OnInit {
         this.menu.push({
           label: 'Producción',
           icon: 'fa fa-paste',
-          children: [
-            { label: 'Cocina', link: 'pos/cocina' },
-            { label: 'Planta', link: 'pos/mostrador/production' },
-          ],
+          link: 'pos/mostrador/production',
+          // children: [
+          //   { label: 'Cocina', link: 'pos/cocina' },
+          //   { label: 'Planta', link: 'pos/mostrador/production' },
+          // ],
         });
       }
 
