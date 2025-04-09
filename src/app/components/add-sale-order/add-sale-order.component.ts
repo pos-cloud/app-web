@@ -745,6 +745,12 @@ export class AddSaleOrderComponent {
           this.width += (movementOfArticle.article?.width ?? 0) * movementOfArticle.amount;
         }
       }
+
+      this.m3 = +this.m3.toFixed(2);
+      this.height = +this.height.toFixed(2);
+      this.width = +this.width.toFixed(2);
+      this.depth = +this.depth.toFixed(2);
+      this.weight = +this.weight.toFixed(2);
     }
   }
 
