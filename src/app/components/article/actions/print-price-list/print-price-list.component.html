@@ -5,52 +5,58 @@
   </button>
 </div>
 <section class="container-fluid">
-  <form [formGroup]="printPriceListForm" (ngSubmit)="toPrint()" autocomplete="off">
-    <div class="modal-body">
-      <div class="row">
-        <div class="form-group col-md-6">
-          <label for="withImage" class="control-label">Con Imagen:</label>
-          <select class="form-control" formControlName="withImage">
-            <option [value]="true">Si</option>
-            <option [value]="false" selected>No</option>
-          </select>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="priceList" class="control-label">Lista de Precio:</label>
-          <select class="form-control" formControlName="priceList">
-            <option [ngValue]="null"></option>
-            <option *ngFor="let priceList of priceLists" [value]="priceList._id" [disabled]="readonly">
-              {{ priceList.name }}
-            </option>
-          </select>
-        </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-6">
+        <label for="withImage" class="control-label">Con Imagen:</label>
+        <select class="form-control" [(ngModel)]="filters.image">
+          <option [value]="true">Si</option>
+          <option [value]="false" selected>No</option>
+        </select>
       </div>
-      <div class="row">
-        <div class="form-group col-md-6">
-          <label for="make" class="control-label">Marca</label>
-          <select class="form-control" formControlName="make">
-            <option [ngValue]="null"></option>
-            <option *ngFor="let make of makes" [value]="make._id" [disabled]="readonly">{{ make.description }}</option>
-          </select>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="category" class="control-label">Rubro:</label>
-          <select class="form-control" formControlName="category">
-            <option [ngValue]="null"></option>
-            <option *ngFor="let category of categories" [value]="category._id" [disabled]="readonly">
-              {{ category.description }}
-            </option>
-          </select>
-        </div>
+      <div class="col-md-6">
+        <label for="priceList"> {{ 'price-list' | translate | capitalize }}:</label>
+        <app-multi-select-dropdown
+          [data]="priceLists"
+          [(ngModel)]="filters.priceList"
+          [textField]="'name'"
+          placeholder="Lista de precio"
+          [multi]="false"
+        >
+        </app-multi-select-dropdown>
       </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="loading">
-        <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
-        <span *ngIf="!loading">Imprimir</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
+    <div class="row">
+      <div class="col-md-6">
+        <label for="make"> {{ 'make' | translate | capitalize }}:</label>
+        <app-multi-select-dropdown
+          [data]="makes"
+          [(ngModel)]="filters.makes"
+          [textField]="'description'"
+          placeholder="Marcas"
+        >
+        </app-multi-select-dropdown>
+      </div>
+
+      <div class="col-md-6">
+        <label for="category">{{ 'category' | translate | capitalize }}:</label>
+        <app-multi-select-dropdown
+          [data]="categories"
+          [(ngModel)]="filters.categories"
+          [textField]="'description'"
+          placeholder="Categorias"
+        >
+        </app-multi-select-dropdown>
+      </div>
     </div>
-  </form>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+    <button class="btn btn-primary" [disabled]="loading" (click)="toPrint()">
+      <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+      <span *ngIf="!loading">Imprimir</span>
+      <span *ngIf="loading">Espere por favor</span>
+    </button>
+  </div>
 </section>
