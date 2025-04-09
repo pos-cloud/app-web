@@ -1,4 +1,4 @@
-<div class="container-fluid my-5">
+<div class="container-fluid">
     <div class="card card-large">
         <div class="card-header">
             <span>Licencia</span>
@@ -14,9 +14,12 @@
                         Estado de licencia: <strong>{{ licenseStatus }}</strong>
                     </ngb-alert>
                     <ngb-alert [type]="'info'" [dismissible]="false">
-                        Las licencias POS Cloud se deben pagar entre el 1 y 10 de cada mes. Pasado el dia 10 habra una
-                        tolerancia de 5 dias con un RECARGO al pago. Luego del dia 15 el sistema se cortara
-                        AUTOMATICAMENTE. Para luego reestablecer el servicio se debera comunicar con nosstros.
+                        Una vez recibido el pago, tu licencia se actualizará automáticamente
+                    </ngb-alert>
+                    <ngb-alert [type]="'info'" [dismissible]="false">
+                        Las licencias de POS Cloud deben pagarse entre el 1 y el 10 de cada mes. Pasado el día 10, habrá
+                        una tolerancia de 5 días con un RECARGO en el pago. Luego del día 15, el sistema se cortará
+                        AUTOMÁTICAMENTE. Para restablecer el servicio, deberá comunicarse con nosotros.
                     </ngb-alert>
                 </div>
             </div>

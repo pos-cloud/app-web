@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { ConfigService } from 'app/core/services/config.service';
 import { Config } from "app/app.config";
 import { CommonModule } from "@angular/common";
-import { LicenseService } from "@core/services/license.service";
+import { LicenseService } from "app/core/services/license.service";
 import { NgbAlertModule } from "@ng-bootstrap/ng-bootstrap";
+import { Title } from "@angular/platform-browser";
 
 @Component({
     selector: 'app-license',
@@ -31,10 +32,12 @@ export class LicenseComponent implements OnInit {
 
     constructor(
         private _configService: ConfigService,
-        private _licenseService: LicenseService
+        private _licenseService: LicenseService,
+        private titleService: Title,
     ) {}
 
     ngOnInit(): void {
+        this.titleService.setTitle('Licencia');
         this._configService.getConfig.subscribe((config) => {
           this.config = config;
           this.expirationLicenseDate = new Date(config.expirationLicenseDate);
