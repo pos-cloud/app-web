@@ -174,6 +174,10 @@ export class AddSaleOrderComponent {
     number: 0,
   };
   m3: number = 0;
+  weight: number = 0;
+  width: number = 0;
+  depth: number = 0;
+  height: number = 0;
   user: User;
 
   constructor(
@@ -725,11 +729,20 @@ export class AddSaleOrderComponent {
   updateQuantity(): void {
     this.quantity = 0;
     this.m3 = 0;
+    this.height = 0;
+    this.weight = 0;
+    this.depth = 0;
+    this.width = 0;
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
+        console.log(movementOfArticle.article);
         if (!movementOfArticle.movementParent) {
           this.quantity += movementOfArticle.amount;
           this.m3 += (movementOfArticle.article?.m3 ?? 0) * movementOfArticle.amount;
+          this.height += (movementOfArticle.article?.height ?? 0) * movementOfArticle.amount;
+          this.weight += (movementOfArticle.article?.weight ?? 0) * movementOfArticle.amount;
+          this.depth += (movementOfArticle.article?.depth ?? 0) * movementOfArticle.amount;
+          this.width += (movementOfArticle.article?.width ?? 0) * movementOfArticle.amount;
         }
       }
     }
