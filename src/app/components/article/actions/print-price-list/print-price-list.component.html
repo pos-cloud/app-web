@@ -7,13 +7,13 @@
 <section class="container-fluid">
   <div class="modal-body">
     <div class="row">
-      <div class="col-md-6">
+      <!-- <div class="col-md-6">
         <label for="withImage" class="control-label">Con Imagen:</label>
         <select class="form-control" [(ngModel)]="filters.image">
           <option [value]="true">Si</option>
           <option [value]="false" selected>No</option>
         </select>
-      </div>
+      </div> -->
       <div class="col-md-6">
         <label for="priceList"> {{ 'price-list' | translate | capitalize }}:</label>
         <app-multi-select-dropdown
@@ -25,8 +25,6 @@
         >
         </app-multi-select-dropdown>
       </div>
-    </div>
-    <div class="row">
       <div class="col-md-6">
         <label for="make"> {{ 'make' | translate | capitalize }}:</label>
         <app-multi-select-dropdown
@@ -37,7 +35,8 @@
         >
         </app-multi-select-dropdown>
       </div>
-
+    </div>
+    <div class="row">
       <div class="col-md-6">
         <label for="category">{{ 'category' | translate | capitalize }}:</label>
         <app-multi-select-dropdown
