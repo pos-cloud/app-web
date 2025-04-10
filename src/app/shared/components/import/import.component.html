@@ -5,7 +5,7 @@
   </button>
 </div>
 <section class="container-fluid">
-  <a (click)="downloadModel()" class="pull-right"> Descargar Modelo </a>
+  <button type="button" class="btn btn-secondary pull-right" (click)="downloadModel()">Descargar Modelo</button>
   <div class="row container-filter" *ngIf="model === 'articles-stock'">
     <div class="col-md-3">
       <label for="branch" class="control-label">
