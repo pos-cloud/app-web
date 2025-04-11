@@ -3,18 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { PrintType } from '@types';
 import { environment } from 'environments/environment';
 import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
-
-export enum PrintType {
-  Article = 'article',
-  PriceList = 'price-list',
-  Labels = 'labels',
-  Transaction = 'transaction',
-  Bar = 'Bar',
-  Kitchen = 'kitchen',
-}
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +14,7 @@ export enum PrintType {
 export class PrintService {
   constructor(private _http: HttpClient, private _authService: AuthService) {}
 
-  public toPrint(type: string, body: {}): Observable<Blob> {
+  public toPrint(type: PrintType, body: {}): Observable<Blob> {
     const URL_PRINT = `${environment.apiv2}/to-print/${type}`;
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

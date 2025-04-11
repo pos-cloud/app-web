@@ -4,7 +4,7 @@ import { PrintService } from '@core/services/print.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { IAttribute, IButton, PrintType } from '@types';
-import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
+import { PrintPriceListComponent } from 'app/components/article/actions/print-price-list/print-price-list.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
