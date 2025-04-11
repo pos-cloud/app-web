@@ -129,7 +129,7 @@ export class ReportTransactionsByEmployeeComponent implements OnInit {
         match: {
           transactionMovement: this.transactionMovement,
           operationType: { $ne: 'D' },
-          requestEmployee: true,
+          requestEmployee: { $ne: null },
         },
       })
       .pipe(takeUntil(this.destroy$))
