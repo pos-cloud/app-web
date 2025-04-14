@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { PrintService } from '@core/services/print.service';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { IButton, PrintType } from '@types';
+import { ApiResponse, IButton, PrintType } from '@types';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/core/services/price-list.service';
 import * as printJS from 'print-js';
@@ -141,27 +141,24 @@ export class ListVariantsComponent {
       .toPrint(type, data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: async (result: Blob) => {
-          if (result) {
-            // Convertimos el Blob a texto para verificar si es un error
-            const text = await result.text();
-
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
             try {
-              const json = JSON.parse(text); // Intentamos parsearlo como JSON
-
-              if (json.status === 400 || json.error) {
-                this._toastService.showToast(json);
-              }
-            } catch (e) {
               const blobUrl = URL.createObjectURL(result);
               printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
             }
           } else {
-            this._toastService.showToast('Error al generar el PDF');
+            this._toastService.showToast(result);
           }
         },
         error: (error) => {
-          this._toastService.showToast('Error en la impresión');
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
         },
         complete: () => {
           this.loading = false;

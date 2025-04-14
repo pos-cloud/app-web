@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FormField, PrintType } from '@types';
+import { ApiResponse, FormField, PrintType } from '@types';
 import { Config } from 'app/app.config';
 import { AccountPeriod } from 'app/components/account-period/account-period';
 import { AccountSeat } from 'app/components/account-seat/account-seat';
@@ -455,27 +455,24 @@ export class ViewTransactionComponent implements OnInit {
       .toPrint(type, data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: async (result: Blob) => {
-          if (result) {
-            // Convertimos el Blob a texto para verificar si es un error
-            const text = await result.text();
-
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toast.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
             try {
-              const json = JSON.parse(text); // Intentamos parsearlo como JSON
-
-              if (json.status === 400 || json.error) {
-                this._toast.showToast(json);
-              }
-            } catch (e) {
               const blobUrl = URL.createObjectURL(result);
               printJS(blobUrl);
+            } catch (e) {
+              this._toast.showToast({ message: 'Error al generar el PDF' });
             }
           } else {
-            this._toast.showToast('Error al generar el PDF');
+            this._toast.showToast(result);
           }
         },
         error: (error) => {
-          this._toast.showToast('Error en la impresión');
+          this._toast.showToast({ message: 'Error al generar el PDF' });
         },
         complete: () => {
           this.loading = false;
