@@ -2719,7 +2719,7 @@ export class PrintComponent implements OnInit {
             this.doc.text(this.movementsOfArticles[i].amount.toString(), 6, row);
           }
           if (this.movementsOfArticles[i].code) {
-            this.doc.text(this.movementsOfArticles[i].code.toString().slice(0, 15), 16, row);
+            this.doc.text(this.movementsOfArticles[i].code.toString().slice(0, 15), 12, row);
           }
 
           let detalle = '';
