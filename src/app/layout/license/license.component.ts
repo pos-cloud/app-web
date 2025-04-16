@@ -5,6 +5,7 @@ import { CommonModule } from "@angular/common";
 import { LicenseService } from "app/core/services/license.service";
 import { NgbAlertModule } from "@ng-bootstrap/ng-bootstrap";
 import { Title } from "@angular/platform-browser";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
     selector: 'app-license',
@@ -28,21 +29,27 @@ export class LicenseComponent implements OnInit {
         email: "",
     };
 
+    externalReference: string | null = null;
+
     @ViewChild('mercadoPagoContainer', { static: true }) containerRef?: ElementRef;
 
     constructor(
         private _configService: ConfigService,
         private _licenseService: LicenseService,
         private titleService: Title,
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
         this.titleService.setTitle('Licencia');
+
         this._configService.getConfig.subscribe((config) => {
           this.config = config;
           this.expirationLicenseDate = new Date(config.expirationLicenseDate);
           this.licensePaymentDueDate = new Date(config.licensePaymentDueDate);
-      
+
+          console.log(localStorage.getItem('company'));
+          this.externalReference = config._id;
           this.payer = {
             firstName: config.companyName,
             email: config.emailAccount,
@@ -63,7 +70,7 @@ export class LicenseComponent implements OnInit {
         if (this.containerRef?.nativeElement) {
             const container = this.containerRef.nativeElement;
             container.innerHTML = '';
-            this._licenseService.createPaymentBrick(container.id, this.payer);
+            this._licenseService.createPaymentBrick(container.id, this.payer,this.externalReference);
         }
     }
 }

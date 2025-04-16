@@ -17,6 +17,7 @@ declare global {
 })
 export class LicenseService {
   private mp: any;
+  private externalReference: string | null = null;
 
   constructor(
     private http: HttpClient,
@@ -26,11 +27,13 @@ export class LicenseService {
 
   prepareLicenseData() {
     let licenseData = {
-      id: "1",
-      title: "Plan Basico",
-      quantity: 1,
-      currency_id: "ARS",
-      unit_price: 100,
+      items:{
+        id: "1",
+        title: "Plan Basico",
+        quantity: 1,
+        currency_id: "ARS",
+        unit_price: 100,
+      },
     };
     return licenseData;
   }
@@ -77,7 +80,11 @@ export class LicenseService {
 
   async createPreference(): Promise<any> {
     try {
-      let preferenceData = this.prepareLicenseData();
+      const preferenceData = {
+        ...this.prepareLicenseData(),
+        external_reference: this.externalReference
+      };
+      console.log("preferenceData: ", preferenceData);
       const response = await firstValueFrom(
         this.http.post<any>(`${environment.apiLicense}/preferences/create-preference`, preferenceData)
       );
@@ -88,9 +95,10 @@ export class LicenseService {
     }
   }
 
-  async createPaymentBrick(containerId: string, payer: object) {
+  async createPaymentBrick(containerId: string, payer: object, external_reference: string) {
     await this.initializeMercadoPago();
 
+    this.externalReference = external_reference;
 
     if (!this.mp) {
       console.error('MercadoPago no inicializado');
@@ -98,10 +106,11 @@ export class LicenseService {
     }
 
     const licenseData = this.prepareLicenseData();
-    const amount = licenseData.unit_price;
+    const amount = licenseData.items.unit_price;
     const bricksBuilder = await this.mp.bricks();
     const preference = await this.createPreference();
     const preferenceId = preference.preferenceId;
+    
     try {
       await bricksBuilder.create("payment", containerId, {
         initialization: {
@@ -124,11 +133,12 @@ export class LicenseService {
           onReady: () => console.log("Payment Brick listo."),
           onSubmit: async ({ formData }: { formData: any }) => {
             try {
+              formData.external_reference = this.externalReference;
               console.log(formData);
               const headers = new HttpHeaders({
                 "Content-Type": "application/json",
               });
-
+              console.log("environment.apiLicense: ", environment.apiLicense);
               const data = await firstValueFrom(
                 this.http.post(
                   `${environment.apiLicense}/payments/create-payment`,
@@ -137,7 +147,7 @@ export class LicenseService {
                 )
               );
               console.log("Pago procesado:", data);
-              this.router.navigate(['/'])
+              //this.router.navigate(['/'])
             } catch (error: any) {
               console.error("Error en el pago:", error?.error || error?.message);
             }
