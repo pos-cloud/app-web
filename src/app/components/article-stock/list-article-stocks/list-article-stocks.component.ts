@@ -394,22 +394,6 @@ export class ListArticleStocksComponent implements OnInit {
         modalRef.componentInstance.barcode = this.filters['article.barcode'];
         modalRef.componentInstance.description = this.filters['article.description'];
         break;
-      case 'updateArticle':
-        this.loading = true;
-        this._articleStockService.updateArticle().subscribe(
-          (result) => {
-            if (result && result.message) {
-              this._toastService.showToast(result.message, 'success');
-              this.loading = false;
-            }
-          },
-          (error) => {
-            this._toastService.showToast(error._body, 'danger');
-            this.loading = false;
-            this.totalItems = 0;
-          }
-        );
-        break;
       case 'uploadFile':
         modalRef = this._modalService.open(ImportComponent, {
           size: 'lg',
