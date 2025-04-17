@@ -395,11 +395,7 @@ export class HeaderComponent implements OnInit {
   public openModal(op: string): void {
     switch (op) {
       case 'soporte':
-        window.open(
-          'https://tawk.to/chat/676477cc49e2fd8dfefa6b74/1ifg77trp',
-          'ChatSoporte',
-          'width=400,height=600,scrollbars=no,resizable=no'
-        );
+        window.open('https://api.whatsapp.com/send/?phone=5493564368535', '_blank');
         break;
       case 'changelogs':
         window.open('https://docs.poscloud.ar/books/actualizaciones', '_blank');
