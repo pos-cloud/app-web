@@ -2719,7 +2719,11 @@ export class PrintComponent implements OnInit {
             this.doc.text(this.movementsOfArticles[i].amount.toString(), 6, row);
           }
           if (this.movementsOfArticles[i].code) {
-            this.doc.text(this.movementsOfArticles[i].code.toString().slice(0, 15), 12, row);
+            if (this.database === 'insumosmaxs') {
+              this.doc.text(this.movementsOfArticles[i].code.toString().slice(0, 15), 12, row);
+            } else {
+              this.doc.text(this.movementsOfArticles[i].code.toString().slice(0, 15), 16, row);
+            }
           }
 
           let detalle = '';
