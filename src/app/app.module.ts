@@ -103,7 +103,6 @@ import { ListRelationTypesComponent } from './components/relation-type/list-rela
 import { RelationTypeComponent } from './components/relation-type/relation-type/relation-type.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
-import { ReportKardexComponent } from './components/report-kardex/report-kardex.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component';
@@ -227,7 +226,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     CancellationTypeComponent,
     ListCancellationTypeComponent,
     MovementOfCancellationComponent,
-    ReportKardexComponent,
     StateComponent,
     ListStatesComponent,
     CountryComponent,
