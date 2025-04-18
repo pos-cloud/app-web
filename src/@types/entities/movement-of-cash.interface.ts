@@ -1,4 +1,4 @@
-import { Activity, Bank } from '@types';
+import { Activity, Bank, CurrencyValue, PaymentMethod, Transaction } from '@types';
 
 export interface MovementOfCash extends Activity {
   _id: string;
@@ -19,8 +19,8 @@ export interface MovementOfCash extends Activity {
   amountPaid: number;
   amountDiscount: number;
   observation: string;
-  type: any; // PaymentMethod;
-  transaction: any; //Transaction;
+  type: PaymentMethod;
+  transaction: Transaction;
   receiver: string;
   number: string;
   bank: Bank;
@@ -29,8 +29,8 @@ export interface MovementOfCash extends Activity {
   deliveredBy: string;
   paymentChange: number;
   balanceCanceled: number;
-  cancelingTransaction: any; //Transaction;
-  currencyValues: any; //currencyValue[];
+  cancelingTransaction: Transaction;
+  currencyValues: CurrencyValue[];
   operationType: string;
   status: PaymentStatus;
 }

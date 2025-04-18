@@ -1,6 +1,4 @@
-import { Activity } from '@types';
-import { Employee } from './employee.interface';
-import { Room } from './room.interface';
+import { Activity, EmployeeType, Room, Transaction } from '@types';
 
 export interface Table extends Activity {
   _id: string;
@@ -9,8 +7,8 @@ export interface Table extends Activity {
   chair: number;
   diners: number;
   state: TableState;
-  employee: Employee;
-  lastTransaction: any; // Transaction;
+  employee: EmployeeType;
+  lastTransaction: Transaction | any;
 }
 
 export enum TableState {

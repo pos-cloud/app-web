@@ -4,21 +4,27 @@ import { FormsModule } from '@angular/forms';
 import { PrintService } from '@core/services/print.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ApiResponse, IAttribute, MovementOfCash, PrintType } from '@types';
+import {
+  ApiResponse,
+  IAttribute,
+  MovementOfCash,
+  Printer,
+  PrinterPrintIn,
+  PrintType,
+  Transaction,
+  TransactionMovement,
+  TransactionState,
+  User,
+} from '@types';
 import { Config } from 'app/app.config';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
-import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
-import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
-import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
-import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
-import { PrinterService } from 'app/core/services/printer.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
@@ -48,7 +54,7 @@ export class WebComponent implements OnInit {
   public transaction: Transaction;
   public transactionMovement: TransactionMovement = TransactionMovement.Sale;
   public _datatableService: DatatableService;
-  public user: User;
+  public user: User | any;
   private subscription: Subscription = new Subscription();
   public columns: IAttribute[];
   public printers: Printer[];
@@ -65,7 +71,6 @@ export class WebComponent implements OnInit {
   constructor(
     private _transactionService: TransactionService,
     private _modalService: NgbModal,
-    private _printerService: PrinterService,
     private _tiendaNubeService: TiendaNubeService,
     private _movementOfCash: MovementOfCashService,
     private _toastService: ToastService,
@@ -560,7 +565,7 @@ export class WebComponent implements OnInit {
           this.movOfCash = result.result;
 
           const mergedData = this.transactions.map((movo) => {
-            const matchedTransaction = this.movOfCash.find((item) => item.transaction === movo._id);
+            const matchedTransaction = this.movOfCash.find((item) => item.transaction.toString() === movo._id);
             return { ...movo, movOfCash: matchedTransaction || null };
           });
           this.transactions = mergedData;

@@ -1,4 +1,4 @@
-import { Activity, Employee } from '@types';
+import { Activity, Branch, CashBoxType, Company, Employee, Origin, Permission, Printer } from '@types';
 
 export interface User extends Activity {
   _id: string;
@@ -10,14 +10,14 @@ export interface User extends Activity {
   token: string;
   tokenExpiration: number;
   employee: Employee | null;
-  //   cashBoxType: CashBoxType | null;
-  //   company: Company | null;
-  //   origin: Origin | null;
-  //   branch: Branch;
-  //   shortcuts: { name: string; url: string }[];
-  //   permission: Permission;
-  //   printers: { _id: string; printer: Printer }[];
-  //   level: number;
+  cashBoxType: CashBoxType | null;
+  company: Company | null;
+  origin: Origin | null;
+  branch: Branch;
+  shortcuts: { name: string; url: string }[];
+  permission: Permission;
+  printers: { _id: string; printer: Printer }[];
+  level: number;
 }
 
 export enum UserState {
