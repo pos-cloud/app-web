@@ -8,6 +8,7 @@ import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { Printer } from '@types';
 import { Company } from 'app/components/company/company';
@@ -19,10 +20,7 @@ import { AddTransactionComponent } from 'app/components/transaction/add-transact
 import { Transaction } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
-import { AuthService } from 'app/core/services/auth.service';
 import { CompanyService } from 'app/core/services/company.service';
-import { ConfigService } from 'app/core/services/config.service';
-import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
@@ -93,18 +91,15 @@ export class CurrentAccountComponent implements OnInit {
   };
 
   constructor(
-    public _transactionService: TransactionService,
-    public _movementOfCashService: MovementOfCashService,
-    public _service: CurrentAccountService,
-    public _companyService: CompanyService,
-    public _configService: ConfigService,
-    public _router: Router,
-    public _authService: AuthService,
+    private _transactionService: TransactionService,
+    private _service: CurrentAccountService,
+    private _companyService: CompanyService,
+    private _router: Router,
     private _route: ActivatedRoute,
-    public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
-    public _printerService: PrinterService,
-    private _toastService: ToastService
+    private _modalService: NgbModal,
+    private _printerService: PrinterService,
+    private _toastService: ToastService,
+    private _title: Title
   ) {
     this.roundNumber = new RoundNumberPipe();
   }
@@ -121,6 +116,8 @@ export class CurrentAccountComponent implements OnInit {
       });
       this._router.navigate(['/']);
     }
+
+    this._title.setTitle('Cuenta corriente');
   }
 
   public getCompany(companyId: string): void {

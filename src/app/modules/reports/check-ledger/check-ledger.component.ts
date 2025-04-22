@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -39,7 +40,8 @@ export class ReportCheckLedgerComponent {
     private _service: ReportSystemService,
     private _toastService: ToastService,
     private _fb: UntypedFormBuilder,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private _title: Title
   ) {
     this.form = this._fb.group({
       checkNumber: [''],
@@ -78,6 +80,8 @@ export class ReportCheckLedgerComponent {
             this.totals = result?.result?.totals ?? {};
             this.header = result?.result?.header ?? {};
             this.title = result?.result?.info?.title ?? 'Kadex de cheque';
+            this._title.setTitle(this.title);
+
             this.cdRef.detectChanges();
           },
           error: (error) => {

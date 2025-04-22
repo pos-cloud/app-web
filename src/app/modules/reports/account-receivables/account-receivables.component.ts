@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@shared/pipes/pipes.module';
@@ -42,7 +43,8 @@ export class AccountReceivablesComponent implements OnInit {
     private _service: ReportSystemService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
-    private _activatedRoute: ActivatedRoute
+    private _activatedRoute: ActivatedRoute,
+    private _title: Title
   ) {}
 
   public ngOnDestroy(): void {
@@ -80,8 +82,9 @@ export class AccountReceivablesComponent implements OnInit {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            (this.title = result?.info?.title ?? `Cuenta Corriente por ${this.companyType}`),
-              this.cdRef.detectChanges();
+            this.title = result?.info?.title ?? `Cuenta Corriente por ${this.companyType}`;
+            this._title.setTitle(this.title);
+            this.cdRef.detectChanges();
           },
           error: (error) => {
             this._toastService.showToast(error);

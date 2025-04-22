@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -60,7 +61,7 @@ export class DasboardComponent {
   private subscription: Subscription = new Subscription();
   private destroy$ = new Subject<void>();
 
-  constructor(private _service: ReportSystemService, private _toastService: ToastService) {}
+  constructor(private _service: ReportSystemService, private _toastService: ToastService, private _title: Title) {}
 
   ngOnInit(): void {
     this.getSalesTotal();
@@ -69,6 +70,7 @@ export class DasboardComponent {
     this.getAccountReveivable();
     this.getSalesByMonth();
     this.getSalesByCategory();
+    this._title.setTitle('Dashboard');
   }
 
   private getSalesTotal(): void {

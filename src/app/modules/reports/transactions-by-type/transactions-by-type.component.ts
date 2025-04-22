@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
@@ -59,6 +60,7 @@ export class ReportTransactionsByTypeComponent {
     private _branchService: BranchService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
+    private _title: Title,
     private cdRef: ChangeDetectorRef
   ) {}
 
@@ -129,6 +131,7 @@ export class ReportTransactionsByTypeComponent {
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
             this.title = result?.result?.title ?? 'Transacciones por tipo';
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {

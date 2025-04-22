@@ -5,6 +5,7 @@ import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
@@ -70,6 +71,7 @@ export class ReportMovArtByMakeComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
+    private _title: Title,
     private cdRef: ChangeDetectorRef
   ) {}
 
@@ -171,6 +173,7 @@ export class ReportMovArtByMakeComponent implements OnInit {
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
             this.title = result?.result?.title ?? `Movimientos de Productos por Marca de ${this.transactionMovement}`;
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {

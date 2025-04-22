@@ -5,6 +5,7 @@ import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
@@ -68,6 +69,7 @@ export class ReportMovCashByTypeComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
+    private _title: Title,
     private cdRef: ChangeDetectorRef
   ) {}
 
@@ -168,7 +170,8 @@ export class ReportMovCashByTypeComponent implements OnInit {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            this.title = result?.result?.title ?? `Movimientos de caja por tipo por ${this.transactionMovement}`;
+            this.title = result?.result?.title ?? `Movimientos de ${this.transactionMovement}`;
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {

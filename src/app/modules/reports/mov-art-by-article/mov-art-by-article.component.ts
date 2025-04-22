@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { CategoryService } from '@core/services/category.service';
 import { MakeService } from '@core/services/make.service';
@@ -80,6 +81,7 @@ export class ReportMovArtByArticleComponent {
     private _makeService: MakeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
+    private _title: Title,
     private cdRef: ChangeDetectorRef
   ) {}
 
@@ -245,6 +247,7 @@ export class ReportMovArtByArticleComponent {
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
             this.title = result?.result?.info?.title ?? `Movimientos por artículo de ${this.transactionMovement}`;
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {

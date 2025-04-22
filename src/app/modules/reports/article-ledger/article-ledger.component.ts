@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { Article, Branch } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
@@ -68,7 +69,8 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     private _toastService: ToastService,
     private _articleService: ArticleService,
     public _fb: UntypedFormBuilder,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private _title: Title
   ) {
     this.articleForm = this._fb.group({ article: [null] });
     this.articleControl = this.articleForm.get('article');
@@ -191,7 +193,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
             this.totals = result?.result?.totals ?? {};
             this.header = result?.result?.header ?? [];
             this.title = result?.result?.info?.title ?? 'Kadex de producto';
-            // this.articleForm.get('article').setValue(null);
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -34,7 +35,8 @@ export class ReportBirthdayComponent implements OnInit {
   constructor(
     private _service: ReportSystemService,
     private _toastService: ToastService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private _title: Title
   ) {}
 
   public ngOnDestroy(): void {
@@ -67,6 +69,7 @@ export class ReportBirthdayComponent implements OnInit {
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
             this.title = result?.info?.title ?? 'Cumpleaños';
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {

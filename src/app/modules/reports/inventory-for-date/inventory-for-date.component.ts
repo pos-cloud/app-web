@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Deposit } from '@types';
 import { BranchService } from 'app/core/services/branch.service';
@@ -60,7 +61,8 @@ export class InventoryForDateComponent {
     private _depositService: DepositService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
-    private _fb: UntypedFormBuilder
+    private _fb: UntypedFormBuilder,
+    private _title: Title
   ) {
     this.form = this._fb.group({ number: [] });
   }
@@ -130,6 +132,7 @@ export class InventoryForDateComponent {
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
             this.title = result?.result?.info?.title ?? 'Inventario por fecha';
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {
