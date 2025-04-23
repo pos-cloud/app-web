@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { GalleryService } from '@core/services/gallery.service';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
@@ -7,7 +7,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Gallery, Resource } from '@types';
 import { Article } from 'app/components/article/article';
-import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 @Component({
@@ -21,7 +20,6 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 export class ViewGalleryComponent implements OnInit {
   @ViewChild('barcodeInput') barcodeInput: ElementRef;
 
-  public src: string;
   public gallery: Gallery;
   public loading = false;
   public images = [];
@@ -29,15 +27,10 @@ export class ViewGalleryComponent implements OnInit {
   public elem;
   public filterArticle: string;
   public article: Article = null;
-  focusEvent = new EventEmitter<boolean>();
-  public database: string;
   public resource: Resource[];
-  public paymentMethod: PaymentMethod[];
-  public makeImage: string = '';
-  public articleImage: string = '';
 
   constructor(
-    public _router: Router,
+    private _router: Router,
     private _galleryService: GalleryService,
     private _resourceService: ResourceService,
     private _toastr: ToastService
@@ -68,8 +61,7 @@ export class ViewGalleryComponent implements OnInit {
               let fileImg = this.resource.find((file) =>
                 typeof element.resource === 'string' ? element.resource === file._id : element.resource._id === file._id
               );
-              this.src = fileImg.file;
-              this.images.push(this.src);
+              this.images.push(fileImg.file);
             });
           }
 
@@ -115,6 +107,12 @@ export class ViewGalleryComponent implements OnInit {
     } else if (this.elem.msRequestFullscreen) {
       /* IE/Edge */
       this.elem.msRequestFullscreen();
+    }
+
+    if (this.gallery.barcode) {
+      setTimeout(() => {
+        this.barcodeInput?.nativeElement?.focus();
+      }, 100);
     }
 
     this.viewBotton = false;
