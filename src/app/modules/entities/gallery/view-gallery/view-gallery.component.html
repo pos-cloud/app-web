@@ -1,10 +1,4 @@
-<button
-  *ngIf="viewBotton"
-  (click)="openFullscreen()"
-  class="btn btn-primary w-100"
->
-  Pantalla Completa
-</button>
+<button *ngIf="viewBotton" (click)="openFullscreen()" class="btn btn-primary w-100">Pantalla Completa</button>
 <div *ngIf="gallery && gallery.barcode">
   <div class="row">
     <div class="col-12">
@@ -27,11 +21,7 @@
   <div class="row align-items-center" style="height: 30vh">
     <div class="col-md-3">
       <div class="imgProduct content" *ngIf="article">
-        <img
-          *ngIf="articleImage"
-          [src]="articleImage"
-          class="img-fluid rounded shadow-lg"
-        />
+        <img *ngIf="article.picture" [src]="acticle.picture" class="img-fluid rounded shadow-lg" />
       </div>
       <h4>Ingrese código de barras</h4>
       <input
@@ -42,14 +32,11 @@
         [focus]="focusEvent"
       />
     </div>
-    <div
-      *ngIf="article"
-      class="col-md-9 d-flex justify-content-center align-items-center text-center article-details"
-    >
+    <div *ngIf="article" class="col-md-9 d-flex justify-content-center align-items-center text-center article-details">
       <div class="content">
         <h2 class="display-5 mb-3">{{ article.description }}</h2>
         <h1>
-          {{ article.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+          {{ article.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
         </h1>
         <p [innerHTML]="article?.observation"></p>
       </div>

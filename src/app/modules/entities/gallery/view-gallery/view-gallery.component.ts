@@ -8,8 +8,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Gallery, Resource } from '@types';
 import { Article } from 'app/components/article/article';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { ArticleService } from 'app/core/services/article.service';
-import { PaymentMethodService } from 'app/core/services/payment-method.service';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
@@ -26,8 +24,6 @@ export class ViewGalleryComponent implements OnInit {
   public gallery: Gallery;
   public loading = false;
   public images = [];
-  public carouselBanner;
-  public intervalSocket;
   public viewBotton = true;
   public elem;
   public filterArticle: string;
@@ -42,10 +38,8 @@ export class ViewGalleryComponent implements OnInit {
   constructor(
     public _router: Router,
     private _galleryService: GalleryService,
-    private _articleService: ArticleService,
     private _resourceService: ResourceService,
-    private _toastr: ToastService,
-    private _paymentMethod: PaymentMethodService
+    private _toastr: ToastService
   ) {
     this.getResource();
   }
@@ -93,85 +87,17 @@ export class ViewGalleryComponent implements OnInit {
 
   public getArticle(): void {
     if (this.filterArticle) {
-      this._articleService
-        .getAll({
-          project: {
-            code: 1,
-            barcode: 1,
-            description: 1,
-            'make.description': 1,
-            'make.picture': 1,
-            'category.description': 1,
-            posDescription: 1,
-            observation: 1,
-            salePrice: 1,
-            operationType: 1,
-            picture: 1,
-          },
-          match: {
-            $or: [{ barcode: this.filterArticle }, { code: this.filterArticle }],
-            operationType: { $ne: 'D' },
-          },
-        })
-        .subscribe(
-          (result) => {
-            if (result.result.length > 0) {
-              this.article = result.result[0];
-              this.filterArticle = '';
-              this.getPaymentMethods();
-            } else {
-              this.article = null;
-              this.filterArticle = '';
-            }
-
-            if (this.article !== null) {
-              if (this.article.picture === './../../../assets/img/default.jpg' || !this.article.picture) {
-                this.articleImage = null;
-                if (this.article.make && this.article.make.picture) {
-                  this.makeImage = this.article.make.picture;
-                } else {
-                  this.articleImage = null;
-                }
-              } else {
-                this.articleImage = this.article.picture;
-              }
-            }
-          },
-          (error) => {
-            this.article = null;
-            this.filterArticle = '';
-          }
-        );
+      this._galleryService.findArticle(this.filterArticle).subscribe({
+        next(value) {
+          console.log(value);
+        },
+        error(err) {},
+        complete() {},
+      });
     } else {
       this.article = null;
       this.filterArticle = '';
     }
-  }
-
-  public getPaymentMethods() {
-    this.loading = true;
-    let project = {
-      _id: 1,
-      name: 1,
-      operationType: 1,
-    };
-    let match = {
-      operationType: { $ne: 'D' },
-    };
-    this._paymentMethod.getAll({ project, match }).subscribe(
-      (result) => {
-        if (!result.result) {
-          this._toastr.showToast(result);
-        } else {
-          this.paymentMethod = result.result;
-        }
-        this.loading = false;
-      },
-      (error) => {
-        this._toastr.showToast(error);
-        this.loading = false;
-      }
-    );
   }
 
   public openFullscreen() {
