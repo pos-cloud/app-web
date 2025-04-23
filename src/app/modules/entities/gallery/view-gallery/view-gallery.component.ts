@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { GalleryService } from '@core/services/gallery.service';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
@@ -10,16 +10,17 @@ import { Article } from 'app/components/article/article';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { ResourceService } from 'app/core/services/resource.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { FocusDirective } from 'app/shared/directives/focus.directive';
 @Component({
   selector: 'app-view-gallery',
   templateUrl: './view-gallery.component.html',
   styleUrls: ['./view-gallery.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbCarouselModule, FocusDirective],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbCarouselModule],
 })
 export class ViewGalleryComponent implements OnInit {
+  @ViewChild('barcodeInput') barcodeInput: ElementRef;
+
   public src: string;
   public gallery: Gallery;
   public loading = false;
@@ -73,7 +74,9 @@ export class ViewGalleryComponent implements OnInit {
           }
 
           if (this.gallery.barcode) {
-            this.focusEvent.emit(true);
+            setTimeout(() => {
+              this.barcodeInput?.nativeElement?.focus();
+            }, 100);
           }
         }
         this.loading = false;
@@ -89,7 +92,7 @@ export class ViewGalleryComponent implements OnInit {
     if (this.filterArticle) {
       this._galleryService.findArticle(this.filterArticle).subscribe({
         next(value) {
-          console.log(value);
+          this.article = value;
         },
         error(err) {},
         complete() {},
