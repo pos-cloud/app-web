@@ -41,15 +41,6 @@
         </h1>
         <h2 class="description">{{ article?.description ?? '' }}</h2>
 
-        <!-- <div *ngIf="article?.variants" class="variants mt-3">
-          <div *ngFor="let key of objectKeys(article.variants)">
-            <strong>{{ key }} Disponible:</strong>
-            <span *ngFor="let value of article.variants[key]; let last = last">
-              {{ value }}<span *ngIf="!last">, </span>
-            </span>
-          </div>
-        </div> -->
-
         <div *ngIf="article?.variants" class="variants mt-3">
           <div *ngFor="let key of objectKeys(article.variants)">
             <div class="variant-badges">

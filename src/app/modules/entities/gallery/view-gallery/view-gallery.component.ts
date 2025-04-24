@@ -18,11 +18,9 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 })
 export class ViewGalleryComponent implements OnInit {
   @ViewChild('barcodeInput') barcodeInput: ElementRef;
-  @ViewChild('carouselImg', { static: false }) carouselImgRef!: ElementRef<HTMLImageElement>;
 
   public objectKeys = Object.keys;
   public gallery: Gallery;
-  public loading = false;
   public images = [];
   public viewBotton = true;
   public elem;
@@ -49,8 +47,6 @@ export class ViewGalleryComponent implements OnInit {
   }
 
   public getGallery(galleryId: string) {
-    this.loading = true;
-
     this._galleryService.getById(galleryId).subscribe(
       (result) => {
         if (!result.result) {
@@ -72,11 +68,9 @@ export class ViewGalleryComponent implements OnInit {
             }, 100);
           }
         }
-        this.loading = false;
       },
       (error) => {
         this._toastr.showToast(error);
-        this.loading = false;
       }
     );
   }
@@ -119,7 +113,6 @@ export class ViewGalleryComponent implements OnInit {
   }
 
   public getResource() {
-    this.loading = true;
     let project = {
       _id: 1,
       name: 1,
@@ -136,51 +129,10 @@ export class ViewGalleryComponent implements OnInit {
         } else {
           this.resource = result.result;
         }
-        this.loading = false;
       },
       (error) => {
         this._toastr.showToast(error);
-        this.loading = false;
       }
     );
-  }
-
-  setBackgroundColorFromImage(img: HTMLImageElement) {
-    console.log('Entro');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-
-    let r = 0,
-      g = 0,
-      b = 0,
-      count = 0;
-
-    // Tomamos un muestreo (cada 10px)
-    for (let i = 0; i < data.length; i += 40) {
-      r += data[i];
-      g += data[i + 1];
-      b += data[i + 2];
-      count++;
-    }
-
-    // Promedio
-    r = Math.round(r / count);
-    g = Math.round(g / count);
-    b = Math.round(b / count);
-
-    const container = document.querySelector('.carousel-container') as HTMLElement;
-    if (container) {
-      container.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-    }
   }
 }
