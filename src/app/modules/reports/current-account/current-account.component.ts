@@ -275,7 +275,7 @@ export class CurrentAccountComponent implements OnInit {
       case 'print':
         if (this.companySelected) {
           const dataLabels = {
-            clientId: this.companySelected._id,
+            companyId: this.companySelected._id,
           };
           this.toPrint(PrintType.CurrentAccount, dataLabels);
         } else {
