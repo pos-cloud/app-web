@@ -1,57 +1,56 @@
-<button
-  *ngIf="viewBotton"
-  (click)="openFullscreen()"
-  class="btn btn-primary w-100"
->
-  Pantalla Completa
-</button>
-<div *ngIf="gallery && gallery.barcode">
-  <div class="row">
-    <div class="col-12">
-      <ngb-carousel
-        class="barcode"
-        *ngIf="images?.length > 0"
-        [interval]="gallery.interval * 1000"
-        [pauseOnHover]="false"
-        [showNavigationArrows]="false"
-      >
-        <ng-template ngbSlide *ngFor="let image of images; let i = index">
-          <div class="picsum-img-wrapper text-center">
-            <img [src]="image" [alt]="'Slide ' + (i + 1)" class="img-fluid" />
-          </div>
-        </ng-template>
-      </ngb-carousel>
-    </div>
+<div class="fullscreen-btn" *ngIf="viewBotton">
+  <button (click)="openFullscreen()" class="btn btn-primary w-100">Pantalla Completa</button>
+</div>
+
+<!-- Carousel superior -->
+<div *ngIf="images?.length > 0" class="carousel-container">
+  <ngb-carousel [interval]="gallery.interval * 1000" [pauseOnHover]="false" [showNavigationArrows]="false">
+    <ng-template ngbSlide *ngFor="let image of images; let i = index">
+      <div class="carousel-image-wrapper">
+        <img [src]="image" [alt]="'Slide ' + (i + 1)" />
+      </div>
+    </ng-template>
+  </ngb-carousel>
+</div>
+
+<!-- Zona de producto -->
+<div class="product-area">
+  <!-- Input superior -->
+  <div class="barcode-input-wrapper">
+    <input
+      #barcodeInput
+      type="text"
+      class="form-control"
+      [(ngModel)]="filterArticle"
+      placeholder="Ingrese código de barras"
+      (keydown.enter)="getArticle()"
+    />
   </div>
 
-  <div class="row align-items-center" style="height: 30vh">
-    <div class="col-md-3">
-      <div class="imgProduct content" *ngIf="article">
-        <img
-          *ngIf="articleImage"
-          [src]="articleImage"
-          class="img-fluid rounded shadow-lg"
-        />
-      </div>
-      <h4>Ingrese código de barras</h4>
-      <input
-        type="text"
-        class="barcode form-control"
-        [(ngModel)]="filterArticle"
-        (keydown.enter)="getArticle()"
-        [focus]="focusEvent"
-      />
+  <div class="row product-content">
+    <!-- Imagen del producto -->
+    <div class="col-md-5 text-center">
+      <img *ngIf="article?.picture" [src]="article.picture" alt="Producto" class="product-image shadow" />
     </div>
-    <div
-      *ngIf="article"
-      class="col-md-9 d-flex justify-content-center align-items-center text-center article-details"
-    >
-      <div class="content">
-        <h2 class="display-5 mb-3">{{ article.description }}</h2>
-        <h1>
-          {{ article.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+
+    <!-- Información del producto -->
+    <div class="col-md-7 d-flex align-items-center justify-content-center">
+      <div class="text-center product-details">
+        <h1 class="price">
+          {{ article?.salePrice ?? null | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
         </h1>
-        <p [innerHTML]="article?.observation"></p>
+        <h2 class="description">{{ article?.description ?? '' }}</h2>
+
+        <div *ngIf="article?.variants" class="variants mt-3">
+          <div *ngFor="let key of objectKeys(article.variants)">
+            <div class="variant-badges">
+              <strong>{{ key }} disponible:</strong>
+              <span *ngFor="let value of article.variants[key]" class="badge-variant">
+                {{ value }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
