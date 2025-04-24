@@ -9,8 +9,9 @@ import 'moment/locale/es';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { PrintService } from '@core/services/print.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { Printer } from '@types';
+import { ApiResponse, Printer, PrintType } from '@types';
 import { Company } from 'app/components/company/company';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { CompanyType } from 'app/components/payment-method/payment-method';
@@ -29,6 +30,9 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination';
+import * as printJS from 'print-js';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CurrentAccountService } from './current-account.service';
 @Component({
   selector: 'app-current-account',
@@ -69,6 +73,7 @@ export class CurrentAccountComponent implements OnInit {
   public data = {};
   public isFirstTime = true;
   printers: Printer[];
+  private destroy$ = new Subject<void>();
 
   public dropdownSettings = {
     singleSelection: false,
@@ -98,6 +103,7 @@ export class CurrentAccountComponent implements OnInit {
     private _route: ActivatedRoute,
     private _modalService: NgbModal,
     private _printerService: PrinterService,
+    public _printService: PrintService,
     private _toastService: ToastService,
     private _title: Title
   ) {
@@ -267,18 +273,14 @@ export class CurrentAccountComponent implements OnInit {
         );
         break;
       case 'print':
-        // if (this.companySelected) {
-        //   modalRef = this._modalService.open(PrintComponent);
-        //   modalRef.componentInstance.items = this.items;
-        //   modalRef.componentInstance.company = this.companySelected;
-        //   modalRef.componentInstance.params = {
-        //     detailsPaymentMethod: this.detailsPaymentMethod,
-        //   };
-        //   modalRef.componentInstance.typePrint = 'current-account';
-        //   modalRef.componentInstance.balance = this.totalPrice;
-        // } else {
-        //   //this.showMessage('Debe seleccionar una empresa.', 'info', true);
-        // }
+        if (this.companySelected) {
+          const dataLabels = {
+            clientId: this.companySelected._id,
+          };
+          this.toPrint(PrintType.CurrentAccount, dataLabels);
+        } else {
+          this._toastService.showToast({ message: 'Debe seleccionar una empresa.' });
+        }
         break;
       case 'print-transaction':
         modalRef = this._modalService.open(PrintComponent);
@@ -325,6 +327,38 @@ export class CurrentAccountComponent implements OnInit {
         }
       );
     });
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public pageChange(page): void {
