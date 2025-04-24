@@ -58,7 +58,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   // sort
   sort = {
-    column: 'amount',
+    column: 'totalPrice',
     direction: 'desc',
   };
 
