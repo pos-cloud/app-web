@@ -1046,8 +1046,12 @@ export class PointOfSaleComponent implements OnInit {
       }
 
       if (this.transaction && this.transaction._id && this.transaction._id !== '') {
+        if (this.company && this.posType === 'cuentas-corrientes') {
+          this.transaction.company = this.company;
+        }
+
         this.transaction = await this.updateTransaction(this.transaction);
-        console.log(this.transaction);
+
         if (
           !this.transaction.branchDestination ||
           !this.transaction.branchOrigin ||
@@ -1076,7 +1080,6 @@ export class PointOfSaleComponent implements OnInit {
               this.transaction.company = this.transaction.type.company;
               this.nextStepTransaction();
             } else {
-              console.log('entro');
               this.openModal('company');
             }
           } else {
