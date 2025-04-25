@@ -16,31 +16,22 @@
           title="Enviar"
         >
           <i class="fa fa-envelope"> Enviar</i>
-        </button>
+        </button>  -->
         <button [disabled]="loading" class="btn" (click)="openModal('print')">
           <i class="fa fa-print"></i> Imprimir
-        </button> -->
+        </button>
       </div>
     </div>
     <div class="card-block table-responsive">
       <div class="center-content" *ngIf="alertMessage !== ''">
-        <ngb-alert
-          [type]="alertConfig.type"
-          [dismissible]="alertConfig.dismissible"
-          (close)="alertMessage = ''"
-        >
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
           {{ alertMessage }}
         </ngb-alert>
       </div>
       <div class="row">
         <div class="form-group col-md-4" *ngIf="companySelected">
           <label for="name" class="control-label">Nombre:</label>
-          <input
-            type="text"
-            class="form-control"
-            [value]="companySelected.name"
-            readonly
-          />
+          <input type="text" class="form-control" [value]="companySelected.name" readonly />
         </div>
         <div class="form-group col-md-8" *ngIf="companySelected">
           <label for="address" class="control-label">Dirección:</label>
@@ -48,22 +39,12 @@
             type="text"
             class="form-control"
             [value]="
-              (companySelected.address
-                ? ' Dirección: ' + companySelected.address
-                : '') +
-              (companySelected.city
-                ? ', Ciudad: ' + companySelected.city
-                : '') +
-              (companySelected.addressNumber
-                ? ', N°: ' + companySelected.addressNumber
-                : '') +
-              (companySelected.floorNumber
-                ? ', P: ' + companySelected.floorNumber
-                : '') +
+              (companySelected.address ? ' Dirección: ' + companySelected.address : '') +
+              (companySelected.city ? ', Ciudad: ' + companySelected.city : '') +
+              (companySelected.addressNumber ? ', N°: ' + companySelected.addressNumber : '') +
+              (companySelected.floorNumber ? ', P: ' + companySelected.floorNumber : '') +
               (companySelected.flat ? ', D: ' + companySelected.flat : '') +
-              (companySelected.zipCode
-                ? ', CP: ' + companySelected.zipCode
-                : '')
+              (companySelected.zipCode ? ', CP: ' + companySelected.zipCode : '')
             "
             readonly
           />
@@ -72,40 +53,21 @@
       <div class="row">
         <div class="form-group col-md-4" *ngIf="companySelected">
           <label for="name" class="control-label">Nombre de Fantasía:</label>
-          <input
-            type="text"
-            class="form-control"
-            [value]="companySelected.fantasyName"
-            readonly
-          />
+          <input type="text" class="form-control" [value]="companySelected.fantasyName" readonly />
         </div>
         <div class="form-group col-md-4" *ngIf="companySelected">
           <label for="phones" class="control-label">Teléfono:</label>
-          <input
-            type="text"
-            class="form-control"
-            [value]="companySelected.phones"
-            readonly
-          />
+          <input type="text" class="form-control" [value]="companySelected.phones" readonly />
         </div>
         <div class="form-group col-md-3" *ngIf="companySelected">
           <label for="emails" class="control-label">Email:</label>
-          <input
-            type="text"
-            class="form-control"
-            [value]="companySelected.emails"
-            readonly
-          />
+          <input type="text" class="form-control" [value]="companySelected.emails" readonly />
         </div>
         <div class="col-md-1">
           <label for="showBalanceOfTransactions" class="control-label">
             <b>Muestra saldo</b>
           </label>
-          <select
-            class="form-control"
-            [(ngModel)]="showBalanceOfTransactions"
-            [disabled]="loading"
-          >
+          <select class="form-control" [(ngModel)]="showBalanceOfTransactions" [disabled]="loading">
             <option [ngValue]="true">Sí</option>
             <option [ngValue]="false">No</option>
           </select>
@@ -116,16 +78,9 @@
           <thead>
             <tr>
               <th class="th transaction-data"></th>
-              <th colspan="5" class="th transaction-data">
-                Datos de la Transacción
-              </th>
+              <th colspan="5" class="th transaction-data">Datos de la Transacción</th>
               <th colspan="3" class="th payment-method-data">Datos del Pago</th>
-              <th
-                [attr.colspan]="showBalanceOfTransactions ? 4 : 3"
-                class="th balance-data"
-              >
-                Saldos
-              </th>
+              <th [attr.colspan]="showBalanceOfTransactions ? 4 : 3" class="th balance-data">Saldos</th>
             </tr>
             <tr>
               <th><i class="fa fa-bars"></i></th>
@@ -171,9 +126,7 @@
                 </button>
                 <button
                   type="button"
-                  *ngIf="
-                    actions && actions.edit && item.transactionTypeAllowEdit
-                  "
+                  *ngIf="actions && actions.edit && item.transactionTypeAllowEdit"
                   class="btn btn-primary btn-sm"
                   (click)="openModal('edit-transaction', item.transaction._id)"
                   title="Editar"
@@ -198,10 +151,10 @@
                 </button>
               </td>
               <td class="align-center" *ngIf="item.endDate">
-                {{ item.endDate | dateFormat: 'DD/MM/YYYY' }}
+                {{ item.endDate | dateFormat : 'DD/MM/YYYY' }}
               </td>
               <td class="align-center" *ngIf="!item.startDate">
-                {{ item.startDate | dateFormat: 'DD/MM/YYYY' }}
+                {{ item.startDate | dateFormat : 'DD/MM/YYYY' }}
               </td>
               <td *ngIf="item.transactionType">
                 {{ item.transactionType }}
@@ -218,23 +171,19 @@
                 {{ item.quota }}
               </td>
               <td class="align-center">
-                {{
-                  item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY'
-                }}
+                {{ item.paymentMethodExpirationDate | dateFormat : 'DD/MM/YYYY' }}
               </td>
               <td class="align-right">
-                {{
-                  item.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                }}
+                {{ item.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" [ngClass]="{ credit: item.debe > 0 }">
-                {{ item.debe | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.debe | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" [ngClass]="{ debit: item.haber > 0 }">
-                {{ item.haber | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.haber | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" *ngIf="showBalanceOfTransactions">
-                {{ item.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </tr>
             <tr align="center" *ngIf="items.length === 0 && !loading">
@@ -257,19 +206,13 @@
               <strong>SALDO TOTAL</strong>
             </td>
             <td *ngIf="totalPrice >= 0" class="align-right">
-              <strong>{{
-                totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-              }}</strong>
+              <strong>{{ totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
             </td>
             <td *ngIf="totalPrice < 0" class="align-right">
-              <strong>{{
-                totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-              }}</strong>
+              <strong>{{ totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
             </td>
             <td *ngIf="showBalanceOfTransactions" class="align-right">
-              <strong>{{
-                balance | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-              }}</strong>
+              <strong>{{ balance | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
             </td>
           </tfoot>
         </table>
@@ -289,11 +232,7 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select
-            class="form-control"
-            [(ngModel)]="itemsPerPage"
-            (change)="getPaymentMethodOfAccountsByCompany()"
-          >
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getPaymentMethodOfAccountsByCompany()">
             <option [value]="5">Mostrar 5 ítems</option>
             <option [value]="10">Mostrar 10 ítems</option>
             <option [value]="15">Mostrar 15 ítems</option>
