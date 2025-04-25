@@ -15,7 +15,6 @@ import { Config } from '../../../app.config';
 import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
-import { PrintArticlesStockComponent } from '../../print/print-articles-stock/print-articles-stock.component';
 import { Printer } from '../../printer/printer';
 import { ArticleStock, attributes } from '../article-stock';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
@@ -385,14 +384,8 @@ export class ListArticleStocksComponent implements OnInit {
         this.loading = false;
         break;
       case 'print-inventario':
-        modalRef = this._modalService.open(PrintArticlesStockComponent);
-        modalRef.componentInstance.branch = this.filters['branch.number'];
-        modalRef.componentInstance.deposit = this.filters['deposit.name'];
-        modalRef.componentInstance.make = this.filters['article.make.description'];
-        modalRef.componentInstance.category = this.filters['article.category.description'];
-        modalRef.componentInstance.code = this.filters['article.code'];
-        modalRef.componentInstance.barcode = this.filters['article.barcode'];
-        modalRef.componentInstance.description = this.filters['article.description'];
+        this.toPrint(PrintType.Inventory, null);
+        this.loading = false;
         break;
       case 'uploadFile':
         modalRef = this._modalService.open(ImportComponent, {

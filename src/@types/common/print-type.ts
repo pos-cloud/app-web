@@ -6,4 +6,5 @@ export enum PrintType {
   Transaction = 'transaction',
   Bar = 'Bar',
   Kitchen = 'kitchen',
+  Inventory = 'inventory',
 }
