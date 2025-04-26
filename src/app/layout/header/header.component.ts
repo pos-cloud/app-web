@@ -743,7 +743,7 @@ export class HeaderComponent implements OnInit {
               label: 'Contabilidad',
               children: [
                 { label: 'Cuenta contable', link: 'accounts' },
-                { label: 'Periodos contable', link: 'account-periods' },
+                { label: 'Periodos contable', link: 'entities/account-periods' },
                 { label: 'Asientos contable', link: 'account-seats' },
                 { label: 'Impuestos', link: 'admin/impuestos' },
                 { label: 'Tipos de cajas', link: 'cash-box-types' },

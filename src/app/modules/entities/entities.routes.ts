@@ -66,4 +66,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'articles',
     loadChildren: () => import('./article/article.routes').then((m) => m.ARTICLE_ROUTES),
   },
+  {
+    path: 'account-periods',
+    loadChildren: () => import('./account-period/account-period.routes').then((m) => m.ACCOUNT_PERIOD_ROUTES),
+  },
 ];

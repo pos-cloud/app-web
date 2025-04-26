@@ -1,24 +1,23 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { IAttribute, IButton } from '@types';
-import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { BankService } from 'app/core/services/bank.service';
+import { DatatableComponent } from '../../../../components/datatable/datatable.component';
+import { AccountPeriodService } from '../../../../core/services/account-period.service';
 
 @Component({
-  selector: 'app-list-banks',
-  templateUrl: './list-bank.component.html',
+  selector: 'app-list-account-periods',
+  templateUrl: './list-account-periods.component.html',
   standalone: true,
   imports: [DatatableModule],
 })
-export class ListBankComponent {
-  public title: string = 'banks';
+export class ListAccountPeriodsComponent {
+  public title: string = 'account-periods';
   public loading: boolean = false;
-  public sort = { name: 1 };
+  public sort = { status: 1 };
   public columns: IAttribute[] = [
     {
-      name: 'name',
+      name: 'description',
       visible: true,
       disabled: false,
       filter: true,
@@ -28,34 +27,30 @@ export class ListBankComponent {
       required: false,
     },
     {
-      name: 'code',
+      name: 'status',
       visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'number',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
-      name: 'agency',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'number',
-      project: null,
-      align: 'left',
-      required: true,
-    },
-    {
-      name: 'account.description',
-      visible: false,
       disabled: false,
       filter: true,
       datatype: 'string',
       project: null,
       align: 'left',
-      required: true,
+      required: false,
+    },
+    {
+      name: 'startDate',
+      project: `{ "$dateToString": { "date": "$startDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
+      visible: true,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'endDate',
+      project: `{ "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
+      visible: true,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
     },
     {
       name: 'creationUser.name',
@@ -107,20 +102,6 @@ export class ListBankComponent {
       required: true,
     },
   ];
-  public headerButtons: IButton[] = [
-    {
-      title: 'add',
-      class: 'btn btn-light',
-      icon: 'fa fa-plus',
-      click: `this.emitEvent('add', null)`,
-    },
-    {
-      title: 'refresh',
-      class: 'btn btn-light',
-      icon: 'fa fa-refresh',
-      click: `this.refresh()`,
-    },
-  ];
   public rowButtons: IButton[] = [
     {
       title: 'view',
@@ -141,10 +122,25 @@ export class ListBankComponent {
       click: `this.emitEvent('delete', item)`,
     },
   ];
+  public headerButtons: IButton[] = [
+    {
+      title: 'add',
+      class: 'btn btn-light',
+      icon: 'fa fa-plus',
+      click: `this.emitEvent('add', null)`,
+    },
+    {
+      title: 'refresh',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.refresh()`,
+    },
+  ];
 
+  // EXCEL
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: BankService, private _router: Router) {}
+  constructor(public _service: AccountPeriodService, private _router: Router) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);
@@ -153,17 +149,18 @@ export class ListBankComponent {
   public async openModal(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('entities/banks/view/' + obj._id);
-        break;
-      case 'update':
-        this._router.navigateByUrl('entities/banks/update/' + obj._id);
-        break;
-      case 'delete':
-        this._router.navigateByUrl('entities/banks/delete/' + obj._id);
+        this._router.navigateByUrl('entities/account-periods/view/' + obj._id);
         break;
       case 'add':
-        this._router.navigateByUrl('entities/banks/add');
+        this._router.navigateByUrl('entities/account-periods/add');
         break;
+      case 'update':
+        this._router.navigateByUrl('entities/account-periods/update/' + obj._id);
+        break;
+      case 'delete':
+        this._router.navigateByUrl('entities/account-periods/delete/' + obj._id);
+        break;
+      default:
     }
   }
 }

@@ -1,5 +1,4 @@
-import { IAttribute } from '@types';
-import { AccountPeriod } from '../account-period/account-period';
+import { AccountPeriod, IAttribute } from '@types';
 import { Account } from '../account/account';
 import { Model } from '../model/model.model';
 import { Transaction } from '../transaction/transaction';
@@ -15,7 +14,7 @@ export class AccountSeat extends Model {
       account: Account;
       debit: Number;
       credit: Number;
-    },
+    }
   ];
 
   constructor() {
