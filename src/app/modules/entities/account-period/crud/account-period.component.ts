@@ -12,12 +12,21 @@ import { FocusDirective } from '@shared/directives/focus.directive';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { AccountPeriod, ApiResponse } from '@types';
 import { Subject, takeUntil } from 'rxjs';
+import { ProgressbarModule } from '../../../../shared/components/progressbar/progressbar.module';
 
 @Component({
   selector: 'app-account-period',
   templateUrl: './account-period.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule, NgbDatepickerModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FocusDirective,
+    PipesModule,
+    TranslateModule,
+    NgbDatepickerModule,
+    ProgressbarModule,
+  ],
 })
 export class AccountPeriodComponent implements OnInit {
   public operation: string;

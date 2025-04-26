@@ -5,10 +5,10 @@
         'add-account-period' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ accountPeriod?.name ?? '' }}</span
+        >{{ 'edit' | translate | capitalize }} {{ accountPeriod?.description ?? '' }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
-        {{ accountPeriod?.name ?? '' }}</span
+        {{ accountPeriod?.description ?? '' }}</span
       >
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
@@ -38,8 +38,15 @@
         </button>
       </div>
     </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+
     <div class="card-body scroll">
-      <form [formGroup]="accountPeriodForm" (ngSubmit)="handleAccountPeriodOperation()" autocomplete="off">
+      <form
+        [formGroup]="accountPeriodForm"
+        (ngSubmit)="handleAccountPeriodOperation()"
+        autocomplete="off"
+        *ngIf="!loading"
+      >
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
