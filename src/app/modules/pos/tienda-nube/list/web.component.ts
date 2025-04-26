@@ -31,7 +31,6 @@ import { UserService } from 'app/core/services/user.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import * as moment from 'moment';
 import * as printJS from 'print-js';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -428,69 +427,62 @@ export class WebComponent implements OnInit {
             };
             this.toPrint(PrintType.Transaction, data);
           } else {
-            if (
-              transaction.type.expirationDate &&
-              moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0
-            ) {
-              // this.showMessage('El documento esta vencido', 'danger', true);
+            if (transaction.type.readLayout) {
+              modalRef = this._modalService.open(PrintTransactionTypeComponent);
+              modalRef.componentInstance.transactionId = transaction._id;
             } else {
-              if (transaction.type.readLayout) {
-                modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                modalRef.componentInstance.transactionId = transaction._id;
-              } else {
-                let printer: Printer;
+              let printer: Printer;
 
-                if (this.user && this.user.printers && this.user.printers.length > 0) {
-                  for (const element of this.user.printers) {
-                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
-                      printer = element.printer;
-                    }
+              if (this.user && this.user.printers && this.user.printers.length > 0) {
+                for (const element of this.user.printers) {
+                  if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
+                    printer = element.printer;
                   }
+                }
+              } else {
+                if (transaction.type.defectPrinter) {
+                  printer = transaction.type.defectPrinter;
                 } else {
-                  if (transaction.type.defectPrinter) {
-                    printer = transaction.type.defectPrinter;
-                  } else {
-                    if (this.printers && this.printers.length > 0) {
-                      for (let printer of this.printers) {
-                        if (printer.printIn === PrinterPrintIn.Counter) {
-                          printer = printer;
-                        }
+                  if (this.printers && this.printers.length > 0) {
+                    for (let printer of this.printers) {
+                      if (printer.printIn === PrinterPrintIn.Counter) {
+                        printer = printer;
                       }
                     }
                   }
                 }
+              }
 
-                modalRef = this._modalService.open(PrintComponent);
-                modalRef.componentInstance.company = transaction.company;
-                modalRef.componentInstance.transactionId = transaction._id;
-                modalRef.componentInstance.typePrint = 'invoice';
-                modalRef.componentInstance.printer = printer;
+              modalRef = this._modalService.open(PrintComponent);
+              modalRef.componentInstance.company = transaction.company;
+              modalRef.componentInstance.transactionId = transaction._id;
+              modalRef.componentInstance.typePrint = 'invoice';
+              modalRef.componentInstance.printer = printer;
 
-                modalRef.result.then(
-                  (result) => {
-                    if (transaction.taxes && transaction.taxes.length > 0) {
-                      for (const tax of transaction.taxes) {
-                        if (tax.tax.printer) {
-                          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                          modalRef.componentInstance.transactionId = transaction._id;
-                          modalRef.componentInstance.printerID = tax.tax.printer;
-                        }
-                      }
-                    }
-                  },
-                  (reason) => {
-                    if (transaction.taxes && transaction.taxes.length > 0) {
-                      for (const tax of transaction.taxes) {
-                        if (tax.tax.printer) {
-                          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                          modalRef.componentInstance.transactionId = transaction._id;
-                          modalRef.componentInstance.printerID = tax.tax.printer;
-                        }
+              modalRef.result.then(
+                (result) => {
+                  if (transaction.taxes && transaction.taxes.length > 0) {
+                    for (const tax of transaction.taxes) {
+                      if (tax.tax.printer) {
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef.componentInstance.printerID = tax.tax.printer;
                       }
                     }
                   }
-                );
-              }
+                },
+                (reason) => {
+                  if (transaction.taxes && transaction.taxes.length > 0) {
+                    for (const tax of transaction.taxes) {
+                      if (tax.tax.printer) {
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef.componentInstance.printerID = tax.tax.printer;
+                      }
+                    }
+                  }
+                }
+              );
             }
           }
         }

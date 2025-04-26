@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 //Paquetes de terceros
 import { NgbAlertConfig, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import 'moment/locale/es';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
