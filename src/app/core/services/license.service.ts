@@ -38,6 +38,18 @@ export class LicenseService {
     return licenseData;
   }
 
+  async getPublicKey() {
+    try {
+      const response = await firstValueFrom(
+        this.http.get<any>(`${environment.apiLicense}/key/get-public-key`)
+      );
+      return response;
+    } catch (error) {
+      console.error("Error al obtener la clave pública:", error);
+      throw error;
+    }
+  }
+
   getLicenseStatus(
     fechaReferencia: Date,
     licensePaymentDueDate: Date,
@@ -46,7 +58,6 @@ export class LicenseService {
     status: string,
     alertType: 'success' | 'warning' | 'danger'
   } {
-    console.log(fechaReferencia, licensePaymentDueDate, expirationLicenseDate);
     if (fechaReferencia < licensePaymentDueDate) {
       return { status: 'Activa', alertType: 'success' };
     } else if (fechaReferencia < expirationLicenseDate) {
@@ -72,8 +83,8 @@ export class LicenseService {
 
   async initializeMercadoPago() {
     await loadMercadoPago();
-
-    this.mp = new window.MercadoPago("APP_USR-3e6fe769-4628-4c46-b2f8-7a472fc09e70", {
+    const publicKey = await this.getPublicKey();
+    this.mp = new window.MercadoPago(publicKey.publicKey, {
       locale: "es-AR",
     });
   }
@@ -84,7 +95,6 @@ export class LicenseService {
         ...this.prepareLicenseData(),
         external_reference: this.externalReference
       };
-      console.log("preferenceData: ", preferenceData);
       const response = await firstValueFrom(
         this.http.post<any>(`${environment.apiLicense}/preferences/create-preference`, preferenceData)
       );
@@ -133,12 +143,23 @@ export class LicenseService {
           onReady: () => console.log("Payment Brick listo."),
           onSubmit: async ({ formData }: { formData: any }) => {
             try {
+              if (!formData || Object.keys(formData).length === 0) {
+                const container = document.getElementById(containerId); // Usar el ID del contenedor
+                if (container) {
+                  container.innerHTML = `
+                    <div class="alert alert-info">
+                      <h4>El proceso de pago continuará en la plataforma de mercado Pago.</h4>
+                      <p>Por favor espere hasta que el pago se complete.</p>
+                    </div>
+                  `;
+                  return; 
+                }
+              }
               formData.external_reference = this.externalReference;
-              console.log(formData);
+
               const headers = new HttpHeaders({
                 "Content-Type": "application/json",
               });
-              console.log("environment.apiLicense: ", environment.apiLicense);
               const data = await firstValueFrom(
                 this.http.post(
                   `${environment.apiLicense}/payments/create-payment`,
@@ -147,7 +168,7 @@ export class LicenseService {
                 )
               );
               console.log("Pago procesado:", data);
-              //this.router.navigate(['/'])
+              this.router.navigate(['/'])
             } catch (error: any) {
               console.error("Error en el pago:", error?.error || error?.message);
             }
