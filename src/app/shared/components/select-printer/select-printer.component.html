@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ 'select' | translate | capitalize }} Impresora</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group col-md-12">
+        <div class="center-content">
+          <div class="btn-group-vertical">
+            <button
+              type="button"
+              *ngFor="let printer of printers"
+              class="btn btn-select"
+              [ngClass]="{
+                'btn-primary': printer?._id === printerSelected?._id,
+                'btn-outline-primary': printer?._id !== printerSelected?._id
+              }"
+              (click)="printerSelected = printer"
+            >
+              {{ printer.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">
+      {{ 'cancel' | translate | capitalize }}
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="selectPrinter()">
+      <span *ngIf="!loading">{{ 'next' | translate | capitalize }} </span>
+      <span *ngIf="loading">Espere por favor</span>
+    </button>
+  </div>
+</section>
