@@ -57,6 +57,7 @@ import { ListVATConditionsComponent } from './components/vat-condition/list-vat-
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
+import { LicenseComponent } from './layout/license/license.component';
 
 export const _routes: Routes = [
   {
@@ -582,6 +583,11 @@ export const _routes: Routes = [
     path: 'pos',
     canActivate: [AuthGuard, LicenseGuard],
     loadChildren: () => import('./modules/pos/pos.routes').then((m) => m.POS_ROUTES),
+  },
+  {
+    path: 'license',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./layout/license/license.component').then((m) => m.LicenseComponent),
   },
   // {
   //   path: 'transaction',
