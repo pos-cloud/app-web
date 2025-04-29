@@ -1,9 +1,14 @@
 import {
+  Account,
   Activity,
+  Application,
   Category,
   Classification,
+  Company,
   Currency,
+  Deposit,
   Make,
+  Taxes,
   UnitOfMeasurement,
   VariantType,
   VariantValue,
@@ -26,7 +31,7 @@ export interface Article extends Activity {
   notes: [];
   tags: [];
   basePrice: number;
-  taxes: any; //Taxes[];
+  taxes: Taxes[];
   costPrice: number;
   markupPercentage: number;
   markupPrice: number;
@@ -35,7 +40,7 @@ export interface Article extends Activity {
   make: Make;
   category: Category;
   deposits: {
-    deposit: any; //Deposit;
+    deposit: Deposit;
     capacity: number;
   }[];
   locations: {
@@ -65,12 +70,12 @@ export interface Article extends Activity {
   isWeigth: boolean;
   forShipping: boolean;
   picture: string;
-  provider: any; //Company;
-  applications: any; //Application;
+  provider: Company;
+  applications: Application;
   classification: Classification;
   harticle: Article;
-  salesAccount: any; //Account;
-  purchaseAccount: any; //Account;
+  salesAccount: Account;
+  purchaseAccount: Account;
   minStock: number;
   maxStock: number;
   pointOfOrder: number;

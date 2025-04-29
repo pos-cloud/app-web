@@ -1,0 +1,147 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-account-period' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ accountPeriod?.description ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ accountPeriod?.description ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleAccountPeriodOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handleAccountPeriodOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+
+    <div class="card-body scroll">
+      <form
+        [formGroup]="accountPeriodForm"
+        (ngSubmit)="handleAccountPeriodOperation()"
+        autocomplete="off"
+        *ngIf="!loading"
+      >
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="description" class="control-label">{{ 'description' | translate | capitalize }}:</label>
+            <input
+              [focus]="focusEvent"
+              type="text"
+              class="form-control"
+              formControlName="description"
+              name="description"
+              id="description"
+            />
+          </div>
+
+          <div class="form-group col-md-2">
+            <label for="status" class="control-label">{{ 'status' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="status" id="status">
+              <option [value]="'Abierto'">{{ 'open' | translate | capitalize }}</option>
+              <option [value]="'Cerrado'">{{ 'close' | translate | capitalize }}</option>
+            </select>
+          </div>
+
+          <div class="form-group col-md-2">
+            <label for="startDate" class="control-label">{{ 'startDate' | translate | capitalize }}:</label>
+            <input
+              class="form-control"
+              formControlName="startDate"
+              ngbDatepicker
+              #startDp="ngbDatepicker"
+              (click)="startDp.toggle()"
+            />
+          </div>
+
+          <div class="form-group col-md-2">
+            <label for="endDate" class="control-label">{{ 'endDate' | translate | capitalize }}:</label>
+            <input
+              class="form-control"
+              formControlName="endDate"
+              ngbDatepicker
+              #endDp="ngbDatepicker"
+              (click)="endDp.toggle()"
+            />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ accountPeriod?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ accountPeriod?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ accountPeriod?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ accountPeriod?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ accountPeriod?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

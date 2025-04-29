@@ -174,6 +174,10 @@ export class AddSaleOrderComponent {
     number: 0,
   };
   m3: number = 0;
+  weight: number = 0;
+  width: number = 0;
+  depth: number = 0;
+  height: number = 0;
   user: User;
 
   constructor(
@@ -725,13 +729,28 @@ export class AddSaleOrderComponent {
   updateQuantity(): void {
     this.quantity = 0;
     this.m3 = 0;
+    this.height = 0;
+    this.weight = 0;
+    this.depth = 0;
+    this.width = 0;
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
+        console.log(movementOfArticle.article);
         if (!movementOfArticle.movementParent) {
           this.quantity += movementOfArticle.amount;
           this.m3 += (movementOfArticle.article?.m3 ?? 0) * movementOfArticle.amount;
+          this.height += (movementOfArticle.article?.height ?? 0) * movementOfArticle.amount;
+          this.weight += (movementOfArticle.article?.weight ?? 0) * movementOfArticle.amount;
+          this.depth += (movementOfArticle.article?.depth ?? 0) * movementOfArticle.amount;
+          this.width += (movementOfArticle.article?.width ?? 0) * movementOfArticle.amount;
         }
       }
+
+      this.m3 = +this.m3.toFixed(2);
+      this.height = +this.height.toFixed(2);
+      this.width = +this.width.toFixed(2);
+      this.depth = +this.depth.toFixed(2);
+      this.weight = +this.weight.toFixed(2);
     }
   }
 
@@ -2181,40 +2200,27 @@ export class AddSaleOrderComponent {
 
         break;
       case 'cancel':
-        if (this.database === 'jaguernight') {
-          this.transaction.state = TransactionState.Canceled;
-          await this.updateTransaction();
-          this.transaction.table.employee = null;
-          this.transaction.table.state = TableState.Available;
-          await this.updateTable(this.transaction.table).then((table) => {
-            if (table) {
-              this.transaction.table = table;
+        modalRef = this._modalService.open(DeleteTransactionComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.transactionId = this.transaction._id;
+        modalRef.result.then(async (result) => {
+          if (result === 'delete_close') {
+            if (this.posType === 'resto' && this.transaction.table) {
+              this.transaction.table.employee = null;
+              this.transaction.table.state = TableState.Available;
+              await this.updateTable(this.transaction.table).then((table) => {
+                if (table) {
+                  this.transaction.table = table;
+                  this.backFinal();
+                }
+              });
+            } else {
               this.backFinal();
             }
-          });
-        } else {
-          modalRef = this._modalService.open(DeleteTransactionComponent, {
-            size: 'lg',
-            backdrop: 'static',
-          });
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.result.then(async (result) => {
-            if (result === 'delete_close') {
-              if (this.posType === 'resto' && this.transaction.table) {
-                this.transaction.table.employee = null;
-                this.transaction.table.state = TableState.Available;
-                await this.updateTable(this.transaction.table).then((table) => {
-                  if (table) {
-                    this.transaction.table = table;
-                    this.backFinal();
-                  }
-                });
-              } else {
-                this.backFinal();
-              }
-            }
-          });
-        }
+          }
+        });
 
         break;
       case 'add_client':

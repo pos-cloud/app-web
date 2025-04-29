@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
@@ -68,6 +69,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
+    private _title: Title,
     private cdRef: ChangeDetectorRef
   ) {}
 
@@ -169,6 +171,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
             this.title = result?.result?.info?.title ?? `Movimientos por categoría de ${this.transactionMovement}`;
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {

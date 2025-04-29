@@ -668,5 +668,11 @@
   "week": "Semana",
   "year": "Año",
   "unit-of-measurements": "Unidades de medida",
-  "room": "Salón"
+  "room": "Salón",
+  "price-list": "Lista de precios",
+  "add-account-period": "Agregar período contable",
+  "next": "Siguiente",
+  "select": "Seleccionar",
+  "add-article": "Agregar producto",
+  "max-length": "Máximo permitido: {{max}} caracteres"
 }

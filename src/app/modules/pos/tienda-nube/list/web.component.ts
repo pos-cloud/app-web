@@ -4,28 +4,33 @@ import { FormsModule } from '@angular/forms';
 import { PrintService } from '@core/services/print.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ApiResponse, IAttribute, MovementOfCash, PrintType } from '@types';
+import {
+  ApiResponse,
+  IAttribute,
+  MovementOfCash,
+  Printer,
+  PrinterPrintIn,
+  PrintType,
+  Transaction,
+  TransactionMovement,
+  TransactionState,
+  User,
+} from '@types';
 import { Config } from 'app/app.config';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
-import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
-import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
-import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
-import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
-import { PrinterService } from 'app/core/services/printer.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import * as moment from 'moment';
 import * as printJS from 'print-js';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -48,7 +53,7 @@ export class WebComponent implements OnInit {
   public transaction: Transaction;
   public transactionMovement: TransactionMovement = TransactionMovement.Sale;
   public _datatableService: DatatableService;
-  public user: User;
+  public user: User | any;
   private subscription: Subscription = new Subscription();
   public columns: IAttribute[];
   public printers: Printer[];
@@ -65,7 +70,6 @@ export class WebComponent implements OnInit {
   constructor(
     private _transactionService: TransactionService,
     private _modalService: NgbModal,
-    private _printerService: PrinterService,
     private _tiendaNubeService: TiendaNubeService,
     private _movementOfCash: MovementOfCashService,
     private _toastService: ToastService,
@@ -423,69 +427,62 @@ export class WebComponent implements OnInit {
             };
             this.toPrint(PrintType.Transaction, data);
           } else {
-            if (
-              transaction.type.expirationDate &&
-              moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0
-            ) {
-              // this.showMessage('El documento esta vencido', 'danger', true);
+            if (transaction.type.readLayout) {
+              modalRef = this._modalService.open(PrintTransactionTypeComponent);
+              modalRef.componentInstance.transactionId = transaction._id;
             } else {
-              if (transaction.type.readLayout) {
-                modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                modalRef.componentInstance.transactionId = transaction._id;
-              } else {
-                let printer: Printer;
+              let printer: Printer;
 
-                if (this.user && this.user.printers && this.user.printers.length > 0) {
-                  for (const element of this.user.printers) {
-                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
-                      printer = element.printer;
-                    }
+              if (this.user && this.user.printers && this.user.printers.length > 0) {
+                for (const element of this.user.printers) {
+                  if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
+                    printer = element.printer;
                   }
+                }
+              } else {
+                if (transaction.type.defectPrinter) {
+                  printer = transaction.type.defectPrinter;
                 } else {
-                  if (transaction.type.defectPrinter) {
-                    printer = transaction.type.defectPrinter;
-                  } else {
-                    if (this.printers && this.printers.length > 0) {
-                      for (let printer of this.printers) {
-                        if (printer.printIn === PrinterPrintIn.Counter) {
-                          printer = printer;
-                        }
+                  if (this.printers && this.printers.length > 0) {
+                    for (let printer of this.printers) {
+                      if (printer.printIn === PrinterPrintIn.Counter) {
+                        printer = printer;
                       }
                     }
                   }
                 }
+              }
 
-                modalRef = this._modalService.open(PrintComponent);
-                modalRef.componentInstance.company = transaction.company;
-                modalRef.componentInstance.transactionId = transaction._id;
-                modalRef.componentInstance.typePrint = 'invoice';
-                modalRef.componentInstance.printer = printer;
+              modalRef = this._modalService.open(PrintComponent);
+              modalRef.componentInstance.company = transaction.company;
+              modalRef.componentInstance.transactionId = transaction._id;
+              modalRef.componentInstance.typePrint = 'invoice';
+              modalRef.componentInstance.printer = printer;
 
-                modalRef.result.then(
-                  (result) => {
-                    if (transaction.taxes && transaction.taxes.length > 0) {
-                      for (const tax of transaction.taxes) {
-                        if (tax.tax.printer) {
-                          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                          modalRef.componentInstance.transactionId = transaction._id;
-                          modalRef.componentInstance.printerID = tax.tax.printer;
-                        }
-                      }
-                    }
-                  },
-                  (reason) => {
-                    if (transaction.taxes && transaction.taxes.length > 0) {
-                      for (const tax of transaction.taxes) {
-                        if (tax.tax.printer) {
-                          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                          modalRef.componentInstance.transactionId = transaction._id;
-                          modalRef.componentInstance.printerID = tax.tax.printer;
-                        }
+              modalRef.result.then(
+                (result) => {
+                  if (transaction.taxes && transaction.taxes.length > 0) {
+                    for (const tax of transaction.taxes) {
+                      if (tax.tax.printer) {
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef.componentInstance.printerID = tax.tax.printer;
                       }
                     }
                   }
-                );
-              }
+                },
+                (reason) => {
+                  if (transaction.taxes && transaction.taxes.length > 0) {
+                    for (const tax of transaction.taxes) {
+                      if (tax.tax.printer) {
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef.componentInstance.printerID = tax.tax.printer;
+                      }
+                    }
+                  }
+                }
+              );
             }
           }
         }
@@ -560,7 +557,7 @@ export class WebComponent implements OnInit {
           this.movOfCash = result.result;
 
           const mergedData = this.transactions.map((movo) => {
-            const matchedTransaction = this.movOfCash.find((item) => item.transaction === movo._id);
+            const matchedTransaction = this.movOfCash.find((item) => item.transaction.toString() === movo._id);
             return { ...movo, movOfCash: matchedTransaction || null };
           });
           this.transactions = mergedData;
@@ -579,27 +576,24 @@ export class WebComponent implements OnInit {
       .toPrint(type, data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: async (result: Blob) => {
-          if (result) {
-            // Convertimos el Blob a texto para verificar si es un error
-            const text = await result.text();
-
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
             try {
-              const json = JSON.parse(text); // Intentamos parsearlo como JSON
-
-              if (json.status === 400 || json.error) {
-                this._toastService.showToast(json);
-              }
-            } catch (e) {
               const blobUrl = URL.createObjectURL(result);
               printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
             }
           } else {
-            this._toastService.showToast('Error al generar el PDF');
+            this._toastService.showToast(result);
           }
         },
         error: (error) => {
-          this._toastService.showToast('Error en la impresión');
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
         },
         complete: () => {
           this.loading = false;

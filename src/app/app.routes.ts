@@ -38,7 +38,6 @@ import { ListPrintersComponent } from './components/printer/list-printers/list-p
 import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
-import { ReportKardexComponent } from './components/report-kardex/report-kardex.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component';
@@ -295,12 +294,6 @@ export const _routes: Routes = [
     component: CurrentAccountComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale' },
-  },
-  {
-    path: 'report/kardex-de-productos',
-    component: ReportKardexComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.stock' },
   },
   {
     path: 'report/venta/movimientos-de-cancellaciones',

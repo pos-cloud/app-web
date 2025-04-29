@@ -65,6 +65,7 @@ export class CategoryComponent implements OnInit {
       visibleOnSale: [false, []],
       visibleOnPurchase: [false, []],
       showMenu: [false, []],
+      tiendaNubeId: [],
     });
   }
 
@@ -105,6 +106,7 @@ export class CategoryComponent implements OnInit {
       visibleOnSale: this.category?.visibleOnSale ?? false,
       visibleOnPurchase: this.category?.visibleOnPurchase ?? false,
       showMenu: this.category?.showMenu ?? false,
+      tiendaNubeId: this.category?.tiendaNubeId ?? null,
     };
     this.categoryForm.setValue(values);
   }

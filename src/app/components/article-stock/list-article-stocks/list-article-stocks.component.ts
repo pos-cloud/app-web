@@ -15,7 +15,6 @@ import { Config } from '../../../app.config';
 import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
-import { PrintArticlesStockComponent } from '../../print/print-articles-stock/print-articles-stock.component';
 import { Printer } from '../../printer/printer';
 import { ArticleStock, attributes } from '../article-stock';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
@@ -385,30 +384,8 @@ export class ListArticleStocksComponent implements OnInit {
         this.loading = false;
         break;
       case 'print-inventario':
-        modalRef = this._modalService.open(PrintArticlesStockComponent);
-        modalRef.componentInstance.branch = this.filters['branch.number'];
-        modalRef.componentInstance.deposit = this.filters['deposit.name'];
-        modalRef.componentInstance.make = this.filters['article.make.description'];
-        modalRef.componentInstance.category = this.filters['article.category.description'];
-        modalRef.componentInstance.code = this.filters['article.code'];
-        modalRef.componentInstance.barcode = this.filters['article.barcode'];
-        modalRef.componentInstance.description = this.filters['article.description'];
-        break;
-      case 'updateArticle':
-        this.loading = true;
-        this._articleStockService.updateArticle().subscribe(
-          (result) => {
-            if (result && result.message) {
-              this._toastService.showToast(result.message, 'success');
-              this.loading = false;
-            }
-          },
-          (error) => {
-            this._toastService.showToast(error._body, 'danger');
-            this.loading = false;
-            this.totalItems = 0;
-          }
-        );
+        this.toPrint(PrintType.Inventory, null);
+        this.loading = false;
         break;
       case 'uploadFile':
         modalRef = this._modalService.open(ImportComponent, {
@@ -460,27 +437,24 @@ export class ListArticleStocksComponent implements OnInit {
       .toPrint(type, data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: async (result: Blob) => {
-          if (result) {
-            // Convertimos el Blob a texto para verificar si es un error
-            const text = await result.text();
-
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
             try {
-              const json = JSON.parse(text); // Intentamos parsearlo como JSON
-
-              if (json.status === 400 || json.error) {
-                this._toastService.showToast(json);
-              }
-            } catch (e) {
               const blobUrl = URL.createObjectURL(result);
               printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
             }
           } else {
-            this._toastService.showToast('Error al generar el PDF');
+            this._toastService.showToast(result);
           }
         },
         error: (error) => {
-          this._toastService.showToast('Error en la impresión');
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
         },
         complete: () => {
           this.loading = false;

@@ -1,10 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import 'moment/locale/es';
-
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
@@ -57,7 +56,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   // sort
   sort = {
-    column: 'amount',
+    column: 'totalPrice',
     direction: 'desc',
   };
 
@@ -67,7 +66,8 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
     private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private _title: Title
   ) {}
 
   async ngOnInit() {
@@ -166,6 +166,8 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
             this.title = result?.result?.title ?? `Transacciones por ${this.companyType} `;
+            this._title.setTitle(this.title);
+
             this.cdRef.detectChanges();
           },
           error: (error) => {

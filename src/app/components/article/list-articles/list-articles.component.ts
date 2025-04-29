@@ -2,9 +2,10 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { PrintService } from '@core/services/print.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { IAttribute, IButton, PrintType } from '@types';
-import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
+import { ApiResponse, IAttribute, IButton, PrinterPrintIn, PrintType } from '@types';
+import { PrintPriceListComponent } from 'app/components/article/actions/print-price-list/print-price-list.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
@@ -674,11 +675,25 @@ export class ListArticlesComponent {
         });
         break;
       case 'print-label':
-        const datalabel = {
-          quantity: 1,
-          articleId: obj._id,
-        };
-        this.toPrint(PrintType.Article, datalabel);
+        modalRef = this._modalService.open(SelectPrinterComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.typePrinter = PrinterPrintIn.Label;
+        modalRef.result.then(
+          (result) => {
+            if (result.data) {
+              const datalabel = {
+                quantity: 1,
+                articleId: obj._id,
+                printerId: result.data._id,
+              };
+              this.toPrint(PrintType.Article, datalabel);
+            }
+          },
+          (reason) => {}
+        );
+
         break;
       case 'print-labels':
         const dataLabels = {
@@ -730,27 +745,24 @@ export class ListArticlesComponent {
       .toPrint(type, data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: async (result: Blob) => {
-          if (result) {
-            // Convertimos el Blob a texto para verificar si es un error
-            const text = await result.text();
-
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
             try {
-              const json = JSON.parse(text); // Intentamos parsearlo como JSON
-
-              if (json.status === 400 || json.error) {
-                this._toastService.showToast(json);
-              }
-            } catch (e) {
               const blobUrl = URL.createObjectURL(result);
               printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
             }
           } else {
-            this._toastService.showToast('Error al generar el PDF');
+            this._toastService.showToast(result);
           }
         },
         error: (error) => {
-          this._toastService.showToast('Error en la impresión');
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
         },
         complete: () => {
           this.loading = false;

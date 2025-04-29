@@ -144,10 +144,7 @@ export class ListBankComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(
-    public _service: BankService,
-    private _router: Router
-  ) {}
+  constructor(public _service: BankService, private _router: Router) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);

@@ -13,7 +13,7 @@ export interface Category extends Activity {
   publishTiendaNube: boolean;
   showMenu: boolean;
   wooId: string;
-  tiendaNubeId: string;
+  tiendaNubeId: number;
   visibleInvoice: boolean;
   visibleOnSale: boolean;
   visibleOnPurchase: boolean;

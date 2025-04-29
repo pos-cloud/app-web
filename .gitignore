@@ -6,6 +6,7 @@
 /out-tsc
 package-lock.json
 settings.json
+.angular
 
 # dependencies
 /node_modules

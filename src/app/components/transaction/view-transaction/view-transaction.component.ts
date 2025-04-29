@@ -2,9 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FormField, PrintType } from '@types';
+import { AccountPeriod, ApiResponse, FormField, PrinterPrintIn, PrintType } from '@types';
 import { Config } from 'app/app.config';
-import { AccountPeriod } from 'app/components/account-period/account-period';
 import { AccountSeat } from 'app/components/account-seat/account-seat';
 import { Account } from 'app/components/account/account';
 import { AccountPeriodService } from 'app/core/services/account-period.service';
@@ -28,6 +27,7 @@ import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction';
 
 import { PrintService } from '@core/services/print.service';
+import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'moment/locale/es';
 import * as printJS from 'print-js';
@@ -409,11 +409,24 @@ export class ViewTransactionComponent implements OnInit {
         modalRef.componentInstance.operation = 'update';
         break;
       case 'print-label':
-        const data = {
-          quantity: movement.amount,
-          articleId: movement.article._id,
-        };
-        this.toPrint(PrintType.Article, data);
+        modalRef = this._modalService.open(SelectPrinterComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.typePrinter = PrinterPrintIn.Label;
+        modalRef.result.then(
+          (result) => {
+            if (result.data) {
+              const datalabel = {
+                quantity: movement.amount,
+                articleId: movement.article._id,
+                printerId: result.data._id,
+              };
+              this.toPrint(PrintType.Article, datalabel);
+            }
+          },
+          (reason) => {}
+        );
         break;
       default:
         break;
@@ -455,27 +468,24 @@ export class ViewTransactionComponent implements OnInit {
       .toPrint(type, data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: async (result: Blob) => {
-          if (result) {
-            // Convertimos el Blob a texto para verificar si es un error
-            const text = await result.text();
-
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toast.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
             try {
-              const json = JSON.parse(text); // Intentamos parsearlo como JSON
-
-              if (json.status === 400 || json.error) {
-                this._toast.showToast(json);
-              }
-            } catch (e) {
               const blobUrl = URL.createObjectURL(result);
               printJS(blobUrl);
+            } catch (e) {
+              this._toast.showToast({ message: 'Error al generar el PDF' });
             }
           } else {
-            this._toast.showToast('Error al generar el PDF');
+            this._toast.showToast(result);
           }
         },
         error: (error) => {
-          this._toast.showToast('Error en la impresión');
+          this._toast.showToast({ message: 'Error al generar el PDF' });
         },
         complete: () => {
           this.loading = false;

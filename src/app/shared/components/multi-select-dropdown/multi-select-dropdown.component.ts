@@ -21,6 +21,7 @@ export class MultiSelectDropdownComponent implements ControlValueAccessor {
   @Input() placeholder: string = '-';
   @Input() textField: string = 'name';
   @Input() allowSearch: boolean = true;
+  @Input() multi: boolean = true;
 
   uniqueId: string;
   selectedItems: any[] = [];
@@ -47,23 +48,38 @@ export class MultiSelectDropdownComponent implements ControlValueAccessor {
   }
 
   isSelected(item: any): boolean {
-    return this.selectedItems.includes(item._id);
+    if (this.multi) {
+      return (this.selectedItems as any[]).includes(item._id);
+    } else {
+      return this.selectedItems === item._id;
+    }
   }
 
   toggleSelection(item: any) {
-    if (this.isSelected(item)) {
-      this.selectedItems = this.selectedItems.filter((id) => id !== item._id);
+    if (this.multi) {
+      if (this.isSelected(item)) {
+        this.selectedItems = (this.selectedItems as any[]).filter((id) => id !== item._id);
+      } else {
+        this.selectedItems = [...(this.selectedItems as any[]), item._id];
+      }
     } else {
-      this.selectedItems.push(item._id);
+      this.selectedItems = item._id;
+      this.isOpen = false; // cerrar dropdown al seleccionar
     }
-    this.onChange(this.selectedItems); // Notificar cambios
+
+    this.onChange(this.selectedItems);
   }
 
   getSelectedItemsText(): string {
-    const selectedCount = this.selectedItems.length;
-    return selectedCount > 0
-      ? `${selectedCount} elemento${selectedCount > 1 ? 's' : ''} seleccionado${selectedCount > 1 ? 's' : ''}`
-      : this.placeholder;
+    if (this.multi) {
+      const selectedCount = (this.selectedItems as any[]).length;
+      return selectedCount > 0
+        ? `${selectedCount} elemento${selectedCount > 1 ? 's' : ''} seleccionado${selectedCount > 1 ? 's' : ''}`
+        : this.placeholder;
+    } else {
+      const selected = this.selectedItems ? this.data.find((d) => d._id === this.selectedItems) : null;
+      return selected ? selected[this.textField] : this.placeholder;
+    }
   }
 
   filteredItems() {
@@ -76,7 +92,7 @@ export class MultiSelectDropdownComponent implements ControlValueAccessor {
 
   /** Métodos de ControlValueAccessor **/
   writeValue(value: any): void {
-    this.selectedItems = value || [];
+    this.selectedItems = value ?? (this.multi ? [] : null);
   }
 
   registerOnChange(fn: any): void {

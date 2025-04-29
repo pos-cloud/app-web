@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
-import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -24,7 +24,6 @@ import { takeUntil } from 'rxjs/operators';
     FormsModule,
     TranslateModule,
     PipesModule,
-    DateTimePickerComponent,
     MultiSelectDropdownComponent,
     DataTableReportsComponent,
     ReactiveFormsModule,
@@ -59,7 +58,8 @@ export class InventoryValuedComponent {
     private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
-    private _fb: UntypedFormBuilder
+    private _fb: UntypedFormBuilder,
+    private _title: Title
   ) {
     this.form = this._fb.group({
       number: [],
@@ -129,6 +129,7 @@ export class InventoryValuedComponent {
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
             this.title = result?.result?.info?.title ?? 'Stock valorizado';
+            this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
           error: (error) => {

@@ -58,10 +58,11 @@ export class HeaderComponent implements OnInit {
     {
       label: 'Producción',
       icon: 'fa fa-paste',
-      children: [
-        { label: 'Cocina', link: 'pos/cocina' },
-        { label: 'Planta', link: 'pos/mostrador/production' },
-      ],
+      link: 'pos/mostrador/production',
+      // children: [
+      //   { label: 'Cocina', link: 'pos/cocina' },
+      //   { label: 'Planta', link: 'pos/mostrador/production' },
+      // ],
     },
     {
       label: 'Stock',
@@ -394,11 +395,7 @@ export class HeaderComponent implements OnInit {
   public openModal(op: string): void {
     switch (op) {
       case 'soporte':
-        window.open(
-          'https://tawk.to/chat/676477cc49e2fd8dfefa6b74/1ifg77trp',
-          'ChatSoporte',
-          'width=400,height=600,scrollbars=no,resizable=no'
-        );
+        window.open('https://api.whatsapp.com/send/?phone=5493564368535', '_blank');
         break;
       case 'changelogs':
         window.open('https://docs.poscloud.ar/books/actualizaciones', '_blank');
@@ -500,10 +497,11 @@ export class HeaderComponent implements OnInit {
         this.menu.push({
           label: 'Producción',
           icon: 'fa fa-paste',
-          children: [
-            { label: 'Cocina', link: 'pos/cocina' },
-            { label: 'Planta', link: 'pos/mostrador/production' },
-          ],
+          link: 'pos/mostrador/production',
+          // children: [
+          //   { label: 'Cocina', link: 'pos/cocina' },
+          //   { label: 'Planta', link: 'pos/mostrador/production' },
+          // ],
         });
       }
 
@@ -512,7 +510,7 @@ export class HeaderComponent implements OnInit {
           label: 'Productos',
           icon: 'fa fa-shopping-basket',
           children: [
-            { label: 'Productos', link: 'admin/articles' },
+            { label: 'Productos', link: 'entities/articles' },
             { label: 'Variantes', link: 'admin/variants' },
             { label: 'Marcas', link: 'entities/makes' },
             { label: 'Categoria', link: 'entities/categories' },
@@ -701,7 +699,7 @@ export class HeaderComponent implements OnInit {
               label: 'Otros',
               children: [
                 { label: 'Cumpleaños', link: 'reports/birthday' },
-                // { label: 'Dashboard', link: 'reports/dashboard' },
+                { label: 'Dashboard', link: 'reports/dashboard' },
               ],
             },
           ],
@@ -745,7 +743,7 @@ export class HeaderComponent implements OnInit {
               label: 'Contabilidad',
               children: [
                 { label: 'Cuenta contable', link: 'accounts' },
-                { label: 'Periodos contable', link: 'account-periods' },
+                { label: 'Periodos contable', link: 'entities/account-periods' },
                 { label: 'Asientos contable', link: 'account-seats' },
                 { label: 'Impuestos', link: 'admin/impuestos' },
                 { label: 'Tipos de cajas', link: 'cash-box-types' },
