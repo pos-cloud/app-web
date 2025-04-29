@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AccountPeriod, ApiResponse, FormField, PrintType } from '@types';
+import { AccountPeriod, ApiResponse, FormField, PrinterPrintIn, PrintType } from '@types';
 import { Config } from 'app/app.config';
 import { AccountSeat } from 'app/components/account-seat/account-seat';
 import { Account } from 'app/components/account/account';
@@ -27,6 +27,7 @@ import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction';
 
 import { PrintService } from '@core/services/print.service';
+import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'moment/locale/es';
 import * as printJS from 'print-js';
@@ -408,11 +409,24 @@ export class ViewTransactionComponent implements OnInit {
         modalRef.componentInstance.operation = 'update';
         break;
       case 'print-label':
-        const data = {
-          quantity: movement.amount,
-          articleId: movement.article._id,
-        };
-        this.toPrint(PrintType.Article, data);
+        modalRef = this._modalService.open(SelectPrinterComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.typePrinter = PrinterPrintIn.Label;
+        modalRef.result.then(
+          (result) => {
+            if (result.data) {
+              const datalabel = {
+                quantity: movement.amount,
+                articleId: movement.article._id,
+                printerId: result.data._id,
+              };
+              this.toPrint(PrintType.Article, datalabel);
+            }
+          },
+          (reason) => {}
+        );
         break;
       default:
         break;

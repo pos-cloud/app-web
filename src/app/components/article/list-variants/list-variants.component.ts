@@ -1,9 +1,10 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { PrintService } from '@core/services/print.service';
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, IButton, PrintType } from '@types';
+import { ApiResponse, IButton, PrinterPrintIn, PrintType } from '@types';
 import { PriceList } from 'app/components/price-list/price-list';
 import { PriceListService } from 'app/core/services/price-list.service';
 import * as printJS from 'print-js';
@@ -78,7 +79,8 @@ export class ListVariantsComponent {
     public _alertConfig: NgbAlertConfig,
     public _priceListService: PriceListService,
     public _printService: PrintService,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private _modalService: NgbModal
   ) {}
 
   public async emitEvent(event) {
@@ -86,6 +88,7 @@ export class ListVariantsComponent {
   }
 
   public async openModal(op: string, obj: any, items) {
+    let modalRef;
     let currentUrl;
     switch (op) {
       case 'view':
@@ -113,11 +116,24 @@ export class ListVariantsComponent {
         });
         break;
       case 'print-label':
-        const datalabel = {
-          quantity: 1,
-          articleId: obj._id,
-        };
-        this.toPrint(PrintType.Article, datalabel);
+        modalRef = this._modalService.open(SelectPrinterComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.typePrinter = PrinterPrintIn.Label;
+        modalRef.result.then(
+          (result) => {
+            if (result.data) {
+              const datalabel = {
+                quantity: 1,
+                articleId: obj._id,
+                printerId: result.data._id,
+              };
+              this.toPrint(PrintType.Article, datalabel);
+            }
+          },
+          (reason) => {}
+        );
         break;
       case 'print-labels':
         const dataLabels = {

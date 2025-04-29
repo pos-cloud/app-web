@@ -2,8 +2,9 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { PrintService } from '@core/services/print.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, IAttribute, IButton, PrintType } from '@types';
+import { ApiResponse, IAttribute, IButton, PrinterPrintIn, PrintType } from '@types';
 import { PrintPriceListComponent } from 'app/components/article/actions/print-price-list/print-price-list.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import * as printJS from 'print-js';
@@ -674,11 +675,25 @@ export class ListArticlesComponent {
         });
         break;
       case 'print-label':
-        const datalabel = {
-          quantity: 1,
-          articleId: obj._id,
-        };
-        this.toPrint(PrintType.Article, datalabel);
+        modalRef = this._modalService.open(SelectPrinterComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.typePrinter = PrinterPrintIn.Label;
+        modalRef.result.then(
+          (result) => {
+            if (result.data) {
+              const datalabel = {
+                quantity: 1,
+                articleId: obj._id,
+                printerId: result.data._id,
+              };
+              this.toPrint(PrintType.Article, datalabel);
+            }
+          },
+          (reason) => {}
+        );
+
         break;
       case 'print-labels':
         const dataLabels = {
