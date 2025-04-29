@@ -5,10 +5,10 @@ import { PrintService } from '@core/services/print.service';
 import { PrinterService } from '@core/services/printer.service';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IAttribute, IButton, PrintType } from '@types';
+import { PrintPriceListComponent } from 'app/components/article/actions/print-price-list/print-price-list.component';
 import { UpdateArticlePriceComponent } from 'app/components/article/actions/update-article-price/update-article-price.component';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { PrintPriceListComponent } from 'app/components/print/print-price-list/print-price-list.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 
 @Component({

@@ -59,10 +59,6 @@ export class HeaderComponent implements OnInit {
       label: 'Producción',
       icon: 'fa fa-paste',
       link: 'pos/mostrador/production',
-      // children: [
-      //   { label: 'Cocina', link: 'pos/cocina' },
-      //   { label: 'Planta', link: 'pos/mostrador/production' },
-      // ],
     },
     {
       label: 'Stock',
@@ -510,7 +506,7 @@ export class HeaderComponent implements OnInit {
           label: 'Productos',
           icon: 'fa fa-shopping-basket',
           children: [
-            { label: 'Productos', link: 'entities/articles' },
+            { label: 'Productos', link: 'admin/articles' },
             { label: 'Variantes', link: 'admin/variants' },
             { label: 'Marcas', link: 'entities/makes' },
             { label: 'Categoria', link: 'entities/categories' },
