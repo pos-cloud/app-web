@@ -682,11 +682,11 @@ export class ListArticlesComponent {
         modalRef.componentInstance.typePrinter = PrinterPrintIn.Label;
         modalRef.result.then(
           (result) => {
-            if (result.printer) {
+            if (result.data) {
               const datalabel = {
                 quantity: 1,
                 articleId: obj._id,
-                printerId: result.printer._id,
+                printerId: result.data._id,
               };
               this.toPrint(PrintType.Article, datalabel);
             }

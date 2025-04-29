@@ -42,7 +42,9 @@ export class SelectPrinterComponent implements OnInit {
         next: (value) => {
           this.printers = value;
           this.printerSelected = this.printers[0];
+
           this.loading = false;
+          if (this.printers.length === 1) this.selectPrinter();
         },
         error: () => {
           this.loading = false;
