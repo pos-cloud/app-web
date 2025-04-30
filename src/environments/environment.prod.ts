@@ -5,5 +5,5 @@ export const environment = {
   apiStorage: 'https://api-storage.poscloud.ar',
   apiTiendaNube: 'https://api-tiendanube.poscloud.ar',
   feAr: 'https://fe-ar.poscloud.ar',
-  apiLicense: 'http://api-license.poscloud.ar',
+  apiLicense: 'https://api-license.poscloud.ar',
 };
