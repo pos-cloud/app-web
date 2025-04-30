@@ -32,7 +32,7 @@ export class LicenseService {
         title: "Plan Basico",
         quantity: 1,
         currency_id: "ARS",
-        unit_price: 100,
+        unit_price: 1,
       },
     };
     return licenseData;
