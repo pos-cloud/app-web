@@ -1,10 +1,6 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import * as moment from 'moment';
@@ -65,10 +61,7 @@ export class AppComponent {
     this._router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const currentUrl = event.url;
-        if (
-          currentUrl.includes('menu') ||
-          currentUrl.includes('galleries/view')
-        ) {
+        if (currentUrl.includes('menu') || currentUrl.includes('galleries/view')) {
           this.showHeader = false;
         }
       }
@@ -89,38 +82,38 @@ export class AppComponent {
     let message: string;
 
     if (this.config && this.config['expirationLicenseDate']) {
-      let days = moment(
-        moment(this.config['expirationLicenseDate']).format('YYYY-MM-DD'),
-        'YYYY-MM-DD'
-      ).diff(moment().format('YYYY-MM-DD'), 'days');
+      let days = moment(moment(this.config['expirationLicenseDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(
+        moment().format('YYYY-MM-DD'),
+        'days'
+      );
 
       days++;
       if (!this.config['demo']) {
         if (days <= 0) {
           message = 'Su licencia expiró, por favor, regularice su pago.';
-          this._toastService.showToast({ message, type: 'danger' , redirect: '/license' });
+          this._toastService.showToast({ message, type: 'danger' });
         } else {
           if (days == 1) {
             message = 'Su licencia vence hoy.';
-            this._toastService.showToast({ message, type: 'warning' , redirect: '/license' });
+            this._toastService.showToast({ message, type: 'warning' });
           }
           if (days <= 5 && days > 1) {
             message = 'Su licencia vence en ' + days + ' días.';
-            this._toastService.showToast({ message, type: 'warning' , redirect: '/license' });
+            this._toastService.showToast({ message, type: 'warning' });
           }
           if (days <= 10 && days > 5) {
             message = 'Su licencia vence en ' + days + ' días.';
-            this._toastService.showToast({ message, type: 'info' , redirect: '/license' });
+            this._toastService.showToast({ message, type: 'info' });
           }
         }
       } else {
         if (days == 1) {
           message = 'Su licencia vence hoy.';
-          this._toastService.showToast({ message, type: 'warning' , redirect: '/license' });
+          this._toastService.showToast({ message, type: 'warning' });
         }
         if (days > 1) {
           message = 'Su licencia de prueba vence en ' + days + ' días.';
-          this._toastService.showToast({ message, type: 'info' , redirect: '/license' });
+          this._toastService.showToast({ message, type: 'info' });
         }
       }
 
@@ -183,10 +176,7 @@ export class AppComponent {
     let hostname = window.location.hostname;
     let subdominio = '';
 
-    if (
-      hostname.includes('.poscloud.com.ar') ||
-      hostname.includes('.poscloud.ar')
-    ) {
+    if (hostname.includes('.poscloud.com.ar') || hostname.includes('.poscloud.ar')) {
       if (hostname.includes('.poscloud.com.ar')) {
         subdominio = hostname.split('.poscloud.com.ar')[0];
       } else {
@@ -200,25 +190,8 @@ export class AppComponent {
         .replace(/https/g, '');
     }
 
-    if (
-      hostname.includes('192.168.0.88') ||
-      hostname.includes('jacksonburgs.hopto.org')
-    ) {
+    if (hostname.includes('192.168.0.88') || hostname.includes('jacksonburgs.hopto.org')) {
       subdominio = 'jacksonburgs';
-      isLocal = true;
-    }
-    if (
-      hostname.includes('192.168.2.108') ||
-      hostname.includes('eldesafioll.con-ip')
-    ) {
-      subdominio = 'eldesafio';
-      isLocal = true;
-    }
-    if (
-      hostname.includes('192.168.88.90') ||
-      hostname.includes('186.127.35.89')
-    ) {
-      subdominio = 'granpaso';
       isLocal = true;
     }
 
@@ -240,11 +213,7 @@ export class AppComponent {
     }
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

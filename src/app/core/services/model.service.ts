@@ -13,14 +13,9 @@ import { environment } from 'environments/environment';
 })
 export class ModelService {
   public URL = `${environment.apiv2}/`;
-  private items: BehaviorSubject<DatatableHistory> =
-    new BehaviorSubject<DatatableHistory>(null);
+  private items: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
 
-  constructor(
-    public path: string,
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public path: string, public _http: HttpClient, public _authService: AuthService) {
     this.URL += path;
   }
 
@@ -51,14 +46,7 @@ export class ModelService {
       );
   }
 
-  public getAll({
-    project = {},
-    match = {},
-    sort = {},
-    group = {},
-    limit = 0,
-    skip = 0,
-  }): Observable<any> {
+  public getAll({ project = {}, match = {}, sort = {}, group = {}, limit = 0, skip = 0 }): Observable<any> {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
@@ -91,9 +79,7 @@ export class ModelService {
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams()
-      .set('project', JSON.stringify(project))
-      .set('query', JSON.stringify(query));
+    const params = new HttpParams().set('project', JSON.stringify(project)).set('query', JSON.stringify(query));
 
     return this._http
       .get(`${this.URL}/find`, {
@@ -163,32 +149,6 @@ export class ModelService {
       .pipe(
         map((res) => {
           return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getCities(state: number, name?: string): Observable<any> {
-    let URL: string = 'https://apis.datos.gob.ar/georef/api/municipios';
-
-    let params = new HttpParams().set('campos', 'nombre').set('max', '20');
-
-    if (state) {
-      params = params.append('provincia', state.toString());
-    }
-    if (name && name !== '') {
-      params = params.append('nombre', name);
-    }
-
-    return this._http
-      .get(URL, {
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res['municipios'];
         }),
         catchError((err) => {
           return of(err);
