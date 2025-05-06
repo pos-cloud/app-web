@@ -14,6 +14,7 @@ export { Claim, ClaimPriority, ClaimType } from './entities/claim.interface';
 export { Classification } from './entities/classification.interface';
 export { CompanyGroup } from './entities/company-group.interface';
 export { Company, CompanyType, GenderType } from './entities/company.interface';
+export { Config } from './entities/config.interface';
 export { Country } from './entities/country.interface';
 export { CurrencyValue } from './entities/currency-value.interface';
 export { Currency } from './entities/currency.interface';
