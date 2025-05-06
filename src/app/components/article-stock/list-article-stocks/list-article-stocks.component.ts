@@ -20,7 +20,8 @@ import { ArticleStock, attributes } from '../article-stock';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 
 import { PrintService } from '@core/services/print.service';
-import { ApiResponse, Branch, PrintType } from '@types';
+import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
+import { ApiResponse, Branch, PrinterPrintIn, PrintType } from '@types';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import * as printJS from 'print-js';
@@ -376,12 +377,24 @@ export class ListArticleStocksComponent implements OnInit {
         break;
       case 'price-lists':
       case 'print-label':
-        const datalabel = {
-          quantity: articleStock.realStock,
-          articleId: articleStock.article._id,
-        };
-        this.toPrint(PrintType.Article, datalabel);
-        this.loading = false;
+        modalRef = this._modalService.open(SelectPrinterComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.typePrinter = PrinterPrintIn.Label;
+        modalRef.result.then(
+          (result) => {
+            if (result.data) {
+              const datalabel = {
+                quantity: articleStock.realStock,
+                articleId: articleStock.article._id,
+                printerId: result.data._id,
+              };
+              this.toPrint(PrintType.Article, datalabel);
+            }
+          },
+          (reason) => {}
+        );
         break;
       case 'print-inventario':
         this.toPrint(PrintType.Inventory, null);
