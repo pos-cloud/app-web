@@ -1,0 +1,454 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-company' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ company?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ company?.name ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleCompanyOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handleCompanyOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="companyForm" (ngSubmit)="handleCompanyOperation()" autocomplete="off" *ngIf="!loading">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              name="name"
+              id="name"
+              [ngClass]="{
+                'is-invalid': companyForm.get('name')?.touched && companyForm.get('name')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="companyForm.get('name')?.touched && companyForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="identificationType" class="control-label">{{
+              'identificationType.name' | translate | capitalize
+            }}</label>
+            <app-typeahead-dropdown
+              [control]="companyForm.get('identificationType')"
+              [data]="identificationTypes"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="identificationValue" class="control-label">{{
+              'identificationValue' | translate | capitalize
+            }}</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="identificationValue"
+              name="identificationValue"
+              id="identificationValue"
+              [focus]="focusEvent"
+              [readonly]="readonly"
+              [ngClass]="{
+                'is-invalid': companyForm.get('identificationValue')?.touched && companyForm.get('identificationValue')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                companyForm.get('identificationValue')?.touched &&
+                companyForm.get('identificationValue')?.hasError('required')
+              "
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="vatCondition" class="control-label"
+              >{{ 'vatCondition.description' | translate | capitalize }}:</label
+            >
+
+            <app-typeahead-dropdown
+              [control]="companyForm.get('vatCondition')"
+              [data]="vatConditions"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="fantasyName" class="control-label">{{ 'fantasyName' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fantasyName"
+              name="fantasyName"
+              id="fantasyName"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="grossIncome" class="control-label">{{ 'grossIncome' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="grossIncome"
+              name="grossIncome"
+              id="grossIncome"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-1">
+            <label for="discount" class="control-label">{{ 'discount' | translate | capitalize }}:</label>
+
+            <input
+              type="number"
+              class="form-control"
+              formControlName="discount"
+              name="discount"
+              id="discount"
+              [readonly]="readonly"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="phones" class="control-label">{{ 'contact.phone' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="phones"
+              name="phones"
+              id="phones"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-3">
+            <label for="emails" class="control-label">{{ 'company.emails' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="emails"
+              name="emails"
+              id="emails"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="gender" class="control-label">{{ 'gender' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="gender">
+              <option *ngFor="let gender of genders" [ngValue]="gender" [disabled]="readonly">
+                {{ gender }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="birthday" class="control-label">{{ 'birthday' | translate | capitalize }}:</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="birthday"
+              name="birthday"
+              id="birthday"
+              [readonly]="readonly"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}:</label>
+            <textarea
+              class="form-control"
+              formControlName="observation"
+              name="observation"
+              id="observation"
+              [readonly]="readonly"
+            ></textarea>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'location' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-5">
+            <label for="address" class="control-label">{{ 'address' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="address"
+              name="address"
+              id="address"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="addressNumber" class="control-label">{{ 'addressNumber' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="addressNumber"
+              name="addressNumber"
+              id="addressNumber"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="floorNumber" class="control-label">{{ 'flat' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="floorNumber"
+              name="floorNumber"
+              id="floorNumber"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="flat" class="control-label">{{ 'floor' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="flat"
+              name="flat"
+              id="flat"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-1">
+            <label for="zipCode" class="control-label">{{ 'zipCode' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="zipCode"
+              name="zipCode"
+              id="zipCode"
+              [readonly]="readonly"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="country" class="control-label">{{ 'company.country.name' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="companyForm.get('country')"
+              [data]="countries"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="state" class="control-label">{{ 'company.state.name' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="companyForm.get('state')"
+              [data]="states"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="city" class="control-label">{{ 'company.state' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="city"
+              name="city"
+              id="city"
+              [readonly]="readonly"
+            />
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'config' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="allowCurrentAccount" class="control-label">{{
+                  'enabled to purchase from checking account' | translate | capitalize
+                }}</label>
+                <select class="form-control" formControlName="allowCurrentAccount">
+                  <option [ngValue]="true" [disabled]="readonly">{{ 'true' | translate | capitalize }}</option>
+                  <option [ngValue]="false" [disabled]="readonly">{{ 'false' | translate | capitalize }}</option>
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="account">{{ 'account' | translate | capitalize }}:</label>
+                <app-typeahead-dropdown
+                  [control]="companyForm.get('account')"
+                  [data]="accounts"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="group" class="control-label">{{ 'assigned group ' | translate | capitalize }}</label>
+                <app-typeahead-dropdown
+                  [control]="companyForm.get('group')"
+                  [data]="companiesGroups"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="employee" class="control-label"> {{ 'assigned employee' | translate | capitalize }}</label>
+                <app-typeahead-dropdown
+                  [control]="companyForm.get('employee')"
+                  [data]="employees"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="transport" class="control-label">{{
+                  'assigned transportation  ' | translate | capitalize
+                }}</label>
+                <app-typeahead-dropdown
+                  [control]="companyForm.get('transport')"
+                  [data]="transports"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="priceList" class="control-label">{{ 'assigned list' | translate | capitalize }}</label>
+                <app-typeahead-dropdown
+                  [control]="companyForm.get('priceList')"
+                  [data]="priceLists"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="creditLimit" class="control-label">{{ 'credit_limit' | translate | capitalize }}</label>
+                <div class="input-group">
+                  <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="creditLimit"
+                    name="creditLimit"
+                    id="creditLimit"
+                    step="0"
+                    [readonly]="readonly"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ company?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ company?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ company?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ company?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ company?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

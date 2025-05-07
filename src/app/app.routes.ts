@@ -7,7 +7,6 @@ import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-c
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
 import { ListCategoriesComponent } from './components/category/list-categories/list-categories.component';
 import { ListClassificationsComponent } from './components/classification/list-classifications/list-classifications.component';
-import { ListCompaniesComponent } from './components/company/list-companies/list-companies.component';
 import { ListCompanyFieldsComponent } from './components/company/list-company-fields/list-company-fields.component';
 import { ConfigComponent } from './components/config/config.component';
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
@@ -265,18 +264,6 @@ export const _routes: Routes = [
     path: 'admin/metodos-de-pago',
     component: ListPaymentMethodsComponent,
     canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/clientes',
-    component: ListCompaniesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
-  },
-  {
-    path: 'admin/proveedores',
-    component: ListCompaniesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'admin/impresoras',
