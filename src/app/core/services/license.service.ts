@@ -1,15 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 import { environment } from 'environments/environment';
 import { loadMercadoPago } from "@mercadopago/sdk-js";
 import { Router } from '@angular/router';
-
+import { amount } from '../../../../services/api-v1/models/company-fields';
 
 declare global {
   interface Window {
     MercadoPago: any;
   }
+}
+
+interface LicenseData {
+  id: number,
+  title: string,
+  quantity: number,
+  currency_id: string,
+  unit_price: number
 }
 
 @Injectable({
@@ -22,26 +30,12 @@ export class LicenseService {
   constructor(
     private http: HttpClient,
     private router: Router,
-  ) {
-  }
-
-  prepareLicenseData() {
-    let licenseData = {
-      items:{
-        id: "1",
-        title: "Plan Basico",
-        quantity: 1,
-        currency_id: "ARS",
-        unit_price: 1,
-      },
-    };
-    return licenseData;
-  }
+  ) { }
 
   async getPublicKey() {
     try {
       const response = await firstValueFrom(
-        this.http.get<any>(`${environment.apiLicense}/key/get-public-key`)
+        this.http.get<{ publicKey: string }>(`${environment.apiLicense}/key/get-public-key`)
       );
       return response;
     } catch (error) {
@@ -50,14 +44,26 @@ export class LicenseService {
     }
   }
 
+  async prepareLicenseData(licenseType: number): Promise<LicenseData> {
+    try {
+      const response = await firstValueFrom(
+        this.http.get<LicenseData>(`${environment.apiLicense}/licenses/get-license-data/${licenseType}`)
+      );
+      return response;
+    } catch (error) {
+      console.error("Error al obtener los datos de la licencia:", error);
+      throw error;
+    }
+  }
+
   getLicenseStatus(
     fechaReferencia: Date,
-    licensePaymentDueDate: Date,
-    expirationLicenseDate: Date
-  ): {
-    status: string,
-    alertType: 'success' | 'warning' | 'danger'
-  } {
+    licensePaymentDueDateString: string,
+    expirationLicenseDateString: string
+  ): { status: string, alertType: 'success' | 'warning' | 'danger' } {
+    const licensePaymentDueDate = new Date(licensePaymentDueDateString);
+    const expirationLicenseDate = new Date(expirationLicenseDateString);
+
     if (fechaReferencia < licensePaymentDueDate) {
       return { status: 'Activa', alertType: 'success' };
     } else if (fechaReferencia < expirationLicenseDate) {
@@ -66,33 +72,38 @@ export class LicenseService {
       return { status: 'Vencida', alertType: 'danger' };
     }
   }
-  
+
   getLicenseTypeLabel(type: number): string {
-    //este dato debería traerse desde la api license cuando se puedan traer los datos de licencia
     switch (type) {
-      case 1:
-        return 'Básico';
-      case 2:
-        return 'Standard';
-      case 3:
-        return 'Premium';
-      default:
-        return 'Desconocido';
+      case 1: return 'Básico';
+      case 2: return 'Standard';
+      case 3: return 'Premium';
+      default: return 'Desconocido';
     }
   }
 
-  async initializeMercadoPago() {
+  async initializeMercadoPago(): Promise<void> {
     await loadMercadoPago();
     const publicKey = await this.getPublicKey();
+    console.log('Public Key:', publicKey.publicKey); // Verifica que sea válido
+    
     this.mp = new window.MercadoPago(publicKey.publicKey, {
       locale: "es-AR",
     });
+  
+    console.log('MP inicializado:', this.mp); // Debería mostrar el objeto MP
   }
 
-  async createPreference(): Promise<any> {
+  async createPreference(licenseData: LicenseData): Promise<any> {
     try {
       const preferenceData = {
-        ...this.prepareLicenseData(),
+        items: {
+          id: licenseData.id.toString(),
+          title: licenseData.title,
+          quantity: 1,
+          currency_id: licenseData.currency_id || 'ARS',
+          unit_price: licenseData.unit_price,
+        },
         external_reference: this.externalReference
       };
       const response = await firstValueFrom(
@@ -105,76 +116,66 @@ export class LicenseService {
     }
   }
 
-  async createPaymentBrick(containerId: string, payer: object, external_reference: string) {
-    await this.initializeMercadoPago();
-
-    this.externalReference = external_reference;
-
-    if (!this.mp) {
-      console.error('MercadoPago no inicializado');
-      return;
-    }
-
-    const licenseData = this.prepareLicenseData();
-    const amount = licenseData.items.unit_price;
-    const bricksBuilder = await this.mp.bricks();
-    const preference = await this.createPreference();
-    const preferenceId = preference.preferenceId;
-    
+  async createPaymentBrick(containerId: string, payer: object, external_reference: string, licenseType: number): Promise<void> {
     try {
+      await this.initializeMercadoPago();
+      this.externalReference = external_reference;
+
+      if (!this.mp) {
+        throw new Error('MercadoPago no inicializado');
+      }
+
+      const licenseData = await this.prepareLicenseData(licenseType);
+      const preference = await this.createPreference(licenseData);
+      const bricksBuilder = await this.mp.bricks();
+
+      const amount = licenseData.unit_price;
+      const preferenceId = preference.id;
+
       await bricksBuilder.create("payment", containerId, {
         initialization: {
           amount,
           preferenceId,
-          payer,
         },
         customization: {
-          visual: {
-            style: { theme: "default" },
-          },
+          visual: { style: { theme: "default" } },
           paymentMethods: {
             creditCard: "all",
             debitCard: "all",
             mercadoPago: "all",
+            wallet_purchase: "all",
             maxInstallments: 1,
           },
         },
         callbacks: {
-          onReady: () => console.log("Payment Brick listo."),
+          onReady: () => {
+            console.log("Payment Brick listo.");
+          },
           onSubmit: async ({ formData }: { formData: any }) => {
             try {
-              if (!formData || Object.keys(formData).length === 0) {
-                const container = document.getElementById(containerId); // Usar el ID del contenedor
-                if (container) {
-                  container.innerHTML = `
-                    <div class="alert alert-info">
-                      <h4>El proceso de pago continuará en la plataforma de mercado Pago.</h4>
-                      <p>Por favor espere hasta que el pago se complete.</p>
-                    </div>
-                  `;
-                  return; 
-                }
-              }
-              formData.external_reference = this.externalReference;
 
-              const headers = new HttpHeaders({
-                "Content-Type": "application/json",
-              });
+              if (!formData || Object.keys(formData).length === 0) {
+                const container = document.getElementById(containerId);
+                if (container) container.innerHTML = '';
+                return;
+              }
+
+              formData.external_reference = this.externalReference;
+              const headers = new HttpHeaders({ "Content-Type": "application/json" });
+
               const data = await firstValueFrom(
-                this.http.post(
-                  `${environment.apiLicense}/payments/create-payment`,
-                  formData,
-                  { headers }
-                )
+                this.http.post(`${environment.apiLicense}/payments/create-payment`, formData, { headers })
               );
+
               console.log("Pago procesado:", data);
-              this.router.navigate(['/'])
+              this.router.navigate(['/']);
             } catch (error: any) {
               console.error("Error en el pago:", error?.error || error?.message);
             }
           },
-          onError: (error: any) =>
-            console.error("Error en Payment Brick:", error),
+          onError: (error: any) => {
+            console.error("Error en Payment Brick:", error);
+          },
         },
       });
     } catch (error) {

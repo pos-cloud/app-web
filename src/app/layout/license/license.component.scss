@@ -42,4 +42,46 @@
       margin-top: 0.5rem;
       opacity: 0.8;
     }
+}
+
+.card-large {
+    // Estilos base para desktop
+    min-height: calc(100vh - 120px);
+    max-height: calc(100vh - 120px);
+    
+    // Media query para móvil
+    @media (max-width: 767px) {
+      min-height: auto !important;
+      max-height: none !important;
+      height: auto;
+      overflow: visible;
+      
+      .row {
+        flex-direction: column;
+        margin: 0;
+        
+        > [class*="col-"] {
+          padding: 0;
+          max-width: 100%;
+        }
+      }
+      
+      .brick-container {
+        min-height: 400px; // Ajusta este valor según necesites
+        max-height: 70vh;
+        padding: 15px;
+        
+        #mercado-pago-container {
+          min-height: 380px; // 20px menos que el contenedor padre
+          max-height: 68vh;
+        }
+      }
+      
+      // Ajustar padding del contenedor interno
+      .container.mt-5.mb-5 {
+        padding: 1rem;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+      }
+    }
   }

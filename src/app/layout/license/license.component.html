@@ -4,10 +4,10 @@
             <span>Licencia</span>
         </div>
         <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6">
                 <div class="container mt-5 mb-5 ">
-                    <p><strong>Fin de licencia:</strong> {{ expirationLicenseDate | date:'dd/MM/yyyy' }}</p>
-                    <p><strong>Próximo cobro:</strong> {{ licensePaymentDueDate | date:'dd/MM/yyyy' }}</p>
+                    <p><strong>Próximo cobro:</strong> {{ formatUTCDate(licensePaymentDueDate) }}</p>
+                    <p><strong>Fin de licencia:</strong> {{ formatUTCDate(expirationLicenseDate) }}</p>
                     <p><strong>Tipo de Plan:</strong>{{ licenseTypeLabel }}</p>
 
                     <ngb-alert [type]="licenseAlertType" [dismissible]="false">
@@ -23,7 +23,7 @@
                     </ngb-alert>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-12 col-md-6">
                 <div class="brick-container">
                     <div #mercadoPagoContainer id="mercado-pago-container"></div>
                 </div>

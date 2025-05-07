@@ -17,9 +17,9 @@ import { Router } from '@angular/router';
 })
 export class LicenseComponent implements OnInit {
     config: Config;
-    licensePaymentDueDate: Date | null = null;
-    expirationLicenseDate: Date | null = null;
-    licenseType: number = 1;
+    licensePaymentDueDate: any | null = null;
+    expirationLicenseDate: any | null = null;
+    licenseType: number = 0;
 
     licenseStatus: string = '';
     licenseAlertType: 'success' | 'warning' | 'danger' = 'success';
@@ -63,8 +63,8 @@ export class LicenseComponent implements OnInit {
 
         this._configService.getConfig.subscribe((config) => {
             this.config = config;
-            this.expirationLicenseDate = new Date(config.expirationLicenseDate);
-            this.licensePaymentDueDate = new Date(config.licensePaymentDueDate);
+            this.expirationLicenseDate = config.expirationLicenseDate;
+            this.licensePaymentDueDate = config.licensePaymentDueDate;
 
             this.externalReference = localStorage.getItem('company');
             this.payer = {
@@ -72,7 +72,7 @@ export class LicenseComponent implements OnInit {
                 email: config.emailAccount,
             };
 
-            const { status, alertType } = this._licenseService.getLicenseStatus(new Date(), this.licensePaymentDueDate, this.expirationLicenseDate);
+            const { status, alertType } = this._licenseService.getLicenseStatus(new Date(), config.licensePaymentDueDate, config.expirationLicenseDate);
             this.licenseStatus = status;
             this.licenseAlertType = alertType;
 
@@ -81,13 +81,17 @@ export class LicenseComponent implements OnInit {
 
         this.loadPaymentBrick();
     }
-
+    
+    formatUTCDate(dateString: string): string {
+        const date = new Date(dateString);
+        return `${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()}`;
+    }
 
     private loadPaymentBrick() {
         if (this.containerRef?.nativeElement) {
             const container = this.containerRef.nativeElement;
             container.innerHTML = '';
-            this._licenseService.createPaymentBrick(container.id, this.payer, this.externalReference);
+            this._licenseService.createPaymentBrick(container.id, this.payer, this.externalReference, this.licenseType);
         }
     }
 }
