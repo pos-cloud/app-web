@@ -89,7 +89,6 @@
               name="identificationValue"
               id="identificationValue"
               [focus]="focusEvent"
-              [readonly]="readonly"
               [ngClass]="{
                 'is-invalid': companyForm.get('identificationValue')?.touched && companyForm.get('identificationValue')?.invalid,
               }"
@@ -121,38 +120,17 @@
           <div class="form-group col-md-3">
             <label for="fantasyName" class="control-label">{{ 'fantasyName' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="fantasyName"
-              name="fantasyName"
-              id="fantasyName"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="fantasyName" name="fantasyName" id="fantasyName" />
           </div>
           <div class="form-group col-md-2">
             <label for="grossIncome" class="control-label">{{ 'grossIncome' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="grossIncome"
-              name="grossIncome"
-              id="grossIncome"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="grossIncome" name="grossIncome" id="grossIncome" />
           </div>
           <div class="form-group col-md-1">
             <label for="discount" class="control-label">{{ 'discount' | translate | capitalize }}:</label>
 
-            <input
-              type="number"
-              class="form-control"
-              formControlName="discount"
-              name="discount"
-              id="discount"
-              [readonly]="readonly"
-            />
+            <input type="number" class="form-control" formControlName="discount" name="discount" id="discount" />
           </div>
         </div>
 
@@ -160,57 +138,30 @@
           <div class="form-group col-md-3">
             <label for="phones" class="control-label">{{ 'contact.phone' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="phones"
-              name="phones"
-              id="phones"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="phones" name="phones" id="phones" />
           </div>
           <div class="form-group col-md-3">
             <label for="emails" class="control-label">{{ 'company.emails' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="emails"
-              name="emails"
-              id="emails"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="emails" name="emails" id="emails" />
           </div>
           <div class="form-group col-md-2">
             <label for="gender" class="control-label">{{ 'gender' | translate | capitalize }}:</label>
             <select class="form-control" formControlName="gender">
-              <option *ngFor="let gender of genders" [ngValue]="gender" [disabled]="readonly">
+              <option *ngFor="let gender of genders" [ngValue]="gender">
                 {{ gender }}
               </option>
             </select>
           </div>
           <div class="form-group col-md-2">
             <label for="birthday" class="control-label">{{ 'birthday' | translate | capitalize }}:</label>
-            <input
-              type="date"
-              class="form-control"
-              formControlName="birthday"
-              name="birthday"
-              id="birthday"
-              [readonly]="readonly"
-            />
+            <input type="date" class="form-control" formControlName="birthday" name="birthday" id="birthday" />
           </div>
         </div>
         <div class="row">
           <div class="form-group col-md-12">
             <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}:</label>
-            <textarea
-              class="form-control"
-              formControlName="observation"
-              name="observation"
-              id="observation"
-              [readonly]="readonly"
-            ></textarea>
+            <textarea class="form-control" formControlName="observation" name="observation" id="observation"></textarea>
           </div>
         </div>
         <hr />
@@ -223,14 +174,7 @@
           <div class="form-group col-md-5">
             <label for="address" class="control-label">{{ 'address' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="address"
-              name="address"
-              id="address"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="address" name="address" id="address" />
           </div>
           <div class="form-group col-md-2">
             <label for="addressNumber" class="control-label">{{ 'addressNumber' | translate | capitalize }}:</label>
@@ -241,44 +185,22 @@
               formControlName="addressNumber"
               name="addressNumber"
               id="addressNumber"
-              [readonly]="readonly"
             />
           </div>
           <div class="form-group col-md-2">
             <label for="floorNumber" class="control-label">{{ 'flat' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="floorNumber"
-              name="floorNumber"
-              id="floorNumber"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="floorNumber" name="floorNumber" id="floorNumber" />
           </div>
           <div class="form-group col-md-2">
             <label for="flat" class="control-label">{{ 'floor' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="flat"
-              name="flat"
-              id="flat"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="flat" name="flat" id="flat" />
           </div>
           <div class="form-group col-md-1">
             <label for="zipCode" class="control-label">{{ 'zipCode' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="zipCode"
-              name="zipCode"
-              id="zipCode"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="zipCode" name="zipCode" id="zipCode" />
           </div>
         </div>
         <div class="row">
@@ -302,14 +224,7 @@
           </div>
           <div class="form-group col-md-4">
             <label for="city" class="control-label">{{ 'company.state' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="city"
-              name="city"
-              id="city"
-              [readonly]="readonly"
-            />
+            <input type="text" class="form-control" formControlName="city" name="city" id="city" />
           </div>
         </div>
 
@@ -327,8 +242,8 @@
                   'enabled to purchase from checking account' | translate | capitalize
                 }}</label>
                 <select class="form-control" formControlName="allowCurrentAccount">
-                  <option [ngValue]="true" [disabled]="readonly">{{ 'true' | translate | capitalize }}</option>
-                  <option [ngValue]="false" [disabled]="readonly">{{ 'false' | translate | capitalize }}</option>
+                  <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+                  <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
                 </select>
               </div>
               <div class="form-group col-md-6">
@@ -395,7 +310,6 @@
                     name="creditLimit"
                     id="creditLimit"
                     step="0"
-                    [readonly]="readonly"
                   />
                 </div>
               </div>

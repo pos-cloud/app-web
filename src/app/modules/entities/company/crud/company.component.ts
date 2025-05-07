@@ -56,7 +56,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class CompanyComponent implements OnInit {
   public operation: string;
-  public readonly: boolean;
+
   public company: Company;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -147,6 +147,7 @@ export class CompanyComponent implements OnInit {
       priceLists: this._priceListService.find({ query: { operationType: { $ne: 'D' } } }),
       identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       accounts: this._accountService.find({ query: { operationType: { $ne: 'D' }, mode: 'Analitico' } }),
+      config: this._configService.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -161,6 +162,7 @@ export class CompanyComponent implements OnInit {
           priceLists,
           identificationTypes,
           accounts,
+          config,
         }) => {
           this.vatConditions = vatConditions ?? [];
           this.companiesGroups = companiesGroups ?? [];
@@ -172,6 +174,7 @@ export class CompanyComponent implements OnInit {
           this.priceLists = priceLists ?? [];
           this.identificationTypes = identificationTypes ?? [];
           this.accounts = accounts ?? [];
+          this.config = config[0] ?? null;
 
           if (companyId) {
             if (companyId) this.getCompany(companyId);
@@ -212,15 +215,31 @@ export class CompanyComponent implements OnInit {
     const transport = this.transports?.find((item) => item._id === this.company?.transport?.toString());
     const priceList = this.priceLists?.find((item) => item._id === this.company?.priceList?.toString());
     const state = this.states?.find((item) => item._id === this.company?.state?.toString());
-    const account = this.accounts?.find((item) => item._id === this.company?.account?.toString());
+    const accountData = this.accounts?.find((item) => item._id === this.company?.account?.toString());
+    let account;
+    let allowCurrentAccount;
+    if (type === CompanyType.Client) {
+      account = accountData
+        ? accountData
+        : this.accounts.find((item) => item._id === this.config?.company?.accountClient?.default?.toString()) ?? null;
 
+      allowCurrentAccount = this.config?.company?.allowCurrentAccountClient.default ?? false;
+    } else {
+      account = accountData
+        ? accountData
+        : this.accounts.find((item) => item._id === this.config?.company?.accountProvider?.default?.toString()) ?? null;
+      allowCurrentAccount = this.config?.company?.allowCurrentAccountProvider?.default ?? false;
+    }
     const values = {
       _id: this.company?._id ?? '',
       name: this.company?.name ?? '',
       code: this.company?.code ?? 0,
       fantasyName: this.company?.fantasyName ?? '',
       type: this.company?.type ?? type,
-      vatCondition: vatCondition ?? null,
+      vatCondition: vatCondition
+        ? vatCondition
+        : this.vatConditions.find((item) => item._id === this.config?.company?.vatCondition?.default.toString()) ??
+          null,
       identificationType: identificationType ?? null,
       identificationValue: this.company?.identificationValue ?? '',
       grossIncome: this.company?.grossIncome ?? '',
@@ -231,7 +250,7 @@ export class CompanyComponent implements OnInit {
       gender: this.company?.gender ?? null,
       birthday: this.company?.birthday ? new Date(this.company.birthday).toISOString().substring(0, 10) : '',
       observation: this.company?.observation ?? '',
-      allowCurrentAccount: this.company?.allowCurrentAccount ?? false,
+      allowCurrentAccount: this.company?.allowCurrentAccount ?? allowCurrentAccount,
       country: country ?? null,
       addressNumber: this.company?.addressNumber ?? '',
       state: state ?? null,
@@ -242,7 +261,7 @@ export class CompanyComponent implements OnInit {
       transport: transport ?? null,
       priceList: priceList ?? null,
       discount: this.company?.discount ?? 0,
-      account: account ?? null,
+      account: account,
       creditLimit: this.company?.creditLimit ?? '',
       zipCode: this.company?.zipCode ?? '',
     };
