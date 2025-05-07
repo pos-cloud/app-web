@@ -482,10 +482,7 @@ export class HeaderComponent implements OnInit {
         this.menu.push({
           label: 'Fondos',
           icon: 'fa fa-money',
-          children: [
-            { label: 'Movimientos', link: 'pos/mostrador/fondo' },
-            { label: 'Cajas', link: 'admin/cajas' },
-          ],
+          link: 'pos/mostrador/fondo',
         });
       }
 
