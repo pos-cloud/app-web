@@ -1504,13 +1504,8 @@ export class AddSaleOrderComponent {
 
       //logic for sangenemi quiere que se updatee por lista de precios esto lo vamos a mejorar y agregar una funcion en apiv2
       if ((this.database === 'sangenemi' || this.database === 'globalstore') && (this.priceList || this.newPriceList)) {
-        let markupPrice = 0;
-        if (this.priceList) {
-          markupPrice = this.priceList.percentage;
-        }
-        if (this.newPriceList) {
-          markupPrice = this.newPriceList.percentage;
-        }
+        const priceListToUse = this.newPriceList ?? this.priceList;
+        let markupPrice = this.getIncreasePercentage(priceListToUse, movementOfArticle);
         if (markupPrice) {
           movementOfArticle.unitPrice -= movementOfArticle.markupPrice;
           let aux = (movementOfArticle.unitPrice * markupPrice) / 100;
@@ -3847,5 +3842,40 @@ export class AddSaleOrderComponent {
         }
       );
     });
+  }
+
+  private getIncreasePercentage(priceList: PriceList, movementOfArticle: MovementOfArticle): number {
+    // 1. Verificar si hay excepción para el artículo
+    if (priceList.exceptions?.length) {
+      const exception = priceList.exceptions.find((e) => e?.article?._id === movementOfArticle.article?._id);
+      if (exception) {
+        return this.roundNumber.transform(exception.percentage);
+      }
+    }
+
+    // 2. Verificar si hay reglas especiales
+    if (priceList.allowSpecialRules && priceList.rules?.length) {
+      for (const rule of priceList.rules) {
+        if (!rule) continue;
+
+        const matchCategory = rule.category?._id === movementOfArticle.category?._id;
+        const matchMake = rule.make?._id === movementOfArticle.make?._id;
+
+        if (rule.category && rule.make && matchCategory && matchMake) {
+          return this.roundNumber.transform(rule.percentage + priceList.percentage);
+        }
+
+        if (!rule.category && rule.make && matchMake) {
+          return this.roundNumber.transform(rule.percentage + priceList.percentage);
+        }
+
+        if (rule.category && !rule.make && matchCategory) {
+          return this.roundNumber.transform(rule.percentage + priceList.percentage);
+        }
+      }
+    }
+
+    // 3. Si no se aplicó ninguna regla ni excepción, usar porcentaje base
+    return this.roundNumber.transform(priceList.percentage);
   }
 }
