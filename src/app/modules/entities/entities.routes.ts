@@ -70,4 +70,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'account-periods',
     loadChildren: () => import('./account-period/account-period.routes').then((m) => m.ACCOUNT_PERIOD_ROUTES),
   },
+  {
+    path: 'companies',
+    loadChildren: () => import('./company/company.routes').then((m) => m.COMPANY_ROUTES),
+  },
 ];

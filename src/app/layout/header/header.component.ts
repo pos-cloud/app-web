@@ -89,8 +89,8 @@ export class HeaderComponent implements OnInit {
       label: 'Empresas',
       icon: 'fa fa-male',
       children: [
-        { label: 'Clientes', link: 'admin/clientes' },
-        { label: 'Proveedores', link: 'admin/proveedores' },
+        { label: 'Clientes', link: 'entities/companies/client' },
+        { label: 'Proveedores', link: 'entities/companies/provider' },
         { label: '', isDivider: true },
         { label: 'Grupo de empresas', link: 'company-groups' },
       ],
@@ -525,11 +525,11 @@ export class HeaderComponent implements OnInit {
         let companies = [];
 
         if (user.permission.menu.companies.client) {
-          companies.push({ label: 'Clientes', link: 'admin/clientes' });
+          companies.push({ label: 'Clientes', link: 'entities/companies/client' });
         }
 
         if (user.permission.menu.companies.provider) {
-          companies.push({ label: 'Proveedores', link: 'admin/proveedores' });
+          companies.push({ label: 'Proveedores', link: 'entities/companies/provider' });
         }
 
         companies.push({ label: '', isDivider: true }, { label: 'Grupo de empresa', link: 'company-groups' });
