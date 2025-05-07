@@ -4,7 +4,6 @@ import { firstValueFrom, Subject } from 'rxjs';
 import { environment } from 'environments/environment';
 import { loadMercadoPago } from "@mercadopago/sdk-js";
 import { Router } from '@angular/router';
-import { amount } from '../../../../services/api-v1/models/company-fields';
 
 declare global {
   interface Window {
@@ -75,6 +74,7 @@ export class LicenseService {
 
   getLicenseTypeLabel(type: number): string {
     switch (type) {
+      case 0: return 'Testing';
       case 1: return 'Básico';
       case 2: return 'Standard';
       case 3: return 'Premium';
@@ -85,13 +85,9 @@ export class LicenseService {
   async initializeMercadoPago(): Promise<void> {
     await loadMercadoPago();
     const publicKey = await this.getPublicKey();
-    console.log('Public Key:', publicKey.publicKey); // Verifica que sea válido
-    
     this.mp = new window.MercadoPago(publicKey.publicKey, {
       locale: "es-AR",
     });
-  
-    console.log('MP inicializado:', this.mp); // Debería mostrar el objeto MP
   }
 
   async createPreference(licenseData: LicenseData): Promise<any> {
@@ -149,7 +145,6 @@ export class LicenseService {
         },
         callbacks: {
           onReady: () => {
-            console.log("Payment Brick listo.");
           },
           onSubmit: async ({ formData }: { formData: any }) => {
             try {
@@ -167,7 +162,6 @@ export class LicenseService {
                 this.http.post(`${environment.apiLicense}/payments/create-payment`, formData, { headers })
               );
 
-              console.log("Pago procesado:", data);
               this.router.navigate(['/']);
             } catch (error: any) {
               console.error("Error en el pago:", error?.error || error?.message);
