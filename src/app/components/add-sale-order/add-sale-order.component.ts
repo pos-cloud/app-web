@@ -2943,11 +2943,15 @@ export class AddSaleOrderComponent {
       if (this.transaction.type.posKitchen) {
         await this.changeArticlesStatusToPending();
       }
-
+      console.log('HELLO');
       // ACTUALIZACIÓN DE STOCK
       if (this.config['modules'].stock && this.transaction.type.modifyStock) {
         if (await this.areValidMovementOfArticle()) await this.updateStockByTransaction();
+        this._toastService.showToast({
+          message: 'Operación realizada con éxito',
+        });
       }
+
       // ACTUALIZACION DE ORDENES DE PRODUCCION
       // esto es solo para actualizar el estado de la orden cuando todos los movimientos de articulos fueron leidos
       if (this.transaction.type.transactionMovement === TransactionMovement.Production) {
