@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CompanyService } from '@core/services/company.service';
 
 import { CompanyType, IAttribute, IButton } from '@types';
@@ -204,22 +204,26 @@ export class ListCompanyComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: CompanyService, private _router: Router) {
-    const pathUrl = this._router.url.split('/');
-    this.companyType = pathUrl[3];
-    this.type = pathUrl[3] === 'client' ? CompanyType.Client : CompanyType.Provider;
-    this.title = this.type;
+  constructor(public _service: CompanyService, private _router: Router, private route: ActivatedRoute) {
+    this.route.url.subscribe(() => {
+      const pathUrl = this._router.url.split('/');
+      this.companyType = pathUrl[3];
+      this.type = pathUrl[3] === 'client' ? CompanyType.Client : CompanyType.Provider;
+      this.title = this.type;
 
-    this.columns.push({
-      name: 'type',
-      visible: false,
-      disabled: true,
-      filter: false,
-      datatype: 'string',
-      defaultFilter: `{ "$eq": "${this.type}" }`,
-      project: null,
-      align: 'left',
-      required: true,
+      this.columns.push({
+        name: 'type',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$eq": "${this.type}" }`,
+        project: null,
+        align: 'left',
+        required: true,
+      });
+
+      this.datatableComponent.refresh();
     });
   }
 
