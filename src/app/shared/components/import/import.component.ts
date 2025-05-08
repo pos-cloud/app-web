@@ -125,8 +125,9 @@ export class ImportComponent implements OnInit {
               this.messageImport = response.result.message;
               this.update = response.result.updateArticle;
               this.loading = false;
+              this._toastService.showToast(response);
             } else {
-              this._toastService.showToast(response.error);
+              this._toastService.showToast({ message: response.error.message });
               this.loading = false;
             }
           });
