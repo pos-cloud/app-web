@@ -223,7 +223,7 @@ export class CompanyComponent implements OnInit {
         ? accountData
         : this.accounts.find((item) => item._id === this.config?.company?.accountClient?.default?.toString()) ?? null;
 
-      allowCurrentAccount = this.config?.company?.allowCurrentAccountClient.default ?? false;
+      allowCurrentAccount = this.config?.company?.allowCurrentAccountClient?.default ?? false;
     } else {
       account = accountData
         ? accountData
@@ -238,7 +238,7 @@ export class CompanyComponent implements OnInit {
       type: this.company?.type ?? type,
       vatCondition: vatCondition
         ? vatCondition
-        : this.vatConditions.find((item) => item._id === this.config?.company?.vatCondition?.default.toString()) ??
+        : this.vatConditions.find((item) => item._id === this.config?.company?.vatCondition?.default?.toString()) ??
           null,
       identificationType: identificationType ?? null,
       identificationValue: this.company?.identificationValue ?? '',
