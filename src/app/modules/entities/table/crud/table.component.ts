@@ -123,26 +123,36 @@ export class TableComponent implements OnInit {
   }
 
   public setValueForm() {
-    const room = this.rooms?.find((item) => item._id == this.table.room.toString());
+    const room = this.rooms?.find((item) => item._id == this.table?.room?.toString());
 
     this.tableForm.setValue({
-      _id: this.table._id ?? '',
-      description: this.table.description ?? '',
+      _id: this.table?._id ?? '',
+      description: this.table?.description ?? '',
       room: room ?? null,
-      chair: this.table.chair ?? 0,
-      state: this.table.state ?? TableState.Available,
+      chair: this.table?.chair ?? 0,
+      state: this.table?.state ?? TableState.Available,
     });
   }
 
+  onEnter() {
+    const isInQuill = event.target instanceof HTMLDivElement && event.target.classList.contains('ql-editor');
+
+    if (isInQuill) {
+      event.preventDefault();
+      return;
+    }
+
+    if (this.tableForm.valid && this.operation !== 'view' && this.operation !== 'delete') {
+      this.addTable();
+    }
+  }
   public addTable(): void {
     this.loading = true;
-
     this.tableForm.markAllAsTouched();
     if (this.tableForm.invalid) {
       this.loading = false;
       return;
     }
-
     this.table = this.tableForm.value;
 
     switch (this.operation) {
@@ -181,7 +191,6 @@ export class TableComponent implements OnInit {
 
   public saveTable(): void {
     this.loading = true;
-
     this._tableService
       .save(this.table)
       .pipe(takeUntil(this.destroy$))

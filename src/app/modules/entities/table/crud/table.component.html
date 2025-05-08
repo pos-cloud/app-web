@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="card-body scroll">
-      <form [formGroup]="tableForm" (ngSubmit)="addTable()" autocomplete="off">
+      <form [formGroup]="tableForm" autocomplete="off" (keydown.enter)="onEnter()">
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
