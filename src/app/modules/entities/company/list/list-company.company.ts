@@ -1,10 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CompanyService } from '@core/services/company.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ImportComponent } from '@shared/components/import/import.component';
 
 import { CompanyType, IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
+import { CurrentAccountDetailsComponent } from 'app/components/print/current-account-details/current-account-details.component';
 
 @Component({
   selector: 'app-list-companies',
@@ -157,6 +160,12 @@ export class ListCompanyComponent {
   ];
   public headerButtons: IButton[] = [
     {
+      title: 'Detalle de cuenta corriente',
+      class: 'btn',
+      icon: 'fa fa-book',
+      click: `this.emitEvent('current', null)`,
+    },
+    {
       title: 'add',
       class: 'btn btn-light',
       icon: 'fa fa-plus',
@@ -167,6 +176,12 @@ export class ListCompanyComponent {
       class: 'btn btn-light',
       icon: 'fa fa-refresh',
       click: `this.refresh()`,
+    },
+    {
+      title: 'import',
+      class: 'btn btn-light',
+      icon: 'fa fa-upload',
+      click: `this.emitEvent('uploadFile', null)`,
     },
   ];
   public rowButtons: IButton[] = [
@@ -204,7 +219,12 @@ export class ListCompanyComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: CompanyService, private _router: Router, private route: ActivatedRoute) {
+  constructor(
+    public _service: CompanyService,
+    private _router: Router,
+    private route: ActivatedRoute,
+    private _modalService: NgbModal
+  ) {
     this.route.url.subscribe(() => {
       const pathUrl = this._router.url.split('/');
       this.companyType = pathUrl[3];
@@ -232,6 +252,7 @@ export class ListCompanyComponent {
   }
 
   public async openModal(op: string, obj: any) {
+    let modalRef;
     switch (op) {
       case 'view':
         this._router.navigateByUrl('entities/companies/view/' + this.companyType + '/' + obj._id);
@@ -251,6 +272,34 @@ export class ListCompanyComponent {
         break;
       case 'current-account1':
         this._router.navigateByUrl('admin/cuentas-corrientes?companyId=' + obj._id + '&companyType=' + this.type);
+        break;
+      case 'current':
+        modalRef = this._modalService.open(CurrentAccountDetailsComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.companyType = this.type;
+        modalRef.result.then(
+          (result) => {},
+          (reason) => {}
+        );
+        break;
+      case 'uploadFile':
+        modalRef = this._modalService.open(ImportComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.model = 'company';
+        modalRef.componentInstance.title = 'Importar empresas';
+        modalRef.result.then(
+          (result) => {
+            if (result === 'save_close') {
+              this.datatableComponent.refresh();
+            }
+          },
+          (reason) => {}
+        );
+
         break;
     }
   }
