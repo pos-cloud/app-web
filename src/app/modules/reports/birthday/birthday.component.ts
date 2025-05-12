@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
+import { PipesModule } from '@shared/pipes/pipes.module';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -14,7 +17,17 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './birthday.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, NgbModule, ReactiveFormsModule, DataTableReportsComponent],
+  imports: [
+    CommonModule,
+    NgbModule,
+    ReactiveFormsModule,
+    DataTableReportsComponent,
+    DateTimePickerComponent,
+    TranslateModule,
+    PipesModule,
+    CommonModule,
+    FormsModule,
+  ],
 })
 export class ReportBirthdayComponent implements OnInit {
   public data: any[] = [];
@@ -25,6 +38,9 @@ export class ReportBirthdayComponent implements OnInit {
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
+
+  startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+  endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
   // sort
   public sort = {
@@ -51,7 +67,10 @@ export class ReportBirthdayComponent implements OnInit {
     this.loading = true;
     const requestPayload = {
       reportType: 'birthday',
-      filters: {},
+      filters: {
+        startDate: this.startDate,
+        endDate: this.endDate,
+      },
       pagination: {
         page: 1,
         pageSize: 10,
