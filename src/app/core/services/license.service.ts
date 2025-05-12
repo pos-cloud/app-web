@@ -136,8 +136,6 @@ export class LicenseService {
         customization: {
           visual: { style: { theme: "default" } },
           paymentMethods: {
-            creditCard: "all",
-            debitCard: "all",
             mercadoPago: "all",
             wallet_purchase: "all",
             maxInstallments: 1,

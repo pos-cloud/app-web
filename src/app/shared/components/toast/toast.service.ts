@@ -3,77 +3,154 @@ import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-  constructor(
-    private _router: Router
-  ) {}
+  constructor(private _router: Router) { }
   toasts: any[] = [];
 
-  // Muestra una notificación
-  private show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
-    this.toasts.push({ textOrTpl, ...options });
+  private show(
+    textOrTpl: string | TemplateRef<any>,
+    options: any = {}
+  ) {
+    if (options.position) {
+      options.classname = `${options.classname || ''} ${options.position}`;
+    }
+
+    this.toasts.push({
+      textOrTpl,
+      ...options
+    });
   }
 
-  // Elimina un toast de la lista
   public remove(toast) {
     this.toasts = this.toasts.filter((t) => t !== toast);
   }
 
   public handleClick(toast) {
-    this.remove(toast)
-    if (toast.redirect !== ''){
-      this._router.navigate([toast.redirect])
+    this.remove(toast);
+    if (toast.redirect) {
+      this._router.navigate([toast.redirect]);
     }
   }
 
-  // Métodos para notificaciones específicas
-  private success(message: string, title: string, redirect: string) {
-    this.show(message, { classname: 'bg-success text-light', header: title , redirect });
+  public calculateNotificationSettings(days: number): { type: 'danger' | 'warning' | 'info', delay: number } {
+    let type: 'danger' | 'warning' | 'info' = 'info';
+    let delay = 0;
+
+    if (days <= 0) {
+      type = 'danger';
+      delay = 86400000;
+    } else if (days <= 5) {
+      type = 'warning';
+      delay = (11 - days) * 60 * 1000; 
+    } else if (days <= 10) {
+      type = 'info';
+      delay = (11 - days) * 60 * 1000; 
+    } else {
+      type = 'info';
+      delay = 5000;
+    }
+
+    return { type, delay };
   }
 
-  private error(message: string, title: string, redirect: string) {
-    this.show(message, { classname: 'bg-danger text-light', header: title , redirect });
+  private success(
+    message: string,
+    title: string,
+    redirect: string,
+    delay: number,
+    position: string
+  ) {
+    this.show(message, {
+      classname: 'bg-success text-light',
+      header: title,
+      redirect,
+      delay,
+      position
+    });
   }
 
-  private info(message: string, title: string, redirect: string) {
-    this.show(message, { classname: 'bg-info text-light', header: title , redirect });
+  private error(
+    message: string,
+    title: string,
+    redirect: string,
+    delay: number,
+    position: string
+  ) {
+    this.show(message, {
+      classname: 'bg-danger text-light',
+      header: title,
+      redirect,
+      delay,
+      position
+    });
   }
 
-  // Método centralizado para manejar toasts
+  private warning(
+    message: string,
+    title: string,
+    redirect: string,
+    delay: number,
+    position: string
+  ) {
+    this.show(message, {
+      classname: 'bg-warning text-light',
+      header: title,
+      redirect,
+      delay,
+      position
+    });
+  }
+
+  private info(
+    message: string,
+    title: string,
+    redirect: string,
+    delay: number,
+    position: string
+  ) {
+    this.show(message, {
+      classname: 'bg-info text-light',
+      header: title,
+      redirect,
+      delay,
+      position
+    });
+  }
+
   showToast(
     result: any = null,
     type?: string,
     title: string = '',
     message: string = '',
-    redirect?: string
+    redirect?: string,
+    delay: number = 5000,
+    position: string = 'bottom-right'
   ): void {
-    if (result) {
+    if (result !== null) {
       if (result.status === 200) {
         type = 'success';
         message = result.message;
-        redirect = result.redirect;
       } else if (result.status >= 400) {
         type = 'danger';
         message = result.error?.message || result.message;
-        redirect = result.redirect;
-
       } else {
         type = 'info';
         message = result.message;
-        redirect = result.redirect;
       }
     }
-
+    console.log(type,message);
     switch (type) {
       case 'success':
-        this.success(message, title, redirect);
+        this.success(message, title, redirect, delay, position);
         break;
       case 'danger':
-        this.error(message, title, redirect);
+        this.error(message, title, redirect, delay, position);
         break;
+      case 'warning':
+        this.warning(message, title, redirect, delay, position);
+      break;
       default:
-        this.info(message, title, redirect);
+        this.info(message, title, redirect, delay, position);
         break;
     }
-
   }
 }

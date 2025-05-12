@@ -1,11 +1,63 @@
 /* toast.styles.scss */
 .toast-custom {
-  color: white; // Color del texto
-  border: none; // Sin borde
-  font-size: 1rem; // Tamaño de fuente
-  font-weight: bold;
-  cursor: pointer;
+  position: fixed;
+  z-index: 9999;
+  margin: 1rem;
+  min-width: 250px;
+  max-width: 100%;
+  animation: fadeIn 0.3s ease-in;
+
+  // Posiciones base
+  &.top-right {
+    top: 0;
+    right: 0;
+  }
+
+  &.top-left {
+    top: 0;
+    left: 0;
+  }
+
+  &.bottom-right {
+    bottom: 0;
+    right: 0;
+  }
+
+  &.bottom-left {
+    bottom: 0;
+    left: 0;
+  }
+
+  // Estilos responsivos para móviles
+  @media (max-width: 768px) {
+    width: calc(100% - 2rem);
+    left: 50%;
+    transform: translateX(-50%);
+    
+    &.top-right,
+    &.top-left {
+      top: 1rem;
+    }
+    
+    &.bottom-right,
+    &.bottom-left {
+      bottom: 1rem;
+    }
+  }
 }
+
+// Animación de entrada
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 // Estilos específicos para los diferentes tipos de toast
 .bg-success {
@@ -14,6 +66,10 @@
 
 .bg-danger {
   background-color: #dc3545 !important; // Rojo
+}
+
+.bg-warning {
+  background-color: #d9dc35 !important; // Rojo
 }
 
 .bg-info {
