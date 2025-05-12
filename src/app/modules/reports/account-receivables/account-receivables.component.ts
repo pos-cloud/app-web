@@ -3,13 +3,16 @@ import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angula
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { EmployeeService } from '@core/services/employee.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
+import { Employee } from '@types';
 import { CompanyType } from 'app/components/company/company';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { Subject, Subscription } from 'rxjs';
+import { combineLatest, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -17,7 +20,15 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './account-receivables.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, PipesModule, DataTableReportsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    PipesModule,
+    DataTableReportsComponent,
+    MultiSelectDropdownComponent,
+  ],
 })
 export class AccountReceivablesComponent implements OnInit {
   public data: any[] = [];
@@ -29,10 +40,11 @@ export class AccountReceivablesComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
   public companyType: CompanyType;
+  public employees: Employee[];
+  employeeSelect: string[] = [];
 
   // filter
   company: string = '';
-
   // sort
   public sort = {
     column: 'total',
@@ -41,6 +53,7 @@ export class AccountReceivablesComponent implements OnInit {
 
   constructor(
     private _service: ReportSystemService,
+    public _employeeService: EmployeeService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
     private _activatedRoute: ActivatedRoute,
@@ -54,6 +67,25 @@ export class AccountReceivablesComponent implements OnInit {
   async ngOnInit() {
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.companyType = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+
+      combineLatest({
+        employees: this._employeeService.find({ query: { operationType: { $ne: 'D' } } }),
+      })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: ({ employees }) => {
+            this.employees = employees ?? [];
+
+            this.getReport();
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
+
       this.getReport();
     });
   }
@@ -65,6 +97,7 @@ export class AccountReceivablesComponent implements OnInit {
       filters: {
         companyType: this.companyType,
         company: this.company,
+        employees: this.employeeSelect,
       },
       pagination: {
         page: 1,
