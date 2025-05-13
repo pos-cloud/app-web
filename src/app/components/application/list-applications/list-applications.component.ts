@@ -1,11 +1,13 @@
 import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ApiResponse } from '@types';
+import { PrintService } from '@core/services/print.service';
+import { ApiResponse, PrintType } from '@types';
 import { CompanyService } from 'app/core/services/company.service';
 import { WooCommerceService } from 'app/core/services/woocommerce.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import * as printJS from 'print-js';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ApplicationService } from '../../../core/services/application.service';
 import { ArticleService } from '../../../core/services/article.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
@@ -49,6 +51,7 @@ export class ListApplicationsComponent implements OnInit {
     company: 'Este campo es requerido.',
     article: 'Este campo es requerido.',
   };
+  private destroy$ = new Subject<void>();
 
   searchArticle = (text$: Observable<string>) =>
     text$.pipe(
@@ -155,7 +158,8 @@ export class ListApplicationsComponent implements OnInit {
     public _paymentMethodService: PaymentMethodService,
     public _companyService: CompanyService,
     private _articleService: ArticleService,
-    private _wooCommerceService: WooCommerceService
+    private _wooCommerceService: WooCommerceService,
+    public _printService: PrintService
   ) {}
 
   async ngOnInit() {
@@ -310,6 +314,38 @@ export class ListApplicationsComponent implements OnInit {
         (error) => this._toastService.showToast(error)
       );
     });
+  }
+
+  public printQr() {
+    this.loading = true;
+
+    this._printService
+      .toPrint(PrintType.Qr, {})
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public getShipmentMethod(query): Promise<ShipmentMethod[]> {
