@@ -55,13 +55,14 @@ import { ListUsersComponent } from './components/user/list-users/list-users.comp
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
+import { NotificationGuard } from '@core/guards/notification.guard';
 import { HomeComponent } from './layout/home/home.component';
 
 export const _routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    canActivate: [AuthGuard, LicenseGuard],
+    canActivate: [AuthGuard, LicenseGuard, NotificationGuard],
   },
   {
     path: 'inicio',

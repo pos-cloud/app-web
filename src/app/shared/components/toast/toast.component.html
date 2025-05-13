@@ -3,10 +3,10 @@
   [header]="toast.header ?? undefined"
   [ngClass]="['toast-custom', toast.classname]"
   [autohide]="true"
-  [delay]="toast.delay || 5000"
+  [delay]="toast.delay"
   (hidden)="toastService.remove(toast)"
   aria-atomic="true"
   (click)="toastService.handleClick(toast)"
->
+> 
   {{ toast.textOrTpl }}
 </ngb-toast>
