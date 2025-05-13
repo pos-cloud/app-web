@@ -5,6 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
+import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -23,6 +24,7 @@ import { takeUntil } from 'rxjs/operators';
     ReactiveFormsModule,
     DataTableReportsComponent,
     DateTimePickerComponent,
+    MultiSelectDropdownComponent,
     TranslateModule,
     PipesModule,
     CommonModule,
@@ -39,6 +41,59 @@ export class ReportBirthdayComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
+  public months: { name: string; _id: number }[] = [
+    {
+      name: 'Enero',
+      _id: 1,
+    },
+    {
+      name: 'Febrero',
+      _id: 2,
+    },
+    {
+      name: 'Marzo',
+      _id: 3,
+    },
+    {
+      name: 'Abril',
+      _id: 4,
+    },
+    {
+      name: 'Mayo',
+      _id: 5,
+    },
+    {
+      name: 'Junio',
+      _id: 6,
+    },
+    {
+      name: 'Julio',
+      _id: 7,
+    },
+    {
+      name: 'Agosto',
+      _id: 8,
+    },
+    {
+      name: 'Septiembre',
+      _id: 9,
+    },
+    {
+      name: 'Octubre',
+      _id: 10,
+    },
+    {
+      name: 'Noviembre',
+      _id: 11,
+    },
+    {
+      name: 'Diciembre',
+      _id: 12,
+    },
+  ];
+
+  public monthsSelect: string[] = [];
+  public day: number;
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
@@ -68,8 +123,8 @@ export class ReportBirthdayComponent implements OnInit {
     const requestPayload = {
       reportType: 'birthday',
       filters: {
-        startDate: this.startDate,
-        endDate: this.endDate,
+        months: this.monthsSelect,
+        day: this.day,
       },
       pagination: {
         page: 1,
