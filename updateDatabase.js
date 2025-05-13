@@ -262,10 +262,12 @@ db['article-stocks'].find().forEach((stock) => {
     // Si el artículo existe, verificamos el realStock
     if (stock.realStock > 0) {
       // Si el realStock es mayor a 0, no se puede vender sin stock
-      db.articles.updateOne({ _id: article._id }, { $set: { allowWithoutStock: false } });
+      db.articles.updateOne({ _id: article._id }, { $set: { allowSaleWithoutStock: false } });
     } else {
       // Si el realStock es 0 o menor, se puede vender sin stock
-      db.articles.updateOne({ _id: article._id }, { $set: { allowWithoutStock: true } });
+      db.articles.updateOne({ _id: article._id }, { $set: { allowSaleWithoutStock: true } });
     }
   }
 });
+
+db.articles.updateMany({}, { $set: { allowSaleWithoutStock: true } });
