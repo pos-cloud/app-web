@@ -3,7 +3,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
-import * as moment from 'moment';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
 import { Config } from './app.config';
@@ -50,7 +49,6 @@ export class AppComponent {
           if (config) {
             this._configService.setConfig(config);
             this.setConfigurationSettings(config);
-            this.verifyNotification();
           }
         });
       } else {
@@ -66,59 +64,6 @@ export class AppComponent {
         }
       }
     });
-  }
-
-  public verifyNotification() {
-    if (!this.isVerifyNotification) {
-      this.isVerifyNotification = true;
-      this.execNotification();
-      setInterval(() => {
-        this.execNotification();
-      }, 3600000);
-    }
-  }
-
-  public execNotification() {
-    let message: string;
-
-    if (this.config && this.config['expirationLicenseDate']) {
-      let days = moment(moment(this.config['expirationLicenseDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(
-        moment().format('YYYY-MM-DD'),
-        'days'
-      );
-
-      days++;
-      if (!this.config['demo']) {
-        if (days <= 0) {
-          message = 'Su licencia expiró, por favor, regularice su pago.';
-          this._toastService.showToast({ message, type: 'danger' });
-        } else {
-          if (days == 1) {
-            message = 'Su licencia vence hoy.';
-            this._toastService.showToast({ message, type: 'warning' });
-          }
-          if (days <= 5 && days > 1) {
-            message = 'Su licencia vence en ' + days + ' días.';
-            this._toastService.showToast({ message, type: 'warning' });
-          }
-          if (days <= 10 && days > 5) {
-            message = 'Su licencia vence en ' + days + ' días.';
-            this._toastService.showToast({ message, type: 'info' });
-          }
-        }
-      } else {
-        if (days == 1) {
-          message = 'Su licencia vence hoy.';
-          this._toastService.showToast({ message, type: 'warning' });
-        }
-        if (days > 1) {
-          message = 'Su licencia de prueba vence en ' + days + ' días.';
-          this._toastService.showToast({ message, type: 'info' });
-        }
-      }
-
-      localStorage.setItem('notificationMessage', message);
-    }
   }
 
   public getConfigApi(): Promise<Config> {
