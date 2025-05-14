@@ -74,4 +74,13 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'companies',
     loadChildren: () => import('./company/company.routes').then((m) => m.COMPANY_ROUTES),
   },
+  {
+    path: 'relation-type',
+    loadChildren: () => import('./relation-type/relation-type.routes').then((m) => m.RELATION_TYPE_ROUTE),
+  },
+  {
+    path: 'identification-type',
+    loadChildren: () =>
+      import('./identification-type/identification-type.routes').then((m) => m.IDENTIFICATION_TYPE_ROUTE),
+  },
 ];

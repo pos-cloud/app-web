@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  Output,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -30,8 +24,7 @@ export class ListIdentificationTypesComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Output() eventAddItem: EventEmitter<IdentificationType> =
-    new EventEmitter<IdentificationType>();
+  @Output() eventAddItem: EventEmitter<IdentificationType> = new EventEmitter<IdentificationType>();
   public itemsPerPage = 10;
   public totalItems = 0;
 
@@ -56,8 +49,7 @@ export class ListIdentificationTypesComponent implements OnInit {
     this._identificationTypeService.getIdentificationTypes(query).subscribe(
       (result) => {
         if (!result.identificationTypes) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.identificationTypes = new Array();
           this.areIdentificationTypesEmpty = true;
@@ -97,8 +89,7 @@ export class ListIdentificationTypesComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.identificationTypeId =
-          identificationType._id;
+        modalRef.componentInstance.identificationTypeId = identificationType._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
         break;
@@ -123,8 +114,7 @@ export class ListIdentificationTypesComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.identificationTypeId =
-          identificationType._id;
+        modalRef.componentInstance.identificationTypeId = identificationType._id;
         modalRef.componentInstance.operation = 'update';
         modalRef.componentInstance.readonly = false;
         modalRef.result.then(
@@ -141,8 +131,7 @@ export class ListIdentificationTypesComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.identificationTypeId =
-          identificationType._id;
+        modalRef.componentInstance.identificationTypeId = identificationType._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'delete';
         modalRef.result.then(
@@ -162,11 +151,7 @@ export class ListIdentificationTypesComponent implements OnInit {
     this.eventAddItem.emit(identificationTypeSelected);
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
