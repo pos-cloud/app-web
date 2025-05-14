@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  Output,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -30,8 +24,7 @@ export class ListRelationTypesComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Output() eventAddItem: EventEmitter<RelationType> =
-    new EventEmitter<RelationType>();
+  @Output() eventAddItem: EventEmitter<RelationType> = new EventEmitter<RelationType>();
   public itemsPerPage = 10;
   public totalItems = 0;
 
@@ -56,8 +49,7 @@ export class ListRelationTypesComponent implements OnInit {
     this._relationTypeService.getRelationTypes(query).subscribe(
       (result) => {
         if (!result.relationTypes) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.relationTypes = new Array();
           this.areRelationTypesEmpty = true;
@@ -159,11 +151,7 @@ export class ListRelationTypesComponent implements OnInit {
     this.eventAddItem.emit(relationTypeSelected);
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
