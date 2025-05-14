@@ -97,8 +97,6 @@ import { PrintVatBookComponent } from './components/print/print-vat-book/print-v
 import { PrintComponent } from './components/print/print/print.component';
 import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
 import { PrinterComponent } from './components/printer/printer/printer.component';
-import { ListRelationTypesComponent } from './components/relation-type/list-relation-types/list-relation-types.component';
-import { RelationTypeComponent } from './components/relation-type/relation-type/relation-type.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
@@ -211,8 +209,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     CompanyContactComponent,
     AddUseOfCFDIComponent,
     ListUsesOfCFDIComponent,
-    ListRelationTypesComponent,
-    RelationTypeComponent,
     AddCompanyFieldComponent,
     UpdateCompanyFieldComponent,
     DeleteCompanyFieldComponent,

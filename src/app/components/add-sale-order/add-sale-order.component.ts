@@ -5,7 +5,6 @@ import { CancellationType } from 'app/components/cancellation-type/cancellation-
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { PriceList } from 'app/components/price-list/price-list';
-import { RelationType } from 'app/components/relation-type/relation-type';
 import { SelectTableComponent } from 'app/components/table/select-table/select-table.component';
 import { Transport } from 'app/components/transport/transport';
 import { UseOfCFDI } from 'app/components/use-of-CFDI.component.ts/use-of-CFDI';
@@ -24,7 +23,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Table, TableState } from '@types';
+import { RelationType, Table, TableState } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { BusinessRuleService } from '../../core/services/business-rule.service';
