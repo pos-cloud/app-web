@@ -65,14 +65,14 @@ export class LicenseComponent implements OnInit {
             this.config = config;
             this.expirationLicenseDate = config.expirationLicenseDate;
             this.licensePaymentDueDate = config.licensePaymentDueDate;
-
+            
             this.externalReference = localStorage.getItem('company');
             this.payer = {
                 firstName: config.companyName,
                 email: config.emailAccount,
             };
 
-            const { status, alertType } = this._licenseService.getLicenseStatus(new Date(), config.licensePaymentDueDate, config.expirationLicenseDate);
+            const { status, alertType } = this._licenseService.getLicenseStatus(new Date(), this.licensePaymentDueDate, this.expirationLicenseDate);
             this.licenseStatus = status;
             this.licenseAlertType = alertType;
 
@@ -84,9 +84,14 @@ export class LicenseComponent implements OnInit {
         this.loadPaymentBrick();
     }
     
-    formatUTCDate(dateString: string): string {
+    public formatUTCDate(dateString: string): string {
         const date = new Date(dateString);
-        return `${date.getUTCDate()}/${date.getUTCMonth()}/${date.getUTCFullYear()}`;
+        
+        const day = date.getUTCDate().toString().padStart(2, '0'); 
+        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0'); 
+        const year = date.getUTCFullYear();
+    
+        return `${day}/${month}/${year}`;
     }
 
     private loadPaymentBrick() {

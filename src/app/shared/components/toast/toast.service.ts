@@ -123,7 +123,7 @@ export class ToastService {
     message: string = '',
     redirect?: string,
     delay: number = 5000,
-    position: string = 'bottom-right'
+    position: string = 'top-right'
   ): void {
     if (result !== null) {
       if (result.status === 200) {
