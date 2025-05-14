@@ -4,13 +4,14 @@ import { Event as NavigationEvent, NavigationStart, Router } from '@angular/rout
 import { fromEvent, map, merge, Observable, of } from 'rxjs';
 
 // DE TERCEROS
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // MODELS
 import { User } from '../../components/user/user';
 
 // SERVICES
 import { TranslateService } from '@ngx-translate/core';
+import { ChangePasswordComponent } from 'app/auth/change-password/change-password.component';
 import { AuthService } from 'app/core/services/auth.service';
 import { PushNotificationsService } from 'app/core/services/notification.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -319,6 +320,7 @@ export class HeaderComponent implements OnInit {
     private _authService: AuthService,
     private _router: Router,
     private _toastService: ToastService,
+    private _modalService: NgbModal,
     private translate: TranslateService,
     private _notificationService: PushNotificationsService
   ) {
@@ -389,6 +391,7 @@ export class HeaderComponent implements OnInit {
   }
 
   public openModal(op: string): void {
+    let modalRef;
     switch (op) {
       case 'soporte':
         window.open('https://api.whatsapp.com/send/?phone=5493564368535', '_blank');
@@ -398,6 +401,23 @@ export class HeaderComponent implements OnInit {
         break;
       case 'documentation':
         window.open('https://docs.poscloud.ar', '_blank');
+        break;
+      case 'change-password':
+        modalRef = this._modalService.open(ChangePasswordComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.model = 'articles';
+        modalRef.componentInstance.title = 'Importar artículos';
+        modalRef.result.then(
+          (result) => {
+            if (result === 'save_close') {
+              //this.refresh();
+            }
+          },
+          (reason) => {}
+        );
+
         break;
       default:
         break;

@@ -87,6 +87,11 @@
             </button>
           </div>
           <div>
+            <button class="dropdown-item" (click)="openModal('change-password')" [routerLinkActive]="['active']">
+              Cambiar Contraseña
+            </button>
+          </div>
+          <div>
             <button class="dropdown-item" (click)="logout()" [routerLinkActive]="['active']">Cerrar Sesión</button>
           </div>
         </div>
