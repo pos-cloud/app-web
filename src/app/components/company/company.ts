@@ -1,12 +1,11 @@
 import { CompanyGroup } from '../company-group/company-group';
 import { Country } from '../country/country';
-import { IdentificationType } from '../identification-type/identification-type';
 import { State } from '../state/state';
 import { User } from '../user/user';
 import { VATCondition } from '../vat-condition/vat-condition';
 import { CompanyFields } from './company-fields';
 
-import { Employee } from '@types';
+import { Employee, IdentificationType } from '@types';
 import * as moment from 'moment';
 import { Account } from '../account/account';
 import { PriceList } from '../price-list/price-list';

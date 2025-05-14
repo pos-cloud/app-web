@@ -63,8 +63,6 @@ import { SelectDepositComponent } from './components/deposit/select-deposit/sele
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportersModule } from './components/export/exporters.module';
-import { AddIdentificationTypeComponent } from './components/identification-type/identification-type/add-identification-type.component';
-import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { LoginComponent } from './components/login/login.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -211,8 +209,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     CompanyNewsComponent,
     ListMovementOfCashesComponent,
     CompanyContactComponent,
-    ListIdentificationTypesComponent,
-    AddIdentificationTypeComponent,
     AddUseOfCFDIComponent,
     ListUsesOfCFDIComponent,
     ListRelationTypesComponent,

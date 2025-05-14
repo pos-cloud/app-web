@@ -57,16 +57,6 @@ export class ListIdentificationTypesComponent {
   constructor(public _service: IdentificationTypeService, private _router: Router) {
     this.columns = [
       {
-        name: 'name',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
-      {
         name: 'code',
         visible: true,
         disabled: false,
@@ -76,7 +66,16 @@ export class ListIdentificationTypesComponent {
         align: 'left',
         required: false,
       },
-
+      {
+        name: 'name',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
       {
         name: 'creationDate',
         visible: false,

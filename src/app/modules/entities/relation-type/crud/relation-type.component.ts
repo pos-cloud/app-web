@@ -8,7 +8,6 @@ import { CommonModule } from '@angular/common';
 import { RelationTypeService } from '@core/services/relation-type.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
@@ -18,14 +17,7 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-relation-type',
   templateUrl: './relation-type.component.html',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FocusDirective,
-    PipesModule,
-    TranslateModule,
-    TypeaheadDropdownComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule],
 })
 export class RelationTypeComponent implements OnInit {
   public operation: string;
@@ -83,17 +75,11 @@ export class RelationTypeComponent implements OnInit {
   }
 
   onEnter() {
-    const isInQuill = event.target instanceof HTMLDivElement && event.target.classList.contains('ql-editor');
-
-    if (isInQuill) {
-      event.preventDefault();
-      return;
-    }
-
     if (this.relationTypeForm.valid && this.operation !== 'view' && this.operation !== 'delete') {
       this.handleRelationTypeOperation();
     }
   }
+
   public getRelationType(id: string) {
     this.loading = true;
 

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { NotificationGuard } from '@core/guards/notification.guard';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
@@ -16,7 +17,6 @@ import { ListEmailTemplatesComponent } from './components/email-template/list-em
 import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
 import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
-import { ListIdentificationTypesComponent } from './components/identification-type/list-identification-types/list-identification-types.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { LoginComponent } from './components/login/login.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -55,7 +55,6 @@ import { ListUsersComponent } from './components/user/list-users/list-users.comp
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
-import { NotificationGuard } from '@core/guards/notification.guard';
 import { HomeComponent } from './layout/home/home.component';
 
 export const _routes: Routes = [
@@ -342,11 +341,6 @@ export const _routes: Routes = [
   {
     path: 'admin/depositos',
     component: ListDepositsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/tipos-de-identificacion',
-    component: ListIdentificationTypesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

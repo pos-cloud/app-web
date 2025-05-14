@@ -1,19 +1,15 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Config } from 'app/app.config';
 import { Country } from '../../country/country';
-import { IdentificationType } from '../../identification-type/identification-type';
 import { VATCondition } from '../../vat-condition/vat-condition';
 import { Transport } from '../transport';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
+import { IdentificationType } from '@types';
 import { ConfigService } from 'app/core/services/config.service';
 import { CountryService } from 'app/core/services/country.service';
 import { IdentificationTypeService } from 'app/core/services/identification-type.service';
@@ -100,8 +96,7 @@ export class TransportComponent implements OnInit {
     this._transportService.getTransport(this.transportId).subscribe(
       (result) => {
         if (!result.transport) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.transport = result.transport;
@@ -226,9 +221,7 @@ export class TransportComponent implements OnInit {
       observation: [this.transport.observation, []],
     });
 
-    this.transportForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.transportForm.valueChanges.subscribe((data) => this.onValueChanged(data));
     this.onValueChanged();
   }
 
@@ -280,11 +273,7 @@ export class TransportComponent implements OnInit {
           }
         } else {
           this.loading = false;
-          this.showMessage(
-            'El transporte se ha actualizado con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El transporte se ha actualizado con éxito.', 'success', false);
         }
       },
       (error) => {
@@ -308,11 +297,7 @@ export class TransportComponent implements OnInit {
           }
         } else {
           this.loading = false;
-          this.showMessage(
-            'El transporte se ha añadido con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El transporte se ha añadido con éxito.', 'success', false);
           this.transport = new Transport();
           this.buildForm();
         }
@@ -433,11 +418,7 @@ export class TransportComponent implements OnInit {
       );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

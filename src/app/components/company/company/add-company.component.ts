@@ -1,9 +1,5 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
@@ -23,11 +19,10 @@ import { EmployeeService } from '../../../core/services/employee.service';
 import { VATConditionService } from '../../../core/services/vat-condition.service';
 
 //PIPE
-import { Employee } from '@types';
+import { Employee, IdentificationType } from '@types';
 import { Config } from 'app/app.config';
 import { Account } from 'app/components/account/account';
 import { Address } from 'app/components/address/address.model';
-import { IdentificationType } from 'app/components/identification-type/identification-type';
 import { PriceList } from 'app/components/price-list/price-list';
 import { State } from 'app/components/state/state';
 import { Transport } from 'app/components/transport/transport';
@@ -42,12 +37,7 @@ import { TransportService } from 'app/core/services/transport.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subscription } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 
 @Component({
@@ -206,16 +196,10 @@ export class AddCompanyComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
 
-    if (
-      pathLocation[2] === 'clientes' ||
-      (this.companyType && this.companyType === CompanyType.Client)
-    ) {
+    if (pathLocation[2] === 'clientes' || (this.companyType && this.companyType === CompanyType.Client)) {
       this.types.push(CompanyType.Client);
       this.company.type = CompanyType.Client;
-    } else if (
-      pathLocation[2] === 'proveedores' ||
-      (this.companyType && this.companyType === CompanyType.Provider)
-    ) {
+    } else if (pathLocation[2] === 'proveedores' || (this.companyType && this.companyType === CompanyType.Provider)) {
       this.types.push(CompanyType.Provider);
       this.company.type = CompanyType.Provider;
     } else if (pathLocation[3] === 'compra') {
@@ -233,15 +217,12 @@ export class AddCompanyComponent implements OnInit {
       this.config = config;
       // this.company.allowCurrentAccount = this.config.company.allowCurrentAccount.default;
       if (this.company.type === CompanyType.Client) {
-        this.company.allowCurrentAccount =
-          this.config.company.allowCurrentAccountClient.default;
+        this.company.allowCurrentAccount = this.config.company.allowCurrentAccountClient.default;
       } else if (this.company.type === CompanyType.Provider) {
-        this.company.allowCurrentAccount =
-          this.config.company.allowCurrentAccountProvider.default;
+        this.company.allowCurrentAccount = this.config.company.allowCurrentAccountProvider.default;
       }
       this.company.vatCondition = this.config.company.vatCondition.default;
-      if (this.company.type === CompanyType.Client)
-        this.company.account = this.config.company.accountClient.default;
+      if (this.company.type === CompanyType.Client) this.company.account = this.config.company.accountClient.default;
       if (this.company.type === CompanyType.Provider)
         this.company.account = this.config.company.accountProvider.default;
     });
@@ -267,8 +248,7 @@ export class AddCompanyComponent implements OnInit {
     this._companyService.getCompany(this.companyId).subscribe(
       (result) => {
         if (!result.company) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
           this.getCountries();
@@ -276,10 +256,7 @@ export class AddCompanyComponent implements OnInit {
           this.otherFields = this.company.otherFields;
 
           if (this.company.birthday) {
-            this.company.birthday = moment(
-              this.company.birthday,
-              'YYYY-MM-DD'
-            ).format('YYYY-MM-DDTHH:mm:ssZ');
+            this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
           } else {
             this.company.birthday = null;
           }
@@ -405,10 +382,7 @@ export class AddCompanyComponent implements OnInit {
   public buildForm(): void {
     this.companyForm = this._fb.group({
       _id: [this.company._id, []],
-      name: [
-        this.company.name,
-        [Validators.required, Validators.pattern('^[a-zA-Z .0-9]+$')],
-      ],
+      name: [this.company.name, [Validators.required, Validators.pattern('^[a-zA-Z .0-9]+$')]],
       fantasyName: [this.company.fantasyName, []],
       type: [this.company.type, [Validators.required]],
       vatCondition: [this.company.vatCondition, [Validators.required]],
@@ -438,9 +412,7 @@ export class AddCompanyComponent implements OnInit {
       zipCode: [this.company.zipCode, []],
     });
 
-    this.companyForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.companyForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
     this.focusEvent.emit(true);
@@ -478,17 +450,13 @@ export class AddCompanyComponent implements OnInit {
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
     if (!this.company.emails) this.company.emails = '';
-    if (!this.company.identificationValue)
-      this.company.identificationValue = '';
+    if (!this.company.identificationValue) this.company.identificationValue = '';
     if (this.company.birthday) {
-      this.company.birthday = moment(this.company.birthday).format(
-        'YYYY-MM-DD'
-      );
+      this.company.birthday = moment(this.company.birthday).format('YYYY-MM-DD');
     } else {
       this.company.birthday = null;
     }
-    if (!this.company.gender && this.genders.length > 0)
-      this.company.gender = null;
+    if (!this.company.gender && this.genders.length > 0) this.company.gender = null;
     if (!this.company.gender) this.company.gender = null;
 
     let vatCondition;
@@ -661,11 +629,7 @@ export class AddCompanyComponent implements OnInit {
           }
         }
 
-        if (
-          this.priceLists &&
-          this.priceLists.length > 0 &&
-          this.company.type === CompanyType.Client
-        ) {
+        if (this.priceLists && this.priceLists.length > 0 && this.company.type === CompanyType.Client) {
           this.priceLists.forEach((element) => {
             if (element.default) {
               this.company.priceList = element;
@@ -692,10 +656,7 @@ export class AddCompanyComponent implements OnInit {
       this.company.otherFields = this.otherFields;
 
       if (this.company.birthday) {
-        this.company.birthday = moment(
-          this.company.birthday,
-          'YYYY-MM-DD'
-        ).format('YYYY-MM-DDTHH:mm:ssZ');
+        this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
       }
       if (this.isValid()) {
         this._companyService.setClients(null);
@@ -728,18 +689,13 @@ export class AddCompanyComponent implements OnInit {
     this._companyService.saveCompany(this.company).subscribe(
       (result) => {
         if (!result.company) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
           if (this.userType === 'pos') {
             this.activeModal.close({ company: this.company });
           } else {
-            this.showMessage(
-              'La empresa se ha añadido con éxito.',
-              'success',
-              false
-            );
+            this.showMessage('La empresa se ha añadido con éxito.', 'success', false);
             this.company = new Company();
             this.buildForm();
             this.getLastCompany();
@@ -760,15 +716,10 @@ export class AddCompanyComponent implements OnInit {
     this._companyService.updateCompany(this.company).subscribe(
       (result) => {
         if (!result.company) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
-          this.showMessage(
-            'La empresa se ha actualizado con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('La empresa se ha actualizado con éxito.', 'success', false);
         }
         this.loading = false;
       },
@@ -953,19 +904,14 @@ export class AddCompanyComponent implements OnInit {
       this._companyService.delete(this.company._id).subscribe(
         async (result) => {
           this._toastService.showToast(result);
-          if (result.status === 200)
-            this.activeModal.close({ company: this.company });
+          if (result.status === 200) this.activeModal.close({ company: this.company });
         },
         (error) => this._toastService.showToast(error)
       )
     );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

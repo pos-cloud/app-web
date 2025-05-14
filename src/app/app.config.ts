@@ -1,7 +1,6 @@
-import { Currency, IService } from '@types';
+import { Currency, IdentificationType, IService } from '@types';
 import * as moment from 'moment';
 import { Account } from './components/account/account';
-import { IdentificationType } from './components/identification-type/identification-type';
 import { VATCondition } from './components/vat-condition/vat-condition';
 
 export class Config {

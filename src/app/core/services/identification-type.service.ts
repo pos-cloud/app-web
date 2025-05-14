@@ -5,17 +5,14 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { IdentificationType } from '../../components/identification-type/identification-type';
 import { AuthService } from './auth.service';
+import { IdentificationType } from '@types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IdentificationTypeService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `identification-types`, // PATH
       _http,
@@ -108,9 +105,7 @@ export class IdentificationTypeService extends ModelService {
       );
   }
 
-  public saveIdentificationType(
-    identificationType: IdentificationType
-  ): Observable<any> {
+  public saveIdentificationType(identificationType: IdentificationType): Observable<any> {
     const URL = `${Config.apiURL}identification-type`;
 
     const headers = new HttpHeaders()
@@ -131,9 +126,7 @@ export class IdentificationTypeService extends ModelService {
       );
   }
 
-  public updateIdentificationType(
-    identificationType: IdentificationType
-  ): Observable<any> {
+  public updateIdentificationType(identificationType: IdentificationType): Observable<any> {
     const URL = `${Config.apiURL}identification-type`;
 
     const headers = new HttpHeaders()
