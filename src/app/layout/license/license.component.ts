@@ -19,7 +19,7 @@ export class LicenseComponent implements OnInit {
     config: Config;
     licensePaymentDueDate: any | null = null;
     expirationLicenseDate: any | null = null;
-    licenseType: number = 0;
+    licenseType: number;
 
     licenseStatus: string = '';
     licenseAlertType: 'success' | 'warning' | 'danger' = 'success';
@@ -76,6 +76,8 @@ export class LicenseComponent implements OnInit {
             this.licenseStatus = status;
             this.licenseAlertType = alertType;
 
+            this.licenseType = config.licenseType
+
             this.licenseTypeLabel = this._licenseService.getLicenseTypeLabel(this.licenseType);
         });
 
@@ -84,7 +86,7 @@ export class LicenseComponent implements OnInit {
     
     formatUTCDate(dateString: string): string {
         const date = new Date(dateString);
-        return `${date.getUTCDate()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()}`;
+        return `${date.getUTCDate()}/${date.getUTCMonth()}/${date.getUTCFullYear()}`;
     }
 
     private loadPaymentBrick() {
