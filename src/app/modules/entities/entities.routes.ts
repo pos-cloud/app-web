@@ -87,4 +87,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'location',
     loadChildren: () => import('./location/location.routes').then((m) => m.LOCATION_ROUTES),
   },
+  {
+    path: 'deposit',
+    loadChildren: () => import('./deposit/deposit.routes').then((m) => m.DEPOSIT_ROUTES),
+  },
 ];
