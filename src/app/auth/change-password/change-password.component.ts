@@ -86,6 +86,8 @@ export class ChangePasswordComponent {
         },
         complete: () => {
           this.loading = false;
+          this.activeModal.dismiss('cancel');
+          this._authService.logoutStorage();
         },
       });
   }
