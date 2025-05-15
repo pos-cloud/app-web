@@ -48,8 +48,8 @@ export class DepositComponent implements OnInit {
     this.depositForm = this._fb.group({
       _id: ['', []],
       name: ['', [Validators.required]],
-      capacity: ['', []],
-      default: ['', []],
+      capacity: [0, []],
+      default: [false, []],
       branch: ['', [Validators.required]],
     });
   }
@@ -99,8 +99,8 @@ export class DepositComponent implements OnInit {
     const values = {
       _id: this.deposit?._id ?? '',
       name: this.deposit?.name ?? '',
-      capacity: this.deposit?.capacity ?? '',
-      default: this.deposit?.default ?? '',
+      capacity: this.deposit?.capacity ?? 0,
+      default: this.deposit?.default ?? false,
       branch: branch ?? null,
     };
     this.depositForm.setValue(values);
