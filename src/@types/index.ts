@@ -24,6 +24,7 @@ export { EmployeeType } from './entities/employee-type.interface';
 export { Employee } from './entities/employee.interface';
 export { Gallery } from './entities/gallery.interface';
 export { IdentificationType } from './entities/identification-type.interface';
+export { Location } from './entities/location.interface';
 export { Make } from './entities/make.interface';
 export { MovementOfCash } from './entities/movement-of-cash.interface';
 export { Origin } from './entities/origin.interface';

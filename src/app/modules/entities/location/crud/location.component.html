@@ -1,0 +1,155 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-location' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ location?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ location?.name ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleLocationOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handleLocationOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body scroll">
+      <form [formGroup]="locationForm" (keydown.enter)="onEnter()" autocomplete="off">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="deposit" class="control-label">{{ 'deposit' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="locationForm.get('deposit')"
+              [data]="deposits"
+              [readonly]="readonly"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+            <div
+              class="invalid-feedback"
+              *ngIf="locationForm.get('deposit')?.touched && locationForm.get('deposit')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="description" class="control-label">{{ 'description' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              name="description"
+              id="description"
+              [ngClass]="{
+                'is-invalid': locationForm.get('description')?.touched && locationForm.get('description')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="locationForm.get('description')?.touched && locationForm.get('description')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="positionX" class="control-label">{{ 'positionX' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="positionX"
+              name="positionX"
+              id="positionX"
+              [focus]="focusEvent"
+            />
+          </div>
+          <div class="form-group col-md-3">
+            <label for="positionY" class="control-label">{{ 'positionY' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" formControlName="positionY" name="positionY" id="positionY" />
+          </div>
+          <div class="form-group col-md-3">
+            <label for="positionZ" class="control-label">{{ 'positionZ' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" formControlName="positionZ" name="positionZ" id="positionZ" />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ location?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ location?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ location?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ location?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ location?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

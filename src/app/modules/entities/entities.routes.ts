@@ -83,4 +83,8 @@ export const ENTITIES_ROUTES: Routes = [
     loadChildren: () =>
       import('./identification-type/identification-type.routes').then((m) => m.IDENTIFICATION_TYPE_ROUTE),
   },
+  {
+    path: 'location',
+    loadChildren: () => import('./location/location.routes').then((m) => m.LOCATION_ROUTES),
+  },
 ];
