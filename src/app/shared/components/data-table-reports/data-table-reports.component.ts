@@ -26,10 +26,13 @@ export class DataTableReportsComponent implements OnInit {
 
   @Input() sorting: { column: string; direction: string };
   @Output() sortingChange = new EventEmitter<{ column: string; direction: string }>();
+  @Output() eventExport = new EventEmitter<boolean>();
 
   public exportItems(): void {
-    this.exportExcelComponent.items = this.data;
-    this.exportExcelComponent.export();
+    // this.exportExcelComponent.items = this.data;
+    // this.exportExcelComponent.export();
+
+    this.eventExport.emit(true);
   }
 
   constructor(private _title: Title) {}

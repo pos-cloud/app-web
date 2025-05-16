@@ -96,7 +96,7 @@ export class ReportBirthdayComponent implements OnInit {
   public day: number;
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
-
+  public excel: boolean = false;
   // sort
   public sort = {
     column: 'year',
@@ -126,6 +126,9 @@ export class ReportBirthdayComponent implements OnInit {
         months: this.monthsSelect,
         day: this.day,
       },
+      exportData: {
+        excel: this.excel,
+      },
       pagination: {
         page: 1,
         pageSize: 10,
@@ -138,15 +141,36 @@ export class ReportBirthdayComponent implements OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            this._toastService.showToast(result);
-            this.data = result?.result?.data ?? [];
-            this.columns = result?.result?.columns ?? [];
-            this.totals = result?.result?.totals ?? {};
-            this.title = result?.info?.title ?? 'Cumpleaños';
-            this._title.setTitle(this.title);
-            this.cdRef.detectChanges();
+            if (this.excel) {
+              if (result instanceof Blob) {
+                try {
+                  console.log('acacca');
+                  const blobUrl = URL.createObjectURL(result);
+                  const a = document.createElement('a');
+                  a.href = blobUrl;
+                  a.download = 'clientes.xlsx';
+                  a.click();
+                  URL.revokeObjectURL(blobUrl); // liberar memoria
+                } catch (e) {
+                  this._toastService.showToast({ message: 'Error al generar el Excel' });
+                }
+              } else {
+                console.log('accaca', result);
+                this._toastService.showToast(result);
+              }
+            } else {
+              this._toastService.showToast(result);
+              this.data = result?.result?.data ?? [];
+              this.columns = result?.result?.columns ?? [];
+              this.totals = result?.result?.totals ?? {};
+              this.title = result?.info?.title ?? 'Cumpleaños';
+              this._title.setTitle(this.title);
+              this.cdRef.detectChanges();
+            }
           },
           error: (error) => {
+            console.log('hhhh');
+            console.log(error);
             this._toastService.showToast(error);
           },
           complete: () => {
@@ -162,6 +186,11 @@ export class ReportBirthdayComponent implements OnInit {
       column: event.column,
       direction: event.direction,
     };
+    this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.excel = event;
     this.getReport();
   }
 }
