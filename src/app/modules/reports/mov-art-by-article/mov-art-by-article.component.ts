@@ -66,6 +66,7 @@ export class ReportMovArtByArticleComponent {
 
   makes: Make[];
   makesSelect: string[] = [];
+  public excel: boolean = false;
 
   // sort
   public sort = {
@@ -234,6 +235,9 @@ export class ReportMovArtByArticleComponent {
         article: this.article,
         makes: this.makesSelect ?? [],
       },
+      exportData: {
+        excel: this.excel,
+      },
       pagination: {
         page: 1,
         pageSize: 10,
@@ -247,19 +251,37 @@ export class ReportMovArtByArticleComponent {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            this._toastService.showToast(result);
-            this.data = result?.result?.data ?? [];
-            this.columns = result?.result?.columns ?? [];
-            this.totals = result?.result?.totals ?? {};
-            this.title = result?.result?.info?.title ?? `Movimientos por artículo de ${this.transactionMovement}`;
-            this._title.setTitle(this.title);
-            this.cdRef.detectChanges();
+            if (this.excel) {
+              if (result instanceof Blob) {
+                try {
+                  const blobUrl = URL.createObjectURL(result);
+                  const a = document.createElement('a');
+                  a.href = blobUrl;
+                  a.download = 'movimientos de artículos.xlsx';
+                  a.click();
+                  URL.revokeObjectURL(blobUrl); // liberar memoria
+                } catch (e) {
+                  this._toastService.showToast({ message: 'Error al generar el Excel' });
+                }
+              } else {
+                this._toastService.showToast(result);
+              }
+            } else {
+              this._toastService.showToast(result);
+              this.data = result?.result?.data ?? [];
+              this.columns = result?.result?.columns ?? [];
+              this.totals = result?.result?.totals ?? {};
+              this.title = result?.result?.info?.title ?? `Movimientos por artículo de ${this.transactionMovement}`;
+              this._title.setTitle(this.title);
+              this.cdRef.detectChanges();
+            }
           },
           error: (error) => {
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
+            this.excel = false;
             this.cdRef.detectChanges();
           },
         })
@@ -271,6 +293,11 @@ export class ReportMovArtByArticleComponent {
       column: event.column,
       direction: event.direction,
     };
+    this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.excel = event;
     this.getReport();
   }
 }

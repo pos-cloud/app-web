@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'environments/environment';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { Injectable } from '@angular/core';
 import { AuthService } from 'app/core/services/auth.service';
@@ -25,8 +25,25 @@ export class ReportSystemService {
         responseType: 'blob',
       })
       .pipe(
-        map((res) => {
-          return res;
+        switchMap((res: Blob) => {
+          // Verificamos si el blob es un JSON
+          if (res.type === 'application/json') {
+            return new Observable((observer) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                const json = JSON.parse(reader.result as string);
+                observer.next(json);
+                observer.complete();
+              };
+              reader.onerror = (err) => {
+                observer.error(err);
+              };
+              reader.readAsText(res);
+            });
+          } else {
+            // Es un archivo real, devolvemos el blob directamente
+            return of(res);
+          }
         }),
         catchError((err) => {
           return of(err);
