@@ -144,7 +144,6 @@ export class ReportBirthdayComponent implements OnInit {
             if (this.excel) {
               if (result instanceof Blob) {
                 try {
-                  console.log('acacca');
                   const blobUrl = URL.createObjectURL(result);
                   const a = document.createElement('a');
                   a.href = blobUrl;
@@ -155,7 +154,6 @@ export class ReportBirthdayComponent implements OnInit {
                   this._toastService.showToast({ message: 'Error al generar el Excel' });
                 }
               } else {
-                console.log('accaca', result);
                 this._toastService.showToast(result);
               }
             } else {
@@ -169,12 +167,11 @@ export class ReportBirthdayComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.log('hhhh');
-            console.log(error);
             this._toastService.showToast(error);
           },
           complete: () => {
             this.loading = false;
+            this.excel = false;
             this.cdRef.detectChanges();
           },
         })
