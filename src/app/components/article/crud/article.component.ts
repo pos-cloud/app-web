@@ -233,6 +233,7 @@ export class ArticleComponent implements OnInit {
   };
 
   formatResult = (result: any) => {
+    console.log(result);
     if (result.parent && result.parent) {
       return result.description + ' - ' + this.categories.find((c: Category) => c._id === result.parent).description;
     }

@@ -22,6 +22,7 @@ export class ReportSystemService {
     return this._http
       .post(URL, data, {
         headers: headers,
+        responseType: 'blob',
       })
       .pipe(
         map((res) => {
