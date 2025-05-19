@@ -1,4 +1,13 @@
-import { Currency, Deposit, Location, Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
+import {
+  Classification,
+  Currency,
+  Deposit,
+  Location,
+  Make,
+  UnitOfMeasurement,
+  VariantType,
+  VariantValue,
+} from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Category } from '../category/category';
 import { Taxes } from '../tax/taxes';
@@ -7,7 +16,6 @@ import { User } from '../user/user';
 import * as moment from 'moment';
 import { Account } from '../account/account';
 import { Application } from '../application/application.model';
-import { Classification } from '../classification/classification';
 import { Company } from '../company/company';
 
 export class Article {

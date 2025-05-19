@@ -10,15 +10,12 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 
 //service
+import { Classification } from '@types';
 import { Config } from 'app/app.config';
-import { Classification } from 'app/components/classification/classification';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { TaxClassification } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
-import {
-  Movements,
-  TransactionMovement,
-} from 'app/components/transaction-type/transaction-type';
+import { Movements, TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { Transaction } from 'app/components/transaction/transaction';
 import { VATCondition } from 'app/components/vat-condition/vat-condition';
 import { ClassificationService } from 'app/core/services/classification.service';
@@ -100,8 +97,7 @@ export class PrintVatBookComponent implements OnInit {
           for (let index = 0; index < this.vatConditions.length; index++) {
             this.dataIVA[index] = {};
             this.dataIVA[index]['_id'] = this.vatConditions[index]._id;
-            this.dataIVA[index]['description'] =
-              this.vatConditions[index].description;
+            this.dataIVA[index]['description'] = this.vatConditions[index].description;
             this.dataIVA[index]['total'] = 0;
           }
         }
@@ -121,11 +117,7 @@ export class PrintVatBookComponent implements OnInit {
           this.transactions = result.transactions;
           this.toPrintVAT();
         } else {
-          this.showMessage(
-            'No se encontraron Comprobantes para el período',
-            'info',
-            true
-          );
+          this.showMessage('No se encontraron Comprobantes para el período', 'info', true);
         }
         this.loading = false;
       },
@@ -170,10 +162,8 @@ export class PrintVatBookComponent implements OnInit {
             this.classifications = result[0].classifications;
             for (let index = 0; index < this.classifications.length; index++) {
               this.dataClassification[index] = {};
-              this.dataClassification[index]['_id'] =
-                this.classifications[index]._id;
-              this.dataClassification[index]['name'] =
-                this.classifications[index].name;
+              this.dataClassification[index]['_id'] = this.classifications[index]._id;
+              this.dataClassification[index]['name'] = this.classifications[index].name;
               this.dataClassification[index]['total'] = 0;
             }
           } else {
@@ -260,21 +250,11 @@ export class PrintVatBookComponent implements OnInit {
 
     for (let transaction of this.transactions) {
       //DATOS PRINCIPALES
-      this.doc.text(
-        this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY'),
-        5,
-        row
-      );
+      this.doc.text(this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY'), 5, row);
       if (transaction.company) {
+        this.doc.text(transaction.company.name.toUpperCase().slice(0, 22), 25, row);
         this.doc.text(
-          transaction.company.name.toUpperCase().slice(0, 22),
-          25,
-          row
-        );
-        this.doc.text(
-          transaction.company.identificationValue
-            ? transaction.company.identificationValue.replace(/-/g, '')
-            : '',
+          transaction.company.identificationValue ? transaction.company.identificationValue.replace(/-/g, '') : '',
           65,
           row
         );
@@ -288,11 +268,7 @@ export class PrintVatBookComponent implements OnInit {
         this.doc.text(transaction.type.name, 95, row);
       }
       this.doc.text(
-        this.padString(transaction.origin, 4) +
-          '-' +
-          transaction.letter +
-          '-' +
-          this.padString(transaction.number, 8),
+        this.padString(transaction.origin, 4) + '-' + transaction.letter + '-' + this.padString(transaction.number, 8),
         120,
         row
       );
@@ -300,8 +276,7 @@ export class PrintVatBookComponent implements OnInit {
       if (
         (transaction.type.transactionMovement === TransactionMovement.Sale &&
           transaction.type.movement === Movements.Outflows) ||
-        (transaction.type.transactionMovement ===
-          TransactionMovement.Purchase &&
+        (transaction.type.transactionMovement === TransactionMovement.Purchase &&
           transaction.type.movement === Movements.Inflows)
       ) {
         transaction.exempt *= -1;
@@ -315,19 +290,13 @@ export class PrintVatBookComponent implements OnInit {
       let partialTaxAmountPercep: number = 0;
       let partialImpInt: number = 0;
 
-      if (
-        transaction.taxes &&
-        transaction.taxes.length > 0 &&
-        transaction.taxes[0].tax
-      ) {
+      if (transaction.taxes && transaction.taxes.length > 0 && transaction.taxes[0].tax) {
         for (let transactionTax of transaction.taxes) {
           // DATOS NUMÉRICOS
           if (
-            (transaction.type.transactionMovement ===
-              TransactionMovement.Sale &&
+            (transaction.type.transactionMovement === TransactionMovement.Sale &&
               transaction.type.movement === Movements.Outflows) ||
-            (transaction.type.transactionMovement ===
-              TransactionMovement.Purchase &&
+            (transaction.type.transactionMovement === TransactionMovement.Purchase &&
               transaction.type.movement === Movements.Inflows)
           ) {
             transactionTax.taxAmount *= -1;
@@ -336,10 +305,7 @@ export class PrintVatBookComponent implements OnInit {
 
           let exists: boolean = false;
           for (let transactionTaxAux of totalTaxes) {
-            if (
-              transactionTaxAux.tax._id.toString() ===
-              transactionTax.tax._id.toString()
-            ) {
+            if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
               transactionTaxAux.taxAmount += transactionTax.taxAmount;
               transactionTaxAux.taxBase += transactionTax.taxBase;
               exists = true;
@@ -379,24 +345,20 @@ export class PrintVatBookComponent implements OnInit {
           transaction.company.vatCondition &&
           this.dataIVA[index]['_id'] === transaction.company.vatCondition
         ) {
-          this.dataIVA[index]['total'] =
-            this.dataIVA[index]['total'] + partialTaxBase;
+          this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + partialTaxBase;
         }
       }
 
       for (let index = 0; index < this.dataClassification.length; index++) {
-        let movementOfArticles: MovementOfArticle[] =
-          await this.getMovementOfArticle(transaction._id);
+        let movementOfArticles: MovementOfArticle[] = await this.getMovementOfArticle(transaction._id);
         if (movementOfArticles && movementOfArticles.length !== 0) {
           for (const element of movementOfArticles) {
             if (
               element.article &&
               element.article.classification &&
-              this.dataClassification[index]['_id'] ===
-                element.article.classification._id
+              this.dataClassification[index]['_id'] === element.article.classification._id
             ) {
-              this.dataClassification[index]['total'] =
-                this.dataClassification[index]['total'] + partialTaxBase;
+              this.dataClassification[index]['total'] = this.dataClassification[index]['total'] + partialTaxBase;
             }
           }
         }
@@ -404,10 +366,7 @@ export class PrintVatBookComponent implements OnInit {
 
       let printGravado = '0,00';
       if (this.roundNumber.transform(partialTaxBase).toString().split('.')[1]) {
-        if (
-          this.roundNumber.transform(partialTaxBase).toString().split('.')[1]
-            .length === 1
-        ) {
+        if (this.roundNumber.transform(partialTaxBase).toString().split('.')[1].length === 1) {
           printGravado = partialTaxBase.toLocaleString('de-DE') + '0';
         } else {
           printGravado = partialTaxBase.toLocaleString('de-DE');
@@ -417,15 +376,8 @@ export class PrintVatBookComponent implements OnInit {
       }
 
       let printExempt = '0,00';
-      if (
-        this.roundNumber.transform(transaction.exempt).toString().split('.')[1]
-      ) {
-        if (
-          this.roundNumber
-            .transform(transaction.exempt)
-            .toString()
-            .split('.')[1].length === 1
-        ) {
+      if (this.roundNumber.transform(transaction.exempt).toString().split('.')[1]) {
+        if (this.roundNumber.transform(transaction.exempt).toString().split('.')[1].length === 1) {
           printExempt = transaction.exempt.toLocaleString('de-DE') + '0';
         } else {
           printExempt = transaction.exempt.toLocaleString('de-DE');
@@ -435,15 +387,8 @@ export class PrintVatBookComponent implements OnInit {
       }
 
       let printTaxAmountÌVA = '0,00';
-      if (
-        this.roundNumber.transform(partialTaxAmountIVA).toString().split('.')[1]
-      ) {
-        if (
-          this.roundNumber
-            .transform(partialTaxAmountIVA)
-            .toString()
-            .split('.')[1].length === 1
-        ) {
+      if (this.roundNumber.transform(partialTaxAmountIVA).toString().split('.')[1]) {
+        if (this.roundNumber.transform(partialTaxAmountIVA).toString().split('.')[1].length === 1) {
           printTaxAmountÌVA = partialTaxAmountIVA.toLocaleString('de-DE') + '0';
         } else {
           printTaxAmountÌVA = partialTaxAmountIVA.toLocaleString('de-DE');
@@ -454,10 +399,7 @@ export class PrintVatBookComponent implements OnInit {
 
       let printImpInt = '0,00';
       if (this.roundNumber.transform(partialImpInt).toString().split('.')[1]) {
-        if (
-          this.roundNumber.transform(partialImpInt).toString().split('.')[1]
-            .length === 1
-        ) {
+        if (this.roundNumber.transform(partialImpInt).toString().split('.')[1].length === 1) {
           printImpInt = partialImpInt.toLocaleString('de-DE') + '0';
         } else {
           printImpInt = partialImpInt.toLocaleString('de-DE');
@@ -467,49 +409,27 @@ export class PrintVatBookComponent implements OnInit {
       }
 
       let printTaxAmountPercep = '0,00';
-      if (
-        this.roundNumber
-          .transform(partialTaxAmountPercep)
-          .toString()
-          .split('.')[1]
-      ) {
-        if (
-          this.roundNumber
-            .transform(partialTaxAmountPercep)
-            .toString()
-            .split('.')[1].length === 1
-        ) {
-          printTaxAmountPercep =
-            partialTaxAmountPercep.toLocaleString('de-DE') + '0';
+      if (this.roundNumber.transform(partialTaxAmountPercep).toString().split('.')[1]) {
+        if (this.roundNumber.transform(partialTaxAmountPercep).toString().split('.')[1].length === 1) {
+          printTaxAmountPercep = partialTaxAmountPercep.toLocaleString('de-DE') + '0';
         } else {
           printTaxAmountPercep = partialTaxAmountPercep.toLocaleString('de-DE');
         }
       } else if (this.roundNumber.transform(partialTaxAmountPercep)) {
-        printTaxAmountPercep =
-          partialTaxAmountPercep.toLocaleString('de-DE') + ',00';
+        printTaxAmountPercep = partialTaxAmountPercep.toLocaleString('de-DE') + ',00';
       }
 
       let printTotal = '0,00';
       if (
         this.roundNumber
-          .transform(
-            partialTaxBase +
-              partialTaxAmountIVA +
-              partialTaxAmountPercep +
-              transaction.exempt +
-              partialImpInt
-          )
+          .transform(partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt)
           .toString()
           .split('.')[1]
       ) {
         if (
           this.roundNumber
             .transform(
-              partialTaxBase +
-                partialTaxAmountIVA +
-                partialTaxAmountPercep +
-                transaction.exempt +
-                partialImpInt
+              partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt
             )
             .toString()
             .split('.')[1].length === 1
@@ -533,11 +453,7 @@ export class PrintVatBookComponent implements OnInit {
         }
       } else if (
         this.roundNumber.transform(
-          partialTaxBase +
-            partialTaxAmountIVA +
-            partialTaxAmountPercep +
-            transaction.exempt +
-            partialImpInt
+          partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt + partialImpInt
         )
       ) {
         printTotal =
@@ -576,16 +492,8 @@ export class PrintVatBookComponent implements OnInit {
 
         this.doc.setFont('', 'normal');
         row += 5;
-        if (
-          this.config &&
-          this.config[0] &&
-          this.config[0].companyIdentificationType
-        ) {
-          this.doc.text(
-            this.config[0].companyIdentificationType.name + ':',
-            5,
-            row
-          );
+        if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+          this.doc.text(this.config[0].companyIdentificationType.name + ':', 5, row);
           this.doc.text(this.config[0].companyIdentificationValue, 25, row);
         }
 
@@ -635,10 +543,7 @@ export class PrintVatBookComponent implements OnInit {
 
     let printTaxBase = '0,00';
     if (this.roundNumber.transform(totalTaxBase).toString().split('.')[1]) {
-      if (
-        this.roundNumber.transform(totalTaxBase).toString().split('.')[1]
-          .length === 1
-      ) {
+      if (this.roundNumber.transform(totalTaxBase).toString().split('.')[1].length === 1) {
         printTaxBase = totalTaxBase.toLocaleString('de-DE') + '0';
       } else {
         printTaxBase = totalTaxBase.toLocaleString('de-DE');
@@ -649,10 +554,7 @@ export class PrintVatBookComponent implements OnInit {
 
     let printExempt = '0,00';
     if (this.roundNumber.transform(totalExempt).toString().split('.')[1]) {
-      if (
-        this.roundNumber.transform(totalExempt).toString().split('.')[1]
-          .length === 1
-      ) {
+      if (this.roundNumber.transform(totalExempt).toString().split('.')[1].length === 1) {
         printExempt = totalExempt.toLocaleString('de-DE') + '0';
       } else {
         printExempt = totalExempt.toLocaleString('de-DE');
@@ -662,13 +564,8 @@ export class PrintVatBookComponent implements OnInit {
     }
 
     let printTaxAmountIVA = '0,00';
-    if (
-      this.roundNumber.transform(totalTaxAmountIVA).toString().split('.')[1]
-    ) {
-      if (
-        this.roundNumber.transform(totalTaxAmountIVA).toString().split('.')[1]
-          .length === 1
-      ) {
+    if (this.roundNumber.transform(totalTaxAmountIVA).toString().split('.')[1]) {
+      if (this.roundNumber.transform(totalTaxAmountIVA).toString().split('.')[1].length === 1) {
         printTaxAmountIVA = totalTaxAmountIVA.toLocaleString('de-DE') + '0';
       } else {
         printTaxAmountIVA = totalTaxAmountIVA.toLocaleString('de-DE');
@@ -679,10 +576,7 @@ export class PrintVatBookComponent implements OnInit {
 
     let printImpInt = '0,00';
     if (this.roundNumber.transform(totalImpInt).toString().split('.')[1]) {
-      if (
-        this.roundNumber.transform(totalImpInt).toString().split('.')[1]
-          .length === 1
-      ) {
+      if (this.roundNumber.transform(totalImpInt).toString().split('.')[1].length === 1) {
         printImpInt = totalImpInt.toLocaleString('de-DE') + '0';
       } else {
         printImpInt = totalImpInt.toLocaleString('de-DE');
@@ -692,31 +586,19 @@ export class PrintVatBookComponent implements OnInit {
     }
 
     let printTaxAmountPercep = '0,00';
-    if (
-      this.roundNumber.transform(totalTaxAmountPercep).toString().split('.')[1]
-    ) {
-      if (
-        this.roundNumber
-          .transform(totalTaxAmountPercep)
-          .toString()
-          .split('.')[1].length === 1
-      ) {
-        printTaxAmountPercep =
-          totalTaxAmountPercep.toLocaleString('de-DE') + '0';
+    if (this.roundNumber.transform(totalTaxAmountPercep).toString().split('.')[1]) {
+      if (this.roundNumber.transform(totalTaxAmountPercep).toString().split('.')[1].length === 1) {
+        printTaxAmountPercep = totalTaxAmountPercep.toLocaleString('de-DE') + '0';
       } else {
         printTaxAmountPercep = totalTaxAmountPercep.toLocaleString('de-DE');
       }
     } else if (this.roundNumber.transform(totalTaxAmountPercep)) {
-      printTaxAmountPercep =
-        totalTaxAmountPercep.toLocaleString('de-DE') + ',00';
+      printTaxAmountPercep = totalTaxAmountPercep.toLocaleString('de-DE') + ',00';
     }
 
     let printAmount = '0,00';
     if (this.roundNumber.transform(totalAmount).toString().split('.')[1]) {
-      if (
-        this.roundNumber.transform(totalAmount).toString().split('.')[1]
-          .length === 1
-      ) {
+      if (this.roundNumber.transform(totalAmount).toString().split('.')[1].length === 1) {
         printAmount = totalAmount.toLocaleString('de-DE') + '0';
       } else {
         printAmount = totalAmount.toLocaleString('de-DE');
@@ -750,16 +632,8 @@ export class PrintVatBookComponent implements OnInit {
 
       this.doc.setFont('', 'normal');
       row += 5;
-      if (
-        this.config &&
-        this.config[0] &&
-        this.config[0].companyIdentificationType
-      ) {
-        this.doc.text(
-          this.config[0].companyIdentificationType.name + ':',
-          5,
-          row
-        );
+      if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+        this.doc.text(this.config[0].companyIdentificationType.name + ':', 5, row);
         this.doc.text(this.config[0].companyIdentificationValue, 25, row);
       }
 
@@ -818,10 +692,7 @@ export class PrintVatBookComponent implements OnInit {
     for (let tax of totalTaxes) {
       let printTaxBase = '0,00';
       if (this.roundNumber.transform(tax.taxBase).toString().split('.')[1]) {
-        if (
-          this.roundNumber.transform(tax.taxBase).toString().split('.')[1]
-            .length === 1
-        ) {
+        if (this.roundNumber.transform(tax.taxBase).toString().split('.')[1].length === 1) {
           printTaxBase = tax.taxBase.toLocaleString('de-DE') + '0';
         } else {
           printTaxBase = tax.taxBase.toLocaleString('de-DE');
@@ -832,10 +703,7 @@ export class PrintVatBookComponent implements OnInit {
 
       let printTaxAmount = '0,00';
       if (this.roundNumber.transform(tax.taxAmount).toString().split('.')[1]) {
-        if (
-          this.roundNumber.transform(tax.taxAmount).toString().split('.')[1]
-            .length === 1
-        ) {
+        if (this.roundNumber.transform(tax.taxAmount).toString().split('.')[1].length === 1) {
           printTaxAmount = tax.taxAmount.toLocaleString('de-DE') + '0';
         } else {
           printTaxAmount = tax.taxAmount.toLocaleString('de-DE');
@@ -973,9 +841,7 @@ export class PrintVatBookComponent implements OnInit {
 
   public finishImpression(): void {
     this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
-      this.doc.output('bloburl')
-    );
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
   }
 
   public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
@@ -1000,11 +866,7 @@ export class PrintVatBookComponent implements OnInit {
     return n;
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

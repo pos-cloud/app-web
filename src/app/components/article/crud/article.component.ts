@@ -21,7 +21,7 @@ import { NgbActiveModal, NgbModal, NgbTypeahead, NgbTypeaheadConfig } from '@ng-
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
-import { Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
+import { Classification, Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
 import { Config } from '../../../app.config';
 import { ArticleService } from '../../../core/services/article.service';
 import { CategoryService } from '../../../core/services/category.service';
@@ -40,7 +40,6 @@ import { ClassificationService } from '../../../core/services/classification.ser
 import { ConfigService } from '../../../core/services/config.service';
 import { Account } from '../../account/account';
 import { Application } from '../../application/application.model';
-import { Classification } from '../../classification/classification';
 
 // Services
 

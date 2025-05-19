@@ -38,8 +38,6 @@ import { CashBoxComponent } from './components/cash-box/cash-box/cash-box.compon
 import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-cash-box.component';
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
-import { ClassificationComponent } from './components/classification/classification/classification.component';
-import { ListClassificationsComponent } from './components/classification/list-classifications/list-classifications.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { AddCompanyFieldComponent } from './components/company-field/add-company-field.component';
 import { DeleteCompanyFieldComponent } from './components/company-field/delete-company-field/delete-company-field.component';
@@ -235,9 +233,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ShortcutComponent,
     StructureComponent,
     ListStructureComponent,
-    ClassificationComponent,
     CancellationTypeAutomaticComponent,
-    ListClassificationsComponent,
     ListMovementsOfArticlesComponent,
     VoucherReaderComponent,
     PosKitchenComponent,

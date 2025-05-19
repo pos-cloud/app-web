@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Classification } from 'app/components/classification/classification';
 import { PrintVatBookComponent } from 'app/components/print/print-vat-book/print-vat-book.component';
 import { State } from 'app/components/state/state';
 import { Tax, TaxClassification } from 'app/components/tax/tax';
@@ -21,7 +20,7 @@ import * as moment from 'moment';
 import { CompanyService } from '../../../core/services/company.service';
 import { TransactionService } from '../../../core/services/transaction.service';
 
-import { Branch } from '@types';
+import { Branch, Classification } from '@types';
 import 'moment/locale/es';
 
 @Component({

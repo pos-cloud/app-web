@@ -3,20 +3,17 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { Classification } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
 import { Config } from '../../app.config';
-import { Classification } from '../../components/classification/classification';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClassificationService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `classifications`, // PATH
       _http,
