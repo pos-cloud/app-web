@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef, NgZone } from "@angular/core";
 import { ConfigService } from 'app/core/services/config.service';
 import { Config } from "app/app.config";
 import { CommonModule } from "@angular/common";
@@ -25,6 +25,8 @@ export class LicenseComponent implements OnInit {
     licenseAlertType: 'success' | 'warning' | 'danger' = 'success';
     licenseTypeLabel: string = '';
 
+    loading: boolean = false;
+
     payer = {
         firstName: "",
         email: "",
@@ -40,6 +42,7 @@ export class LicenseComponent implements OnInit {
         private titleService: Title,
         private route: ActivatedRoute,
         private router: Router,
+        private ngZone: NgZone
     ) { }
 
     ngOnInit(): void {
@@ -95,10 +98,24 @@ export class LicenseComponent implements OnInit {
     }
 
     private loadPaymentBrick() {
-        if (this.containerRef?.nativeElement) {
-            const container = this.containerRef.nativeElement;
-            container.innerHTML = '';
-            this._licenseService.createPaymentBrick(container.id, this.payer, this.externalReference, this.licenseType);
-        }
-    }
+        if (!this.containerRef?.nativeElement) return;
+    
+        this.loading = true;                    
+        const container = this.containerRef.nativeElement;
+        container.innerHTML = '';
+    
+        this._licenseService.createPaymentBrick(container.id, this.payer, this.externalReference, this.licenseType, {
+          onReady: () => {
+            console.log("Payment Brick listo.");
+            this.ngZone.run(() => this.loading = false);               
+          },
+          onError: () => {
+            this.ngZone.run(() => this.loading = false);               
+          },
+          onPayment: () => {
+            this.ngZone.run(() => this.loading = true);               
+          }
+        });
+      }
+    
 }

@@ -25,8 +25,11 @@
             </div>
             <div class="col-12 col-md-6">
                 <div class="brick-container">
-                    <div #mercadoPagoContainer id="mercado-pago-container"></div>
-                </div>
+                    <div *ngIf="loading" class="spinner-overlay">
+                      <div class="spinner"></div>
+                    </div>
+                    <div #mercadoPagoContainer id="mercado-pago-container" [class.hidden]="loading"></div>
+                  </div>
             </div>
         </div>
     </div>

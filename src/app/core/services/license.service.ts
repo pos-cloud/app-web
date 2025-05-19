@@ -112,7 +112,7 @@ export class LicenseService {
     }
   }
 
-  async createPaymentBrick(containerId: string, payer: object, external_reference: string, licenseType: number): Promise<void> {
+  async createPaymentBrick(containerId: string, payer: object, external_reference: string, licenseType: number, callbacks?: {onReady?:() => void, onError?:(err: any) => void, onPayment?:() => void}): Promise<void> { 
     try {
       await this.initializeMercadoPago();
       this.externalReference = external_reference;
@@ -143,6 +143,7 @@ export class LicenseService {
         },
         callbacks: {
           onReady: () => {
+            callbacks?.onReady?.();
           },
           onSubmit: async ({ formData }: { formData: any }) => {
             try {
@@ -150,6 +151,7 @@ export class LicenseService {
               if (!formData || Object.keys(formData).length === 0) {
                 const container = document.getElementById(containerId);
                 if (container) container.innerHTML = '';
+                callbacks?.onPayment?.();
                 return;
               }
 
@@ -167,11 +169,13 @@ export class LicenseService {
           },
           onError: (error: any) => {
             console.error("Error en Payment Brick:", error);
+            callbacks?.onError?.(error);
           },
         },
       });
     } catch (error) {
       console.error("Error al crear el Payment Brick:", error);
+      callbacks?.onError?.(error);
     }
   }
 }
