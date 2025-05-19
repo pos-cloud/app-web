@@ -1,13 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Deposit } from 'app/components/deposit/deposit';
+import { Deposit } from '@types';
 import { DepositService } from 'app/core/services/deposit.service';
 
 @Component({
   selector: 'app-select-deposit',
   templateUrl: './select-deposit.component.html',
-  styleUrls: ['./select-deposit.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class SelectDepositComponent implements OnInit {
   @Input() op: string;
@@ -54,28 +56,16 @@ export class SelectDepositComponent implements OnInit {
   public selectTransfer(): void {
     let valid = true;
 
-    if (
-      this.transferForm.value.origin === this.transferForm.value.destination &&
-      this.op === 'transfer'
-    ) {
-      this.showMessage(
-        'No puede seleccionar el mismo depósito de origen y destino',
-        'info',
-        true
-      );
+    if (this.transferForm.value.origin === this.transferForm.value.destination && this.op === 'transfer') {
+      this.showMessage('No puede seleccionar el mismo depósito de origen y destino', 'info', true);
       valid = false;
     }
 
     if (
       this.op === 'transfer' &&
-      (this.transferForm.value.origin === null ||
-        this.transferForm.value.destination === null)
+      (this.transferForm.value.origin === null || this.transferForm.value.destination === null)
     ) {
-      this.showMessage(
-        'Debe seleccionar un depósito para origen y otro para destino',
-        'info',
-        true
-      );
+      this.showMessage('Debe seleccionar un depósito para origen y otro para destino', 'info', true);
       valid = false;
     }
 
@@ -88,11 +78,7 @@ export class SelectDepositComponent implements OnInit {
     }
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

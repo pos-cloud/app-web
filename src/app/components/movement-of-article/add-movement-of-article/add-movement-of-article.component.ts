@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Account } from 'app/components/account/account';
 import { CompanyType } from 'app/components/company/company';
-import { Deposit } from 'app/components/deposit/deposit';
 import { PriceList } from 'app/components/price-list/price-list';
 import { Structure, Utilization } from 'app/components/structure/structure';
 import { Transaction } from 'app/components/transaction/transaction';
@@ -18,7 +17,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
-import { VariantType, VariantValue } from '@types';
+import { Deposit, VariantType, VariantValue } from '@types';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';

@@ -1,8 +1,6 @@
-import { Currency, Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
+import { Currency, Deposit, Location, Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Category } from '../category/category';
-import { Deposit } from '../deposit/deposit';
-import { Location } from '../location/location';
 import { Taxes } from '../tax/taxes';
 import { User } from '../user/user';
 

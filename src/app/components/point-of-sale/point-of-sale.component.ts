@@ -14,7 +14,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Branch, Currency, Room } from '@types';
+import { Branch, Currency, Deposit, Room } from '@types';
 import { Printer, PrinterPrintIn } from '../printer/printer';
 import {
   CurrentAccount,
@@ -48,11 +48,11 @@ import { EmailService } from '../../core/services/send-email.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
 import { SelectBranchComponent } from '../../shared/components/select-branch/select-branch.component';
+import { SelectDepositComponent } from '../../shared/components/select-deposit/select-deposit.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
 import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { SelectCompanyComponent } from '../company/select-company/select-company.component';
-import { SelectDepositComponent } from '../deposit/select-deposit/select-deposit.component';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
@@ -65,7 +65,6 @@ import { ViewTransactionComponent } from '../transaction/view-transaction/view-t
 import { Config } from './../../app.config';
 import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
 import { Company, CompanyType } from './../../components/company/company';
-import { Deposit } from './../../components/deposit/deposit';
 import { Origin } from './../../components/origin/origin';
 import { User } from './../../components/user/user';
 

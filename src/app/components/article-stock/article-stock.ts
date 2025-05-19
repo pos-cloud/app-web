@@ -1,6 +1,5 @@
-import { Branch } from '@types';
+import { Branch, Deposit } from '@types';
 import { Article } from '../article/article';
-import { Deposit } from '../deposit/deposit';
 
 export class ArticleStock {
   public _id: string;

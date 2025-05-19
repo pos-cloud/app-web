@@ -57,9 +57,6 @@ import { ConfigComponent } from './components/config/config.component';
 import { CountryComponent } from './components/country/country/country.component';
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { DepositComponent } from './components/deposit/deposit/deposit.component';
-import { ListDepositsComponent } from './components/deposit/list-deposits/list-deposits.component';
-import { SelectDepositComponent } from './components/deposit/select-deposit/select-deposit.component';
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportersModule } from './components/export/exporters.module';
@@ -194,8 +191,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
     StatisticsComponent,
-    DepositComponent,
-    ListDepositsComponent,
     ReportBestSellingArticleComponent,
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
@@ -234,7 +229,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PriceListComponent,
     ListPriceListsComponent,
     ListArticlesPosComponent,
-    SelectDepositComponent,
     EditCheckComponent,
     PrintVatBookComponent,
     PrintTransactionTypeComponent,

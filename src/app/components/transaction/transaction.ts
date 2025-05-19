@@ -1,12 +1,11 @@
 import * as moment from 'moment';
 
-import { Branch, Currency, Employee, RelationType, Table } from '@types';
+import { Branch, Currency, Deposit, Employee, RelationType, Table } from '@types';
 import { Account } from '../account/account';
 import { Address } from '../address/address.model';
 import { BusinessRule } from '../business-rules/business-rules';
 import { CashBox } from '../cash-box/cash-box';
 import { Company } from '../company/company';
-import { Deposit } from '../deposit/deposit';
 import { PriceList } from '../price-list/price-list';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { Taxes } from '../tax/taxes';

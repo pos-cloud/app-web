@@ -12,7 +12,6 @@ import { ListCompanyFieldsComponent } from './components/company/list-company-fi
 import { ConfigComponent } from './components/config/config.component';
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { ListDepositsComponent } from './components/deposit/list-deposits/list-deposits.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
 import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
@@ -330,11 +329,6 @@ export const _routes: Routes = [
   {
     path: 'admin/usos-de-cfdi',
     component: ListUsesOfCFDIComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/depositos',
-    component: ListDepositsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
