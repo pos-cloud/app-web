@@ -48,9 +48,9 @@ export class LocationComponent implements OnInit {
     this.locationForm = this._fb.group({
       _id: ['', []],
       description: ['', [Validators.required]],
-      positionX: ['', []],
-      positionY: ['', []],
-      positionZ: ['', []],
+      positionX: ['', [Validators.required]],
+      positionY: ['', [Validators.required]],
+      positionZ: ['', [Validators.required]],
       deposit: [null, [Validators.required]],
     });
   }

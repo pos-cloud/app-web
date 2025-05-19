@@ -70,6 +70,7 @@
               formControlName="description"
               name="description"
               id="description"
+              [focus]="focusEvent"
               [ngClass]="{
                 'is-invalid': locationForm.get('description')?.touched && locationForm.get('description')?.invalid,
               }"
@@ -91,16 +92,54 @@
               formControlName="positionX"
               name="positionX"
               id="positionX"
-              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': locationForm.get('positionX')?.touched && locationForm.get('positionX')?.invalid,
+              }"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="locationForm.get('positionX')?.touched && locationForm.get('positionX')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
           </div>
           <div class="form-group col-md-3">
             <label for="positionY" class="control-label">{{ 'positionY' | translate | capitalize }}:</label>
-            <input type="text" class="form-control" formControlName="positionY" name="positionY" id="positionY" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="positionY"
+              name="positionY"
+              id="positionY"
+              [ngClass]="{
+                'is-invalid': locationForm.get('positionY')?.touched && locationForm.get('positionY')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="locationForm.get('positionY')?.touched && locationForm.get('positionY')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
           </div>
           <div class="form-group col-md-3">
             <label for="positionZ" class="control-label">{{ 'positionZ' | translate | capitalize }}:</label>
-            <input type="text" class="form-control" formControlName="positionZ" name="positionZ" id="positionZ" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="positionZ"
+              name="positionZ"
+              id="positionZ"
+              [ngClass]="{
+                'is-invalid': locationForm.get('positionZ')?.touched && locationForm.get('positionZ')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="locationForm.get('positionZ')?.touched && locationForm.get('positionZ')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
           </div>
         </div>
         <hr />
