@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/core/services/config.service';
-import * as moment from 'moment';
-import 'moment/locale/es';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
 @Injectable()
 export class LicenseGuard implements CanActivate {
-  constructor(private _configService: ConfigService, private _router: Router) {}
+  constructor(private _configService: ConfigService, private _router: Router) { }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this._configService.getConfig.pipe(
@@ -40,23 +38,37 @@ export class LicenseGuard implements CanActivate {
   }
 
   public checkLicense(config: Config, next: ActivatedRouteSnapshot) {
-    if (config && config['licensePaymentDueDate']) {
-      let days = moment(moment(config['licensePaymentDueDate']).format('YYYY-MM-DD'), 'YYYY-MM-DD').diff(
-        moment().format('YYYY-MM-DD'),
-        'days'
-      );
-      days++;
-      let daysOfPay = moment(config['licensePaymentDueDate'], 'YYYY-MM-DD').diff(moment().format('YYYY-MM-DD'), 'days');
+    if (config["licensePaymentDueDate"]) {
+      const dueDate = new Date(config["licensePaymentDueDate"]);
+      dueDate.setUTCHours(0, 0, 0, 0);
+
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+
+      const timeDiff = dueDate.getTime() - today.getTime();
+      let days = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1; 
+
+      const rawDueDate = new Date(config["licensePaymentDueDate"]);
+      rawDueDate.setUTCHours(0, 0, 0, 0);
+      const daysOfPay = Math.floor((rawDueDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
+
       if (days >= 1 && daysOfPay > 0) {
-        if (!next.data.module) {
-          return true;
-        } else if (eval(next.data.module)) return true;
-        return false;
+        if (!next.data.module) return true;
+
+        const modulePath = next.data.module.split('.');
+        let moduleValue = config["modules"];
+
+        for (const key of modulePath) {
+          moduleValue = moduleValue?.[key];
+          if (moduleValue === undefined) break;
+        }
+        return moduleValue === true;
       } else {
+        
         this._router.navigate(['/license']);
         return false;
       }
-    } else {
+    }else{
       return false;
     }
   }
