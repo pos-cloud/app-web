@@ -136,17 +136,22 @@ export class ReportMovArtByArticleComponent {
           operationType: 1,
           name: 1,
           branch: 1,
+          modifyStock: 1,
         },
         match: {
           transactionMovement: this.transactionMovement,
           operationType: { $ne: 'D' },
           requestArticles: true,
+          modifyStock: true,
         },
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
           this.transactionTypes = result.result;
+          for (let transactionType of this.transactionTypes) {
+            this.transactionTypesSelect.push(transactionType._id);
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -222,7 +227,7 @@ export class ReportMovArtByArticleComponent {
       filters: {
         branches: this.branchSelectedId,
         transactionMovement: this.transactionMovement,
-        transactionTypes: this.transactionTypesSelect ?? [],
+        transactionTypes: this.transactionTypesSelect,
         startDate: this.startDate,
         endDate: this.endDate,
         categories: this.categoriesSelect ?? [],
