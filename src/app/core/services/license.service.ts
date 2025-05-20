@@ -74,10 +74,10 @@ export class LicenseService {
 
   getLicenseTypeLabel(type: number): string {
     switch (type) {
-      case 0: return 'Testing';
-      case 1: return 'Básico';
-      case 2: return 'Standard';
-      case 3: return 'Premium';
+      case 0: return 'Free';
+      case 1: return 'Basic';
+      case 2: return 'Pro';
+      case 3: return 'Max';
       default: return 'Desconocido';
     }
   }

@@ -137,7 +137,6 @@ export class ToastService {
         message = result.message;
       }
     }
-    console.log(type,message);
     switch (type) {
       case 'success':
         this.success(message, title, redirect, delay, position);
