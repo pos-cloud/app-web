@@ -271,3 +271,10 @@ db['article-stocks'].find().forEach((stock) => {
 });
 
 db.articles.updateMany({}, { $set: { allowSaleWithoutStock: true } });
+
+db.getCollection('movements-of-cashes').update(
+  { number: '55354875' },
+  { $set: { operationType: 'U', statusCheck: 'Disponible' } },
+  false,
+  true
+);
