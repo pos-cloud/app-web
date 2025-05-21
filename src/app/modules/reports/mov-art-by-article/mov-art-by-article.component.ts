@@ -4,12 +4,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { CategoryService } from '@core/services/category.service';
+import { DepositService } from '@core/services/deposit.service';
 import { MakeService } from '@core/services/make.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch, Make } from '@types';
+import { Deposit, Make } from '@types';
 import { Category } from 'app/components/category/category';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -56,8 +56,8 @@ export class ReportMovArtByArticleComponent {
   categories: Category[];
   categoriesSelect: string[] = [];
 
-  branches: Branch[];
-  branchSelectedId: string[] = [];
+  deposits: Deposit[];
+  depositsSelectedId: string[] = [];
 
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
@@ -75,7 +75,7 @@ export class ReportMovArtByArticleComponent {
 
   constructor(
     private _service: ReportSystemService,
-    private _branchService: BranchService,
+    private _depositService: DepositService,
     private _transactionTypeService: TransactionTypeService,
     private _categoryService: CategoryService,
     private _makeService: MakeService,
@@ -90,7 +90,7 @@ export class ReportMovArtByArticleComponent {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
       this.getTransactionTypes();
       this.getReport();
-      this.getBranches();
+      this.getDeposits();
       this.getCategories();
       this.getMakes();
     });
@@ -100,9 +100,9 @@ export class ReportMovArtByArticleComponent {
     this.subscription.unsubscribe();
   }
 
-  private getBranches(): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
+  private getDeposits(): Promise<Deposit[]> {
+    return new Promise<Deposit[]>((resolve, reject) => {
+      this._depositService
         .getAll({
           project: {
             _id: 1,
@@ -116,7 +116,7 @@ export class ReportMovArtByArticleComponent {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            this.branches = result.result;
+            this.deposits = result.result;
           },
           error: (error) => {
             resolve(null);
@@ -136,17 +136,22 @@ export class ReportMovArtByArticleComponent {
           operationType: 1,
           name: 1,
           branch: 1,
+          modifyStock: 1,
         },
         match: {
           transactionMovement: this.transactionMovement,
           operationType: { $ne: 'D' },
           requestArticles: true,
+          modifyStock: true,
         },
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
           this.transactionTypes = result.result;
+          for (let transactionType of this.transactionTypes) {
+            this.transactionTypesSelect.push(transactionType._id);
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -220,9 +225,9 @@ export class ReportMovArtByArticleComponent {
     const requestPayload = {
       reportType: 'mov-art-by-article',
       filters: {
-        branches: this.branchSelectedId,
+        deposits: this.depositsSelectedId,
         transactionMovement: this.transactionMovement,
-        transactionTypes: this.transactionTypesSelect ?? [],
+        transactionTypes: this.transactionTypesSelect,
         startDate: this.startDate,
         endDate: this.endDate,
         categories: this.categoriesSelect ?? [],
