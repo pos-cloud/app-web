@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
@@ -107,7 +108,8 @@ export class ReportBirthdayComponent implements OnInit {
     private _service: ReportSystemService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
-    private _title: Title
+    private _title: Title,
+    private _router: Router
   ) {}
 
   public ngOnDestroy(): void {
@@ -120,6 +122,9 @@ export class ReportBirthdayComponent implements OnInit {
 
   public getReport(): void {
     this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
     const requestPayload = {
       reportType: 'birthday',
       filters: {
@@ -145,9 +150,10 @@ export class ReportBirthdayComponent implements OnInit {
               if (result instanceof Blob) {
                 try {
                   const blobUrl = URL.createObjectURL(result);
+                  console.log(blobUrl);
                   const a = document.createElement('a');
                   a.href = blobUrl;
-                  a.download = 'clientes.xlsx';
+                  a.download = `${entity}.xlsx`;
                   a.click();
                   URL.revokeObjectURL(blobUrl); // liberar memoria
                 } catch (e) {

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '@core/services/category.service';
 import { DepositService } from '@core/services/deposit.service';
 import { MakeService } from '@core/services/make.service';
@@ -83,7 +83,8 @@ export class ReportMovArtByArticleComponent {
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private _title: Title,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private _router: Router
   ) {}
 
   ngOnInit() {
@@ -222,6 +223,8 @@ export class ReportMovArtByArticleComponent {
 
   public getReport(): void {
     this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
 
     const requestPayload = {
       reportType: 'mov-art-by-article',
@@ -257,7 +260,7 @@ export class ReportMovArtByArticleComponent {
                   const blobUrl = URL.createObjectURL(result);
                   const a = document.createElement('a');
                   a.href = blobUrl;
-                  a.download = 'movimientos de artículos.xlsx';
+                  a.download = `${entity}.xlsx`;
                   a.click();
                   URL.revokeObjectURL(blobUrl); // liberar memoria
                 } catch (e) {
