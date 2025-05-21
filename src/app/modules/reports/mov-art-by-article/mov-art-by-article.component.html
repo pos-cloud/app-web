@@ -2,10 +2,10 @@
   <!-- Filtros -->
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
     <div class="form-group mr-2">
-      <label for="branch" class="control-label">
-        <b>{{ 'agency' | translate | capitalize }}</b>
+      <label for="deposit" class="control-label">
+        <b>{{ 'deposit' | translate | capitalize }}</b>
       </label>
-      <app-multi-select-dropdown [data]="branches" [(ngModel)]="branchSelectedId" placeholder="Sucursal">
+      <app-multi-select-dropdown [data]="deposits" [(ngModel)]="depositsSelectedId" placeholder="Deposito">
       </app-multi-select-dropdown>
     </div>
 
@@ -25,7 +25,7 @@
 
     <div class="form-group mr-2">
       <label for="categories" class="control-label">
-        <b>Categoría</b>
+        <b>{{ 'categories' | translate | capitalize }}</b>
       </label>
       <app-multi-select-dropdown [data]="categories" [(ngModel)]="categoriesSelect" placeholder="Categorías">
       </app-multi-select-dropdown>
@@ -33,7 +33,7 @@
 
     <div class="form-group mr-2">
       <label for="makes" class="control-label">
-        <b>Marca</b>
+        <b>{{ 'makes' | translate | capitalize }}</b>
       </label>
       <app-multi-select-dropdown [data]="makes" [(ngModel)]="makesSelect" placeholder="Marcas">
       </app-multi-select-dropdown>
