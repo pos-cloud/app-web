@@ -51,24 +51,19 @@ export class LicenseGuard implements CanActivate {
       const rawDueDate = new Date(config["licensePaymentDueDate"]);
       rawDueDate.setUTCHours(0, 0, 0, 0);
       const daysOfPay = Math.floor((rawDueDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
-
+      console.log("pasa por el guard de license");
+      console.log(days >= 1 && daysOfPay > 0)
       if (days >= 1 && daysOfPay > 0) {
-        if (!next.data.module) return true;
-
-        const modulePath = next.data.module.split('.');
-        let moduleValue = config["modules"];
-
-        for (const key of modulePath) {
-          moduleValue = moduleValue?.[key];
-          if (moduleValue === undefined) break;
-        }
-        return moduleValue === true;
+        if (!next.data.module) {
+          return true;
+        } else if (eval(next.data.module)) return true;
+        return false;
       } else {
-        
         this._router.navigate(['/license']);
         return false;
       }
     }else{
+      console.log("entra al segundo else?");
       return false;
     }
   }
