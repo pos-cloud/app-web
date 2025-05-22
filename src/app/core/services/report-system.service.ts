@@ -13,7 +13,7 @@ export class ReportSystemService {
   constructor(public _http: HttpClient, public _authService: AuthService) {}
 
   public getReport(data: {}): Observable<any> {
-    const URL = `${environment.apiv2}/reports-system/${data['reportType']}/${data['type']}`;
+    const URL = `${environment.apiv2}/reports-system/${data['reportType']}/json`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -33,7 +33,7 @@ export class ReportSystemService {
       );
   }
   public downloadXlsx(data: {}): Observable<any> {
-    const URL = `${environment.apiv2}/reports-system/${data['reportType']}/${data['type']}`;
+    const URL = `${environment.apiv2}/reports-system/${data['reportType']}/xlsx`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

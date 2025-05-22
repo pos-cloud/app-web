@@ -49,7 +49,6 @@ export class ReportMovArtByArticleComponent {
   private subscription: Subscription = new Subscription();
 
   // filters
-
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
 
@@ -66,7 +65,6 @@ export class ReportMovArtByArticleComponent {
 
   makes: Make[];
   makesSelect: string[] = [];
-  public excel: boolean = false;
 
   // sort
   public sort = {
@@ -105,7 +103,6 @@ export class ReportMovArtByArticleComponent {
   private get requestPayload() {
     return {
       reportType: 'mov-art-by-article',
-      type: this.excel ? 'xlsx' : 'json',
       filters: {
         deposits: this.depositsSelectedId,
         transactionMovement: this.transactionMovement,
@@ -264,14 +261,21 @@ export class ReportMovArtByArticleComponent {
           },
           complete: () => {
             this.loading = false;
-            this.excel = false;
             this.cdRef.detectChanges();
           },
         })
     );
   }
 
-  public downloadXlsx() {
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+    this.getReport();
+  }
+
+  public onExportExcel(event): void {
     this.loading = true;
     const pathUrl = this._router.url.split('/');
     const entity = pathUrl[2];
@@ -298,23 +302,9 @@ export class ReportMovArtByArticleComponent {
           },
           complete: () => {
             this.loading = false;
-            this.excel = false;
             this.cdRef.detectChanges();
           },
         })
     );
-  }
-
-  public onSortingChange(event: { column: string; direction: string }): void {
-    this.sort = {
-      column: event.column,
-      direction: event.direction,
-    };
-    this.getReport();
-  }
-
-  public onExportExcel(event): void {
-    this.excel = event;
-    this.downloadXlsx();
   }
 }

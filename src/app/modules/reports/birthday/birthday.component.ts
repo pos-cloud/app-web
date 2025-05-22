@@ -5,7 +5,6 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -24,7 +23,6 @@ import { takeUntil } from 'rxjs/operators';
     NgbModule,
     ReactiveFormsModule,
     DataTableReportsComponent,
-    DateTimePickerComponent,
     MultiSelectDropdownComponent,
     TranslateModule,
     PipesModule,
@@ -97,7 +95,6 @@ export class ReportBirthdayComponent implements OnInit {
   public day: number;
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
-  public excel: boolean = false;
   // sort
   public sort = {
     column: 'year',
@@ -123,7 +120,6 @@ export class ReportBirthdayComponent implements OnInit {
   private get requestPayload() {
     return {
       reportType: 'birthday',
-      type: this.excel ? 'xlsx' : 'json',
       filters: {
         months: this.monthsSelect,
         day: this.day,
@@ -157,14 +153,21 @@ export class ReportBirthdayComponent implements OnInit {
           },
           complete: () => {
             this.loading = false;
-            this.excel = false;
             this.cdRef.detectChanges();
           },
         })
     );
   }
 
-  public downloadXlsx() {
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+    this.getReport();
+  }
+
+  public onExportExcel(event): void {
     this.loading = true;
     const pathUrl = this._router.url.split('/');
     const entity = pathUrl[2];
@@ -181,7 +184,7 @@ export class ReportBirthdayComponent implements OnInit {
               a.href = blobUrl;
               a.download = `${entity}.xlsx`;
               a.click();
-              URL.revokeObjectURL(blobUrl); // liberar memoria
+              URL.revokeObjectURL(blobUrl);
             } catch (e) {
               this._toastService.showToast({ message: 'Error al generar el Excel' });
             }
@@ -191,23 +194,9 @@ export class ReportBirthdayComponent implements OnInit {
           },
           complete: () => {
             this.loading = false;
-            this.excel = false;
             this.cdRef.detectChanges();
           },
         })
     );
-  }
-
-  public onSortingChange(event: { column: string; direction: string }): void {
-    this.sort = {
-      column: event.column,
-      direction: event.direction,
-    };
-    this.getReport();
-  }
-
-  public onExportExcel(event): void {
-    this.excel = event;
-    this.downloadXlsx();
   }
 }
