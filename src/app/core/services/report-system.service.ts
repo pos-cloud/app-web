@@ -32,7 +32,7 @@ export class ReportSystemService {
         })
       );
   }
-  public uploadXlsx(data: {}): Observable<any> {
+  public downloadXlsx(data: {}): Observable<any> {
     const URL = `${environment.apiv2}/reports-system/${data['reportType']}/${data['type']}`;
 
     const headers = new HttpHeaders()

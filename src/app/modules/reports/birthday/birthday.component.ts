@@ -164,14 +164,14 @@ export class ReportBirthdayComponent implements OnInit {
     );
   }
 
-  public uploadXlsx() {
+  public downloadXlsx() {
     this.loading = true;
     const pathUrl = this._router.url.split('/');
     const entity = pathUrl[2];
 
     this.subscription.add(
       this._service
-        .uploadXlsx(this.requestPayload)
+        .downloadXlsx(this.requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
@@ -208,6 +208,6 @@ export class ReportBirthdayComponent implements OnInit {
 
   public onExportExcel(event): void {
     this.excel = event;
-    this.uploadXlsx();
+    this.downloadXlsx();
   }
 }
