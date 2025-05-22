@@ -1,36 +1,36 @@
 <div class="container-fluid">
-    <div class="card card-large">
-        <div class="card-header">
-            <span>Licencia</span>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6">
-                <div class="container mt-5 mb-5 ">
-                    <p><strong>Próximo pago:</strong> {{ formatUTCDate(licensePaymentDueDate) }}</p>
-                    <p><strong>Fin de licencia:</strong> {{ formatUTCDate(expirationLicenseDate) }}</p>
-                    <p><strong>Tipo de Plan:</strong>{{ licenseTypeLabel }}</p>
-
-                    <ngb-alert [type]="licenseAlertType" [dismissible]="false">
-                        Estado de licencia: <strong>{{ licenseStatus }}</strong>
-                    </ngb-alert>
-                    <ngb-alert [type]="'info'" [dismissible]="false">
-                        Una vez recibido el pago, tu licencia se actualizará automáticamente
-                    </ngb-alert>
-                    <ngb-alert [type]="'info'" [dismissible]="false">
-                        Las licencias de POS Cloud deben pagarse entre el 1 y el 10 de cada mes. Pasado el día 10, habrá
-                        una tolerancia de 5 días con un RECARGO en el pago. Luego del día 15, el sistema se cortará
-                        AUTOMÁTICAMENTE. Para restablecer el servicio, deberá comunicarse con nosotros.
-                    </ngb-alert>
-                </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="brick-container">
-                    <div *ngIf="loading" class="spinner-overlay">
-                      <div class="spinner"></div>
-                    </div>
-                    <div #mercadoPagoContainer id="mercado-pago-container" [class.hidden]="loading"></div>
-                  </div>
-            </div>
-        </div>
+  <div class="card card-large">
+    <div class="card-header">
+      <span>Licencia</span>
     </div>
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="container mt-5 mb-5">
+          <p><strong>Próximo pago:</strong> {{ formatUTCDate(licensePaymentDueDate) }}</p>
+          <p><strong>Fin de licencia:</strong> {{ formatUTCDate(expirationLicenseDate) }}</p>
+          <p><strong>Tipo de Plan:</strong>{{ licenseTypeLabel }}</p>
+
+          <ngb-alert [type]="licenseAlertType" [dismissible]="false">
+            Estado de licencia: <strong>{{ licenseStatus }}</strong>
+          </ngb-alert>
+          <ngb-alert [type]="'info'" [dismissible]="false">
+            Una vez recibido el pago, tu licencia se actualizará automáticamente.
+          </ngb-alert>
+          <ngb-alert [type]="'info'" [dismissible]="false">
+            <strong>Importante:</strong> Las licencias deben abonarse entre el <strong>1 y el 10</strong> de cada mes.
+            Luego hay una tolerancia de <strong>5 días</strong>. A partir del <strong>día 15</strong>, el servicio se
+            suspenderá temporalmente. Para reactivarlo, será necesario regularizar el pago.
+          </ngb-alert>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="brick-container">
+          <div *ngIf="loading" class="spinner-overlay">
+            <div class="spinner"></div>
+          </div>
+          <div #mercadoPagoContainer id="mercado-pago-container" [class.hidden]="loading"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
