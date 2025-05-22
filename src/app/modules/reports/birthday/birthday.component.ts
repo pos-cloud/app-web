@@ -120,19 +120,13 @@ export class ReportBirthdayComponent implements OnInit {
     this.getReport();
   }
 
-  public getReport(): void {
-    this.loading = true;
-    const pathUrl = this._router.url.split('/');
-    const entity = pathUrl[2];
-
-    const requestPayload = {
+  private get requestPayload() {
+    return {
       reportType: 'birthday',
+      type: this.excel ? 'xlsx' : 'json',
       filters: {
         months: this.monthsSelect,
         day: this.day,
-      },
-      exportData: {
-        excel: this.excel,
       },
       pagination: {
         page: 1,
@@ -140,36 +134,56 @@ export class ReportBirthdayComponent implements OnInit {
       },
       sorting: this.sort,
     };
+  }
+
+  public getReport(): void {
+    this.loading = true;
     this.subscription.add(
       this._service
-        .getReport(requestPayload)
+        .getReport(this.requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            if (this.excel) {
-              if (result instanceof Blob) {
-                try {
-                  const blobUrl = URL.createObjectURL(result);
-                  console.log(blobUrl);
-                  const a = document.createElement('a');
-                  a.href = blobUrl;
-                  a.download = `${entity}.xlsx`;
-                  a.click();
-                  URL.revokeObjectURL(blobUrl); // liberar memoria
-                } catch (e) {
-                  this._toastService.showToast({ message: 'Error al generar el Excel' });
-                }
-              } else {
-                this._toastService.showToast(result);
-              }
-            } else {
-              this._toastService.showToast(result);
-              this.data = result?.result?.data ?? [];
-              this.columns = result?.result?.columns ?? [];
-              this.totals = result?.result?.totals ?? {};
-              this.title = result?.info?.title ?? 'Cumpleaños';
-              this._title.setTitle(this.title);
-              this.cdRef.detectChanges();
+            this._toastService.showToast(result);
+            this.data = result?.result?.data ?? [];
+            this.columns = result?.result?.columns ?? [];
+            this.totals = result?.result?.totals ?? {};
+            this.title = result?.info?.title ?? 'Cumpleaños';
+            this._title.setTitle(this.title);
+            this.cdRef.detectChanges();
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.excel = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
+  }
+
+  public uploadXlsx() {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .uploadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl); // liberar memoria
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
             }
           },
           error: (error) => {
@@ -194,6 +208,6 @@ export class ReportBirthdayComponent implements OnInit {
 
   public onExportExcel(event): void {
     this.excel = event;
-    this.getReport();
+    this.uploadXlsx();
   }
 }
