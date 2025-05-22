@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -23,7 +23,6 @@ import { takeUntil } from 'rxjs/operators';
     NgbModule,
     ReactiveFormsModule,
     DataTableReportsComponent,
-    DateTimePickerComponent,
     MultiSelectDropdownComponent,
     TranslateModule,
     PipesModule,
@@ -96,7 +95,6 @@ export class ReportBirthdayComponent implements OnInit {
   public day: number;
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
-
   // sort
   public sort = {
     column: 'year',
@@ -107,7 +105,8 @@ export class ReportBirthdayComponent implements OnInit {
     private _service: ReportSystemService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
-    private _title: Title
+    private _title: Title,
+    private _router: Router
   ) {}
 
   public ngOnDestroy(): void {
@@ -118,9 +117,8 @@ export class ReportBirthdayComponent implements OnInit {
     this.getReport();
   }
 
-  public getReport(): void {
-    this.loading = true;
-    const requestPayload = {
+  private get requestPayload() {
+    return {
       reportType: 'birthday',
       filters: {
         months: this.monthsSelect,
@@ -132,9 +130,13 @@ export class ReportBirthdayComponent implements OnInit {
       },
       sorting: this.sort,
     };
+  }
+
+  public getReport(): void {
+    this.loading = true;
     this.subscription.add(
       this._service
-        .getReport(requestPayload)
+        .getReport(this.requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
@@ -163,5 +165,38 @@ export class ReportBirthdayComponent implements OnInit {
       direction: event.direction,
     };
     this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .downloadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
   }
 }

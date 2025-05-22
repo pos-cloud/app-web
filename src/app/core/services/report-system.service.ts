@@ -13,7 +13,7 @@ export class ReportSystemService {
   constructor(public _http: HttpClient, public _authService: AuthService) {}
 
   public getReport(data: {}): Observable<any> {
-    const URL = `${environment.apiv2}/reports-system/${data['reportType']}`;
+    const URL = `${environment.apiv2}/reports-system/${data['reportType']}/json`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -22,6 +22,27 @@ export class ReportSystemService {
     return this._http
       .post(URL, data, {
         headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+  public downloadXlsx(data: {}): Observable<any> {
+    const URL = `${environment.apiv2}/reports-system/${data['reportType']}/xlsx`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, data, {
+        headers: headers,
+        responseType: 'blob',
       })
       .pipe(
         map((res) => {

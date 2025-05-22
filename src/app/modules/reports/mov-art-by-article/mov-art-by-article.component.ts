@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '@core/services/category.service';
 import { DepositService } from '@core/services/deposit.service';
 import { MakeService } from '@core/services/make.service';
@@ -49,7 +49,6 @@ export class ReportMovArtByArticleComponent {
   private subscription: Subscription = new Subscription();
 
   // filters
-
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
 
@@ -82,7 +81,8 @@ export class ReportMovArtByArticleComponent {
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private _title: Title,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private _router: Router
   ) {}
 
   ngOnInit() {
@@ -98,6 +98,27 @@ export class ReportMovArtByArticleComponent {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  private get requestPayload() {
+    return {
+      reportType: 'mov-art-by-article',
+      filters: {
+        deposits: this.depositsSelectedId,
+        transactionMovement: this.transactionMovement,
+        transactionTypes: this.transactionTypesSelect,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        categories: this.categoriesSelect ?? [],
+        article: this.article,
+        makes: this.makesSelect ?? [],
+      },
+      pagination: {
+        page: 1,
+        pageSize: 10,
+      },
+      sorting: this.sort,
+    };
   }
 
   private getDeposits(): Promise<Deposit[]> {
@@ -221,29 +242,9 @@ export class ReportMovArtByArticleComponent {
 
   public getReport(): void {
     this.loading = true;
-
-    const requestPayload = {
-      reportType: 'mov-art-by-article',
-      filters: {
-        deposits: this.depositsSelectedId,
-        transactionMovement: this.transactionMovement,
-        transactionTypes: this.transactionTypesSelect,
-        startDate: this.startDate,
-        endDate: this.endDate,
-        categories: this.categoriesSelect ?? [],
-        article: this.article,
-        makes: this.makesSelect ?? [],
-      },
-      pagination: {
-        page: 1,
-        pageSize: 10,
-      },
-      sorting: this.sort,
-    };
-
     this.subscription.add(
       this._service
-        .getReport(requestPayload)
+        .getReport(this.requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
@@ -251,7 +252,7 @@ export class ReportMovArtByArticleComponent {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            this.title = result?.result?.info?.title ?? `Movimientos por artículo de ${this.transactionMovement}`;
+            this.title = result?.info?.title ?? `Movimientos por artículo de ${this.transactionMovement}`;
             this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
@@ -272,5 +273,38 @@ export class ReportMovArtByArticleComponent {
       direction: event.direction,
     };
     this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .downloadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
   }
 }
