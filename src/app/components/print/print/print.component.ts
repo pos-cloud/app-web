@@ -2208,21 +2208,21 @@ export class PrintComponent implements OnInit {
     }
 
     this.doc.setFont('helvetica', 'bold');
-    this.doc.text('Domicilio Comercial:', margin, 40);
+    this.doc.text('Domicilio:', margin, 40);
     this.doc.setFont(undefined, 'normal');
     if (this.config[0].companyAddress) {
-      this.doc.text(this.config[0].companyAddress, 42, 40);
+      this.doc.text(this.config[0].companyAddress, 23, 40);
     }
 
     this.doc.setFont('helvetica', 'bold');
     if (Config.country === 'AR') {
-      this.doc.text('Condición de IVA:', margin, 45);
+      this.doc.text('Cond. de IVA:', margin, 45);
     } else {
       this.doc.text('Régimen Fiscal:', margin, 45);
     }
     this.doc.setFont(undefined, 'normal');
     if (this.config[0].companyVatCondition) {
-      this.doc.text(this.config[0].companyVatCondition.description.slice(0, 31), 36, 45);
+      this.doc.text(this.config[0].companyVatCondition.description.slice(0, 31), 29, 45);
     }
   }
 
@@ -4575,7 +4575,9 @@ export class PrintComponent implements OnInit {
         if (movementOfArticle.salePrice > 0) {
           this.doc.setFont(undefined, 'normal');
           this.row += 6;
-          this.doc.text(movementOfArticle.description.slice(0, 25), margin, this.row);
+          this.doc.setFontSize(8);
+          this.doc.text(movementOfArticle.description.slice(0, 23), margin, this.row);
+          this.doc.setFontSize(10);
           this.doc.text(
             this.roundNumber.transform(movementOfArticle.amount) +
               ' x ' +
