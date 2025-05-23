@@ -3,11 +3,11 @@ import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BranchService } from '@core/services/branch.service';
 import { CategoryService } from '@core/services/category.service';
-import { DepositService } from '@core/services/deposit.service';
 import { MakeService } from '@core/services/make.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { Deposit, Make } from '@types';
+import { Branch, Make } from '@types';
 import { Category } from 'app/components/category/category';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -55,8 +55,8 @@ export class ReportMovArtByArticleComponent {
   categories: Category[];
   categoriesSelect: string[] = [];
 
-  deposits: Deposit[];
-  depositsSelectedId: string[] = [];
+  branches: Branch[];
+  branchesSelectedId: string[] = [];
 
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
@@ -74,7 +74,7 @@ export class ReportMovArtByArticleComponent {
 
   constructor(
     private _service: ReportSystemService,
-    private _depositService: DepositService,
+    private _branchService: BranchService,
     private _transactionTypeService: TransactionTypeService,
     private _categoryService: CategoryService,
     private _makeService: MakeService,
@@ -90,7 +90,7 @@ export class ReportMovArtByArticleComponent {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
       this.getTransactionTypes();
       this.getReport();
-      this.getDeposits();
+      this.getBranches();
       this.getCategories();
       this.getMakes();
     });
@@ -104,7 +104,7 @@ export class ReportMovArtByArticleComponent {
     return {
       reportType: 'mov-art-by-article',
       filters: {
-        deposits: this.depositsSelectedId,
+        branches: this.branchesSelectedId,
         transactionMovement: this.transactionMovement,
         transactionTypes: this.transactionTypesSelect,
         startDate: this.startDate,
@@ -121,9 +121,9 @@ export class ReportMovArtByArticleComponent {
     };
   }
 
-  private getDeposits(): Promise<Deposit[]> {
-    return new Promise<Deposit[]>((resolve, reject) => {
-      this._depositService
+  private getBranches(): Promise<Branch[]> {
+    return new Promise<Branch[]>((resolve, reject) => {
+      this._branchService
         .getAll({
           project: {
             _id: 1,
@@ -137,7 +137,7 @@ export class ReportMovArtByArticleComponent {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            this.deposits = result.result;
+            this.branches = result.result;
           },
           error: (error) => {
             resolve(null);
