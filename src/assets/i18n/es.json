@@ -697,5 +697,6 @@
   "select": "Seleccionar",
   "add-article": "Agregar producto",
   "add-company": "Agregar compañía",
-  "max-length": "Máximo permitido: {{max}} caracteres"
+  "max-length": "Máximo permitido: {{max}} caracteres",
+  "article.observation": "Observación"
 }
