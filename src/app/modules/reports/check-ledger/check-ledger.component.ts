@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -41,6 +42,7 @@ export class ReportCheckLedgerComponent {
     private _toastService: ToastService,
     private _fb: UntypedFormBuilder,
     private cdRef: ChangeDetectorRef,
+    public _router: Router,
     private _title: Title
   ) {
     this.form = this._fb.group({
@@ -54,9 +56,8 @@ export class ReportCheckLedgerComponent {
     this.subscription.unsubscribe();
   }
 
-  public getReport(): void {
-    this.loading = true;
-    const requestPayload = {
+  private get requestPayload() {
+    return {
       reportType: 'check-ledger',
       filters: {
         number: this.form.value.checkNumber,
@@ -67,10 +68,14 @@ export class ReportCheckLedgerComponent {
       },
       sorting: this.sort,
     };
+  }
+
+  public getReport(): void {
+    this.loading = true;
 
     this.subscription.add(
       this._service
-        .getReport(requestPayload)
+        .getReport(this.requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
@@ -101,5 +106,37 @@ export class ReportCheckLedgerComponent {
       direction: event.direction,
     };
     this.getReport();
+  }
+  public onExportExcel(event): void {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .downloadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
   }
 }

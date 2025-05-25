@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Deposit } from '@types';
 import { BranchService } from 'app/core/services/branch.service';
@@ -62,6 +63,7 @@ export class InventoryForDateComponent {
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
     private _fb: UntypedFormBuilder,
+    public _router: Router,
     private _title: Title
   ) {
     this.form = this._fb.group({ number: [] });
@@ -75,6 +77,18 @@ export class InventoryForDateComponent {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  private get requestPayload() {
+    return {
+      reportType: 'inventory-for-date',
+      filters: { branches: this.branchSelectedId, deposits: this.depositSelectedId, endDate: this.endDate },
+      pagination: {
+        page: 1,
+        pageSize: 10,
+      },
+      sorting: this.sort,
+    };
   }
 
   private getBranches(): Promise<Branch[]> {
@@ -114,16 +128,9 @@ export class InventoryForDateComponent {
   public getReport(): void {
     this.loading = true;
 
-    const requestPayload = {
-      reportType: 'inventory-for-date',
-      filters: { branches: this.branchSelectedId, deposits: this.depositSelectedId, endDate: this.endDate },
-      pagination: { page: 1, pageSize: 10 },
-      sorting: this.sort,
-    };
-
     this.subscription.add(
       this._service
-        .getReport(requestPayload)
+        .getReport(this.requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
@@ -149,5 +156,38 @@ export class InventoryForDateComponent {
   public onSortingChange(event: { column: string; direction: string }): void {
     this.sort = { column: event.column, direction: event.direction };
     this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .downloadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
   }
 }

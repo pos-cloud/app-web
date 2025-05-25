@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeService } from '@core/services/employee.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
@@ -57,11 +57,28 @@ export class AccountReceivablesComponent implements OnInit {
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
     private _activatedRoute: ActivatedRoute,
+    public _router: Router,
     private _title: Title
   ) {}
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  private get requestPayload() {
+    return {
+      reportType: 'account-receivables',
+      filters: {
+        companyType: this.companyType,
+        company: this.company,
+        employees: this.employeeSelect,
+      },
+      pagination: {
+        page: 1,
+        pageSize: 10,
+      },
+      sorting: this.sort,
+    };
   }
 
   async ngOnInit() {
@@ -92,22 +109,10 @@ export class AccountReceivablesComponent implements OnInit {
 
   public getReport(): void {
     this.loading = true;
-    const requestPayload = {
-      reportType: 'account-receivables',
-      filters: {
-        companyType: this.companyType,
-        company: this.company,
-        employees: this.employeeSelect,
-      },
-      pagination: {
-        page: 1,
-        pageSize: 10,
-      },
-      sorting: this.sort,
-    };
+
     this.subscription.add(
       this._service
-        .getReport(requestPayload)
+        .getReport(this.requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
@@ -136,5 +141,38 @@ export class AccountReceivablesComponent implements OnInit {
       direction: event.direction,
     };
     this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .downloadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
   }
 }

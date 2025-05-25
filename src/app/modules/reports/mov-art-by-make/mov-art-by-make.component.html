@@ -10,7 +10,7 @@
 
     <div class="form-group mr-2">
       <label for="article" class="control-label">
-        <b>{{ 'make' | translate | capitalize }}</b></label
+        <b>{{ 'makes' | translate | capitalize }}</b></label
       >
       <input
         type="text"
@@ -65,6 +65,7 @@
     [loading]="loading"
     [(sorting)]="sort"
     (sortingChange)="onSortingChange($event)"
+    (eventExport)="onExportExcel($event)"
   >
   </app-data-table-reports>
 </section>

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -63,6 +63,7 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
   constructor(
     private _service: ReportSystemService,
     private _branchService: BranchService,
+    public _router: Router,
     private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
@@ -81,6 +82,24 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  private get requestPayload() {
+    return {
+      reportType: 'transactions-by-company',
+      filters: {
+        branches: this.branchSelectedId,
+        companyType: this.companyType,
+        transactionTypes: this.transactionTypesSelect ?? [],
+        startDate: this.startDate,
+        endDate: this.endDate,
+      },
+      pagination: {
+        page: 1,
+        pageSize: 10,
+      },
+      sorting: this.sort,
+    };
   }
 
   private getBranches(): Promise<Branch[]> {
@@ -139,25 +158,10 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   public getReport(): void {
     this.loading = true;
-    const requestPayload = {
-      reportType: 'transactions-by-company',
-      filters: {
-        branches: this.branchSelectedId,
-        companyType: this.companyType,
-        transactionTypes: this.transactionTypesSelect ?? [],
-        startDate: this.startDate,
-        endDate: this.endDate,
-      },
-      pagination: {
-        page: 1,
-        pageSize: 10,
-      },
-      sorting: this.sort,
-    };
 
     this.subscription.add(
       this._service
-        .getReport(requestPayload)
+        .getReport(this.requestPayload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
@@ -188,5 +192,38 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
     };
 
     this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .downloadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
   }
 }
