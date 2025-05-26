@@ -170,7 +170,7 @@ export class CurrentAccountComponent implements OnInit {
 
     this._service.getTotalOfAccountsByCompany(this.data).subscribe(
       (result) => {
-        if (result) {
+        if (result.status === 200) {
           this.totalPrice = result[0]?.totalPrice;
         }
         this.loadingTotal = false;

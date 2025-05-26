@@ -29,6 +29,7 @@ import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operato
 import Keyboard from 'simple-keyboard';
 
 import { ApiResponse } from '@types';
+import { CurrentAccountService } from 'app/modules/reports/current-account/current-account.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
@@ -40,7 +41,7 @@ import { MovementOfArticle } from '../../movement-of-article/movement-of-article
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { Tax } from '../../tax/tax';
 import { Taxes } from '../../tax/taxes';
-import { Movements, TransactionMovement } from '../../transaction-type/transaction-type';
+import { CurrentAccount, Movements, TransactionMovement } from '../../transaction-type/transaction-type';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
 import { MovementOfCash, StatusCheck } from '../movement-of-cash';
@@ -140,6 +141,7 @@ export class AddMovementOfCashComponent implements OnInit {
     private _movementOfArticleService: MovementOfArticleService,
     private _toastService: ToastService,
     private _currencyService: CurrencyService,
+    private _currencyAccountService: CurrentAccountService,
     public activeModal: NgbActiveModal,
     public _fb: UntypedFormBuilder,
     public alertConfig: NgbAlertConfig,
@@ -1644,6 +1646,8 @@ export class AddMovementOfCashComponent implements OnInit {
                     }
                   }
                 }
+              } else {
+                this.activeModal.dismiss('close_click');
               }
             } else {
               if (this.totalInterestAmount + this.totalTaxAmount > 0 && this.transaction.totalPrice !== 0) {
@@ -1728,6 +1732,7 @@ export class AddMovementOfCashComponent implements OnInit {
             }
           } else {
             this.fastPayment = null;
+            this.activeModal.dismiss('close_click');
           }
         }
       } else {
@@ -1771,28 +1776,38 @@ export class AddMovementOfCashComponent implements OnInit {
   validateCredit(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (this.movementOfCash.type.isCurrentAccount && !this.transaction.company)
-          throw new Error('Debe seleccionar una empresa para este método de pago');
+        if (this.movementOfCash.type.isCurrentAccount && !this.transaction.company) {
+          this._toastService.showToast({ message: 'Debe seleccionar una empresa para este método de pago' });
+          resolve(false);
+        }
         if (
-          this.movementOfCash.type.isCurrentAccount &&
-          (this.transaction.company.creditLimit || 0) > 0 &&
-          this.transaction.company._id &&
-          this.transaction.type.transactionMovement === TransactionMovement.Sale
+          this.movementOfCash?.type?.isCurrentAccount &&
+          this.transaction?.company?.creditLimit > 0 &&
+          this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+          this.transaction.type.currentAccount === CurrentAccount.Yes
         ) {
-          this._companyService.getSummaryCurrentAccount(this.transaction.company._id).subscribe(
+          let query = {
+            company: this.transaction?.company?._id,
+            transactionMovement: this.transaction?.type?.transactionMovement,
+          };
+          this._currencyAccountService.getTotalOfAccountsByCompany(JSON.stringify(query)).subscribe(
             (result) => {
-              if (result && result.status === 200) {
-                let total = result.result + this.movementOfCash.amountPaid;
-
-                if (total > (this.transaction.company.creditLimit || 0)) {
-                  throw new Error('La empresa supera el limite de crédito otorgado');
+              if (result.status === 200) {
+                let total = result.result[0]?.totalPrice;
+                if (total > this.transaction?.company?.creditLimit) {
+                  this._toastService.showToast({
+                    message:
+                      'El total de cuenta supera el límite de crédito asignado a esta empresa. No se puede continuar con la transacción',
+                  });
+                  resolve(false);
                 } else {
                   resolve(true);
                 }
-              } else throw result;
+              } else resolve(false);
             },
             (error) => {
-              throw error;
+              this._toastService.showToast(error);
+              resolve(false);
             }
           );
         } else {

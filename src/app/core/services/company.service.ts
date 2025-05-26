@@ -12,25 +12,18 @@ import { AuthService } from './auth.service';
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
 import { Company } from '../../components/company/company';
-const EXCEL_TYPE =
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CompanyService extends ModelService {
-  private clients: BehaviorSubject<DatatableHistory> =
-    new BehaviorSubject<DatatableHistory>(null);
-  private providers: BehaviorSubject<DatatableHistory> =
-    new BehaviorSubject<DatatableHistory>(null);
-  private provider: BehaviorSubject<DatatableHistory> =
-    new BehaviorSubject<DatatableHistory>(null);
+  private clients: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
+  private providers: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
+  private provider: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
 
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `companies`, // PATH
       _http,
@@ -209,19 +202,8 @@ export class CompanyService extends ModelService {
       );
   }
 
-  public getQuantityOfCompaniesByType(
-    type: string,
-    startDate: string,
-    endDate: string
-  ): Observable<any> {
-    let query =
-      '{"type":"' +
-      type +
-      '","startDate":"' +
-      startDate +
-      '", "endDate":"' +
-      endDate +
-      '"}';
+  public getQuantityOfCompaniesByType(type: string, startDate: string, endDate: string): Observable<any> {
+    let query = '{"type":"' + type + '","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
 
     const URL = `${Config.apiURL}quantity-of-companies-by-type`;
 
@@ -318,31 +300,6 @@ export class CompanyService extends ModelService {
       );
   }
 
-  public getSummaryCurrentAccount(companyId: string): Observable<any> {
-    const URL = `${environment.apiv2}/get-summary-current-account`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(
-        URL + `/${companyId}`,
-        {},
-        {
-          headers: headers,
-        }
-      )
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public exportAsExcelFile(json: any[], excelFileName: string): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
     const workbook: XLSX.WorkBook = {
@@ -357,11 +314,7 @@ export class CompanyService extends ModelService {
     this.saveAsExcelFile(excelBuffer, excelFileName);
   }
 
-  public exportAsExcelFileMulti(
-    json: any[],
-    json2: any[],
-    excelFileName: string
-  ): void {
+  public exportAsExcelFileMulti(json: any[], json2: any[], excelFileName: string): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
     const worksheet2: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json2);
     const workbook: XLSX.WorkBook = {
