@@ -48,7 +48,7 @@ export class ShipmentMethodComponent implements OnInit {
   ) {
     this.shipmentMethodForm = this._fb.group({
       _id: ['', []],
-      name: ['', [Validators.required, Validators.maxLength(5)]],
+      name: ['', [Validators.required]],
       requireAddress: ['', []],
       requireTable: ['', []],
       article: ['', []],
