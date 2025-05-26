@@ -1777,7 +1777,10 @@ export class AddMovementOfCashComponent implements OnInit {
     return new Promise<boolean>((resolve, reject) => {
       try {
         if (this.movementOfCash.type.isCurrentAccount && !this.transaction.company) {
-          this._toastService.showToast({ message: 'Debe seleccionar una empresa para este método de pago' });
+          this._toastService.showToast({
+            message: 'Debe seleccionar una empresa para este método de pago',
+            type: 'warning',
+          });
           resolve(false);
         }
         if (
@@ -1796,8 +1799,8 @@ export class AddMovementOfCashComponent implements OnInit {
                 let total = result.result[0]?.totalPrice;
                 if (total > this.transaction?.company?.creditLimit) {
                   this._toastService.showToast({
-                    message:
-                      'El total de cuenta supera el límite de crédito asignado a esta empresa. No se puede continuar con la transacción',
+                    message: 'El total de la transaccion supera el límite de crédito asignado a esta empresa.',
+                    type: 'warning',
                   });
                   resolve(false);
                 } else {
