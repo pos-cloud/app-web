@@ -95,4 +95,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'classification',
     loadChildren: () => import('./classification/classification.routes').then((m) => m.CLASSIFICATION_ROUTE),
   },
+  {
+    path: 'shipment-methods',
+    loadChildren: () => import('./shipment-method/shipment-method.routes').then((m) => m.SHIPMENT_METHOD_ROUTES),
+  },
 ];

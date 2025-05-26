@@ -1,0 +1,154 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-shipmentMethod' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ shipmentMethod?.description }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{
+        shipmentMethod?.description
+      }}</span>
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="addShipmentMethod()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger active"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="addShipmentMethod()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+        <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="shipmentMethodForm" autocomplete="off" (keydown.enter)="onEnter()" *ngIf="!loading">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-5">
+            <label class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              name="name"
+              id="name"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': shipmentMethodForm.get('name')?.touched && shipmentMethodForm.get('name')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="shipmentMethodForm.get('name')?.touched && shipmentMethodForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-5">
+            <label class="control-label">{{ 'article' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="shipmentMethodForm.get('article')"
+              [data]="articles"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label class="control-label">{{ 'requireAddress' | translate | capitalize }}:</label>
+
+            <select class="form-control" formControlName="requireAddress">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label class="control-label">{{ 'requireTable' | translate | capitalize }}:</label>
+
+            <select class="form-control" formControlName="requireTable">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ shipmentMethod?.creationUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ shipmentMethod?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ shipmentMethod?.updateUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ shipmentMethod?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  ID:<b>{{ shipmentMethod?._id || '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
