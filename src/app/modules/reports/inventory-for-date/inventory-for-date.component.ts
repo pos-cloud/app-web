@@ -5,7 +5,6 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Deposit } from '@types';
-import { BranchService } from 'app/core/services/branch.service';
 import { DepositService } from 'app/core/services/deposit.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -45,9 +44,6 @@ export class InventoryForDateComponent {
   private subscription: Subscription = new Subscription();
 
   // filters
-  branches: Branch[];
-  branchSelectedId: string[] = [];
-
   deposits: Deposit[];
   depositSelectedId: string[] = [];
 
@@ -58,7 +54,6 @@ export class InventoryForDateComponent {
 
   constructor(
     private _service: ReportSystemService,
-    private _branchService: BranchService,
     private _depositService: DepositService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
@@ -70,7 +65,6 @@ export class InventoryForDateComponent {
   }
 
   async ngOnInit() {
-    this.getBranches();
     this.getDeposits();
     this.getReport();
   }
@@ -82,30 +76,13 @@ export class InventoryForDateComponent {
   private get requestPayload() {
     return {
       reportType: 'inventory-for-date',
-      filters: { branches: this.branchSelectedId, deposits: this.depositSelectedId, endDate: this.endDate },
+      filters: { deposits: this.depositSelectedId, endDate: this.endDate },
       pagination: {
         page: 1,
         pageSize: 10,
       },
       sorting: this.sort,
     };
-  }
-
-  private getBranches(): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getAll({ project: { _id: 1, operationType: 1, name: 1 }, match: { operationType: { $ne: 'D' } } })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.branches = result.result;
-          },
-          error: (error) => {
-            resolve(null);
-          },
-          complete: () => {},
-        });
-    });
   }
 
   private getDeposits(): Promise<Branch[]> {
