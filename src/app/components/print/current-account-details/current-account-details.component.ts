@@ -3,12 +3,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import jsPDF from 'jspdf';
 
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
-import { Company, CompanyType } from 'app/components/company/company';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Company, CompanyType } from '@types';
 import { EmployeeService } from 'app/core/services/employee.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
@@ -26,21 +22,10 @@ import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { Observable } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 let splitRegex = /\r\n|\r|\n/g;
-jsPDF.API['textEx'] = function (
-  text: any,
-  x: number,
-  y: number,
-  hAlign?: string,
-  vAlign?: string
-) {
+jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
   let fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
   // As defined in jsPDF source code
@@ -48,12 +33,7 @@ jsPDF.API['textEx'] = function (
 
   let splittedText: string[];
   let lineCount: number = 1;
-  if (
-    vAlign === 'middle' ||
-    vAlign === 'bottom' ||
-    hAlign === 'center' ||
-    hAlign === 'right'
-  ) {
+  if (vAlign === 'middle' || vAlign === 'bottom' || hAlign === 'center' || hAlign === 'right') {
     splittedText = typeof text === 'string' ? text.split(splitRegex) : text;
 
     lineCount = splittedText.length || 1;
@@ -71,11 +51,7 @@ jsPDF.API['textEx'] = function (
 
     if (lineCount > 1) {
       for (let iLine = 0; iLine < splittedText.length; iLine++) {
-        this.text(
-          splittedText[iLine],
-          x - this.getStringUnitWidth(splittedText[iLine]) * alignSize,
-          y
-        );
+        this.text(splittedText[iLine], x - this.getStringUnitWidth(splittedText[iLine]) * alignSize, y);
         y += fontSize;
       }
       return this;
@@ -211,9 +187,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       withDetails: [false, [Validators.required]],
     });
 
-    this.companyForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.companyForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
   }
@@ -399,11 +373,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         $eq: [this.companyType, 'Cliente'],
                       },
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewClient,
-                          false,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                       },
                       {
                         $eq: ['$type.movement', 'Entrada'],
@@ -424,11 +394,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         $eq: [this.companyType, 'Cliente'],
                       },
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewClient,
-                          false,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                       },
                       {
                         $eq: ['$type.movement', 'Salida'],
@@ -446,11 +412,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   case: {
                     $and: [
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewClient,
-                          false,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                       },
                       {
                         $eq: [this.companyType, 'Cliente'],
@@ -471,11 +433,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   case: {
                     $and: [
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewClient,
-                          false,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                       },
                       {
                         $eq: [this.companyType, 'Cliente'],
@@ -499,11 +457,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         $eq: [this.companyType, 'Cliente'],
                       },
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewClient,
-                          true,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                       },
                       {
                         $eq: ['$type.movement', 'Entrada'],
@@ -524,11 +478,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         $eq: [this.companyType, 'Cliente'],
                       },
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewClient,
-                          true,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                       },
                       {
                         $eq: ['$type.movement', 'Salida'],
@@ -546,11 +496,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   case: {
                     $and: [
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewClient,
-                          true,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                       },
                       {
                         $eq: [this.companyType, 'Cliente'],
@@ -571,11 +517,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   case: {
                     $and: [
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewClient,
-                          true,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                       },
                       {
                         $eq: [this.companyType, 'Cliente'],
@@ -599,11 +541,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         $eq: [this.companyType, 'Proveedor'],
                       },
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewProvider,
-                          false,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                       },
                       {
                         $eq: ['$type.movement', 'Entrada'],
@@ -624,11 +562,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         $eq: [this.companyType, 'Proveedor'],
                       },
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewProvider,
-                          false,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                       },
                       {
                         $eq: ['$type.movement', 'Salida'],
@@ -646,11 +580,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   case: {
                     $and: [
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewProvider,
-                          false,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                       },
                       {
                         $eq: [this.companyType, 'Proveedor'],
@@ -671,11 +601,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   case: {
                     $and: [
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewProvider,
-                          false,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                       },
                       {
                         $eq: [this.companyType, 'Proveedor'],
@@ -699,11 +625,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         $eq: [this.companyType, 'Proveedor'],
                       },
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewProvider,
-                          true,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                       },
                       {
                         $eq: ['$type.movement', 'Entrada'],
@@ -724,11 +646,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                         $eq: [this.companyType, 'Proveedor'],
                       },
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewProvider,
-                          true,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                       },
                       {
                         $eq: ['$type.movement', 'Salida'],
@@ -746,11 +664,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   case: {
                     $and: [
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewProvider,
-                          true,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                       },
                       {
                         $eq: [this.companyType, 'Proveedor'],
@@ -771,11 +685,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                   case: {
                     $and: [
                       {
-                        $eq: [
-                          this.config.reports.summaryOfAccounts
-                            .invertedViewProvider,
-                          true,
-                        ],
+                        $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                       },
                       {
                         $eq: [this.companyType, 'Proveedor'],
@@ -899,35 +809,22 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
       row += 5;
       this.doc.setFontSize(this.fontSizes.normal);
-      if (
-        this.items[i]._id.company.identificationType &&
-        this.items[i]._id.company.identificationValue
-      ) {
+      if (this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
         this.doc.text(
           5,
           row,
-          this.items[i]._id.company.identificationType.name +
-            ':' +
-            this.items[i]._id.company.identificationValue
+          this.items[i]._id.company.identificationType.name + ':' + this.items[i]._id.company.identificationValue
         );
       }
       if (Config.country === 'AR') {
         this.doc.text(100, row, 'Condición de IVA:');
         if (this.items[i]._id.company.vatCondition) {
-          this.doc.text(
-            100 + 30,
-            row,
-            this.items[i]._id.company.vatCondition.description
-          );
+          this.doc.text(100 + 30, row, this.items[i]._id.company.vatCondition.description);
         }
       } else {
         this.doc.text(100, row, 'Régimen Fiscal:');
         if (this.items[i]._id.company.vatCondition) {
-          this.doc.text(
-            100 + 30,
-            row,
-            +this.items[i]._id.company.vatCondition.description
-          );
+          this.doc.text(100 + 30, row, +this.items[i]._id.company.vatCondition.description);
         }
       }
       row += 5;
@@ -991,11 +888,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             this.doc.text(110, row, transaction.expirationDate);
           }
           this.doc.textEx(
-            '$ ' +
-              this.roundNumber
-                .transform(transaction.totalPrice)
-                .toFixed(2)
-                .toString(),
+            '$ ' + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(),
             155,
             row,
             'right',
@@ -1004,9 +897,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
           this.doc.textEx(
             '$ ' +
               this.roundNumber
-                .transform(
-                  transaction.balance * Math.sign(transaction.totalPrice)
-                )
+                .transform(transaction.balance * Math.sign(transaction.totalPrice))
                 .toFixed(2)
                 .toString(),
             180,
@@ -1014,8 +905,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             'right',
             'middle'
           );
-          acumulado =
-            acumulado + transaction.balance * Math.sign(transaction.totalPrice);
+          acumulado = acumulado + transaction.balance * Math.sign(transaction.totalPrice);
           this.doc.textEx(
             '$ ' + this.roundNumber.transform(acumulado).toFixed(2).toString(),
             205,
@@ -1025,8 +915,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
           );
           row += 5;
         } else {
-          acumulado =
-            acumulado + transaction.balance * Math.sign(transaction.totalPrice);
+          acumulado = acumulado + transaction.balance * Math.sign(transaction.totalPrice);
         }
 
         if (row > 200) {
@@ -1041,13 +930,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
       this.doc.setFont('', 'bold');
       this.doc.text(120, row, 'Total');
-      this.doc.textEx(
-        '$ ' + this.roundNumber.transform(acumulado).toFixed(2).toString(),
-        180,
-        row,
-        'right',
-        'middle'
-      );
+      this.doc.textEx('$ ' + this.roundNumber.transform(acumulado).toFixed(2).toString(), 180, row, 'right', 'middle');
 
       this.doc.setFont('', 'normal');
       row += 5;
@@ -1223,11 +1106,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Cliente'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Entrada'],
@@ -1248,11 +1127,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Cliente'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Salida'],
@@ -1270,11 +1145,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                         },
                         {
                           $eq: [this.companyType, 'Cliente'],
@@ -1295,11 +1166,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                         },
                         {
                           $eq: [this.companyType, 'Cliente'],
@@ -1323,11 +1190,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Cliente'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Entrada'],
@@ -1348,11 +1211,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Cliente'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Salida'],
@@ -1370,11 +1229,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                         },
                         {
                           $eq: [this.companyType, 'Cliente'],
@@ -1395,11 +1250,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                         },
                         {
                           $eq: [this.companyType, 'Cliente'],
@@ -1423,11 +1274,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Proveedor'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Entrada'],
@@ -1448,11 +1295,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Proveedor'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Salida'],
@@ -1470,11 +1313,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                         },
                         {
                           $eq: [this.companyType, 'Proveedor'],
@@ -1495,11 +1334,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                         },
                         {
                           $eq: [this.companyType, 'Proveedor'],
@@ -1523,11 +1358,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Proveedor'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Entrada'],
@@ -1548,11 +1379,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Proveedor'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Salida'],
@@ -1570,11 +1397,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                         },
                         {
                           $eq: [this.companyType, 'Proveedor'],
@@ -1595,11 +1418,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                         },
                         {
                           $eq: [this.companyType, 'Proveedor'],
@@ -1630,11 +1449,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Cliente'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Entrada'],
@@ -1655,11 +1470,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Cliente'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Salida'],
@@ -1677,11 +1488,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                         },
                         {
                           $eq: [this.companyType, 'Cliente'],
@@ -1702,11 +1509,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, false],
                         },
                         {
                           $eq: [this.companyType, 'Cliente'],
@@ -1730,11 +1533,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Cliente'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Entrada'],
@@ -1755,11 +1554,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Cliente'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Salida'],
@@ -1777,11 +1572,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                         },
                         {
                           $eq: [this.companyType, 'Cliente'],
@@ -1802,11 +1593,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewClient,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewClient, true],
                         },
                         {
                           $eq: [this.companyType, 'Cliente'],
@@ -1830,11 +1617,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Proveedor'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Entrada'],
@@ -1855,11 +1638,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Proveedor'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Salida'],
@@ -1877,11 +1656,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                         },
                         {
                           $eq: [this.companyType, 'Proveedor'],
@@ -1902,11 +1677,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            false,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, false],
                         },
                         {
                           $eq: [this.companyType, 'Proveedor'],
@@ -1930,11 +1701,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Proveedor'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Entrada'],
@@ -1955,11 +1722,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                           $eq: [this.companyType, 'Proveedor'],
                         },
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                         },
                         {
                           $eq: ['$transaction.type.movement', 'Salida'],
@@ -1977,11 +1740,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                         },
                         {
                           $eq: [this.companyType, 'Proveedor'],
@@ -2002,11 +1761,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
                     case: {
                       $and: [
                         {
-                          $eq: [
-                            this.config.reports.summaryOfAccounts
-                              .invertedViewProvider,
-                            true,
-                          ],
+                          $eq: [this.config.reports.summaryOfAccounts.invertedViewProvider, true],
                         },
                         {
                           $eq: [this.companyType, 'Proveedor'],
@@ -2138,35 +1893,22 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.text(5, row, this.items[i]._id.company.name);
         row += 5;
         this.doc.setFontSize(this.fontSizes.normal);
-        if (
-          this.items[i]._id.company.identificationType &&
-          this.items[i]._id.company.identificationValue
-        ) {
+        if (this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
           this.doc.text(
             5,
             row,
-            this.items[i]._id.company.identificationType.name +
-              ':' +
-              this.items[i]._id.company.identificationValue
+            this.items[i]._id.company.identificationType.name + ':' + this.items[i]._id.company.identificationValue
           );
         }
         if (Config.country === 'AR') {
           this.doc.text(100, row, 'Condición de IVA:');
           if (this.items[i]._id.company.vatCondition) {
-            this.doc.text(
-              100 + 30,
-              row,
-              this.items[i]._id.company.vatCondition.description
-            );
+            this.doc.text(100 + 30, row, this.items[i]._id.company.vatCondition.description);
           }
         } else {
           this.doc.text(100, row, 'Régimen Fiscal:');
           if (this.items[i]._id.company.vatCondition) {
-            this.doc.text(
-              100 + 30,
-              row,
-              +this.items[i]._id.company.vatCondition.description
-            );
+            this.doc.text(100 + 30, row, +this.items[i]._id.company.vatCondition.description);
           }
         }
         row += 5;
@@ -2231,11 +1973,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
             }
 
             this.doc.textEx(
-              '$ ' +
-                this.roundNumber
-                  .transform(transaction.totalPrice)
-                  .toFixed(2)
-                  .toString(),
+              '$ ' + this.roundNumber.transform(transaction.totalPrice).toFixed(2).toString(),
               155,
               row,
               'right',
@@ -2257,11 +1995,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.setFont('', 'bold');
         this.doc.text(120, row, 'Total');
         this.doc.textEx(
-          '$ ' +
-            this.roundNumber
-              .transform(this.items[i].price)
-              .toFixed(2)
-              .toString(),
+          '$ ' + this.roundNumber.transform(this.items[i].price).toFixed(2).toString(),
           155,
           row,
           'right',
@@ -2285,11 +2019,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
     row += 8;
     this.doc.setFontSize(this.fontSizes.extraLarge);
-    this.doc.text(
-      120,
-      row,
-      'Total : $ ' + this.roundNumber.transform(total).toFixed(2).toString()
-    );
+    this.doc.text(120, row, 'Total : $ ' + this.roundNumber.transform(total).toFixed(2).toString());
 
     this.finishImpression();
   }
@@ -2299,9 +2029,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       transaction
         .filter((e) => e.endDate)
         .forEach((e) => {
-          Date.parse(maxDate.slice(0, 10)) < Date.parse(e.endDate.slice(0, 10))
-            ? (maxDate = e.endDate)
-            : null;
+          Date.parse(maxDate.slice(0, 10)) < Date.parse(e.endDate.slice(0, 10)) ? (maxDate = e.endDate) : null;
         });
       resolve(maxDate.slice(0, 10));
     });
@@ -2312,16 +2040,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
     let items = await this.getMovementOfCash();
     let y = 0;
     for (let i = 0; i < items.length; i++) {
-      if (
-        this.roundNumber.transform(items[i]['balance']).toFixed(2) !== '0.00'
-      ) {
+      if (this.roundNumber.transform(items[i]['balance']).toFixed(2) !== '0.00') {
         data[y] = {};
         let company: Company = items[i]['_id']['company'];
 
         data[y]['Nombre'] = company.name;
-        data[y]['Condición de IVA'] = company.vatCondition
-          ? company.vatCondition.description
-          : '';
+        data[y]['Condición de IVA'] = company.vatCondition ? company.vatCondition.description : '';
         data[y]['Identificación'] = company.identificationValue;
         data[y]['Ciudad'] = company.city;
         data[y]['Dirección'] = company.address;
@@ -2333,16 +2057,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
           data[y]['Empleado'] = '';
         }
 
-        data[y]['Balance'] = this.roundNumber
-          .transform(items[i]['balance'])
-          .toFixed(2);
+        data[y]['Balance'] = this.roundNumber.transform(items[i]['balance']).toFixed(2);
         data[y]['Balance'] = parseFloat(data[y]['Balance'].replace('.', ','));
 
         if (items[i]['transactions']) {
           // recorrer transaction y buscar el endate mas nuevo
-          data[y]['Ultimo movimiento'] = await this.endDateTransactions(
-            items[i]['transactions']
-          );
+          data[y]['Ultimo movimiento'] = await this.endDateTransactions(items[i]['transactions']);
         }
         y++;
         if (this.withDetails) {
@@ -2370,17 +2090,12 @@ export class CurrentAccountDetailsComponent implements OnInit {
       }
     }
     this.loading = false;
-    this._companyService.exportAsExcelFile(
-      data,
-      'Resumen de Cuenta de' + this.companyType
-    );
+    this._companyService.exportAsExcelFile(data, 'Resumen de Cuenta de' + this.companyType);
   }
 
   public finishImpression(): void {
     this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
-      this.doc.output('bloburl')
-    );
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
     this.doc = new jsPDF('l', 'mm', [this.pageWidth, this.pageHigh]);
   }
 
@@ -2440,21 +2155,19 @@ export class CurrentAccountDetailsComponent implements OnInit {
     match = JSON.parse(match);
 
     return new Promise((resolve, reject) => {
-      this._companyService
-        .getCompaniesV2(project, match, { name: 1 }, {}, 10)
-        .subscribe(
-          (result) => {
-            if (result.companies) {
-              resolve(result.companies);
-            } else {
-              resolve(null);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            this.loading = false;
+      this._companyService.getCompaniesV2(project, match, { name: 1 }, {}, 10).subscribe(
+        (result) => {
+          if (result.companies) {
+            resolve(result.companies);
+          } else {
+            resolve(null);
           }
-        );
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
     });
   }
 
@@ -2493,10 +2206,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
   public getTransactionTypes(): Promise<TransactionType[]> {
     return new Promise<TransactionType[]>((resolve, reject) => {
       let transactionMovement;
-      if (this.companyType === CompanyType.Client)
-        transactionMovement = 'Venta';
-      if (this.companyType === CompanyType.Provider)
-        transactionMovement = 'Compra';
+      if (this.companyType === CompanyType.Client) transactionMovement = 'Venta';
+      if (this.companyType === CompanyType.Provider) transactionMovement = 'Compra';
 
       let match = {};
 
@@ -2538,11 +2249,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
   onSelectAll(items: any) {}
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
   }
 

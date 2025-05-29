@@ -1,16 +1,5 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  UntypedFormArray,
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -18,9 +7,8 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FormField } from '@types';
+import { Company, FormField } from '@types';
 import { Config } from 'app/app.config';
-import { Company } from 'app/components/company/company';
 import { ApplicationService } from 'app/core/services/application.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { CompanyService } from 'app/core/services/company.service';
@@ -32,12 +20,7 @@ import { ShipmentMethodService } from 'app/core/services/shipment-method.service
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { AccountService } from '../../../core/services/account.service';
@@ -72,19 +55,13 @@ export class AccountComponent implements OnInit {
   public database: string = Config.database;
 
   public searchAccount = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged()
-    );
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['parent'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== ''
-            ? { description: { $regex: term, $options: 'i' } }
-            : {};
+        let match: {} = term && term !== '' ? { description: { $regex: term, $options: 'i' } } : {};
 
         if (this.operation === 'update' && this.obj._id) {
           match['_id'] = { $ne: { $oid: this.obj._id } };
@@ -120,14 +97,7 @@ export class AccountComponent implements OnInit {
       name: 'type',
       tag: 'select',
       tagType: 'text',
-      values: [
-        Types.Asset,
-        Types.Passive,
-        Types.netWorth,
-        Types.Result,
-        Types.Compensatory,
-        Types.Other,
-      ],
+      values: [Types.Asset, Types.Passive, Types.netWorth, Types.Result, Types.Compensatory, Types.Other],
       class: 'form-group col-md-2',
     },
     {
@@ -189,12 +159,8 @@ export class AccountComponent implements OnInit {
     let pathUrl: string[] = this._router.url.split('/');
 
     this.operation = pathUrl[2];
-    if (this.operation !== 'add' && this.operation !== 'update')
-      this.readonly = false;
-    this.title =
-      this.translatePipe.transform(this.operation) +
-      ' ' +
-      this.translatePipe.transform(this.title);
+    if (this.operation !== 'add' && this.operation !== 'update') this.readonly = false;
+    this.title = this.translatePipe.transform(this.operation) + ' ' + this.translatePipe.transform(this.title);
     this.title = this.capitalizePipe.transform(this.title);
     this._title.setTitle(this.title);
     this.buildForm();
@@ -267,8 +233,7 @@ export class AccountComponent implements OnInit {
     };
 
     for (let field of this.formFields) {
-      if (field.tag !== 'separator')
-        fields[field.name] = [this.obj[field.name], field.validators];
+      if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators];
     }
     this.objForm = this._fb.group(fields);
     this.objForm.valueChanges.subscribe((data) => this.onValueChanged(data));
@@ -323,10 +288,7 @@ export class AccountComponent implements OnInit {
 
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (
-              eval(`this.obj${sumF}`) == null ||
-              eval(`this.obj${sumF}`) == undefined
-            ) {
+            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }
@@ -348,10 +310,7 @@ export class AccountComponent implements OnInit {
             break;
           default:
             if (field.tag !== 'separator')
-              values[field.name] =
-                eval('this.obj.' + field.name) !== undefined
-                  ? eval('this.obj.' + field.name)
-                  : null;
+              values[field.name] = eval('this.obj.' + field.name) !== undefined ? eval('this.obj.' + field.name) : null;
             break;
         }
       }
@@ -376,32 +335,19 @@ export class AccountComponent implements OnInit {
         switch (field.tagType) {
           case 'date':
             this.obj[field.name] = moment(this.obj[field.name]).isValid()
-              ? moment(this.obj[field.name]).format('YYYY-MM-DD') +
-                moment().format('THH:mm:ssZ')
+              ? moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ')
               : null;
             break;
           case 'number':
             this.obj[field.name] = parseFloat(this.obj[field.name]);
             break;
           case 'file':
-            if (
-              this.filesToUpload &&
-              this.filesToUpload[field.name] &&
-              this.filesToUpload[field.name].length > 0
-            ) {
+            if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
               this.loading = true;
               this._objService.deleteFile(this.obj[field.name]);
-              if (
-                this.filesToUpload[field.name] &&
-                this.filesToUpload[field.name].length > 0
-              ) {
+              if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                 this.obj[field.name] = this.oldFiles[field.name];
-                if (
-                  field.multiple &&
-                  (!this.obj ||
-                    !this.obj[field.name] ||
-                    this.obj[field.name].length === 0)
-                ) {
+                if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                   this.obj[field.name] = new Array();
                 }
                 for (let file of this.filesToUpload[field.name]) {
@@ -435,20 +381,17 @@ export class AccountComponent implements OnInit {
               }
               this.loading = false;
             } else {
-              if (this.oldFiles)
-                this.obj[field.name] = this.oldFiles[field.name];
+              if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
           case 'boolean':
-            this.obj[field.name] =
-              this.obj[field.name] == 'true' || this.obj[field.name] == true;
+            this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
             break;
           case 'text':
             if (this.obj[field.name] === 'null') this.obj[field.name] = null;
             if (
               field.tag === 'autocomplete' &&
-              (this.obj[field.name] == '' ||
-                (this.obj[field.name] && !this.obj[field.name]['_id']))
+              (this.obj[field.name] == '' || (this.obj[field.name] && !this.obj[field.name]['_id']))
             ) {
               this.obj[field.name] = null;
             }
@@ -484,13 +427,7 @@ export class AccountComponent implements OnInit {
       (result) => {
         if (result.status === 200) {
           try {
-            eval(
-              'this.obj.' +
-                fieldName +
-                ' = this.obj.' +
-                fieldName +
-                '.filter(item => item !== filename)'
-            );
+            eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
           } catch (error) {
             eval('this.obj.' + fieldName + ' = null');
           }

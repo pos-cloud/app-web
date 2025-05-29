@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import { Company } from '../company/company';
+import { Company } from '@types';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction/transaction';
 
@@ -22,17 +22,14 @@ import { TransactionService } from '../../core/services/transaction.service';
 import { Config } from 'app/app.config';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { PrintComponent } from 'app/components/print/print/print.component';
-import {
-  TransactionMovement,
-  TransactionType,
-} from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
 import { ConfigService } from 'app/core/services/config.service';
+import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { first } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';
-import { SelectCompanyComponent } from '../company/select-company/select-company.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { Printer, PrinterPrintIn } from '../printer/printer';
 import { SendEmailComponent } from '../send-email/send-email.component';
@@ -147,14 +144,11 @@ export class CurrentAccountComponent implements OnInit {
 
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
-      this.detailsPaymentMethod =
-        this.config.reports.summaryOfAccounts.detailsPaymentMethod;
+      this.detailsPaymentMethod = this.config.reports.summaryOfAccounts.detailsPaymentMethod;
       if (this.companyType === CompanyType.Client) {
-        this.invertedView =
-          this.config.reports.summaryOfAccounts.invertedViewClient;
+        this.invertedView = this.config.reports.summaryOfAccounts.invertedViewClient;
       } else {
-        this.invertedView =
-          this.config.reports.summaryOfAccounts.invertedViewProvider;
+        this.invertedView = this.config.reports.summaryOfAccounts.invertedViewProvider;
       }
     });
   }
@@ -168,9 +162,7 @@ export class CurrentAccountComponent implements OnInit {
     }
 
     if (typeof this.detailsPaymentMethod !== 'boolean') {
-      this.detailsPaymentMethod = Boolean(
-        JSON.parse(this.detailsPaymentMethod)
-      );
+      this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
     }
 
     let transactionTypes = [];
@@ -202,38 +194,33 @@ export class CurrentAccountComponent implements OnInit {
         transactionBalance: { $gt: 0 },
       };
     }
-    this._companyService
-      .getSummaryOfAccountsByCompany(JSON.stringify(query))
-      .subscribe(
-        (result) => {
-          if (!result) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
-            this.items = new Array();
-            this.totalItems = 0;
-          } else {
-            this.hideMessage();
-            this.items = result;
-            if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
-              this.items = result.filter((e) => e.debe > e.haber);
-            }
-
-            this.totalItems = this.items.length;
-            this.currentPage = parseFloat(
-              this.roundNumber
-                .transform(this.totalItems / this.itemsPerPage + 0.5, 0)
-                .toFixed(0)
-            );
-            this.getBalance();
-            this.showPaymentMethod = this.detailsPaymentMethod;
+    this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
+      (result) => {
+        if (!result) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.items = new Array();
+          this.totalItems = 0;
+        } else {
+          this.hideMessage();
+          this.items = result;
+          if (this.showBalanceOfTransactions && this.showBalanceOfCero) {
+            this.items = result.filter((e) => e.debe > e.haber);
           }
-          this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+
+          this.totalItems = this.items.length;
+          this.currentPage = parseFloat(
+            this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0)
+          );
+          this.getBalance();
+          this.showPaymentMethod = this.detailsPaymentMethod;
         }
-      );
+        this.loading = false;
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getCompany(companyId: string): void {
@@ -242,8 +229,7 @@ export class CurrentAccountComponent implements OnInit {
     this._companyService.getCompany(companyId).subscribe(
       async (result) => {
         if (!result.company) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.companySelected = result.company;
           if (this.companySelected.type === CompanyType.Client) {
@@ -281,10 +267,7 @@ export class CurrentAccountComponent implements OnInit {
     this.balanceDoc = 0;
 
     for (let i = 0; i < this.items.length; i++) {
-      if (
-        this.items[i].isCurrentAccount ||
-        this.items[i].typeCurrentAccount !== 'No'
-      ) {
+      if (this.items[i].isCurrentAccount || this.items[i].typeCurrentAccount !== 'No') {
         //SALDO
         this.balance += this.items[i].debe;
         this.balance -= this.items[i].haber;
@@ -330,6 +313,7 @@ export class CurrentAccountComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
+        console.log(this.companyType);
         modalRef.componentInstance.type = this.companyType;
         modalRef.result.then(
           (result) => {
@@ -398,10 +382,9 @@ export class CurrentAccountComponent implements OnInit {
         if (transaction.type.labelPrint) {
           labelPrint = transaction.type.labelPrint;
         }
-        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(
-          transaction.origin,
-          4
-        )}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
+        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${
+          transaction.letter
+        }-${this.padNumber(transaction.number, 8)}`;
         if (transaction.type.electronics) {
           // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
           modalRef.componentInstance.body = ' ';
@@ -424,18 +407,14 @@ export class CurrentAccountComponent implements OnInit {
           modalRef.componentInstance.body += ' ';
           attachments.push({
             filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-            path:
-              `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` +
-              transaction.number +
-              `.xml`,
+            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`,
           });
         }
 
         if (transaction.type.defectEmailTemplate) {
           if (transaction.type.electronics) {
             // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body =
-              transaction.type.defectEmailTemplate.design;
+            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
 
             attachments = [];
             attachments.push({
@@ -444,8 +423,7 @@ export class CurrentAccountComponent implements OnInit {
             });
           } else {
             // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body =
-              transaction.type.defectEmailTemplate.design;
+            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
 
             attachments = [];
             attachments.push({
@@ -461,10 +439,7 @@ export class CurrentAccountComponent implements OnInit {
             attachments = [];
             attachments.push({
               filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-              path:
-                `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` +
-                transaction.number +
-                `.xml`,
+              path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`,
             });
           }
         }
@@ -521,8 +496,7 @@ export class CurrentAccountComponent implements OnInit {
         await this.getTransaction(transactionId).then(async (transaction) => {
           if (transaction) {
             if (transaction.type.defectPrinter) {
-              modalRef.componentInstance.printer =
-                transaction.type.defectPrinter;
+              modalRef.componentInstance.printer = transaction.type.defectPrinter;
             } else {
               await this.getPrinters().then((printers) => {
                 if (printers) {
@@ -622,11 +596,7 @@ export class CurrentAccountComponent implements OnInit {
     });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

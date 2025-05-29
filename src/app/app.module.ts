@@ -42,14 +42,6 @@ import { ClockComponent } from './components/clock/clock.component';
 import { AddCompanyFieldComponent } from './components/company-field/add-company-field.component';
 import { DeleteCompanyFieldComponent } from './components/company-field/delete-company-field/delete-company-field.component';
 import { UpdateCompanyFieldComponent } from './components/company-field/update-company-field/update-company-field.component';
-import { AddCompanyFieldsComponent } from './components/company/add-company-fields/add-company-fields.component';
-import { CompanyContactComponent } from './components/company/company-contact/company-contact.component';
-import { CompanyNewsComponent } from './components/company/company-news/company-news.component';
-import { AddCompanyComponent } from './components/company/company/add-company.component';
-import { DeleteCompanyComponent } from './components/company/delete-company/delete-company.component';
-import { ListCompaniesComponent } from './components/company/list-companies/list-companies.component';
-import { ListCompanyFieldsComponent } from './components/company/list-company-fields/list-company-fields.component';
-import { SelectCompanyComponent } from './components/company/select-company/select-company.component';
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
 import { CountryComponent } from './components/country/country/country.component';
@@ -162,9 +154,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddUserComponent,
     ListUsersComponent,
     DeleteUserComponent,
-    ListCompaniesComponent,
-    DeleteCompanyComponent,
-    AddCompanyComponent,
     ClockComponent,
     PrinterComponent,
     ListPrintersComponent,
@@ -197,16 +186,12 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
-    CompanyNewsComponent,
     ListMovementOfCashesComponent,
-    CompanyContactComponent,
     AddUseOfCFDIComponent,
     ListUsesOfCFDIComponent,
     AddCompanyFieldComponent,
     UpdateCompanyFieldComponent,
     DeleteCompanyFieldComponent,
-    ListCompanyFieldsComponent,
-    AddCompanyFieldsComponent,
     PushNotificationComponent,
     CancellationTypeComponent,
     ListCancellationTypeComponent,
@@ -240,7 +225,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PosClientViewComponent,
     PosPackingComponent,
     ListChecksComponent,
-    SelectCompanyComponent,
     SelectTableComponent,
     EmailTemplateComponent,
     ListEmailTemplatesComponent,

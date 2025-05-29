@@ -127,7 +127,7 @@
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="let item of items">
+          <tr *ngFor="let item of items" style="cursor: pointer">
             <td align="left">
               <button
                 *ngFor="let button of rowButtons"
@@ -141,7 +141,11 @@
               </button>
             </td>
             <ng-container *ngFor="let column of columns">
-              <td *ngIf="column.visible && column.datatype !== 'boolean'" [attr.align]="column.align">
+              <td
+                *ngIf="column.visible && column.datatype !== 'boolean'"
+                [attr.align]="column.align"
+                (click)="onRowClick(item)"
+              >
                 {{ getValue(item, column) }}
               </td>
               <td *ngIf="column.visible && column.datatype === 'boolean'" [attr.align]="column.align">

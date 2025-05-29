@@ -23,7 +23,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { RelationType, Table, TableState } from '@types';
+import { CompanyType, RelationType, Table, TableState } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { BusinessRuleService } from '../../core/services/business-rule.service';
@@ -48,8 +48,6 @@ import { BusinessRule } from '../business-rules/business-rules';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { Category } from '../category/category';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
-import { CompanyType } from '../company/company';
-import { SelectCompanyComponent } from '../company/select-company/select-company.component';
 import { AddMovementOfArticleComponent } from '../movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article/movement-of-article';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
@@ -75,6 +73,7 @@ import { SelectTransportComponent } from '../transport/select-transport/select-t
 
 import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
+import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
@@ -150,8 +149,8 @@ export class AddSaleOrderComponent {
   lastMovementOfArticle: MovementOfArticle;
   isCancellationAutomatic: boolean = false;
   showBussinessRulesButton: boolean = false;
-  priceList: PriceList;
-  newPriceList: PriceList;
+  priceList: any;
+  newPriceList: any;
   increasePrice = 0;
   lastIncreasePrice = 0;
   companyOld: boolean = false;

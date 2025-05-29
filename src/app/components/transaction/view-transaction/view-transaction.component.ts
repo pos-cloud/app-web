@@ -21,13 +21,13 @@ import { MovementOfCashService } from '../../../core/services/movement-of-cash.s
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ArticleComponent } from '../../article/crud/article.component';
-import { AddCompanyComponent } from '../../company/company/add-company.component';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction';
 
 import { PrintService } from '@core/services/print.service';
 import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
+import { CompanyComponent } from 'app/modules/entities/company/crud/company.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import 'moment/locale/es';
 import * as printJS from 'print-js';
@@ -378,7 +378,6 @@ export class ViewTransactionComponent implements OnInit {
 
   async openModal(op: string, movement?: MovementOfArticle) {
     let modalRef;
-
     switch (op) {
       case 'view-article':
         modalRef = this._modalService.open(ArticleComponent, {
@@ -391,22 +390,25 @@ export class ViewTransactionComponent implements OnInit {
         };
         break;
       case 'view-company':
-        modalRef = this._modalService.open(AddCompanyComponent, {
+        modalRef = this._modalService.open(CompanyComponent, {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.companyId = this.transaction.company._id;
-        modalRef.componentInstance.readonly = true;
-        modalRef.componentInstance.operation = 'view';
+        modalRef.componentInstance.property = {
+          companyId: this.transaction.company._id,
+          operation: 'view',
+          type: '',
+        };
+
         break;
       case 'edit-company':
-        modalRef = this._modalService.open(AddCompanyComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.companyId = this.transaction.company._id;
-        modalRef.componentInstance.readonly = false;
-        modalRef.componentInstance.operation = 'update';
+        // modalRef = this._modalService.open(AddCompanyComponent, {
+        //   size: 'lg',
+        //   backdrop: 'static',
+        // });
+        // modalRef.componentInstance.companyId = this.transaction.company._id;
+        // modalRef.componentInstance.readonly = false;
+        // modalRef.componentInstance.operation = 'update';
         break;
       case 'print-label':
         modalRef = this._modalService.open(SelectPrinterComponent, {

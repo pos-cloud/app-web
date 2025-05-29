@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -14,11 +14,13 @@ import { PriceListService } from '@core/services/price-list.service';
 import { StateService } from '@core/services/state.service';
 import { TransportService } from '@core/services/transport.service';
 import { VATConditionService } from '@core/services/vat-condition.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import {
   Address,
   ApiResponse,
+  Company,
   CompanyGroup,
   CompanyType,
   Employee,
@@ -31,7 +33,6 @@ import {
 } from '@types';
 import { Config } from 'app/app.config';
 import { Account } from 'app/components/account/account';
-import { Company } from 'app/components/company/company';
 import { AccountService } from 'app/core/services/account.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
@@ -55,6 +56,12 @@ import { takeUntil } from 'rxjs/operators';
   ],
 })
 export class CompanyComponent implements OnInit {
+  @Input() property: {
+    companyId: string;
+    operation: string;
+    type: string;
+  };
+  public companyId: string;
   public operation: string;
 
   public company: Company;
@@ -90,6 +97,7 @@ export class CompanyComponent implements OnInit {
     public _transportService: TransportService,
     public _priceListService: PriceListService,
     public _fb: UntypedFormBuilder,
+    public activeModal: NgbActiveModal,
     public _router: Router,
     private _toastService: ToastService
   ) {
@@ -128,12 +136,17 @@ export class CompanyComponent implements OnInit {
   }
 
   ngOnInit() {
-    const pathUrl = this._router.url.split('/');
-
-    const companyId = pathUrl[5];
-    this.operation = pathUrl[3];
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.companyForm.disable();
-    this.type = pathUrl[4];
+    if (this.property) {
+      this.operation = this.property.operation;
+      this.companyId = this.property.companyId;
+      this.type = this.property.type;
+    } else {
+      const URL = this._router.url.split('/');
+      this.operation = URL[3];
+      this.companyId = URL[5];
+      this.type = URL[4];
+    }
+    if (this.operation === 'view' || this.operation === 'delete') this.companyForm.disable();
     this.loading = true;
 
     combineLatest({
@@ -176,8 +189,8 @@ export class CompanyComponent implements OnInit {
           this.accounts = accounts ?? [];
           this.config = config[0] ?? null;
 
-          if (companyId) {
-            if (companyId) this.getCompany(companyId);
+          if (this.companyId) {
+            if (this.companyId) this.getCompany(this.companyId);
           } else {
             this.setValueForm();
           }
@@ -235,7 +248,7 @@ export class CompanyComponent implements OnInit {
       name: this.company?.name ?? '',
       code: this.company?.code ?? 0,
       fantasyName: this.company?.fantasyName ?? '',
-      type: this.company?.type ?? type,
+      type: this.property ? this.type : this.company?.type ?? type,
       vatCondition: vatCondition
         ? vatCondition
         : this.vatConditions.find((item) => item._id === this.config?.company?.vatCondition?.default?.toString()) ??
@@ -269,7 +282,11 @@ export class CompanyComponent implements OnInit {
   }
 
   returnTo() {
-    return this._router.navigate([`/entities/companies/${this.type}`]);
+    if (this.property) {
+      this.activeModal.close({ company: this.company });
+    } else {
+      this._router.navigate([`/entities/companies/${this.type}`]);
+    }
   }
 
   public getCompany(id: string) {
@@ -321,7 +338,10 @@ export class CompanyComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) this.returnTo();
+          if (result.status == 200) {
+            this.company = result.result;
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -339,7 +359,10 @@ export class CompanyComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) this.returnTo();
+          if (result.status == 200) {
+            this.company = result.result;
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
