@@ -7,7 +7,7 @@ import { map, take } from 'rxjs/operators';
 
 @Injectable()
 export class LicenseGuard implements CanActivate {
-  constructor(private _configService: ConfigService, private _router: Router) { }
+  constructor(private _configService: ConfigService, private _router: Router) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this._configService.getConfig.pipe(
@@ -38,21 +38,19 @@ export class LicenseGuard implements CanActivate {
   }
 
   public checkLicense(config: Config, next: ActivatedRouteSnapshot) {
-    if (config["licensePaymentDueDate"]) {
-      const dueDate = new Date(config["licensePaymentDueDate"]);
+    if (config['licensePaymentDueDate']) {
+      const dueDate = new Date(config['licensePaymentDueDate']);
       dueDate.setUTCHours(0, 0, 0, 0);
 
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
 
       const timeDiff = dueDate.getTime() - today.getTime();
-      let days = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1; 
+      let days = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
 
-      const rawDueDate = new Date(config["licensePaymentDueDate"]);
+      const rawDueDate = new Date(config['licensePaymentDueDate']);
       rawDueDate.setUTCHours(0, 0, 0, 0);
       const daysOfPay = Math.floor((rawDueDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
-      console.log("pasa por el guard de license");
-      console.log(days >= 1 && daysOfPay > 0)
       if (days >= 1 && daysOfPay > 0) {
         if (!next.data.module) {
           return true;
@@ -62,8 +60,7 @@ export class LicenseGuard implements CanActivate {
         this._router.navigate(['/license']);
         return false;
       }
-    }else{
-      console.log("entra al segundo else?");
+    } else {
       return false;
     }
   }
