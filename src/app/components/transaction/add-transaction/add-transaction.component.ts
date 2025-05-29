@@ -20,7 +20,8 @@ import { TransactionTypeService } from '../../../core/services/transaction-type.
 import { TransactionService } from '../../../core/services/transaction.service';
 
 //Pipes
-import { ApiResponse, Company, Employee } from '@types';
+import { ApiResponse, Company, CompanyType, Employee } from '@types';
+import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
@@ -433,31 +434,26 @@ export class AddTransactionComponent implements OnInit {
         );
         break;
       case 'change-company':
-        // modalRef = this._modalService.open(SelectCompanyComponent, {
-        //   size: 'lg',
-        //   backdrop: 'static',
-        // });
-        // if (
-        //   this.transaction.type.transactionMovement ===
-        //   TransactionMovement.Purchase
-        // ) {
-        //   modalRef.componentInstance.type = CompanyType.Provider;
-        // } else if (
-        //   this.transaction.type.transactionMovement === TransactionMovement.Sale
-        // ) {
-        //   modalRef.componentInstance.type = CompanyType.Client;
-        // }
-        // modalRef.result.then(
-        //   async (result) => {
-        //     if (result.company) {
-        //       this.transaction.company = result.company;
-        //       this.companyName = this.transaction.company.name;
-        //       this.transaction = await this.updateTransaction();
-        //       this.setValuesForm();
-        //     }
-        //   },
-        //   (reason) => {}
-        // );
+        modalRef = this._modalService.open(SelectCompanyComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+          modalRef.componentInstance.type = CompanyType.Provider;
+        } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+          modalRef.componentInstance.type = CompanyType.Client;
+        }
+        modalRef.result.then(
+          async (result) => {
+            if (result.company) {
+              this.transaction.company = result.company;
+              this.companyName = this.transaction.company.name;
+              this.transaction = await this.updateTransaction();
+              this.setValuesForm();
+            }
+          },
+          (reason) => {}
+        );
         break;
       default:
         break;

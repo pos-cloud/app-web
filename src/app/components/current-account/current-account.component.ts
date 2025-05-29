@@ -25,6 +25,7 @@ import { PrintComponent } from 'app/components/print/print/print.component';
 import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
 import { ConfigService } from 'app/core/services/config.service';
+import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { first } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
@@ -308,34 +309,35 @@ export class CurrentAccountComponent implements OnInit {
         );
         break;
       case 'company':
-        // modalRef = this._modalService.open(SelectCompanyComponent, {
-        //   size: 'lg',
-        //   backdrop: 'static',
-        // });
-        // modalRef.componentInstance.type = this.companyType;
-        // modalRef.result.then(
-        //   (result) => {
-        //     if (result.company) {
-        //       this.companySelected = result.company;
-        //       if (this.companyType === CompanyType.Client) {
-        //         this._router.navigate(['admin/cuentas-corrientes'], {
-        //           queryParams: {
-        //             companyId: this.companySelected._id,
-        //             companyType: this.companySelected.type,
-        //           },
-        //         });
-        //       } else {
-        //         this._router.navigate(['admin/cuentas-corrientes'], {
-        //           queryParams: {
-        //             companyId: this.companySelected._id,
-        //             companyType: this.companySelected.type,
-        //           },
-        //         });
-        //       }
-        //     }
-        //   },
-        //   (reason) => {}
-        // );
+        modalRef = this._modalService.open(SelectCompanyComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        console.log(this.companyType);
+        modalRef.componentInstance.type = this.companyType;
+        modalRef.result.then(
+          (result) => {
+            if (result.company) {
+              this.companySelected = result.company;
+              if (this.companyType === CompanyType.Client) {
+                this._router.navigate(['admin/cuentas-corrientes'], {
+                  queryParams: {
+                    companyId: this.companySelected._id,
+                    companyType: this.companySelected.type,
+                  },
+                });
+              } else {
+                this._router.navigate(['admin/cuentas-corrientes'], {
+                  queryParams: {
+                    companyId: this.companySelected._id,
+                    companyType: this.companySelected.type,
+                  },
+                });
+              }
+            }
+          },
+          (reason) => {}
+        );
         break;
       case 'send-email':
         let transaction: Transaction;
