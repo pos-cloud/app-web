@@ -1,6 +1,5 @@
-import { Branch, Employee } from '@types';
+import { Branch, Company, Employee } from '@types';
 import { CashBoxType } from '../cash-box-type/cash-box-type.model';
-import { Company } from '../company/company';
 import { Origin } from '../origin/origin';
 import { Permission } from '../permission/permission.model';
 import { Printer } from '../printer/printer';
@@ -23,14 +22,14 @@ export class User {
     {
       name: string;
       url: string;
-    },
+    }
   ];
   public permission: Permission;
   public printers: [
     {
       _id: string;
       printer: Printer;
-    },
+    }
   ];
   public level: number = 99;
 

@@ -27,7 +27,6 @@ import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { Article } from '../../article/article';
 import { CashBox } from '../../cash-box/cash-box';
-import { Company } from '../../company/company';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { Printer, PrinterPrintIn, PrinterType } from '../../printer/printer';
@@ -36,6 +35,7 @@ import { DescriptionType, TransactionMovement, TransactionType } from '../../tra
 //Paquetes de terceros
 
 //Servicios
+import { Company } from '@types';
 import { StructureService } from 'app/core/services/structure.service';
 import { PrintService } from '../../../core/services/print.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';

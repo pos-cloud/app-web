@@ -21,7 +21,7 @@ import { NgbActiveModal, NgbModal, NgbTypeahead, NgbTypeaheadConfig } from '@ng-
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
-import { Classification, Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
+import { Classification, Company, Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
 import { Config } from '../../../app.config';
 import { ArticleService } from '../../../core/services/article.service';
 import { CategoryService } from '../../../core/services/category.service';
@@ -29,7 +29,6 @@ import { VariantService } from '../../../core/services/variant.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { Category } from '../../category/category';
-import { Company } from '../../company/company';
 import { Taxes } from '../../tax/taxes';
 import { Variant } from '../../variant/variant';
 import { Article, ArticlePrintIn, Type } from '../article';

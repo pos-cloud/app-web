@@ -10,9 +10,9 @@ import { MovementOfCashService } from 'app/core/services/movement-of-cash.servic
 import { TransactionService } from 'app/core/services/transaction.service';
 
 //modelos
+import { Company } from '@types';
 import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
-import { Company } from 'app/components/company/company';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
@@ -94,10 +94,7 @@ export class PrintTransactionTypeComponent implements OnInit {
       this.getArticle();
     }
 
-    if (
-      (this.movementOfArticle && this.movementOfArticles.length > 0) ||
-      (this.articles && this.articles.length > 0)
-    ) {
+    if ((this.movementOfArticle && this.movementOfArticles.length > 0) || (this.articles && this.articles.length > 0)) {
       this.buildPrint();
     }
 
@@ -195,11 +192,7 @@ export class PrintTransactionTypeComponent implements OnInit {
             if (priceList.exceptions && priceList.exceptions.length > 0) {
               priceList.exceptions.forEach((exception) => {
                 if (exception) {
-                  if (
-                    this.article &&
-                    exception.article &&
-                    exception.article._id === this.article._id
-                  ) {
+                  if (this.article && exception.article && exception.article._id === this.article._id) {
                     increasePrice = exception.percentage;
                   }
                 }
@@ -209,8 +202,7 @@ export class PrintTransactionTypeComponent implements OnInit {
 
           if (increasePrice != 0) {
             this.article.salePrice = this.roundNumber.transform(
-              this.article.salePrice +
-                (this.article.salePrice * increasePrice) / 100
+              this.article.salePrice + (this.article.salePrice * increasePrice) / 100
             );
             this.buildPrint();
           } else {
@@ -340,11 +332,7 @@ export class PrintTransactionTypeComponent implements OnInit {
         )
         .subscribe(
           async (result) => {
-            if (
-              result &&
-              result.movementsOfCancellations &&
-              result.movementsOfCancellations.length > 0
-            ) {
+            if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
               this.movementOfCancellation = new Array();
               this.movementOfCancellation = result.movementsOfCancellations;
               resolve(true);
@@ -445,20 +433,11 @@ export class PrintTransactionTypeComponent implements OnInit {
               }
               this.doc.setFont('', field.fontType);
               this.doc.setFontSize(field.fontSize);
-              this.doc.text(
-                field.positionStartX,
-                field.positionStartY,
-                field.value
-              );
+              this.doc.text(field.positionStartX, field.positionStartY, field.value);
               break;
             case 'line':
               this.doc.setLineWidth(field.fontSize);
-              this.doc.line(
-                field.positionStartX,
-                field.positionStartY,
-                field.positionEndX,
-                field.positionEndY
-              );
+              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);
               break;
             case 'image':
               try {
@@ -475,9 +454,7 @@ export class PrintTransactionTypeComponent implements OnInit {
               break;
             case 'barcode':
               try {
-                await this.getBarcode64(
-                  'code128?value=' + eval('this.' + field.value)
-                );
+                await this.getBarcode64('code128?value=' + eval('this.' + field.value));
                 this.doc.addImage(
                   this.imageURL,
                   'png',
@@ -505,11 +482,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                       .slice(field.positionEndX, field.positionEndY)
                   );
                 } else {
-                  this.doc.text(
-                    field.positionStartX,
-                    field.positionStartY,
-                    eval('this.' + field.value).toString()
-                  );
+                  this.doc.text(field.positionStartX, field.positionStartY, eval('this.' + field.value).toString());
                 }
               } catch (e) {
                 this.doc.text(field.positionStartX, field.positionStartY, ' ');
@@ -532,11 +505,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                       .slice(field.positionEndX, field.positionEndY)
                   );
                 } else {
-                  this.doc.text(
-                    field.positionStartX,
-                    field.positionStartY,
-                    eval('this.' + field.value).toString()
-                  );
+                  this.doc.text(field.positionStartX, field.positionStartY, eval('this.' + field.value).toString());
                 }
               } catch (e) {
                 this.doc.text(field.positionStartX, field.positionStartY, ' ');
@@ -550,31 +519,29 @@ export class PrintTransactionTypeComponent implements OnInit {
               this.doc.setFont('', field.fontType);
               this.doc.setFontSize(field.fontSize);
 
-              if (
-                field.value.split('.')[0] === 'movementOfArticle' &&
-                this.movementOfArticle
-              ) {
+              if (field.value.split('.')[0] === 'movementOfArticle' && this.movementOfArticle) {
                 this.movementOfArticle.forEach(async (movementOfArticle) => {
                   sum = sum + eval(field.value);
                 });
                 try {
-                  this.doc.text(
-                    field.positionStartX,
-                    field.positionStartY,
-                    this.roundNumber.transform(sum).toString()
-                  );
+                  this.doc.text(field.positionStartX, field.positionStartY, this.roundNumber.transform(sum).toString());
                 } catch (e) {
-                  this.doc.text(
-                    field.positionStartX,
-                    field.positionStartY,
-                    ' '
-                  );
+                  this.doc.text(field.positionStartX, field.positionStartY, ' ');
                 }
-              } else if (
-                field.value.split('.')[0] === 'movementOfCash' &&
-                this.movementOfCash
-              ) {
+              } else if (field.value.split('.')[0] === 'movementOfCash' && this.movementOfCash) {
                 this.movementOfCash.forEach(async (movementOfCash) => {
+                  let sum = 0;
+                  if (typeof eval('this.' + field.value) === 'number') {
+                    sum = sum + eval('this.' + field.value);
+                  }
+                  try {
+                    this.doc.text(field.positionStartX, field.positionStartY, sum.toString());
+                  } catch (e) {
+                    this.doc.text(field.positionStartX, field.positionStartY, ' ');
+                  }
+                });
+              } else if (field.value.split('.')[0] === 'movementOfCancellation' && this.movementOfCancellation) {
+                this.movementOfCancellation.forEach(async (movementOfCancellation) => {
                   let sum = 0;
                   if (typeof eval('this.' + field.value) === 'number') {
                     sum = sum + eval('this.' + field.value);
@@ -583,48 +550,15 @@ export class PrintTransactionTypeComponent implements OnInit {
                     this.doc.text(
                       field.positionStartX,
                       field.positionStartY,
-                      sum.toString()
+                      this.roundNumber.transform(sum).toString()
                     );
                   } catch (e) {
-                    this.doc.text(
-                      field.positionStartX,
-                      field.positionStartY,
-                      ' '
-                    );
+                    this.doc.text(field.positionStartX, field.positionStartY, '');
                   }
                 });
-              } else if (
-                field.value.split('.')[0] === 'movementOfCancellation' &&
-                this.movementOfCancellation
-              ) {
-                this.movementOfCancellation.forEach(
-                  async (movementOfCancellation) => {
-                    let sum = 0;
-                    if (typeof eval('this.' + field.value) === 'number') {
-                      sum = sum + eval('this.' + field.value);
-                    }
-                    try {
-                      this.doc.text(
-                        field.positionStartX,
-                        field.positionStartY,
-                        this.roundNumber.transform(sum).toString()
-                      );
-                    } catch (e) {
-                      this.doc.text(
-                        field.positionStartX,
-                        field.positionStartY,
-                        ''
-                      );
-                    }
-                  }
-                );
               } else {
                 try {
-                  this.doc.text(
-                    field.positionStartX,
-                    field.positionStartY,
-                    eval(field.value)
-                  );
+                  this.doc.text(field.positionStartX, field.positionStartY, eval(field.value));
                 } catch (error) {
                   this.doc.text(field.positionStartX, field.positionStartY, '');
                 }
@@ -645,10 +579,7 @@ export class PrintTransactionTypeComponent implements OnInit {
       if (this.movementOfArticle && this.movementOfArticle.length > 0) {
         for (const movementOfArticle of this.movementOfArticle) {
           for (const field of this.printer.fields) {
-            if (
-              field.position === PositionPrint.Body &&
-              field.value.split('.')[0] === 'movementOfArticle'
-            ) {
+            if (field.position === PositionPrint.Body && field.value.split('.')[0] === 'movementOfArticle') {
               if (field.font !== 'default') {
                 this.doc.setFont(field.font);
               }
@@ -662,9 +593,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                 this.doc.text(
                   field.positionStartX,
                   row,
-                  eval(field.value)
-                    .toString()
-                    .slice(field.positionEndX, field.positionEndY)
+                  eval(field.value).toString().slice(field.positionEndX, field.positionEndY)
                 );
               } catch (e) {
                 this.doc.text(field.positionStartX, row, ' ');
@@ -682,10 +611,7 @@ export class PrintTransactionTypeComponent implements OnInit {
       if (this.movementOfCash && this.movementOfCash.length > 0) {
         for (const movementOfCash of this.movementOfCash) {
           for (const field of this.printer.fields) {
-            if (
-              field.position === PositionPrint.Body &&
-              field.value.split('.')[0] === 'movementOfCash'
-            ) {
+            if (field.position === PositionPrint.Body && field.value.split('.')[0] === 'movementOfCash') {
               if (field.font !== 'default') {
                 this.doc.setFont(field.font);
               }
@@ -699,9 +625,7 @@ export class PrintTransactionTypeComponent implements OnInit {
                 this.doc.text(
                   field.positionStartX,
                   row,
-                  eval(field.value)
-                    .toString()
-                    .slice(field.positionEndX, field.positionEndY)
+                  eval(field.value).toString().slice(field.positionEndX, field.positionEndY)
                 );
               } catch (e) {
                 this.doc.text(field.positionStartX, row, ' ');
@@ -731,10 +655,7 @@ export class PrintTransactionTypeComponent implements OnInit {
           }
 
           for (const field of this.printer.fields) {
-            if (
-              field.position === PositionPrint.Body &&
-              field.value.split('.')[0] === 'article'
-            ) {
+            if (field.position === PositionPrint.Body && field.value.split('.')[0] === 'article') {
               if (field.font) this.doc.setFont(field.font);
               this.doc.setFont('', field.fontType);
               this.doc.setFontSize(field.fontSize);
@@ -743,11 +664,7 @@ export class PrintTransactionTypeComponent implements OnInit {
               }
 
               try {
-                this.doc.text(
-                  field.positionStartX + largoEtiqueta,
-                  row,
-                  eval(field.value).toString()
-                );
+                this.doc.text(field.positionStartX + largoEtiqueta, row, eval(field.value).toString());
               } catch (e) {
                 this.doc.text(field.positionStartX + largoEtiqueta, row, ' ');
               }
@@ -763,26 +680,12 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   public finishImpression(): void {
     this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
-      this.doc.output('bloburl')
-    );
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
 
-    if (
-      this.transaction &&
-      this.transaction.type &&
-      this.transaction.type.electronics
-    ) {
-      this._printService.saveFile(
-        this.doc.output('blob'),
-        'invoice',
-        this.transactionId
-      );
+    if (this.transaction && this.transaction.type && this.transaction.type.electronics) {
+      this._printService.saveFile(this.doc.output('blob'), 'invoice', this.transactionId);
     } else if (this.source === 'mail') {
-      this._printService.saveFile(
-        this.doc.output('blob'),
-        'others',
-        this.transactionId
-      );
+      this._printService.saveFile(this.doc.output('blob'), 'others', this.transactionId);
     }
   }
 
@@ -824,11 +727,7 @@ export class PrintTransactionTypeComponent implements OnInit {
     });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

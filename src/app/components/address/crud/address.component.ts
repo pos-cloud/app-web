@@ -1,17 +1,6 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  NgZone,
-  Output,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
-import { Company } from 'app/components/company/company';
+import { Component, EventEmitter, Input, NgZone, Output, ViewEncapsulation } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Company } from '@types';
 import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
 import { CompanyService } from 'app/core/services/company.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -115,9 +104,7 @@ export class AddressComponent {
       this.place = params.place;
       this.addressStr = params.place['formatted_address'];
       this.formattedAddress = params.place['formatted_address'];
-      this.zone.run(
-        () => (this.formattedAddress = params.place['formatted_address'])
-      );
+      this.zone.run(() => (this.formattedAddress = params.place['formatted_address']));
     } else {
       this.place = null;
       this.addressStr = null;
@@ -137,9 +124,7 @@ export class AddressComponent {
       forShipping: [this.lastValues['forShipping'], []],
     });
 
-    this.addressForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.addressForm.valueChanges.subscribe((data) => this.onValueChanged(data));
   }
 
   private onValueChanged(data?: any): void {
@@ -171,8 +156,7 @@ export class AddressComponent {
     if (!this.address.observation) this.address.observation = '';
     if (!this.address.company) this.address.company = null;
     if (this.address.forBilling === undefined) this.address.forBilling = false;
-    if (this.address.forShipping === undefined)
-      this.address.forShipping = false;
+    if (this.address.forShipping === undefined) this.address.forShipping = false;
 
     const values = {
       _id: this.address._id,
@@ -278,15 +262,11 @@ export class AddressComponent {
       if (isValid && !this.address.number) {
         try {
           this.address.number = parseInt(
-            this.address.name.split(',')[0].split(' ')[
-              this.address.name.split(',')[0].split(' ').length - 1
-            ]
+            this.address.name.split(',')[0].split(' ')[this.address.name.split(',')[0].split(' ').length - 1]
           ).toString();
           if (this.address.number !== 'NaN') {
             this.address.name = this.address.name.replace(
-              this.address.name.split(',')[0].split(' ')[
-                this.address.name.split(',')[0].split(' ').length - 1
-              ],
+              this.address.name.split(',')[0].split(' ')[this.address.name.split(',')[0].split(' ').length - 1],
               ''
             );
           }

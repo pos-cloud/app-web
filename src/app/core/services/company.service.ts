@@ -9,9 +9,8 @@ import { Config } from '../../app.config';
 import { DatatableHistory } from '../../components/datatable/datatable-history.interface';
 import { AuthService } from './auth.service';
 
+import { Company } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { environment } from 'environments/environment';
-import { Company } from '../../components/company/company';
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 

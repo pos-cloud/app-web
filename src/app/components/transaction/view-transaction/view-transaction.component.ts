@@ -21,7 +21,6 @@ import { MovementOfCashService } from '../../../core/services/movement-of-cash.s
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ArticleComponent } from '../../article/crud/article.component';
-import { AddCompanyComponent } from '../../company/company/add-company.component';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction';
@@ -391,22 +390,22 @@ export class ViewTransactionComponent implements OnInit {
         };
         break;
       case 'view-company':
-        modalRef = this._modalService.open(AddCompanyComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.companyId = this.transaction.company._id;
-        modalRef.componentInstance.readonly = true;
-        modalRef.componentInstance.operation = 'view';
+        // modalRef = this._modalService.open(AddCompanyComponent, {
+        //   size: 'lg',
+        //   backdrop: 'static',
+        // });
+        // modalRef.componentInstance.companyId = this.transaction.company._id;
+        // modalRef.componentInstance.readonly = true;
+        // modalRef.componentInstance.operation = 'view';
         break;
       case 'edit-company':
-        modalRef = this._modalService.open(AddCompanyComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.companyId = this.transaction.company._id;
-        modalRef.componentInstance.readonly = false;
-        modalRef.componentInstance.operation = 'update';
+        // modalRef = this._modalService.open(AddCompanyComponent, {
+        //   size: 'lg',
+        //   backdrop: 'static',
+        // });
+        // modalRef.componentInstance.companyId = this.transaction.company._id;
+        // modalRef.componentInstance.readonly = false;
+        // modalRef.componentInstance.operation = 'update';
         break;
       case 'print-label':
         modalRef = this._modalService.open(SelectPrinterComponent, {

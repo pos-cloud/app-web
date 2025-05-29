@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse } from '@types';
+import { ApiResponse, Company } from '@types';
 import { Address } from 'app/components/address/address.model';
-import { Company } from 'app/components/company/company';
 import { AddressService } from 'app/core/services/address.service';
 import { ShipmentMethodService } from 'app/core/services/shipment-method.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -74,10 +73,7 @@ export class SelectShipmentMethodComponent implements OnInit {
         type: 'info',
         message: 'Debe seleccionar un método de entrega.',
       });
-    } else if (
-      this.shipmentMethodSelected.requireAddress &&
-      !this.addressSelected
-    ) {
+    } else if (this.shipmentMethodSelected.requireAddress && !this.addressSelected) {
       this._toastService.showToast({
         type: 'info',
         message: 'Debe seleccionar una dirección.',
@@ -103,17 +99,15 @@ export class SelectShipmentMethodComponent implements OnInit {
 
   loadAddresses() {
     this.subscription.add(
-      this._addressService
-        .getAll({ match: { company: { $oid: this.company._id } } })
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (result.status === 200) {
-              this.addresses = result.result;
-            } else this._toastService.showToast(result);
-          },
-          (error) => this._toastService.showToast(error)
-        )
+      this._addressService.getAll({ match: { company: { $oid: this.company._id } } }).subscribe(
+        (result) => {
+          this.loading = false;
+          if (result.status === 200) {
+            this.addresses = result.result;
+          } else this._toastService.showToast(result);
+        },
+        (error) => this._toastService.showToast(error)
+      )
     );
   }
 }

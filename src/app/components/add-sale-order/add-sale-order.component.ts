@@ -23,7 +23,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { RelationType, Table, TableState } from '@types';
+import { CompanyType, RelationType, Table, TableState } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { BusinessRuleService } from '../../core/services/business-rule.service';
@@ -48,7 +48,6 @@ import { BusinessRule } from '../business-rules/business-rules';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { Category } from '../category/category';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
-import { CompanyType } from '../company/company';
 import { AddMovementOfArticleComponent } from '../movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article/movement-of-article';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
@@ -150,8 +149,8 @@ export class AddSaleOrderComponent {
   lastMovementOfArticle: MovementOfArticle;
   isCancellationAutomatic: boolean = false;
   showBussinessRulesButton: boolean = false;
-  priceList: PriceList;
-  newPriceList: PriceList;
+  priceList: any;
+  newPriceList: any;
   increasePrice = 0;
   lastIncreasePrice = 0;
   companyOld: boolean = false;

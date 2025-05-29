@@ -13,10 +13,10 @@ import { Category } from '../category/category';
 import { Taxes } from '../tax/taxes';
 import { User } from '../user/user';
 
+import { Company } from '@types';
 import * as moment from 'moment';
 import { Account } from '../account/account';
 import { Application } from '../application/application.model';
-import { Company } from '../company/company';
 
 export class Article {
   public _id: string;

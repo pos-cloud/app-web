@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PrintService } from '@core/services/print.service';
-import { ApiResponse, PrintType } from '@types';
+import { ApiResponse, Company, CompanyType, PrintType } from '@types';
 import { CompanyService } from 'app/core/services/company.service';
 import { WooCommerceService } from 'app/core/services/woocommerce.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -15,7 +15,6 @@ import { ShipmentMethodService } from '../../../core/services/shipment-method.se
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { Article, Type } from '../../article/article';
-import { Company, CompanyType } from '../../company/company';
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { ShipmentMethod } from '../../shipment-method/shipment-method.model';
 import { TransactionType } from '../../transaction-type/transaction-type';

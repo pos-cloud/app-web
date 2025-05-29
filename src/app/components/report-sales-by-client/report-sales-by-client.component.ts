@@ -5,7 +5,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Branch } from '@types';
+import { Branch, CompanyType } from '@types';
 import { Config } from 'app/app.config';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
@@ -13,7 +13,6 @@ import { Subscription } from 'rxjs';
 import { CompanyService } from '../../core/services/company.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { TransactionService } from '../../core/services/transaction.service';
-import { CompanyType } from '../company/company';
 import { TransactionType } from '../transaction-type/transaction-type';
 
 @Component({

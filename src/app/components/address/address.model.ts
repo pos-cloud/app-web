@@ -1,6 +1,6 @@
 import { IAttribute } from '@types';
 
-import { Company } from '../company/company';
+import { Company } from '@types';
 import { Model } from '../model/model.model';
 
 export class Address extends Model {

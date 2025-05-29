@@ -8,10 +8,10 @@ import { Employee, IdentificationType } from '@types';
 import * as moment from 'moment';
 
 export class Transport {
-  public _id: string;
-  public code: number = 1;
-  public name: string;
-  public fantasyName: string;
+  public _id?: string;
+  public code?: number = 1;
+  public name?: string;
+  public fantasyName?: string;
   public entryDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public identificationType: IdentificationType;
   public identificationValue: string;

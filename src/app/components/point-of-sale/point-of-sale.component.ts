@@ -29,7 +29,18 @@ import { RoomService } from '../../core/services/room.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { TransactionService } from '../../core/services/transaction.service';
 
-import { ApiResponse, Claim, ClaimPriority, ClaimType, EmailProps, EmployeeType, Table, TableState } from '@types';
+import {
+  ApiResponse,
+  Claim,
+  ClaimPriority,
+  ClaimType,
+  Company,
+  CompanyType,
+  EmailProps,
+  EmployeeType,
+  Table,
+  TableState,
+} from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
@@ -64,7 +75,6 @@ import { AddTransactionComponent } from '../transaction/add-transaction/add-tran
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { Config } from './../../app.config';
 import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
-import { Company, CompanyType } from './../../components/company/company';
 import { Origin } from './../../components/origin/origin';
 import { User } from './../../components/user/user';
 

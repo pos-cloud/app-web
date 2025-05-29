@@ -8,9 +8,8 @@ import 'moment/locale/es';
 import { CompanyService } from 'app/core/services/company.service';
 import { ConfigService } from '../../core/services/config.service';
 
-import { Company, CompanyType } from 'app/components/company/company';
+import { Company, CompanyType } from '@types';
 import { Subscription } from 'rxjs';
-import { AddCompanyComponent } from '../company/company/add-company.component';
 import { Config } from './../../app.config';
 
 @Component({
@@ -63,8 +62,7 @@ export class ReportBirthdayComponent implements OnInit {
   ngOnInit(): void {
     let pathLocation: string[] = this._router.url.split('/');
     this.listType = pathLocation[3];
-    this.transactionMovement =
-      pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
 
     this.timezone = '-03:00';
     if (Config.timezone && Config.timezone !== '') {
@@ -83,10 +81,7 @@ export class ReportBirthdayComponent implements OnInit {
 
     // FILTRAMOS LA CONSULTA
     let match: any = `{ "operationType" : { "$ne" : "D" }`;
-    match += `,"birthday": { "$regex": "${moment(
-      this.startDate,
-      'YYYY-MM-DD'
-    ).format('DD/MM')}", "$options": "i"}`;
+    match += `,"birthday": { "$regex": "${moment(this.startDate, 'YYYY-MM-DD').format('DD/MM')}", "$options": "i"}`;
 
     if (this.transactionMovement === 'Venta') {
       match += `, "type": "${CompanyType.Client}" `;
@@ -98,14 +93,7 @@ export class ReportBirthdayComponent implements OnInit {
     match = JSON.parse(match);
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let displayedColumns = [
-      'name',
-      'birthday',
-      'phones',
-      'emails',
-      'operationType',
-      'type',
-    ];
+    let displayedColumns = ['name', 'birthday', 'phones', 'emails', 'operationType', 'type'];
 
     let project = '{}';
     if (displayedColumns && displayedColumns.length > 0) {
@@ -232,9 +220,7 @@ export class ReportBirthdayComponent implements OnInit {
             if (result && result[0] && result[0].companies) {
               this.companies = result[0].companies;
               this.totalItems = result[0].count;
-              this.companies = this.companies.sort((n1, n2) =>
-                n1['day'] < n2['day'] ? -1 : 1
-              );
+              this.companies = this.companies.sort((n1, n2) => (n1['day'] < n2['day'] ? -1 : 1));
             } else {
               this.companies = new Array();
             }
@@ -251,12 +237,12 @@ export class ReportBirthdayComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(AddCompanyComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.companyId = companyId;
-        modalRef.componentInstance.readonly = true;
+        // modalRef = this._modalService.open(AddCompanyComponent, {
+        //   size: 'lg',
+        //   backdrop: 'static',
+        // });
+        // modalRef.componentInstance.companyId = companyId;
+        // modalRef.componentInstance.readonly = true;
         break;
       default:
     }
@@ -275,11 +261,7 @@ export class ReportBirthdayComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

@@ -7,7 +7,6 @@ import { ListCancellationTypeComponent } from './components/cancellation-type/li
 import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-cash-box.component';
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
 import { ListCategoriesComponent } from './components/category/list-categories/list-categories.component';
-import { ListCompanyFieldsComponent } from './components/company/list-company-fields/list-company-fields.component';
 import { ConfigComponent } from './components/config/config.component';
 import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
@@ -340,11 +339,6 @@ export const _routes: Routes = [
     component: ListChecksComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' },
-  },
-  {
-    path: 'admin/campos-de-empresas',
-    component: ListCompanyFieldsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/venta/movimientos-de-medios',
