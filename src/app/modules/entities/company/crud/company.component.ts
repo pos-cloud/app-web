@@ -283,7 +283,7 @@ export class CompanyComponent implements OnInit {
 
   returnTo() {
     if (this.property) {
-      this.activeModal.close({result: this.company});
+      this.activeModal.close({ company: this.company });
     } else {
       this._router.navigate([`/entities/companies/${this.type}`]);
     }
@@ -338,7 +338,10 @@ export class CompanyComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) this.returnTo();
+          if (result.status == 200) {
+            this.company = result.result;
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -356,7 +359,10 @@ export class CompanyComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) this.returnTo();
+          if (result.status == 200) {
+            this.company = result.result;
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);

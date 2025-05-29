@@ -244,6 +244,7 @@ export class SelectCompanyComponent implements OnInit {
 
         modalRef.result.then(
           (result) => {
+            console.log(result);
             this.selectCompany(result?.company);
           },
           (reason) => {
@@ -261,6 +262,7 @@ export class SelectCompanyComponent implements OnInit {
   }
 
   public selectCompany(companySelected: Company): void {
+    console.log(companySelected);
     if (companySelected) {
       this._service.getCompany(companySelected._id).subscribe(
         (result) => {
