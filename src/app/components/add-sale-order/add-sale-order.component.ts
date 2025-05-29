@@ -49,7 +49,6 @@ import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancell
 import { Category } from '../category/category';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
 import { CompanyType } from '../company/company';
-import { SelectCompanyComponent } from '../company/select-company/select-company.component';
 import { AddMovementOfArticleComponent } from '../movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article/movement-of-article';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
@@ -75,6 +74,7 @@ import { SelectTransportComponent } from '../transport/select-transport/select-t
 
 import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
+import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';

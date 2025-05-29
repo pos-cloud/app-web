@@ -1,26 +1,24 @@
-import { Component, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CompanyService } from '@core/services/company.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ImportComponent } from '@shared/components/import/import.component';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { CompanyType, IAttribute, IButton } from '@types';
+import { ToastService } from '@shared/components/toast/toast.service';
+import { Company, CompanyType, IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { CurrentAccountDetailsComponent } from 'app/components/print/current-account-details/current-account-details.component';
+import { CompanyComponent } from '../crud/company.component';
 
 @Component({
-  selector: 'app-list-companies',
-  templateUrl: './list-company.component.html',
+  selector: 'app-select-company',
+  templateUrl: './select-company.component.html',
   standalone: true,
   imports: [DatatableModule],
 })
-export class ListCompanyComponent {
-  public companyType: string;
-  public title: string;
+export class SelectCompanyComponent implements OnInit {
+  @Input() type: CompanyType;
+  public title: CompanyType;
   public loading: boolean = false;
   public sort = { name: 1 };
-  public type;
   public columns: IAttribute[] = [
     {
       name: 'name',
@@ -160,60 +158,24 @@ export class ListCompanyComponent {
   ];
   public headerButtons: IButton[] = [
     {
-      title: 'Detalle de cuenta corriente',
-      class: 'btn',
-      icon: 'fa fa-book',
-      click: `this.emitEvent('current', null)`,
-    },
-    {
       title: 'add',
       class: 'btn btn-light',
       icon: 'fa fa-plus',
       click: `this.emitEvent('add', null)`,
     },
     {
-      title: 'refresh',
+      title: 'return',
       class: 'btn btn-light',
-      icon: 'fa fa-refresh',
-      click: `this.refresh()`,
-    },
-    {
-      title: 'import',
-      class: 'btn btn-light',
-      icon: 'fa fa-upload',
-      click: `this.emitEvent('uploadFile', null)`,
+      icon: 'fa fa-close',
+      click: `this.emitEvent('return', item)`,
     },
   ];
   public rowButtons: IButton[] = [
-    {
-      title: 'view',
-      class: 'btn btn-success btn-sm',
-      icon: 'fa fa-eye',
-      click: `this.emitEvent('view', item)`,
-    },
     {
       title: 'update',
       class: 'btn btn-primary btn-sm',
       icon: 'fa fa-pencil',
       click: `this.emitEvent('update', item)`,
-    },
-    {
-      title: 'delete',
-      class: 'btn btn-danger btn-sm',
-      icon: 'fa fa-trash-o',
-      click: `this.emitEvent('delete', item)`,
-    },
-    {
-      title: 'current-account1',
-      class: 'btn btn-light btn-sm',
-      icon: 'fa fa-book',
-      click: `this.emitEvent('current-account1', item)`,
-    },
-    {
-      title: 'current-account2',
-      class: 'btn btn-light btn-sm',
-      icon: 'fa fa-address-book',
-      click: `this.emitEvent('current-account2', item)`,
     },
   ];
 
@@ -221,32 +183,28 @@ export class ListCompanyComponent {
 
   constructor(
     public _service: CompanyService,
-    private _router: Router,
-    private route: ActivatedRoute,
-    private _modalService: NgbModal
-  ) {
-    this.route.url.subscribe(() => {
-      const pathUrl = this._router.url.split('/');
-      this.companyType = pathUrl[3];
-      this.type = pathUrl[3] === 'client' ? CompanyType.Client : CompanyType.Provider;
-      this.title = this.type;
+    private _modalService: NgbModal,
+    public activeModal: NgbActiveModal,
+    private _toastService: ToastService
+  ) {}
 
-      this.columns.push({
-        name: 'type',
-        visible: false,
-        disabled: true,
-        filter: false,
-        datatype: 'string',
-        defaultFilter: `{ "$eq": "${this.type}" }`,
-        project: null,
-        align: 'left',
-        required: true,
-      });
-
-      this.datatableComponent.refresh();
+  ngOnInit(): void {
+    this.setColumn();
+  }
+  setColumn() {
+    this.title = this.type;
+    this.columns.push({
+      name: 'type',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: `{ "$eq": "${this.type}" }`,
+      project: null,
+      align: 'left',
+      required: true,
     });
   }
-
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);
   }
@@ -254,53 +212,67 @@ export class ListCompanyComponent {
   public async openModal(op: string, obj: any) {
     let modalRef;
     switch (op) {
-      case 'view':
-        this._router.navigateByUrl('entities/companies/view/' + this.companyType + '/' + obj._id);
-        break;
-
       case 'update':
-        this._router.navigateByUrl('entities/companies/update/' + this.companyType + '/' + obj._id);
-        break;
-      case 'delete':
-        this._router.navigateByUrl('entities/companies/delete/' + this.companyType + '/' + obj._id);
-        break;
-      case 'add':
-        this._router.navigateByUrl('entities/companies/add/' + this.companyType);
-        break;
-      case 'current-account2':
-        this._router.navigateByUrl('reports/current-account/' + obj._id);
-        break;
-      case 'current-account1':
-        this._router.navigateByUrl('admin/cuentas-corrientes?companyId=' + obj._id + '&companyType=' + this.type);
-        break;
-      case 'current':
-        modalRef = this._modalService.open(CurrentAccountDetailsComponent, {
+        modalRef = this._modalService.open(CompanyComponent, {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.companyType = this.type;
-        modalRef.result.then(
-          (result) => {},
-          (reason) => {}
-        );
-        break;
-      case 'uploadFile':
-        modalRef = this._modalService.open(ImportComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.model = 'company';
-        modalRef.componentInstance.title = 'Importar empresas';
+        modalRef.componentInstance.property = {
+          companyId: obj._id,
+          operation: 'update',
+          type: this.type,
+        };
         modalRef.result.then(
           (result) => {
-            if (result === 'save_close') {
-              this.datatableComponent.refresh();
-            }
+            this.selectCompany(result?.company);
           },
-          (reason) => {}
+          (reason) => {
+            this.datatableComponent.refresh();
+          }
         );
-
         break;
+      case 'add':
+        modalRef = this._modalService.open(CompanyComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.property = {
+          companyId: null,
+          operation: 'add',
+          type: this.type,
+        };
+
+        modalRef.result.then(
+          (result) => {
+            this.selectCompany(result?.company);
+          },
+          (reason) => {
+            this.datatableComponent.refresh();
+          }
+        );
+        break;
+      case 'return':
+        this.activeModal.close();
+        break;
+      case 'on-click':
+        this.selectCompany(obj);
+        break;
+    }
+  }
+
+  public selectCompany(companySelected: Company): void {
+    if (companySelected) {
+      this._service.getCompany(companySelected._id).subscribe(
+        (result) => {
+          if (result && result.company) {
+            this.activeModal.close({ company: result.company });
+          }
+        },
+        (error) => {
+          this._toastService.showToast(error);
+          this.loading = false;
+        }
+      );
     }
   }
 }

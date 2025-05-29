@@ -148,6 +148,10 @@ export class DatatableComponent {
     this.eventFunction.emit({ op, obj, items: this.items });
   }
 
+  public onRowClick(item: any): void {
+    this.eventFunction.emit({ op: 'on-click', obj: item, items: this.items });
+  }
+
   public refresh(): void {
     this.getItems();
   }
