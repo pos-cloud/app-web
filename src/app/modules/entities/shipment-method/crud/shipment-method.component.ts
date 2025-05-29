@@ -125,7 +125,7 @@ export class ShipmentMethodComponent implements OnInit {
       _id: this.shipmentMethod?._id ?? '',
       name: this.shipmentMethod?.name ?? '',
       requireAddress: this.shipmentMethod?.requireAddress ?? false,
-      requireTable: this.shipmentMethod?.requireAddress ?? false,
+      requireTable: this.shipmentMethod?.requireTable ?? false,
       article: article ?? null,
     });
   }
