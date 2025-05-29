@@ -6,6 +6,8 @@ import { ToastService } from '@shared/components/toast/toast.service';
 import { Company, CompanyType, IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CompanyComponent } from '../crud/company.component';
 
 @Component({
@@ -19,6 +21,7 @@ export class SelectCompanyComponent implements OnInit {
   public title: CompanyType;
   public loading: boolean = false;
   public sort = { name: 1 };
+  private destroy$ = new Subject<void>();
   public columns: IAttribute[] = [
     {
       name: 'name',
@@ -244,7 +247,6 @@ export class SelectCompanyComponent implements OnInit {
 
         modalRef.result.then(
           (result) => {
-            console.log(result);
             this.selectCompany(result?.company);
           },
           (reason) => {
@@ -262,19 +264,23 @@ export class SelectCompanyComponent implements OnInit {
   }
 
   public selectCompany(companySelected: Company): void {
-    console.log(companySelected);
     if (companySelected) {
-      this._service.getCompany(companySelected._id).subscribe(
-        (result) => {
-          if (result && result.company) {
-            this.activeModal.close({ company: result.company });
-          }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        }
-      );
+      this._service
+        .getCompany(companySelected._id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            if (result && result.company) {
+              this.activeModal.close({ company: result.company });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
     }
   }
 }
