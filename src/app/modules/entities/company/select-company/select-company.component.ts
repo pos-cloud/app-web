@@ -161,16 +161,16 @@ export class SelectCompanyComponent implements OnInit {
   ];
   public headerButtons: IButton[] = [
     {
+      title: 'return',
+      class: 'btn btn-light',
+      icon: 'fa fa-arrow-left',
+      click: `this.emitEvent('return', item)`,
+    },
+    {
       title: 'add',
       class: 'btn btn-light',
       icon: 'fa fa-plus',
       click: `this.emitEvent('add', null)`,
-    },
-    {
-      title: 'return',
-      class: 'btn btn-light',
-      icon: 'fa fa-close',
-      click: `this.emitEvent('return', item)`,
     },
   ];
   public rowButtons: IButton[] = [
