@@ -54,7 +54,6 @@ export class CurrentAccountComponent implements OnInit {
   public transactions: Transaction[];
   public companySelected: Company;
   public companyType: CompanyType;
-  public alertMessage: string = '';
   public loading: boolean = false;
   public loadingTotal: boolean = false;
   public itemsPerPage = 10;
@@ -170,7 +169,7 @@ export class CurrentAccountComponent implements OnInit {
     this._service.getTotalOfAccountsByCompany(this.data).subscribe(
       (result) => {
         if (result.status === 200) {
-          this.totalPrice = result[0]?.totalPrice;
+          this.totalPrice = result.result[0]?.totalPrice;
         }
         this.loadingTotal = false;
       },
@@ -245,6 +244,7 @@ export class CurrentAccountComponent implements OnInit {
       }
     );
   }
+
   async openModal(op: string, transactionId?: string) {
     let modalRef;
     switch (op) {
@@ -361,6 +361,12 @@ export class CurrentAccountComponent implements OnInit {
 
   public pageChange(page): void {
     this.currentPage = page;
+    this.getPaymentMethodOfAccountsByCompany();
+  }
+
+  public selectItemsPerPage(value: number): void {
+    this.itemsPerPage = value;
+    this.currentPage = 1;
     this.getPaymentMethodOfAccountsByCompany();
   }
 
