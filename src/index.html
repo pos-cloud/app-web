@@ -35,6 +35,18 @@
           (window.plausible.q = window.plausible.q || []).push(arguments);
         };
     </script>
+
+    <script>
+      (function () {
+        const hash = window.location.hash;
+        if (hash.startsWith('#/menu/')) {
+          // Obtengo la parte después del hash
+          const path = hash.substring(2); // "/menú/los4hermanos"
+          // Redirecciono a la URL sin hash pero con la ruta correcta
+          window.history.replaceState(null, '', path);
+        }
+      })();
+    </script>
   </head>
 
   <body style="background-color: #e4e9f2">
