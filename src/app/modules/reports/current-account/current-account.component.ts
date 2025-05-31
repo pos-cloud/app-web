@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { PrintService } from '@core/services/print.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { ApiResponse, Company, Printer, PrintType } from '@types';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { CompanyType } from 'app/components/payment-method/payment-method';
@@ -248,6 +249,16 @@ export class CurrentAccountComponent implements OnInit {
   async openModal(op: string, transactionId?: string) {
     let modalRef;
     switch (op) {
+      case 'send-email':
+        modalRef = this._modalService.open(SendEmailComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.subject = [this.companySelected.emails];
+        modalRef.componentInstance.subject = `Resumen de cuenta corriente de ${this.companySelected.name}`;
+        modalRef.componentInstance.companyId = this.companySelected._id;
+
+        break;
       case 'view-transaction':
         modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',

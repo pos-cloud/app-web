@@ -91,7 +91,6 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
-import { SendEmailComponent } from './components/send-email/send-email.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StateComponent } from './components/state/state/state.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
@@ -160,7 +159,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ConfigComponent,
     AddTransactionComponent,
     CurrentAccountComponent,
-    SendEmailComponent,
     PrintComponent,
     ViewTransactionComponent,
     AddArticleStockComponent,
