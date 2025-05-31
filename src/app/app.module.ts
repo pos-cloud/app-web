@@ -85,7 +85,6 @@ import { PrintComponent } from './components/print/print/print.component';
 import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
 import { PrinterComponent } from './components/printer/printer/printer.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
-import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component';
@@ -183,7 +182,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
     ReportSalesByCategoryComponent,
-    ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
     ListMovementOfCashesComponent,

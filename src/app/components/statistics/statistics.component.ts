@@ -12,7 +12,6 @@ import { BranchService } from 'app/core/services/branch.service';
 import { CompanyService } from '../../core/services/company.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { ReportBestSellingArticleComponent } from '../report-best-selling-article/report-best-selling-article.component';
-import { ReportBirthdayComponent } from '../report-birthday/report-birthday.component';
 import { ReportSalesByClientComponent } from '../report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from '../report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from '../report-sales-by-payment-method/report-sales-by-payment-method.component';
@@ -42,8 +41,6 @@ export class StatisticsComponent implements OnInit {
   reportSalesByClient: ReportSalesByClientComponent;
   @ViewChild(ReportSalesByMakeComponent, { static: true })
   reportSalesByMake: ReportSalesByMakeComponent;
-  @ViewChild(ReportBirthdayComponent, { static: true })
-  reportBirthday: ReportBirthdayComponent;
   public transactionMovement: string;
   public branches: Branch[];
   public branchSelectedId: String;

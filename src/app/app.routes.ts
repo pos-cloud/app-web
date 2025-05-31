@@ -32,7 +32,6 @@ import { CurrentAccountDetailsComponent } from './components/print/current-accou
 import { PrintComponent } from './components/print/print/print.component';
 import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
-import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component';
@@ -78,11 +77,6 @@ export const _routes: Routes = [
     component: StatisticsComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.sale' },
-  },
-  {
-    path: 'admin/cumpleaños',
-    component: ReportBirthdayComponent,
-    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'cheque',
