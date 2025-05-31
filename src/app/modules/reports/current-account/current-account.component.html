@@ -6,15 +6,15 @@
         <button class="btn btn-light" (click)="refresh()" [disabled]="loading">
           <i class="fa fa-refresh"></i><span>{{ 'refresh' | translate | capitalize }}</span>
         </button>
-        <!-- <button
+        <button
           [disabled]="loading"
           type="button"
           class="btn btn-light btn-sm"
-          (click)="openModal('send-email-current')"
+          (click)="openModal('send-email')"
           title="Enviar"
         >
           <i class="fa fa-envelope"> Enviar</i>
-        </button>  -->
+        </button>
         <button [disabled]="loading" class="btn" (click)="openModal('print')">
           <i class="fa fa-print"></i> {{ 'print' | translate | capitalize }}
         </button>

@@ -62,6 +62,7 @@ import { UserService } from '../../core/services/user.service';
 import { SelectBranchComponent } from '../../shared/components/select-branch/select-branch.component';
 import { SelectDepositComponent } from '../../shared/components/select-deposit/select-deposit.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
+import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
 import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
@@ -70,7 +71,6 @@ import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { SelectOriginComponent } from '../origin/select-origin/select-origin.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
-import { SendEmailComponent } from '../send-email/send-email.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { Config } from './../../app.config';
@@ -1993,7 +1993,6 @@ export class PointOfSaleComponent implements OnInit {
             this.transaction.letter
           }-${this.padNumber(this.transaction.number, 8)}`,
           body: this.transaction?.type?.defectEmailTemplate?.design || '',
-          attachments: attachments,
         };
 
         setTimeout(() => {
@@ -2405,7 +2404,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public sendEmail(body: EmailProps): void {
-    this._serviceEmail.sendEmailV2(body).subscribe(
+    this._serviceEmail.sendEmail(body).subscribe(
       (result) => {
         this._toastService.showToast(result);
       },

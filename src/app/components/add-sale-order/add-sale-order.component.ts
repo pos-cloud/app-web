@@ -2185,7 +2185,6 @@ export class AddSaleOrderComponent {
             this.transaction.letter
           }-${this.padNumber(this.transaction.number, 8)}`,
           body: this.transaction?.type?.defectEmailTemplate?.design || '',
-          attachments: attachments,
         };
         setTimeout(() => {
           this.sendEmail(this.email);
@@ -3811,7 +3810,7 @@ export class AddSaleOrderComponent {
   }
 
   public sendEmail(body: EmailProps): void {
-    this._serviceEmail.sendEmailV2(body).subscribe(
+    this._serviceEmail.sendEmail(body).subscribe(
       (result) => {
         this._toastService.showToast(result);
       },
