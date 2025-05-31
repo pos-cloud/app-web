@@ -238,7 +238,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(_routes),
+    RouterModule.forRoot(_routes, { useHash: true }),
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
