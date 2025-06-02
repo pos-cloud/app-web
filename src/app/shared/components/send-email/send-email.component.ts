@@ -21,7 +21,7 @@ export class SendEmailComponent implements AfterViewInit {
   sendEmailForm: UntypedFormGroup;
   loading: boolean = false;
   focusEvent = new EventEmitter<boolean>();
-  @Input() emails: string;
+  @Input() to: string;
   @Input() subject: string = '';
   @Input() body: string = '';
   @Input() companyId: string = '';
@@ -70,7 +70,7 @@ export class SendEmailComponent implements AfterViewInit {
     private _toastService: ToastService
   ) {
     this.sendEmailForm = this._fb.group({
-      emails: [this.emails ?? '', [Validators.required]],
+      to: [this.to ?? '', [Validators.required]],
       subject: [this.subject ?? '', [Validators.required]],
       body: ['', []],
     });

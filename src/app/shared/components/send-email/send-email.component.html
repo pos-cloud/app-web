@@ -8,8 +8,8 @@
   <form [formGroup]="sendEmailForm" (ngSubmit)="sendEmail()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <label for="emails">{{ 'emails' | translate | capitalize }}:</label>
-        <input class="form-control" formControlName="emails" name="emails" id="emails" [focus]="focusEvent" />
+        <label for="to">{{ 'to' | translate | capitalize }}:</label>
+        <input class="form-control" formControlName="to" name="to" id="to" [focus]="focusEvent" />
       </div>
       <div class="row">
         <label for="subject">{{ 'subject' | translate | capitalize }}:</label>

@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { EmailProps } from '@types';
-import { Config } from '../../app.config';
+import { environment } from 'environments/environment';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class EmailService {
   constructor(private _http: HttpClient, private _authService: AuthService) {}
 
   public sendEmail(data: EmailProps): Observable<any> {
-    const URL = `${Config.apiURL}send-email`;
+    const URL = `${environment.apiv2}/send-email`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
