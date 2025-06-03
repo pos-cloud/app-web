@@ -72,7 +72,7 @@ export class SendEmailComponent implements AfterViewInit {
     this.sendEmailForm = this._fb.group({
       to: [this.to ?? '', [Validators.required]],
       subject: [this.subject ?? '', [Validators.required]],
-      body: ['', []],
+      body: [this.body ?? '', []],
     });
   }
 
