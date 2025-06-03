@@ -53,10 +53,6 @@ export class SendEmailComponent implements OnInit {
     placeholder: 'Escribe aqui...',
     theme: 'snow',
     readOnly: false,
-    // styles: {
-    //   height: '150px', // Altura del editor
-    //   width: '600px',
-    // },
   };
   constructor(
     private _serviceEmail: EmailService,
