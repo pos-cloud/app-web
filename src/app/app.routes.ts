@@ -38,7 +38,6 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
-import { SendEmailComponent } from './components/send-email/send-email.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListStructureComponent } from './components/structure/list-structure/list-structure.component';
@@ -51,6 +50,7 @@ import { ListVATConditionsComponent } from './components/vat-condition/list-vat-
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
+import { SendEmailComponent } from './shared/components/send-email/send-email.component';
 
 export const _routes: Routes = [
   {

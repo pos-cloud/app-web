@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ 'send-email' | translate | capitalize }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <form [formGroup]="sendEmailForm" (ngSubmit)="sendEmail()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <label for="to">{{ 'to' | translate | capitalize }}:</label>
+        <input class="form-control" formControlName="to" name="to" id="to" [focus]="focusEvent" />
+      </div>
+      <div class="row">
+        <label for="subject">{{ 'subject' | translate | capitalize }}:</label>
+        <input type="text" class="form-control" formControlName="subject" name="subject" id="subject" />
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="body">{{ 'body' | translate | capitalize }}:</label>
+          <quill-editor
+            formControlName="body"
+            name="body"
+            id="body"
+            [modules]="quillConfig.modules"
+            [theme]="quillConfig.theme"
+            style="width: 100%; height: 100px"
+          >
+          </quill-editor>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="close()">{{ 'cancel' | translate | capitalize }}</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!sendEmailForm?.valid || loading">
+        <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+        <span *ngIf="!loading">{{ 'send' | translate | capitalize }}</span>
+        <span *ngIf="loading">{{ 'wait-please' | translate | capitalize }}</span>
+      </button>
+    </div>
+  </form>
+</section>
