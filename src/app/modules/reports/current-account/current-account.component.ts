@@ -257,6 +257,7 @@ export class CurrentAccountComponent implements OnInit {
         modalRef.componentInstance.to = this.companySelected.emails;
         modalRef.componentInstance.subject = `Resumen de cuenta corriente de ${this.companySelected.name}`;
         modalRef.componentInstance.companyId = this.companySelected._id;
+        modalRef.componentInstance.body = '';
 
         break;
       case 'view-transaction':

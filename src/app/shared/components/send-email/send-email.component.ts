@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,7 +17,7 @@ import { ToastService } from '../toast/toast.service';
   standalone: true,
   imports: [FormsModule, QuillModule, CommonModule, FocusDirective, ReactiveFormsModule, PipesModule, TranslateModule],
 })
-export class SendEmailComponent implements AfterViewInit {
+export class SendEmailComponent implements OnInit {
   sendEmailForm: UntypedFormGroup;
   loading: boolean = false;
   focusEvent = new EventEmitter<boolean>();
@@ -49,20 +49,15 @@ export class SendEmailComponent implements AfterViewInit {
 
         ['clean'],
       ],
-      imageResize: {
-        displayStyles: {
-          backgroundColor: 'black',
-          border: 'none',
-          color: 'white',
-        },
-        modules: ['Resize', 'DisplaySize', 'Toolbar'],
-      },
     },
     placeholder: 'Escribe aqui...',
     theme: 'snow',
     readOnly: false,
+    // styles: {
+    //   height: '150px', // Altura del editor
+    //   width: '600px',
+    // },
   };
-
   constructor(
     private _serviceEmail: EmailService,
     private _fb: UntypedFormBuilder,
@@ -72,7 +67,15 @@ export class SendEmailComponent implements AfterViewInit {
     this.sendEmailForm = this._fb.group({
       to: [this.to ?? '', [Validators.required]],
       subject: [this.subject ?? '', [Validators.required]],
-      body: [this.body ?? '', []],
+      body: [this.body, []],
+    });
+  }
+
+  ngOnInit() {
+    this.sendEmailForm.setValue({
+      to: this.to || '',
+      subject: this.subject || '',
+      body: this.body || '',
     });
   }
 

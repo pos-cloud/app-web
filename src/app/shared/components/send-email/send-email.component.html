@@ -21,6 +21,8 @@
           <label for="body">{{ 'body' | translate | capitalize }}:</label>
           <quill-editor
             formControlName="body"
+            name="body"
+            id="body"
             [modules]="quillConfig.modules"
             [theme]="quillConfig.theme"
             style="width: 100%; height: 100px"
