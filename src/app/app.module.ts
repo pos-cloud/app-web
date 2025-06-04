@@ -39,9 +39,6 @@ import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-c
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 import { ClockComponent } from './components/clock/clock.component';
-import { AddCompanyFieldComponent } from './components/company-field/add-company-field.component';
-import { DeleteCompanyFieldComponent } from './components/company-field/delete-company-field/delete-company-field.component';
-import { UpdateCompanyFieldComponent } from './components/company-field/update-company-field/update-company-field.component';
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
 import { CountryComponent } from './components/country/country/country.component';
@@ -185,9 +182,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListMovementOfCashesComponent,
     AddUseOfCFDIComponent,
     ListUsesOfCFDIComponent,
-    AddCompanyFieldComponent,
-    UpdateCompanyFieldComponent,
-    DeleteCompanyFieldComponent,
     PushNotificationComponent,
     CancellationTypeComponent,
     ListCancellationTypeComponent,
