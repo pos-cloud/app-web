@@ -1,9 +1,5 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
@@ -13,12 +9,7 @@ import { ArticleService } from 'app/core/services/article.service';
 import { StructureService } from 'app/core/services/structure.service';
 
 import { Observable } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-structure',
@@ -75,9 +66,7 @@ export class StructureComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => (this.loading = true)),
       switchMap((term) =>
-        this.getArticles(
-          `where="description": { "$regex": "${term}", "$options": "i" }&limit=20`
-        ).then((articles) => {
+        this.getArticles(`where="description": { "$regex": "${term}", "$options": "i" }&limit=20`).then((articles) => {
           return articles;
         })
       ),
@@ -118,8 +107,7 @@ export class StructureComponent implements OnInit {
     this._structureService.getStructure(this.structureId).subscribe(
       (result) => {
         if (!result.structure) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.structure = result.structure;
@@ -153,8 +141,8 @@ export class StructureComponent implements OnInit {
 
     const values = {
       _id: this.structure._id,
-      parent: this.structure.parent,
-      child: this.structure.child,
+      parent: this.structure.parent ?? null,
+      child: this.structure.child ?? null,
       quantity: this.structure.quantity,
       utilization: this.structure.utilization,
       optional: this.structure.optional,
@@ -175,9 +163,7 @@ export class StructureComponent implements OnInit {
       increasePrice: [this.structure.increasePrice, []],
     });
 
-    this.structureForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.structureForm.valueChanges.subscribe((data) => this.onValueChanged(data));
     this.onValueChanged();
   }
 
@@ -236,17 +222,9 @@ export class StructureComponent implements OnInit {
           } else {
             if (await this.updateArticle()) {
               this.loading = false;
-              this.showMessage(
-                'La estructura se ha actualizado con éxito.',
-                'success',
-                false
-              );
+              this.showMessage('La estructura se ha actualizado con éxito.', 'success', false);
             } else {
-              this.showMessage(
-                'No se pudo actualizar el producto padre.',
-                'danger',
-                false
-              );
+              this.showMessage('No se pudo actualizar el producto padre.', 'danger', false);
             }
           }
         },
@@ -274,21 +252,13 @@ export class StructureComponent implements OnInit {
           } else {
             this.loading = false;
             if (await this.updateArticle()) {
-              this.showMessage(
-                'La estructura se ha añadido con éxito.',
-                'success',
-                false
-              );
+              this.showMessage('La estructura se ha añadido con éxito.', 'success', false);
               this.structure = new Structure();
               this.structure.parent = this.structureForm.value.parent;
               this.buildForm();
               this.focusEvent.emit(true);
             } else {
-              this.showMessage(
-                'No se pudo actualizar el producto padre.',
-                'danger',
-                false
-              );
+              this.showMessage('No se pudo actualizar el producto padre.', 'danger', false);
             }
           }
         },
@@ -351,29 +321,17 @@ export class StructureComponent implements OnInit {
     let valid = true;
 
     if (this.structure.child._id === this.structure.parent._id) {
-      this.showMessage(
-        'Un producto no puede ser estructura de si mismo.',
-        'info',
-        true
-      );
+      this.showMessage('Un producto no puede ser estructura de si mismo.', 'info', true);
       valid = false;
     }
 
-    if (
-      this.structure.quantity === 0 ||
-      this.structure.quantity < 0 ||
-      this.structure.quantity === null
-    ) {
+    if (this.structure.quantity === 0 || this.structure.quantity < 0 || this.structure.quantity === null) {
       this.showMessage('La cantidad tiene que ser mayor a 0.', 'info', true);
       valid = false;
     }
 
     if (this.structure.optional && this.structure.increasePrice === null) {
-      this.showMessage(
-        'El incremento de precio no puede ser vacio',
-        'info',
-        true
-      );
+      this.showMessage('El incremento de precio no puede ser vacio', 'info', true);
       valid = false;
     }
 
@@ -397,11 +355,7 @@ export class StructureComponent implements OnInit {
     });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

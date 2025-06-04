@@ -1,0 +1,195 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-structure' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ structure?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ structure?.name ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleStructureOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handleStructureOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="structureForm" autocomplete="off" (keydown.enter)="onEnter()" *ngIf="!loading">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="parent" class="control-label">{{ 'parent.description' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="structureForm.get('parent')"
+              [data]="articles"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+            <div
+              class="invalid-feedback"
+              *ngIf="structureForm.get('parent')?.touched && structureForm.get('parent')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="child" class="control-label">{{ 'child.description' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="structureForm.get('child')"
+              [data]="articles"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+            <div
+              class="invalid-feedback"
+              *ngIf="structureForm.get('child')?.touched && structureForm.get('child')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="quantity" class="control-label">{{ 'quantity' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="quantity"
+              name="quantity"
+              id="quantity"
+              [ngClass]="{
+                    'is-invalid': structureForm.get('quantity')?.touched && structureForm.get('quantity')?.invalid,
+                  }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="structureForm.get('quantity')?.touched && structureForm.get('quantity')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="utilization">{{ 'utilization' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="utilization">
+              <option [ngValue]="utilization.Sale">
+                {{ 'sale' | translate | capitalize }}
+              </option>
+              <option [ngValue]="utilization.Production">
+                {{ 'production' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="optional" class="control-label"> {{ 'isOptional' | translate | capitalize }} </label>
+            <select class="form-control" formControlName="optional">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div *ngIf="structureForm.get('optional')?.value" class="form-group col-md-3">
+            <label for="name" class="control-label">{{ 'unitPriceIncrease' | translate | capitalize }}</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="increasePrice"
+                name="increasePrice"
+                id="increasePrice"
+              />
+              <button
+                type="button"
+                class="btn btn-light"
+                placement="right"
+                popoverClass="popover-class"
+                ngbPopover="¿Incrementa el precio al realizar una venta?"
+              >
+                <b>?</b>
+              </button>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ structure?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ structure?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ structure?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ structure?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ structure?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

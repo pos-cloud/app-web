@@ -37,6 +37,7 @@ export { Resource } from './entities/resource.interface';
 export { Room } from './entities/room.interface';
 export { ShipmentMethod } from './entities/shipment-method.interface';
 export { State } from './entities/state.interface';
+export { Structure, Utilization } from './entities/structure.interface';
 export { Table, TableState } from './entities/table.interface';
 export { Tax, Taxes } from './entities/tax.interface';
 export { TransactionType } from './entities/transaction-type.interface';
