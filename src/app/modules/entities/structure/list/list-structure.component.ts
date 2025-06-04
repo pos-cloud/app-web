@@ -1,6 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { StructureService } from '@core/services/structure.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationQuestionComponent } from '@shared/components/confirm/confirmation-question.component';
+import { ToastService } from '@shared/components/toast/toast.service';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
@@ -18,6 +21,12 @@ export class ListStructureComponent {
   public pathLocation: string[];
   public loading: boolean = false;
   public headerButtons: IButton[] = [
+    {
+      title: 'update-cost',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.emitEvent('update-base-price', null)`,
+    },
     {
       title: 'add',
       class: 'btn btn-light',
@@ -54,7 +63,13 @@ export class ListStructureComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: StructureService, private _router: Router) {
+  constructor(
+    public _service: StructureService,
+    private _router: Router,
+    private _modalService: NgbModal,
+    private _structureService: StructureService,
+    private _toastService: ToastService
+  ) {
     this.columns = [
       {
         name: 'parent.code',
@@ -217,6 +232,31 @@ export class ListStructureComponent {
         break;
       case 'add':
         this._router.navigateByUrl('entities/structure/add');
+        break;
+      case 'update-base-price':
+        let modalRef = this._modalService.open(ConfirmationQuestionComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.title = 'Actualizar Precios bases';
+        modalRef.componentInstance.subtitle =
+          'Actualiza los precios de bases de aquellos productos que tienen estructura. Consiste en sumar los precios bases de sus hijos y actualizar el precio base del padre. ¿ Esta seguro de ejectura esta rutina ?';
+        modalRef.result.then((result) => {
+          if (result) {
+            this.loading = true;
+            this._structureService.updateBasePriceByStruct().subscribe({
+              next: (response) => {
+                this._toastService.showToast(response);
+              },
+              error: (error) => {
+                this._toastService.showToast(error);
+              },
+              complete: () => {
+                this.loading = false;
+              },
+            });
+          }
+        });
         break;
     }
   }

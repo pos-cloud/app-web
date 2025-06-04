@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Structure } from 'app/components/structure/structure';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -8,15 +7,13 @@ import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
 import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { Structure } from '@types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StructureService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `structures`, // PATH
       _http,

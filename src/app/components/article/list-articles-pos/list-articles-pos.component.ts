@@ -12,10 +12,9 @@ import { Article, Type } from '../article';
 
 import { ArticleService } from '../../../core/services/article.service';
 
-import { CompanyType, PriceList } from '@types';
+import { CompanyType, PriceList, Structure, Utilization } from '@types';
 import { ArticleFieldType } from 'app/components/article-field/article-field';
 import { ArticleFields } from 'app/components/article-field/article-fields';
-import { Structure, Utilization } from 'app/components/structure/structure';
 import { Tax } from 'app/components/tax/tax';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';

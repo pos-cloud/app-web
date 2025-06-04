@@ -1,9 +1,9 @@
-import { Activity, Article } from '@types';
+import { Activity } from '@types';
 
 export interface Structure extends Activity {
   _id: string;
-  parent: Article;
-  child: Article;
+  parent: any;
+  child: any;
   quantity: number;
   utilization: Utilization;
   optional: boolean;

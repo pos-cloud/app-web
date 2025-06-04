@@ -91,8 +91,7 @@ import { ReportTransactionTypeComponent } from './components/report-transaction-
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StateComponent } from './components/state/state/state.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
-import { ListStructureComponent } from './components/structure/list-structure/list-structure.component';
-import { StructureComponent } from './components/structure/structure/structure.component';
+
 import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
@@ -206,8 +205,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintVatBookComponent,
     PrintTransactionTypeComponent,
     ShortcutComponent,
-    StructureComponent,
-    ListStructureComponent,
     CancellationTypeAutomaticComponent,
     ListMovementsOfArticlesComponent,
     VoucherReaderComponent,

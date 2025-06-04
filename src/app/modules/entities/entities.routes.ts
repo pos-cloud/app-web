@@ -100,7 +100,7 @@ export const ENTITIES_ROUTES: Routes = [
     loadChildren: () => import('./shipment-method/shipment-method.routes').then((m) => m.SHIPMENT_METHOD_ROUTES),
   },
   {
-    path: 'structure',
+    path: 'structures',
     loadChildren: () => import('./structure/structure.routes').then((m) => m.STRUCTURE_ROUTES),
   },
 ];

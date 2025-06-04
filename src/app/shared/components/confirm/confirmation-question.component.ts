@@ -1,11 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input } from '@angular/core';
-import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 
 @Component({
   selector: 'app-confirmation-question',
   templateUrl: './confirmation-question.component.html',
   styleUrls: ['./confirmation-question.component.css'],
+  standalone: true,
+  imports: [CommonModule, NgbAlertModule],
   providers: [NgbAlertConfig, TranslateMePipe],
 })
 export class ConfirmationQuestionComponent {

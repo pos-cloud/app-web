@@ -40,7 +40,6 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
 import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
-import { ListStructureComponent } from './components/structure/list-structure/list-structure.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { ListTransportComponent } from './components/transport/list-transports/list-transports.component';
@@ -369,11 +368,6 @@ export const _routes: Routes = [
     component: ListMovementsOfArticlesComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.stock' },
-  },
-  {
-    path: 'admin/structures',
-    component: ListStructureComponent,
-    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/template-emails',
