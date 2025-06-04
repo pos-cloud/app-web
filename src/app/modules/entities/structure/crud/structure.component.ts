@@ -11,7 +11,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -23,7 +22,6 @@ import { takeUntil } from 'rxjs/operators';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FocusDirective,
     PipesModule,
     TranslateModule,
     TypeaheadDropdownComponent,
