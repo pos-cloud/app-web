@@ -62,8 +62,8 @@ export class CategoryComponent implements OnInit {
       publishWooCommerce: [false, []],
       publishTiendaNube: [false, []],
       visibleInvoice: [false, []],
-      visibleOnSale: [false, []],
-      visibleOnPurchase: [false, []],
+      visibleOnSale: [true, []],
+      visibleOnPurchase: [true, []],
       showMenu: [false, []],
       tiendaNubeId: [],
     });
