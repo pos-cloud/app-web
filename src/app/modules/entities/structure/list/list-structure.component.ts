@@ -222,16 +222,16 @@ export class ListStructureComponent {
   public async redirect(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('entities/structure/view/' + obj._id);
+        this._router.navigateByUrl('entities/structures/view/' + obj._id);
         break;
       case 'update':
-        this._router.navigateByUrl('entities/structure/update/' + obj._id);
+        this._router.navigateByUrl('entities/structures/update/' + obj._id);
         break;
       case 'delete':
-        this._router.navigateByUrl('entities/structure/delete/' + obj._id);
+        this._router.navigateByUrl('entities/structures/delete/' + obj._id);
         break;
       case 'add':
-        this._router.navigateByUrl('entities/structure/add');
+        this._router.navigateByUrl('entities/structures/add');
         break;
       case 'update-base-price':
         let modalRef = this._modalService.open(ConfirmationQuestionComponent, {
