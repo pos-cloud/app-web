@@ -115,7 +115,7 @@ export class StructureComponent implements OnInit {
   }
 
   returnTo() {
-    return this._router.navigate(['/entities/structure']);
+    return this._router.navigate(['/entities/structures']);
   }
 
   onEnter() {

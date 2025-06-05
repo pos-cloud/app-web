@@ -63,7 +63,6 @@
   "article": "Artículo",
   "article._id": "Identificador Artículo",
   "article.barcode": "Código de Barras",
-
   "article.basePrice": "Precio Base",
   "article.category.description": "Categoría",
   "article.category.parent.description": "Categoría padre",
@@ -719,5 +718,9 @@
   "add-article": "Agregar producto",
   "add-company": "Agregar compañía",
   "max-length": "Máximo permitido: {{max}} caracteres",
-  "article.observation": "Observación"
+  "article.observation": "Observación",
+  "structure": "Estructura",
+  "structures": "Estructuras",
+  "update-cost": "Actualizar costos",
+  "add-structure": "Agregar estructura"
 }

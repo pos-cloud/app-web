@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators'
 @Component({
   selector: 'app-typeahead-dropdown',
   templateUrl: './typeahead-dropdown.component.html',
+  styleUrls: ['./typeahead-dropdown.component.scss'],
   standalone: true,
   imports: [CommonModule, NgbDropdownModule, NgbTypeaheadModule, ReactiveFormsModule],
 })
