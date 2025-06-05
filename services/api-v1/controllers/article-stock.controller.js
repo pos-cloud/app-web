@@ -481,6 +481,38 @@ function getArticleStocksV2(req, res, next) {
             },
           });
         }
+        if (searchPropertyOfArray(project, 'article.variantType1.')) {
+          queryAggregate.push({
+            $lookup: {
+              from: 'variant-types',
+              foreignField: '_id',
+              localField: 'article.variantType1',
+              as: 'article.variantType1',
+            },
+          });
+          queryAggregate.push({
+            $unwind: {
+              path: '$article.variantType1',
+              preserveNullAndEmptyArrays: true,
+            },
+          });
+        }
+        if (searchPropertyOfArray(project, 'article.variantValue1.')) {
+          queryAggregate.push({
+            $lookup: {
+              from: 'variant-values',
+              foreignField: '_id',
+              localField: 'article.variantValue1',
+              as: 'article.variantValue1',
+            },
+          });
+          queryAggregate.push({
+            $unwind: {
+              path: '$article.variantValue1',
+              preserveNullAndEmptyArrays: true,
+            },
+          });
+        }
 
         if (
           searchPropertyOfArray(project, 'articleproviders.') ||
@@ -879,28 +911,28 @@ async function updateStockByArticle(
                 transaction.branchOrigin._id &&
                 movementOfArticle.deposit.branch._id &&
                 transaction.branchOrigin._id.toString() ==
-                  movementOfArticle.deposit.branch._id.toString()
+                movementOfArticle.deposit.branch._id.toString()
               ) {
                 equalsOrigin = true;
               } else if (
                 !transaction.branchOrigin._id &&
                 movementOfArticle.deposit.branch._id &&
                 transaction.branchOrigin.toString() ==
-                  movementOfArticle.deposit.branch._id.toString()
+                movementOfArticle.deposit.branch._id.toString()
               ) {
                 equalsOrigin = true;
               } else if (
                 !transaction.branchOrigin._id &&
                 !movementOfArticle.deposit.branch._id &&
                 transaction.branchOrigin.toString() ==
-                  movementOfArticle.deposit.branch.toString()
+                movementOfArticle.deposit.branch.toString()
               ) {
                 equalsOrigin = true;
               } else if (
                 transaction.branchOrigin._id &&
                 !movementOfArticle.deposit.branch._id &&
                 transaction.branchOrigin._id.toString() ==
-                  movementOfArticle.deposit.branch.toString()
+                movementOfArticle.deposit.branch.toString()
               ) {
                 equalsOrigin = true;
               }
@@ -987,28 +1019,28 @@ async function updateStockByArticle(
                 transaction.branchOrigin._id &&
                 movementOfArticle.deposit.branch._id &&
                 transaction.branchOrigin._id.toString() ==
-                  movementOfArticle.deposit.branch._id.toString()
+                movementOfArticle.deposit.branch._id.toString()
               ) {
                 equalsOrigin = true;
               } else if (
                 !transaction.branchOrigin._id &&
                 movementOfArticle.deposit.branch._id &&
                 transaction.branchOrigin.toString() ==
-                  movementOfArticle.deposit.branch._id.toString()
+                movementOfArticle.deposit.branch._id.toString()
               ) {
                 equalsOrigin = true;
               } else if (
                 !transaction.branchOrigin._id &&
                 !movementOfArticle.deposit.branch._id &&
                 transaction.branchOrigin.toString() ==
-                  movementOfArticle.deposit.branch.toString()
+                movementOfArticle.deposit.branch.toString()
               ) {
                 equalsOrigin = true;
               } else if (
                 transaction.branchOrigin._id &&
                 !movementOfArticle.deposit.branch._id &&
                 transaction.branchOrigin._id.toString() ==
-                  movementOfArticle.deposit.branch.toString()
+                movementOfArticle.deposit.branch.toString()
               ) {
                 equalsOrigin = true;
               }
