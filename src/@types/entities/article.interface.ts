@@ -81,6 +81,7 @@ export interface Article extends Activity {
   pointOfOrder: number;
   purchasePrice: number;
   costPrice2: number;
+  season: string;
   m3: number;
   weight: number;
   width: number;

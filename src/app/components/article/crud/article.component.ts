@@ -232,7 +232,6 @@ export class ArticleComponent implements OnInit {
   };
 
   formatResult = (result: any) => {
-    console.log(result);
     if (result.parent && result.parent) {
       return result.description + ' - ' + this.categories.find((c: Category) => c._id === result.parent).description;
     }
@@ -498,6 +497,7 @@ export class ArticleComponent implements OnInit {
       observation: [this.article.observation, []],
       barcode: [this.article.barcode, []],
       printIn: [this.article.printIn, []],
+      season: [this.article.season, []],
       allowPurchase: [this.article.allowPurchase, []],
       allowSale: [this.article.allowSale, []],
       allowStock: [this.article.allowStock, []],
@@ -1473,6 +1473,7 @@ export class ArticleComponent implements OnInit {
       allowStock: this.article.allowStock ?? null,
       wooId: this.article.wooId ?? null,
       purchasePrice: this.article.purchasePrice ?? null,
+      season: this.article.season ?? '',
       m3: this.article.m3 ?? null,
       weight: this.article.weight ?? null,
       height: this.article.height ?? null,

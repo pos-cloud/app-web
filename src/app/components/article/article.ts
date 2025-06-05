@@ -118,6 +118,7 @@ export class Article {
   public variantValue1: VariantValue;
   public variantType2: VariantType;
   public variantValue2: VariantValue;
+  public season: string;
   public variants: [
     {
       value: VariantValue;
@@ -285,6 +286,16 @@ export let attributesVariant = [
   {
     name: 'barcode',
     visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
+    name: 'season',
+    visible: false,
     disabled: false,
     filter: true,
     datatype: 'string',

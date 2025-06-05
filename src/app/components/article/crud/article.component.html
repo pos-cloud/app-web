@@ -271,19 +271,7 @@
                 >
                 </quill-editor>
               </div>
-              <div class="form-group col-md-5">
-                <label for="seson" class="control-label">{{ 'season' | translate | capitalize }}:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="note"
-                  id="note"
-                  (keydown.enter)="addNote($event.target.value)"
-                  placeholder="Ingresar la nota y luego presionar enter por cada nota."
-                  [focus]="focusNoteEvent"
-                  [readonly]="readonly"
-                />
-              </div>
+
               <div class="form-group col-md-5">
                 <label for="note" class="control-label">{{ 'notes' | translate | capitalize }}:</label>
                 <input
@@ -764,6 +752,10 @@
                 >
               </div>
             </div>
+          </div>
+          <div class="form-group col-md-5">
+            <label for="season" class="control-label">{{ 'season' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" formControlName="season" id="season" [readonly]="readonly" />
           </div>
         </div>
         <div class="row">

@@ -248,7 +248,16 @@ export class ListArticlesComponent {
       align: 'left',
       required: false,
     },
-
+    {
+      name: 'season',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
     {
       name: 'printIn',
       visible: false,
