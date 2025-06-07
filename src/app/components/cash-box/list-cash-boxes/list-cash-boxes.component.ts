@@ -1,23 +1,23 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { CashBoxService } from '../../../core/services/cash-box.service';
 import { CashBox } from '../cash-box';
 
+import { PrintService } from '@core/services/print.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ApiResponse, PrintType } from '@types';
 import { Printer } from 'app/components/printer/printer';
 import { User } from 'app/components/user/user';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { PrintComponent } from '../../print/print/print.component';
+import * as printJS from 'print-js';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-cash-boxes',
@@ -35,6 +35,7 @@ export class ListCashBoxesComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
+  private destroy$ = new Subject<void>();
   public itemsPerPage = 10;
   public totalItems = 0;
   public filterNumber;
@@ -54,6 +55,7 @@ export class ListCashBoxesComponent implements OnInit {
     private _userService: UserService,
     private _toastService: ToastService,
     public activeModal: NgbActiveModal,
+    public _printService: PrintService,
     public _transactionTypeService: TransactionTypeService
   ) {}
 
@@ -75,20 +77,14 @@ export class ListCashBoxesComponent implements OnInit {
     this.loading = true;
     let user: User = await this.getUser();
     let query = '';
-    if (
-      user &&
-      user.employee &&
-      user.employee.type &&
-      user.employee.type.description !== 'Administrador'
-    ) {
+    if (user && user.employee && user.employee.type && user.employee.type.description !== 'Administrador') {
       query = 'where="employee":"' + user.employee._id + '"';
     }
 
     this._cashBoxService.getCashBoxes(query).subscribe(
       async (result) => {
         if (!result.cashBoxes) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.cashBoxes = new Array();
           this.areCashBoxesEmpty = true;
@@ -187,36 +183,63 @@ export class ListCashBoxesComponent implements OnInit {
       );
   }
 
-  public openModal(
-    op: string,
-    cashBox: CashBox,
-    printer: Printer = null
-  ): void {
+  public openModal(op: string, cashBox: CashBox, printer: Printer = null): void {
     let modalRef;
     switch (op) {
       case 'print':
-        let modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.cashBox = cashBox;
-        modalRef.componentInstance.printer = printer;
-        modalRef.componentInstance.typePrint = 'cash-box';
-        modalRef.result.then(
-          (result) => {},
-          (reason) => {}
-        );
-        break;
+        const dataLabels = {
+          cashBoxId: cashBox._id,
+        };
+        this.toPrint(PrintType.CashBox, dataLabels);
+      // let modalRef = this._modalService.open(PrintComponent);
+      // modalRef.componentInstance.cashBox = cashBox;
+      // modalRef.componentInstance.printer = printer;
+      // modalRef.componentInstance.typePrint = 'cash-box';
+      // modalRef.result.then(
+      //   (result) => {},
+      //   (reason) => {}
+      // );
+      // break;
       default:
     }
   }
 
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
+  }
   openListCashBox(cashBox: CashBox) {
     this._router.navigateByUrl('report/list-box/' + cashBox._id);
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

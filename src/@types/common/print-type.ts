@@ -8,4 +8,5 @@ export enum PrintType {
   Kitchen = 'kitchen',
   Inventory = 'inventory',
   Qr = 'qr',
+  CashBox = 'cash-box',
 }
