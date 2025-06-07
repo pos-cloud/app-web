@@ -1,15 +1,6 @@
 // ANGULAR
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 // TERCEROS
@@ -91,9 +82,7 @@ export class LoginComponent implements OnInit {
   }
 
   async lockInput() {
-    this.checkLockInput
-      ? (this.checkLockInput = false)
-      : (this.checkLockInput = true);
+    this.checkLockInput ? (this.checkLockInput = false) : (this.checkLockInput = true);
   }
 
   private processParams(): void {
@@ -162,8 +151,7 @@ export class LoginComponent implements OnInit {
         async (result) => {
           this.loading = false;
           if (!result.user) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
             if (result.user.employee) {
               this.showMessage('Ingresando...', 'success', false);
@@ -180,26 +168,19 @@ export class LoginComponent implements OnInit {
               Config.setDatabase(this.company);
               localStorage.setItem('company', this.company);
 
-              this._route.queryParams.subscribe(
-                (params) => params['return'] || '/'
-              );
-              this._router.navigateByUrl('/');
+              // Obtener la URL de retorno y navegar a ella
+              this._route.queryParams.subscribe((params) => {
+                const returnUrl = params['return'] || '/';
+                this._router.navigateByUrl(returnUrl);
+              });
             } else {
-              this.showMessage(
-                'El usuario y/o contraseña son incorrectos',
-                'info',
-                true
-              );
+              this.showMessage('El usuario y/o contraseña son incorrectos', 'info', true);
             }
           }
         },
         (error) => {
           if (error.status === 0) {
-            this.showMessage(
-              'Error de conexión con el servidor. Comunicarse con Soporte.',
-              'danger',
-              false
-            );
+            this.showMessage('Error de conexión con el servidor. Comunicarse con Soporte.', 'danger', false);
           } else {
             this.showMessage(error._body, 'danger', false);
           }
@@ -274,11 +255,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
