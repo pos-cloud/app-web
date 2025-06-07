@@ -24,8 +24,8 @@
     <script>
       (function () {
         const hash = window.location.hash;
-        if (hash.startsWith('#/menu/')) {
-          const path = hash.substring(2);
+        if (hash) {
+          const path = hash.substring(1);
           window.history.replaceState(null, '', path);
         }
       })();
