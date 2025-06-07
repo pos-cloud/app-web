@@ -1796,10 +1796,17 @@ export class AddMovementOfCashComponent implements OnInit {
           this._currencyAccountService.getTotalOfAccountsByCompany(JSON.stringify(query)).subscribe(
             (result) => {
               if (result.status === 200) {
-                let total = result.result[0]?.totalPrice;
-                if (total > this.transaction?.company?.creditLimit) {
+                let total = result.result[0]?.totalPrice ?? 0;
+                if (
+                  total > this.transaction?.company?.creditLimit ||
+                  this.movementOfCash?.amountPaid > this.transaction?.company?.creditLimit
+                ) {
                   this._toastService.showToast({
-                    message: 'El total de la transaccion supera el límite de crédito asignado a esta empresa.',
+                    message: `El limite de credito es de ${
+                      this.transaction?.company?.creditLimit
+                    } y esta transaccion lo supera por ${
+                      this.transaction?.company?.creditLimit - this.movementOfCash?.amountPaid
+                    }`,
                     type: 'warning',
                   });
                   resolve(false);
