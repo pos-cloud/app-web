@@ -20,7 +20,7 @@ import { TransactionTypeService } from '../../../core/services/transaction-type.
 import { TransactionService } from '../../../core/services/transaction.service';
 
 //Pipes
-import { ApiResponse, Company, CompanyType, Employee } from '@types';
+import { Account, ApiResponse, Company, CompanyType, Employee } from '@types';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable } from 'rxjs';
@@ -36,7 +36,6 @@ import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { MovementOfCancellationComponent } from '../../movement-of-cancellation/movement-of-cancellation.component';
 import { TaxBase, TaxClassification } from '../../tax/tax';
 import { Config } from './../../../app.config';
-import { Account } from './../../../components/account/account';
 import { MovementOfCancellation } from './../../../components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCash } from './../../../components/movement-of-cash/movement-of-cash';
 

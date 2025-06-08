@@ -1,6 +1,6 @@
 // entities
 export { AccountPeriod } from './entities/account-period.interface';
-export { Account } from './entities/account.interface';
+export { Account, Modes, Types } from './entities/account.interface';
 export { Address } from './entities/address.interface';
 export { Application } from './entities/application.interface';
 export { Article } from './entities/article.interface';

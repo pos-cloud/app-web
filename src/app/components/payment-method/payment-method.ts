@@ -1,8 +1,7 @@
 import { User } from '../user/user';
 
-import { Currency } from '@types';
+import { Account, Currency } from '@types';
 import * as moment from 'moment';
-import { Account } from '../account/account';
 import { Application } from '../application/application.model';
 import { Article } from '../article/article';
 

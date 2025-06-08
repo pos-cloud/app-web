@@ -1,26 +1,17 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Account } from 'app/components/account/account';
 import { Printer } from 'app/components/printer/printer';
 import { AccountService } from 'app/core/services/account.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { Observable } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 import { Tax, TaxBase, TaxClassification, TaxType } from '../tax';
 
+import { Account } from '@types';
 import { TaxService } from '../../../core/services/tax.service';
 
 @Component({
@@ -41,12 +32,7 @@ export class TaxComponent implements OnInit {
     TaxClassification.Withholding,
     TaxClassification.Perception,
   ];
-  public taxTypes: TaxType[] = [
-    TaxType.None,
-    TaxType.National,
-    TaxType.State,
-    TaxType.City,
-  ];
+  public taxTypes: TaxType[] = [TaxType.None, TaxType.National, TaxType.State, TaxType.City];
   public taxForm: UntypedFormGroup;
   public alertMessage: string = '';
   public userType: string;
@@ -83,8 +69,7 @@ export class TaxComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
+        let match: {} = term && term !== '' ? { name: { $regex: term, $options: 'i' } } : {};
         return await this.getAllPrinters(match).then((result) => {
           return result;
         });
@@ -208,8 +193,7 @@ export class TaxComponent implements OnInit {
       this._taxService.getTax(taxId).subscribe(
         (result) => {
           if (!result.tax) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.tax);
@@ -228,8 +212,7 @@ export class TaxComponent implements OnInit {
       this._taxService.getTaxes(query).subscribe(
         (result) => {
           if (!result.taxes) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.taxes);
@@ -251,8 +234,7 @@ export class TaxComponent implements OnInit {
     if (!this.tax.percentage) this.tax.percentage = 0;
     if (!this.tax.amount) this.tax.amount = 0;
     if (!this.tax.type) this.tax.type = TaxType.None;
-    if (!this.tax.classification)
-      this.tax.classification = TaxClassification.None;
+    if (!this.tax.classification) this.tax.classification = TaxClassification.None;
     if (!this.tax.lastNumber) this.tax.lastNumber = 0;
     if (!this.tax.debitAccount) this.tax.debitAccount = null;
     if (!this.tax.creditAccount) this.tax.creditAccount = null;
@@ -293,16 +275,11 @@ export class TaxComponent implements OnInit {
     this._taxService.saveTax(this.tax).subscribe(
       (result) => {
         if (!result.tax) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.tax = result.tax;
-          this.showMessage(
-            'El impuesto se ha añadido con éxito.',
-            'success',
-            true
-          );
+          this.showMessage('El impuesto se ha añadido con éxito.', 'success', true);
           let code = this.tax.code;
           this.tax = new Tax();
           this.buildForm();
@@ -326,16 +303,11 @@ export class TaxComponent implements OnInit {
     this._taxService.updateTax(this.tax).subscribe(
       (result) => {
         if (!result.tax) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.tax = result.tax;
-          this.showMessage(
-            'El impuesto se ha actualizado con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El impuesto se ha actualizado con éxito.', 'success', false);
         }
         this.loading = false;
       },
@@ -395,11 +367,7 @@ export class TaxComponent implements OnInit {
     });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

@@ -37,7 +37,6 @@ import { AccountService } from '../../../core/services/account.service';
 import { ApplicationService } from '../../../core/services/application.service';
 import { ClassificationService } from '../../../core/services/classification.service';
 import { ConfigService } from '../../../core/services/config.service';
-import { Account } from '../../account/account';
 import { Application } from '../../application/application.model';
 
 // Services
@@ -46,7 +45,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
 
 // Pipes
 import { TranslateService } from '@ngx-translate/core';
-import { ApiResponse, Currency, MediaCategory } from '@types';
+import { Account, ApiResponse, Currency, MediaCategory } from '@types';
 import { User } from 'app/components/user/user';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { CompanyService } from 'app/core/services/company.service';

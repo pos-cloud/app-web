@@ -2,8 +2,7 @@ import { Component, EventEmitter, Input, OnInit, ViewEncapsulation } from '@angu
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CompanyType, Structure, Utilization } from '@types';
-import { Account } from 'app/components/account/account';
+import { Account, CompanyType, Structure, Utilization } from '@types';
 import { PriceList } from 'app/components/price-list/price-list';
 import { Transaction } from 'app/components/transaction/transaction';
 import { AccountService } from 'app/core/services/account.service';

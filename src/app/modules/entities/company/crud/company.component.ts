@@ -18,6 +18,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import {
+  Account,
   Address,
   ApiResponse,
   Company,
@@ -32,7 +33,6 @@ import {
   VATCondition,
 } from '@types';
 import { Config } from 'app/app.config';
-import { Account } from 'app/components/account/account';
 import { AccountService } from 'app/core/services/account.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';

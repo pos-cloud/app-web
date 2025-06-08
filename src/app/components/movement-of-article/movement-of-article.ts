@@ -1,7 +1,6 @@
 import * as moment from 'moment';
 
-import { Deposit, Make } from '@types';
-import { Account } from '../account/account';
+import { Account, Deposit, Make } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Article, ArticlePrintIn } from '../article/article';
 import { Category } from '../category/category';

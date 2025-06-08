@@ -1,5 +1,4 @@
-import { AccountPeriod, IAttribute } from '@types';
-import { Account } from '../account/account';
+import { Account, AccountPeriod, IAttribute } from '@types';
 import { Model } from '../model/model.model';
 import { Transaction } from '../transaction/transaction';
 

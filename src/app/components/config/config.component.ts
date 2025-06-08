@@ -18,14 +18,13 @@ import { UserService } from '../../core/services/user.service';
 import { VATConditionService } from '../../core/services/vat-condition.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 
-import { Currency, IdentificationType, MediaCategory } from '@types';
+import { Account, Currency, IdentificationType, MediaCategory } from '@types';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { FileService } from 'app/core/services/file.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
 import { AccountService } from '../../core/services/account.service';
-import { Account } from '../account/account';
 
 @Component({
   selector: 'app-config',

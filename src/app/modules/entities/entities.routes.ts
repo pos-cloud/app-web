@@ -2,6 +2,10 @@ import { Routes } from '@angular/router';
 
 export const ENTITIES_ROUTES: Routes = [
   {
+    path: 'accounts',
+    loadChildren: () => import('./account/account.routes').then((m) => m.ACCOUNT_ROUTES),
+  },
+  {
     path: 'banks',
     loadChildren: () => import('./bank/bank.routes').then((m) => m.BANK_ROUTES),
   },

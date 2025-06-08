@@ -1,0 +1,198 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-account' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ account?.description ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ account?.description ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleAccountOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handleAccountOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form
+        [formGroup]="accountForm"
+        (ngSubmit)="handleAccountOperation()"
+        autocomplete="off"
+        (keydown.enter)="onEnter()"
+        *ngIf="!loading"
+      >
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="code" class="control-label">{{ 'code' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              name="code"
+              id="code"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': accountForm.get('code')?.touched && accountForm.get('code')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="accountForm.get('code')?.touched && accountForm.get('code')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-5">
+            <label for="description" class="control-label">{{ 'description' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              name="description"
+              id="description"
+              [ngClass]="{
+                'is-invalid': accountForm.get('description')?.touched && accountForm.get('description')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="accountForm.get('description')?.touched && accountForm.get('description')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="type" class="control-label">{{ 'type' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="type"
+              name="type"
+              id="type"
+              [ngClass]="{
+                'is-invalid': accountForm.get('type')?.touched && accountForm.get('type')?.invalid,
+              }"
+            >
+              <option value="">{{ 'select' | translate | capitalize }}</option>
+              <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="accountForm.get('type')?.touched && accountForm.get('type')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="mode" class="control-label">{{ 'mode' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="mode"
+              name="mode"
+              id="mode"
+              [ngClass]="{
+                'is-invalid': accountForm.get('mode')?.touched && accountForm.get('mode')?.invalid,
+              }"
+            >
+              <option value="">{{ 'select' | translate | capitalize }}</option>
+              <option *ngFor="let mode of modes" [value]="mode">{{ mode }}</option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="accountForm.get('mode')?.touched && accountForm.get('mode')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="parent" class="control-label">{{ 'parent' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="accountForm.get('parent')"
+              [data]="accounts"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ account?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ account?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ account?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ account?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ account?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

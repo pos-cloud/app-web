@@ -1,24 +1,22 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { BankService } from '@core/services/bank.service';
-
-import { Account, ApiResponse, Bank } from '@types';
-
-import { CommonModule } from '@angular/common';
+import { AccountService } from '@core/services/account.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { AccountService } from 'app/core/services/account.service';
+import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
+import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
+import { Account, ApiResponse, Modes, Types } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { Subject } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-bank',
-  templateUrl: './bank.component.html',
+  selector: 'app-account',
+  templateUrl: './account.component.html',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,43 +25,70 @@ import { takeUntil } from 'rxjs/operators';
     PipesModule,
     TranslateModule,
     TypeaheadDropdownComponent,
+    ProgressbarModule,
   ],
 })
-export class BankComponent implements OnInit {
+export class AccountComponent implements OnInit {
+  public accountId: string;
   public operation: string;
-  public readonly: boolean;
-  public bank: Bank;
+  public account: Account;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public bankForm: UntypedFormGroup;
-  public accounts: Account[];
+  public accountForm: UntypedFormGroup;
   private destroy$ = new Subject<void>();
+  public accounts: Account[];
+  public types = Object.values(Types);
+  public modes = Object.values(Modes);
 
   constructor(
-    public _bankService: BankService,
     public _accountService: AccountService,
-    public _router: Router,
     public _fb: UntypedFormBuilder,
+    public activeModal: NgbActiveModal,
+    public _router: Router,
     private _toastService: ToastService
   ) {
-    this.bankForm = this._fb.group({
+    this.accountForm = this._fb.group({
       _id: ['', []],
       code: ['', [Validators.required]],
-      name: ['', [Validators.required]],
-      agency: ['', []],
-      account: [null, []],
+      description: ['', [Validators.required]],
+      type: ['', [Validators.required]],
+      mode: ['', [Validators.required]],
+      parent: ['', []],
     });
   }
 
   ngOnInit() {
-    const pathUrl = this._router.url.split('/');
+    const URL = this._router.url.split('/');
+    this.operation = URL[3];
+    this.accountId = URL[4];
 
-    const bankId = pathUrl[4];
-    this.operation = pathUrl[3];
-    this.getAccount();
+    if (this.operation === 'view' || this.operation === 'delete') {
+      this.accountForm.disable();
+    }
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.bankForm.disable();
-    if (bankId) this.getBank(bankId);
+    this.loading = true;
+
+    combineLatest({
+      accounts: this._accountService.find({ query: { operationType: { $ne: 'D' } } }),
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ accounts }) => {
+          this.accounts = accounts ?? [];
+
+          if (this.accountId) {
+            this.getAccount(this.accountId);
+          } else {
+            this.setValueForm();
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   ngAfterViewInit() {
@@ -77,52 +102,32 @@ export class BankComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    const account = this.accounts?.find((item) => item._id === this.bank?.account?.toString());
+    const accountParent = this.accounts?.find((item) => item._id === this.account?.parent?._id);
 
     const values = {
-      _id: this.bank._id ?? '',
-      code: this.bank.code ?? 0,
-      name: this.bank.name ?? '',
-      agency: this.bank.agency ?? 0,
-      account: account ?? null,
+      _id: this.account?._id ?? '',
+      code: this.account?.code ?? '',
+      description: this.account?.description ?? '',
+      type: this.account?.type ?? '',
+      mode: this.account?.mode ?? '',
+      parent: accountParent ?? null,
     };
-    this.bankForm.setValue(values);
+    this.accountForm.setValue(values);
   }
 
-  returnTo() {
-    return this._router.navigate(['/entities/banks']);
+  public returnTo() {
+    this._router.navigateByUrl('entities/accounts');
   }
 
-  getAccount(): Promise<void> {
-    this.loading = true;
-    return new Promise(() => {
-      this._accountService
-        .find({ query: { operationType: { $ne: 'D' } } })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.accounts = result;
-            this.setValueForm();
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-          },
-          complete: () => {
-            this.loading = false;
-          },
-        });
-    });
-  }
-
-  public getBank(id: string) {
+  public getAccount(id: string) {
     this.loading = true;
 
-    this._bankService
+    this._accountService
       .getById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this.bank = result.result;
+          this.account = result.result;
           if (result.status == 200) this.setValueForm();
         },
         error: (error) => {
@@ -134,33 +139,34 @@ export class BankComponent implements OnInit {
       });
   }
 
-  public handleBankOperation() {
+  public handleAccountOperation() {
     this.loading = true;
-    this.bankForm.markAllAsTouched();
-    if (this.bankForm.invalid) {
+    this.accountForm.markAllAsTouched();
+    if (this.accountForm.invalid) {
       this.loading = false;
       return;
     }
 
-    this.bank = this.bankForm.value;
+    this.account = this.accountForm.value;
 
     switch (this.operation) {
       case 'add':
-        this.saveBank();
+        this.saveAccount();
         break;
       case 'update':
-        this.updateBank();
+        this.updateAccount();
         break;
       case 'delete':
-        this.deleteBank();
+        this.deleteAccount();
+        break;
       default:
         break;
     }
   }
 
-  public updateBank() {
-    this._bankService
-      .update(this.bank)
+  public updateAccount() {
+    this._accountService
+      .update(this.account)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
@@ -176,9 +182,9 @@ export class BankComponent implements OnInit {
       });
   }
 
-  public saveBank() {
-    this._bankService
-      .save(this.bank)
+  public saveAccount() {
+    this._accountService
+      .save(this.account)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
@@ -194,9 +200,9 @@ export class BankComponent implements OnInit {
       });
   }
 
-  public deleteBank() {
-    this._bankService
-      .delete(this.bank._id)
+  public deleteAccount() {
+    this._accountService
+      .delete(this.account._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {

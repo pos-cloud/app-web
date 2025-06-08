@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 
 import { AccountSeatModule } from './account-seat/account-seat.module';
-import { AccountModule } from './account/account.module';
 import { ApplicationModule } from './application/application.module';
 import { ArticleModule } from './article/article.module';
 import { BusinessRuleModule } from './business-rules/business-rule.module';
@@ -30,7 +29,6 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
     TransactionTypeModule,
     CategoryModule,
     CompanyGroupModule,
-    AccountModule,
     AccountSeatModule,
     ReportModule,
     BusinessRuleModule,
