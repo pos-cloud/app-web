@@ -93,7 +93,7 @@ export class HeaderComponent implements OnInit {
         { label: 'Clientes', link: 'entities/companies/client' },
         { label: 'Proveedores', link: 'entities/companies/provider' },
         { label: '', isDivider: true },
-        { label: 'Grupo de empresas', link: 'company-groups' },
+        { label: 'Grupo de empresas', link: 'entities/company-groups' },
       ],
     },
     {
@@ -552,7 +552,7 @@ export class HeaderComponent implements OnInit {
           companies.push({ label: 'Proveedores', link: 'entities/companies/provider' });
         }
 
-        companies.push({ label: '', isDivider: true }, { label: 'Grupo de empresa', link: 'company-groups' });
+        companies.push({ label: '', isDivider: true }, { label: 'Grupo de empresa', link: 'entities/company-groups' });
 
         this.menu.push({
           label: 'Empresas',
