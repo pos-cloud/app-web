@@ -111,4 +111,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'article-stock',
     loadChildren: () => import('./article-stock/article-stock.routes').then((m) => m.ARTICLE_STOCK_ROUTES),
   },
+  {
+    path: 'company-group',
+    loadChildren: () => import('./company-group/company-group.routes').then((m) => m.COMPANY_GROUP_ROUTE),
+  },
 ];
