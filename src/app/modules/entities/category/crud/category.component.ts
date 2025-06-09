@@ -103,8 +103,8 @@ export class CategoryComponent implements OnInit {
       publishWooCommerce: this.category?.publishWooCommerce ?? false,
       publishTiendaNube: this.category?.publishTiendaNube ?? false,
       visibleInvoice: this.category?.visibleInvoice ?? false,
-      visibleOnSale: this.category?.visibleOnSale ?? false,
-      visibleOnPurchase: this.category?.visibleOnPurchase ?? false,
+      visibleOnSale: this.category?.visibleOnSale ?? true,
+      visibleOnPurchase: this.category?.visibleOnPurchase ?? true,
       showMenu: this.category?.showMenu ?? false,
       tiendaNubeId: this.category?.tiendaNubeId ?? null,
     };
