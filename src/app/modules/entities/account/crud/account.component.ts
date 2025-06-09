@@ -102,7 +102,7 @@ export class AccountComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    const accountParent = this.accounts?.find((item) => item._id === this.account?.parent?._id);
+    const accountParent = this.accounts?.find((item) => item._id === this.account?.parent?.toString());
 
     const values = {
       _id: this.account?._id ?? '',

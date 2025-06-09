@@ -10,15 +10,15 @@ export interface Account extends Activity {
 }
 
 export enum Types {
-  Asset = <any>'Activo',
-  Passive = <any>'Pasivo',
-  netWorth = <any>'Patrimonio Neto',
-  Result = <any>'Resultado',
-  Compensatory = <any>'Compensatoria',
-  Other = <any>'Otro',
+  Asset = 'Activo',
+  Passive = 'Pasivo',
+  netWorth = 'Patrimonio Neto',
+  Result = 'Resultado',
+  Compensatory = 'Compensatoria',
+  Other = 'Otro',
 }
 
 export enum Modes {
-  Synthetic = <any>'Sintetico',
-  Analytical = <any>'Analitico',
+  Synthetic = 'Sintetico',
+  Analytical = 'Analitico',
 }
