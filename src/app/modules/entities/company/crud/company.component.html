@@ -54,6 +54,7 @@
               class="form-control"
               formControlName="name"
               name="name"
+              autocomplete="nope"
               id="name"
               [ngClass]="{
                 'is-invalid': companyForm.get('name')?.touched && companyForm.get('name')?.invalid,
@@ -137,13 +138,25 @@
         <div class="row">
           <div class="form-group col-md-3">
             <label for="phones" class="control-label">{{ 'contact.phone' | translate | capitalize }}:</label>
-
-            <input type="text" class="form-control" formControlName="phones" name="phones" id="phones" />
+            <input
+              type="text"
+              class="form-control"
+              autocomplete="nope"
+              formControlName="phones"
+              name="phones"
+              id="phones"
+            />
           </div>
           <div class="form-group col-md-3">
             <label for="emails" class="control-label">{{ 'company.emails' | translate | capitalize }}:</label>
-
-            <input type="text" class="form-control" formControlName="emails" name="emails" id="emails" />
+            <input
+              type="text"
+              class="form-control"
+              autocomplete="nope"
+              formControlName="emails"
+              name="emails"
+              id="emails"
+            />
           </div>
           <div class="form-group col-md-2">
             <label for="gender" class="control-label">{{ 'gender' | translate | capitalize }}:</label>
@@ -173,8 +186,14 @@
         <div class="row">
           <div class="form-group col-md-5">
             <label for="address" class="control-label">{{ 'address' | translate | capitalize }}:</label>
-
-            <input type="text" class="form-control" formControlName="address" name="address" id="address" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="address"
+              autocomplete="nope"
+              name="address"
+              id="address"
+            />
           </div>
           <div class="form-group col-md-2">
             <label for="addressNumber" class="control-label">{{ 'addressNumber' | translate | capitalize }}:</label>
@@ -183,24 +202,37 @@
               type="text"
               class="form-control"
               formControlName="addressNumber"
+              autocomplete="nope"
               name="addressNumber"
               id="addressNumber"
             />
           </div>
           <div class="form-group col-md-2">
             <label for="floorNumber" class="control-label">{{ 'flat' | translate | capitalize }}:</label>
-
-            <input type="text" class="form-control" formControlName="floorNumber" name="floorNumber" id="floorNumber" />
+            <input
+              type="text"
+              class="form-control"
+              autocomplete="nope"
+              formControlName="floorNumber"
+              name="floorNumber"
+              id="floorNumber"
+            />
           </div>
           <div class="form-group col-md-2">
             <label for="flat" class="control-label">{{ 'floor' | translate | capitalize }}:</label>
-
-            <input type="text" class="form-control" formControlName="flat" name="flat" id="flat" />
+            <input type="text" class="form-control" autocomplete="nope" formControlName="flat" name="flat" id="flat" />
           </div>
           <div class="form-group col-md-1">
             <label for="zipCode" class="control-label">{{ 'zipCode' | translate | capitalize }}:</label>
 
-            <input type="text" class="form-control" formControlName="zipCode" name="zipCode" id="zipCode" />
+            <input
+              type="text"
+              class="form-control"
+              autocomplete="nope"
+              formControlName="zipCode"
+              name="zipCode"
+              id="zipCode"
+            />
           </div>
         </div>
         <div class="row">
@@ -224,7 +256,7 @@
           </div>
           <div class="form-group col-md-4">
             <label for="city" class="control-label">{{ 'company.state' | translate | capitalize }}:</label>
-            <input type="text" class="form-control" formControlName="city" name="city" id="city" />
+            <input type="text" class="form-control" autocomplete="nope" formControlName="city" name="city" id="city" />
           </div>
         </div>
 

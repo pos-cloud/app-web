@@ -4,6 +4,7 @@
     [formControl]="control"
     class="form-control custom-typeahead"
     [ngbTypeahead]="searchFn"
+    autocomplete="nope"
     [resultFormatter]="resultFormatter"
     [inputFormatter]="resultFormatter"
     (focus)="focus$.next('')"
