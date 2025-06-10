@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import jsPDF from 'jspdf';
 
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Company, CompanyType } from '@types';
+import { Company, CompanyGroup, CompanyType } from '@types';
 import { EmployeeService } from 'app/core/services/employee.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
@@ -13,7 +13,6 @@ import { Config } from './../../../app.config';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Employee } from '@types';
-import { CompanyGroup } from 'app/components/company-group/company-group';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { Transaction } from 'app/components/transaction/transaction';
 import { CompanyGroupService } from 'app/core/services/company-group.service';

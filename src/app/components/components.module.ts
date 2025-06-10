@@ -6,7 +6,6 @@ import { ArticleModule } from './article/article.module';
 import { BusinessRuleModule } from './business-rules/business-rule.module';
 import { CashBoxTypeModule } from './cash-box-type/cash-box-type.module';
 import { CategoryModule } from './category/category.module';
-import { CompanyGroupModule } from './company-group/company-group.module';
 import { DatatableModule } from './datatable/datatable.module';
 import { ExportersModule } from './export/exporters.module';
 import { HistoryModule } from './history/history.module';
@@ -28,7 +27,6 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
     HolidayModule,
     TransactionTypeModule,
     CategoryModule,
-    CompanyGroupModule,
     AccountSeatModule,
     ReportModule,
     BusinessRuleModule,

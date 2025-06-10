@@ -3,19 +3,16 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { CompanyGroup } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { CompanyGroup } from '../../components/company-group/company-group';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CompanyGroupService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `company-groups`, // PATH
       _http,

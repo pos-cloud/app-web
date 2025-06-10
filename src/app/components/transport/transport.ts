@@ -1,10 +1,9 @@
-import { CompanyGroup } from '../company-group/company-group';
 import { Country } from '../country/country';
 import { State } from '../state/state';
 import { User } from '../user/user';
 import { VATCondition } from '../vat-condition/vat-condition';
 
-import { Employee, IdentificationType } from '@types';
+import { CompanyGroup, Employee, IdentificationType } from '@types';
 import * as moment from 'moment';
 
 export class Transport {

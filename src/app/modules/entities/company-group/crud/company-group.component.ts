@@ -71,7 +71,7 @@ export class CompanyGroupComponent implements OnInit {
   }
 
   returnTo() {
-    return this._router.navigate(['/entities/company-group']);
+    return this._router.navigate(['/entities/company-groups']);
   }
 
   onEnter() {

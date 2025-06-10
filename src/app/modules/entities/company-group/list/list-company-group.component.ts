@@ -147,16 +147,16 @@ export class CompanyGroupComponent {
   public async redirect(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('entities/company-group/view/' + obj._id);
+        this._router.navigateByUrl('entities/company-groups/view/' + obj._id);
         break;
       case 'update':
-        this._router.navigateByUrl('entities/company-group/update/' + obj._id);
+        this._router.navigateByUrl('entities/company-groups/update/' + obj._id);
         break;
       case 'delete':
-        this._router.navigateByUrl('entities/company-group/delete/' + obj._id);
+        this._router.navigateByUrl('entities/company-groups/delete/' + obj._id);
         break;
       case 'add':
-        this._router.navigateByUrl('entities/company-group/add');
+        this._router.navigateByUrl('entities/company-groups/add');
         break;
     }
   }
