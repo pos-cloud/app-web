@@ -727,5 +727,6 @@
   "structure": "Estructura",
   "structures": "Estructuras",
   "update-cost": "Actualizar costos",
-  "add-structure": "Agregar estructura"
+  "add-structure": "Agregar estructura",
+  "send-email": "Enviar email"
 }
