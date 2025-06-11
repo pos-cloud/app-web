@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, forwardRef, HostListener, Input } from '@angular/core';
+import { Component, forwardRef, HostListener, Input, OnDestroy } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-multi-select-dropdown',
@@ -16,17 +17,20 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
     },
   ],
 })
-export class MultiSelectDropdownComponent implements ControlValueAccessor {
+export class MultiSelectDropdownComponent implements ControlValueAccessor, OnDestroy {
   @Input() data: any[] = [];
-  @Input() placeholder: string = '-';
+  @Input() placeholder: string = 'Seleccionar...';
   @Input() textField: string = 'name';
   @Input() allowSearch: boolean = true;
   @Input() multi: boolean = true;
+  @Input() searchPlaceholder: string = 'Buscar...';
+  @Input() noResultsText: string = 'No se encontraron resultados';
 
   uniqueId: string;
   selectedItems: any[] = [];
   isOpen = false;
   searchTerm = '';
+  private destroy$ = new Subject<void>();
 
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
@@ -43,8 +47,23 @@ export class MultiSelectDropdownComponent implements ControlValueAccessor {
     this.uniqueId = `dropdown-${Math.floor(Math.random() * 1000000)}-${Date.now()}`;
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   toggleDropdown() {
     this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      this.onTouched();
+    }
+  }
+
+  hasSelection(): boolean {
+    if (this.multi) {
+      return (this.selectedItems as any[]).length > 0;
+    }
+    return this.selectedItems !== null && this.selectedItems !== undefined;
   }
 
   isSelected(item: any): boolean {
@@ -64,7 +83,7 @@ export class MultiSelectDropdownComponent implements ControlValueAccessor {
       }
     } else {
       this.selectedItems = item._id;
-      this.isOpen = false; // cerrar dropdown al seleccionar
+      this.isOpen = false;
     }
 
     this.onChange(this.selectedItems);
@@ -73,9 +92,14 @@ export class MultiSelectDropdownComponent implements ControlValueAccessor {
   getSelectedItemsText(): string {
     if (this.multi) {
       const selectedCount = (this.selectedItems as any[]).length;
-      return selectedCount > 0
-        ? `${selectedCount} elemento${selectedCount > 1 ? 's' : ''} seleccionado${selectedCount > 1 ? 's' : ''}`
-        : this.placeholder;
+      if (selectedCount === 0) return this.placeholder;
+
+      if (selectedCount === 1) {
+        const selected = this.data.find((d) => d._id === this.selectedItems[0]);
+        return selected ? selected[this.textField] : this.placeholder;
+      }
+
+      return `${selectedCount} item${selectedCount > 1 ? 's' : ''}`;
     } else {
       const selected = this.selectedItems ? this.data.find((d) => d._id === this.selectedItems) : null;
       return selected ? selected[this.textField] : this.placeholder;
@@ -83,12 +107,15 @@ export class MultiSelectDropdownComponent implements ControlValueAccessor {
   }
 
   filteredItems() {
-    return this.searchTerm
-      ? this.data.filter((item) => item[this.textField].toLowerCase().includes(this.searchTerm.toLowerCase()))
-      : this.data;
+    if (!this.searchTerm) return this.data;
+
+    const searchTermLower = this.searchTerm.toLowerCase();
+    return this.data.filter((item) => item[this.textField].toLowerCase().includes(searchTermLower));
   }
 
-  onSearchChange() {}
+  onSearchChange() {
+    this.searchTerm = this.searchTerm;
+  }
 
   /** Métodos de ControlValueAccessor **/
   writeValue(value: any): void {
