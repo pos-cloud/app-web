@@ -20,6 +20,7 @@ import { ExportExcelComponent } from '../export/export-excel/export-excel.compon
 export class DatatableComponent {
   public items: any[] = new Array();
   @Input() loading: boolean = false;
+  @Input() saveFilters: boolean = false;
   private subscription: Subscription = new Subscription();
   private capitalizePipe: CapitalizePipe = new CapitalizePipe();
 
@@ -32,7 +33,7 @@ export class DatatableComponent {
   // TABLA
   public _datatableService: DatatableService;
   public filters: any;
-  public currentPage: number = 0;
+  public currentPage: number = 1;
   public itemsPerPage = 10;
   public totalItems = 0;
   @Input() title: string;
@@ -94,8 +95,10 @@ export class DatatableComponent {
   }
 
   private processParams(): void {
-    // Recupera los filtros desde localStorage
-    const storedFilters = JSON.parse(localStorage.getItem(`${this.identifier}_datatableFilters`) || '{}');
+    // Usamos saveFilters para determinar si guardamos estado
+    const storedFilters = this.saveFilters
+      ? JSON.parse(localStorage.getItem(`${this.identifier}_datatableFilters`) || '{}')
+      : {};
     this.filters = {};
 
     for (let field of this.columns) {
@@ -108,11 +111,14 @@ export class DatatableComponent {
       }
     }
 
-    // Recupera currentPage e itemsPerPage desde localStorage
-    this.currentPage = parseInt(localStorage.getItem(`${this.identifier}_currentPage`) || '0', 10);
-    this.itemsPerPage = parseInt(localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10', 10);
-
-    this.sort = JSON.parse(localStorage.getItem(`${this.identifier}_sort`) || '{}');
+    // Solo recuperamos página y ordenamiento si saveFilters es true
+    this.currentPage = this.saveFilters
+      ? parseInt(localStorage.getItem(`${this.identifier}_currentPage`) || '1', 10)
+      : 1;
+    this.itemsPerPage = this.saveFilters
+      ? parseInt(localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10', 10)
+      : 10;
+    this.sort = this.saveFilters ? JSON.parse(localStorage.getItem(`${this.identifier}_sort`) || '{}') : {};
 
     this.getItems();
   }
@@ -158,8 +164,13 @@ export class DatatableComponent {
 
   public addFilters(): void {
     this.currentPage = 1;
-    localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
-    localStorage.setItem(`${this.identifier}_datatableFilters`, JSON.stringify(this.filters));
+
+    // Solo guardamos si saveFilters es true
+    if (this.saveFilters) {
+      localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
+      localStorage.setItem(`${this.identifier}_datatableFilters`, JSON.stringify(this.filters));
+    }
+
     this.getItems();
   }
 
@@ -192,16 +203,21 @@ export class DatatableComponent {
 
   public pageChange(page): void {
     this.currentPage = page;
-    // Guarda la página actual en localStorage
-    localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
+    // Solo guardamos si saveFilters es true
+    if (this.saveFilters) {
+      localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
+    }
     this.getItems();
   }
 
   public selectItemsPerPage(value: number): void {
     this.itemsPerPage = value;
     this.currentPage = 1;
-    localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
-    localStorage.setItem(`${this.identifier}_itemsPerPage`, this.itemsPerPage.toString());
+    // Solo guardamos si saveFilters es true
+    if (this.saveFilters) {
+      localStorage.setItem(`${this.identifier}_currentPage`, this.currentPage.toString());
+      localStorage.setItem(`${this.identifier}_itemsPerPage`, this.itemsPerPage.toString());
+    }
     this.getItems();
   }
 }
