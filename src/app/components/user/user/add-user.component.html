@@ -114,7 +114,6 @@
                         autocomplete="nope"
                         id="email"
                         [readonly]="readonly"
-                        autocomplete="off"
                       />
                     </div>
                     <div *ngIf="formErrors.email" class="alert alert-danger">
@@ -128,6 +127,7 @@
                       class="form-control"
                       formControlName="password"
                       name="password"
+                      autocomplete="nope"
                       id="password"
                       [readonly]="readonly"
                     />
