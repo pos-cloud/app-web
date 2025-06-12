@@ -71,6 +71,7 @@ import {
 import { Transaction, TransactionState } from '../transaction/transaction';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
 
+import { ChangeObservationComponent } from 'app/modules/transaction/components/change-observation/change-observation.component';
 import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
@@ -90,7 +91,6 @@ export class AddSaleOrderComponent {
   @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
   @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
   @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
-  @ViewChild('contentChangeObservation', { static: true }) contentChangeObservation: ElementRef;
   @ViewChild('contentBusinessRulesCode', { static: true }) contentBusinessRulesCode: ElementRef;
   @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
   @ViewChild('contentInformCancellation', { static: true }) contentInformCancellation: ElementRef;
@@ -2019,18 +2019,20 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'observation':
-        modalRef = this._modalService.open(this.contentChangeObservation).result.then(async (result) => {
-          if (result !== 'cancel' && result !== '') {
-            if (this.transaction.observation) {
-              await this.updateTransaction().then(async (transaction) => {
-                if (transaction) {
-                  this.transaction = transaction;
-                  this.lastQuotation = this.transaction.quotation;
-                }
-              });
-            }
-          }
+        modalRef = this._modalService.open(ChangeObservationComponent, {
+          size: 'lg',
+          backdrop: 'static',
         });
+        modalRef.componentInstance.observation = this.transaction.observation || '';
+        modalRef.result.then(
+          (result) => {
+            if (result !== 'cancel' && result !== '') {
+              this.transaction.observation = result;
+              this.updateTransaction();
+            }
+          },
+          (reason) => {}
+        );
         break;
       case 'apply-bussiness-rule-code':
         modalRef = this._modalService.open(this.contentBusinessRulesCode);

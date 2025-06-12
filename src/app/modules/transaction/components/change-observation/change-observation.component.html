@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">Observación</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <textarea
+        type="text"
+        class="form-control"
+        [(ngModel)]="observation"
+        placeholder="Observación"
+        (keyup.enter)="accept()"
+      ></textarea>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+  <button type="submit" class="btn btn-primary" (click)="accept()">
+    <span>Aceptar</span>
+  </button>
+</div>
