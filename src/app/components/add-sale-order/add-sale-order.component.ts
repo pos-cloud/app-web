@@ -88,7 +88,6 @@ import { Config } from './../../app.config';
 })
 export class AddSaleOrderComponent {
   @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
-  @ViewChild('contentMessage', { static: true }) contentMessage: ElementRef;
   @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
   @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
   @ViewChild('contentChangeObservation', { static: true }) contentChangeObservation: ElementRef;
@@ -2412,15 +2411,6 @@ export class AddSaleOrderComponent {
         } else {
           this.backFinal();
         }
-        break;
-      case 'errorMessage':
-        modalRef = this._modalService
-          .open(this.contentMessage, { size: 'lg', backdrop: 'static' })
-          .result.then((result) => {
-            if (result !== 'cancel' && result !== '') {
-              this.backFinal();
-            }
-          });
         break;
       case 'change-date':
         modalRef = this._modalService.open(this.contentChangeDate).result.then(async (result) => {
