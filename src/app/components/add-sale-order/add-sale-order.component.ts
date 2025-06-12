@@ -71,10 +71,10 @@ import {
 import { Transaction, TransactionState } from '../transaction/transaction';
 import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
 
-import { ChangeObservationComponent } from 'app/modules/transaction/components/change-observation/change-observation.component';
 import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
+import { ChangeObservationComponent } from 'app/modules/transaction/components/change-observation/change-observation.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
@@ -2018,22 +2018,6 @@ export class AddSaleOrderComponent {
           }
         });
         break;
-      case 'observation':
-        modalRef = this._modalService.open(ChangeObservationComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.observation = this.transaction.observation || '';
-        modalRef.result.then(
-          (result) => {
-            if (result !== 'cancel' && result !== '') {
-              this.transaction.observation = result;
-              this.updateTransaction();
-            }
-          },
-          (reason) => {}
-        );
-        break;
       case 'apply-bussiness-rule-code':
         modalRef = this._modalService.open(this.contentBusinessRulesCode);
         break;
@@ -3867,5 +3851,22 @@ export class AddSaleOrderComponent {
 
     // 3. Si no se aplicó ninguna regla ni excepción, usar porcentaje base
     return this.roundNumber.transform(priceList.percentage);
+  }
+
+  editObservation() {
+    const modalRef = this._modalService.open(ChangeObservationComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.observation = this.transaction.observation || '';
+    modalRef.result.then(
+      (result) => {
+        if (result !== 'cancel' && result !== '') {
+          this.transaction.observation = result;
+          this.updateTransaction();
+        }
+      },
+      (reason) => {}
+    );
   }
 }
