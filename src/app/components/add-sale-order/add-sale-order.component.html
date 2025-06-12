@@ -121,10 +121,10 @@
         </div>
         <div class="item-header" *ngIf="transaction?.company && transaction?.type?.requestTransport">
           <div class="btn-group">
-            <button type="button" class="btn btn-outline-light" (click)="openModal('change-transport')">
+            <button type="button" class="btn btn-outline-light" (click)="changeTransport()">
               Transporte {{ transaction?.transport?.name }}
             </button>
-            <button type="button" class="btn btn-light fa fa-exchange" (click)="openModal('change-transport')"></button>
+            <button type="button" class="btn btn-light fa fa-exchange" (click)="changeTransport()"></button>
           </div>
         </div>
         <div class="item-header" *ngIf="userCountry === 'MX' && transaction?.type?.electronics">

@@ -34,6 +34,7 @@ import { TableService } from '../../core/services/table.service';
 import { TaxService } from '../../core/services/tax.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { UserService } from '../../core/services/user.service';
+import { SelectTransportComponent } from '../../modules/transaction/components/select-transport/select-transport.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
@@ -69,7 +70,6 @@ import {
   TransactionType,
 } from '../transaction-type/transaction-type';
 import { Transaction, TransactionState } from '../transaction/transaction';
-import { SelectTransportComponent } from '../transport/select-transport/select-transport.component';
 
 import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
@@ -327,7 +327,6 @@ export class AddSaleOrderComponent {
           } else {
             this.showButtonCancelation = true;
           }
-          this.getTransports();
 
           this.getMovementsOfTransaction();
         }
@@ -484,20 +483,6 @@ export class AddSaleOrderComponent {
   async changeUseOfCFDI(useOfCFDI) {
     this.transaction.useOfCFDI = useOfCFDI;
     this.transaction = await this.updateTransaction();
-  }
-
-  async changeTransport(transport) {
-    if (transport) {
-      this.transaction.transport = transport;
-    } else {
-      this.transaction.transport = null;
-    }
-    await this.updateTransaction().then(async (transaction) => {
-      if (transaction) {
-        this.transaction = transaction;
-        this.lastQuotation = this.transaction.quotation;
-      }
-    });
   }
 
   getRelationTypes(): Promise<RelationType[]> {
@@ -1570,7 +1555,6 @@ export class AddSaleOrderComponent {
 
   getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
     let movementOfArticle: MovementOfArticle;
-
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticleAux of this.movementsOfArticles) {
         if (movementOfArticleAux.article && movementOfArticleAux.article._id === articleId) {
@@ -2573,22 +2557,6 @@ export class AddSaleOrderComponent {
             this.updateMovementOfArticlePrintedVoucher();
           });
         break;
-      case 'change-transport':
-        modalRef = this._modalService.open(SelectTransportComponent);
-        modalRef.result.then(async (result) => {
-          if (result && result.transport) {
-            this.transaction.transport = result.transport;
-            this.transaction.declaredValue = result.declaredValue;
-            this.transaction.package = result.package;
-            await this.updateTransaction().then(async (transaction) => {
-              if (transaction) {
-                this.transaction = transaction;
-                this.lastQuotation = this.transaction.quotation;
-              }
-            });
-          }
-        });
-        break;
       case 'change-shipment-method':
         if (this.transaction.company) {
           modalRef = this._modalService.open(SelectShipmentMethodComponent, {
@@ -2609,8 +2577,7 @@ export class AddSaleOrderComponent {
             }
           });
         } else {
-          `          this.showToast(null, 'info', 'Debe seleccionar una empresa.');
-`;
+          this._toastService.showToast(null, 'info', 'Debe seleccionar una empresa.');
         }
         break;
       case 'change-table':
@@ -3606,32 +3573,6 @@ export class AddSaleOrderComponent {
     return this.updateTransaction();
   }
 
-  getTransports(): void {
-    this.loading = true;
-
-    this._transportService
-      .getTransports(
-        { name: 1, operationType: 1 }, // PROJECT
-        { operationType: { $ne: 'D' } }, // MATCH
-        { name: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
-      .subscribe(
-        (result) => {
-          if (result && result.transports && result.transports.length > 0) {
-            this.transports = result.transports;
-          }
-          this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
-      );
-  }
-
   async assignTransactionNumber() {
     try {
       let query = `where= "type":"${this.transaction.type._id}",
@@ -3868,5 +3809,22 @@ export class AddSaleOrderComponent {
       },
       (reason) => {}
     );
+  }
+
+  changeTransport() {
+    let modalRef = this._modalService.open(SelectTransportComponent);
+    modalRef.result.then(async (result) => {
+      if (result && result.transport) {
+        this.transaction.transport = result.transport;
+        this.transaction.declaredValue = result.declaredValue;
+        this.transaction.package = result.package;
+        await this.updateTransaction().then(async (transaction) => {
+          if (transaction) {
+            this.transaction = transaction;
+            this.lastQuotation = this.transaction.quotation;
+          }
+        });
+      }
+    });
   }
 }
