@@ -146,9 +146,6 @@ export class AppComponent {
         Config.setApiHost('http://' + hostname + ':300'); // LOCAL
         Config.setApiV8Host('http://' + hostname + ':308'); // LOCAL
       } else {
-        // Config.setApiHost('https://api.poscloud.com.ar'); // DONWEB
-        // Config.setApiV8Host('https://apiv8.poscloud.com.ar'); // DONWEB
-
         Config.setApiHost(environment.api); // TEST
         Config.setApiV8Host(environment.apiv2); // TEST
       }
