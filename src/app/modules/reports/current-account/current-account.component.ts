@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 //Paquetes de terceros
@@ -51,12 +51,14 @@ import { CurrentAccountService } from './current-account.service';
     ExportersModule,
   ],
 })
-export class CurrentAccountComponent implements OnInit {
+export class CurrentAccountComponent implements OnInit, OnDestroy {
   public transactions: Transaction[];
   public companySelected: Company;
   public companyType: CompanyType;
   public loading: boolean = false;
   public loadingTotal: boolean = false;
+  public loadingBalance: boolean = false;
+  public loadingPaymentMethods: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
   public items: any[] = new Array();
@@ -127,31 +129,33 @@ export class CurrentAccountComponent implements OnInit {
   public getCompany(companyId: string): void {
     this.loading = true;
 
-    this._companyService.getById(companyId).subscribe(
-      async (result) => {
-        if (result.result) {
-          this.companySelected = result.result;
-          if (this.companySelected.type === CompanyType.Client) {
-            this.transactionMovement = TransactionMovement.Sale;
-          } else {
-            this.transactionMovement = TransactionMovement.Purchase;
+    this._companyService
+      .getById(companyId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          if (result.result) {
+            this.companySelected = result.result;
+            if (this.companySelected.type === CompanyType.Client) {
+              this.transactionMovement = TransactionMovement.Sale;
+            } else {
+              this.transactionMovement = TransactionMovement.Purchase;
+            }
+            this.refresh();
           }
-
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this._router.navigate(['/']);
+        },
+        complete: () => {
           this.loading = false;
-
-          this.refresh();
-        }
-      },
-      (error) => {
-        this._toastService.showToast(error);
-        this.loading = false;
-      }
-    );
+        },
+      });
   }
 
   public refresh(): void {
     if (this.companySelected) {
-      //this.getSummary();
       this.getPaymentMethodOfAccountsByCompany();
       this.getTotalOfAccountsByCompany();
       this.getBalanceOfAccountsByCompany();
@@ -164,51 +168,58 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public getTotalOfAccountsByCompany(): void {
-    this.totalPrice = 0;
     this.loadingTotal = true;
 
-    this._service.getTotalOfAccountsByCompany(this.data).subscribe(
-      (result) => {
-        if (result.status === 200) {
-          this.totalPrice = result.result[0]?.totalPrice;
-        }
-        this.loadingTotal = false;
-      },
-      (error) => {
-        this._toastService.showToast(error);
-        this.loadingTotal = true;
-      }
-    );
+    this._service
+      .getTotalOfAccountsByCompany(this.data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          if (result.status === 200) {
+            this.totalPrice = result.result[0]?.totalPrice || 0;
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.totalPrice = 0;
+        },
+        complete: () => {
+          this.loadingTotal = false;
+        },
+      });
   }
 
   public getBalanceOfAccountsByCompany(): void {
-    this.balance = 0;
+    this.loadingBalance = true;
 
-    this._service.getBalanceOfAccountsByCompany(this.data).subscribe(
-      (result) => {
-        if (result) {
-          this.balance = result[0]?.balance;
-        }
-      },
-      (error) => {
-        this._toastService.showToast(error);
-      }
-    );
+    this._service
+      .getBalanceOfAccountsByCompany(this.data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          if (result) {
+            this.balance = result[0]?.balance || 0;
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.balance = 0;
+        },
+        complete: () => {
+          this.loadingBalance = false;
+        },
+      });
   }
 
   public getPaymentMethodOfAccountsByCompany(): void {
-    this.loading = true;
+    this.loadingPaymentMethods = true;
 
     if (typeof this.detailsPaymentMethod !== 'boolean') {
       this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
     }
 
-    let page = 0;
-
-    if (this.currentPage != 0) {
-      page = this.currentPage - 1;
-    }
-    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
+    let page = this.currentPage > 0 ? this.currentPage - 1 : 0;
+    let skip = page * this.itemsPerPage;
     let limit = this.itemsPerPage;
 
     this.data = {
@@ -218,32 +229,37 @@ export class CurrentAccountComponent implements OnInit {
       limit,
     };
 
-    this._service.getPaymentMethodOfAccountsByCompany(this.data).subscribe(
-      (result) => {
-        if (!result.result.length) {
-          this._toastService.showToast(result);
-          this.items = new Array();
-          this.totalItems = 0;
-        } else {
-          if (this.isFirstTime && result?.result?.[0]?.count > 0) {
-            const totalCount = result.result[0].count;
-            const totalPages = Math.ceil(totalCount / limit);
-            const lastPageSkip = (totalPages - 1) * limit;
-            this.pageChange(lastPageSkip);
-            this.isFirstTime = false;
-            this.loading = false;
+    this._service
+      .getPaymentMethodOfAccountsByCompany(this.data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          if (!result.result.length) {
+            this._toastService.showToast(result);
+            this.items = [];
+            this.totalItems = 0;
           } else {
-            this.items = result.result[0].items;
-            this.totalItems = result.result[0].count;
-            this.loading = false;
+            if (this.isFirstTime && result?.result?.[0]?.count > 0) {
+              const totalCount = result.result[0].count;
+              const totalPages = Math.ceil(totalCount / limit);
+              const lastPageSkip = (totalPages - 1) * limit;
+              this.pageChange(lastPageSkip);
+              this.isFirstTime = false;
+            } else {
+              this.items = result.result[0].items;
+              this.totalItems = result.result[0].count;
+            }
           }
-        }
-      },
-      (error) => {
-        this._toastService.showToast(error);
-        this.loading = false;
-      }
-    );
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.items = [];
+          this.totalItems = 0;
+        },
+        complete: () => {
+          this.loadingPaymentMethods = false;
+        },
+      });
   }
 
   async openModal(op: string, transactionId?: string) {
@@ -448,5 +464,10 @@ export class CurrentAccountComponent implements OnInit {
         }
       );
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
