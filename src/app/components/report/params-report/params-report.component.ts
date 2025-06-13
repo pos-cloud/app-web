@@ -1,19 +1,8 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Transport } from 'app/components/transport/transport';
 import { AuthService } from 'app/core/services/auth.service';
 import { Report } from '../report.model';
 
@@ -25,7 +14,6 @@ import { Report } from '../report.model';
 })
 export class ParamsReportComponent implements OnInit {
   @Input() report: Report;
-  public transportSelected: Transport;
   public alertMessage: string = '';
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -59,11 +47,7 @@ export class ParamsReportComponent implements OnInit {
     this.activeModal.close(this.objForm.value);
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

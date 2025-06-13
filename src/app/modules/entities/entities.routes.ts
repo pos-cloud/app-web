@@ -115,4 +115,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'company-groups',
     loadChildren: () => import('./company-group/company-group.routes').then((m) => m.COMPANY_GROUP_ROUTE),
   },
+  {
+    path: 'transports',
+    loadChildren: () => import('./transport/transport.routes').then((m) => m.TRANSPORT_ROUTES),
+  },
 ];

@@ -99,8 +99,6 @@ import { TaxComponent } from './components/tax/tax/tax.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { ViewTransactionComponent } from './components/transaction/view-transaction/view-transaction.component';
-import { ListTransportComponent } from './components/transport/list-transports/list-transports.component';
-import { TransportComponent } from './components/transport/transport/transport.component';
 import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { AddUseOfCFDIComponent } from './components/use-of-CFDI.component.ts/use-of-CFDI/add-use-of-CFDI.component';
 import { DeleteUserComponent } from './components/user/delete-user/delete-user.component';
@@ -191,8 +189,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListOriginsComponent,
     OriginComponent,
     SelectOriginComponent,
-    TransportComponent,
-    ListTransportComponent,
     ListCashBoxComponent,
     CurrentAccountDetailsComponent,
     PrintArticlesStockComponent,

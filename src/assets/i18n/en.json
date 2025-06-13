@@ -26,5 +26,9 @@
   "variant-value": "variant value",
   "variant-values": "variant values",
   "visibleSale": "Visible Sale",
-  "send-email": "Send email"
+  "send-email": "Send email",
+  "add-transport": "Add transport",
+  "vat-conditions": "VAT Condition",
+  "identificationType": "Identification Type",
+  "country": "Country"
 }

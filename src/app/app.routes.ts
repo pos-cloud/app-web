@@ -42,7 +42,6 @@ import { ListStatesComponent } from './components/state/list-states/list-states.
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
-import { ListTransportComponent } from './components/transport/list-transports/list-transports.component';
 import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
@@ -372,11 +371,6 @@ export const _routes: Routes = [
   {
     path: 'admin/template-emails',
     component: ListEmailTemplatesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/transports',
-    component: ListTransportComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

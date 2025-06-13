@@ -6,7 +6,6 @@ import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { PriceList } from 'app/components/price-list/price-list';
 import { SelectTableComponent } from 'app/components/table/select-table/select-table.component';
-import { Transport } from 'app/components/transport/transport';
 import { UseOfCFDI } from 'app/components/use-of-CFDI.component.ts/use-of-CFDI';
 import { User } from 'app/components/user/user';
 import { ArticleService } from 'app/core/services/article.service';
@@ -23,7 +22,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { CompanyType, RelationType, Table, TableState } from '@types';
+import { CompanyType, RelationType, Table, TableState, Transport } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { BusinessRuleService } from '../../core/services/business-rule.service';

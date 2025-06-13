@@ -729,5 +729,9 @@
   "update-cost": "Actualizar costos",
   "add-structure": "Agregar estructura",
   "send-email": "Enviar email",
-  "article.season": "Temporada"
+  "article.season": "Temporada",
+  "add-transport": "Agregar transporte",
+  "vat-conditions": "Condición IVA",
+  "identificationType": "Tipo de Identificación",
+  "country": "País"
 }

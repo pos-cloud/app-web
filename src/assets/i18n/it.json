@@ -29,5 +29,9 @@
   "variant-values": "Valori variante",
   "variant-type": "Tipo variante",
   "variant-types": "Tipi variante",
-  "send-email": "Invia email"
+  "send-email": "Invia email",
+  "add-transport": "Aggiungi trasporto",
+  "vat-conditions": "Condizione IVA",
+  "identificationType": "Tipo di Identificazione",
+  "country": "Paese"
 }
