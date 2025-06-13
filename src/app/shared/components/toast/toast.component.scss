@@ -6,6 +6,7 @@
   min-width: 250px;
   max-width: 100%;
   animation: fadeIn 0.3s ease-in;
+  cursor: pointer;
 
   // Posiciones base
   &.top-right {
@@ -33,12 +34,12 @@
     width: calc(100% - 2rem);
     left: 50%;
     transform: translateX(-50%);
-    
+
     &.top-right,
     &.top-left {
       top: 1rem;
     }
-    
+
     &.bottom-right,
     &.bottom-left {
       bottom: 1rem;
@@ -58,20 +59,19 @@
   }
 }
 
-
 // Estilos específicos para los diferentes tipos de toast
 .bg-success {
-  background-color: #28a745 !important; // Verde
+  background-color: #28a745 !important;
 }
 
 .bg-danger {
-  background-color: #dc3545 !important; // Rojo
+  background-color: #dc3545 !important;
 }
 
 .bg-warning {
-  background-color: #d9dc35 !important; // Rojo
+  background-color: #8d8e53 !important;
 }
 
 .bg-info {
-  background-color: #17a2b8 !important; // Celeste
+  background-color: #17a2b8 !important;
 }
