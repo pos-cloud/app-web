@@ -149,9 +149,7 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  saveMovementsOfArticles(
-    movementsOfArticles: MovementOfArticle[]
-  ): Observable<any> {
+  saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Observable<any> {
     const URL = `${Config.apiURL}movements-of-articles`;
 
     const headers = new HttpHeaders()
@@ -176,9 +174,7 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  updateMovementOfArticle(
-    movementOfArticle: MovementOfArticle
-  ): Observable<any> {
+  updateMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
     const URL = `${Config.apiURL}movement-of-article`;
 
     const headers = new HttpHeaders()
@@ -202,11 +198,7 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  updateMovementOfArticleByWhere(
-    where: {},
-    set: {},
-    sort: {}
-  ): Observable<any> {
+  updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Observable<any> {
     const URL = `${Config.apiURL}movement-of-article-by-where`;
 
     const headers = new HttpHeaders()
@@ -233,11 +225,7 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  updateMovementsOfArticlesByWhere(
-    where: {},
-    set: {},
-    sort: {}
-  ): Observable<any> {
+  updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Observable<any> {
     const URL = `${Config.apiURL}movements-of-articles-by-where`;
 
     const headers = new HttpHeaders()
@@ -303,6 +291,27 @@ export class MovementOfArticleService extends ModelService {
           headers: headers,
         }
       )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public getMovementsOfArticlesByTransaction(transactionId: string): Observable<any> {
+    const URL = `${environment.apiv2}/movements-of-articles/by-transaction/${transactionId}`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .get(URL, {
+        headers: headers,
+      })
       .pipe(
         map((res) => {
           return res;
