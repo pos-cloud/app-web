@@ -41,8 +41,6 @@ import { ListCategoriesPosComponent } from './components/category/list-categorie
 import { ClockComponent } from './components/clock/clock.component';
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
-import { CountryComponent } from './components/country/country/country.component';
-import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
@@ -184,8 +182,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     MovementOfCancellationComponent,
     StateComponent,
     ListStatesComponent,
-    CountryComponent,
-    ListCountriesComponent,
     ListOriginsComponent,
     OriginComponent,
     SelectOriginComponent,

@@ -290,7 +290,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Monedas', link: 'entities/currencies' },
             { label: 'Tipos de Monedas', link: 'entities/currency-values' },
             { label: 'Provincias', link: 'admin/states' },
-            { label: 'Países', link: 'admin/countries' },
+            { label: 'Países', link: 'entities/countries' },
           ],
         },
         {
@@ -779,7 +779,7 @@ export class HeaderComponent implements OnInit {
                 { label: 'Monedas', link: 'entities/currencies' },
                 { label: 'Tipos de Monedas', link: 'entities/currency-values' },
                 { label: 'Provincias', link: 'admin/states' },
-                { label: 'Países', link: 'admin/countries' },
+                { label: 'Países', link: 'entities/countries' },
               ],
             },
             {

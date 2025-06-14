@@ -119,4 +119,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'transports',
     loadChildren: () => import('./transport/transport.routes').then((m) => m.TRANSPORT_ROUTES),
   },
+  {
+    path: 'countries',
+    loadChildren: () => import('./country/country.routes').then((m) => m.COUNTRY_ROUTES),
+  },
 ];

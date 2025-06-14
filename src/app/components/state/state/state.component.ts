@@ -1,9 +1,5 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { StateService } from '../../../core/services/state.service';
@@ -11,8 +7,8 @@ import { StateService } from '../../../core/services/state.service';
 import { State } from '../state';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Country } from '@types';
 import { Config } from 'app/app.config';
-import { Country } from 'app/components/country/country';
 import { CountryService } from 'app/core/services/country.service';
 
 @Component({
@@ -116,8 +112,7 @@ export class StateComponent implements OnInit {
     this._stateService.getState(this.stateId).subscribe(
       (result) => {
         if (!result.state) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.state = result.state;
@@ -231,11 +226,7 @@ export class StateComponent implements OnInit {
           }
         } else {
           this.loading = false;
-          this.showMessage(
-            'El estado se ha actualizado con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El estado se ha actualizado con éxito.', 'success', false);
         }
       },
       (error) => {
@@ -259,11 +250,7 @@ export class StateComponent implements OnInit {
           }
         } else {
           this.loading = false;
-          this.showMessage(
-            'El estado se ha añadido con éxito.',
-            'success',
-            false
-          );
+          this.showMessage('El estado se ha añadido con éxito.', 'success', false);
           this.state = new State();
           this.buildForm();
         }
@@ -295,11 +282,7 @@ export class StateComponent implements OnInit {
     );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

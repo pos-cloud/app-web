@@ -733,5 +733,12 @@
   "add-transport": "Agregar transporte",
   "vat-conditions": "Condición IVA",
   "identificationType": "Tipo de Identificación",
-  "country": "País"
+  "country": "País",
+  "flag": "Bandera",
+  "countries": "Países",
+  "calling-codes": "Códigos de llamada",
+  "timezone": "Zona horaria",
+  "add-country": "Agregar país",
+  "alpha2Code": "Código alfa-2",
+  "alpha3Code": "Código alfa-3"
 }

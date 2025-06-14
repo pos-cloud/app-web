@@ -8,7 +8,6 @@ import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-c
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
 import { ListCategoriesComponent } from './components/category/list-categories/list-categories.component';
 import { ConfigComponent } from './components/config/config.component';
-import { ListCountriesComponent } from './components/country/list-countries/list-countries.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
@@ -178,11 +177,6 @@ export const _routes: Routes = [
   {
     path: 'admin/states',
     component: ListStatesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/countries',
-    component: ListCountriesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

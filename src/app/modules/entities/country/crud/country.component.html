@@ -1,0 +1,168 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-country' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ country?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{
+        country?.name ?? ''
+      }}</span>
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleCountryOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handleCountryOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body scroll">
+      <form [formGroup]="countryForm" (ngSubmit)="handleCountryOperation()" autocomplete="off">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="code" class="control-label">{{ 'code' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              name="code"
+              id="code"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': countryForm.get('code')?.touched && countryForm.get('code')?.invalid
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="countryForm.get('code')?.touched && countryForm.get('code')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-5">
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              name="name"
+              id="name"
+              [ngClass]="{
+                'is-invalid': countryForm.get('name')?.touched && countryForm.get('name')?.invalid
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="countryForm.get('name')?.touched && countryForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-5">
+            <label for="callingCodes" class="control-label">{{ 'calling-codes' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="callingCodes"
+              name="callingCodes"
+              id="callingCodes"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-5">
+            <label for="timezones" class="control-label">{{ 'timezones' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" formControlName="timezones" name="timezones" id="timezones" />
+          </div>
+          <div class="form-group col-md-5">
+            <label for="flag" class="control-label">{{ 'flag' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" formControlName="flag" name="flag" id="flag" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-5">
+            <label for="alpha2Code" class="control-label">{{ 'alpha2Code' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" formControlName="alpha2Code" name="alpha2Code" id="alpha2Code" />
+          </div>
+          <div class="form-group col-md-5">
+            <label for="alpha3Code" class="control-label">{{ 'alpha3Code' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" formControlName="alpha3Code" name="alpha3Code" id="alpha3Code" />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ country?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ country?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ country?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ country?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ country?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

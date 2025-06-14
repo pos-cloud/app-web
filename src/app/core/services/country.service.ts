@@ -3,19 +3,16 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { Country } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { Country } from '../../components/country/country';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CountryService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `countries`, // PATH
       _http,
