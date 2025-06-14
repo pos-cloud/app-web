@@ -24,6 +24,7 @@ import { QuillModule } from 'ngx-quill';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
+import { LoginComponent } from './auth/login/login.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { AddressModule } from './components/address/address.module';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
@@ -46,7 +47,6 @@ import { EmailTemplateComponent } from './components/email-template/email-templa
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportersModule } from './components/export/exporters.module';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
-import { LoginComponent } from './components/login/login.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { ListMovementsOfArticlesComponent } from './components/movement-of-article/list-movements-of-articles/list-movements-of-articles.component';
