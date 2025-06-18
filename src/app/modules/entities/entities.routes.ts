@@ -123,4 +123,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'countries',
     loadChildren: () => import('./country/country.routes').then((m) => m.COUNTRY_ROUTES),
   },
+  {
+    path: 'permissions',
+    loadChildren: () => import('./permission/permission.routes').then((m) => m.PERMISSION_ROUTES),
+  },
 ];

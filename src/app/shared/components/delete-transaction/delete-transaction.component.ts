@@ -99,17 +99,14 @@ export class DeleteTransactionComponent implements OnInit, OnDestroy {
       );
     } else {
       this._toast.showToast({
-        message:
-          'No se puede eliminar una transacción electrónica ya validada.',
+        message: 'No se puede eliminar una transacción electrónica ya validada.',
       });
       this.loading = false;
     }
   }
 
   private canDeleteTransaction(): boolean {
-    const transactionCollection = this.user?.permission?.collections.find(
-      (collection) => collection.name === 'transacciones'
-    );
-    return transactionCollection?.actions?.delete !== false;
+    const transactionCollection = this.user?.permission?.collections?.transactions;
+    return transactionCollection?.delete !== false;
   }
 }

@@ -4,15 +4,35 @@ export interface Permission extends Activity {
   name: string;
 
   collections: {
-    name: string;
-    actions: {
+    transactions: {
       view: boolean;
       add: boolean;
       edit: boolean;
       delete: boolean;
       export: boolean;
     };
-  }[];
+    articles: {
+      view: boolean;
+      add: boolean;
+      edit: boolean;
+      delete: boolean;
+      export: boolean;
+    };
+    companies: {
+      view: boolean;
+      add: boolean;
+      edit: boolean;
+      delete: boolean;
+      export: boolean;
+    };
+    movementsOfArticles: {
+      view: boolean;
+      add: boolean;
+      edit: boolean;
+      delete: boolean;
+      export: boolean;
+    };
+  };
 
   menu: {
     sales: {
