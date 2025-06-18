@@ -28,7 +28,7 @@ export class ListTransportsComponent {
       required: true,
     },
     {
-      name: 'vatCondition.name',
+      name: 'vatCondition.description',
       visible: true,
       disabled: false,
       filter: true,
