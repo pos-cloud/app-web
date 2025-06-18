@@ -131,11 +131,9 @@ export class CurrentAccountComponent implements OnInit {
     });
 
     if (this.identity.permission && this.identity.permission.collections) {
-      this.identity.permission.collections.forEach((element) => {
-        if (element.name === 'transacciones') {
-          this.actions = element.actions;
-        }
-      });
+      if (this.identity.permission.collections.transactions) {
+        this.actions = this.identity.permission.collections.transactions;
+      }
     }
 
     this.userCountry = Config.country;

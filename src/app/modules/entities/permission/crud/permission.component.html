@@ -1,0 +1,476 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-permission' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ permission?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ permission?.name ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handlePermissionOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handlePermissionOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="permissionForm" (ngSubmit)="handlePermissionOperation()" autocomplete="off" *ngIf="!loading">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              name="name"
+              id="name"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': permissionForm.get('name')?.touched && permissionForm.get('name')?.invalid
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="permissionForm.get('name')?.touched && permissionForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'permissions' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="filterTransaction" class="control-label"
+              >{{ 'filterTransaction' | translate | capitalize }}:</label
+            >
+            <select class="form-control" formControlName="filterTransaction">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="filterCompany" class="control-label">{{ 'filterCompany' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="filterCompany">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="editArticle" class="control-label">{{ 'editArticle' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="editArticle">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="allowDiscount" class="control-label">{{ 'allowDiscount' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="allowDiscount">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="allowPayment" class="control-label">{{ 'allowPayment' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="allowPayment">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'menu' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div formGroupName="menu" class="d-flex flex-wrap">
+          <!-- Ventas -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'sales' | translate | capitalize }}</b>
+            </div>
+            <div formGroupName="sales" class="d-flex flex-column">
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="counter" formControlName="counter" />
+                <label class="form-check-label" for="counter">{{ 'counter' | translate | capitalize }}</label>
+              </div>
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="tiendaNube" formControlName="tiendaNube" />
+                <label class="form-check-label" for="tiendaNube">{{ 'tiendaNube' | translate | capitalize }}</label>
+              </div>
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="wooCommerce" formControlName="wooCommerce" />
+                <label class="form-check-label" for="wooCommerce">{{ 'wooCommerce' | translate | capitalize }}</label>
+              </div>
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="delivery" formControlName="delivery" />
+                <label class="form-check-label" for="delivery">{{ 'delivery' | translate | capitalize }}</label>
+              </div>
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="voucherReader" formControlName="voucherReader" />
+                <label class="form-check-label" for="voucherReader">{{
+                  'voucherReader' | translate | capitalize
+                }}</label>
+              </div>
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="sales_resto" formControlName="resto" />
+                <label class="form-check-label" for="sales_resto">{{ 'resto' | translate | capitalize }}</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Compras -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'purchases' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="purchases" formControlName="purchases" />
+              <label class="form-check-label" for="purchases">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Stock -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'stock' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="stock" formControlName="stock" />
+              <label class="form-check-label" for="stock">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Fondos -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'money' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="money" formControlName="money" />
+              <label class="form-check-label" for="money">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Producción -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'production' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="production" formControlName="production" />
+              <label class="form-check-label" for="production">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Productos -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'articles' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="articles" formControlName="articles" />
+              <label class="form-check-label" for="articles">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Empresas -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'companies' | translate | capitalize }}</b>
+            </div>
+            <div formGroupName="companies" class="d-flex flex-column">
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="companies_client" formControlName="client" />
+                <label class="form-check-label" for="companies_client">{{ 'client' | translate | capitalize }}</label>
+              </div>
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="companies_provider" formControlName="provider" />
+                <label class="form-check-label" for="companies_provider">{{
+                  'provider' | translate | capitalize
+                }}</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resto -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'resto' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="menu_resto" formControlName="resto" />
+              <label class="form-check-label" for="menu_resto">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Contenido -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'gallery' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="gallery" formControlName="gallery" />
+              <label class="form-check-label" for="gallery">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Reportes -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'report' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="report" formControlName="report" />
+              <label class="form-check-label" for="report">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Configuración -->
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'config' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="config" formControlName="config" />
+              <label class="form-check-label" for="config">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'transaction-types' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-12">
+            <ng-container *ngFor="let group of transactionTypeGroups">
+              <div class="mb-2">
+                <b>{{ group[0] }}</b>
+              </div>
+              <div class="d-flex flex-wrap mb-3">
+                <div class="form-check mr-4 mb-2" *ngFor="let type of group[1]">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [id]="'type-' + type._id"
+                    [formControlName]="type._id"
+                    (change)="onTransactionTypeChange($event, type._id)"
+                  />
+                  <label class="form-check-label" [for]="'type-' + type._id">
+                    {{ type.name }}
+                  </label>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'collections' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <div formGroupName="collections">
+          <!-- Transactions -->
+          <div class="mb-2">
+            <b>{{ 'transactions' | translate | capitalize }}</b>
+          </div>
+          <div formGroupName="transactions" class="d-flex flex-wrap mb-3">
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="transactions_view" formControlName="view" />
+              <label class="form-check-label" for="transactions_view">{{ 'view' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="transactions_add" formControlName="add" />
+              <label class="form-check-label" for="transactions_add">{{ 'add' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="transactions_edit" formControlName="edit" />
+              <label class="form-check-label" for="transactions_edit">{{ 'edit' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="transactions_delete" formControlName="delete" />
+              <label class="form-check-label" for="transactions_delete">{{ 'delete' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="transactions_export" formControlName="export" />
+              <label class="form-check-label" for="transactions_export">{{ 'export' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Article -->
+          <div class="mb-2">
+            <b>{{ 'article' | translate | capitalize }}</b>
+          </div>
+          <div formGroupName="article" class="d-flex flex-wrap mb-3">
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_view" formControlName="view" />
+              <label class="form-check-label" for="article_view">{{ 'view' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_add" formControlName="add" />
+              <label class="form-check-label" for="article_add">{{ 'add' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_edit" formControlName="edit" />
+              <label class="form-check-label" for="article_edit">{{ 'edit' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_delete" formControlName="delete" />
+              <label class="form-check-label" for="article_delete">{{ 'delete' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_export" formControlName="export" />
+              <label class="form-check-label" for="article_export">{{ 'export' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Companies -->
+          <div class="mb-2">
+            <b>{{ 'companies' | translate | capitalize }}</b>
+          </div>
+          <div formGroupName="companies" class="d-flex flex-wrap mb-3">
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="companies_view" formControlName="view" />
+              <label class="form-check-label" for="companies_view">{{ 'view' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="companies_add" formControlName="add" />
+              <label class="form-check-label" for="companies_add">{{ 'add' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="companies_edit" formControlName="edit" />
+              <label class="form-check-label" for="companies_edit">{{ 'edit' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="companies_delete" formControlName="delete" />
+              <label class="form-check-label" for="companies_delete">{{ 'delete' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="companies_export" formControlName="export" />
+              <label class="form-check-label" for="companies_export">{{ 'export' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <!-- Movements of Articles -->
+          <div class="mb-2">
+            <b>{{ 'movementsOfArticles' | translate | capitalize }}</b>
+          </div>
+          <div formGroupName="movementsOfArticles" class="d-flex flex-wrap mb-3">
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="movements_view" formControlName="view" />
+              <label class="form-check-label" for="movements_view">{{ 'view' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="movements_add" formControlName="add" />
+              <label class="form-check-label" for="movements_add">{{ 'add' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="movements_edit" formControlName="edit" />
+              <label class="form-check-label" for="movements_edit">{{ 'edit' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="movements_delete" formControlName="delete" />
+              <label class="form-check-label" for="movements_delete">{{ 'delete' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="movements_export" formControlName="export" />
+              <label class="form-check-label" for="movements_export">{{ 'export' | translate | capitalize }}</label>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ permission?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ permission?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ permission?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ permission?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ permission?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

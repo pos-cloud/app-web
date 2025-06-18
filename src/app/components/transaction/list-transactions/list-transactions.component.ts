@@ -144,16 +144,10 @@ export class ListTransactionsComponent implements OnInit {
 
     this._authService.getIdentity.subscribe(async (identity) => {
       // get permision
-
-      if (identity?.permission?.collections.some((collection) => collection.name === 'transacciones')) {
-        // Encontrar el objeto con name igual a "transacciones"
-        const transactionObject = identity.permission.collections.find(
-          (collection) => collection.name === 'transacciones'
-        );
-
-        // Guardar los valores de 'actions' en las variables correspondientes
-        this.deleteTransaction = transactionObject.actions.delete;
-        this.editTransaction = transactionObject.actions.edit;
+      if (identity?.permission?.collections?.transactions) {
+        const transactionObject = identity.permission.collections.transactions;
+        this.deleteTransaction = transactionObject.delete;
+        this.editTransaction = transactionObject.edit;
       }
 
       if (identity && identity.origin) {
