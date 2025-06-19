@@ -3,33 +3,28 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PrintComponent } from 'app/components/print/print/print.component';
-import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
-import { UserService } from 'app/core/services/user.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import * as moment from 'moment';
 import { Observable, Subscription, of as observableOf } from 'rxjs';
 
 import { Config } from '../../../app.config';
 import { ConfigService } from '../../../core/services/config.service';
-import { PrinterService } from '../../../core/services/printer.service';
 import { TransactionService } from '../../../core/services/transaction.service';
-import { SendEmailComponent } from '../../../shared/components/send-email/send-email.component';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
-import { PrintTransactionTypeComponent } from '../../print/print-transaction-type/print-transaction-type.component';
-import { Printer, PrinterPrintIn } from '../../printer/printer';
+import { Printer } from '../../printer/printer';
 import { TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
 import { PrintService } from '@core/services/print.service';
+import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, Branch, PrintType } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
@@ -50,7 +45,6 @@ export class ListTransactionsComponent implements OnInit {
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
-  userCountry: string;
   transactionMovement: TransactionMovement;
   listType: string = 'statistics';
   modules: Observable<{}>;
@@ -64,7 +58,6 @@ export class ListTransactionsComponent implements OnInit {
   currentPage: number = 1;
   sort = { endDate: -1 };
   filters: any[];
-  scrollY: number = 0;
   timezone: string = '-03:00';
   columns = attributes;
   pathLocation: string[];
@@ -93,7 +86,6 @@ export class ListTransactionsComponent implements OnInit {
   branches: Branch[];
   config: Config;
   database: string;
-  pdfSrc: string;
 
   deleteTransaction = true;
   editTransaction = true;
@@ -104,13 +96,10 @@ export class ListTransactionsComponent implements OnInit {
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
     public _configService: ConfigService,
-    public _userService: UserService,
     public _router: Router,
     public _modalService: NgbModal,
     private _route: ActivatedRoute,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    public _printerService: PrinterService,
     public _branchService: BranchService,
     private _authService: AuthService,
     public _printService: PrintService,
@@ -133,8 +122,6 @@ export class ListTransactionsComponent implements OnInit {
 
   async ngOnInit() {
     this.database = localStorage.getItem('company');
-    this.userCountry = Config.country;
-    this.getPrinters();
 
     await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
       this.branches = branches;
@@ -195,6 +182,7 @@ export class ListTransactionsComponent implements OnInit {
     this.getItems();
     this.initDragHorizontalScroll();
   }
+
   public getBranches(match: {} = {}): Promise<Branch[]> {
     return new Promise<Branch[]>((resolve) => {
       this._branchService
@@ -206,19 +194,23 @@ export class ListTransactionsComponent implements OnInit {
           0, // LIMIT
           0 // SKIP
         )
-        .subscribe(
-          (result) => {
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
             if (result && result.branches) {
               resolve(result.branches);
             } else {
               resolve(null);
             }
           },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
+          error: (error) => {
+            this._toastService.showToast(error);
             resolve(null);
-          }
-        );
+          },
+          complete: () => {
+            resolve(null);
+          },
+        });
     });
   }
 
@@ -243,19 +235,23 @@ export class ListTransactionsComponent implements OnInit {
           },
           match: match,
         })
-        .subscribe(
-          (result) => {
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
             if (result) {
               resolve(result.result);
             } else {
               resolve(null);
             }
           },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
+          error: (error) => {
+            this._toastService.showToast(error);
             resolve(null);
-          }
-        );
+          },
+          complete: () => {
+            resolve(null);
+          },
+        });
     });
   }
 
@@ -318,26 +314,6 @@ export class ListTransactionsComponent implements OnInit {
 
       slider.scrollLeft = scrollLeft - walk;
     });
-  }
-
-  public getPrinters(): void {
-    this.loading = true;
-
-    this._printerService.getPrinters().subscribe(
-      (result) => {
-        if (!result.printers) {
-          this.printers = new Array();
-        } else {
-          this.hideMessage();
-          this.printers = result.printers;
-        }
-        this.loading = false;
-      },
-      (error) => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
   }
 
   public getItems(): void {
@@ -472,7 +448,7 @@ export class ListTransactionsComponent implements OnInit {
             }
           },
           (error) => {
-            this.showMessage(error._body, 'danger', false);
+            this._toastService.showToast(error);
             this.loading = false;
             this.totalItems = 0;
           }
@@ -577,76 +553,11 @@ export class ListTransactionsComponent implements OnInit {
         );
         break;
       case 'print':
-        // if (transaction.type.transactionMovement === TransactionMovement.Production) {
         const data = {
           transactionId: transaction._id,
         };
         this.toPrint(PrintType.Transaction, data);
-        // } else {
-        //   if (transaction.type.expirationDate && moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0) {
-        //     this.showMessage('El documento esta vencido', 'danger', true);
-        //   } else {
-        //     if (transaction.type.readLayout) {
-        //       modalRef = this._modalService.open(PrintTransactionTypeComponent);
-        //       modalRef.componentInstance.transactionId = transaction._id;
-        //     } else {
-        //       let printer: Printer;
 
-        //       await this.getUser().then(async (user) => {
-        //         if (user && user.printers && user.printers.length > 0) {
-        //           for (const element of user.printers) {
-        //             if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
-        //               printer = element.printer;
-        //             }
-        //           }
-        //         } else {
-        //           if (transaction.type.defectPrinter) {
-        //             printer = transaction.type.defectPrinter;
-        //           } else {
-        //             if (this.printers && this.printers.length > 0) {
-        //               for (let printer of this.printers) {
-        //                 if (printer.printIn === PrinterPrintIn.Counter) {
-        //                   printer = printer;
-        //                 }
-        //               }
-        //             }
-        //           }
-        //         }
-        //       });
-
-        //       modalRef = this._modalService.open(PrintComponent);
-        //       modalRef.componentInstance.company = transaction.company;
-        //       modalRef.componentInstance.transactionId = transaction._id;
-        //       modalRef.componentInstance.typePrint = 'invoice';
-        //       modalRef.componentInstance.printer = printer;
-
-        //       modalRef.result.then(
-        //         (result) => {
-        //           if (transaction.taxes && transaction.taxes.length > 0) {
-        //             for (const tax of transaction.taxes) {
-        //               if (tax.tax.printer) {
-        //                 modalRef = this._modalService.open(PrintTransactionTypeComponent);
-        //                 modalRef.componentInstance.transactionId = transaction._id;
-        //                 modalRef.componentInstance.printerID = tax.tax.printer;
-        //               }
-        //             }
-        //           }
-        //         },
-        //         (reason) => {
-        //           if (transaction.taxes && transaction.taxes.length > 0) {
-        //             for (const tax of transaction.taxes) {
-        //               if (tax.tax.printer) {
-        //                 modalRef = this._modalService.open(PrintTransactionTypeComponent);
-        //                 modalRef.componentInstance.transactionId = transaction._id;
-        //                 modalRef.componentInstance.printerID = tax.tax.printer;
-        //               }
-        //             }
-        //           }
-        //         }
-        //       );
-        //     }
-        //   }
-        // }
         break;
       case 'delete':
         modalRef = this._modalService.open(DeleteTransactionComponent, {
@@ -665,146 +576,25 @@ export class ListTransactionsComponent implements OnInit {
         );
         break;
       case 'send-email':
-        let attachments = [];
-
-        if (transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = transaction._id;
-          modalRef.componentInstance.source = 'mail';
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = transaction.company;
-          modalRef.componentInstance.transactionId = transaction._id;
-          modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.componentInstance.source = 'mail';
-        }
-        if (transaction.type.defectPrinter) {
-          modalRef.componentInstance.printer = transaction.type.defectPrinter;
-        } else {
-          if (this.printers && this.printers.length > 0) {
-            for (let printer of this.printers) {
-              if (printer.printIn === PrinterPrintIn.Counter) {
-                modalRef.componentInstance.printer = printer;
-              }
-            }
-          }
-        }
-
         modalRef = this._modalService.open(SendEmailComponent, {
           size: 'lg',
           backdrop: 'static',
         });
-        if (transaction.company && transaction.company.emails) {
-          modalRef.componentInstance.emails = transaction.company.emails;
-        }
-        let labelPrint = transaction.type.name;
-
-        if (transaction.type.labelPrint) {
-          labelPrint = transaction.type.labelPrint;
-        }
-        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${
+        modalRef.componentInstance.to = transaction.company.emails;
+        modalRef.componentInstance.subject = `${transaction.type.name} ${this.padNumber(transaction.origin, 4)}-${
           transaction.letter
         }-${this.padNumber(transaction.number, 8)}`;
-
-        if (transaction.type.electronics) {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
-          modalRef.componentInstance.body = ' ';
-
-          attachments.push({
-            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-            path: `/home/clients/${this.database}/invoice/${transaction._id}.pdf`,
-          });
-        } else {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
-          modalRef.componentInstance.body = ' ';
-          attachments.push({
-            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-            path: `/home/clients/${this.database}/others/${transaction._id}.pdf`,
-          });
-        }
-
-        if (Config.country === 'MX') {
-          // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
-          modalRef.componentInstance.body += ' ';
-
-          attachments.push({
-            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`,
-          });
-        }
-
-        if (transaction.type.defectEmailTemplate) {
-          if (transaction.type.electronics) {
-            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
-            attachments = [];
-            attachments.push({
-              filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-              path: `/home/clients/${this.database}/invoice/${transaction._id}.pdf`,
-            });
-          } else {
-            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
-            attachments = [];
-            attachments.push({
-              filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-              path: `/home/clients/${this.database}/others/${transaction._id}.pdf`,
-            });
-          }
-
-          if (Config.country === 'MX') {
-            // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + transaction.number + `">Su comprobante</a>`;
-            modalRef.componentInstance.body += ' ';
-            attachments = [];
-            attachments.push({
-              filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-              path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`,
-            });
-          }
-        }
-        modalRef.componentInstance.attachments = attachments;
-
-        break;
-      case 'download':
-        if (transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = transaction._id;
-          modalRef.componentInstance.source = 'mail';
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = transaction.company;
-          modalRef.componentInstance.transactionId = transaction._id;
-          modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.componentInstance.source = 'mail';
-        }
-        let url = `http://${Config.apiHost}.poscloud.com.ar:300/api/print/others/${transaction._id}`;
-
-        window.open(url);
+        modalRef.componentInstance.transactionId = transaction._id;
         break;
       default:
     }
   }
 
-  public getUser(): Promise<User> {
-    return new Promise<User>((resolve, reject) => {
-      let identity: User = JSON.parse(sessionStorage.getItem('user'));
-      let user;
+  public padNumber(n, length): string {
+    n = n.toString();
+    while (n.length < length) n = '0' + n;
 
-      if (identity) {
-        this._userService.getUser(identity._id).subscribe(
-          (result) => {
-            if (result && result.user) {
-              resolve(result.user);
-            } else {
-              this.showMessage('Debe volver a iniciar sesión', 'danger', false);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-          }
-        );
-      }
-    });
+    return n;
   }
 
   public toPrint(type: PrintType, data: {}): void {
@@ -837,13 +627,6 @@ export class ListTransactionsComponent implements OnInit {
           this.loading = false;
         },
       });
-  }
-
-  public padNumber(n, length): string {
-    n = n.toString();
-    while (n.length < length) n = '0' + n;
-
-    return n;
   }
 
   public exportCiti(): void {
@@ -882,15 +665,5 @@ export class ListTransactionsComponent implements OnInit {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
-  }
-
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage(): void {
-    this.alertMessage = '';
   }
 }
