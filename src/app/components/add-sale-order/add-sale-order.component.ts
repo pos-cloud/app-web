@@ -568,7 +568,6 @@ export class AddSaleOrderComponent {
       mov.transactionOrigin = transOrigin;
       mov.transactionDestination = transDestino;
     }
-    console.log(this.discountApply);
     return new Promise<MovementOfCancellation[]>((resolve) => {
       this.loading = true;
 
@@ -716,7 +715,6 @@ export class AddSaleOrderComponent {
     this.width = 0;
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        console.log(movementOfArticle.article);
         if (!movementOfArticle.movementParent) {
           this.quantity += movementOfArticle.amount;
           this.m3 += (movementOfArticle.article?.m3 ?? 0) * movementOfArticle.amount;

@@ -167,10 +167,10 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   viewPrice(): boolean {
-    if (this.user.permission.editArticle && this.movementOfArticle.transaction.type.modifyArticle) {
+    if (this?.user?.permission?.editArticle && this.movementOfArticle?.transaction?.type?.modifyArticle) {
       return false;
     }
-    if (!this.movementOfArticle.transaction.type.modifyArticle && this.user.permission.editArticle) {
+    if (!this.movementOfArticle?.transaction?.type?.modifyArticle && this.user?.permission?.editArticle) {
       return false;
     }
     return true;
@@ -184,26 +184,26 @@ export class AddMovementOfArticleComponent implements OnInit {
   loadLocationAndStock(): void {
     let depositArticle: Deposit;
 
-    if (this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0) {
-      this.movementOfArticle.article.deposits.forEach((element) => {
-        if (element.deposit.branch._id === this.transaction.depositDestination.branch._id) {
-          this.position += `Dep. ${element.deposit.name} - `;
-          depositArticle = element.deposit;
-        } else {
-          depositArticle = this.transaction.depositDestination;
-        }
-      });
-    } else {
-      depositArticle = this.transaction.depositDestination;
-    }
+    // if (this.movementOfArticle?.article?.deposits && this.movementOfArticle?.article?.deposits?.length > 0) {
+    //   this.movementOfArticle.article.deposits.forEach((element) => {
+    //     if (element.deposit.branch._id === this.transaction.depositDestination.branch._id) {
+    //       this.position += `Dep. ${element.deposit.name} - `;
+    //       depositArticle = element.deposit;
+    //     } else {
+    //       depositArticle = this.transaction.depositDestination;
+    //     }
+    //   });
+    // } else {
+    //   depositArticle = this.transaction.depositDestination;
+    // }
 
-    if (this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
-      this.movementOfArticle.article.locations.forEach((element) => {
-        if (element.location && element.location.deposit && element.location.deposit._id === depositArticle._id) {
-          this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
-        }
-      });
-    }
+    // if (this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
+    //   this.movementOfArticle.article.locations.forEach((element) => {
+    //     if (element.location && element.location.deposit && element.location.deposit._id === depositArticle._id) {
+    //       this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
+    //     }
+    //   });
+    // }
     if (Config.modules && Config.modules.stock) {
       this.getArticleStock(this.movementOfArticle).then((articleStock) => {
         if (articleStock) {
