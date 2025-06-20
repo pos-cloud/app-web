@@ -101,6 +101,7 @@ export class SendEmailComponent implements OnInit {
         },
         complete: () => {
           this.loading = false;
+          this.close();
         },
       });
   }

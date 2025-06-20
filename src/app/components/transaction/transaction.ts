@@ -605,6 +605,16 @@ export let attributes = [
     required: true,
   },
   {
+    name: 'company.phones',
+    visible: false,
+    disabled: false,
+    filter: false,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: true,
+  },
+  {
     name: 'type.expirationDate',
     visible: false,
     disabled: false,

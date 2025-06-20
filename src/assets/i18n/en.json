@@ -30,5 +30,11 @@
   "add-transport": "Add transport",
   "vat-conditions": "VAT Condition",
   "identificationType": "Identification Type",
-  "country": "Country"
+  "country": "Country",
+  "send": "Send",
+  "send-whatsapp": "Send WhatsApp",
+  "phone": "Phone",
+  "message": "Message",
+  "cancel": "Cancel",
+  "wait-please": "Please wait"
 }

@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ 'send-whatsapp' | translate | capitalize }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <form [formGroup]="sendWppForm" (ngSubmit)="sendWpp()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+          <label for="phone">{{ 'phone' | translate | capitalize }}:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">+ 54 9</span>
+            </div>
+            <input class="form-control" formControlName="phone" name="phone" id="phone" [focus]="focusEvent" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label for="message">{{ 'message' | translate | capitalize }}:</label>
+          <input class="form-control" formControlName="message" name="message" id="message" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="close()">{{ 'cancel' | translate | capitalize }}</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!sendWppForm?.valid || loading">
+        <i class="fa" [ngClass]="{ 'fa-whatsapp': !loading, 'fa-spinner fa-spin': loading }"></i>
+        <span *ngIf="!loading">{{ 'send' | translate | capitalize }}</span>
+        <span *ngIf="loading">{{ 'wait-please' | translate | capitalize }}</span>
+      </button>
+    </div>
+  </form>
+</section>
