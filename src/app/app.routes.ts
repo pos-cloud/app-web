@@ -47,7 +47,6 @@ import { ListVATConditionsComponent } from './components/vat-condition/list-vat-
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
-import { SendEmailComponent } from './shared/components/send-email/send-email.component';
 
 export const _routes: Routes = [
   {
@@ -278,11 +277,6 @@ export const _routes: Routes = [
     component: ListCashBoxComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' },
-  },
-  {
-    path: 'admin/send-email',
-    component: SendEmailComponent,
-    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/export-citi',
