@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FocusDirective } from '@shared/directives/focus.directive';
 import { PipesModule } from '@shared/pipes/pipes.module';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-send-wpp',
@@ -51,7 +52,7 @@ export class SendWppComponent implements OnInit {
     const message = this.sendWppForm.get('message').value;
 
     const company = localStorage.getItem('company');
-    const transactionLink = `https://api.poscloud.ar/to-print/transaction/${company}/${this.transactionId}`;
+    const transactionLink = `${environment.apiv2}/to-print/transaction/${company}/${this.transactionId}`;
     const fullMessage = `${message} ${transactionLink}`;
 
     const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(fullMessage)}`;
