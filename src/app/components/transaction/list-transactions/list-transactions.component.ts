@@ -2,7 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
@@ -11,7 +11,6 @@ import * as moment from 'moment';
 import { Observable, Subscription, of as observableOf } from 'rxjs';
 
 import { Config } from '../../../app.config';
-import { ConfigService } from '../../../core/services/config.service';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
@@ -25,6 +24,7 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 
 import { PrintService } from '@core/services/print.service';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
+import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, Branch, PrintType } from '@types';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
@@ -93,16 +93,14 @@ export class ListTransactionsComponent implements OnInit {
   private destroy$ = new Subject<void>();
 
   constructor(
-    public _transactionService: TransactionService,
-    public _transactionTypeService: TransactionTypeService,
-    public _configService: ConfigService,
-    public _router: Router,
-    public _modalService: NgbModal,
+    private _transactionService: TransactionService,
+    private _transactionTypeService: TransactionTypeService,
+    private _router: Router,
+    private _modalService: NgbModal,
     private _route: ActivatedRoute,
-    public activeModal: NgbActiveModal,
-    public _branchService: BranchService,
+    private _branchService: BranchService,
     private _authService: AuthService,
-    public _printService: PrintService,
+    private _printService: PrintService,
     private _toastService: ToastService
   ) {
     this.transactionTypesSelect = new Array();
@@ -584,6 +582,14 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.subject = `${transaction.type.name} ${this.padNumber(transaction.origin, 4)}-${
           transaction.letter
         }-${this.padNumber(transaction.number, 8)}`;
+        modalRef.componentInstance.transactionId = transaction._id;
+        break;
+      case 'send-wpp':
+        modalRef = this._modalService.open(SendWppComponent, {
+          size: 'md',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.phone = transaction.company.phones;
         modalRef.componentInstance.transactionId = transaction._id;
         break;
       default:
