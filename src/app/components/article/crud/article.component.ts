@@ -356,7 +356,6 @@ export class ArticleComponent implements OnInit {
     this.getCategory();
     this.getUnitsOfMeasurement();
     this.getCompany();
-    this.getUsers();
     this.getTax();
 
     const pathLocation: string[] = this._router.url.split('/');
@@ -652,24 +651,7 @@ export class ArticleComponent implements OnInit {
             this.article.updateDate = '';
             this.article.updateUser = null;
           }
-          this.creationUser = this.users.find(
-            (user: User) =>
-              user._id ===
-              (typeof this.article.creationUser === 'string'
-                ? this.article.creationUser
-                : typeof this.article.creationUser !== 'undefined'
-                ? this.article.creationUser._id
-                : '')
-          );
-          this.updateUser = this.users.find(
-            (user: User) =>
-              user._id ===
-              (typeof this.article.updateUser === 'string'
-                ? this.article.updateUser
-                : typeof this.article.updateUser !== 'undefined'
-                ? this.article.updateUser._id
-                : '')
-          );
+
           if (this.article.variants.length > 0) {
             const types = this.article.variants.map((item) => item.type);
             const uniqueTypes = [...new Set(types)];
@@ -733,32 +715,6 @@ export class ArticleComponent implements OnInit {
       },
       (error) => {
         //   this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getUsers() {
-    this.loading = true;
-    let project = {
-      _id: 1,
-      name: 1,
-      operationType: 1,
-    };
-    let match = {
-      operationType: { $ne: 'D' },
-    };
-    this._userService.getAll({ project, match }).subscribe(
-      (result) => {
-        if (!result) {
-          this.loading = false;
-          this.users = new Array();
-        } else {
-          this.loading = false;
-          this.users = result.result;
-        }
-      },
-      (error) => {
         this.loading = false;
       }
     );
