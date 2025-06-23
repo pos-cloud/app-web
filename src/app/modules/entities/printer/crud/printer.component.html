@@ -1,0 +1,406 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">
+        {{ 'add-printer' | translate | capitalize }}
+      </span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'">
+        {{ 'edit' | translate | capitalize }} {{ printer?.name ?? '' }}
+      </span>
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ printer?.name ?? '' }}
+      </span>
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handlePrinterOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger active"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="handlePrinterOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+
+    <div class="card-body scroll">
+      <form [formGroup]="printerForm" (ngSubmit)="handlePrinterOperation()" autocomplete="off" *ngIf="!loading">
+        <!-- Datos principales -->
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              id="name"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': printerForm.get('name')?.touched && printerForm.get('name')?.invalid
+              }"
+              [readonly]="operation === 'view' || operation === 'delete'"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="printerForm.get('name')?.touched && printerForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="printIn" class="control-label">{{ 'printIn' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="printIn"
+              [disabled]="operation === 'view' || operation === 'delete'"
+            >
+              <option *ngFor="let printIn of printsIn" [ngValue]="printIn">{{ printIn }}</option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="printerForm.get('printIn')?.touched && printerForm.get('printIn')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="connectionURL" class="control-label">{{ 'connectionURL' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="connectionURL"
+              id="connectionURL"
+              [readonly]="operation === 'view' || operation === 'delete'"
+            />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="url" class="control-label">{{ 'url' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="url"
+              id="url"
+              [readonly]="operation === 'view' || operation === 'delete'"
+            />
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'dimensions' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="orientation" class="control-label">{{ 'orientation' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="orientation"
+              [disabled]="operation === 'view' || operation === 'delete'"
+            >
+              <option value="p">{{ 'portrait' | translate | capitalize }}</option>
+              <option value="l">{{ 'landscape' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="pageWidth" class="control-label">{{ 'pageWidth' | translate | capitalize }}:</label>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="pageWidth"
+                id="pageWidth"
+                [readonly]="operation === 'view' || operation === 'delete'"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="pageHigh" class="control-label">{{ 'page-height' | translate | capitalize }}:</label>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="pageHigh"
+                id="pageHigh"
+                [readonly]="operation === 'view' || operation === 'delete'"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="labelWidth" class="control-label">{{ 'label-width' | translate | capitalize }}:</label>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="labelWidth"
+                id="labelWidth"
+                [readonly]="operation === 'view' || operation === 'delete'"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="labelHigh" class="control-label">{{ 'label-height' | translate | capitalize }}:</label>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="labelHigh"
+                id="labelHigh"
+                [readonly]="operation === 'view' || operation === 'delete'"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="row" class="control-label">{{ 'row' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="row"
+              id="row"
+              [readonly]="operation === 'view' || operation === 'delete'"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="addPag" class="control-label">{{ 'addPag' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="addPag"
+              id="addPag"
+              [readonly]="operation === 'view' || operation === 'delete'"
+            />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'fields' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th style="width: 10%">{{ 'position' | translate | capitalize }}</th>
+                    <th style="width: 12%">{{ 'type' | translate | capitalize }}</th>
+                    <th style="width: 18%">{{ 'value' | translate | capitalize }}</th>
+                    <th style="width: 10%">{{ 'font' | translate | capitalize }}</th>
+                    <th style="width: 10%">{{ 'style' | translate | capitalize }}</th>
+                    <th style="width: 6%">{{ 'size' | translate | capitalize }}</th>
+                    <th style="width: 8%">{{ 'positionStartX' | translate | capitalize }}</th>
+                    <th style="width: 8%">{{ 'positionEndX' | translate | capitalize }}</th>
+                    <th style="width: 8%">{{ 'positionStartY' | translate | capitalize }}</th>
+                    <th style="width: 8%">{{ 'positionEndY' | translate | capitalize }}</th>
+                    <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 7%">
+                      <button type="button" class="btn btn-success btn-sm" (click)="addField()">
+                        <i class="fa fa-plus"></i>
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="fields">
+                  <tr *ngFor="let field of fieldsArray.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <select
+                        class="form-control form-control-sm"
+                        formControlName="position"
+                        [disabled]="operation === 'view' || operation === 'delete'"
+                      >
+                        <option value="Encabezado">Encabezado</option>
+                        <option value="Cuerpo">Cuerpo</option>
+                        <option value="Pie">Pie</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select
+                        class="form-control form-control-sm"
+                        formControlName="type"
+                        [disabled]="operation === 'view' || operation === 'delete'"
+                      >
+                        <option value="label">Etiqueta</option>
+                        <option value="data">Dato</option>
+                        <option value="dataSum">Dato Sumalizado</option>
+                        <option value="dataEsp">Dato Especifico</option>
+                        <option value="line">Línea</option>
+                        <option value="image">Imagen</option>
+                        <option value="barcode">Código de barra</option>
+                        <option value="url">Url</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        formControlName="value"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                      />
+                    </td>
+                    <td>
+                      <select
+                        class="form-control form-control-sm"
+                        formControlName="font"
+                        [disabled]="operation === 'view' || operation === 'delete'"
+                      >
+                        <option value="default">Default</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Times">Times</option>
+                        <option value="Courier">Courier</option>
+                        <option value="Symbol">Symbol</option>
+                        <option value="ZapfDingbats">ZapfDingbats</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select
+                        class="form-control form-control-sm"
+                        formControlName="fontType"
+                        [disabled]="operation === 'view' || operation === 'delete'"
+                      >
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="italic">Italic</option>
+                        <option value="bolditalic">Bold Italic</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="fontSize"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="positionStartX"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="positionEndX"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="positionStartY"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="positionEndY"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                      />
+                    </td>
+                    <td *ngIf="operation !== 'view' && operation !== 'delete'">
+                      <button type="button" class="btn btn-danger btn-sm" (click)="removeField(i)">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ printer?.creationUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ printer?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ printer?.updateUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ printer?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  ID:<b>{{ printer?._id || '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

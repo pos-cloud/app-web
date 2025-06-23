@@ -123,4 +123,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'countries',
     loadChildren: () => import('./country/country.routes').then((m) => m.COUNTRY_ROUTES),
   },
+  {
+    path: 'printers',
+    loadChildren: () => import('./printer/printer.routes').then((m) => m.PRINTER_ROUTES),
+  },
 ];
