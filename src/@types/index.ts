@@ -31,7 +31,7 @@ export { Origin } from './entities/origin.interface';
 export { PaymentMethod } from './entities/payment-method.interface';
 export { Permission } from './entities/permission.interface';
 export { PriceList } from './entities/price-list.interface';
-export { Printer, PrinterPrintIn, PrinterType } from './entities/printer.interface';
+export { Printer, PrinterPrintIn } from './entities/printer.interface';
 export { RelationType } from './entities/relation-type.interface';
 export { Resource } from './entities/resource.interface';
 export { Room } from './entities/room.interface';

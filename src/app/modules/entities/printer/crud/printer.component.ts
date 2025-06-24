@@ -159,7 +159,6 @@ export class PrinterComponent implements OnInit {
         this.fieldsArray.push(
           this._fb.group({
             type: [field.type || '', []],
-            label: [field.label || '', []],
             value: [field.value || '', []],
             font: [field.font || '', []],
             fontType: [field.fontType || '', []],
@@ -168,8 +167,6 @@ export class PrinterComponent implements OnInit {
             positionStartY: [field.positionStartY || 0, []],
             positionEndX: [field.positionEndX || 0, []],
             positionEndY: [field.positionEndY || 0, []],
-            splitting: [field.splitting || 0, []],
-            colour: [field.colour || '', []],
             position: [field.position || '', []],
           })
         );

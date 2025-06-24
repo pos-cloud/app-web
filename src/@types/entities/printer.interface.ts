@@ -3,9 +3,6 @@ import { Activity } from '@types';
 export interface Printer extends Activity {
   _id: string;
   name: string;
-  origin: number;
-  connectionURL: string;
-  type: PrinterType;
   pageWidth: number;
   pageHigh: number;
   labelWidth: number;
@@ -19,7 +16,6 @@ export interface Printer extends Activity {
   fields: [
     {
       type: string; //field,line,movArticle,movCash,movCancellation
-      label: string;
       value: string; //field,movArticle,movCash,movCancellation
       font: string; //courier,times,helvetica  solo si es field
       fontType: string; //normal,italic,bold,bolditalic solo si es field
@@ -28,10 +24,8 @@ export interface Printer extends Activity {
       positionStartY: number;
       positionEndX: number; //line
       positionEndY: number; //line
-      splitting: number; // ancho del string solo si es field
-      colour: string; // 4,5,9
       position: PositionPrint;
-    },
+    }
   ];
 }
 
@@ -55,10 +49,4 @@ export enum PrinterPrintIn {
   Label = <any>'Etiqueta',
   Counter = <any>'Mostrador',
   Voucher = <any>'Voucher',
-}
-
-export enum PrinterType {
-  PDF = <any>'PDF',
-  Commander = <any>'Comandera',
-  Fiscal = <any>'Fiscal',
 }
