@@ -65,7 +65,6 @@ export class PrinterComponent implements OnInit {
     this.printerForm = this._fb.group({
       _id: ['', []],
       name: ['', [Validators.required]],
-      connectionURL: ['', []],
       pageWidth: [0, []],
       pageHigh: [0, []],
       labelWidth: [0, []],
@@ -135,7 +134,6 @@ export class PrinterComponent implements OnInit {
     const values = {
       _id: this.printer?._id ?? '',
       name: this.printer?.name ?? '',
-      connectionURL: this.printer?.connectionURL ?? '',
       pageWidth: this.printer?.pageWidth ?? 0,
       pageHigh: this.printer?.pageHigh ?? 0,
       labelWidth: this.printer?.labelWidth ?? 0,
