@@ -72,7 +72,6 @@ import { ListPriceListsComponent } from './components/price-list/list-price-list
 import { PriceListComponent } from './components/price-list/price-list/price-list.component';
 import { SelectPriceListComponent } from './components/price-list/select-price-list/select-price-list.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
-import { PrintArticlesStockComponent } from './components/print/print-articles-stock/print-articles-stock.component';
 import { PrintQRComponent } from './components/print/print-qr/print-qr.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
 import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
@@ -187,7 +186,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectOriginComponent,
     ListCashBoxComponent,
     CurrentAccountDetailsComponent,
-    PrintArticlesStockComponent,
     PriceListComponent,
     ListPriceListsComponent,
     ListArticlesPosComponent,
