@@ -76,6 +76,7 @@ export class AddTransactionComponent implements OnInit {
     TransactionState.PaymentDeclined,
     TransactionState.Pending,
   ];
+  public madeIns: string[] = ['mostrador', 'resto'];
   public companyName: string = 'Consumidor Final';
   public transactionDate: string;
   public userCountry: string;
@@ -211,6 +212,7 @@ export class AddTransactionComponent implements OnInit {
       observation: [this.transaction.observation, []],
       employeeOpening: [this.transaction.employeeOpening, []],
       state: [this.transaction.state, []],
+      madein: [this.transaction.madein, []],
       VATPeriod: [this.transaction?.VATPeriod || null, []],
       balance: [this.transaction.balance, []],
     });
@@ -226,6 +228,7 @@ export class AddTransactionComponent implements OnInit {
     if (!this.transaction.letter) this.transaction.letter = '';
     if (!this.transaction.number) this.transaction.number = 1;
     if (!this.transaction.observation) this.transaction.observation = '';
+    if (!this.transaction.madein) this.transaction.madein = 'mostrador';
 
     let employeeOpening;
     if (!this.transaction.employeeOpening) {
@@ -254,6 +257,7 @@ export class AddTransactionComponent implements OnInit {
       observation: this.transaction.observation,
       employeeOpening: employeeOpening,
       state: this.transaction.state,
+      madein: this.transaction.madein,
       VATPeriod: this.transaction?.VATPeriod || null,
       balance: this.transaction.balance ? this.transaction.balance : 0,
       account: this.transaction.account ? this.transaction.account : null,
@@ -559,6 +563,7 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
     this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
     this.transaction.account = this.transactionForm.value.account;
+    this.transaction.madein = this.transactionForm.value.madein;
 
     if (
       (this.transaction.type.requestEmployee && this.transaction.employeeOpening) ||
@@ -640,6 +645,7 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.origin = this.transactionForm.value.origin;
     this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
     this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
+    this.transaction.madein = this.transactionForm.value.madein;
 
     if (this.transactionMovement && this.transactionMovement !== TransactionMovement.Sale.toString()) {
       this.transaction.letter = this.transactionForm.value.letter;

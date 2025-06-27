@@ -307,6 +307,31 @@
           </select>
         </div>
       </div>
+      <div
+        class="row"
+        *ngIf="
+          transaction &&
+          transaction.type &&
+          transaction.type.allowEdit &&
+          transaction._id &&
+          transaction._id !== '' &&
+          userType === 'admin' &&
+          posType !== 'cuentas-corrientes'
+        "
+      >
+        <div class="form-group col-md-12">
+          <label for="madein" class="control-label">Canal</label>
+          <select class="form-control" formControlName="madein">
+            <option
+              *ngFor="let madein of madeIns"
+              [selected]="transaction && transaction.madein && madein === transaction.madein"
+              [value]="madein"
+            >
+              {{ madein }}
+            </option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
