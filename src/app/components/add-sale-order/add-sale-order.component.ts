@@ -57,7 +57,7 @@ import { SelectPriceListComponent } from '../price-list/select-price-list/select
 import { Print } from '../print/print';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
-import { Printer, PrinterPrintIn, PrinterType } from '../printer/printer';
+import { Printer, PrinterPrintIn } from '../printer/printer';
 import { SelectShipmentMethodComponent } from '../shipment-method/select-shipment-method/select-shipment-method.component';
 import { TaxBase, TaxClassification } from '../tax/tax';
 import { Taxes } from '../tax/taxes';
@@ -3499,9 +3499,7 @@ export class AddSaleOrderComponent {
 
       switch (this.typeOfOperationToPrint) {
         case 'charge':
-          if (printer.type === PrinterType.PDF) {
-            this.openModal('print');
-          }
+          this.openModal('print');
           break;
         case 'kitchen':
           this.openModal('printKitchen');
