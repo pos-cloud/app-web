@@ -50,7 +50,7 @@ export class PermissionComponent implements OnInit {
           delete: [true],
           export: [true],
         }),
-        article: this._fb.group({
+        articles: this._fb.group({
           view: [true],
           add: [true],
           edit: [true],
@@ -160,22 +160,83 @@ export class PermissionComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    if (this.permission && this.transactionTypes.length > 0) {
-      this.permissionForm.patchValue(this.permission);
+    this.permissionForm.patchValue({
+      _id: this.permission._id ?? '',
+      name: this.permission.name ?? '',
+      collections: {
+        transactions: {
+          view: this.permission.collections?.transactions?.view ?? true,
+          add: this.permission.collections?.transactions?.add ?? true,
+          edit: this.permission.collections?.transactions?.edit ?? true,
+          delete: this.permission.collections?.transactions?.delete ?? true,
+          export: this.permission.collections?.transactions?.export ?? true,
+        },
+        articles: {
+          view: this.permission.collections?.articles?.view ?? true,
+          add: this.permission.collections?.articles?.add ?? true,
+          edit: this.permission.collections?.articles?.edit ?? true,
+          delete: this.permission.collections?.articles?.delete ?? true,
+          export: this.permission.collections?.articles?.export ?? true,
+        },
+        companies: {
+          view: this.permission.collections?.companies?.view ?? true,
+          add: this.permission.collections?.companies?.add ?? true,
+          edit: this.permission.collections?.companies?.edit ?? true,
+          delete: this.permission.collections?.companies?.delete ?? true,
+          export: this.permission.collections?.companies?.export ?? true,
+        },
+        movementsOfArticles: {
+          view: this.permission.collections?.movementsOfArticles?.view ?? true,
+          add: this.permission.collections?.movementsOfArticles?.add ?? true,
+          edit: this.permission.collections?.movementsOfArticles?.edit ?? true,
+          delete: this.permission.collections?.movementsOfArticles?.delete ?? true,
+          export: this.permission.collections?.movementsOfArticles?.export ?? true,
+        },
+      },
+      menu: {
+        sales: {
+          counter: this.permission.menu?.sales?.counter ?? true,
+          tiendaNube: this.permission.menu?.sales?.tiendaNube ?? true,
+          wooCommerce: this.permission.menu?.sales?.wooCommerce ?? true,
+          delivery: this.permission.menu?.sales?.delivery ?? true,
+          voucherReader: this.permission.menu?.sales?.voucherReader ?? true,
+          resto: this.permission.menu?.sales?.resto ?? true,
+        },
+        money: this.permission.menu?.money ?? true,
+        production: this.permission.menu?.production ?? true,
+        purchases: this.permission.menu?.purchases ?? true,
+        stock: this.permission.menu?.stock ?? true,
+        articles: this.permission.menu?.articles ?? true,
+        companies: {
+          client: this.permission.menu?.companies?.client ?? true,
+          provider: this.permission.menu?.companies?.provider ?? true,
+        },
+        report: this.permission.menu?.report ?? true,
+        config: this.permission.menu?.config ?? true,
+        gallery: this.permission.menu?.gallery ?? true,
+        resto: this.permission.menu?.resto ?? true,
+      },
+      filterTransaction: this.permission.filterTransaction ?? false,
+      filterCompany: this.permission.filterCompany ?? false,
+      transactionTypes: [],
+      editArticle: this.permission.editArticle ?? true,
+      allowDiscount: this.permission.allowDiscount ?? true,
+      allowPayment: this.permission.allowPayment ?? true,
+    });
 
+    // Solo manejar transactionTypes si ya están cargados
+    if (this.transactionTypes.length > 0) {
+      // Manejar transactionTypes de forma separada
       const selectedTypes = (this.permission.transactionTypes || []).map((t: any) =>
         typeof t === 'string' ? t : t._id
       );
       this.permissionForm.get('transactionTypes').setValue(selectedTypes);
 
+      // Establecer los controles dinámicos de transactionTypes
       this.transactionTypes.forEach((type) => {
         if (this.permissionForm.contains(type._id)) {
           this.permissionForm.get(type._id).setValue(selectedTypes.includes(type._id));
         }
-      });
-
-      setTimeout(() => {
-        this.permissionForm.updateValueAndValidity();
       });
     }
   }
@@ -190,14 +251,14 @@ export class PermissionComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          if (result.status === 200) {
-            this.permission = result.result;
-            this.setValueForm();
-          }
-          this.loading = false;
+          this.permission = result.result;
         },
         error: (error) => {
           this._toast.showToast(error);
+          this.loading = false;
+        },
+        complete: () => {
+          this.setValueForm();
           this.loading = false;
         },
       });
@@ -211,7 +272,11 @@ export class PermissionComponent implements OnInit {
       return;
     }
 
-    this.permission = this.permissionForm.value;
+    const formValues = this.permissionForm.value;
+    this.permission = {
+      ...this.permission,
+      ...formValues,
+    };
 
     switch (this.operation) {
       case 'add':
