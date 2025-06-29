@@ -94,30 +94,11 @@ export class RegisterComponent implements OnInit {
 
     this._authService.register(registerData).subscribe({
       next: (result) => {
-        if (!result.user) {
-          if (result.message && result.message !== '') {
-            this._toastService.showToast({
-              message: result.message,
-              type: 'info',
-            });
-          }
-        } else {
-          this._toastService.showToast({
-            message:
-              'Ha sido registrado correctamente, le enviamos a la casilla de correo los datos necesarios para ingresar POS Cloud.',
-            type: 'success',
-          });
-          setTimeout(() => {
-            this._router.navigate(['/login']);
-          }, 3000);
-        }
+        this._toastService.showToast(result);
         this.loading = false;
       },
       error: (error) => {
-        this._toastService.showToast({
-          message: error._body,
-          type: 'danger',
-        });
+        this._toastService.showToast(error);
         this.loading = false;
       },
       complete: () => {
