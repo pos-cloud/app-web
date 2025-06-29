@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Config } from 'app/app.config';
 import { User } from 'app/components/user/user';
+import { environment } from 'environments/environment';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -10,13 +11,9 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AuthService {
-  private identity: BehaviorSubject<User | null> =
-    new BehaviorSubject<User | null>(null);
+  private identity: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
 
-  constructor(
-    private _router: Router,
-    private _http: HttpClient
-  ) {
+  constructor(private _router: Router, private _http: HttpClient) {
     const storedUser = sessionStorage.getItem('user');
     if (storedUser) {
       this.identity.next(JSON.parse(storedUser));
@@ -38,7 +35,7 @@ export class AuthService {
   }
 
   register(data): Observable<any> {
-    const URL = `${Config.apiURL}register`;
+    const URL = `${environment.apiv2}/auth/register`;
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
@@ -96,9 +93,7 @@ export class AuthService {
   isValidToken(token: string): Observable<any> {
     const URL = `${Config.apiURL}validate_token`;
 
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this.getToken());
+    const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
 
     const params = new HttpParams().set('token', token.replace(/"/gi, ''));
 
@@ -120,9 +115,7 @@ export class AuthService {
   checkPermission(employee: string): Observable<any> {
     const URL = `${Config.apiURL}check_permission`;
 
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this.getToken());
+    const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
 
     const params = new HttpParams().set('employee', employee);
 
