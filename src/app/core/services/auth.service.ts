@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Config } from 'app/app.config';
 import { User } from 'app/components/user/user';
+import { environment } from 'environments/environment';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -34,7 +35,7 @@ export class AuthService {
   }
 
   register(data): Observable<any> {
-    const URL = `${Config.apiURL}register`;
+    const URL = `${environment.apiv2}/auth/register`;
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
@@ -95,6 +96,28 @@ export class AuthService {
     const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
 
     const params = new HttpParams().set('token', token.replace(/"/gi, ''));
+
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  checkPermission(employee: string): Observable<any> {
+    const URL = `${Config.apiURL}check_permission`;
+
+    const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
+
+    const params = new HttpParams().set('employee', employee);
 
     return this._http
       .get(URL, {
