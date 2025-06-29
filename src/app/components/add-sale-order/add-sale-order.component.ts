@@ -2003,11 +2003,9 @@ export class AddSaleOrderComponent {
         modalRef = this._modalService.open(this.contentBusinessRulesCode);
         break;
       case 'movement_of_article':
-        const movementOfArticleCollection = this.user?.permission?.collections.find(
-          (collection) => collection.name === 'movimiento de articulo'
-        );
+        const movementOfArticleCollection = this.user?.permission?.collections?.movementsOfArticles;
 
-        if (movementOfArticleCollection && movementOfArticleCollection?.actions?.edit == false) {
+        if (movementOfArticleCollection && movementOfArticleCollection.edit === false) {
           this._toastService.showToast({ message: 'No tiene permisos para editar artículos.', type: 'danger' });
           return;
         }

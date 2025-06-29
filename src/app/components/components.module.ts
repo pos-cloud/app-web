@@ -10,7 +10,6 @@ import { DatatableModule } from './datatable/datatable.module';
 import { ExportersModule } from './export/exporters.module';
 import { HistoryModule } from './history/history.module';
 import { HolidayModule } from './holiday/holiday.module';
-import { PermissionModule } from './permission/permission.module';
 import { ReportModule } from './report/report.module';
 import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
 import { TransactionTypeModule } from './transaction-type/transaction-type.module';
@@ -20,7 +19,6 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
     DatatableModule,
     ExportersModule,
     ApplicationModule,
-    PermissionModule,
     CashBoxTypeModule,
     HistoryModule,
     ShipmentMethodModule,
