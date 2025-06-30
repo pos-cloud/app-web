@@ -26,16 +26,6 @@ export class ListPrintersComponent {
       required: false,
     },
     {
-      name: 'type',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
       name: 'printIn',
       visible: true,
       disabled: false,
