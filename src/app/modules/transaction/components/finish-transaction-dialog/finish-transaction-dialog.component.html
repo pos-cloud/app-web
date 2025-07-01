@@ -1,0 +1,44 @@
+<div class="modal-header">
+  <h4 class="modal-title">Finalizar Transacción</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
+      {{ alertMessage }}
+    </ngb-alert>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group col-md-12">
+        <div class="center-content">
+          <div class="btn-group-vertical">
+            <button
+              type="button"
+              *ngFor="let option of transactionOptions"
+              class="btn btn-branch"
+              [ngClass]="{
+                'btn-primary': option.id === selectedOption.id,
+                'btn-outline-primary': option.id !== selectedOption.id
+              }"
+              (click)="selectOption(option)"
+            >
+              <i class="fa {{ option.icon }}"></i>
+              {{ option.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="finishTransaction()">
+      <i class="fa" [ngClass]="{ 'fa-check': !loading, 'fa-spinner fa-spin': loading }"></i>
+      <span *ngIf="!loading">Confirmar</span>
+      <span *ngIf="loading">Procesando...</span>
+    </button>
+  </div>
+</section>
