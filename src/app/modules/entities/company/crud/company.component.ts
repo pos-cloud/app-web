@@ -309,6 +309,12 @@ export class CompanyComponent implements OnInit {
       });
   }
 
+  onEnter() {
+    if (this.companyForm.valid && this.operation !== 'view' && this.operation !== 'delete') {
+      this.handleCompanyOperation();
+    }
+  }
+
   public handleCompanyOperation() {
     this.loading = true;
     this.companyForm.markAllAsTouched();
