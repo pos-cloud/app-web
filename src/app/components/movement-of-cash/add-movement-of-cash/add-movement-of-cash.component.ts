@@ -151,11 +151,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this.movementOfCash = new MovementOfCash();
     this.paymentMethods = new Array();
     this.banks = new Array();
-    if (this.fastPayment) {
-      this.movementOfCash.type = this.fastPayment;
-    } else {
-      this.movementOfCash.type = new PaymentMethod();
-    }
+    this.movementOfCash.type = new PaymentMethod();
     this.paymentMethodSelected = this.movementOfCash.type;
   }
 
@@ -164,6 +160,13 @@ export class AddMovementOfCashComponent implements OnInit {
     this.movementOfCash.expirationDate = this.transaction.endDate
       ? this.transaction.endDate
       : this.transaction.startDate;
+
+    // Inicializar fastPayment si está disponible
+    if (this.fastPayment) {
+      this.movementOfCash.type = this.fastPayment;
+      this.paymentMethodSelected = this.fastPayment;
+    }
+
     this.buildForm();
     this.getPaymentMethods();
     this.getHolidays().then((result) => {
@@ -282,7 +285,10 @@ export class AddMovementOfCashComponent implements OnInit {
       balanceCanceled: this.movementOfCash.balanceCanceled,
     });
 
-    this.movementOfCashForm.valueChanges.subscribe((data) => this.onValueChanged(data));
+    // Usar setTimeout para evitar problemas con la suscripción durante la inicialización
+    setTimeout(() => {
+      this.movementOfCashForm.valueChanges.subscribe((data) => this.onValueChanged(data));
+    }, 0);
   }
 
   changePaymentMethod(paymentMethod: PaymentMethod): void {
@@ -702,7 +708,10 @@ export class AddMovementOfCashComponent implements OnInit {
               this.amountPaid = 0;
               this.updateAmounts('init');
               if (this.fastPayment) {
-                this.addMovementOfCash();
+                // Usar setTimeout para evitar ExpressionChangedAfterItHasBeenCheckedError
+                setTimeout(() => {
+                  this.addMovementOfCash();
+                }, 0);
               }
               this.loading = false;
             } else {
