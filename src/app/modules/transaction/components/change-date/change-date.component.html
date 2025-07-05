@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h4 class="modal-title">Cambiar Fecha y Hora</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<form (ngSubmit)="accept()" #dateForm="ngForm">
+  <div class="modal-body container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <label for="endDate" class="control-label">
+          <b>Fecha y Hora:</b>
+        </label>
+        <app-date-time-picker
+          [(ngModel)]="endDate"
+          name="endDate"
+          [inputDatetimeFormat]="'dd/MM/yyyy HH:mm'"
+          [hourStep]="1"
+          [minuteStep]="1"
+          [seconds]="false"
+          required
+        >
+        </app-date-time-picker>
+        <small class="form-text text-muted"> Presiona <kbd>Enter</kbd> para confirmar </small>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+    <button type="submit" class="btn btn-primary">
+      <span>Cambiar</span>
+    </button>
+  </div>
+</form>

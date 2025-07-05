@@ -56,19 +56,19 @@
         </div>
         <div class="item-header" *ngIf="!transaction?.endDate">
           <div class="btn-group">
-            <button type="button" class="btn btn-outline-light" (click)="openModal('change-date')">
+            <button type="button" class="btn btn-outline-light" (click)="changeDate()">
               Inicio:
               {{ transaction.startDate | dateFormat : 'DD/MM/YYYY HH:mm' }}
             </button>
-            <button type="button" class="btn btn-light fa fa-exchange" (click)="openModal('change-date')"></button>
+            <button type="button" class="btn btn-light fa fa-exchange" (click)="changeDate()"></button>
           </div>
         </div>
         <div class="item-header" *ngIf="transaction?.endDate">
           <div class="btn-group">
-            <button type="button" class="btn btn-outline-light" (click)="openModal('change-date')">
+            <button type="button" class="btn btn-outline-light" (click)="changeDate()">
               Fecha: {{ transaction.endDate | dateFormat : 'DD/MM/YYYY' }}
             </button>
-            <button type="button" class="btn btn-light fa fa-exchange" (click)="openModal('change-date')"></button>
+            <button type="button" class="btn btn-light fa fa-exchange" (click)="changeDate()"></button>
           </div>
         </div>
         <div class="item-header" *ngIf="showBussinessRulesButton">
@@ -627,35 +627,6 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
-  </div>
-</ng-template>
-
-<!--MODAL CAMBIAR FECHA-->
-<ng-template #contentChangeDate let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title">Cambiar Fecha</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <input
-          type="date"
-          class="form-control"
-          [(ngModel)]="transaction.endDate"
-          placeholder="Fecha"
-          [focus]="focusEvent"
-        />
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-light" (click)="c('cancel')">Cancelar</button>
-    <button type="submit" class="btn btn-primary" (click)="c('y')">
-      <span>Cambiar</span>
-    </button>
   </div>
 </ng-template>
 

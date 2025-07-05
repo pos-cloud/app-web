@@ -78,6 +78,7 @@ import { FinishTransactionDialogComponent } from 'app/modules/transaction/compon
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
+import { ChangeDateComponent } from '../../modules/transaction/components/change-date/change-date.component';
 import { Config } from './../../app.config';
 
 @Component({
@@ -89,7 +90,6 @@ import { Config } from './../../app.config';
 })
 export class AddSaleOrderComponent {
   @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
-  @ViewChild('contentChangeDate', { static: true }) contentChangeDate: ElementRef;
   @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
   @ViewChild('contentBusinessRulesCode', { static: true }) contentBusinessRulesCode: ElementRef;
   @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
@@ -2378,19 +2378,6 @@ export class AddSaleOrderComponent {
           this.backFinal();
         }
         break;
-      case 'change-date':
-        modalRef = this._modalService.open(this.contentChangeDate).result.then(async (result) => {
-          if (result !== 'cancel' && result !== '') {
-            if (this.transaction.endDate && moment(this.transaction.endDate, 'YYYY-MM-DD').isValid()) {
-              this.transaction.endDate = moment(this.transaction.endDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
-              this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-              this.transaction.expirationDate = this.transaction.endDate;
-              this.transaction = await this.updateTransaction();
-              this.lastQuotation = this.transaction.quotation;
-            }
-          }
-        });
-        break;
       case 'change-optional-afip':
         modalRef = this._modalService.open(this.contentChangeOptionalAFIP).result.then(async (result) => {
           if (result !== 'cancel' && result !== '') {
@@ -3030,7 +3017,6 @@ export class AddSaleOrderComponent {
     const modalRef = this._modalService.open(FinishTransactionDialogComponent, {
       size: 'md',
       backdrop: 'static',
-      centered: true,
     });
     modalRef.componentInstance.transaction = this.transaction;
 
@@ -3836,5 +3822,44 @@ export class AddSaleOrderComponent {
         });
       }
     });
+  }
+
+  changeDate() {
+    const modalRef = this._modalService.open(ChangeDateComponent, {
+      size: 'md',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.currentDate = this.transaction.endDate;
+    modalRef.result
+      .then(async (result) => {
+        if (result && result.success && result.endDate) {
+          const selectedDate = new Date(result.endDate);
+          if (!isNaN(selectedDate.getTime())) {
+            this.transaction.endDate = result.endDate; // Ya viene en formato ISO del datetime picker
+            this.transaction.VATPeriod = this.formatDateToYYYYMM(selectedDate);
+            this.transaction.expirationDate = this.transaction.endDate;
+            await this.updateTransaction().then(async (transaction) => {
+              if (transaction) {
+                this.transaction = transaction;
+                this.lastQuotation = this.transaction.quotation;
+              }
+            });
+          }
+        }
+      })
+      .catch(() => {
+        // Modal cerrado sin cambios
+      });
+  }
+
+  /**
+   * Formatea una fecha al formato YYYYMM para VATPeriod
+   * @param date - La fecha a formatear
+   * @returns String en formato YYYYMM
+   */
+  private formatDateToYYYYMM(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}${month}`;
   }
 }
