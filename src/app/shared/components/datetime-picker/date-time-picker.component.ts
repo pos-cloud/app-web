@@ -1,6 +1,6 @@
 // https://stackblitz.com/edit/ng-bootstrap-datetimepicker
 import { CommonModule, DatePipe } from '@angular/common';
-import { AfterViewInit, Component, forwardRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, forwardRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import {
   NgbDatepicker,
@@ -58,15 +58,15 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
   @ViewChild(NgbPopover)
   private popover: NgbPopover;
 
+  @ViewChild('dateTimeInput')
+  private dateTimeInput: ElementRef;
+
   private onTouched: () => void = noop;
   private onChange: (_: any) => void = noop;
 
   private ngControl: NgControl;
 
-  constructor(
-    private config: NgbPopoverConfig,
-    private inj: Injector
-  ) {
+  constructor(private config: NgbPopoverConfig, private inj: Injector) {
     config.autoClose = 'outside';
     config.placement = 'auto';
   }
@@ -145,8 +145,15 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
     this.datetime.month = date.month;
     this.datetime.day = date.day;
 
-    //this.dp.navigateTo({ year: this.datetime.year, month: this.datetime.month });
     this.setDateStringModel();
+
+    // Auto-cerrar el popover después de seleccionar fecha
+    // Si no hay time picker activo, cerrar inmediatamente
+    if (!this.showTimePickerToggle) {
+      setTimeout(() => {
+        this.closePopover();
+      }, 100);
+    }
   }
 
   onTimeChange(event: NgbTimeStruct) {
@@ -155,6 +162,20 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
     this.datetime.second = event.second;
 
     this.setDateStringModel();
+  }
+
+  private closePopover() {
+    if (this.popover) {
+      this.popover.close();
+
+      // Enfocar el input del datetime picker para mantener el foco en el form
+      setTimeout(() => {
+        if (this.dateTimeInput && this.dateTimeInput.nativeElement) {
+          this.dateTimeInput.nativeElement.focus();
+        }
+        this.onTouched();
+      }, 50);
+    }
   }
 
   setDateStringModel() {

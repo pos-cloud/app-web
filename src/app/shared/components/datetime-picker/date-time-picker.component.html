@@ -1,11 +1,13 @@
 <div class="input-group mr-2">
   <input
+    #dateTimeInput
     class="form-control"
     (blur)="inputBlur($event)"
-    [ngModel]="dateString | date: inputDatetimeFormat"
+    [ngModel]="dateString | date : inputDatetimeFormat"
     readonly
     [disabled]="disabled"
     [ngStyle]="{ 'background-color': 'white', width: '145px' }"
+    tabindex="0"
   />
   <div class="input-group-append">
     <button class="btn btn-outline-secondary" [ngbPopover]="calendarContent" [disabled]="disabled" type="button">
