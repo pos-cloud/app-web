@@ -9,7 +9,7 @@ import 'moment/locale/es';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { UserService } from '../../../core/services/user.service';
 
-import { Config } from 'app/app.config';
+import { environment } from 'environments/environment';
 import { TransactionMovement } from '../../transaction-type/transaction-type';
 
 @Component({
@@ -53,7 +53,7 @@ export class ExportCitiComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.apiURL = Config.apiURL;
+    this.apiURL = environment.api + '/api/';
     this.buildForm();
   }
 
@@ -100,7 +100,7 @@ export class ExportCitiComponent implements OnInit {
 
           this.compURL =
             '-' +
-            Config.database +
+            localStorage.getItem('company') +
             '-CITI-' +
             this.transactionMovement.toString() +
             's-' +
@@ -109,7 +109,7 @@ export class ExportCitiComponent implements OnInit {
             '.txt';
           this.aliURL =
             '-' +
-            Config.database +
+            localStorage.getItem('company') +
             '-CITI-' +
             this.transactionMovement.toString() +
             's-' +
