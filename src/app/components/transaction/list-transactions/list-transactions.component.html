@@ -202,7 +202,7 @@
               >
                 <i class="fa fa-print"></i>
               </button>
-              <button
+              <!-- <button
                 type="button"
                 *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'"
                 class="btn btn-light btn-sm"
@@ -219,7 +219,7 @@
                 title="Enviar"
               >
                 <i class="fa fa-whatsapp" aria-hidden="true"></i>
-              </button>
+              </button> -->
             </td>
             <ng-container *ngFor="let column of columns">
               <td *ngIf="column.visible" [attr.align]="column.align">

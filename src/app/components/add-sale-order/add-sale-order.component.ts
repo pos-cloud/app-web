@@ -74,7 +74,6 @@ import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { ChangeObservationComponent } from 'app/modules/transaction/components/change-observation/change-observation.component';
-import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
@@ -3014,33 +3013,33 @@ export class AddSaleOrderComponent {
 
   async print() {
     // Abrir el modal de opciones de finalización de transacción
-    const modalRef = this._modalService.open(FinishTransactionDialogComponent, {
-      size: 'md',
-      backdrop: 'static',
-    });
-    modalRef.componentInstance.transaction = this.transaction;
+    // const modalRef = this._modalService.open(FinishTransactionDialogComponent, {
+    //   size: 'md',
+    //   backdrop: 'static',
+    // });
+    // modalRef.componentInstance.transaction = this.transaction;
 
-    try {
-      await modalRef.result;
-    } catch (e) {
-      // Si se cierra el modal sin seleccionar opción, también continuar
-    }
-    this.backFinal();
+    // try {
+    //   await modalRef.result;
+    // } catch (e) {
+    //   // Si se cierra el modal sin seleccionar opción, también continuar
+    // }
+    // this.backFinal();
 
     // old code
-    // await this.getPrinters().then((printers) => {
-    //   if (printers) {
-    //     this.printers = printers;
-    //   }
-    // });
+    await this.getPrinters().then((printers) => {
+      if (printers) {
+        this.printers = printers;
+      }
+    });
 
-    // if (this.transaction.type.defectPrinter) {
-    //   this.printerSelected = this.transaction.type.defectPrinter;
-    //   this.typeOfOperationToPrint = 'charge';
-    //   this.distributeImpressions(this.transaction.type.defectPrinter);
-    // } else {
-    //   this.openModal('printers');
-    // }
+    if (this.transaction.type.defectPrinter) {
+      this.printerSelected = this.transaction.type.defectPrinter;
+      this.typeOfOperationToPrint = 'charge';
+      this.distributeImpressions(this.transaction.type.defectPrinter);
+    } else {
+      this.openModal('printers');
+    }
   }
 
   updateStockByTransaction(): Promise<boolean> {

@@ -23,10 +23,14 @@ import { Transaction, attributes } from '../transaction';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
 import { PrintService } from '@core/services/print.service';
+import { UserService } from '@core/services/user.service';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, Branch, PrintType } from '@types';
+import { ApiResponse, Branch, PrintType, PrinterPrintIn } from '@types';
+import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
+import { PrintComponent } from 'app/components/print/print/print.component';
+import { User } from 'app/components/user/user';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import 'moment/locale/es';
 import * as printJS from 'print-js';
@@ -101,7 +105,8 @@ export class ListTransactionsComponent implements OnInit {
     private _branchService: BranchService,
     private _authService: AuthService,
     private _printService: PrintService,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    public _userService: UserService
   ) {
     this.transactionTypesSelect = new Array();
     this.filters = new Array();
@@ -545,10 +550,82 @@ export class ListTransactionsComponent implements OnInit {
         );
         break;
       case 'print':
-        const data = {
-          transactionId: transaction._id,
-        };
-        this.toPrint(PrintType.Transaction, data);
+        // const data = {
+        //   transactionId: transaction._id,
+        // };
+        // this.toPrint(PrintType.Transaction, data);
+
+        if (transaction.type.transactionMovement === TransactionMovement.Production) {
+          const data = {
+            transactionId: transaction._id,
+          };
+          this.toPrint(PrintType.Transaction, data);
+        } else {
+          if (transaction.type.expirationDate && moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0) {
+            this._toastService.showToast({ message: 'El documento esta vencido' });
+          } else {
+            if (transaction.type.readLayout) {
+              modalRef = this._modalService.open(PrintTransactionTypeComponent);
+              modalRef.componentInstance.transactionId = transaction._id;
+            } else {
+              let printer: Printer;
+
+              await this.getUser().then(async (user) => {
+                if (user && user.printers && user.printers.length > 0) {
+                  for (const element of user.printers) {
+                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
+                      printer = element.printer;
+                    }
+                  }
+                } else {
+                  if (transaction.type.defectPrinter) {
+                    printer = transaction.type.defectPrinter;
+                  } else {
+                    if (this.printers && this.printers.length > 0) {
+                      for (let printer of this.printers) {
+                        if (printer.printIn === PrinterPrintIn.Counter) {
+                          printer = printer;
+                        }
+                      }
+                    }
+                  }
+                }
+              });
+
+              modalRef = this._modalService.open(PrintComponent);
+              modalRef.componentInstance.company = transaction.company;
+              modalRef.componentInstance.transactionId = transaction._id;
+              modalRef.componentInstance.typePrint = 'invoice';
+              modalRef.componentInstance.printer = printer;
+
+              modalRef.result.then(
+                (result) => {
+                  if (transaction.taxes && transaction.taxes.length > 0) {
+                    for (const tax of transaction.taxes) {
+                      if (tax.tax.printer) {
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef.componentInstance.printerID = tax.tax.printer;
+                      }
+                    }
+                  }
+                },
+                (reason) => {
+                  if (transaction.taxes && transaction.taxes.length > 0) {
+                    for (const tax of transaction.taxes) {
+                      if (tax.tax.printer) {
+                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
+                        modalRef.componentInstance.transactionId = transaction._id;
+                        modalRef.componentInstance.printerID = tax.tax.printer;
+                      }
+                    }
+                  }
+                }
+              );
+            }
+          }
+        }
+        break;
 
         break;
       case 'delete':
@@ -665,5 +742,27 @@ export class ListTransactionsComponent implements OnInit {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  public getUser(): Promise<User> {
+    return new Promise<User>((resolve, reject) => {
+      let identity: User = JSON.parse(sessionStorage.getItem('user'));
+      let user;
+
+      if (identity) {
+        this._userService.getUser(identity._id).subscribe(
+          (result) => {
+            if (result && result.user) {
+              resolve(result.user);
+            } else {
+              this._toastService.showToast({ message: 'Debe volver a iniciar sesión' });
+            }
+          },
+          (error) => {
+            // this.showMessage(error._body, 'danger', false);
+          }
+        );
+      }
+    });
   }
 }
