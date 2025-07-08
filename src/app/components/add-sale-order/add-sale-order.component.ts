@@ -77,6 +77,7 @@ import { ChangeObservationComponent } from 'app/modules/transaction/components/c
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { environment } from 'environments/environment';
 import { VariantService } from '../../core/services/variant.service';
 import { ChangeDateComponent } from '../../modules/transaction/components/change-date/change-date.component';
 import { Config } from './../../app.config';
@@ -3013,34 +3014,35 @@ export class AddSaleOrderComponent {
   }
 
   async print() {
-    // Abrir el modal de opciones de finalización de transacción
-    const modalRef = this._modalService.open(FinishTransactionDialogComponent, {
-      size: 'md',
-      backdrop: 'static',
-    });
-    modalRef.componentInstance.transaction = this.transaction;
+    if (environment.production) {
+      // old code
+      await this.getPrinters().then((printers) => {
+        if (printers) {
+          this.printers = printers;
+        }
+      });
 
-    try {
-      await modalRef.result;
-    } catch (e) {
-      // Si se cierra el modal sin seleccionar opción, también continuar
+      if (this.transaction.type.defectPrinter) {
+        this.printerSelected = this.transaction.type.defectPrinter;
+        this.typeOfOperationToPrint = 'charge';
+        this.distributeImpressions(this.transaction.type.defectPrinter);
+      } else {
+        this.openModal('printers');
+      }
+    } else {
+      const modalRef = this._modalService.open(FinishTransactionDialogComponent, {
+        size: 'md',
+        backdrop: 'static',
+      });
+      modalRef.componentInstance.transaction = this.transaction;
+
+      try {
+        await modalRef.result;
+      } catch (e) {
+        // Si se cierra el modal sin seleccionar opción, también continuar
+      }
+      this.backFinal();
     }
-    this.backFinal();
-
-    // old code
-    // await this.getPrinters().then((printers) => {
-    //   if (printers) {
-    //     this.printers = printers;
-    //   }
-    // });
-
-    // if (this.transaction.type.defectPrinter) {
-    //   this.printerSelected = this.transaction.type.defectPrinter;
-    //   this.typeOfOperationToPrint = 'charge';
-    //   this.distributeImpressions(this.transaction.type.defectPrinter);
-    // } else {
-    //   this.openModal('printers');
-    // }
   }
 
   updateStockByTransaction(): Promise<boolean> {
