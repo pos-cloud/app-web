@@ -626,8 +626,6 @@ export class ListTransactionsComponent implements OnInit {
           }
         }
         break;
-
-        break;
       case 'delete':
         modalRef = this._modalService.open(DeleteTransactionComponent, {
           size: 'lg',
