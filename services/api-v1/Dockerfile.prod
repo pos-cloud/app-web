@@ -1,4 +1,4 @@
-FROM ghcr.io/library/node:16-alpine
+FROM node:16.10
 
 RUN mkdir -p /app
 WORKDIR /app
