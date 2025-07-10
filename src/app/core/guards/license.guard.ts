@@ -38,8 +38,8 @@ export class LicenseGuard implements CanActivate {
   }
 
   public checkLicense(config: Config, next: ActivatedRouteSnapshot) {
-    if (config['licensePaymentDueDate']) {
-      const dueDate = new Date(config['licensePaymentDueDate']);
+    if (config['expirationLicenseDate']) {
+      const dueDate = new Date(config['expirationLicenseDate']);
       dueDate.setUTCHours(0, 0, 0, 0);
 
       const today = new Date();
@@ -48,7 +48,7 @@ export class LicenseGuard implements CanActivate {
       const timeDiff = dueDate.getTime() - today.getTime();
       let days = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
 
-      const rawDueDate = new Date(config['licensePaymentDueDate']);
+      const rawDueDate = new Date(config['expirationLicenseDate']);
       rawDueDate.setUTCHours(0, 0, 0, 0);
       const daysOfPay = Math.floor((rawDueDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
       if (days >= 1 && daysOfPay > 0) {
