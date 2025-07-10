@@ -202,12 +202,9 @@
               >
                 <i class="fa fa-print"></i>
               </button>
-              <button
+              <!-- <button
                 type="button"
-                *ngIf="
-                  !environment.production &&
-                  (item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto')
-                "
+                *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'"
                 class="btn btn-light btn-sm"
                 (click)="openModal('send-email', item)"
                 title="Enviar"
@@ -216,16 +213,13 @@
               </button>
               <button
                 type="button"
-                *ngIf="
-                  !environment.production &&
-                  (item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto')
-                "
+                *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'"
                 class="btn btn-light btn-sm"
                 (click)="openModal('send-wpp', item)"
                 title="Enviar"
               >
                 <i class="fa fa-whatsapp" aria-hidden="true"></i>
-              </button>
+              </button> -->
             </td>
             <ng-container *ngFor="let column of columns">
               <td *ngIf="column.visible" [attr.align]="column.align">
