@@ -9,6 +9,7 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 // SERVICES
 import { Employee } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
+import { PlausibleService } from 'app/core/services/plausible.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 
 @Component({
@@ -33,7 +34,8 @@ export class LoginComponent {
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _route: ActivatedRoute,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private _plausibleService: PlausibleService
   ) {
     const savedCompany = localStorage.getItem('company');
     this.checkLockInput = !!savedCompany;
@@ -89,6 +91,9 @@ export class LoginComponent {
 
               this._authService.loginStorage(result.user);
               localStorage.setItem('company', this.company);
+
+              // Actualizar información del cliente en Plausible
+              this._plausibleService.updateClient(this.company);
 
               // Obtener la URL de retorno y navegar a ella
               this._route.queryParams.subscribe({
