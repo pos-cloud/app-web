@@ -8,6 +8,7 @@ import { merge as observableMerge, of as observableOf } from 'rxjs';
 import { Config } from './app.config';
 import { AuthService } from './core/services/auth.service';
 import { ConfigService } from './core/services/config.service';
+import { PlausibleService } from './core/services/plausible.service';
 
 import 'moment/locale/es';
 import { ToastService } from './shared/components/toast/toast.service';
@@ -34,7 +35,8 @@ export class AppComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _router: Router,
-    private _translateService: TranslateService
+    private _translateService: TranslateService,
+    private _plausibleService: PlausibleService
   ) {
     this._translateService.setDefaultLang('es');
     this._translateService.use('es');
@@ -43,6 +45,9 @@ export class AppComponent {
   }
 
   async ngOnInit() {
+    // Inicializar el tracking de Plausible (solo una vez)
+    this._plausibleService.initializeTracking();
+
     this._authService.getIdentity.subscribe(async (identity) => {
       if (identity) {
         await this.getConfigApi().then((config) => {

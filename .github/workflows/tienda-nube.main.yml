@@ -1,11 +1,12 @@
-name: PROD API Tienda Nube
+name: PROD API Tienda Nube (Manual)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "services/tienda-nube/**"
   workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Razón del deploy manual'
+        required: false
+        default: 'Deploy manual de Tienda Nube'
 
 jobs:
   deploy-donweb:
