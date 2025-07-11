@@ -1,11 +1,12 @@
-name: DEV API v1
+name: DEV API v1 (Manual)
 
 on:
-  push:
-    branches: [dev]
-    paths:
-      - 'services/api-v1/**'
   workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Razón del deploy manual'
+        required: false
+        default: 'Deploy manual de API v1'
 
 jobs:
   build:
