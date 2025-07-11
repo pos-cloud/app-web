@@ -131,4 +131,12 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'permissions',
     loadChildren: () => import('./permission/permission.routes').then((m) => m.PERMISSION_ROUTES),
   },
+  {
+    path: 'uses-of-cfdi',
+    loadChildren: () => import('./uses-of-cfdi/uses-of-cfdi.routes').then((m) => m.USES_OF_CFDI),
+  },
+  {
+    path: 'holiday',
+    loadChildren: () => import('./holiday/holiday.routes').then((m) => m.HOLIDAY),
+  },
 ];
