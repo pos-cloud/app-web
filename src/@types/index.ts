@@ -23,6 +23,7 @@ export { EmailTemplate } from './entities/email-template.interface';
 export { EmployeeType } from './entities/employee-type.interface';
 export { Employee } from './entities/employee.interface';
 export { Gallery } from './entities/gallery.interface';
+export { Holiday } from './entities/holiday.interface';
 export { IdentificationType } from './entities/identification-type.interface';
 export { Location } from './entities/location.interface';
 export { Make } from './entities/make.interface';
@@ -56,6 +57,7 @@ export { VariantType } from './entities/variant-type.interface';
 export { VariantValue } from './entities/variant-value.interface';
 export { Variant } from './entities/variant.interface';
 export { VATCondition } from './entities/vat-condition.interface';
+
 // common
 export { Activity } from './common/activity.interface';
 export { ApiResponse } from './common/api-response.interface';

@@ -249,7 +249,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Métodos de pago', link: 'admin/metodos-de-pago' },
             { label: 'Métodos de entrega', link: 'entities/shipment-methods' },
             { label: 'Lista de Precios', link: 'admin/price-list' },
-            { label: 'Feriados', link: 'holidays' },
+            { label: 'Feriados', link: 'entities/holidays' },
             { label: 'Reports', link: 'reports' },
             { label: 'Historial', link: 'histories' },
           ],
@@ -761,7 +761,7 @@ export class HeaderComponent implements OnInit {
                 { label: 'Impuestos', link: 'admin/impuestos' },
                 { label: 'Tipos de cajas', link: 'cash-box-types' },
                 { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
-                { label: 'Feriados', link: 'holidays' },
+                { label: 'Feriados', link: 'entities/holidays' },
               ],
             },
             {

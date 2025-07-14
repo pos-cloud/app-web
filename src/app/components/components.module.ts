@@ -9,7 +9,6 @@ import { CategoryModule } from './category/category.module';
 import { DatatableModule } from './datatable/datatable.module';
 import { ExportersModule } from './export/exporters.module';
 import { HistoryModule } from './history/history.module';
-import { HolidayModule } from './holiday/holiday.module';
 import { ReportModule } from './report/report.module';
 import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
 import { TransactionTypeModule } from './transaction-type/transaction-type.module';
@@ -22,7 +21,6 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
     CashBoxTypeModule,
     HistoryModule,
     ShipmentMethodModule,
-    HolidayModule,
     TransactionTypeModule,
     CategoryModule,
     AccountSeatModule,
