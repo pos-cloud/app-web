@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
@@ -24,8 +16,7 @@ import { Category } from '../category';
 })
 export class ListCategoriesPosComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
-  @Output() eventSelectCategory: EventEmitter<Category> =
-    new EventEmitter<Category>();
+  @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
   @Input() areCategoriesVisible: boolean = true;
   @Input() transactionMovement: TransactionMovement;
   @Input() loading: boolean = false;
@@ -36,7 +27,6 @@ export class ListCategoriesPosComponent implements OnInit {
   orderTerm: string[] = ['order'];
   propertyTerm: string;
   areFiltersVisible: boolean = false;
-  apiURL = Config.apiURL;
   itemsPerPage = 10;
   totalItems = 0;
   database: string;
@@ -78,8 +68,7 @@ export class ListCategoriesPosComponent implements OnInit {
     this._categoryService.getCategories(query).subscribe(
       (result) => {
         if (!result.categories) {
-          if (result.message && result.message !== '')
-            this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.categories = new Array();
           this.areCategoriesEmpty = true;
@@ -157,28 +146,22 @@ export class ListCategoriesPosComponent implements OnInit {
         order: -1,
       };
 
-      this._categoryService
-        .getCategoriesV2(project, match, sort, {}, 0)
-        .subscribe(
-          (result) => {
-            if (!result.categories) {
-              resolve(null);
-            } else {
-              resolve(result.categories);
-            }
-          },
-          (error) => {
+      this._categoryService.getCategoriesV2(project, match, sort, {}, 0).subscribe(
+        (result) => {
+          if (!result.categories) {
             resolve(null);
+          } else {
+            resolve(result.categories);
           }
-        );
+        },
+        (error) => {
+          resolve(null);
+        }
+      );
     });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

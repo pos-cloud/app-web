@@ -15,7 +15,6 @@ import { MovementOfCancellationService } from 'app/core/services/movement-of-can
 import { PriceListService } from 'app/core/services/price-list.service';
 import { RelationTypeService } from 'app/core/services/relation-type.service';
 import { StructureService } from 'app/core/services/structure.service';
-import { TransportService } from 'app/core/services/transport.service';
 import { UseOfCFDIService } from 'app/core/services/use-of-CFDI.service';
 import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
@@ -28,7 +27,6 @@ import { ArticleStockService } from '../../core/services/article-stock.service';
 import { BusinessRuleService } from '../../core/services/business-rule.service';
 import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
 import { PrinterService } from '../../core/services/printer.service';
-import { EmailService } from '../../core/services/send-email.service';
 import { TableService } from '../../core/services/table.service';
 import { TaxService } from '../../core/services/tax.service';
 import { TransactionService } from '../../core/services/transaction.service';
@@ -134,7 +132,6 @@ export class AddSaleOrderComponent {
   focusEvent = new EventEmitter<boolean>();
   roundNumber = new RoundNumberPipe();
   areMovementsOfArticlesEmpty: boolean = true;
-  apiURL = Config.apiURL;
   userCountry: string = 'AR';
   lastQuotation: number = 1;
   categorySelected: Category;
@@ -191,11 +188,9 @@ export class AddSaleOrderComponent {
     private _variantService: VariantService,
     private _taxService: TaxService,
     private _useOfCFDIService: UseOfCFDIService,
-    private _serviceEmail: EmailService,
     private _relationTypeService: RelationTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,
-    private _transportService: TransportService,
     private _accountSeatService: AccountSeatService,
     private _priceListService: PriceListService,
     private _configService: ConfigService,
@@ -2072,90 +2067,6 @@ export class AddSaleOrderComponent {
           this.showMessage('No se ingresaron productos a la transacción.', 'info', true);
         }
         break;
-      case 'send-email':
-        if (this.transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.source = 'mail';
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = this.transaction.company;
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.componentInstance.source = 'mail';
-        }
-        if (this.transaction.type.defectPrinter) {
-          modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
-        } else {
-          if (this.printers && this.printers.length > 0) {
-            for (let printer of this.printers) {
-              if (printer.printIn === PrinterPrintIn.Counter) {
-                modalRef.componentInstance.printer = printer;
-              }
-            }
-          }
-        }
-
-        let attachments = [];
-        let labelPrint = this.transaction.type.name;
-        if (this.transaction.type.labelPrint) {
-          labelPrint = this.transaction.type.labelPrint;
-        }
-        if (this.transaction.type.electronics) {
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-            path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
-          });
-        } else {
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-            path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
-          });
-        }
-
-        if (Config.country === 'MX') {
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
-          });
-        }
-
-        if (this.transaction.type.defectEmailTemplate) {
-          if (this.transaction.type.electronics) {
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-              path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
-            });
-          } else {
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-              path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
-            });
-          }
-
-          if (Config.country === 'MX') {
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-              path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
-            });
-          }
-        }
-
-        this.email = {
-          to: this.transaction?.company?.emails,
-          subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
-            this.transaction.letter
-          }-${this.padNumber(this.transaction.number, 8)}`,
-          body: this.transaction?.type?.defectEmailTemplate?.design || '',
-        };
-        setTimeout(() => {
-          this.sendEmail(this.email);
-        }, 2500);
-
-        break;
       case 'cancel':
         modalRef = this._modalService.open(DeleteTransactionComponent, {
           size: 'lg',
@@ -2929,7 +2840,6 @@ export class AddSaleOrderComponent {
       if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {
         if (this.transaction && this.transaction.type.printable) {
           this.print();
-          if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
         } else {
           this.backFinal();
         }
@@ -3721,17 +3631,6 @@ export class AddSaleOrderComponent {
     while (n.length < length) n = '0' + n;
 
     return n;
-  }
-
-  public sendEmail(body: EmailProps): void {
-    this._serviceEmail.sendEmail(body).subscribe(
-      (result) => {
-        this._toastService.showToast(result);
-      },
-      (err) => {
-        this._toastService.showToast(err);
-      }
-    );
   }
 
   updateOrdenOfProduction(id): Promise<boolean> {

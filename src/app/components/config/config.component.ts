@@ -55,7 +55,6 @@ export class ConfigComponent implements OnInit {
   public countries: any;
   public timezones: any;
   public userCountry: string;
-  public apiURL: string;
   public apiV8URL: string;
   private subscription: Subscription = new Subscription();
 
@@ -112,7 +111,6 @@ export class ConfigComponent implements OnInit {
     public _modalService: NgbModal,
     public _fileService: FileService
   ) {
-    this.apiURL = Config.apiURL;
     this.apiV8URL = Config.apiV8URL;
     this.getVatConditions();
     this.getCountries();

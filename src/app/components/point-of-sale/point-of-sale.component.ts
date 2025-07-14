@@ -36,7 +36,6 @@ import {
   ClaimType,
   Company,
   CompanyType,
-  EmailProps,
   EmployeeType,
   Table,
   TableState,
@@ -44,6 +43,7 @@ import {
 import { ClaimService } from 'app/core/services/claim.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
+import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subscription } from 'rxjs';
@@ -56,21 +56,17 @@ import { DepositService } from '../../core/services/deposit.service';
 import { MovementOfCancellationService } from '../../core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from '../../core/services/movement-of-cash.service';
 import { OriginService } from '../../core/services/origin.service';
-import { EmailService } from '../../core/services/send-email.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
 import { SelectBranchComponent } from '../../shared/components/select-branch/select-branch.component';
 import { SelectDepositComponent } from '../../shared/components/select-deposit/select-deposit.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
-import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
 import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { SelectOriginComponent } from '../origin/select-origin/select-origin.component';
-import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
-import { PrintComponent } from '../print/print/print.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { Config } from './../../app.config';
@@ -143,7 +139,6 @@ export class PointOfSaleComponent implements OnInit {
     private _router: Router,
     private _route: ActivatedRoute,
     private _modalService: NgbModal,
-    private _serviceEmail: EmailService,
     private _currencyService: CurrencyService,
     private _cashBoxService: CashBoxService,
     private _tableService: TableService,
@@ -1291,59 +1286,27 @@ export class PointOfSaleComponent implements OnInit {
         }
         break;
       case 'print':
-        if (this.transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.result.then(
-            async (result) => {},
-            async (reason) => {
-              if (this.transaction.state === TransactionState.Packing) {
-                // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
-                await this.getTransaction(this.transaction._id).then(async (transaction) => {
-                  if (transaction) {
-                    transaction.state = TransactionState.Delivered;
-                    await this.updateTransaction(transaction);
-                    this.refresh();
-                  }
-                });
-              }
-            }
-          );
-        } else {
-          await this.getPrinters().then((printers) => {
-            this.printers = printers;
-          });
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = this.transaction.company;
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.typePrint = 'invoice';
-          if (this.transaction.type.defectPrinter) {
-            modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
-          } else {
-            if (this.printers && this.printers.length > 0) {
-              for (let printer of this.printers) {
-                if (printer.printIn === PrinterPrintIn.Counter) {
-                  modalRef.componentInstance.printer = printer;
+        modalRef = this._modalService.open(FinishTransactionDialogComponent, {
+          size: 'md',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.transaction = this.transaction;
+
+        modalRef.result.then(
+          async (result) => {},
+          async (reason) => {
+            if (this.transaction.state === TransactionState.Packing) {
+              // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
+              await this.getTransaction(this.transaction._id).then(async (transaction) => {
+                if (transaction) {
+                  transaction.state = TransactionState.Delivered;
+                  await this.updateTransaction(transaction);
+                  this.refresh();
                 }
-              }
+              });
             }
           }
-          modalRef.result.then(
-            async (result) => {},
-            async (reason) => {
-              if (this.transaction.state === TransactionState.Packing) {
-                // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
-                await this.getTransaction(this.transaction._id).then(async (transaction) => {
-                  if (transaction) {
-                    transaction.state = TransactionState.Delivered;
-                    await this.updateTransaction(transaction);
-                    this.refresh();
-                  }
-                });
-              }
-            }
-          );
-        }
+        );
         break;
       case 'printers':
         await this.getPrinters().then((printers) => {
@@ -1586,118 +1549,6 @@ export class PointOfSaleComponent implements OnInit {
           }
         );
         break;
-      case 'send-email':
-        let attachments = [];
-        if (this.transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.source = 'mail';
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = this.transaction.company;
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.componentInstance.source = 'mail';
-        }
-        if (this.transaction.type.defectPrinter) {
-          modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
-        } else {
-          if (this.printers && this.printers.length > 0) {
-            for (let printer of this.printers) {
-              if (printer.printIn === PrinterPrintIn.Counter) {
-                modalRef.componentInstance.printer = printer;
-              }
-            }
-          }
-        }
-
-        modalRef = this._modalService.open(SendEmailComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        if (this.transaction.company && this.transaction.company.emails) {
-          modalRef.componentInstance.emails = this.transaction.company.emails;
-        }
-        let labelPrint = this.transaction.type.name;
-        if (this.transaction.type.labelPrint) {
-          labelPrint = this.transaction.type.labelPrint;
-        }
-        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
-          this.transaction.letter
-        }-${this.padNumber(this.transaction.number, 8)}`;
-        if (this.transaction.type.electronics) {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${this.transaction._id}">Su comprobante</a>`
-          modalRef.componentInstance.body = ' ';
-
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-            path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
-          });
-        } else {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${this.transaction._id}">Su comprobante</a>`
-          modalRef.componentInstance.body = ' ';
-
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-            path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
-          });
-        }
-
-        if (Config.country === 'MX') {
-          // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number + `">Su comprobante</a>`;
-          modalRef.componentInstance.body += ' ';
-
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + this.transaction.number + `.xml`,
-          });
-        }
-
-        if (this.transaction.type.defectEmailTemplate) {
-          if (this.transaction.type.electronics) {
-            // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/invoice/${this.database}/${this.transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design;
-
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-              path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
-            });
-          } else {
-            // modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design + `<a href="http://vps-1883265-x.dattaweb.com:300/api/print/others/${this.database}/${this.transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body = this.transaction.type.defectEmailTemplate.design;
-
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-              path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
-            });
-          }
-
-          if (Config.country === 'MX') {
-            // modalRef.componentInstance.body += ` y su XML correspondiente en <a href="http://vps-1883265-x.dattaweb.com:300/api/print/xml/CFDI-33_Factura_` + this.transaction.number + `">Su comprobante</a>`;
-            modalRef.componentInstance.body += ' ';
-
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-              path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + this.transaction.number + `.xml`,
-            });
-          }
-        }
-
-        modalRef.componentInstance.attachments = attachments;
-
-        modalRef.result.then(
-          (result) => {
-            this.refresh();
-          },
-          (reason) => {
-            this.refresh();
-          }
-        );
-
-        break;
       default:
     }
   }
@@ -1727,8 +1578,6 @@ export class PointOfSaleComponent implements OnInit {
             } else {
               this.openModal('printers');
             }
-          } else if (this.transaction && this.transaction.type.requestEmailTemplate) {
-            this.openModal('send-email');
           } else {
             this.refresh();
           }
@@ -1911,93 +1760,6 @@ export class PointOfSaleComponent implements OnInit {
           this.transaction = undefined;
         }
         this.refresh();
-      }
-      if (this.transaction.type.requestEmailTemplate) {
-        let attachments = [];
-        let modalRef;
-
-        if (this.transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.source = 'mail';
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = this.transaction.company;
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.componentInstance.source = 'mail';
-        }
-        if (this.transaction.type.defectPrinter) {
-          modalRef.componentInstance.printer = this.transaction.type.defectPrinter;
-        } else {
-          if (this.printers && this.printers.length > 0) {
-            for (let printer of this.printers) {
-              if (printer.printIn === PrinterPrintIn.Counter) {
-                modalRef.componentInstance.printer = printer;
-              }
-            }
-          }
-        }
-
-        let labelPrint = this.transaction.type.name;
-
-        if (this.transaction.type.labelPrint) {
-          labelPrint = this.transaction.type.labelPrint;
-        }
-        if (this.transaction.type.electronics) {
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-            path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
-          });
-        } else {
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-            path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
-          });
-        }
-
-        if (Config.country === 'MX') {
-          attachments.push({
-            filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
-          });
-        }
-
-        if (this.transaction.type.defectEmailTemplate) {
-          if (this.transaction.type.electronics) {
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-              path: `/home/clients/${this.database}/invoice/${this.transaction._id}.pdf`,
-            });
-          } else {
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.pdf`,
-              path: `/home/clients/${this.database}/others/${this.transaction._id}.pdf`,
-            });
-          }
-
-          if (Config.country === 'MX') {
-            attachments = [];
-            attachments.push({
-              filename: `${this.transaction.origin}-${this.transaction.letter}-${this.transaction.number}.xml`,
-              path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_${this.transaction.number}.xml`,
-            });
-          }
-        }
-
-        const email: EmailProps = {
-          to: this.transaction?.company?.emails,
-          subject: `${labelPrint} ${this.padNumber(this.transaction.origin, 4)}-${
-            this.transaction.letter
-          }-${this.padNumber(this.transaction.number, 8)}`,
-          body: this.transaction?.type?.defectEmailTemplate?.design || '',
-        };
-
-        setTimeout(() => {
-          this.sendEmail(email);
-        }, 2500);
       }
     } catch (error) {
       this._toastService.showToast(error);
@@ -2401,17 +2163,6 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     return rtn;
-  }
-
-  public sendEmail(body: EmailProps): void {
-    this._serviceEmail.sendEmail(body).subscribe(
-      (result) => {
-        this._toastService.showToast(result);
-      },
-      (err) => {
-        this._toastService.showToast(err);
-      }
-    );
   }
 
   public ngOnDestroy(): void {
