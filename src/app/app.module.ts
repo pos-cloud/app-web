@@ -17,7 +17,6 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
-//import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
 
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { QuillModule } from 'ngx-quill';
@@ -96,8 +95,6 @@ import { TaxComponent } from './components/tax/tax/tax.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { ViewTransactionComponent } from './components/transaction/view-transaction/view-transaction.component';
-import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
-import { AddUseOfCFDIComponent } from './components/use-of-CFDI.component.ts/use-of-CFDI/add-use-of-CFDI.component';
 import { DeleteUserComponent } from './components/user/delete-user/delete-user.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ShortcutComponent } from './components/user/shortcut/shortcut.component';
@@ -173,8 +170,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
     ListMovementOfCashesComponent,
-    AddUseOfCFDIComponent,
-    ListUsesOfCFDIComponent,
     PushNotificationComponent,
     CancellationTypeComponent,
     ListCancellationTypeComponent,

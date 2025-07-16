@@ -3,19 +3,16 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { UseOfCFDI } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { UseOfCFDI } from '../../components/use-of-CFDI.component.ts/use-of-CFDI';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UseOfCFDIService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `uses-of-cdfi`, // PATH
       _http,

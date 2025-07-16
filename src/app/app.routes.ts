@@ -28,8 +28,6 @@ import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.compon
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
 import { ListPriceListsComponent } from './components/price-list/list-price-lists/list-price-lists.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
-import { PrintComponent } from './components/print/print/print.component';
-import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
@@ -41,7 +39,6 @@ import { ListStatesComponent } from './components/state/list-states/list-states.
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
-import { ListUsesOfCFDIComponent } from './components/use-of-CFDI.component.ts/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { AuthGuard } from './core/guards/auth.guard';
@@ -247,11 +244,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/impresoras',
-    component: ListPrintersComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'admin/configuraciones',
     component: ConfigComponent,
     canActivate: [AuthGuard],
@@ -305,11 +297,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/usos-de-cfdi',
-    component: ListUsesOfCFDIComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'admin/tipos-de-cancelaciones',
     component: ListCancellationTypeComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -360,10 +347,6 @@ export const _routes: Routes = [
     path: 'admin/template-emails',
     component: ListEmailTemplatesComponent,
     canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'print/invoice/:transaction',
-    component: PrintComponent,
   },
   {
     path: 'pos/resto/salones/:id/mesas',
@@ -488,12 +471,10 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.production.kitchen' },
   },
-
   {
     path: 'menu/:database',
     component: MenuComponent,
   },
-
   // MODULES ROUTES
   {
     path: 'entities',

@@ -1,4 +1,4 @@
-import { Branch, Company, CompanyType, IAttribute } from '@types';
+import { Branch, Company, CompanyType, IAttribute, UseOfCFDI } from '@types';
 import * as moment from 'moment';
 
 import { EmployeeType } from '@types';
@@ -10,7 +10,6 @@ import { PaymentMethod } from '../payment-method/payment-method';
 import { Printer } from '../printer/printer';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { TransactionState } from '../transaction/transaction';
-import { UseOfCFDI } from '../use-of-CFDI.component.ts/use-of-CFDI';
 import { User } from '../user/user';
 
 export class TransactionType extends Model {

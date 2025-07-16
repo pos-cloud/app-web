@@ -15,8 +15,7 @@ import { Config } from 'app/app.config';
 
 // COMPONENTS
 
-import { Bank, Currency } from '@types';
-import { Holiday } from 'app/components/holiday/holiday.model';
+import { Bank, Currency, Holiday } from '@types';
 import { AccountSeatService } from 'app/core/services/account-seat.service';
 import { BankService } from 'app/core/services/bank.service';
 import { CompanyService } from 'app/core/services/company.service';
