@@ -68,9 +68,6 @@ export class PlausibleService {
 
       // Enviar a Plausible
       window.plausible('pageview', { props });
-
-      // Debug: mostrar en consola para verificar que se está enviando
-      console.log('Plausible props enviadas:', props);
     }
   }
 

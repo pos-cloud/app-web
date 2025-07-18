@@ -20,7 +20,7 @@ export class SendWppComponent implements OnInit {
   loading: boolean = false;
   focusEvent = new EventEmitter<boolean>();
   @Input() phone: string;
-  @Input() message: string = '¡Hola! Te comparto tu comprobante:';
+  @Input() message: string = '¡Hola! Te comparto el link de tu comprobante:';
   @Input() transactionId: string = '';
 
   constructor(private _fb: UntypedFormBuilder, private activeModal: NgbActiveModal) {
@@ -52,7 +52,7 @@ export class SendWppComponent implements OnInit {
     const message = this.sendWppForm.get('message').value;
 
     const company = localStorage.getItem('company');
-    const transactionLink = `${environment.apiv2}/to-print/transaction/${company}/${this.transactionId}`;
+    const transactionLink = `${environment.apiv2}/to-print/transaction/${company}/${this.transactionId}/pdf`;
     const fullMessage = `${message} ${transactionLink}`;
 
     const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(fullMessage)}`;
