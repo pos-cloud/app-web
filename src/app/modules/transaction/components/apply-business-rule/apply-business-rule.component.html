@@ -1,0 +1,73 @@
+<div class="modal-header">
+  <h4 class="modal-title">Reglas de Negocio</h4>
+  <button type="button" class="close" aria-label="Close" (click)="cancel()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label for="businessRulesCode">Código de Regla Específica</label>
+        <input
+          type="text"
+          class="form-control"
+          id="businessRulesCode"
+          [(ngModel)]="businessRulesCode"
+          placeholder="Ingrese el código de la regla"
+          [disabled]="loading"
+        />
+        <small class="form-text text-muted">
+          Ingrese el código de una regla de negocio específica para aplicarla
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <div class="alert alert-info">
+        <strong>Opciones disponibles:</strong>
+        <ul class="mb-0 mt-2">
+          <li><strong>Aplicar regla específica:</strong> Ingrese un código y presione "Aplicar Regla"</li>
+          <li>
+            <strong>Aplicar todas las reglas:</strong> Presione "Aplicar Todas las Reglas" para que el sistema intente
+            aplicar todas las reglas disponibles
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-light"
+    (click)="!loading ? cancel() : $event.stopPropagation()"
+    [disabled]="loading"
+  >
+    Cancelar
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="!loading ? applySpecificRule() : $event.stopPropagation()"
+    [disabled]="loading || !businessRulesCode?.trim()"
+  >
+    <span *ngIf="!loading">Aplicar Regla</span>
+    <span *ngIf="loading && !applyingAll">Aplicando...</span>
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-success"
+    (click)="!loading ? applyAllRules() : $event.stopPropagation()"
+    [disabled]="loading"
+  >
+    <span *ngIf="!loading">Aplicar Todas las Reglas</span>
+    <span *ngIf="loading && applyingAll">Aplicando todas...</span>
+  </button>
+</div>

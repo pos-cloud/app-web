@@ -20,7 +20,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { BusinessRule, CompanyType, RelationType, Table, TableState, Transport, UseOfCFDI } from '@types';
+import { CompanyType, RelationType, Table, TableState, Transport, UseOfCFDI } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { BusinessRuleService } from '../../core/services/business-rule.service';
@@ -74,6 +74,7 @@ import { FinishTransactionDialogComponent } from 'app/modules/transaction/compon
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
+import { ApplyBusinessRuleComponent } from '../../modules/transaction/components/apply-business-rule/apply-business-rule.component';
 import { ChangeDateComponent } from '../../modules/transaction/components/change-date/change-date.component';
 import { Config } from './../../app.config';
 
@@ -87,7 +88,7 @@ import { Config } from './../../app.config';
 export class AddSaleOrderComponent {
   @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
   @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
-  @ViewChild('contentBusinessRulesCode', { static: true }) contentBusinessRulesCode: ElementRef;
+
   @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
   @ViewChild('contentInformCancellation', { static: true }) contentInformCancellation: ElementRef;
   @ViewChild('containerMovementsOfArticles', { static: true }) containerMovementsOfArticles: ElementRef;
@@ -142,14 +143,14 @@ export class AddSaleOrderComponent {
   database: string;
   lastMovementOfArticle: MovementOfArticle;
   isCancellationAutomatic: boolean = false;
-  showBussinessRulesButton: boolean = false;
+
   priceList: any;
   newPriceList: any;
   increasePrice = 0;
   lastIncreasePrice = 0;
   companyOld: boolean = false;
   quantity = 0;
-  businessRulesCode: string;
+
   movementsOfCancellations: MovementOfCancellation[] = new Array();
   email: EmailProps;
   canceledTransactions: {
@@ -291,12 +292,6 @@ export class AddSaleOrderComponent {
           }
           this.backFinal();
         } else {
-          this.getBusinessRules().then((businessRules) => {
-            if (businessRules && businessRules.length > 0) {
-              this.showBussinessRulesButton = true;
-            }
-          });
-
           this.transactionMovement = '' + this.transaction.type.transactionMovement || '';
           this.filtersTaxClassification = [TaxClassification.Withholding, TaxClassification.Perception];
           this.lastQuotation = this.transaction.quotation;
@@ -337,26 +332,6 @@ export class AddSaleOrderComponent {
         this.focusEvent.emit(true);
       }
     }, 1000);
-  }
-
-  getBusinessRules(): Promise<BusinessRule[]> {
-    return new Promise<BusinessRule[]>((resolve) => {
-      this.loading = true;
-
-      this._businessRulesService.getAll({}).subscribe(
-        (result: ApiResponse) => {
-          if (result.status === 200) {
-            resolve(result.result);
-          } else {
-            resolve(null);
-          }
-        },
-        () => {
-          this.loading = false;
-          resolve(null);
-        }
-      );
-    });
   }
 
   getPriceList(id: string): Promise<PriceList> {
@@ -1987,9 +1962,7 @@ export class AddSaleOrderComponent {
           }
         });
         break;
-      case 'apply-bussiness-rule-code':
-        modalRef = this._modalService.open(this.contentBusinessRulesCode);
-        break;
+
       case 'movement_of_article':
         const movementOfArticleCollection = this.user?.permission?.collections?.movementsOfArticles;
 
@@ -2491,23 +2464,6 @@ export class AddSaleOrderComponent {
         });
         break;
       default:
-    }
-  }
-
-  async applyBusinessRuleCode() {
-    if (this.businessRulesCode) {
-      this.loading = true;
-      await this._businessRulesService.apply(this.businessRulesCode, this.transactionId).subscribe(
-        async (result) => {
-          this._toastService.showToast(result);
-          if (result.status === 200) {
-            this.businessRulesCode = null;
-            this._modalService.dismissAll();
-            this.getMovementsOfTransaction();
-          }
-        },
-        (error) => this._toastService.showToast(error)
-      );
     }
   }
 
@@ -3753,5 +3709,23 @@ export class AddSaleOrderComponent {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     return `${year}${month}`;
+  }
+
+  applyBusinessRule() {
+    const modalRef = this._modalService.open(ApplyBusinessRuleComponent, {
+      size: 'md',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.transactionId = this.transactionId;
+    modalRef.result.then(
+      (result) => {
+        if (result && result.success) {
+          this.getMovementsOfTransaction();
+        }
+      },
+      (reason) => {
+        // Modal cerrado sin cambios
+      }
+    );
   }
 }

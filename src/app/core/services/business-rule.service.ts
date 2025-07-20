@@ -11,10 +11,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class BusinessRuleService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `business-rules`, // PATH
       _http,
@@ -30,6 +27,23 @@ export class BusinessRuleService extends ModelService {
       .set('Authorization', this._authService.getToken());
 
     return this._http.post(URL, { code, transactionId }, { headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
+  applyAll(transactionId: string): Observable<any> {
+    const URL = `${environment.apiv2}/business-rules/apply/all`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, { transactionId }, { headers }).pipe(
       map((res) => {
         return res;
       }),
