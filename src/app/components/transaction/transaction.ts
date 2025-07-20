@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import {
   Account,
   Branch,
+  BusinessRule,
   Company,
   Currency,
   Deposit,
@@ -14,7 +15,6 @@ import {
   UseOfCFDI,
 } from '@types';
 import { Address } from '../address/address.model';
-import { BusinessRule } from '../business-rules/business-rules';
 import { CashBox } from '../cash-box/cash-box';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { Taxes } from '../tax/taxes';

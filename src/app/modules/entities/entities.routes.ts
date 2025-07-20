@@ -139,4 +139,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'holidays',
     loadChildren: () => import('./holiday/holiday.routes').then((m) => m.HOLIDAY),
   },
+  {
+    path: 'business-rules',
+    loadChildren: () => import('./business-rules/business-rules.routes').then((m) => m.BUSINESS_RULES_ROUTES),
+  },
 ];

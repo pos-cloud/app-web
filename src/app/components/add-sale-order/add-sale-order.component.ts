@@ -20,7 +20,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { CompanyType, RelationType, Table, TableState, Transport, UseOfCFDI } from '@types';
+import { BusinessRule, CompanyType, RelationType, Table, TableState, Transport, UseOfCFDI } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { BusinessRuleService } from '../../core/services/business-rule.service';
@@ -41,7 +41,6 @@ import { ArticleStock } from '../article-stock/article-stock';
 import { Article, ArticlePrintIn, Type } from '../article/article';
 import { ArticleComponent } from '../article/crud/article.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
-import { BusinessRule } from '../business-rules/business-rules';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { Category } from '../category/category';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
@@ -344,25 +343,19 @@ export class AddSaleOrderComponent {
     return new Promise<BusinessRule[]>((resolve) => {
       this.loading = true;
 
-      this._businessRulesService
-        .getAll({
-          match: {
-            $or: [{ transactionTypeIds: { $in: [this.transaction.type._id] } }, { transactionTypeIds: { $size: 0 } }],
-          },
-        })
-        .subscribe(
-          (result: ApiResponse) => {
-            if (result.status === 200) {
-              resolve(result.result);
-            } else {
-              resolve(null);
-            }
-          },
-          () => {
-            this.loading = false;
+      this._businessRulesService.getAll({}).subscribe(
+        (result: ApiResponse) => {
+          if (result.status === 200) {
+            resolve(result.result);
+          } else {
             resolve(null);
           }
-        );
+        },
+        () => {
+          this.loading = false;
+          resolve(null);
+        }
+      );
     });
   }
 

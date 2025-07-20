@@ -247,6 +247,7 @@
   "discount": "Descuento",
   "discountAmount": "Monto de Descuento",
   "discountArticle": "Artículo de descuento",
+  "articleDiscount": "Artículo para descuento",
   "discountPercent": "Porcentaje de Descuento",
   "discountType": "Tipo de Descuento",
   "discountValue": "Valor de Descuento",

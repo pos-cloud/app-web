@@ -2,7 +2,6 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { BusinessRule } from 'app/components/business-rules/business-rules';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { TaxClassification } from 'app/components/tax/tax';
 import { Voucher } from 'app/components/voucher-reader/voucher';
@@ -35,7 +34,7 @@ import { DescriptionType, TransactionMovement, TransactionType } from '../../tra
 //Paquetes de terceros
 
 //Servicios
-import { Company } from '@types';
+import { BusinessRule, Company } from '@types';
 import { StructureService } from 'app/core/services/structure.service';
 import { PrintService } from '../../../core/services/print.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
@@ -4359,22 +4358,22 @@ export class PrintComponent implements OnInit {
     this.doc.setFont(undefined, 'normal');
     this.doc.setFontSize(this.fontSizes.normal);
     row += 8;
-    if (this.businessRule.description) {
-      this.doc.text(this.businessRule.description.slice(0, 36), margin, row);
+    if (this.businessRule.name) {
+      this.doc.text(this.businessRule.name.slice(0, 36), margin, row);
       row += 5;
-      this.doc.text(this.businessRule.description.slice(36, 70), margin, row);
+      this.doc.text(this.businessRule.name.slice(36, 70), margin, row);
       row += 5;
-      this.doc.text(this.businessRule.description.slice(71, 105), margin, row);
+      this.doc.text(this.businessRule.name.slice(71, 105), margin, row);
       row += 5;
-      this.doc.text(this.businessRule.description.slice(106, 140), margin, row);
+      this.doc.text(this.businessRule.name.slice(106, 140), margin, row);
       row += 5;
-      this.doc.text(this.businessRule.description.slice(141, 175), margin, row);
+      this.doc.text(this.businessRule.name.slice(141, 175), margin, row);
       row += 5;
-      this.doc.text(this.businessRule.description.slice(176, 200), margin, row);
+      this.doc.text(this.businessRule.name.slice(176, 200), margin, row);
       row += 5;
-      this.doc.text(this.businessRule.description.slice(201, 235), margin, row);
+      this.doc.text(this.businessRule.name.slice(201, 235), margin, row);
       row += 5;
-      this.doc.text(this.businessRule.description.slice(236, 270), margin, row);
+      this.doc.text(this.businessRule.name.slice(236, 270), margin, row);
     }
     this.finishImpression();
   }

@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { AccountSeatModule } from './account-seat/account-seat.module';
 import { ApplicationModule } from './application/application.module';
 import { ArticleModule } from './article/article.module';
-import { BusinessRuleModule } from './business-rules/business-rule.module';
 import { CashBoxTypeModule } from './cash-box-type/cash-box-type.module';
 import { CategoryModule } from './category/category.module';
 import { DatatableModule } from './datatable/datatable.module';
@@ -25,7 +24,6 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
     CategoryModule,
     AccountSeatModule,
     ReportModule,
-    BusinessRuleModule,
     ArticleModule,
   ],
   exports: [ArticleModule],

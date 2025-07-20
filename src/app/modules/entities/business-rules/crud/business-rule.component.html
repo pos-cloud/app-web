@@ -1,0 +1,350 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add'">{{ 'add-business-rule' | translate | capitalize }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ businessRule?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ businessRule?.name ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i>
+          <span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleBusinessRuleOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="handleBusinessRuleOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="businessRuleForm" autocomplete="off" *ngIf="!loading">
+        <!-- Datos principales -->
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <!-- Primera fila: Código y Nombre -->
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="code" class="control-label">{{ 'code' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              id="code"
+              [readonly]="operation === 'view' || operation === 'delete'"
+            />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              id="name"
+              [focus]="focusEvent"
+              [readonly]="operation === 'view' || operation === 'delete'"
+              [ngClass]="{
+                'is-invalid': businessRuleForm.get('name')?.touched && businessRuleForm.get('name')?.invalid
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="businessRuleForm.get('name')?.touched && businessRuleForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="active" class="control-label">{{ 'active' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="active"
+              id="active"
+              [disabled]="operation === 'view' || operation === 'delete'"
+            >
+              <option [ngValue]="true">{{ 'yes' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'no' | translate | capitalize }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Segunda fila: Fecha inicio, fecha fin, stock actual y días -->
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="startDate" class="control-label">{{ 'startDate' | translate | capitalize }}:</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="startDate"
+              id="startDate"
+              [readonly]="operation === 'view' || operation === 'delete'"
+            />
+          </div>
+          <div class="form-group col-md-3">
+            <label for="endDate" class="control-label">{{ 'endDate' | translate | capitalize }}:</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="endDate"
+              id="endDate"
+              [readonly]="operation === 'view' || operation === 'delete'"
+            />
+          </div>
+          <div class="form-group col-md-3">
+            <label for="totalStock" class="control-label">{{ 'totalStock' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="totalStock"
+              id="totalStock"
+              [readonly]="operation === 'view' || operation === 'delete'"
+              [ngClass]="{
+                'is-invalid': businessRuleForm.get('totalStock')?.invalid && businessRuleForm.get('totalStock')?.touched
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="businessRuleForm.get('totalStock')?.invalid && businessRuleForm.get('totalStock')?.touched"
+            >
+              {{ 'totalStock' | translate | capitalize }} {{ 'is required' | translate | lowercase }}
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="days" class="control-label">{{ 'days' | translate | capitalize }}:</label>
+            <app-multi-select-dropdown
+              [data]="days"
+              [control]="businessRuleForm.get('days')"
+              placeholder="Seleccionar días válidos para la promoción"
+              textField="name"
+              keyField="_id"
+            ></app-multi-select-dropdown>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'discount' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="discountType" class="control-label">{{ 'discountType' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="discountType"
+              id="discountType"
+              [disabled]="operation === 'view' || operation === 'delete'"
+              [ngClass]="{
+                'is-invalid':
+                  businessRuleForm.get('discountType')?.invalid && businessRuleForm.get('discountType')?.touched
+              }"
+            >
+              <option value="percentage">{{ 'percentage' | translate | capitalize }}</option>
+              <option value="amount">{{ 'amount' | translate | capitalize }}</option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="businessRuleForm.get('discountType')?.invalid && businessRuleForm.get('discountType')?.touched"
+            >
+              {{ 'discountType' | translate | capitalize }} {{ 'is required' | translate | lowercase }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="discountValue" class="control-label">{{ 'discountValue' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="discountValue"
+              id="discountValue"
+              [readonly]="operation === 'view' || operation === 'delete'"
+              [ngClass]="{
+                'is-invalid':
+                  businessRuleForm.get('discountValue')?.invalid && businessRuleForm.get('discountValue')?.touched
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="businessRuleForm.get('discountValue')?.invalid && businessRuleForm.get('discountValue')?.touched"
+            >
+              {{ 'discountValue' | translate | capitalize }} {{ 'is required' | translate | lowercase }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="articleDiscount" class="control-label">{{ 'articleDiscount' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="businessRuleForm.get('articleDiscount')"
+              [data]="articles"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                businessRuleForm.get('articleDiscount')?.invalid && businessRuleForm.get('articleDiscount')?.touched
+              "
+            >
+              {{ 'articleDiscount' | translate | capitalize }} {{ 'is required' | translate | lowercase }}
+            </div>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'articles' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th style="width: 70%">{{ 'article' | translate | capitalize }}</th>
+                    <th style="width: 20%">{{ 'quantity' | translate | capitalize }}</th>
+                    <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
+                      <button type="button" class="btn btn-success btn-sm" (click)="addArticle()">
+                        <i class="fa fa-plus"></i>
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="articles">
+                  <tr *ngFor="let article of articlesArray.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <div class="typeahead-wrapper">
+                        <app-typeahead-dropdown
+                          [control]="article.get('article')"
+                          [data]="articles"
+                          [keyField]="'_id'"
+                          [displayField]="'description'"
+                        ></app-typeahead-dropdown>
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="quantity"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                        [ngClass]="{
+                          'is-invalid': article.get('quantity')?.invalid && article.get('quantity')?.touched
+                        }"
+                      />
+                    </td>
+                    <td *ngIf="operation !== 'view' && operation !== 'delete'">
+                      <button type="button" class="btn btn-danger btn-sm" (click)="removeArticle(i)">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <style>
+          /* Estilos para solucionar el problema del dropdown en la tabla */
+          .typeahead-wrapper {
+            position: relative;
+          }
+
+          .typeahead-wrapper .dropdown-menu {
+            z-index: 9999 !important;
+            position: absolute !important;
+          }
+
+          .table-responsive {
+            overflow: visible !important;
+          }
+
+          .table {
+            overflow: visible !important;
+          }
+
+          .table tbody {
+            overflow: visible !important;
+          }
+
+          .table td {
+            overflow: visible !important;
+          }
+        </style>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ businessRule?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ businessRule?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ businessRule?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ businessRule?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ businessRule?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

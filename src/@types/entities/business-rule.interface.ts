@@ -4,24 +4,15 @@ export interface BusinessRule extends Activity {
   _id: string;
   code: string;
   name: string;
-  description: string;
-  termsAndConditions: string;
+  active: boolean;
   startDate: Date;
   endDate: Date;
-  minAmount: number;
-  minQuantity: number;
-  transactionAmountLimit: number;
   totalStock: number;
   currentStock: number;
-  madeIn: string;
-  active: boolean;
   discountType: DiscountType;
   discountValue: number;
-  article: Article;
-  item: Article;
-  item2: Article;
-  item3: Article;
-  transactionTypeIds: string[];
+  articleDiscount: Article;
+  articles: BusinessRuleArticle[];
   days: Day[];
 }
 
@@ -38,4 +29,9 @@ export enum Day {
   Friday = 'Friday',
   Saturday = 'Saturday',
   Sunday = 'Sunday',
+}
+
+export interface BusinessRuleArticle {
+  article: Article;
+  quantity: number;
 }
