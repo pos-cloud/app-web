@@ -20,7 +20,7 @@ export class BusinessRuleService extends ModelService {
   }
 
   apply(code: string, transactionId: string): Observable<any> {
-    const URL = `${environment.apiv2}/business-rules/apply`;
+    const URL = `${environment.apiv2}/business-rules/apply/${code}`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
