@@ -84,5 +84,6 @@
   "roman": "Roman",
   "bold": "Grassetto",
   "italic": "Corsivo",
-  "size": "Dimensione"
+  "size": "Dimensione",
+  "currentStock": "Stock attuale"
 }

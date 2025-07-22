@@ -10,7 +10,6 @@ import {
 import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { ApiResponse, Article, BusinessRule } from '@types';
@@ -32,7 +31,6 @@ import { BusinessRuleService } from '../../../../core/services/business-rule.ser
     TranslateModule,
     TypeaheadDropdownComponent,
     ProgressbarModule,
-    MultiSelectDropdownComponent,
   ],
 })
 export class BusinessRuleComponent implements OnInit {
@@ -148,12 +146,19 @@ export class BusinessRuleComponent implements OnInit {
   public setValueForm(): void {
     const articleDiscount = this.articles?.find((item) => item._id === this.businessRule?.articleDiscount?.toString());
 
+    const formatDate = (date: string | Date) => {
+      if (!date) return '';
+      if (typeof date === 'string') return date.substring(0, 10);
+      // Si es Date, formatea a 'YYYY-MM-DD'
+      return date.toISOString().substring(0, 10);
+    };
+
     const values = {
       _id: this.businessRule?._id ?? '',
       code: this.businessRule?.code ?? '',
       name: this.businessRule?.name ?? '',
-      startDate: this.businessRule?.startDate ?? '',
-      endDate: this.businessRule?.endDate ?? '',
+      startDate: formatDate(this.businessRule?.startDate),
+      endDate: formatDate(this.businessRule?.endDate),
       totalStock: this.businessRule?.totalStock ?? '',
       active: this.businessRule?.active ?? true,
       discountType: this.businessRule?.discountType ?? '',
@@ -284,5 +289,26 @@ export class BusinessRuleComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  // Métodos para selección múltiple de días con checkboxes
+  toggleDay(dayId: string, checked: boolean) {
+    const daysControl = this.businessRuleForm.get('days');
+    let value = daysControl.value as string[];
+    if (checked) {
+      value = [...value, dayId];
+    } else {
+      value = value.filter((d) => d !== dayId);
+    }
+    daysControl.setValue(value);
+    daysControl.markAsDirty();
+  }
+
+  mostrarDiasSeleccionados(): string {
+    const seleccionados = this.businessRuleForm.get('days').value;
+    return this.days
+      .filter((d) => seleccionados.includes(d._id))
+      .map((d) => d.name)
+      .join(', ');
   }
 }

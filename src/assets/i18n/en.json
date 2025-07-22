@@ -87,5 +87,6 @@
   "roman": "Roman",
   "bold": "Bold",
   "italic": "Italic",
-  "size": "Size"
+  "size": "Size",
+  "currentStock": "Current stock"
 }

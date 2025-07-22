@@ -803,5 +803,6 @@
   "export": "Exportar",
   "collections": "Colecciones",
   "counter": "Mostrador",
-  "voucherReader": "Lector de Voucher"
+  "voucherReader": "Lector de Voucher",
+  "currentStock": "Stock actual"
 }
