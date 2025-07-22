@@ -33,7 +33,7 @@ export class ListHolidaysComponent {
       filter: true,
       defaultFilter: null,
       datatype: 'date',
-      project: null,
+      project: `{ "$dateToString": { "date": "$date", "format": "%d/%m/%Y"} }`,
       align: 'left',
       required: false,
     },

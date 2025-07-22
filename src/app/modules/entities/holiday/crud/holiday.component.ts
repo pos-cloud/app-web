@@ -37,7 +37,7 @@ export class HolidayComponent implements OnInit {
     this.holidayForm = this._fb.group({
       _id: ['', []],
       name: ['', [Validators.required]],
-      date: ['', [Validators.required]],
+      date: [null, [Validators.required]],
     });
   }
 
@@ -65,7 +65,7 @@ export class HolidayComponent implements OnInit {
     const values = {
       _id: this.holiday?._id ?? '',
       name: this.holiday?.name ?? '',
-      date: new Date(this.holiday?.date).toISOString().substring(0, 10) ?? '',
+      date: this.holiday?.date ? new Date(this.holiday.date).toISOString().substring(0, 10) : '',
     };
     this.holidayForm.setValue(values);
   }
@@ -75,6 +75,7 @@ export class HolidayComponent implements OnInit {
   }
 
   onEnter() {
+    console.log(this.holidayForm);
     if (this.holidayForm.valid && this.operation !== 'view' && this.operation !== 'delete') {
       this.handleHolidayOperation();
     }
