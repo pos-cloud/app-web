@@ -19,6 +19,16 @@ export class ListBusinessRulesComponent {
   public sort = { name: 1 };
   public columns: IAttribute[] = [
     {
+      name: 'code',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+    {
       name: 'name',
       visible: true,
       disabled: false,
