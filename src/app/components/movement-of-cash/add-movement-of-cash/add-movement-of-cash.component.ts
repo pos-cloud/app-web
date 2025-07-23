@@ -1879,6 +1879,7 @@ export class AddMovementOfCashComponent implements OnInit {
       movementOfArticle.transaction = this.transaction;
       movementOfArticle.modifyStock = this.transaction.type.modifyStock;
       movementOfArticle.stockMovement = this.transaction.type.stockMovement;
+      movementOfArticle.isGeneratedByPayment = true;
       if (this.paymentMethodSelected.surcharge > 0 && this.paymentMethodSelected.surchargeArticle) {
         movementOfArticle.article = this.paymentMethodSelected.surchargeArticle;
       }
