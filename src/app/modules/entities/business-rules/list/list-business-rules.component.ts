@@ -1,9 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IAttribute, IButton } from '@types';
+import { ApiResponse, IAttribute, IButton, PrintType } from '@types';
 
+import { PrintService } from '@core/services/print.service';
+import { ToastService } from '@shared/components/toast/toast.service';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
+import * as printJS from 'print-js';
+import { Subject, takeUntil } from 'rxjs';
 import { DatatableComponent } from '../../../../components/datatable/datatable.component';
 import { BusinessRuleService } from '../../../../core/services/business-rule.service';
 
@@ -17,6 +20,8 @@ export class ListBusinessRulesComponent {
   public title: string = 'business-rules';
   public loading: boolean = false;
   public sort = { name: 1 };
+  private destroy$ = new Subject<void>();
+
   public columns: IAttribute[] = [
     {
       name: 'code',
@@ -184,7 +189,12 @@ export class ListBusinessRulesComponent {
   // EXCEL
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(private _modalService: NgbModal, private _router: Router, public _service: BusinessRuleService) {}
+  constructor(
+    public _printService: PrintService,
+    private _router: Router,
+    public _service: BusinessRuleService,
+    private _toastService: ToastService
+  ) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);
@@ -204,11 +214,51 @@ export class ListBusinessRulesComponent {
       case 'delete':
         this._router.navigateByUrl('entities/business-rules/delete/' + obj._id);
         break;
+      case 'print':
+        const datalabel = {
+          quantity: 1,
+          ruleId: obj._id,
+        };
+        this.toPrint(PrintType.Rule, datalabel);
+        this.loading = false;
+        break;
       default:
     }
   }
 
   public refresh() {
     this.datatableComponent.refresh();
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 }

@@ -9,7 +9,7 @@
   <div class="row">
     <div class="col-md-12">
       <div class="form-group">
-        <label for="businessRulesCode">Código de Regla Específica</label>
+        <label for="businessRulesCode">Código</label>
         <input
           type="text"
           class="form-control"
@@ -17,20 +17,21 @@
           [(ngModel)]="businessRulesCode"
           placeholder="Ingrese el código de la regla"
           [disabled]="loading"
+          (keydown.enter)="applySpecificRule()"
         />
         <small class="form-text text-muted">
-          Ingrese el código de una regla de negocio específica para aplicarla
+          Ingrese el código de una regla de negocio específica para aplicarla y luego presione "Aplicar Regla" o Enter
         </small>
       </div>
     </div>
   </div>
 
-  <div class="row mt-3">
+  <!-- <div class="row mt-3">
     <div class="col-md-12">
       <div class="alert alert-info">
         <strong>Opciones disponibles:</strong>
         <ul class="mb-0 mt-2">
-          <li><strong>Aplicar regla específica:</strong> Ingrese un código y presione "Aplicar Regla"</li>
+          <li><strong>Aplicar regla específica:</strong> Ingrese un código y presione "Aplicar Regla" o Enter</li>
           <li>
             <strong>Aplicar todas las reglas:</strong> Presione "Aplicar Todas las Reglas" para que el sistema intente
             aplicar todas las reglas disponibles
@@ -38,7 +39,7 @@
         </ul>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 
 <div class="modal-footer">
@@ -61,7 +62,7 @@
     <span *ngIf="loading && !applyingAll">Aplicando...</span>
   </button>
 
-  <button
+  <!-- <button
     type="button"
     class="btn btn-success"
     (click)="!loading ? applyAllRules() : $event.stopPropagation()"
@@ -69,5 +70,5 @@
   >
     <span *ngIf="!loading">Aplicar Todas las Reglas</span>
     <span *ngIf="loading && applyingAll">Aplicando todas...</span>
-  </button>
+  </button> -->
 </div>
