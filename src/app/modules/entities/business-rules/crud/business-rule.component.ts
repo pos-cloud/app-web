@@ -219,9 +219,10 @@ export class BusinessRuleComponent implements OnInit {
       this.loading = false;
       return;
     }
-
-    this.businessRule = this.businessRuleForm.value;
-
+    this.businessRule = {
+      ...this.businessRule,
+      ...this.businessRuleForm.value,
+    };
     switch (this.operation) {
       case 'add':
         this.saveBusinessRule();
@@ -274,6 +275,7 @@ export class BusinessRuleComponent implements OnInit {
   }
 
   public deleteBusinessRule() {
+    // console.log(this.businessRule);
     this._businessRuleService
       .delete(this.businessRule._id)
       .pipe(takeUntil(this.destroy$))
