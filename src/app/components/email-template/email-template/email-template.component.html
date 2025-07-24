@@ -2,30 +2,17 @@
   <h4 class="modal-title">
     Plantilla <span *ngIf="emailTemplate">{{ emailTemplate.name }}</span>
   </h4>
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    (click)="activeModal.dismiss('close_click')"
-  >
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <section class="container-fluid">
   <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert
-      [type]="alertConfig.type"
-      [dismissible]="alertConfig.dismissible"
-      (close)="alertMessage = ''"
-    >
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
       {{ alertMessage }}
     </ngb-alert>
   </div>
-  <form
-    [formGroup]="emailTemplateForm"
-    (ngSubmit)="addEmailTemplate()"
-    autocomplete="off"
-  >
+  <form [formGroup]="emailTemplateForm" (ngSubmit)="addEmailTemplate()" autocomplete="off">
     <div class="modal-body">
       <ul ngbNav #nav="ngbNav" class="nav-tabs" [orientation]="orientation">
         <li ngbNavItem>
@@ -75,50 +62,31 @@
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label class="control-label">Creado por:</label>
-                    <label
-                      *ngIf="emailTemplate.creationUser"
-                      class="control-label"
+                    <label *ngIf="emailTemplate.creationUser" class="control-label"
                       ><b>{{ emailTemplate.creationUser.name }}</b></label
                     >
                   </div>
                   <div class="form-group col-md-6">
                     <label class="control-label">El día:</label>
-                    <label
-                      *ngIf="emailTemplate.creationDate"
-                      class="control-label"
-                    >
+                    <label *ngIf="emailTemplate.creationDate" class="control-label">
                       <b>{{ emailTemplate.creationDate }}</b></label
                     >
                   </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label class="control-label"
-                      >Última modificación por:</label
-                    >
-                    <label
-                      *ngIf="emailTemplate.updateUser"
-                      class="control-label"
+                    <label class="control-label">Última modificación por:</label>
+                    <label *ngIf="emailTemplate.updateUser" class="control-label"
                       ><b>{{ emailTemplate.updateUser.name }}</b></label
                     >
-                    <label
-                      *ngIf="!emailTemplate.updateUser"
-                      class="control-label"
-                      ><b>-</b></label
-                    >
+                    <label *ngIf="!emailTemplate.updateUser" class="control-label"><b>-</b></label>
                   </div>
                   <div class="form-group col-md-6">
                     <label class="control-label">El día:</label>
-                    <label
-                      *ngIf="emailTemplate.updateDate"
-                      class="control-label"
+                    <label *ngIf="emailTemplate.updateDate" class="control-label"
                       ><b>{{ emailTemplate.updateDate }}</b></label
                     >
-                    <label
-                      *ngIf="!emailTemplate.updateDate"
-                      class="control-label"
-                      ><b>-</b></label
-                    >
+                    <label *ngIf="!emailTemplate.updateDate" class="control-label"><b>-</b></label>
                   </div>
                 </div>
               </div>
@@ -129,37 +97,25 @@
       <div [ngbNavOutlet]="nav" class="mt-2"></div>
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
-      <button
-        type="button"
-        class="btn btn-light"
-        (click)="activeModal.dismiss('cancel')"
-      >
-        Cancelar
-      </button>
+      <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
       <button
         type="submit"
         class="btn btn-primary"
         [disabled]="!emailTemplateForm?.valid || loading"
         *ngIf="operation !== 'delete'"
       >
-        <i
-          class="fa"
-          [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-        ></i>
+        <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
         <span *ngIf="!loading">Guardar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
       <button
         type="button"
-        class="btn btn-danger"
+        class="btn btn-danger active"
         *ngIf="operation === 'delete'"
         [disabled]="!emailTemplateForm?.valid || loading"
         (click)="deleteEmailTemplate()"
       >
-        <i
-          class="fa"
-          [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
-        ></i>
+        <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
         <span *ngIf="!loading">Eliminar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>

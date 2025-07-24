@@ -4,8 +4,7 @@
       <span style="color: #607d8b">{{ title }}</span>
       <div class="pull-right">
         <button type="button" class="btn" [routerLink]="['/account-seats']">
-          <i class="fa fa-arrow-left"></i
-          ><span>{{ 'return' | translate | capitalize }}</span>
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
         </button>
         <button
           type="button"
@@ -14,24 +13,18 @@
           *ngIf="operation !== 'delete' && operation !== 'view'"
           (click)="addObj()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn btn-danger active"
           *ngIf="operation === 'delete'"
           [disabled]="loading"
           (click)="addObj()"
         >
-          <i
-            class="fa"
-            [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"
-          ></i>
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
           <span *ngIf="!loading"> {{ 'delete' | translate | capitalize }}</span>
           <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
         </button>
@@ -46,38 +39,23 @@
               <hr />
               <b>{{ field.name }}</b>
             </div>
-            <label
-              *ngIf="field.tag !== 'separator'"
-              [for]="field.name"
-              class="control-label"
+            <label *ngIf="field.tag !== 'separator'" [for]="field.name" class="control-label"
               >{{ field.name | translate | capitalize }}:</label
             >
             <div class="input-group">
               <!-- FILE -->
-              <div
-                class="row"
-                style="width: 100%"
-                *ngIf="field.tag === 'input' && field.tagType === 'file'"
-              >
+              <div class="row" style="width: 100%" *ngIf="field.tag === 'input' && field.tagType === 'file'">
                 <div class="col-md-12">
                   <div class="row">
                     <div class="col-md-12">
                       <div class="custom-file">
                         <label
                           class="custom-file-label btn btn-light"
-                          [id]="
-                            'labelFile' +
-                            field.name.split('.')[
-                              field.name.split('.').length - 1
-                            ]
-                          "
+                          [id]="'labelFile' + field.name.split('.')[field.name.split('.').length - 1]"
                           for="customFile"
                           >{{
-                            filesToUpload &&
-                            filesToUpload[field.name] &&
-                            filesToUpload[field.name].length > 0
-                              ? filesToUpload[field.name].length +
-                                ' archivos cargados'
+                            filesToUpload && filesToUpload[field.name] && filesToUpload[field.name].length > 0
+                              ? filesToUpload[field.name].length + ' archivos cargados'
                               : 'Seleccionar
                                                     archivos'
                           }}</label
@@ -90,9 +68,7 @@
                           [id]="field.name"
                           [readonly]="readonly"
                           [ngClass]="{
-                            'is-invalid':
-                              !objForm.get(field.name)?.valid &&
-                              formErrors[field.name]
+                            'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
                           }"
                           (change)="onFileSelected($event, field.name)"
                           [accept]="field.format + '/*'"
@@ -102,11 +78,7 @@
                     </div>
                   </div>
                   <div class="row" *ngIf="field.multiple">
-                    <div
-                      class="col-md-3"
-                      style="padding: 1rem"
-                      *ngFor="let file of getFiles(field.name)"
-                    >
+                    <div class="col-md-3" style="padding: 1rem" *ngFor="let file of getFiles(field.name)">
                       <div class="card" style="min-height: auto !important">
                         <div
                           class="img-file"
@@ -116,29 +88,21 @@
                             'file?filename=' +
                             file +
                             '&model=' +
-                            field.name.split('.')[
-                              field.name.split('.').length - 1
-                            ] +
+                            field.name.split('.')[field.name.split('.').length - 1] +
                             '&database=' +
                             database +
                             ')'
                           "
                         ></div>
                         <div class="card-body text-center">
-                          <a
-                            class="btn btn-danger"
-                            style="color: white"
-                            (click)="deleteFile('image', field.name, file)"
+                          <a class="btn btn-danger" style="color: white" (click)="deleteFile('image', field.name, file)"
                             ><i class="fa fa-trash-o"></i>Eliminar</a
                           >
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div
-                    class="row"
-                    *ngIf="!field.multiple && getFiles(field.name)"
-                  >
+                  <div class="row" *ngIf="!field.multiple && getFiles(field.name)">
                     <div class="col-md-3" style="padding: 1rem">
                       <div class="card" style="min-height: auto !important">
                         <div
@@ -149,9 +113,7 @@
                             'file?filename=' +
                             getFiles(field.name) +
                             '&model=' +
-                            field.name.split('.')[
-                              field.name.split('.').length - 1
-                            ] +
+                            field.name.split('.')[field.name.split('.').length - 1] +
                             '&database=' +
                             database +
                             ')'
@@ -161,13 +123,7 @@
                           <a
                             class="btn btn-danger"
                             style="color: white"
-                            (click)="
-                              deleteFile(
-                                'image',
-                                field.name,
-                                getFiles(field.name)
-                              )
-                            "
+                            (click)="deleteFile('image', field.name, getFiles(field.name))"
                             ><i class="fa fa-trash-o"></i>Eliminar</a
                           >
                         </div>
@@ -187,8 +143,7 @@
                 [id]="field.name"
                 [readonly]="readonly"
                 [ngClass]="{
-                  'is-invalid':
-                    !objForm.get(field.name)?.valid && formErrors[field.name]
+                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
                 }"
                 (blur)="onValueChanged($event.target.id)"
               />
@@ -200,8 +155,7 @@
                 [formControlName]="field.name"
                 [id]="field.name"
                 [ngClass]="{
-                  'is-invalid':
-                    !objForm.get(field.name)?.valid && formErrors[field.name]
+                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
                 }"
                 (blur)="onValueChanged($event.target.id)"
               >
@@ -218,10 +172,7 @@
               <!-- AUTOCOMPLETE -->
               <div *ngIf="field.tag === 'autocomplete'" style="width: 100%">
                 <ng-template #result let-r="result" let-t="term">
-                  <ngb-highlight
-                    [result]="r.description"
-                    [term]="t"
-                  ></ngb-highlight>
+                  <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                 </ng-template>
                 <input
                   [type]="field.tagType"
@@ -234,8 +185,7 @@
                   [resultTemplate]="result"
                   [inputFormatter]="field.format"
                   [ngClass]="{
-                    'is-invalid':
-                      !objForm.get(field.name).valid && formErrors[field.name]
+                    'is-invalid': !objForm.get(field.name).valid && formErrors[field.name]
                   }"
                   (focus)="focus$[field.name].next($any($event).target.value)"
                   (blur)="onValueChanged($event.target.id)"
@@ -251,17 +201,13 @@
                 [id]="field.name"
                 [readonly]="readonly"
                 [ngClass]="{
-                  'is-invalid':
-                    !objForm.get(field.name)?.valid && formErrors[field.name]
+                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
                 }"
                 (blur)="onValueChanged($event.target.id)"
               ></textarea>
 
               <!-- MOSTRAR ERROR -->
-              <div
-                class="invalid-feedback"
-                [style.display]="formErrors[field.name] ? 'block' : 'none'"
-              >
+              <div class="invalid-feedback" [style.display]="formErrors[field.name] ? 'block' : 'none'">
                 {{ formErrors[field.name] }}
               </div>
             </div>
@@ -277,10 +223,7 @@
                   <div class="row">
                     <div class="form-group col-md-6">
                       <ng-template #rtAccount let-r="result" let-t="term">
-                        <ngb-highlight
-                          [result]="r.description"
-                          [term]="t"
-                        ></ngb-highlight>
+                        <ngb-highlight [result]="r.description" [term]="t"></ngb-highlight>
                       </ng-template>
                       <label for="account">Cuenta:</label>
                       <input
@@ -296,31 +239,15 @@
                       />
                     </div>
                     <div class="form-group col-md-2">
-                      <label for="debit" class="control-label"
-                        >{{ 'debit' | translate | capitalize }}:</label
-                      >
+                      <label for="debit" class="control-label">{{ 'debit' | translate | capitalize }}:</label>
                       <div class="input-group">
-                        <input
-                          type="number"
-                          class="form-control"
-                          name="debit"
-                          value="0"
-                          [(ngModel)]="debit"
-                        />
+                        <input type="number" class="form-control" name="debit" value="0" [(ngModel)]="debit" />
                       </div>
                     </div>
                     <div class="form-group col-md-2">
-                      <label for="credit" class="control-label"
-                        >{{ 'credit' | translate | capitalize }}:</label
-                      >
+                      <label for="credit" class="control-label">{{ 'credit' | translate | capitalize }}:</label>
                       <div class="input-group">
-                        <input
-                          type="number"
-                          class="form-control"
-                          name="credit"
-                          value="0"
-                          [(ngModel)]="credit"
-                        />
+                        <input type="number" class="form-control" name="credit" value="0" [(ngModel)]="credit" />
                       </div>
                     </div>
                     <div class="form-group col-md-1">
@@ -345,12 +272,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr
-                      *ngFor="
-                        let field of objForm.get('items')['controls'];
-                        let i = index
-                      "
-                    >
+                    <tr *ngFor="let field of objForm.get('items')['controls']; let i = index">
                       <td *ngIf="field?.value?.account?.description">
                         {{ field?.value?.account?.description }}
                       </td>
@@ -360,23 +282,13 @@
                                                     {{account.description}}</td>
                                             </div>-->
                       <td>
-                        {{
-                          field?.value?.debit
-                            | currency: 'ARS' : 'symbol-narrow' : '1.2-2'
-                        }}
+                        {{ field?.value?.debit | currency : 'ARS' : 'symbol-narrow' : '1.2-2' }}
                       </td>
                       <td>
-                        {{
-                          field?.value?.credit
-                            | currency: 'ARS' : 'symbol-narrow' : '1.2-2'
-                        }}
+                        {{ field?.value?.credit | currency : 'ARS' : 'symbol-narrow' : '1.2-2' }}
                       </td>
                       <td align="right" width="10">
-                        <button
-                          type="button"
-                          class="btn btn-danger btn-sm"
-                          (click)="deleteItem(i)"
-                        >
+                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(i)">
                           <i class="fa fa-trash-o"></i>
                         </button>
                       </td>
@@ -385,14 +297,10 @@
                   <tfoot>
                     <td></td>
                     <td class="align-right">
-                      <strong>{{
-                        totalDebit | currency: 'ARS' : 'symbol-narrow' : '1.2-2'
-                      }}</strong>
+                      <strong>{{ totalDebit | currency : 'ARS' : 'symbol-narrow' : '1.2-2' }}</strong>
                     </td>
                     <td class="align-right">
-                      <strong>{{
-                        totalHaber | currency: 'ARS' : 'symbol-narrow' : '1.2-2'
-                      }}</strong>
+                      <strong>{{ totalHaber | currency : 'ARS' : 'symbol-narrow' : '1.2-2' }}</strong>
                     </td>
                   </tfoot>
                 </table>
