@@ -125,7 +125,7 @@
               class="invalid-feedback"
               *ngIf="businessRuleForm.get('totalStock')?.invalid && businessRuleForm.get('totalStock')?.touched"
             >
-              {{ 'totalStock' | translate | capitalize }} {{ 'is required' | translate | lowercase }}
+              {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-3">
@@ -170,7 +170,7 @@
               class="invalid-feedback"
               *ngIf="businessRuleForm.get('discountType')?.invalid && businessRuleForm.get('discountType')?.touched"
             >
-              {{ 'discountType' | translate | capitalize }} {{ 'is required' | translate | lowercase }}
+              {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-4">
@@ -190,7 +190,7 @@
               class="invalid-feedback"
               *ngIf="businessRuleForm.get('discountValue')?.invalid && businessRuleForm.get('discountValue')?.touched"
             >
-              {{ 'discountValue' | translate | capitalize }} {{ 'is required' | translate | lowercase }}
+              {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
           <div class="form-group col-md-4">
@@ -207,7 +207,7 @@
                 businessRuleForm.get('articleDiscount')?.invalid && businessRuleForm.get('articleDiscount')?.touched
               "
             >
-              {{ 'articleDiscount' | translate | capitalize }} {{ 'is required' | translate | lowercase }}
+              {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
         </div>
