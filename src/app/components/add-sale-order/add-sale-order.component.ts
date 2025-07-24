@@ -14,7 +14,6 @@ import { MovementOfCancellationService } from 'app/core/services/movement-of-can
 import { PriceListService } from 'app/core/services/price-list.service';
 import { RelationTypeService } from 'app/core/services/relation-type.service';
 import { StructureService } from 'app/core/services/structure.service';
-import { UseOfCFDIService } from 'app/core/services/use-of-CFDI.service';
 import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
@@ -23,7 +22,6 @@ import 'moment/locale/es';
 import { CompanyType, RelationType, Table, TableState, Transport, UseOfCFDI } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
-import { BusinessRuleService } from '../../core/services/business-rule.service';
 import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
 import { PrinterService } from '../../core/services/printer.service';
 import { TableService } from '../../core/services/table.service';
@@ -186,7 +184,6 @@ export class AddSaleOrderComponent {
     private _userService: UserService,
     private _variantService: VariantService,
     private _taxService: TaxService,
-    private _useOfCFDIService: UseOfCFDIService,
     private _relationTypeService: RelationTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,
@@ -195,7 +192,6 @@ export class AddSaleOrderComponent {
     private _configService: ConfigService,
     private _structureService: StructureService,
     private _jsonDiffPipe: JsonDiffPipe,
-    private _businessRulesService: BusinessRuleService,
     private _toastService: ToastService,
     public translatePipe: TranslateMePipe,
     public activeModal: NgbActiveModal,
@@ -236,18 +232,18 @@ export class AddSaleOrderComponent {
     this._configService.getConfig.subscribe((config) => {
       this.config = config;
       this.userCountry = this.config['country'];
-      if (this.userCountry === 'MX') {
-        this.getUsesOfCFDI().then((usesOfCFDI) => {
-          if (usesOfCFDI) {
-            this.usesOfCFDI = usesOfCFDI;
-          }
-        });
-        this.getRelationTypes().then((relationTypes) => {
-          if (relationTypes) {
-            this.relationTypes = relationTypes;
-          }
-        });
-      }
+      // if (this.userCountry === 'MX') {
+      //   this.getUsesOfCFDI().then((usesOfCFDI) => {
+      //     if (usesOfCFDI) {
+      //       this.usesOfCFDI = usesOfCFDI;
+      //     }
+      //   });
+      //   this.getRelationTypes().then((relationTypes) => {
+      //     if (relationTypes) {
+      //       this.relationTypes = relationTypes;
+      //     }
+      //   });
+      // }
     });
 
     this._authService.getIdentity.subscribe((identity) => {
@@ -417,28 +413,6 @@ export class AddSaleOrderComponent {
             resolve(null);
           }
         );
-    });
-  }
-
-  getUsesOfCFDI(): Promise<UseOfCFDI[]> {
-    return new Promise<UseOfCFDI[]>((resolve) => {
-      this.loading = true;
-
-      this._useOfCFDIService.getUsesOfCFDI().subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.usesOfCFDI) {
-            resolve(null);
-          } else {
-            resolve(result.usesOfCFDI);
-          }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
     });
   }
 

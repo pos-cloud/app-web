@@ -1,9 +1,5 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -12,8 +8,6 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //service
 import { Make } from '@types';
-import { CategoryService } from 'app/core/services/category.service';
-import { MakeService } from 'app/core/services/make.service';
 import { ArticleService } from '../../../../core/services/article.service';
 import { Category } from '../../../category/category';
 import { Article } from '../../article';
@@ -62,9 +56,7 @@ export class UpdateArticlePriceComponent implements OnInit {
     public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    public _makeService: MakeService,
-    public _categoryService: CategoryService
+    public alertConfig: NgbAlertConfig
   ) {}
 
   ngOnInit(): void {
@@ -85,9 +77,7 @@ export class UpdateArticlePriceComponent implements OnInit {
       decimal: [, [Validators.required]],
     });
 
-    this.updatePriceForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.updatePriceForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
   }
@@ -126,30 +116,19 @@ export class UpdateArticlePriceComponent implements OnInit {
       field: this.updatePriceForm.value.field,
       decimal: this.updatePriceForm.value.decimal,
     };
-    this._articleService
-      .updatePrices(
-        query.articlesCode,
-        query.field,
-        query.decimal,
-        query.percentage
-      )
-      .subscribe(
-        (result) => {
-          this.showMessage(result.message, 'success', false);
-          this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
-      );
+    this._articleService.updatePrices(query.articlesCode, query.field, query.decimal, query.percentage).subscribe(
+      (result) => {
+        this.showMessage(result.message, 'success', false);
+        this.loading = false;
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
