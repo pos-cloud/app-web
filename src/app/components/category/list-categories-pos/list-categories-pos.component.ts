@@ -1,9 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 
-import { Config } from '../../../app.config';
 import { CategoryService } from '../../../core/services/category.service';
 import { Category } from '../category';
 
@@ -20,7 +19,8 @@ export class ListCategoriesPosComponent implements OnInit {
   @Input() areCategoriesVisible: boolean = true;
   @Input() transactionMovement: TransactionMovement;
   @Input() loading: boolean = false;
-  categories: Category[] = new Array();
+  categories: Category[] = [];
+  categoryFiltered: Category[] = [];
   areCategoriesEmpty: boolean = true;
   alertMessage: string = '';
   userType: string;
@@ -29,7 +29,6 @@ export class ListCategoriesPosComponent implements OnInit {
   areFiltersVisible: boolean = false;
   itemsPerPage = 10;
   totalItems = 0;
-  database: string;
 
   constructor(
     public _categoryService: CategoryService,
@@ -39,53 +38,60 @@ export class ListCategoriesPosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.categories = new Array();
-    this.database = Config.database;
     this.getCategories();
-  }
-
-  public ngOnChanges(changes: SimpleChanges): void {
-    if (changes?.transactionMovement?.currentValue) {
-      this.getCategories();
-    }
-  }
-
-  public getBadge(term: string): boolean {
-    return true;
   }
 
   public getCategories(): void {
     this.loading = true;
 
-    let query = 'sort="order":-1';
+    let match = {};
+
+    match['operationType'] = { $ne: 'D' };
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      order: 1,
+      description: 1,
+      picture: 1,
+      visibleOnSale: 1,
+      visibleOnPurchase: 1,
+      'parent._id': 1,
+      'parent.description': 1,
+      'parent.picture': 1,
+      'parent.operationType': 1,
+      operationType: 1,
+    };
 
     if (this.transactionMovement === TransactionMovement.Sale) {
-      query += `&where="visibleOnSale":true,"parent":null`;
-    } else if (this.transactionMovement === TransactionMovement.Purchase) {
-      query += `&where="visibleOnPurchase":true,"parent":null`;
+      match['visibleOnSale'] = true;
     }
 
-    this._categoryService.getCategories(query).subscribe(
-      (result) => {
-        if (!result.categories) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-          this.categories = new Array();
-          this.areCategoriesEmpty = true;
-        } else {
-          this.hideMessage();
+    if (this.transactionMovement === TransactionMovement.Purchase) {
+      match['visibleOnPurchase'] = true;
+    }
 
+    this._categoryService
+      .getAll({
+        project, // PROJECT
+        match, // MATCH
+        sort: { order: 1, description: 1 },
+      })
+      .subscribe(
+        (result) => {
           this.loading = false;
-          this.categories = result.categories;
-          this.totalItems = this.categories.length;
-          this.areCategoriesEmpty = false;
+          if (result.result.length > 0) {
+            this.categories = result.result;
+            this.categoryFiltered = this.categories.filter((cat) => !cat.parent);
+          } else {
+            this.categories = [];
+            this.categoryFiltered = [];
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-      },
-      (error) => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
   public orderBy(term: string, property?: string): void {
@@ -102,64 +108,25 @@ export class ListCategoriesPosComponent implements OnInit {
   }
 
   public selectCategory(categorySelected) {
-    this.getCategoriesChild(categorySelected['_id']).then((categories) => {
-      if (categories.length === 0) {
-        this.eventSelectCategory.emit(categorySelected);
-      } else {
-        this.hideMessage();
-        this.loading = false;
-        this.categories = categories;
-        this.totalItems = categories.length;
-        this.areCategoriesEmpty = false;
+    // Filtrar en memoria las subcategorías cuyo parent sea la seleccionada
+    const subcategories = this.categories.filter((cat) => {
+      if (cat.parent && typeof cat.parent === 'object' && cat.parent._id) {
+        return cat.parent._id === categorySelected._id;
+      } else if (cat.parent) {
+        return cat.parent === categorySelected._id;
       }
+      return false;
     });
+    if (subcategories.length > 0) {
+      // Mostrar subcategorías
+      this.categoryFiltered = subcategories;
+    } else {
+      // No hay subcategorías, emitir evento para mostrar productos
+      this.eventSelectCategory.emit(categorySelected);
+    }
   }
 
-  getCategoriesChild(categoryId: string): Promise<Category[]> {
-    return new Promise<Category[]>((resolve, reject) => {
-      let project = {
-        _id: 1,
-        visibleOnSale: 1,
-        visibleOnPurchase: 1,
-        operationType: 1,
-        description: 1,
-        picture: 1,
-        parent: 1,
-        order: 1,
-      };
-
-      let match = `{`;
-
-      if (this.transactionMovement === TransactionMovement.Sale) {
-        match += `"visibleOnSale":true,"parent": { "$oid" : "${categoryId}"},`;
-      } else if (this.transactionMovement === TransactionMovement.Purchase) {
-        match += `"visibleOnPurchase":true,"parent": { "$oid" : "${categoryId}"},`;
-      } else {
-        match += `"parent": { "$oid" : "${categoryId}"},`;
-      }
-
-      match += `"operationType": { "$ne" : "D"} }`;
-
-      match = JSON.parse(match);
-
-      let sort = {
-        order: -1,
-      };
-
-      this._categoryService.getCategoriesV2(project, match, sort, {}, 0).subscribe(
-        (result) => {
-          if (!result.categories) {
-            resolve(null);
-          } else {
-            resolve(result.categories);
-          }
-        },
-        (error) => {
-          resolve(null);
-        }
-      );
-    });
-  }
+  // Eliminada la función getCategoriesChild, ahora todo se filtra en memoria
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
