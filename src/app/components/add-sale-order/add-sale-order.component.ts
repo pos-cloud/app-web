@@ -45,7 +45,7 @@ import { ApplyDiscountComponent } from '../apply-discount/apply-discount.compone
 import { ArticleFieldType } from '../article-field/article-field';
 import { ArticleFields } from '../article-field/article-fields';
 import { ArticleStock } from '../article-stock/article-stock';
-import { Article, ArticlePrintIn, Type } from '../article/article';
+import { Article, ArticlePrintIn } from '../article/article';
 import { ArticleComponent } from '../article/crud/article.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
@@ -2751,38 +2751,38 @@ export class AddSaleOrderComponent {
       } else {
         this.openModal('cancelation-type-automatic');
       }
-      if (
-        this.transaction.type.requestArticles &&
-        this.transaction.type.modifyStock &&
-        this.config.tiendaNube !== undefined &&
-        this.config.tiendaNube.userID &&
-        this.config.tiendaNube.userID !== '' &&
-        this.movementsOfArticles.length > 0
-      ) {
-        let articlesForUpdate = [];
+      // if (
+      //   this.transaction.type.requestArticles &&
+      //   this.transaction.type.modifyStock &&
+      //   this.config.tiendaNube !== undefined &&
+      //   this.config.tiendaNube.userID &&
+      //   this.config.tiendaNube.userID !== '' &&
+      //   this.movementsOfArticles.length > 0
+      // ) {
+      //   let articlesForUpdate = [];
 
-        for (let movement of this.movementsOfArticles) {
-          if (movement.article.tiendaNubeId) {
-            if (movement.article.type === Type.Final) {
-              await this.updateArticleTiendaNube(movement.article._id);
-            }
-            if (movement.article.type === Type.Variant) {
-              const result = await this.getVariantsByArticleChild(movement.article._id);
+      //   for (let movement of this.movementsOfArticles) {
+      //     if (movement.article.tiendaNubeId) {
+      //       if (movement.article.type === Type.Final) {
+      //         await this.updateArticleTiendaNube(movement.article._id);
+      //       }
+      //       if (movement.article.type === Type.Variant) {
+      //         const result = await this.getVariantsByArticleChild(movement.article._id);
 
-              if (result && result.length > 0) {
-                if (!articlesForUpdate.includes(result[0].articleParent._id)) {
-                  articlesForUpdate.push(result[0].articleParent._id);
-                }
-              }
-            }
-          }
-        }
-        if (articlesForUpdate.length > 0) {
-          for (let articleId of articlesForUpdate) {
-            await this.updateArticleTiendaNube(articleId);
-          }
-        }
-      }
+      //         if (result && result.length > 0) {
+      //           if (!articlesForUpdate.includes(result[0].articleParent._id)) {
+      //             articlesForUpdate.push(result[0].articleParent._id);
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      //   if (articlesForUpdate.length > 0) {
+      //     for (let articleId of articlesForUpdate) {
+      //       await this.updateArticleTiendaNube(articleId);
+      //     }
+      //   }
+      // }
 
       this.loading = false;
     } catch (error) {
