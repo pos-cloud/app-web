@@ -12,7 +12,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
       <p>Una nueva versión de POS Cloud está disponible.</p>
       <p>
         Puedes ver los detalles
-        <a href="https://docs.poscloud.ar/books/actualizaciones" target="_blank">aquí</a>.
+        <a href="https://docs.poscloud.ar/" target="_blank">aquí</a>.
       </p>
     </div>
     <div class="modal-footer">
