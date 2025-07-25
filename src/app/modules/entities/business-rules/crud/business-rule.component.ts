@@ -62,7 +62,7 @@ export class BusinessRuleComponent implements OnInit {
   ) {
     this.businessRuleForm = this._fb.group({
       _id: ['', []],
-      code: ['', []],
+      code: ['', [Validators.required]],
       name: ['', [Validators.required]],
       startDate: ['', []],
       endDate: ['', []],
