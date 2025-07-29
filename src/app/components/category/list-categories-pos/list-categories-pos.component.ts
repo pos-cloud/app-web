@@ -70,6 +70,9 @@ export class ListCategoriesPosComponent implements OnInit {
       match['visibleOnPurchase'] = true;
     }
 
+    match['operationType'] = { $ne: 'D' };
+    match['parent.operationType'] = { $ne: 'D' };
+
     this._categoryService
       .getAll({
         project, // PROJECT
