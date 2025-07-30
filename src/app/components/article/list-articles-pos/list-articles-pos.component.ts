@@ -777,7 +777,11 @@ export class ListArticlesPosComponent implements OnInit {
             (article.code && article.code === this.filterArticle))
         ) {
           this.filterArticle = '';
-          if (this.transaction.type.transactionMovement === TransactionMovement.Sale && isCodePrefix) {
+          if (
+            this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+            isCodePrefix &&
+            article.isWeigth
+          ) {
             let wholePart = originalFilter.slice(
               originalFilter.length -
                 this.config.tradeBalance.numberOfDecimals -
