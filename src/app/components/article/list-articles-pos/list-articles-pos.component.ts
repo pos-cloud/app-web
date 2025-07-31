@@ -812,16 +812,20 @@ export class ListArticlesPosComponent implements OnInit {
               );
 
               amount = parseFloat(wholePart + '.' + decimalPart);
+
+              if (article.quantityPerMeasure > 1) {
+                amount = amount * article.quantityPerMeasure;
+              }
+
               salePrice = article.salePrice * amount;
 
               /*
-                            amount = parseInt(originalFilter.slice(
-                                this.config.tradeBalance.codePrefix.toString().length + article.code.length,
-                                this.config.tradeBalance.codePrefix.toString().length + article.code.length + this.config.tradeBalance.numberOfQuantity)
-                            );
-                            amount = amount / article.quantityPerMeasure;
-
-                            */
+                amount = parseInt(originalFilter.slice(
+                    this.config.tradeBalance.codePrefix.toString().length + article.code.length,
+                    this.config.tradeBalance.codePrefix.toString().length + article.code.length + this.config.tradeBalance.numberOfQuantity)
+                );
+                amount = amount / article.quantityPerMeasure;
+              */
             }
             await this.getStructureForStock(article, amount, salePrice);
           } else {

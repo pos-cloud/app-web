@@ -882,7 +882,7 @@
                   </option>
                 </select>
               </div>
-              <div class="form-group col-md-4">
+              <div class="form-group col-md-2">
                 <label for="isWeigth" class="control-label">{{ 'isWeigth' | translate | capitalize }}</label>
                 <select class="form-control" formControlName="isWeigth">
                   <option [ngValue]="true" [disabled]="readonly">
@@ -892,6 +892,19 @@
                     {{ 'false' | translate | capitalize }}
                   </option>
                 </select>
+              </div>
+              <div class="form-group col-md-2">
+                <label for="quantityPerMeasure" class="control-label">{{
+                  'quantityPerMeasure' | translate | capitalize
+                }}</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="quantityPerMeasure"
+                  [readonly]="operation === 'view'"
+                  name="quantityPerMeasure"
+                  id="quantityPerMeasure"
+                />
               </div>
               <div class="form-group col-md-4">
                 <label for="allowMeasure" class="control-label">{{ 'allowMeasure' | translate | capitalize }}</label>
