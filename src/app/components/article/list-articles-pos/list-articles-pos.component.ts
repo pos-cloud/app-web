@@ -881,4 +881,18 @@ export class ListArticlesPosComponent implements OnInit {
   public hideMessage(): void {
     this.alertMessage = '';
   }
+
+  public onImageError(event: any): void {
+    // Cuando la imagen no se puede cargar, cambiar a la imagen por defecto
+    event.target.src = './../../../assets/img/default.jpg';
+  }
+
+  /**
+   * Limpia el filtro de artículos y muestra todos los artículos disponibles
+   */
+  public clearFilter(): void {
+    this.filterArticle = '';
+    this.filteredArticles = this.filterPipe.transform(this.articles, Type.Final.toString(), 'type');
+    this.hideMessage();
+  }
 }

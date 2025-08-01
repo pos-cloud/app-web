@@ -1,56 +1,90 @@
 app-list-articles-pos {
-    img {
-          image-rendering: auto;
-    }
-    
-    .articles-list {
-          height: 70vh;
-          overflow: scroll;
-    }
-    
-    .iarticle {
-          width: 120px;
-          height: 160px;
-          margin: 4px;
-          float: left;
-          text-align: center;
-          cursor: pointer;
-          position: relative;
-    }
-    
-    .iarticle:hover {
-          opacity: 0.5;
-    }
-    
-    .image-title {
-          color: black;
-          font-size: 17px;
-          width: 100%;
-    }
+  img {
+    image-rendering: auto;
+  }
 
-    .number-price {
-          height: 20px;
-          position: absolute;
-          right: 0px; 
-    }
-    
-    #make {
-          font-family:Arial;
-          font-weight: bold;
-          font-size: 3mm;
-    }
+  .articles-list {
+    height: 70vh;
+    overflow: scroll;
+  }
 
-    
+  .iarticle {
+    width: 120px;
+    height: 160px;
+    margin: 4px;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+  }
 
-      /* RESPONSIVE */
-      @media (max-width: 767px) {
-            .iarticle {
-                  width: 110px;
-                  height: 130px;
-                  img {
-                        width: 90px;
-                        height: 90px;
-                  }
-            }
+  .iarticle:hover {
+    opacity: 0.5;
+  }
+
+  .image-title {
+    color: black;
+    font-size: 17px;
+    width: 100%;
+  }
+
+  .number-price {
+    height: 20px;
+    position: absolute;
+    right: 0px;
+  }
+
+  #make {
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 3mm;
+  }
+
+  .no-articles-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+
+    .text-center {
+      max-width: 400px;
+
+      i {
+        color: #6c757d;
+        margin-bottom: 1rem;
       }
+
+      h5 {
+        margin-bottom: 0.5rem;
+        color: #6c757d;
+      }
+
+      p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+      }
+
+      .btn {
+        border-radius: 20px;
+        padding: 0.5rem 1.5rem;
+
+        i {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 767px) {
+    .iarticle {
+      width: 110px;
+      height: 130px;
+      img {
+        width: 90px;
+        height: 90px;
+      }
+    }
+  }
 }

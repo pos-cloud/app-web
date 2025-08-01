@@ -292,6 +292,11 @@ export class AddSaleOrderComponent {
           this.filtersTaxClassification = [TaxClassification.Withholding, TaxClassification.Perception];
           this.lastQuotation = this.transaction.quotation;
 
+          // Cargar categorías después de tener el TransactionMovement
+          if (this.listCategoriesComponent) {
+            this.listCategoriesComponent.loadCategories();
+          }
+
           if (this.userCountry === 'MX' && this.transaction.type.defectUseOfCFDI && !this.transaction.useOfCFDI) {
             this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
           }
@@ -326,6 +331,10 @@ export class AddSaleOrderComponent {
     setTimeout(() => {
       if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         this.focusEvent.emit(true);
+      }
+      // Verificar si ya tenemos TransactionMovement y cargar categorías si es necesario
+      if (this.transactionMovement && this.listCategoriesComponent) {
+        this.listCategoriesComponent.loadCategories();
       }
     }, 1000);
   }

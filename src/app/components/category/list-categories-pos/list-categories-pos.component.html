@@ -1,5 +1,15 @@
 <section class="container-fluid">
-  <div class="row" *ngIf="areCategoriesVisible" class="categories-list">
+  <!-- Indicador de carga -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Cargando categorías...</span>
+    </div>
+    <p>Cargando categorías...</p>
+  </div>
+
+  <!-- Contenido cuando no está cargando -->
+  <div class="row" *ngIf="areCategoriesVisible && !loading" class="categories-list">
+    <!-- Mostrar categorías filtradas -->
     <div *ngFor="let category of categoryFiltered | orderBy : orderTerm : propertyTerm">
       <div class="icategory" (click)="selectCategory(category)">
         <img
@@ -7,12 +17,15 @@
           src="./../../../assets/img/default.jpg"
           height="120"
           width="120"
+          alt="{{ category.description }}"
         />
         <img
           *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined"
           [src]="category.picture"
           height="120"
           width="120"
+          alt="{{ category.description }}"
+          (error)="onImageError($event)"
         />
         <div class="image-title">{{ category.description | slice : 0 : 20 }}</div>
       </div>

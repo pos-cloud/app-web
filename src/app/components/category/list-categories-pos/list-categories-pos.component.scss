@@ -1,39 +1,69 @@
 app-list-categories-pos {
-    .categories-list {
-          height: 70vh;
-          overflow: scroll;
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+
+    p {
+      margin-top: 1rem;
+      color: #666;
+      font-size: 16px;
     }
-    
-    .icategory {
-          color: white;
-          width: 120px;
-          height: 160px;
-          margin: 4px;
-          float: left;
-          text-align: center;
-          cursor: pointer;
-          position: relative;
-    }
-    
-    .icategory:hover {
-          opacity: 0.5;
-    }
-    
-    .image-title {
-          color: black;
-          font-size: 17px;
-          width: 100%;
+  }
+
+  .categories-list {
+    height: 70vh;
+    overflow: scroll;
+  }
+
+  .icategory {
+    color: white;
+    width: 120px;
+    height: 160px;
+    margin: 4px;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .icategory:hover {
+    opacity: 0.5;
+  }
+
+  .image-title {
+    color: black;
+    font-size: 17px;
+    width: 100%;
+  }
+
+  .no-categories-message {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+
+    p {
+      margin-bottom: 1rem;
+      font-size: 16px;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 767px) {
-          .icategory {
-                width: 110px;
-                height: 130px;
-                img {
-                      width: 90px;
-                      height: 90px;
-                }
-          }
+    .btn {
+      margin-top: 1rem;
     }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 767px) {
+    .icategory {
+      width: 110px;
+      height: 130px;
+      img {
+        width: 90px;
+        height: 90px;
+      }
+    }
+  }
 }

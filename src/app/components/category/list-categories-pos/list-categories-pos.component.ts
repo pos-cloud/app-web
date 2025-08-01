@@ -1,6 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewEncapsulation,
+} from '@angular/core';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 
 import { CategoryService } from '../../../core/services/category.service';
@@ -10,43 +17,49 @@ import { Category } from '../category';
   selector: 'app-list-categories-pos',
   templateUrl: './list-categories-pos.component.html',
   styleUrls: ['./list-categories-pos.component.scss'],
-  providers: [NgbAlertConfig],
   encapsulation: ViewEncapsulation.None,
 })
-export class ListCategoriesPosComponent implements OnInit {
+export class ListCategoriesPosComponent implements OnInit, OnChanges {
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
   @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
   @Input() areCategoriesVisible: boolean = true;
   @Input() transactionMovement: TransactionMovement;
-  @Input() loading: boolean = false;
+  @Input() loading: boolean = true;
   categories: Category[] = [];
   categoryFiltered: Category[] = [];
   areCategoriesEmpty: boolean = true;
-  alertMessage: string = '';
-  userType: string;
   orderTerm: string[] = ['order'];
   propertyTerm: string;
   areFiltersVisible: boolean = false;
-  itemsPerPage = 10;
-  totalItems = 0;
 
-  constructor(
-    public _categoryService: CategoryService,
-    public _router: Router,
-    public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
-  ) {}
+  constructor(private _categoryService: CategoryService) {}
 
   ngOnInit(): void {
-    this.getCategories();
+    // Solo cargar categorías si ya tenemos el TransactionMovement
+    if (this.transactionMovement) {
+      this.getCategories();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Si cambia el TransactionMovement y no se han cargado las categorías, cargarlas
+    if (
+      changes['transactionMovement'] &&
+      changes['transactionMovement'].currentValue &&
+      !changes['transactionMovement'].firstChange &&
+      this.categories.length === 0
+    ) {
+      this.getCategories();
+    }
   }
 
   public getCategories(): void {
     this.loading = true;
+    // Limpiar el filtro al cargar nuevas categorías
+    this.categoryFiltered = [];
+    this.areCategoriesEmpty = true;
 
     let match = {};
-
-    match['operationType'] = { $ne: 'D' };
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
@@ -81,20 +94,49 @@ export class ListCategoriesPosComponent implements OnInit {
       })
       .subscribe(
         (result) => {
-          this.loading = false;
           if (result.result.length > 0) {
             this.categories = result.result;
-            this.categoryFiltered = this.categories.filter((cat) => !cat.parent);
+            // Filtrar solo las categorías principales (sin parent)
+            this.filterMainCategories();
           } else {
             this.categories = [];
             this.categoryFiltered = [];
+            this.areCategoriesEmpty = true;
           }
+          // Solo desactivar loading después de que todo esté listo
+          this.loading = false;
         },
         (error) => {
-          this.showMessage(error._body, 'danger', false);
+          this.categories = [];
+          this.categoryFiltered = [];
+          this.areCategoriesEmpty = true;
           this.loading = false;
         }
       );
+  }
+
+  /**
+   * Filtra las categorías principales (sin parent)
+   */
+  private filterMainCategories(): void {
+    this.categoryFiltered = this.categories.filter((cat) => !cat.parent);
+    this.areCategoriesEmpty = this.categoryFiltered.length === 0;
+  }
+
+  /**
+   * Resetea el filtro para mostrar las categorías principales
+   */
+  public resetToMainCategories(): void {
+    this.filterMainCategories();
+  }
+
+  /**
+   * Fuerza la carga de categorías (para cuando el TransactionMovement esté disponible)
+   */
+  public loadCategories(): void {
+    if (this.transactionMovement && this.categories.length === 0) {
+      this.getCategories();
+    }
   }
 
   public orderBy(term: string, property?: string): void {
@@ -129,15 +171,8 @@ export class ListCategoriesPosComponent implements OnInit {
     }
   }
 
-  // Eliminada la función getCategoriesChild, ahora todo se filtra en memoria
-
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage(): void {
-    this.alertMessage = '';
+  public onImageError(event: any): void {
+    // Cuando la imagen no se puede cargar, cambiar a la imagen por defecto
+    event.target.src = './../../../assets/img/default.jpg';
   }
 }
