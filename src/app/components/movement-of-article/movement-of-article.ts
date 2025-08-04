@@ -269,6 +269,16 @@ export let attributes = [
     required: false,
   },
   {
+    name: 'article.season',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
     name: 'otherFieldsValues',
     visible: false,
     disabled: false,
