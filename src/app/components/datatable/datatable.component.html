@@ -84,12 +84,14 @@
                   (keydown.enter)="addFilters()"
                   placeholder="{{ column.name | translate | capitalize }}"
                   [disabled]="!column.filter || loading"
+                  #filterInput
                 />
                 <select
                   class="form-control"
                   *ngIf="column.datatype === 'boolean'"
                   [(ngModel)]="filters[column.name]"
                   (change)="addFilters()"
+                  #filterInput
                 >
                   <option
                     value=""

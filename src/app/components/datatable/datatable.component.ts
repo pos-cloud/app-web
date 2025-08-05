@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -48,6 +58,7 @@ export class DatatableComponent {
 
   // EXCEL
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
+  @ViewChildren('filterInput') filterInputs: QueryList<ElementRef>;
 
   constructor(
     private _title: Title,
@@ -199,6 +210,20 @@ export class DatatableComponent {
         .catch((error) => this._toastService.showToast(error))
     );
     this.loading = false;
+
+    setTimeout(() => {
+      this.focusFirstFilterInput();
+    }, 200);
+  }
+
+  private focusFirstFilterInput(): void {
+    if (this.filterInputs && this.filterInputs.length > 0) {
+      const firstInput = this.filterInputs.first;
+
+      if (firstInput && firstInput.nativeElement) {
+        firstInput.nativeElement.focus();
+      }
+    }
   }
 
   public pageChange(page): void {
