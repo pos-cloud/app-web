@@ -108,8 +108,8 @@ export class Config {
   public tiendaNube: {
     token: string;
     userID: string;
-    appID: string;
-    clientSecret: string;
+    // appID: string;
+    // clientSecret: string;
   };
 
   constructor() {

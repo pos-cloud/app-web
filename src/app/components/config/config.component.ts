@@ -311,19 +311,19 @@ export class ConfigComponent implements OnInit {
   }
 
   public buildFormSystem() {
-    if (!this.config.twilio) {
-      this.config.twilio = {
-        senderNumber: '',
-        accountSid: '',
-        authToken: '',
-      };
-    }
+    // if (!this.config.twilio) {
+    //   this.config.twilio = {
+    //     senderNumber: '',
+    //     accountSid: '',
+    //     authToken: '',
+    //   };
+    // }
     if (!this.config.tiendaNube) {
       this.config.tiendaNube = {
         token: '',
         userID: '',
-        appID: '',
-        clientSecret: '',
+        // appID: '',
+        // clientSecret: '',
       };
     }
     this.configFormSystem = this._fb.group({
@@ -356,13 +356,13 @@ export class ConfigComponent implements OnInit {
       'tradeBalance.numberOfDecimals': [this.config.tradeBalance.numberOfDecimals, []],
       'voucher.readingLimit': [this.config.voucher.readingLimit, []],
       'voucher.minutesOfExpiration': [this.config.voucher.minutesOfExpiration, []],
-      'twilio.senderNumber': [this.config.twilio.senderNumber, []],
-      'twilio.accountSid': [this.config.twilio.accountSid, []],
-      'twilio.authToken': [this.config.twilio.authToken, []],
+      // 'twilio.senderNumber': [this.config.twilio.senderNumber, []],
+      // 'twilio.accountSid': [this.config.twilio.accountSid, []],
+      // 'twilio.authToken': [this.config.twilio.authToken, []],
       'tiendaNube.token': [this.config.tiendaNube.token, []],
       'tiendaNube.userID': [this.config.tiendaNube.userID, []],
-      'tiendaNube.appID': [this.config.tiendaNube.appID, []],
-      'tiendaNube.clientSecret': [this.config.tiendaNube.clientSecret, []],
+      // 'tiendaNube.appID': [this.config.tiendaNube.appID, []],
+      // 'tiendaNube.clientSecret': [this.config.tiendaNube.clientSecret, []],
     });
 
     this.configFormSystem.valueChanges.subscribe((data) => this.onValueChangedSystem(data));
@@ -596,6 +596,14 @@ export class ConfigComponent implements OnInit {
     this.config['companyPicture'] = './../../../assets/img/default.jpg';
     this.imageURL = './../../../assets/img/default.jpg';
 
+    // Limpiar los archivos para subir
+    this.filesToUpload = null;
+
+    // Actualizar el formulario para que refleje el cambio
+    this.configFormCompany.patchValue({
+      companyPicture: './../../../assets/img/default.jpg',
+    });
+
     await this.deleteFile(picture);
   }
 
@@ -604,7 +612,7 @@ export class ConfigComponent implements OnInit {
     if (!this.config['emailPassword']) this.config['emailPassword'] = '';
     if (!this.config['emailHost']) this.config['emailHost'] = '';
     if (!this.config['emailPort']) this.config['emailPort'] = '';
-    if (!this.config['companyPicture']) this.config['companyPicture'] = 'default.jpg';
+    // if (!this.config['companyPicture']) this.config['companyPicture'] = 'default.jpg';
     if (!this.config['companyName']) this.config['companyName'] = '';
     if (!this.config['companyFantasyName']) this.config['companyFantasyName'] = '';
 
