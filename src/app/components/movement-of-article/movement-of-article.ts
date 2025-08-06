@@ -269,7 +269,7 @@ export let attributes = [
     required: false,
   },
   {
-    name: 'taxAmount',
+    name: 'taxes',
     visible: false,
     disabled: false,
     filter: true,
@@ -367,16 +367,6 @@ export let attributes = [
     project: null,
     align: 'right',
     required: false,
-  },
-  {
-    name: 'taxes',
-    visible: false,
-    disabled: false,
-    filter: true,
-    datatype: 'currency',
-    project: null,
-    align: 'right',
-    required: true,
   },
   {
     name: 'salePrice',
