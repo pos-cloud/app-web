@@ -1,20 +1,20 @@
 import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { PrintService } from '@core/services/print.service';
-import { ApiResponse, Company, CompanyType, PrintType } from '@types';
+import { ApiResponse, Company, PrintType } from '@types';
 import { CompanyService } from 'app/core/services/company.service';
 import { WooCommerceService } from 'app/core/services/woocommerce.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import * as printJS from 'print-js';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { combineLatest, Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ApplicationService } from '../../../core/services/application.service';
 import { ArticleService } from '../../../core/services/article.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
 import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 import { TranslateMePipe } from '../../../shared/pipes/translate-me';
-import { Article, Type } from '../../article/article';
+import { Article } from '../../article/article';
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { ShipmentMethod } from '../../shipment-method/shipment-method.model';
 import { TransactionType } from '../../transaction-type/transaction-type';
@@ -41,111 +41,8 @@ export class ListApplicationsComponent implements OnInit {
   companies: Company[];
   articles: Article[];
   focusEvent = new EventEmitter<boolean>();
-  formErrors = {
-    userId: 'Este campo es requerido.',
-    token: 'Este campo es requerido.',
-    transactionType: 'Este campo es requerido.',
-    shipmentMethod: 'Este campo es requerido.',
-    paymentMethod: 'Este campo es requerido.',
-    company: 'Este campo es requerido.',
-    article: 'Este campo es requerido.',
-  };
+
   private destroy$ = new Subject<void>();
-
-  searchArticle = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => null),
-      switchMap((term) =>
-        this.getArticle(
-          `where="description": { "$regex": "${term}", "$options": "i" },"type":"${Type.Final}"&sort="description":1&limit=10`
-        ).then((articles) => {
-          return articles;
-        })
-      ),
-      tap(() => null)
-    );
-
-  formatterArticles = (x: Article) => {
-    return x.description;
-  };
-
-  searchCompany = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => null),
-      switchMap((term) =>
-        this.getCompany(
-          `where="name": { "$regex": "${term}", "$options": "i" },"type":"${CompanyType.Client}"&sort="name":1&limit=10`
-        ).then((articles) => {
-          return articles;
-        })
-      ),
-      tap(() => null)
-    );
-
-  formatterCompany = (x: Company) => {
-    return x.name;
-  };
-
-  searchTransactionType = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => null),
-      switchMap((term) =>
-        this.getTransactionTypes(`where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`).then(
-          (transactionTypes) => {
-            return transactionTypes;
-          }
-        )
-      ),
-      tap(() => null)
-    );
-
-  formatterTransactionType = (x: TransactionType) => {
-    return x.name;
-  };
-
-  searchPaymentMethod = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => null),
-      switchMap((term) =>
-        this.getPaymentMethod(`where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`).then(
-          (paymentMethod) => {
-            return paymentMethod;
-          }
-        )
-      ),
-      tap(() => null)
-    );
-
-  formatterPaymentMethod = (x: PaymentMethod) => {
-    return x.name;
-  };
-
-  searchpShipmentMethod = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => null),
-      switchMap((term) =>
-        this.getShipmentMethod(`where="name": { "$regex": "${term}", "$options": "i" }&sort="name":1&limit=10`).then(
-          (shipmentMethods) => {
-            return shipmentMethods;
-          }
-        )
-      ),
-      tap(() => null)
-    );
-
-  formatterShipmentMethod = (x: ShipmentMethod) => {
-    return x.name;
-  };
 
   constructor(
     private fb: FormBuilder,
@@ -163,8 +60,32 @@ export class ListApplicationsComponent implements OnInit {
 
   async ngOnInit() {
     this.buildForm();
+    this.loading = true;
 
-    this.getAllApplication();
+    combineLatest({
+      transactionTypes: this._transactionTypeService.find({ query: { operationType: { $ne: 'D' } } }),
+      shipmentMethods: this._shipmentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
+      paymentMethods: this._paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
+      companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
+      articles: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ transactionTypes, shipmentMethods, paymentMethods, companies, articles }) => {
+          this.transactionTypes = transactionTypes ?? [];
+          this.shipmentMethods = shipmentMethods ?? [];
+          this.paymentMethods = paymentMethods ?? [];
+          this.companies = companies ?? [];
+          this.articles = articles ?? [];
+          this.getAllApplication();
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   ngAfterViewInit() {
@@ -173,13 +94,13 @@ export class ListApplicationsComponent implements OnInit {
 
   buildForm(): void {
     this.tiendaNubeForm = this.fb.group({
-      userId: [0, [Validators.required]],
-      token: ['', [Validators.required]],
-      transactionType: ['', [Validators.required]],
-      shipmentMethod: ['', [Validators.required]],
-      paymentMethod: ['', [Validators.required]],
-      company: ['', [Validators.required]],
-      article: ['', [Validators.required]],
+      userId: [0, []],
+      token: ['', []],
+      transactionType: ['', []],
+      shipmentMethod: ['', []],
+      paymentMethod: ['', []],
+      company: ['', []],
+      article: ['', []],
     });
 
     this.cartaDigitalForm = this.fb.group({
@@ -216,14 +137,14 @@ export class ListApplicationsComponent implements OnInit {
     });
 
     this.wooCommerceForm = this.fb.group({
-      key: ['', [Validators.required]],
-      secret: ['', [Validators.required]],
-      url: ['', [Validators.required]],
-      transactionType: ['', [Validators.required]],
-      shipmentMethod: ['', [Validators.required]],
-      paymentMethod: ['', [Validators.required]],
-      company: ['', [Validators.required]],
-      article: ['', [Validators.required]],
+      key: ['', []],
+      secret: ['', []],
+      url: ['', []],
+      transactionType: [null, []],
+      shipmentMethod: [null, []],
+      paymentMethod: [null, []],
+      company: [null, []],
+      article: [null, []],
     });
   }
 
@@ -300,21 +221,6 @@ export class ListApplicationsComponent implements OnInit {
     );
   }
 
-  public getTransactionTypes(query): Promise<TransactionType[]> {
-    return new Promise<TransactionType[]>((resolve, reject) => {
-      this._transactionTypeService.getTrasactionTypes(query).subscribe(
-        (result) => {
-          if (!result.transactionTypes) {
-            resolve(null);
-          } else {
-            resolve(result.transactionTypes);
-          }
-        },
-        (error) => this._toastService.showToast(error)
-      );
-    });
-  }
-
   public printQr() {
     this.loading = true;
 
@@ -345,66 +251,6 @@ export class ListApplicationsComponent implements OnInit {
           this.loading = false;
         },
       });
-  }
-
-  public getShipmentMethod(query): Promise<ShipmentMethod[]> {
-    return new Promise<ShipmentMethod[]>((resolve, reject) => {
-      this._shipmentMethodService.getShipmentMethods(query).subscribe(
-        (result) => {
-          if (!result.result) {
-            resolve(null);
-          } else {
-            resolve(result.result);
-          }
-        },
-        (error) => this._toastService.showToast(error)
-      );
-    });
-  }
-
-  public getPaymentMethod(query): Promise<PaymentMethod[]> {
-    return new Promise<PaymentMethod[]>((resolve, reject) => {
-      this._paymentMethodService.getPaymentMethods(query).subscribe(
-        (result) => {
-          if (!result.paymentMethods) {
-            resolve(null);
-          } else {
-            resolve(result.paymentMethods);
-          }
-        },
-        (error) => this._toastService.showToast(error)
-      );
-    });
-  }
-
-  public getCompany(query): Promise<Company[]> {
-    return new Promise<Company[]>((resolve, reject) => {
-      this._companyService.getCompanies(query).subscribe(
-        (result) => {
-          if (!result.companies) {
-            resolve(null);
-          } else {
-            resolve(result.companies);
-          }
-        },
-        (error) => this._toastService.showToast(error)
-      );
-    });
-  }
-
-  public getArticle(query): Promise<Article[]> {
-    return new Promise<Article[]>((resolve, reject) => {
-      this._articleService.getArticles(query).subscribe(
-        (result) => {
-          if (!result.articles) {
-            resolve(null);
-          } else {
-            resolve(result.articles);
-          }
-        },
-        (error) => this._toastService.showToast(error)
-      );
-    });
   }
 
   setValuesForm(tiendaNube, cartaDigital, wooCommerce) {
@@ -466,11 +312,11 @@ export class ListApplicationsComponent implements OnInit {
       key: wooCommerce?.key ?? '',
       secret: wooCommerce?.secret ?? '',
       url: wooCommerce?.url ?? '',
-      transactionType: wooCommerce?.transactionType ?? '',
-      shipmentMethod: wooCommerce?.shipmentMethod ?? '',
-      paymentMethod: wooCommerce?.paymentMethod ?? '',
-      company: wooCommerce?.company ?? '',
-      article: wooCommerce?.article ?? '',
+      transactionType: wooCommerce?.transactionType ?? null,
+      shipmentMethod: wooCommerce?.shipmentMethod ?? null,
+      paymentMethod: wooCommerce?.paymentMethod ?? null,
+      company: wooCommerce?.company ?? null,
+      article: wooCommerce?.article ?? null,
     });
   }
 
@@ -547,6 +393,8 @@ export class ListApplicationsComponent implements OnInit {
       case ApplicationType.WooCommerce:
         if (application) {
           formData = this.wooCommerceForm.value;
+
+          console.log(formData);
           application.wooCommerce = { ...application.wooCommerce, ...formData };
           this.updateApplication(application);
         } else {

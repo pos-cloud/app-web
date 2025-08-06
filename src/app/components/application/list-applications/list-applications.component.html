@@ -34,15 +34,6 @@
                     id="userId"
                     [focus]="focusEvent"
                   />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('userId').invalid &&
-                      (tiendaNubeForm.get('userId').dirty || tiendaNubeForm.get('userId').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.userId }}
-                  </div>
                 </div>
                 <div class="form-group col-md-3">
                   <label for="token" class="control-label">Token:</label>
@@ -54,140 +45,56 @@
                     id="token"
                     [focus]="focusEvent"
                   />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('token').invalid &&
-                      (tiendaNubeForm.get('token').dirty || tiendaNubeForm.get('token').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.token }}
-                  </div>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtTransactionType let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="transactionType" class="control-label">Tipo de transacción:</label>
-                  <input
-                    id="transactionType"
-                    type="text"
-                    class="form-control"
-                    formControlName="transactionType"
-                    name="transactionType"
-                    [ngbTypeahead]="searchTransactionType"
-                    [resultTemplate]="rtTransactionType"
-                    [inputFormatter]="formatterTransactionType"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('transactionType').invalid &&
-                      (tiendaNubeForm.get('transactionType').dirty || tiendaNubeForm.get('transactionType').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.transactionType }}
-                  </div>
+                  <label class="control-label">{{ 'transaction-type' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="tiendaNubeForm.get('transactionType')"
+                    [data]="transactionTypes"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                  ></app-typeahead-dropdown>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtShipmentMethod let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="shipmentMethod" class="control-label">Método de entrega:</label>
-                  <input
-                    id="shipmentMethod"
-                    type="text"
-                    class="form-control"
-                    formControlName="shipmentMethod"
-                    name="shipmentMethod"
-                    [ngbTypeahead]="searchpShipmentMethod"
-                    [resultTemplate]="rtShipmentMethod"
-                    [inputFormatter]="formatterShipmentMethod"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('shipmentMethod').invalid &&
-                      (tiendaNubeForm.get('shipmentMethod').dirty || tiendaNubeForm.get('shipmentMethod').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.shipmentMethod }}
-                  </div>
+                  <label class="control-label">{{ 'shipment-method' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="tiendaNubeForm.get('shipmentMethod')"
+                    [data]="shipmentMethods"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                  ></app-typeahead-dropdown>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtPaymentMethod let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="paymentMethod" class="control-label">Método de pago:</label>
-                  <input
-                    id="paymentMethod"
-                    type="text"
-                    class="form-control"
-                    formControlName="paymentMethod"
-                    name="paymentMethod"
-                    [ngbTypeahead]="searchPaymentMethod"
-                    [resultTemplate]="rtPaymentMethod"
-                    [inputFormatter]="formatterPaymentMethod"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('paymentMethod').invalid &&
-                      (tiendaNubeForm.get('paymentMethod').dirty || tiendaNubeForm.get('paymentMethod').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.paymentMethod }}
-                  </div>
+                  <label class="control-label">{{ 'paymentMethodEcommerce' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="tiendaNubeForm.get('paymentMethod')"
+                    [data]="paymentMethods"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                  ></app-typeahead-dropdown>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtCompany let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="company" class="control-label">Cliente:</label>
-                  <input
-                    id="company"
-                    type="text"
-                    class="form-control"
-                    formControlName="company"
-                    name="company"
-                    [ngbTypeahead]="searchCompany"
-                    [resultTemplate]="rtCompany"
-                    [inputFormatter]="formatterCompany"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('company').invalid &&
-                      (tiendaNubeForm.get('company').dirty || tiendaNubeForm.get('company').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.company }}
-                  </div>
+                  <label class="control-label">{{ 'client' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="tiendaNubeForm.get('company')"
+                    [data]="companies"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                  ></app-typeahead-dropdown>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtArticles let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.description" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="article" class="control-label">artículo default:</label>
-                  <input
-                    id="article"
-                    type="text"
-                    class="form-control"
-                    formControlName="article"
-                    name="article"
-                    [ngbTypeahead]="searchArticle"
-                    [resultTemplate]="rtArticles"
-                    [inputFormatter]="formatterArticles"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('article').invalid &&
-                      (tiendaNubeForm.get('article').dirty || tiendaNubeForm.get('article').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.article }}
-                  </div>
+                  <label class="control-label">{{ 'article' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="tiendaNubeForm.get('article')"
+                    [data]="articles"
+                    [keyField]="'_id'"
+                    [displayField]="'description'"
+                  ></app-typeahead-dropdown>
                 </div>
                 <div class="form-group col-md-3">
                   <label class="control-label">Verificar webhook:</label> <br />
@@ -518,129 +425,53 @@
                   />
                 </div>
                 <div class="form-group col-md-3">
-                  <ng-template #rtTransactionType let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="transactionType" class="control-label">Tipo de transacción:</label>
-                  <input
-                    id="transactionType"
-                    type="text"
-                    class="form-control"
-                    formControlName="transactionType"
-                    name="transactionType"
-                    [ngbTypeahead]="searchTransactionType"
-                    [resultTemplate]="rtTransactionType"
-                    [inputFormatter]="formatterTransactionType"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('transactionType').invalid &&
-                      (tiendaNubeForm.get('transactionType').dirty || tiendaNubeForm.get('transactionType').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.transactionType }}
-                  </div>
+                  <label class="control-label">{{ 'transaction-type' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="wooCommerceForm.get('transactionType')"
+                    [data]="transactionTypes"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                  ></app-typeahead-dropdown>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtShipmentMethod let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="shipmentMethod" class="control-label">Método de entrega:</label>
-                  <input
-                    id="shipmentMethod"
-                    type="text"
-                    class="form-control"
-                    formControlName="shipmentMethod"
-                    name="shipmentMethod"
-                    [ngbTypeahead]="searchpShipmentMethod"
-                    [resultTemplate]="rtShipmentMethod"
-                    [inputFormatter]="formatterShipmentMethod"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('shipmentMethod').invalid &&
-                      (tiendaNubeForm.get('shipmentMethod').dirty || tiendaNubeForm.get('shipmentMethod').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.shipmentMethod }}
-                  </div>
+                  <label class="control-label">{{ 'shipment-method' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="wooCommerceForm.get('shipmentMethod')"
+                    [data]="shipmentMethods"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                  ></app-typeahead-dropdown>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtPaymentMethod let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="paymentMethod" class="control-label">Método de pago:</label>
-                  <input
-                    id="paymentMethod"
-                    type="text"
-                    class="form-control"
-                    formControlName="paymentMethod"
-                    name="paymentMethod"
-                    [ngbTypeahead]="searchPaymentMethod"
-                    [resultTemplate]="rtPaymentMethod"
-                    [inputFormatter]="formatterPaymentMethod"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('paymentMethod').invalid &&
-                      (tiendaNubeForm.get('paymentMethod').dirty || tiendaNubeForm.get('paymentMethod').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.paymentMethod }}
-                  </div>
+                  <label class="control-label">{{ 'paymentMethodEcommerce' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="wooCommerceForm.get('paymentMethod')"
+                    [data]="paymentMethods"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                  ></app-typeahead-dropdown>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtCompany let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.name" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="company" class="control-label">Cliente:</label>
-                  <input
-                    id="company"
-                    type="text"
-                    class="form-control"
-                    formControlName="company"
-                    name="company"
-                    [ngbTypeahead]="searchCompany"
-                    [resultTemplate]="rtCompany"
-                    [inputFormatter]="formatterCompany"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('company').invalid &&
-                      (tiendaNubeForm.get('company').dirty || tiendaNubeForm.get('company').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.company }}
-                  </div>
+                  <label class="control-label">{{ 'client' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="wooCommerceForm.get('company')"
+                    [data]="compananies"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                  ></app-typeahead-dropdown>
                 </div>
+
                 <div class="form-group col-md-3">
-                  <ng-template #rtArticles let-r="result" let-t="term">
-                    <ngb-highlight [result]="r.description" [term]="t"> </ngb-highlight>
-                  </ng-template>
-                  <label for="article" class="control-label">artículo default:</label>
-                  <input
-                    id="article"
-                    type="text"
-                    class="form-control"
-                    formControlName="article"
-                    name="article"
-                    [ngbTypeahead]="searchArticle"
-                    [resultTemplate]="rtArticles"
-                    [inputFormatter]="formatterArticles"
-                  />
-                  <div
-                    *ngIf="
-                      tiendaNubeForm.get('article').invalid &&
-                      (tiendaNubeForm.get('article').dirty || tiendaNubeForm.get('article').touched)
-                    "
-                    class="alert alert-danger"
-                  >
-                    {{ formErrors.article }}
-                  </div>
+                  <label class="control-label">{{ 'article' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="wooCommerceForm.get('article')"
+                    [data]="articles"
+                    [keyField]="'_id'"
+                    [displayField]="'description'"
+                  ></app-typeahead-dropdown>
                 </div>
                 <div class="form-group col-md-3">
                   <label class="control-label">Sincronizar categorias/productos</label><br />
