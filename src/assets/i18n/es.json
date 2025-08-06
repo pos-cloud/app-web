@@ -805,5 +805,7 @@
   "collections": "Colecciones",
   "counter": "Mostrador",
   "voucherReader": "Lector de Voucher",
-  "currentStock": "Stock actual"
+  "currentStock": "Stock actual",
+  "taxes": "Impuestos",
+  "priceWithoutTax": "Precio sin impuestos"
 }
