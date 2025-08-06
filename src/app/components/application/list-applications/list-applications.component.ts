@@ -393,8 +393,6 @@ export class ListApplicationsComponent implements OnInit {
       case ApplicationType.WooCommerce:
         if (application) {
           formData = this.wooCommerceForm.value;
-
-          console.log(formData);
           application.wooCommerce = { ...application.wooCommerce, ...formData };
           this.updateApplication(application);
         } else {
