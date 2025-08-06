@@ -2197,7 +2197,6 @@ export class AddSaleOrderComponent {
             } else {
               if (this.transaction && this.transaction.type.printable) {
                 this.print();
-                if (this.transaction && this.transaction.type.requestEmailTemplate) this.openModal('send-email');
               } else {
                 this.backFinal();
               }
@@ -3073,41 +3072,6 @@ export class AddSaleOrderComponent {
         }
       );
     });
-  }
-
-  async getTaxVAT(movementOfArticle: MovementOfArticle) {
-    this.loading = true;
-
-    let taxes: Taxes[] = new Array();
-    let tax: Taxes = new Taxes();
-
-    tax.percentage = 21.0;
-    tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / (tax.percentage / 100 + 1));
-    tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage) / 100);
-
-    this._taxService.getTaxes('where="name":"IVA"').subscribe(
-      async (result) => {
-        this.loading = false;
-        if (!result.taxes) {
-          this.showMessage('Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta', 'info', true);
-        } else {
-          this.hideMessage();
-          tax.tax = result.taxes[0];
-          taxes.push(tax);
-          movementOfArticle.taxes = taxes;
-          await this.saveMovementOfArticle(movementOfArticle).then((movementOfArticle) => {
-            if (movementOfArticle) {
-              this.focusEvent.emit(true);
-              this.getMovementsOfTransaction();
-            }
-          });
-        }
-      },
-      (error) => {
-        this.loading = false;
-        this.showMessage(error._body, 'danger', false);
-      }
-    );
   }
 
   updateMovementOfArticlePrintedBar(): void {
