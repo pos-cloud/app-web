@@ -271,14 +271,16 @@ body {
 /* CHECK COLUMNS */
 
 .example-list {
-  width: 500px;
-  max-width: 100%;
-  border: solid 1px #ccc;
-  min-height: 60px;
-  display: block;
-  background: white;
-  border-radius: 4px;
-  overflow: hidden;
+  width: 400px !important;
+  max-width: 400px !important;
+  border: solid 1px #ccc !important;
+  min-height: 60px !important;
+  display: block !important;
+  background: white !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  height: 300px !important;
+  overflow-y: auto !important;
 }
 
 .example-box {
@@ -452,4 +454,11 @@ td {
   overflow-x: hidden;
   width: 95%;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos específicos para dropdown de columnas */
+.ngb-dropdown-menu {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  width: 400px !important;
 }

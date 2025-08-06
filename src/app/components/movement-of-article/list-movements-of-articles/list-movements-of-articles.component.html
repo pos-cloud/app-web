@@ -168,7 +168,7 @@
           <tr
             *ngFor="
               let item of items
-                | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }
+                | paginate : { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }
             "
           >
             <td align="left" width="50">
@@ -184,19 +184,6 @@
             <td [attr.colspan]="getColumnsVisibles() + 1">No se encontraron productos</td>
           </tr>
         </tbody>
-        <!-- <tfoot>
-                    <td></td>
-                    <ng-container *ngFor="let column of columns">
-                        <td *ngIf="column.visible && column.datatype === 'number'" [attr.align]="column.align">
-                            <strong>{{column.sum}}</strong>
-                        </td>
-                        <td *ngIf="column.visible && column.datatype === 'currency'" [attr.align]="column.align">
-                            <strong>{{column.sum | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
-                        </td>
-                        <td *ngIf="column.visible && (column.datatype !== 'number' && column.datatype !== 'currency')"
-                            [attr.align]="column.align"></td>
-                    </ng-container>
-                </tfoot> -->
       </table>
     </div>
     <div class="card-footer">
