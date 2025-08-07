@@ -114,7 +114,7 @@ export let attributes = [
     disabled: false,
     filter: true,
     datatype: 'number',
-    project: null,
+    project: `{"$toString" : "$transaction.number"}`,
     align: 'center',
     required: false,
   },
