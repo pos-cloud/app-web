@@ -807,5 +807,6 @@
   "voucherReader": "Lector de Voucher",
   "currentStock": "Stock actual",
   "taxes": "Impuestos",
-  "priceWithoutTax": "Precio sin impuestos"
+  "priceWithoutTax": "Precio sin impuestos",
+  "discountRate": "Tasa de descuento"
 }

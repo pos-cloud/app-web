@@ -26,6 +26,7 @@ export class SendEmailComponent implements OnInit {
   @Input() body: string = '';
   @Input() companyId: string = '';
   @Input() transactionId: string = '';
+  @Input() items: number;
 
   quillConfig = {
     formats: ['bold', 'italic', 'underline', 'strike', 'list', 'link'],
@@ -91,6 +92,7 @@ export class SendEmailComponent implements OnInit {
         ...this.sendEmailForm.value,
         companyId: this.companyId,
         transactionId: this.transactionId,
+        items: this.items,
       })
       .subscribe({
         next: (result) => {

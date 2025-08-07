@@ -273,6 +273,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         modalRef.componentInstance.to = this.companySelected.emails;
         modalRef.componentInstance.subject = `Resumen de cuenta corriente de ${this.companySelected.name}`;
         modalRef.componentInstance.companyId = this.companySelected._id;
+        modalRef.componentInstance.items = this.itemsPerPage;
 
         break;
       case 'view-transaction':
@@ -301,6 +302,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         if (this.companySelected) {
           const dataLabels = {
             companyId: this.companySelected._id,
+            items: this.itemsPerPage,
           };
           this.toPrint(PrintType.CurrentAccount, dataLabels);
         } else {
