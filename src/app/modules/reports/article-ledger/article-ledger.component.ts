@@ -4,9 +4,8 @@ import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup 
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { Article, Branch } from '@types';
+import { Article, Deposit } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
-import { BranchService } from 'app/core/services/branch.service';
 import { DepositService } from 'app/core/services/deposit.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -48,10 +47,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
   public title: string = '';
 
   // filters
-  branches: Branch[];
-  branchSelectedId: string[] = [];
-
-  deposits: Branch[];
+  deposits: Deposit[];
   depositSelectedId: string[] = [];
 
   articles: Article[];
@@ -65,7 +61,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
 
   constructor(
     private _service: ReportSystemService,
-    private _branchService: BranchService,
     private _depositService: DepositService,
     private _toastService: ToastService,
     private _articleService: ArticleService,
@@ -79,7 +74,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.getBranches();
     this.getDeposits();
     this.getArticles();
   }
@@ -93,7 +87,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
       reportType: 'article-ledger',
       filters: {
         article: this.articleControl?.value?._id,
-        branches: this.branchSelectedId,
         deposits: this.depositSelectedId,
       },
       pagination: {
@@ -104,40 +97,15 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     };
   }
 
-  private getBranches(): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getAll({
-          project: {
-            _id: 1,
-            operationType: 1,
-            name: 1,
-          },
-          match: {
-            operationType: { $ne: 'D' },
-          },
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.branches = result.result;
-          },
-          error: (error) => {
-            resolve(null);
-          },
-          complete: () => {},
-        });
-    });
-  }
-
-  private getDeposits(): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
+  private getDeposits(): Promise<Deposit[]> {
+    return new Promise<Deposit[]>((resolve, reject) => {
       this._depositService
         .getAll({
           project: {
             _id: 1,
             operationType: 1,
             name: 1,
+            default: 1,
           },
           match: {
             operationType: { $ne: 'D' },
@@ -147,6 +115,9 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (result) => {
             this.deposits = result.result;
+            for (let deposit of this.deposits) {
+              if (deposit.default) this.depositSelectedId.push(deposit._id);
+            }
           },
           error: (error) => {
             resolve(null);
@@ -156,8 +127,8 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getArticles(): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
+  private getArticles(): Promise<Article[]> {
+    return new Promise<Article[]>((resolve, reject) => {
       this._articleService
         .getAll({
           project: {
