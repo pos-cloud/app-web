@@ -46,6 +46,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   public columns = attributes;
   public pathLocation: string[];
   private subscription: Subscription = new Subscription();
+  private identifier: string = 'list-movements-of-articles';
 
   //cabecera
   public startDate: string;
@@ -152,6 +153,10 @@ export class ListMovementsOfArticlesComponent implements OnInit {
       }
     });
 
+    // Cargar visibilidad de columnas y parámetros guardados
+    this.loadColumnVisibility();
+    this.processParams();
+
     //this.getItems();
     this.initDragHorizontalScroll();
   }
@@ -217,6 +222,8 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   }
 
   public getItems(): void {
+    // Guardar parámetros actuales
+    this.saveCurrentState();
     this.loading = true;
 
     // FILTRAMOS LA CONSULTA
@@ -522,6 +529,35 @@ export class ListMovementsOfArticlesComponent implements OnInit {
   onItemSelect(item: any) {}
 
   onSelectAll(items: any) {}
+
+  public loadColumnVisibility(): void {
+    const storedColumnVisibility = JSON.parse(localStorage.getItem(`${this.identifier}_columnVisibility`) || '{}');
+
+    this.columns.forEach((column) => {
+      if (storedColumnVisibility[column.name] !== undefined) {
+        column.visible = storedColumnVisibility[column.name];
+      }
+    });
+  }
+
+  public saveColumnVisibility(): void {
+    // Guardar la visibilidad de las columnas en localStorage
+    const columnVisibility = {};
+    this.columns.forEach((column) => {
+      columnVisibility[column.name] = column.visible;
+    });
+    localStorage.setItem(`${this.identifier}_columnVisibility`, JSON.stringify(columnVisibility));
+  }
+
+  private processParams(): void {
+    // Solo cargar visibilidad de columnas
+    this.loadColumnVisibility();
+  }
+
+  private saveCurrentState(): void {
+    // Solo guardar visibilidad de columnas
+    this.saveColumnVisibility();
+  }
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
