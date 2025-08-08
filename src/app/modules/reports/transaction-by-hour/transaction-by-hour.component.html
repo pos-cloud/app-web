@@ -1,0 +1,43 @@
+<section class="container-fluid dashboard">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
+      <label for="startDate" class="control-label">
+        <b>{{ 'startDate' | translate | capitalize }}:</b>
+      </label>
+      <app-date-time-picker [(ngModel)]="startDate" name="activeStartDate"></app-date-time-picker>
+    </div>
+
+    <div class="form-group mr-2">
+      <label for="endDate" class="control-label">
+        <b>{{ 'endDate' | translate | capitalize }}:</b>
+      </label>
+      <app-date-time-picker [(ngModel)]="endDate" name="activeEndDate"></app-date-time-picker>
+    </div>
+
+    <!-- Botón de Actualizar -->
+    <div class="form-group ml-auto">
+      <label class="control-label"> </label>
+      <button class="btn btn-primary" (click)="getSalesByMonth()">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 chart">
+      <span>{{ transactionMovement | capitalize }}s de los últimos 12 meses</span>
+
+      <apx-chart
+        [series]="salesByMonth?.series"
+        [chart]="salesByMonth?.chart"
+        [dataLabels]="salesByMonth?.dataLabels"
+        [plotOptions]="salesByMonth?.plotOptions"
+        [yaxis]="salesByMonth?.yaxis"
+        [legend]="salesByMonth?.legend"
+        [fill]="salesByMonth?.fill"
+        [stroke]="salesByMonth?.stroke"
+        [tooltip]="salesByMonth?.tooltip"
+        [xaxis]="salesByMonth?.xaxis"
+      ></apx-chart>
+    </div>
+  </div>
+</section>
