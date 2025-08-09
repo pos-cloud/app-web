@@ -3438,16 +3438,6 @@ export class AddSaleOrderComponent {
     }
   }
 
-  setPrintBill(): void {
-    if (this.movementsOfArticles && this.movementsOfArticles.length !== 0) {
-      this.typeOfOperationToPrint = 'bill';
-      this.openModal('printers');
-    } else {
-      this.showMessage('No existen productos en el pedido.', 'info', true);
-      this.loading = false;
-    }
-  }
-
   async filterArticles() {
     this.listArticlesComponent.filterArticle = this.filterArticle;
     let article: Article = null;

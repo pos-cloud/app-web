@@ -13,8 +13,6 @@ import { Article, Type } from '../article';
 import { ArticleService } from '../../../core/services/article.service';
 
 import { CompanyType, PriceList, Structure, Utilization } from '@types';
-import { ArticleFieldType } from 'app/components/article-field/article-field';
-import { ArticleFields } from 'app/components/article-field/article-fields';
 import { Tax } from 'app/components/tax/tax';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
@@ -24,13 +22,10 @@ import { StructureService } from 'app/core/services/structure.service';
 import { TaxService } from 'app/core/services/tax.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { FilterPipe } from 'app/shared/pipes/filter.pipe';
-import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { StockMovement, TransactionMovement } from '../../transaction-type/transaction-type';
 
-import { Claim, ClaimPriority, ClaimType } from '@types';
-import { ClaimService } from 'app/core/services/claim.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 @Component({
@@ -51,7 +46,6 @@ export class ListArticlesPosComponent implements OnInit {
   @Input() transactionId: string;
   @Input() transaction: Transaction;
   @Input() loading: boolean = false;
-  private subscriptionArticlePos: Subscription = new Subscription();
   identity: User;
   articles: Article[];
   alertMessage: string = '';
@@ -79,7 +73,6 @@ export class ListArticlesPosComponent implements OnInit {
     private _authService: AuthService,
     private _taxService: TaxService,
     private _configService: ConfigService,
-    private _claimService: ClaimService,
     private _priceListService: PriceListService,
     private _transactionService: TransactionService,
     public _structureService: StructureService,
@@ -414,26 +407,6 @@ export class ListArticlesPosComponent implements OnInit {
             this.transaction.type &&
             this.transaction.type.transactionMovement === TransactionMovement.Sale
           ) {
-            let fields: ArticleFields[] = new Array();
-            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-              for (const field of movementOfArticle.otherFields) {
-                if (
-                  field.articleField.datatype === ArticleFieldType.Percentage ||
-                  field.articleField.datatype === ArticleFieldType.Number
-                ) {
-                  if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                    field.amount = this.roundNumber.transform(
-                      (movementOfArticle.basePrice * parseFloat(field.value)) / 100
-                    );
-                  } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                    field.amount = parseFloat(field.value);
-                  }
-                }
-                fields.push(field);
-              }
-            }
-
-            movementOfArticle.otherFields = fields;
             movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
             movementOfArticle.markupPercentage = article.markupPercentage;
             movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
@@ -475,7 +448,6 @@ export class ListArticlesPosComponent implements OnInit {
                   if (taxAux.tax && taxAux.tax._id) {
                     tax.tax = taxAux.tax;
                   } else if (taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
-                    this.saveClaim('ERROR ARTICLE NULL - LINEA 510 -', JSON.stringify(article));
                     let query = `where="_id":"${taxAux.tax}"`;
                     await this.getTaxes(query).then((taxes) => {
                       if (taxes && taxes.length > 0) {
@@ -486,7 +458,6 @@ export class ListArticlesPosComponent implements OnInit {
                       }
                     });
                   } else if (taxAux.tax === null) {
-                    this.saveClaim('ERROR ARTICLE NULL - LINEA 523 -', JSON.stringify(article));
                     err = true;
                     this.showMessage('Error interno de la aplicación, comunicarse con Soporte.', 'danger', false);
                   }
@@ -505,30 +476,6 @@ export class ListArticlesPosComponent implements OnInit {
             let taxedAmount = movementOfArticle.basePrice;
             movementOfArticle.costPrice = 0;
 
-            let fields: ArticleFields[] = new Array();
-            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-              for (const field of movementOfArticle.otherFields) {
-                if (
-                  field.articleField.datatype === ArticleFieldType.Percentage ||
-                  field.articleField.datatype === ArticleFieldType.Number
-                ) {
-                  if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                    field.amount = this.roundNumber.transform(
-                      (movementOfArticle.basePrice * parseFloat(field.value)) / 100
-                    );
-                  } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                    field.amount = parseFloat(field.value);
-                  }
-                  if (field.articleField.modifyVAT) {
-                    taxedAmount += field.amount;
-                  } else {
-                    movementOfArticle.costPrice += field.amount;
-                  }
-                }
-                fields.push(field);
-              }
-            }
-            movementOfArticle.otherFields = fields;
             if (this.transaction.type.requestTaxes) {
               let taxes: Taxes[] = new Array();
               if (article.taxes) {
@@ -536,7 +483,6 @@ export class ListArticlesPosComponent implements OnInit {
                   if (taxAux.tax && taxAux.tax._id) {
                     taxAux.tax = taxAux.tax;
                   } else if (taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
-                    this.saveClaim('ERROR ARTICLE NULL - LINEA 572 -', JSON.stringify(article));
                     let query = `where="_id":"${taxAux.tax}"`;
                     await this.getTaxes(query).then((taxes) => {
                       if (taxes && taxes.length > 0) {
@@ -547,7 +493,6 @@ export class ListArticlesPosComponent implements OnInit {
                       }
                     });
                   } else if (taxAux.tax === null) {
-                    this.saveClaim('ERROR ARTICLE NULL - LINEA 585 -', JSON.stringify(article));
                     err = true;
                     this.showMessage('Error interno de la aplicación, comunicarse con Soporte.', 'danger', false);
                   }
@@ -857,19 +802,6 @@ export class ListArticlesPosComponent implements OnInit {
     n = n.toString();
     while (n.length < length) n = '0' + n;
     return n;
-  }
-
-  public saveClaim(titulo: string, message: string): void {
-    this.loading = true;
-
-    let claim: Claim;
-    claim.description = message;
-    claim.name = titulo;
-    claim.priority = ClaimPriority.High;
-    claim.type = ClaimType.Err;
-    claim.listName = 'ERRORES 500';
-
-    this._claimService.saveClaim(claim).subscribe();
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
