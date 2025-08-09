@@ -837,6 +837,13 @@ export class TransactionTypeComponent implements OnInit {
     },
 
     {
+      name: 'printBalanceAccount',
+      tag: 'select',
+      tagType: 'boolean',
+      values: ['false', 'true'],
+      class: 'form-group col-md-2',
+    },
+    {
       name: 'printSign',
       tag: 'select',
       tagType: 'boolean',
@@ -1011,6 +1018,7 @@ export class TransactionTypeComponent implements OnInit {
         finishCharge: 1,
         modifyStock: 1,
         stockMovement: 1,
+        printBalanceAccount: 1,
         cashBoxImpact: 1,
         cashOpening: 1,
         cashClosing: 1,

@@ -64,6 +64,7 @@ export class TransactionType extends Model {
   showDescriptionType: DescriptionType = DescriptionType.Description;
   printDescriptionType: DescriptionType = DescriptionType.Description;
   printSign: boolean = false;
+  printBalanceAccount: boolean = false;
   posKitchen: boolean = false;
   readLayout: boolean = false;
   updatePrice: PriceType;

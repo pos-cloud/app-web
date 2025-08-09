@@ -808,5 +808,6 @@
   "currentStock": "Stock actual",
   "taxes": "Impuestos",
   "priceWithoutTax": "Precio sin impuestos",
-  "discountRate": "Tasa de descuento"
+  "discountRate": "Tasa de descuento",
+  "printBalanceAccount": "Imprimir saldo de cuenta"
 }
