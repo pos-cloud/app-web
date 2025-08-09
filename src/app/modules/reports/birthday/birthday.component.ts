@@ -3,12 +3,14 @@ import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angula
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
+import { IButton } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
+import { SendWppComponent } from 'app/shared/components/send-wpp/send-wpp.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -35,6 +37,14 @@ export class ReportBirthdayComponent implements OnInit {
   public columns: any[] = [];
   public totals: any = {};
   public title: string = '';
+  public rowButtons: IButton[] = [
+    {
+      title: 'send-whatsapp',
+      class: 'btn btn-sm btn-success',
+      icon: 'fa fa-whatsapp',
+      click: 'send-wpp',
+    },
+  ];
 
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
@@ -106,7 +116,8 @@ export class ReportBirthdayComponent implements OnInit {
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
     private _title: Title,
-    private _router: Router
+    private _router: Router,
+    private _modalService: NgbModal
   ) {}
 
   public ngOnDestroy(): void {
@@ -165,6 +176,34 @@ export class ReportBirthdayComponent implements OnInit {
       direction: event.direction,
     };
     this.getReport();
+  }
+
+  public openSendWppModal(company: any): void {
+    const modalRef = this._modalService.open(SendWppComponent, {
+      size: 'md',
+      backdrop: 'static',
+    });
+
+    if (company && company.phones) {
+      modalRef.componentInstance.phone = company.phones;
+    }
+
+    modalRef.componentInstance.message = `¡Hola ${company?.name || ''}! 🎉 ¡Feliz cumpleaños!`;
+
+    modalRef.result.then(
+      (result) => {
+        // Modal cerrado exitosamente
+      },
+      (reason) => {
+        // Modal cerrado sin enviar
+      }
+    );
+  }
+
+  public onEventFunction(event: { op: string; obj: any; items: any[] }): void {
+    if (event.op === 'send-wpp') {
+      this.openSendWppModal(event.obj);
+    }
   }
 
   public onExportExcel(event): void {

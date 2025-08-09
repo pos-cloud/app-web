@@ -19,6 +19,9 @@
     <table class="table table-striped">
       <thead>
         <tr>
+          <th *ngIf="rowButtons && rowButtons.length > 0" [width]="50">
+            <i class="fa fa-bars"></i>
+          </th>
           <ng-container *ngFor="let column of columns">
             <th (click)="changeSorting(column)">
               <b>
@@ -45,6 +48,18 @@
         </tr>
 
         <tr *ngFor="let item of data">
+          <td *ngIf="rowButtons && rowButtons.length > 0" align="left">
+            <button
+              *ngFor="let button of rowButtons"
+              [type]="'button'"
+              [class]="button.class"
+              (click)="runEvent(button.click, item, data)"
+              [disabled]="loading"
+              [title]="button.title | translate | capitalize"
+            >
+              <i [class]="button.icon"></i>
+            </button>
+          </td>
           <td *ngFor="let column of columns">
             {{ item?.[column.label] | dynamicFormat: column.dataType }}
           </td>

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
+import { IButton } from '@types';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -23,15 +24,18 @@ export class DataTableReportsComponent implements OnInit {
   @Input() totals = {};
   @Input() title: string = '';
   @Input() loading: boolean = true;
+  @Input() rowButtons: IButton[] = [];
 
   @Input() sorting: { column: string; direction: string };
   @Output() sortingChange = new EventEmitter<{ column: string; direction: string }>();
   @Output() eventExport = new EventEmitter<boolean>();
+  @Output() eventFunction = new EventEmitter<{
+    op: string;
+    obj: any;
+    items: any[];
+  }>();
 
   public exportItems(): void {
-    // this.exportExcelComponent.items = this.data;
-    // this.exportExcelComponent.export();
-
     this.eventExport.emit(true);
   }
 
@@ -50,8 +54,18 @@ export class DataTableReportsComponent implements OnInit {
         direction: 'asc',
       };
     }
-
-    // Esto actualiza automáticamente el valor en el padre
     this.sortingChange.emit(this.sorting);
+  }
+
+  public runEvent(event: any, item: any, items: any[]) {
+    this.eventFunction.emit({
+      op: event,
+      obj: item,
+      items: items,
+    });
+  }
+
+  public emitEvent(op: string, obj: any, items: any[]) {
+    this.eventFunction.emit({ op, obj, items });
   }
 }

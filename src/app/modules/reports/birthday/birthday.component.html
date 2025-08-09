@@ -28,9 +28,11 @@
     [totals]="totals"
     [title]="title"
     [loading]="loading"
+    [rowButtons]="rowButtons"
     [(sorting)]="sort"
     (sortingChange)="onSortingChange($event)"
     (eventExport)="onExportExcel($event)"
+    (eventFunction)="onEventFunction($event)"
   >
   </app-data-table-reports>
 </section>
