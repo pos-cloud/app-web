@@ -129,7 +129,6 @@ export class TransactionsComponetByHour {
   }
 
   private getTransactionTypes() {
-    console.log(this.transactionMovement);
     this._transactionTypeService
       .getAll({
         project: {
