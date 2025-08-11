@@ -53,7 +53,7 @@ export class SendWppComponent implements OnInit {
 
     const company = localStorage.getItem('company');
     const transactionLink = `${environment.apiv2}/to-print/transaction/${company}/${this.transactionId}/pdf`;
-    const fullMessage = `${message} ${transactionLink}`;
+    const fullMessage = `${message} ${this.transactionId ? transactionLink : ''}`;
 
     const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(fullMessage)}`;
 
