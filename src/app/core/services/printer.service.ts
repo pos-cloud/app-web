@@ -7,7 +7,7 @@ import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 
-import { Printer } from '../../components/printer/printer';
+import { Printer } from '@types';
 
 @Injectable({
   providedIn: 'root',

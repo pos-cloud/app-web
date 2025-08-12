@@ -1,7 +1,6 @@
-import { Branch, Company, Employee, Permission } from '@types';
+import { Branch, Company, Employee, Permission, Printer } from '@types';
 import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 import { Origin } from '../origin/origin';
-import { Printer } from '../printer/printer';
 
 export class User {
   public _id: string;

@@ -278,3 +278,24 @@ db.getCollection('movements-of-cashes').update(
   false,
   true
 );
+
+db.getCollection('movements-of-articles').update(
+  { _id: ObjectId('689292ddf533090028576950') },
+  { $set: { quantityForStock: 112.8 } },
+  false,
+  true
+);
+
+db.getCollection('movements-of-articles').update(
+  { _id: ObjectId('689292f8f533090028576b7b') },
+  { $set: { quantityForStock: 40.29 } },
+  false,
+  true
+);
+
+db.getCollection('movements-of-articles').update(
+  { _id: ObjectId('689295e0f53309002857985c') },
+  { $set: { quantityForStock: -274.9 } },
+  false,
+  true
+);

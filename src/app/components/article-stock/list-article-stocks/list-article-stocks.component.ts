@@ -10,11 +10,11 @@ import { PriceListService } from 'app/core/services/price-list.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 
+import { Printer } from '@types';
 import { Config } from '../../../app.config';
 import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
-import { Printer } from '../../printer/printer';
 import { ArticleStock, attributes } from '../article-stock';
 import { UpdateArticleStockComponent } from '../update-article-stock/update-article-stock.component';
 

@@ -10,14 +10,13 @@ import { MovementOfCashService } from 'app/core/services/movement-of-cash.servic
 import { TransactionService } from 'app/core/services/transaction.service';
 
 //modelos
-import { Company } from '@types';
+import { Company, PositionPrint, Printer } from '@types';
 import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PriceList } from 'app/components/price-list/price-list';
-import { PositionPrint, Printer } from 'app/components/printer/printer';
 import { Transaction } from 'app/components/transaction/transaction';
 import { ArticleService } from 'app/core/services/article.service';
 import { ConfigService } from 'app/core/services/config.service';

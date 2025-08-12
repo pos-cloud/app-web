@@ -75,8 +75,6 @@ import { PrintQRComponent } from './components/print/print-qr/print-qr.component
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
 import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
 import { PrintComponent } from './components/print/print/print.component';
-import { ListPrintersComponent } from './components/printer/list-printers/list-printers.component';
-import { PrinterComponent } from './components/printer/printer/printer.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
@@ -140,8 +138,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListUsersComponent,
     DeleteUserComponent,
     ClockComponent,
-    PrinterComponent,
-    ListPrintersComponent,
     AddMovementOfCashComponent,
     ConfigComponent,
     AddTransactionComponent,

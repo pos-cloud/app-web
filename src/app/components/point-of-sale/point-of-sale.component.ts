@@ -14,8 +14,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Branch, Currency, Deposit, Room } from '@types';
-import { Printer, PrinterPrintIn } from '../printer/printer';
+import { Branch, Currency, Deposit, Printer, PrinterPrintIn, Room } from '@types';
 import {
   CurrentAccount,
   StockMovement,

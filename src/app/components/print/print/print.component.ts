@@ -14,6 +14,7 @@ import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import jsPDF from 'jspdf';
 import * as moment from 'moment';
 
+import { Printer, PrinterPrintIn } from '@types';
 import { Config } from '../../../app.config';
 import { ArticleService } from '../../../core/services/article.service';
 import { CashBoxService } from '../../../core/services/cash-box.service';
@@ -28,7 +29,6 @@ import { Article } from '../../article/article';
 import { CashBox } from '../../cash-box/cash-box';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
-import { Printer, PrinterPrintIn, PrinterType } from '../../printer/printer';
 import { DescriptionType, TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
 
 //Paquetes de terceros
@@ -173,10 +173,10 @@ export class PrintComponent implements OnInit {
     this.database = localStorage.getItem('company');
 
     if (!this.printer || !this.printer.printIn) {
-      this.printer = new Printer();
+      // this.printer = new Printer();
       this.printer.name = 'PDF';
       this.printer.printIn = PrinterPrintIn.Counter;
-      this.printer.type = PrinterType.PDF;
+      // this.printer.type = PrinterType.PDF;
       this.printer.pageWidth = 210;
       this.printer.pageHigh = 297;
     }

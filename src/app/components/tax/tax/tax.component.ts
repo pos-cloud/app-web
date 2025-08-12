@@ -3,7 +3,7 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Printer } from 'app/components/printer/printer';
+import { Printer } from '@types';
 import { AccountService } from 'app/core/services/account.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { Observable } from 'rxjs';

@@ -19,7 +19,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { CompanyType, RelationType, Table, TableState, Transport, UseOfCFDI } from '@types';
+import { CompanyType, Printer, PrinterPrintIn, RelationType, Table, TableState, Transport, UseOfCFDI } from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
@@ -51,7 +51,6 @@ import { SelectPriceListComponent } from '../price-list/select-price-list/select
 import { Print } from '../print/print';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
-import { Printer, PrinterPrintIn } from '../printer/printer';
 import { SelectShipmentMethodComponent } from '../shipment-method/select-shipment-method/select-shipment-method.component';
 import { TaxBase, TaxClassification } from '../tax/tax';
 import { Taxes } from '../tax/taxes';

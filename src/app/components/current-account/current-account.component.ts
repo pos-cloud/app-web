@@ -19,6 +19,7 @@ import { TransactionTypeService } from '../../core/services/transaction-type.ser
 import { TransactionService } from '../../core/services/transaction.service';
 
 //Componentes
+import { Printer, PrinterPrintIn } from '@types';
 import { Config } from 'app/app.config';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { PrintComponent } from 'app/components/print/print/print.component';
@@ -32,7 +33,6 @@ import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';
 import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
-import { Printer, PrinterPrintIn } from '../printer/printer';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 

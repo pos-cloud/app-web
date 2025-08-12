@@ -7,14 +7,9 @@ import jsPDF from 'jspdf';
 
 //modelos
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse, Table } from '@types';
+import { ApiResponse, Printer, PrinterPrintIn, Table } from '@types';
 import { Config } from 'app/app.config';
 import { Application } from 'app/components/application/application.model';
-import {
-  Printer,
-  PrinterPrintIn,
-  PrinterType,
-} from 'app/components/printer/printer';
 import { ApplicationService } from 'app/core/services/application.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PrintService } from 'app/core/services/print.service';
@@ -24,13 +19,7 @@ import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 
 let splitRegex = /\r\n|\r|\n/g;
-jsPDF.API['textEx'] = function (
-  text: any,
-  x: number,
-  y: number,
-  hAlign?: string,
-  vAlign?: string
-) {
+jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
   let fontSize = this.internal.getFontSize() / this.internal.scaleFactor;
 
   // As defined in jsPDF source code
@@ -38,12 +27,7 @@ jsPDF.API['textEx'] = function (
 
   let splittedText: string[];
   let lineCount: number = 1;
-  if (
-    vAlign === 'middle' ||
-    vAlign === 'bottom' ||
-    hAlign === 'center' ||
-    hAlign === 'right'
-  ) {
+  if (vAlign === 'middle' || vAlign === 'bottom' || hAlign === 'center' || hAlign === 'right') {
     splittedText = typeof text === 'string' ? text.split(splitRegex) : text;
 
     lineCount = splittedText.length || 1;
@@ -61,11 +45,7 @@ jsPDF.API['textEx'] = function (
 
     if (lineCount > 1) {
       for (let iLine = 0; iLine < splittedText.length; iLine++) {
-        this.text(
-          splittedText[iLine],
-          x - this.getStringUnitWidth(splittedText[iLine]) * alignSize,
-          y
-        );
+        this.text(splittedText[iLine], x - this.getStringUnitWidth(splittedText[iLine]) * alignSize, y);
         y += fontSize;
       }
       return this;
@@ -118,17 +98,14 @@ export class PrintQRComponent implements OnInit {
     let margin = 5;
 
     if (!this.printer) {
-      this.printer = new Printer();
+      // this.printer = new Printer();
       this.printer.name = 'PDF';
       this.printer.printIn = PrinterPrintIn.Counter;
-      this.printer.type = PrinterType.PDF;
+      // this.printer.type = PrinterType.PDF;
       this.printer.pageWidth = 216;
       this.printer.pageHigh = 279;
     }
-    this.doc = new jsPDF(orientation, units, [
-      this.printer.pageWidth,
-      this.printer.pageHigh,
-    ]);
+    this.doc = new jsPDF(orientation, units, [this.printer.pageWidth, this.printer.pageHigh]);
 
     this.config = await this.getConfig();
     let applications: Application[];
@@ -160,9 +137,7 @@ export class PrintQRComponent implements OnInit {
             77,
             0,
             row,
-            this.config['companyFantasyName']
-              ? this.config['companyFantasyName']
-              : this.config['companyName']
+            this.config['companyFantasyName'] ? this.config['companyFantasyName'] : this.config['companyName']
           );
           row += 10;
 
@@ -173,14 +148,7 @@ export class PrintQRComponent implements OnInit {
 
           row += 7;
 
-          this.centerText(
-            margin,
-            margin,
-            77,
-            0,
-            row,
-            'Mesa ' + table.description
-          );
+          this.centerText(margin, margin, 77, 0, row, 'Mesa ' + table.description);
 
           row += 3;
 
@@ -189,9 +157,7 @@ export class PrintQRComponent implements OnInit {
           this.doc.setDrawColor(255, 255, 255);
           this.doc.roundedRect(23, row - 1, 32, 32, 2, 2, 'FD');
           let url = `${application.url}/%23/?table=${table.description}`;
-          let imgdata =
-            'data:image/png;base64,' +
-            (await this.getBarcode64(`qr?value=${url}`));
+          let imgdata = 'data:image/png;base64,' + (await this.getBarcode64(`qr?value=${url}`));
           this.doc.addImage(imgdata, 'PNG', 24, row, 30, 30);
           row += 33;
 
@@ -200,37 +166,16 @@ export class PrintQRComponent implements OnInit {
           row += 4;
           this.doc.setTextColor(2, 117, 216);
           this.doc.setFontSize(this.fontSizes.normal);
-          this.centerText(
-            margin,
-            margin,
-            77,
-            0,
-            row,
-            `${application.url}/#/?table=${table.description}`
-          );
+          this.centerText(margin, margin, 77, 0, row, `${application.url}/#/?table=${table.description}`);
 
           this.doc.setTextColor(0);
           this.doc.setFontSize(this.fontSizes.small);
 
           row += 7;
-          this.centerText(
-            margin,
-            margin,
-            77,
-            0,
-            row,
-            '1 - Abrí tu cámara o lector.'
-          );
+          this.centerText(margin, margin, 77, 0, row, '1 - Abrí tu cámara o lector.');
 
           row += 5;
-          this.centerText(
-            margin,
-            margin,
-            77,
-            0,
-            row,
-            '2 - Escaneá el código QR.'
-          );
+          this.centerText(margin, margin, 77, 0, row, '2 - Escaneá el código QR.');
 
           row += 5;
           this.centerText(margin, margin, 77, 0, row, '3 - Realizá tu pedido.');
@@ -256,17 +201,15 @@ export class PrintQRComponent implements OnInit {
 
   getBase64() {
     return new Promise((resolve, reject) => {
-      this._http
-        .get('/assets/img/logo.png', { responseType: 'blob' })
-        .subscribe((res) => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            let base64data = reader.result;
-            resolve(base64data);
-          };
+      this._http.get('/assets/img/logo.png', { responseType: 'blob' }).subscribe((res) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          let base64data = reader.result;
+          resolve(base64data);
+        };
 
-          reader.readAsDataURL(res);
-        });
+        reader.readAsDataURL(res);
+      });
     });
   }
 
@@ -288,9 +231,7 @@ export class PrintQRComponent implements OnInit {
 
   public finishImpression(): void {
     this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
-      this.doc.output('bloburl')
-    );
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
   }
 
   public getConfig(): Promise<Config> {
@@ -298,8 +239,7 @@ export class PrintQRComponent implements OnInit {
       this._configService.getConfigApi().subscribe(
         (result) => {
           if (!result.configs) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             reject(null);
           } else {
             this.hideMessage();
@@ -314,25 +254,17 @@ export class PrintQRComponent implements OnInit {
     });
   }
 
-  async getCompanyPicture(
-    lmargin,
-    rmargin,
-    width,
-    height,
-    finish: boolean = false
-  ) {
+  async getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false) {
     return new Promise((resolve, reject) => {
-      this._configService
-        .getCompanyPicture(this.config['companyPicture'])
-        .subscribe((result) => {
-          this.hideMessage();
-          let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
-          this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
-          if (finish) {
-            this.finishImpression();
-          }
-          resolve(true);
-        });
+      this._configService.getCompanyPicture(this.config['companyPicture']).subscribe((result) => {
+        this.hideMessage();
+        let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
+        this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
+        if (finish) {
+          this.finishImpression();
+        }
+        resolve(true);
+      });
     });
   }
 
@@ -348,11 +280,7 @@ export class PrintQRComponent implements OnInit {
     });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

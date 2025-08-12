@@ -8,8 +8,7 @@ import { CashBox } from '../cash-box';
 
 import { PrintService } from '@core/services/print.service';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ApiResponse, PrintType } from '@types';
-import { Printer } from 'app/components/printer/printer';
+import { ApiResponse, Printer, PrintType } from '@types';
 import { User } from 'app/components/user/user';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';

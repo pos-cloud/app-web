@@ -1,13 +1,12 @@
 import { Branch, Company, CompanyType, IAttribute, UseOfCFDI } from '@types';
 import * as moment from 'moment';
 
-import { EmployeeType } from '@types';
+import { EmployeeType, Printer } from '@types';
 import { Application } from '../application/application.model';
 import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
 import { PaymentMethod } from '../payment-method/payment-method';
-import { Printer } from '../printer/printer';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { TransactionState } from '../transaction/transaction';
 import { User } from '../user/user';

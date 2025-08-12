@@ -20,8 +20,7 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-// Importar enums del archivo original
-import { PositionPrint, TypeFields } from '../../../../components/printer/printer';
+import { PositionPrint, TypeFields } from '@types';
 
 @Component({
   selector: 'app-printer',

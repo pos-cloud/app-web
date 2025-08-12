@@ -21,9 +21,8 @@ import { PaymentMethodService } from '../../../core/services/payment-method.serv
 import { TransactionService } from '../../../core/services/transaction.service';
 
 //Componentes
-import { ApiResponse, CurrencyValue } from '@types';
+import { ApiResponse, CurrencyValue, Printer, PrinterPrintIn } from '@types';
 import { Config } from 'app/app.config';
-import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
 import { ConfigService } from 'app/core/services/config.service';

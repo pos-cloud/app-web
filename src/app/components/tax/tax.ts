@@ -1,7 +1,6 @@
 'use strict';
 
-import { Account } from '@types';
-import { Printer } from '../printer/printer';
+import { Account, Printer } from '@types';
 
 export class Tax {
   public _id: string;

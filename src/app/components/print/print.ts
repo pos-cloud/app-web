@@ -1,11 +1,10 @@
-import { Printer } from '../printer/printer';
+import { Printer } from '@types';
 
 export class Print {
-	
-	public _id: string;
-	public fileName: string;
-	public content: string;
-	public printer: Printer;
+  public _id: string;
+  public fileName: string;
+  public content: string;
+  public printer: Printer;
 
-	constructor () {}
+  constructor() {}
 }

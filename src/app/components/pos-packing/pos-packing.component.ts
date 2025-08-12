@@ -1,13 +1,9 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse } from '@types';
+import { ApiResponse, Printer, PrinterPrintIn } from '@types';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
-import { Printer, PrinterPrintIn } from 'app/components/printer/printer';
-import {
-  Transaction,
-  TransactionState,
-} from 'app/components/transaction/transaction';
+import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { User } from 'app/components/user/user';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { PrinterService } from 'app/core/services/printer.service';
@@ -33,13 +29,7 @@ export class PosPackingComponent {
   public printers: Printer[];
 
   // DISEÑO
-  public colors: string[] = [
-    'teal:white',
-    'midnightblue:white',
-    'black:white',
-    'black:white',
-    'chocolate:white',
-  ];
+  public colors: string[] = ['teal:white', 'midnightblue:white', 'black:white', 'black:white', 'chocolate:white'];
   public colorNumber: number = 0;
   public positionNumber: number = 0;
   public limit: number = 3;
@@ -64,10 +54,8 @@ export class PosPackingComponent {
 
   private processParams(): void {
     this._route.queryParams.subscribe((params) => {
-      if (params['column'] && !isNaN(params['column']))
-        this.column = params['column'];
-      if (params['fontSize'] && !isNaN(params['fontSize']))
-        this.fontSize = params['fontSize'];
+      if (params['column'] && !isNaN(params['column'])) this.column = params['column'];
+      if (params['fontSize'] && !isNaN(params['fontSize'])) this.fontSize = params['fontSize'];
       if (params['limit'] && !isNaN(params['limit'])) {
         if (params['limit'] !== this.limit) {
           this.limit = params['limit'];
@@ -102,18 +90,12 @@ export class PosPackingComponent {
     let count = 0;
     let change: boolean = false;
     for (const transactionToPacking of this.transactionsToPacking) {
-      if (
-        transactionToPacking &&
-        transactionToPacking._id &&
-        transactionToPacking._id !== ''
-      ) {
+      if (transactionToPacking && transactionToPacking._id && transactionToPacking._id !== '') {
         if (transactions && transactions.length > 0) {
           for (const transaction of transactions) {
             if (transaction._id && transactionToPacking._id) {
               count++;
-              if (
-                this._jsonDiffPipe.transform(transaction, transactionToPacking)
-              ) {
+              if (this._jsonDiffPipe.transform(transaction, transactionToPacking)) {
                 change = true;
               }
             }
@@ -170,9 +152,7 @@ export class PosPackingComponent {
             position: transaction['position'],
           });
         }
-        this.colorNumber === this.colors.length - 1
-          ? (this.colorNumber = 0)
-          : this.colorNumber++;
+        this.colorNumber === this.colors.length - 1 ? (this.colorNumber = 0) : this.colorNumber++;
         i++;
       }
       this.transactionsToPacking.sort((a, b) => {
@@ -184,10 +164,7 @@ export class PosPackingComponent {
         }
         return comparison;
       });
-      localStorage.setItem(
-        'packingTransactions',
-        JSON.stringify(packingTransactions)
-      );
+      localStorage.setItem('packingTransactions', JSON.stringify(packingTransactions));
     }
     this.loading = false;
   }
@@ -374,13 +351,11 @@ export class PosPackingComponent {
               if (transaction.state === TransactionState.Packing) {
                 // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
                 transaction.state = TransactionState.Delivered;
-                await this.updateTransaction(transaction).then(
-                  async (transaction) => {
-                    if (transaction) {
-                      this.loadPacking();
-                    }
+                await this.updateTransaction(transaction).then(async (transaction) => {
+                  if (transaction) {
+                    this.loadPacking();
                   }
-                );
+                });
               }
             }
           );
@@ -396,32 +371,16 @@ export class PosPackingComponent {
               if (user) {
                 if (user.printers && user.printers.length > 0) {
                   for (const element of user.printers) {
-                    if (
-                      element &&
-                      element.printer &&
-                      element.printer.printIn === PrinterPrintIn.Bar
-                    ) {
+                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Bar) {
                       printerSelect = element.printer;
                     }
-                    if (
-                      element &&
-                      element.printer &&
-                      element.printer.printIn === PrinterPrintIn.Counter
-                    ) {
+                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
                       printerSelect = element.printer;
                     }
-                    if (
-                      element &&
-                      element.printer &&
-                      element.printer.printIn === PrinterPrintIn.Kitchen
-                    ) {
+                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen) {
                       printerSelect = element.printer;
                     }
-                    if (
-                      element &&
-                      element.printer &&
-                      element.printer.printIn === PrinterPrintIn.Voucher
-                    ) {
+                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher) {
                       printerSelect = element.printer;
                     }
                   }
@@ -452,13 +411,11 @@ export class PosPackingComponent {
                 if (transaction?.shipmentMethod?.name === 'Auto') {
                   transaction.state = TransactionState.Closed;
                 }
-                await this.updateTransaction(transaction).then(
-                  async (transaction) => {
-                    if (transaction) {
-                      this.loadPacking();
-                    }
+                await this.updateTransaction(transaction).then(async (transaction) => {
+                  if (transaction) {
+                    this.loadPacking();
                   }
-                );
+                });
               }
             }
           );
@@ -474,8 +431,7 @@ export class PosPackingComponent {
       this._printerService.getPrinters().subscribe(
         (result) => {
           if (!result.printers) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.printers);
@@ -536,11 +492,7 @@ export class PosPackingComponent {
             if (result && result.user) {
               resolve(result.user);
             } else {
-              this.showMessage(
-                'Debe volver a iniciar session',
-                'danger',
-                false
-              );
+              this.showMessage('Debe volver a iniciar session', 'danger', false);
             }
           },
           (error) => {
@@ -551,11 +503,7 @@ export class PosPackingComponent {
     });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
