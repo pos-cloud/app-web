@@ -299,3 +299,25 @@ db.getCollection('movements-of-articles').update(
   false,
   true
 );
+// Crear applicaciones en base de datos
+const applicationTypes = ['WooCommerce', 'TiendaNube', 'Carta digital'];
+
+for (let i = 0; i < applicationTypes.length; i++) {
+  var type = applicationTypes[i];
+
+  let exists = db.applications.findOne({ type: type });
+
+  if (!exists) {
+    db.applications.insertOne({
+      type: type,
+      name: type,
+      url: 'https://example.com/' + type.toLowerCase(),
+      order: i + 1,
+      operationType: 'C',
+      [type.toLowerCase()]: {},
+    });
+    print("✅ Aplicación '" + type + "' creada con orden " + (i + 1));
+  } else {
+    print("⚠️ Aplicación '" + type + "' ya existe.");
+  }
+}
