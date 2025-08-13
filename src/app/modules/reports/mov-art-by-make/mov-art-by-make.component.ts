@@ -4,8 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { MakeService } from '@core/services/make.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from '@types';
+import { Branch, Make } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -55,7 +56,8 @@ export class ReportMovArtByMakeComponent implements OnInit {
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
-  make: string = '';
+  makes: Make[];
+  makesSelect: string[] = [];
   // sort
   sort = {
     column: 'amount',
@@ -70,7 +72,8 @@ export class ReportMovArtByMakeComponent implements OnInit {
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private _title: Title,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private _makeService: MakeService
   ) {}
 
   async ngOnInit() {
@@ -78,6 +81,7 @@ export class ReportMovArtByMakeComponent implements OnInit {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
       this.getBranches();
       this.getTransactionTypes();
+      this.getMakes();
       this.getReport();
     });
   }
@@ -95,7 +99,7 @@ export class ReportMovArtByMakeComponent implements OnInit {
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
-        make: this.make,
+        makes: this.makesSelect,
       },
       pagination: {
         page: 1,
@@ -129,6 +133,36 @@ export class ReportMovArtByMakeComponent implements OnInit {
           complete: () => {},
         });
     });
+  }
+
+  private getMakes() {
+    this._makeService
+      .getAll({
+        project: {
+          _id: 1,
+          operationType: 1,
+          description: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          let makesList = result.result.map((make) => {
+            return {
+              _id: make._id,
+              name: make.description,
+              operationType: make.operationType,
+            };
+          });
+          this.makes = makesList;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
   }
 
   private getTransactionTypes() {

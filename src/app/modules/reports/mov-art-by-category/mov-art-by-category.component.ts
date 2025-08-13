@@ -3,8 +3,9 @@ import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angula
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CategoryService } from '@core/services/category.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from '@types';
+import { Branch, Category } from '@types';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -56,7 +57,8 @@ export class ReportMovArtByCategoryComponent implements OnInit {
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
-  category: string = '';
+  categories: Category[];
+  categoriesSelect: string[] = [];
   // sort
   public sort = {
     column: 'amount',
@@ -71,7 +73,8 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     private _activatedRoute: ActivatedRoute,
     private _title: Title,
     public _router: Router,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private _categoryService: CategoryService
   ) {}
 
   async ngOnInit() {
@@ -79,6 +82,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
       this.getBranches();
       this.getTransactionTypes();
+      this.getCategories();
       this.getReport();
     });
   }
@@ -96,7 +100,7 @@ export class ReportMovArtByCategoryComponent implements OnInit {
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
         endDate: this.endDate,
-        category: this.category,
+        categories: this.categoriesSelect ?? [],
       },
       pagination: {
         page: 1,
@@ -106,6 +110,35 @@ export class ReportMovArtByCategoryComponent implements OnInit {
     };
   }
 
+  private getCategories() {
+    this._categoryService
+      .getAll({
+        project: {
+          _id: 1,
+          operationType: 1,
+          description: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          let category = result.result.map((cate) => {
+            return {
+              _id: cate._id,
+              name: cate.description,
+              operationType: cate.operationType,
+            };
+          });
+          this.categories = category;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
+  }
   private getBranches(): Promise<Branch[]> {
     return new Promise<Branch[]>((resolve, reject) => {
       this._branchService
