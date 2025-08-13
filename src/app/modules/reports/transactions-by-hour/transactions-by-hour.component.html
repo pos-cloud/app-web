@@ -36,26 +36,27 @@
     <!-- Botón de Actualizar -->
     <div class="form-group ml-auto">
       <label class="control-label"> </label>
-      <button class="btn btn-primary" (click)="getSalesByMonth()">
+      <button class="btn btn-primary" (click)="getSalesByMonth()" [disabled]="loading">
         <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
       </button>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12 chart">
-      <span>{{ transactionMovement | capitalize }}s por hora</span>
+      <span>{{ transactionMovement ? (transactionMovement | capitalize) : '' }}s por hora</span>
 
       <apx-chart
-        [series]="salesByMonth?.series"
-        [chart]="salesByMonth?.chart"
-        [dataLabels]="salesByMonth?.dataLabels"
-        [plotOptions]="salesByMonth?.plotOptions"
-        [yaxis]="salesByMonth?.yaxis"
-        [legend]="salesByMonth?.legend"
-        [fill]="salesByMonth?.fill"
-        [stroke]="salesByMonth?.stroke"
-        [tooltip]="salesByMonth?.tooltip"
-        [xaxis]="salesByMonth?.xaxis"
+        *ngIf="salesByMonth && salesByMonth.series"
+        [series]="salesByMonth.series"
+        [chart]="salesByMonth.chart"
+        [dataLabels]="salesByMonth.dataLabels"
+        [plotOptions]="salesByMonth.plotOptions"
+        [yaxis]="salesByMonth.yaxis"
+        [legend]="salesByMonth.legend"
+        [fill]="salesByMonth.fill"
+        [stroke]="salesByMonth.stroke"
+        [tooltip]="salesByMonth.tooltip"
+        [xaxis]="salesByMonth.xaxis"
       ></apx-chart>
     </div>
   </div>

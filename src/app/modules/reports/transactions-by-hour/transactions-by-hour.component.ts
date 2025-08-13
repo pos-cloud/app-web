@@ -156,6 +156,7 @@ export class TransactionsComponetByHour {
   }
 
   public getSalesByMonth(): void {
+    this.loading = true;
     const requestPayload = {
       type: 'transactions-by-hour',
       filters: {
@@ -180,7 +181,9 @@ export class TransactionsComponetByHour {
           error: (error) => {
             this._toastService.showToast(error);
           },
-          complete: () => {},
+          complete: () => {
+            this.loading = false;
+          },
         })
     );
   }
