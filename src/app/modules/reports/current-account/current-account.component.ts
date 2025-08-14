@@ -261,7 +261,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
       });
   }
 
-  async openModal(op: string, transactionId?: string) {
+  async openModal(op: string, transaction?: Transaction) {
     let modalRef;
     switch (op) {
       case 'send-email':
@@ -280,14 +280,14 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionId = transactionId;
+        modalRef.componentInstance.transactionId = transaction._id;
         break;
       case 'edit-transaction':
         modalRef = this._modalService.open(AddTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionId = transactionId;
+        modalRef.componentInstance.transactionId = transaction._id;
         modalRef.result.then(
           (result) => {
             if (result.transaction) {
@@ -310,32 +310,30 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         break;
       case 'print-transaction':
         const data = {
-          transactionId: transactionId,
+          transactionId: transaction._id,
         };
         this.toPrint(PrintType.Transaction, data);
         break;
-
+      case 'send-email-transaction':
+        modalRef = this._modalService.open(SendEmailComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.to = transaction.company.emails;
+        modalRef.componentInstance.subject = `${transaction.type.name} ${this.padNumber(transaction.origin, 4)}-${
+          transaction.letter
+        }-${this.padNumber(transaction.number, 8)}`;
+        modalRef.componentInstance.transactionId = transaction._id;
+        break;
       default:
     }
   }
 
-  public getTransaction(transactionId: string): Promise<Transaction> {
-    return new Promise<Transaction>((resolve, reject) => {
-      this._transactionService.getTransaction(transactionId).subscribe(
-        async (result) => {
-          if (!result.transaction) {
-            this._toastService.showToast(result);
-            resolve(null);
-          } else {
-            resolve(result.transaction);
-          }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          resolve(null);
-        }
-      );
-    });
+  public padNumber(n, length): string {
+    n = n.toString();
+    while (n.length < length) n = '0' + n;
+
+    return n;
   }
 
   public toPrint(type: PrintType, data: {}): void {

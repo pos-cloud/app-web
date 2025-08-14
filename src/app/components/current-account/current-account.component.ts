@@ -21,7 +21,7 @@ import { TransactionService } from '../../core/services/transaction.service';
 //Componentes
 import { PrintService } from '@core/services/print.service';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { Printer, PrinterPrintIn } from '@types';
+import { Printer } from '@types';
 import { Config } from 'app/app.config';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { PrintComponent } from 'app/components/print/print/print.component';
@@ -30,15 +30,14 @@ import { User } from 'app/components/user/user';
 import { ConfigService } from 'app/core/services/config.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
+import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';
 import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
-import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
-import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-current-account',
@@ -344,114 +343,6 @@ export class CurrentAccountComponent implements OnInit {
           (reason) => {}
         );
         break;
-      case 'send-email':
-        let transaction: Transaction;
-        let attachments = [];
-
-        await this.getTransaction(transactionId).then(async (result) => {
-          transaction = result;
-        });
-        if (transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = transactionId;
-          modalRef.componentInstance.source = 'mail';
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = transaction.company;
-          modalRef.componentInstance.transactionId = transactionId;
-          modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.componentInstance.source = 'mail';
-        }
-        if (transaction.type.defectPrinter) {
-          modalRef.componentInstance.printer = transaction.type.defectPrinter;
-        } else {
-          await this.getPrinters().then((printers) => {
-            if (printers && printers.length > 0) {
-              for (let printer of printers) {
-                if (printer.printIn === PrinterPrintIn.Counter) {
-                  modalRef.componentInstance.printer = printer;
-                }
-              }
-            }
-          });
-        }
-
-        modalRef = this._modalService.open(SendEmailComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        if (transaction.company && transaction.company.emails) {
-          modalRef.componentInstance.emails = transaction.company.emails;
-        }
-        let labelPrint = transaction.type.name;
-        if (transaction.type.labelPrint) {
-          labelPrint = transaction.type.labelPrint;
-        }
-        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${
-          transaction.letter
-        }-${this.padNumber(transaction.number, 8)}`;
-        if (transaction.type.electronics) {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente` + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
-          modalRef.componentInstance.body = ' ';
-          attachments.push({
-            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-            path: `/home/clients/${Config.database}/invoice/${transaction._id}.pdf`,
-          });
-        } else {
-          // modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente ` + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
-          modalRef.componentInstance.body = ' ';
-
-          attachments.push({
-            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-            path: `/home/clients/${Config.database}/others/${transaction._id}.pdf`,
-          });
-        }
-
-        if (Config.country === 'MX') {
-          // modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.database}:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
-          modalRef.componentInstance.body += ' ';
-          attachments.push({
-            filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-            path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`,
-          });
-        }
-
-        if (transaction.type.defectEmailTemplate) {
-          if (transaction.type.electronics) {
-            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/invoice/${Config.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
-
-            attachments = [];
-            attachments.push({
-              filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-              path: `/home/clients/${Config.database}/invoice/${transaction._id}.pdf`,
-            });
-          } else {
-            // modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design + `<a href="http://${Config.apiHost}:300/api/print/others/${Config.database}/${transaction._id}">Su comprobante</a>`
-            modalRef.componentInstance.body = transaction.type.defectEmailTemplate.design;
-
-            attachments = [];
-            attachments.push({
-              filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.pdf`,
-              path: `/home/clients/${Config.database}/others/${transaction._id}.pdf`,
-            });
-          }
-
-          if (Config.country === 'MX') {
-            // modalRef.componentInstance.body += ` y su XML correspondiente en http://${Config.apiHost}:300/api/print/xml/CFDI-33_Factura_` + transaction.number;
-            modalRef.componentInstance.body += ' ';
-
-            attachments = [];
-            attachments.push({
-              filename: `${transaction.origin}-${transaction.letter}-${transaction.number}.xml`,
-              path: `/var/www/html/libs/fe/mx/archs_cfdi/CFDI-33_Factura_` + transaction.number + `.xml`,
-            });
-          }
-        }
-
-        modalRef.componentInstance.attachments = attachments;
-
-        break;
       case 'send-email-current':
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.items = this.items;
@@ -499,7 +390,22 @@ export class CurrentAccountComponent implements OnInit {
         };
         this.toPrint(PrintType.Transaction, data);
         break;
+      case 'send-email-transaction':
+        let transaction: Transaction;
 
+        await this.getTransaction(transactionId).then(async (result) => {
+          transaction = result;
+        });
+        modalRef = this._modalService.open(SendEmailComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.to = transaction.company.emails;
+        modalRef.componentInstance.subject = `${transaction.type.name} ${this.padNumber(transaction.origin, 4)}-${
+          transaction.letter
+        }-${this.padNumber(transaction.number, 8)}`;
+        modalRef.componentInstance.transactionId = transaction._id;
+        break;
       default:
     }
   }
