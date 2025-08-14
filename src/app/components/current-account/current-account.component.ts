@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import { Company } from '@types';
+import { ApiResponse, Company, PrintType } from '@types';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { Transaction } from '../transaction/transaction';
 
@@ -19,6 +19,8 @@ import { TransactionTypeService } from '../../core/services/transaction-type.ser
 import { TransactionService } from '../../core/services/transaction.service';
 
 //Componentes
+import { PrintService } from '@core/services/print.service';
+import { ToastService } from '@shared/components/toast/toast.service';
 import { Printer, PrinterPrintIn } from '@types';
 import { Config } from 'app/app.config';
 import { CompanyType } from 'app/components/payment-method/payment-method';
@@ -28,13 +30,15 @@ import { User } from 'app/components/user/user';
 import { ConfigService } from 'app/core/services/config.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import { first } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { first, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';
 import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
+import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-current-account',
@@ -73,6 +77,7 @@ export class CurrentAccountComponent implements OnInit {
   public selectedItems;
   public transactionTypes: TransactionType[];
   public transactionTypesSelect;
+  private destroy$ = new Subject<void>();
   public dropdownSettings = {
     singleSelection: false,
     defaultOpen: false,
@@ -104,7 +109,9 @@ export class CurrentAccountComponent implements OnInit {
     private _route: ActivatedRoute,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
-    public _printerService: PrinterService
+    public _printerService: PrinterService,
+    public _toastService: ToastService,
+    public _printService: PrintService
   ) {
     this.transactionTypesSelect = new Array();
     this.movementsOfCashes = new Array();
@@ -487,31 +494,46 @@ export class CurrentAccountComponent implements OnInit {
         }
         break;
       case 'print-transaction':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = transactionId;
-        modalRef.componentInstance.company = this.companySelected;
-        modalRef.componentInstance.typePrint = 'invoice';
-        await this.getTransaction(transactionId).then(async (transaction) => {
-          if (transaction) {
-            if (transaction.type.defectPrinter) {
-              modalRef.componentInstance.printer = transaction.type.defectPrinter;
-            } else {
-              await this.getPrinters().then((printers) => {
-                if (printers) {
-                  for (let printer of printers) {
-                    if (printer.printIn === PrinterPrintIn.Counter) {
-                      modalRef.componentInstance.printer = printer;
-                    }
-                  }
-                }
-              });
-            }
-          }
-        });
+        const data = {
+          transactionId: transactionId,
+        };
+        this.toPrint(PrintType.Transaction, data);
         break;
 
       default:
     }
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public padNumber(n, length): string {

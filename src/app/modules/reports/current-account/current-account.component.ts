@@ -14,7 +14,6 @@ import { SendEmailComponent } from '@shared/components/send-email/send-email.com
 import { ApiResponse, Company, Printer, PrintType } from '@types';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { CompanyType } from 'app/components/payment-method/payment-method';
-import { PrintComponent } from 'app/components/print/print/print.component';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
@@ -310,27 +309,10 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         }
         break;
       case 'print-transaction':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = transactionId;
-        modalRef.componentInstance.company = this.companySelected;
-        modalRef.componentInstance.typePrint = 'invoice';
-        await this.getTransaction(transactionId).then(async (transaction) => {
-          if (transaction) {
-            if (transaction.type.defectPrinter) {
-              modalRef.componentInstance.printer = transaction.type.defectPrinter;
-            } else {
-              await this.getPrinters().then((printers) => {
-                if (printers) {
-                  for (let printer of printers) {
-                    if (printer.printIn.toString() == 'Mostrador') {
-                      modalRef.componentInstance.printer = printer;
-                    }
-                  }
-                }
-              });
-            }
-          }
-        });
+        const data = {
+          transactionId: transactionId,
+        };
+        this.toPrint(PrintType.Transaction, data);
         break;
 
       default:
