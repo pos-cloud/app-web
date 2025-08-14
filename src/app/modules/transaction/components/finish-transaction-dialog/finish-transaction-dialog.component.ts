@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -79,6 +79,7 @@ export class FinishTransactionDialogComponent implements OnInit {
   }
 
   public async finishTransaction(): Promise<void> {
+    if (this.loading) return;
     this.loading = true;
 
     try {
@@ -101,35 +102,46 @@ export class FinishTransactionDialogComponent implements OnInit {
   }
 
   private async printTransaction(): Promise<void> {
-    const data = {
-      transactionId: this.transaction._id,
-    };
+    return new Promise<void>((resolve) => {
+      const data = {
+        transactionId: this.transaction._id,
+      };
 
-    this._printService.toPrint(PrintType.Transaction, data).subscribe({
-      next: (result: Blob | ApiResponse) => {
-        if (!result) {
-          this._toastService.showToast({ message: 'Error al generar el PDF' });
-          return;
-        }
-        if (result instanceof Blob) {
-          try {
-            const blobUrl = URL.createObjectURL(result);
-            printJS(blobUrl);
-            this.activeModal.close({
-              option: this.selectedOption,
-              action: 'print',
-              success: true,
-            });
-          } catch (e) {
+      this._printService.toPrint(PrintType.Transaction, data).subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
             this._toastService.showToast({ message: 'Error al generar el PDF' });
+            resolve();
+            return;
           }
-        } else {
-          this._toastService.showToast(result);
-        }
-      },
-      error: (error) => {
-        this._toastService.showToast({ message: 'Error al generar el PDF' });
-      },
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+              this.activeModal.close({
+                option: this.selectedOption,
+                action: 'print',
+                success: true,
+              });
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            } finally {
+              resolve();
+            }
+          } else {
+            this._toastService.showToast(result);
+            resolve();
+          }
+        },
+        error: () => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+          resolve();
+        },
+        complete: () => {
+          // En caso de que no haya pasado por next/error
+          resolve();
+        },
+      });
     });
   }
 
@@ -197,5 +209,28 @@ export class FinishTransactionDialogComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  public handleKeyboardShortcuts(event: KeyboardEvent): void {
+    if (this.loading) return;
+
+    const key = event.key;
+
+    if (key === 'Enter') {
+      event.preventDefault();
+      this.finishTransaction();
+      return;
+    }
+
+    const match = /^F(\d+)$/.exec(key);
+    if (!match) return;
+
+    const fnNumber = parseInt(match[1], 10);
+    const index = fnNumber - 1; // F1 => 0, F2 => 1
+    if (this.transactionOptions && index >= 0 && index < this.transactionOptions.length) {
+      event.preventDefault();
+      this.selectedOption = this.transactionOptions[index];
+    }
   }
 }

@@ -17,7 +17,7 @@
           <div class="btn-group-vertical">
             <button
               type="button"
-              *ngFor="let option of transactionOptions"
+              *ngFor="let option of transactionOptions; let i = index"
               class="btn btn-branch"
               [ngClass]="{
                 'btn-primary': option.id === selectedOption.id,
@@ -27,6 +27,7 @@
             >
               <i class="fa {{ option.icon }}"></i>
               {{ option.name }}
+              <small class="text-muted ml-2">[F{{ i + 1 }}]</small>
             </button>
           </div>
         </div>
@@ -37,7 +38,7 @@
     <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
     <button type="button" class="btn btn-primary" [disabled]="loading" (click)="finishTransaction()">
       <i class="fa" [ngClass]="{ 'fa-check': !loading, 'fa-spinner fa-spin': loading }"></i>
-      <span *ngIf="!loading">Confirmar</span>
+      <span *ngIf="!loading">Confirmar <small class="text-muted ml-2">[E]</small></span>
       <span *ngIf="loading">Procesando...</span>
     </button>
   </div>

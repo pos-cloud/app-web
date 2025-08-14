@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { CancellationTypeService } from '../../../core/services/cancellation-type.service';
@@ -10,22 +10,13 @@ import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
 import { ArticleFieldType } from 'app/components/article-field/article-field';
 import { ArticleFields } from 'app/components/article-field/article-fields';
-import {
-  MovementOfArticle,
-  MovementOfArticleStatus,
-} from 'app/components/movement-of-article/movement-of-article';
+import { MovementOfArticle, MovementOfArticleStatus } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { TaxBase } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
-import {
-  TransactionMovement,
-  TransactionType,
-} from 'app/components/transaction-type/transaction-type';
-import {
-  Transaction,
-  TransactionState,
-} from 'app/components/transaction/transaction';
+import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
@@ -92,9 +83,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
-          this.transaction.totalPrice = this.roundNumber.transform(
-            this.transaction.totalPrice
-          );
+          this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
           let query = 'where="transaction":"' + this.transaction._id + '"';
           this.movementsOfArticles = await this.getMovementsOfArticles(query);
           this.movementsOfCashes = await this.getMovementsOfCashes(query);
@@ -184,11 +173,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
       )
       .subscribe(
         (result) => {
-          if (
-            result &&
-            result.cancellationTypes &&
-            result.cancellationTypes.length > 0
-          ) {
+          if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
             this.cancellationTypes = result.cancellationTypes;
           }
           this.loading = false;
@@ -210,14 +195,10 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         let match = {
           _id: { $oid: this.cancellationTypeSelected.destination._id },
         };
-        let transactionType: TransactionType =
-          await this.getTransactionType(match);
+        let transactionType: TransactionType = await this.getTransactionType(match);
         // CAMBIAMOS DATOS NECESARIO
         let transactionDestination: Transaction = new Transaction();
-        transactionDestination = Object.assign(
-          transactionDestination,
-          this.transaction
-        );
+        transactionDestination = Object.assign(transactionDestination, this.transaction);
         transactionDestination._id = '';
         transactionDestination.type = transactionType;
         transactionDestination.state = TransactionState.Pending;
@@ -227,8 +208,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         transactionDestination.declaredValue = this.transaction.declaredValue;
         transactionDestination.package = this.transaction.package;
         transactionDestination.discountAmount = this.transaction.discountAmount;
-        transactionDestination.discountPercent =
-          this.transaction.discountPercent;
+        transactionDestination.discountPercent = this.transaction.discountPercent;
         transactionDestination.orderNumber = this.transaction.orderNumber;
         if (this.transaction.table) {
           transactionDestination.table = this.transaction.table;
@@ -236,20 +216,12 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         transactionDestination.CAE = null;
         transactionDestination.CAEExpirationDate = null;
 
-        if (
-          transactionDestination.type.fixedOrigin &&
-          transactionDestination.type.fixedOrigin !== 0
-        ) {
-          transactionDestination.origin =
-            transactionDestination.type.fixedOrigin;
+        if (transactionDestination.type.fixedOrigin && transactionDestination.type.fixedOrigin !== 0) {
+          transactionDestination.origin = transactionDestination.type.fixedOrigin;
         }
 
-        if (
-          transactionDestination.type.fixedLetter &&
-          transactionDestination.type.fixedLetter !== ''
-        ) {
-          transactionDestination.letter =
-            transactionDestination.type.fixedLetter;
+        if (transactionDestination.type.fixedLetter && transactionDestination.type.fixedLetter !== '') {
+          transactionDestination.letter = transactionDestination.type.fixedLetter;
         }
 
         if (!transactionDestination.type.cashBoxImpact) {
@@ -270,35 +242,23 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         } else {
           transactionDestination.number = 1;
         }
-        transactionDestination = await this.saveTransaction(
-          transactionDestination
-        );
+        transactionDestination = await this.saveTransaction(transactionDestination);
         // SI REQUIERE ARTÍCULOS GUARDAMOS ARTÍCULOS
-        if (
-          transactionDestination.type.requestArticles &&
-          this.transaction.type.requestArticles
-        ) {
-          await this.saveMovementsOfArticles(
-            this.copyMovementsOfArticles(transactionDestination)
-          );
+        if (transactionDestination.type.requestArticles && this.transaction.type.requestArticles) {
+          await this.saveMovementsOfArticles(this.copyMovementsOfArticles(transactionDestination));
         }
 
-        if (
-          transactionDestination.type.requestPaymentMethods &&
-          this.transaction.type.requestPaymentMethods
-        ) {
+        if (transactionDestination.type.requestPaymentMethods && this.transaction.type.requestPaymentMethods) {
           await this.copyMovementsOfCashes(transactionDestination);
         }
 
-        let movementOfCancellation: MovementOfCancellation =
-          new MovementOfCancellation();
+        let movementOfCancellation: MovementOfCancellation = new MovementOfCancellation();
         movementOfCancellation.transactionOrigin = this.transaction;
         movementOfCancellation.transactionDestination = transactionDestination;
         movementOfCancellation.balance = transactionDestination.totalPrice;
         await this.saveMovementOfCancellation(movementOfCancellation);
         this.transaction.state = this.cancellationTypeSelected.stateOrigin;
-        if (this.cancellationTypeSelected.modifyBalance)
-          this.transaction.balance = 0;
+        if (this.cancellationTypeSelected.modifyBalance) this.transaction.balance = 0;
         this.transaction = await this.updateTransaction(this.transaction);
         this.activeModal.close({ transaction: transactionDestination });
       }
@@ -326,26 +286,20 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     });
   }
 
-  public saveMovementOfCancellation(
-    movementOfCancellation: MovementOfCancellation
-  ): Promise<MovementOfCancellation> {
+  public saveMovementOfCancellation(movementOfCancellation: MovementOfCancellation): Promise<MovementOfCancellation> {
     return new Promise<MovementOfCancellation>((resolve, reject) => {
-      this._movementOfCancellationService
-        .saveMovementOfCancellation(movementOfCancellation)
-        .subscribe(
-          async (result) => {
-            if (result.movementOfCancellation) {
-              resolve(result.movementOfCancellation);
-            } else reject(result);
-          },
-          (error) => reject(error)
-        );
+      this._movementOfCancellationService.saveMovementOfCancellation(movementOfCancellation).subscribe(
+        async (result) => {
+          if (result.movementOfCancellation) {
+            resolve(result.movementOfCancellation);
+          } else reject(result);
+        },
+        (error) => reject(error)
+      );
     });
   }
 
-  public copyMovementsOfArticles(
-    transaction: Transaction
-  ): MovementOfArticle[] {
+  public copyMovementsOfArticles(transaction: Transaction): MovementOfArticle[] {
     let movsOfArts = new Array();
     for (let movOfArt of this.movementsOfArticles) {
       let mov = new MovementOfArticle();
@@ -358,10 +312,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
       mov.transactionDiscountAmount = movOfArt.transactionDiscountAmount;
       mov.status = MovementOfArticleStatus.Ready;
       mov.stockMovement = transaction.type.stockMovement;
-      if (
-        this.transaction.type.requestTaxes &&
-        !transaction.type.requestTaxes
-      ) {
+      if (this.transaction.type.requestTaxes && !transaction.type.requestTaxes) {
         mov.costPrice = movOfArt.costPrice;
         mov.salePrice = movOfArt.salePrice;
         let taxes: Taxes[] = new Array();
@@ -374,13 +325,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
               tax.taxBase = this.roundNumber.transform(mov.salePrice);
             }
             if (tax.percentage === 0) {
-              tax.taxAmount = this.roundNumber.transform(
-                tax.taxAmount * mov.amount
-              );
+              tax.taxAmount = this.roundNumber.transform(tax.taxAmount * mov.amount);
             } else {
-              tax.taxAmount = this.roundNumber.transform(
-                (tax.taxBase * tax.percentage) / 100
-              );
+              tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage) / 100);
             }
             mov.salePrice += tax.taxAmount;
             taxes.push(tax);
@@ -389,19 +336,11 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         mov.taxes = taxes;
 
         mov.unitPrice = mov.salePrice / mov.amount;
-        mov.markupPrice = this.roundNumber.transform(
-          mov.salePrice - mov.costPrice
-        );
-        mov.markupPercentage = this.roundNumber.transform(
-          (mov.markupPrice / mov.costPrice) * 100,
-          3
-        );
+        mov.markupPrice = this.roundNumber.transform(mov.salePrice - mov.costPrice);
+        mov.markupPercentage = this.roundNumber.transform((mov.markupPrice / mov.costPrice) * 100, 3);
         mov.roundingAmount = movOfArt.roundingAmount;
       } else {
-        if (
-          this.transaction.type.requestTaxes &&
-          transaction.type.requestTaxes
-        ) {
+        if (this.transaction.type.requestTaxes && transaction.type.requestTaxes) {
           mov.taxes = movOfArt.taxes;
         }
         mov.costPrice = movOfArt.costPrice;
@@ -421,9 +360,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     return movsOfArts;
   }
 
-  public async copyMovementsOfCashes(
-    transaction: Transaction
-  ): Promise<boolean> {
+  public async copyMovementsOfCashes(transaction: Transaction): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
       try {
         if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
@@ -441,9 +378,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     });
   }
 
-  public updateMovementOfCash(
-    movementOfCash: MovementOfCash
-  ): Promise<MovementOfCash> {
+  public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
     return new Promise<MovementOfCash>((resolve, reject) => {
       this._movementOfCashService.update(movementOfCash).subscribe(
         async (result: ApiResponse) => {
@@ -456,14 +391,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     });
   }
 
-  public recalculateCostPrice(
-    movementOfArticle: MovementOfArticle,
-    transaction: Transaction
-  ): MovementOfArticle {
+  public recalculateCostPrice(movementOfArticle: MovementOfArticle, transaction: Transaction): MovementOfArticle {
     // ADVERTENCIA, EL UNIT PRICE NO SE RECALCULA CON EL DESCUENTO DE LA transaction PARA QUE EL DESCUENTO DE LA transaction CANCELADA PASE A LA transaction CANCELATORIA
-    movementOfArticle.basePrice = this.roundNumber.transform(
-      movementOfArticle.unitPrice * movementOfArticle.amount
-    );
+    movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = 0.0;
     movementOfArticle.markupPercentage = 0.0;
 
@@ -471,19 +401,14 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     movementOfArticle.costPrice = 0;
 
     let fields: ArticleFields[] = new Array();
-    if (
-      movementOfArticle.otherFields &&
-      movementOfArticle.otherFields.length > 0
-    ) {
+    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
         if (
           field.articleField.datatype === ArticleFieldType.Percentage ||
           field.articleField.datatype === ArticleFieldType.Number
         ) {
           if (field.articleField.datatype === ArticleFieldType.Percentage) {
-            field.amount = this.roundNumber.transform(
-              (movementOfArticle.basePrice * parseFloat(field.value)) / 100
-            );
+            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value)) / 100);
           } else if (field.articleField.datatype === ArticleFieldType.Number) {
             field.amount = parseFloat(field.value);
           }
@@ -498,11 +423,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     }
     movementOfArticle.otherFields = fields;
     if (transaction.type.requestTaxes) {
-      if (
-        movementOfArticle.article &&
-        movementOfArticle.article.taxes &&
-        movementOfArticle.article.taxes.length > 0
-      ) {
+      if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.taxes) {
           if (articleTax.tax.taxBase === TaxBase.Neto) {
@@ -513,15 +434,11 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           if (articleTax.percentage === 0) {
             for (let artTax of movementOfArticle.article.taxes) {
               if (artTax.tax._id === articleTax.tax._id) {
-                articleTax.taxAmount = this.roundNumber.transform(
-                  artTax.taxAmount * movementOfArticle.amount
-                );
+                articleTax.taxAmount = this.roundNumber.transform(artTax.taxAmount * movementOfArticle.amount);
               }
             }
           } else {
-            articleTax.taxAmount = this.roundNumber.transform(
-              (articleTax.taxBase * articleTax.percentage) / 100
-            );
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage) / 100);
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -530,17 +447,13 @@ export class CancellationTypeAutomaticComponent implements OnInit {
       }
     }
     movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
-    movementOfArticle.salePrice =
-      movementOfArticle.costPrice + movementOfArticle.roundingAmount;
+    movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.roundingAmount;
 
     return movementOfArticle;
   }
 
   // EL IMPUESTO VA SOBRE EL ARTICULO Y NO SOBRE EL MOVIMIENTO
-  public recalculateSalePrice(
-    movementOfArticle: MovementOfArticle,
-    transaction: Transaction
-  ): MovementOfArticle {
+  public recalculateSalePrice(movementOfArticle: MovementOfArticle, transaction: Transaction): MovementOfArticle {
     let quotation = 1;
     if (transaction.quotation) {
       quotation = transaction.quotation;
@@ -556,26 +469,19 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id
       ) {
-        movementOfArticle.basePrice = this.roundNumber.transform(
-          movementOfArticle.basePrice * quotation
-        );
+        movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
     }
 
     let fields: ArticleFields[] = new Array();
-    if (
-      movementOfArticle.otherFields &&
-      movementOfArticle.otherFields.length > 0
-    ) {
+    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
         if (
           field.articleField.datatype === ArticleFieldType.Percentage ||
           field.articleField.datatype === ArticleFieldType.Number
         ) {
           if (field.articleField.datatype === ArticleFieldType.Percentage) {
-            field.amount = this.roundNumber.transform(
-              (movementOfArticle.basePrice * parseFloat(field.value)) / 100
-            );
+            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value)) / 100);
           } else if (field.articleField.datatype === ArticleFieldType.Number) {
             field.amount = parseFloat(field.value);
           }
@@ -595,16 +501,12 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id
       ) {
-        movementOfArticle.costPrice = this.roundNumber.transform(
-          movementOfArticle.costPrice * quotation
-        );
+        movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
       }
     }
 
     // ADVERTENCIA, EL UNIT PRICE NO SE RECALCULA CON EL DESCUENTO DE LA transaction PARA QUE EL DESCUENTO DE LA transaction CANCELADA PASE A LA transaction CANCELATORIA
-    movementOfArticle.salePrice = this.roundNumber.transform(
-      movementOfArticle.unitPrice * movementOfArticle.amount
-    );
+    movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = this.roundNumber.transform(
       movementOfArticle.salePrice - movementOfArticle.costPrice
     );
@@ -615,18 +517,11 @@ export class CancellationTypeAutomaticComponent implements OnInit {
 
     if (transaction.type.requestTaxes) {
       let taxes: Taxes[] = new Array();
-      if (
-        movementOfArticle.article &&
-        movementOfArticle.article.taxes &&
-        movementOfArticle.article.taxes.length > 0
-      ) {
+      if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
         let impInt: number = 0;
         for (let taxAux of movementOfArticle.article.taxes) {
           if (taxAux.percentage === 0) {
-            impInt = this.roundNumber.transform(
-              taxAux.taxAmount * movementOfArticle.amount,
-              4
-            );
+            impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount, 4);
           }
         }
         for (let taxAux of movementOfArticle.article.taxes) {
@@ -638,14 +533,10 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             tax.taxBase = 0;
           } else {
             tax.taxBase = this.roundNumber.transform(
-              (movementOfArticle.salePrice - impInt) /
-                (tax.percentage / 100 + 1),
+              (movementOfArticle.salePrice - impInt) / (tax.percentage / 100 + 1),
               4
             );
-            tax.taxAmount = this.roundNumber.transform(
-              (tax.taxBase * tax.percentage) / 100,
-              4
-            );
+            tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage) / 100, 4);
           }
           taxes.push(tax);
         }
@@ -656,20 +547,16 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     return movementOfArticle;
   }
 
-  public saveMovementsOfArticles(
-    movemenstOfarticles: MovementOfArticle[]
-  ): Promise<MovementOfArticle[]> {
+  public saveMovementsOfArticles(movemenstOfarticles: MovementOfArticle[]): Promise<MovementOfArticle[]> {
     return new Promise((resolve, reject) => {
-      this._movementOfArticleService
-        .saveMovementsOfArticles(movemenstOfarticles)
-        .subscribe(
-          (result) => {
-            if (result.movementsOfArticles) {
-              resolve(result.movementsOfArticles);
-            } else reject(result);
-          },
-          (error) => reject(error)
-        );
+      this._movementOfArticleService.saveMovementsOfArticles(movemenstOfarticles).subscribe(
+        (result) => {
+          if (result.movementsOfArticles) {
+            resolve(result.movementsOfArticles);
+          } else reject(result);
+        },
+        (error) => reject(error)
+      );
     });
   }
 
@@ -726,8 +613,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         })
         .subscribe(
           (result) => {
-            if (result.status == 200 && result.result.length > 0)
-              resolve(result.result[0]);
+            if (result.status == 200 && result.result.length > 0) resolve(result.result[0]);
             else reject(result);
           },
           (error) => reject(error)
@@ -735,11 +621,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
@@ -747,5 +629,33 @@ export class CancellationTypeAutomaticComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  public handleKeyboardShortcuts(event: KeyboardEvent): void {
+    if (this.loading) return;
+
+    const key = event.key;
+
+    if (key === 'Enter') {
+      event.preventDefault();
+      this.finishSelection();
+      return;
+    }
+
+    const match = /^F(\d+)$/.exec(key);
+    if (!match) return;
+
+    event.preventDefault();
+    const fnNumber = parseInt(match[1], 10);
+    if (fnNumber === 1) {
+      this.cancellationTypeSelected = null;
+      return;
+    }
+
+    const index = fnNumber - 2;
+    if (this.cancellationTypes && index >= 0 && index < this.cancellationTypes.length) {
+      this.cancellationTypeSelected = this.cancellationTypes[index];
+    }
   }
 }
