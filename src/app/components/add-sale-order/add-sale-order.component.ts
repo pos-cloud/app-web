@@ -3542,7 +3542,7 @@ export class AddSaleOrderComponent {
   private getIncreasePercentage(priceList: PriceList, movementOfArticle: MovementOfArticle): number {
     // 1. Verificar si hay excepción para el artículo
     if (priceList.exceptions?.length) {
-      const exception = priceList.exceptions.find((e) => e?.article?._id === movementOfArticle.article?._id);
+      const exception = priceList.exceptions.find((e) => e?.article?.toString() === movementOfArticle.article?._id);
       if (exception) {
         return this.roundNumber.transform(exception.percentage);
       }
@@ -3553,8 +3553,8 @@ export class AddSaleOrderComponent {
       for (const rule of priceList.rules) {
         if (!rule) continue;
 
-        const matchCategory = rule.category?._id === movementOfArticle.category?._id;
-        const matchMake = rule.make?._id === movementOfArticle.make?._id;
+        const matchCategory = rule.category.toString() === movementOfArticle.category?._id;
+        const matchMake = rule.make?.toString() === movementOfArticle.make?._id;
 
         if (rule.category && rule.make && matchCategory && matchMake) {
           return this.roundNumber.transform(rule.percentage + priceList.percentage);
