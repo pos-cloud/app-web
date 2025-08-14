@@ -190,15 +190,7 @@ export class ListCashBoxesComponent implements OnInit {
           cashBoxId: cashBox._id,
         };
         this.toPrint(PrintType.CashBox, dataLabels);
-      // let modalRef = this._modalService.open(PrintComponent);
-      // modalRef.componentInstance.cashBox = cashBox;
-      // modalRef.componentInstance.printer = printer;
-      // modalRef.componentInstance.typePrint = 'cash-box';
-      // modalRef.result.then(
-      //   (result) => {},
-      //   (reason) => {}
-      // );
-      // break;
+
       default:
     }
   }

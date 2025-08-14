@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute } from '@angular/router';
+import { PrintService } from '@core/services/print.service';
+import { ApiResponse, PrintType } from '@types';
 import { CashBox } from 'app/components/cash-box/cash-box';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { Movements } from 'app/components/transaction-type/transaction-type';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { CashBoxService } from 'app/core/services/cash-box.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 import { FilterPipe } from 'app/shared/pipes/filter.pipe';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import { PrintComponent } from '../../print/print/print.component';
+import * as printJS from 'print-js';
+import { Subject, takeUntil } from 'rxjs';
 import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
 import { ListCashBoxesComponent } from '../list-cash-boxes/list-cash-boxes.component';
 
@@ -64,6 +64,7 @@ export class ListCashBoxComponent implements OnInit {
   public filters: any[];
   public totalItems: number = 0;
   public filterPipe: FilterPipe = new FilterPipe();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
@@ -71,7 +72,9 @@ export class ListCashBoxComponent implements OnInit {
     public _cashBoxService: CashBoxService,
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    private _toastService: ToastService,
+    public _printService: PrintService
   ) {
     this.filters = new Array();
     this.movementsOfCashes = new Array();
@@ -190,8 +193,7 @@ export class ListCashBoxComponent implements OnInit {
 
     match = JSON.parse(match);
 
-    if (this.cashBoxSelected)
-      match['transaction.cashBox._id'] = { $oid: this.cashBoxSelected._id };
+    if (this.cashBoxSelected) match['transaction.cashBox._id'] = { $oid: this.cashBoxSelected._id };
 
     // CAMPOS A TRAER
     let project = {
@@ -268,9 +270,7 @@ export class ListCashBoxComponent implements OnInit {
             this.totalItems = result[0].count;
             this.areMovementOfCashesEmpty = false;
             this.currentPage = parseFloat(
-              this.roundNumber
-                .transform(this.totalItems / this.itemsPerPage + 0.5, 0)
-                .toFixed(0)
+              this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0)
             );
           } else {
             this.items = new Array();
@@ -312,8 +312,7 @@ export class ListCashBoxComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionId =
-          movementOfCash.transaction._id;
+        modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
         break;
       case 'cashBox':
         modalRef = this._modalService.open(ListCashBoxesComponent, {
@@ -330,19 +329,49 @@ export class ListCashBoxComponent implements OnInit {
         );
         break;
       case 'print':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.cashBox = this.cashBoxSelected;
-        modalRef.componentInstance.typePrint = 'cash-box';
+        const dataLabels = {
+          cashBoxId: this.cashBoxSelected._id,
+        };
+        this.toPrint(PrintType.CashBox, dataLabels);
+
         break;
       default:
     }
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

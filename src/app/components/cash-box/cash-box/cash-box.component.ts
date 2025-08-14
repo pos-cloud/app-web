@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import { MovementOfCash, currencyValue } from '../../movement-of-cash/movement-of-cash';
+import { currencyValue, MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { CashBox, CashBoxState } from '../cash-box';
@@ -21,7 +21,8 @@ import { PaymentMethodService } from '../../../core/services/payment-method.serv
 import { TransactionService } from '../../../core/services/transaction.service';
 
 //Componentes
-import { ApiResponse, CurrencyValue, Printer, PrinterPrintIn } from '@types';
+import { PrintService } from '@core/services/print.service';
+import { ApiResponse, CurrencyValue, Printer, PrintType } from '@types';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { User } from 'app/components/user/user';
@@ -31,7 +32,8 @@ import { TransactionTypeService } from 'app/core/services/transaction-type.servi
 import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { PrintComponent } from '../../print/print/print.component';
+import * as printJS from 'print-js';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-cash-box',
@@ -61,6 +63,7 @@ export class CashBoxComponent implements OnInit {
   private identity: User;
   public selectPayment;
   public printerSelected: Printer;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private _fb: UntypedFormBuilder,
@@ -78,7 +81,8 @@ export class CashBoxComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _userService: UserService,
-    public _modalService: NgbModal
+    public _modalService: NgbModal,
+    public _printService: PrintService
   ) {
     this.paymentMethods = new Array();
     this.cashBox = new CashBox();
@@ -393,34 +397,11 @@ export class CashBoxComponent implements OnInit {
 
     switch (op) {
       case 'print':
-        await this.getUser().then(async (user) => {
-          if (user) {
-            if (user.printers && user.printers.length > 0) {
-              for (const element of user.printers) {
-                if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
-                  this.printerSelected = element.printer;
-                }
-              }
-            }
-          }
-
-          let modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.cashBox = this.cashBox;
-          modalRef.componentInstance.typePrint = 'cash-box';
-          if (this.printerSelected) {
-            modalRef.componentInstance.printer = this.printerSelected;
-          } else {
-            modalRef.componentInstance.printer = this.transactionType.defectPrinter;
-          }
-          modalRef.result.then(
-            (result) => {
-              this.activeModal.close({ cashBox: this.cashBox });
-            },
-            (reason) => {
-              this.activeModal.close({ cashBox: this.cashBox });
-            }
-          );
-        });
+        const dataLabels = {
+          cashBoxId: this.cashBox._id,
+        };
+        this.toPrint(PrintType.CashBox, dataLabels);
+        this.activeModal.close({ cashBox: this.cashBox });
         break;
       case 'delete':
         let del = -1;
@@ -435,6 +416,37 @@ export class CashBoxComponent implements OnInit {
     }
   }
 
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
+  }
   public getUser(): Promise<User> {
     return new Promise<User>((resolve, reject) => {
       let identity: User = JSON.parse(sessionStorage.getItem('user'));
