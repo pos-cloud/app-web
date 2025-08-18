@@ -372,16 +372,13 @@ export class CurrentAccountComponent implements OnInit {
         break;
       case 'print':
         if (this.companySelected) {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.items = this.items;
-          modalRef.componentInstance.company = this.companySelected;
-          modalRef.componentInstance.params = {
-            detailsPaymentMethod: this.detailsPaymentMethod,
+          const dataLabels = {
+            companyId: this.companySelected._id,
+            items: this.itemsPerPage,
           };
-          modalRef.componentInstance.typePrint = 'current-account';
-          modalRef.componentInstance.balance = this.balance;
+          this.toPrint(PrintType.CurrentAccount, dataLabels);
         } else {
-          this.showMessage('Debe seleccionar una empresa.', 'info', true);
+          this._toastService.showToast({ message: 'Debe seleccionar una empresa.' });
         }
         break;
       case 'print-transaction':

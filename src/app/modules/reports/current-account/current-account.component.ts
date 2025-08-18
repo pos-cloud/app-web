@@ -55,9 +55,6 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   public companySelected: Company;
   public companyType: CompanyType;
   public loading: boolean = false;
-  public loadingTotal: boolean = false;
-  public loadingBalance: boolean = false;
-  public loadingPaymentMethods: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
   public items: any[] = new Array();
@@ -71,6 +68,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   public showBalanceOfTransactions: boolean = false;
   public data = {};
   public isFirstTime = true;
+  public hasInitialized: boolean = false;
   printers: Printer[];
   private destroy$ = new Subject<void>();
 
@@ -148,15 +146,24 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           this._router.navigate(['/']);
         },
         complete: () => {
-          this.loading = false;
+          // No cambiamos loading aquí porque refresh() lo maneja
         },
       });
   }
 
   public refresh(): void {
     if (this.companySelected) {
+      this.loading = true;
+      this.hasInitialized = false;
+      this.isFirstTime = true; // Resetear para que vaya a la última página
+
+      // Consulta 1: Comprobantes (con paginación automática a la última página)
       this.getPaymentMethodOfAccountsByCompany();
+
+      // Consulta 2: Saldo total (en paralelo, independiente)
       this.getTotalOfAccountsByCompany();
+
+      // Consulta 3: Balance (en paralelo, independiente)
       this.getBalanceOfAccountsByCompany();
     } else {
       this._toastService.showToast({
@@ -167,8 +174,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   }
 
   public getTotalOfAccountsByCompany(): void {
-    this.loadingTotal = true;
-
+    // Esta consulta se ejecuta en paralelo, no afecta el loading principal
     this._service
       .getTotalOfAccountsByCompany(this.data)
       .pipe(takeUntil(this.destroy$))
@@ -183,14 +189,13 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           this.totalPrice = 0;
         },
         complete: () => {
-          this.loadingTotal = false;
+          // No afecta el loading principal
         },
       });
   }
 
   public getBalanceOfAccountsByCompany(): void {
-    this.loadingBalance = true;
-
+    // Esta consulta se ejecuta en paralelo, no afecta el loading principal
     this._service
       .getBalanceOfAccountsByCompany(this.data)
       .pipe(takeUntil(this.destroy$))
@@ -205,13 +210,13 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           this.balance = 0;
         },
         complete: () => {
-          this.loadingBalance = false;
+          // No afecta el loading principal
         },
       });
   }
 
   public getPaymentMethodOfAccountsByCompany(): void {
-    this.loadingPaymentMethods = true;
+    this.loading = true;
 
     if (typeof this.detailsPaymentMethod !== 'boolean') {
       this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
@@ -237,16 +242,58 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
             this._toastService.showToast(result);
             this.items = [];
             this.totalItems = 0;
+            this.hasInitialized = true;
+            this.loading = false; // Solo aquí terminamos el loading
           } else {
             if (this.isFirstTime && result?.result?.[0]?.count > 0) {
+              // CONSULTA 1: Primera vez - calcular total de páginas y obtener la última
               const totalCount = result.result[0].count;
               const totalPages = Math.ceil(totalCount / limit);
               const lastPageSkip = (totalPages - 1) * limit;
-              this.pageChange(lastPageSkip);
-              this.isFirstTime = false;
+
+              // Actualizar la página actual
+              this.currentPage = totalPages;
+
+              // CONSULTA 2: Obtener datos de la última página
+              // El loading se mantiene activo durante esta segunda consulta
+              this.data = {
+                company: this.companySelected._id,
+                transactionMovement: this.transactionMovement,
+                skip: lastPageSkip,
+                limit,
+              };
+
+              // Llamar al servicio para la última página
+              this._service
+                .getPaymentMethodOfAccountsByCompany(this.data)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                  next: (lastPageResult) => {
+                    if (lastPageResult.result.length) {
+                      this.items = lastPageResult.result[0].items;
+                      this.totalItems = lastPageResult.result[0].count;
+                    }
+                    this.isFirstTime = false;
+                    this.hasInitialized = true;
+                  },
+                  error: (error) => {
+                    this._toastService.showToast(error);
+                    this.items = [];
+                    this.totalItems = 0;
+                    this.isFirstTime = false;
+                    this.hasInitialized = true;
+                  },
+                  complete: () => {
+                    this.loading = false; // Aquí terminamos el loading de los comprobantes
+                  },
+                });
+              return; // Salir temprano para evitar el código siguiente
             } else {
+              // Caso normal: no es la primera vez, mostrar datos de la página actual
               this.items = result.result[0].items;
               this.totalItems = result.result[0].count;
+              this.hasInitialized = true;
+              this.loading = false; // Terminar loading
             }
           }
         },
@@ -254,9 +301,11 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           this._toastService.showToast(error);
           this.items = [];
           this.totalItems = 0;
+          this.hasInitialized = true;
+          this.loading = false; // Terminar loading en caso de error
         },
         complete: () => {
-          this.loadingPaymentMethods = false;
+          // El loading se maneja en next() o error() según el caso
         },
       });
   }
@@ -370,12 +419,14 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
 
   public pageChange(page): void {
     this.currentPage = page;
+    this.loading = true;
     this.getPaymentMethodOfAccountsByCompany();
   }
 
   public selectItemsPerPage(value: number): void {
     this.itemsPerPage = value;
     this.currentPage = 1;
+    this.loading = true;
     this.getPaymentMethodOfAccountsByCompany();
   }
 
@@ -412,9 +463,9 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           this.totalItems = result.result[0].count;
 
           if (this.isFirstTime) {
-            const totalPages = Math.ceil(this.totalItems / limit); // Número total de páginas
+            const totalPages = Math.ceil(this.totalItems / limit);
             const lastPageSkip = (totalPages - 1) * limit;
-
+            this.currentPage = totalPages;
             this.pageChange(lastPageSkip);
             this.isFirstTime = false;
           }

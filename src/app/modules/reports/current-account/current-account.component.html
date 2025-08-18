@@ -94,10 +94,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr *ngIf="loading">
               <td colspan="99" style="padding: 0px">
                 <app-progressbar [loading]="loading"></app-progressbar>
               </td>
+            </tr>
+            <tr align="center" *ngIf="loading">
+              <td colspan="13"><i class="fa fa-spinner fa-spin"></i> Cargando transacciones...</td>
             </tr>
             <tr
               *ngFor="
@@ -181,15 +184,10 @@
                 {{ item.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </tr>
-            <tr align="center" *ngIf="items.length === 0 && !loading">
+            <tr align="center" *ngIf="items.length === 0 && !loading && hasInitialized">
               <td colspan="13">No se encontraron movimientos</td>
             </tr>
           </tbody>
-          <tr>
-            <td colspan="99" style="padding: 0px">
-              <app-progressbar [loading]="loadingTotal"></app-progressbar>
-            </td>
-          </tr>
           <tfoot [ngClass]="{ credit: totalPrice > 0, debit: totalPrice < 0 }">
             <td></td>
             <td></td>
