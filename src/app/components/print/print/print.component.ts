@@ -2395,16 +2395,10 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text('Fecha', margin, 77);
     this.doc.text('Tipo Comp.', 25, 77);
-    this.doc.text('Nro. Comprobante', 90, 77);
-    /*if (this.params.detailsPaymentMethod) {
-            this.doc.text("Monto", 90, 77);
-            this.doc.text("Método", 110, 77);
-        } else {
-            this.doc.text("Monto", 110, 77);
-        }*/
-    this.doc.text('Debe', 145, 77);
-    this.doc.text('Haber', 165, 77);
-    this.doc.text('Saldo', 195, 77);
+    this.doc.text('Nro. Comprobante', 70, 77);
+    this.doc.text('Debe', 120, 77);
+    this.doc.text('Haber', 150, 77);
+    this.doc.text('Saldo', 190, 77);
     this.doc.setFont(undefined, 'normal');
 
     // Nombre del comprobante
@@ -2436,7 +2430,7 @@ export class PrintComponent implements OnInit {
               item.transactionLetter +
               '-' +
               this.padString(item.transactionNumber, 10),
-            90,
+            70,
             row
           );
         } else {
@@ -2450,14 +2444,14 @@ export class PrintComponent implements OnInit {
 
         this.doc.textEx(
           '$ ' + new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(item.debe),
-          160,
+          140,
           row,
           'right',
           'middle'
         );
         this.doc.textEx(
           '$ ' + new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(item.haber),
-          180,
+          170,
           row,
           'right',
           'middle'
@@ -2465,7 +2459,7 @@ export class PrintComponent implements OnInit {
         this.doc.setFont('helvetica', 'bold');
         this.doc.textEx(
           '$ ' + new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(item.balance),
-          205,
+          200,
           row,
           'right',
           'middle'
@@ -2479,35 +2473,30 @@ export class PrintComponent implements OnInit {
           i = 0;
 
           this.doc.setFont('helvetica', 'bold');
-          this.doc.text('TRANSPORTE:'.toString(), 25, row);
-          this.doc.textEx(
-            '$ ' +
+          this.doc.text(
+            'TRANSPORTE:$ ' +
               new Intl.NumberFormat('de-DE', {
                 minimumFractionDigits: 2,
               }).format(item.balance),
-            194,
-            row,
-            'right',
-            'middle'
+            150,
+            row
           );
 
           this.getGreeting();
-          this.getFooter();
+          // this.getFooter();
           row = 85;
           this.doc.addPage();
 
           this.doc.setFont('helvetica', 'bold');
-          this.doc.text('TRANSPORTE:'.toString(), 25, row);
-          this.doc.textEx(
-            '$ ' +
+          this.doc.text(
+            'TRANSPORTE:$ ' +
               new Intl.NumberFormat('de-DE', {
                 minimumFractionDigits: 2,
               }).format(item.balance),
-            194,
-            row,
-            'right',
-            'middle'
+            150,
+            row
           );
+
           row += 5;
 
           this.getHeader(false);
@@ -2518,11 +2507,10 @@ export class PrintComponent implements OnInit {
           this.doc.setFontSize(this.fontSizes.normal);
           this.doc.text('Fecha', margin, 77);
           this.doc.text('Tipo Comp.', 25, 77);
-          this.doc.text('Nro. Comprobante.', 53, 77);
-          this.doc.text('Monto', 110, 77);
-          this.doc.text('Debe', 145, 77);
-          this.doc.text('Haber', 165, 77);
-          this.doc.text('Saldo', 185, 77);
+          this.doc.text('Nro. Comprobante', 70, 77);
+          this.doc.text('Debe', 120, 77);
+          this.doc.text('Haber', 150, 77);
+          this.doc.text('Saldo', 190, 77);
           this.doc.setFont(undefined, 'normal');
 
           // Nombre del comprobante
@@ -2544,7 +2532,7 @@ export class PrintComponent implements OnInit {
     this.balance = this.roundNumber.transform(this.balance, 2).toFixed(2);
     this.doc.textEx(
       '$ ' + new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2 }).format(this.balance),
-      175,
+      200,
       246,
       'right',
       'middle'

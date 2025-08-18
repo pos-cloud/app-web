@@ -287,7 +287,32 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
-  async openModal(op: string, transactionId?: string) {
+  public getDefaultPrinter() {
+    return {
+      _id: 'default',
+      name: 'PDF',
+      pageWidth: 210,
+      pageHigh: 297,
+      labelWidth: 0,
+      labelHigh: 0,
+      printIn: 'Counter',
+      url: '',
+      quantity: 1,
+      orientation: 'p',
+      row: 0,
+      addPag: 0,
+      fields: [],
+      // Propiedades de Activity
+      operationType: 'add',
+      status: 'active',
+      creationDate: new Date(),
+      updateDate: new Date(),
+      creationUser: null,
+      updateUser: null,
+    };
+  }
+
+  public async openModal(op: string, transactionId?: string) {
     let modalRef;
     switch (op) {
       case 'view-transaction':
@@ -353,6 +378,8 @@ export class CurrentAccountComponent implements OnInit {
         modalRef.componentInstance.typePrint = 'current-account';
         modalRef.componentInstance.source = 'mail';
         modalRef.componentInstance.balance = this.balance;
+        // Pasar una impresora por defecto para evitar el error
+        modalRef.componentInstance.printer = this.getDefaultPrinter();
 
         if (this.companySelected) {
           modalRef = this._modalService.open(SendEmailComponent, {
@@ -372,13 +399,18 @@ export class CurrentAccountComponent implements OnInit {
         break;
       case 'print':
         if (this.companySelected) {
-          const dataLabels = {
-            companyId: this.companySelected._id,
-            items: this.itemsPerPage,
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.items = this.items;
+          modalRef.componentInstance.company = this.companySelected;
+          modalRef.componentInstance.params = {
+            detailsPaymentMethod: this.detailsPaymentMethod,
           };
-          this.toPrint(PrintType.CurrentAccount, dataLabels);
+          modalRef.componentInstance.typePrint = 'current-account';
+          modalRef.componentInstance.balance = this.balance;
+          // Pasar una impresora por defecto para evitar el error
+          modalRef.componentInstance.printer = this.getDefaultPrinter();
         } else {
-          this._toastService.showToast({ message: 'Debe seleccionar una empresa.' });
+          this.showMessage('Debe seleccionar una empresa.', 'info', true);
         }
         break;
       case 'print-transaction':
