@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { IAttribute, IButton } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { PermissionService } from 'app/core/services/permission.service';
+import { PriceListService } from 'app/core/services/price-list.service';
 
 @Component({
   selector: 'app-list-price-list',
@@ -26,6 +26,44 @@ export class ListPriceListComponent {
       datatype: 'string',
       project: null,
       align: 'left',
+      required: false,
+    },
+    {
+      name: 'percentage',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'number',
+      project: null,
+      align: 'right',
+      required: false,
+    },
+    {
+      name: 'percentageType',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: `{
+        "$switch": {
+          "branches": [
+            { "case": { "$eq": ["$percentageType", "final"] }, "then": "Precio Final" },
+            { "case": { "$eq": ["$percentageType", "margin"] }, "then": "Margen" }
+          ],
+          "default": "$percentageType"
+        }
+      }`,
+      align: 'center',
+      required: false,
+    },
+    {
+      name: 'default',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'center',
       required: false,
     },
     {
@@ -125,7 +163,7 @@ export class ListPriceListComponent {
     },
   ];
 
-  constructor(public _service: PermissionService, private _router: Router) {}
+  constructor(public _service: PriceListService, private _router: Router) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);

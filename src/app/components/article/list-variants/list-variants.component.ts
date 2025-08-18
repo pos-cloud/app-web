@@ -4,9 +4,7 @@ import { PrintService } from '@core/services/print.service';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, IButton, PrinterPrintIn, PrintType } from '@types';
-import { PriceList } from 'app/components/price-list/price-list';
-import { PriceListService } from 'app/core/services/price-list.service';
+import { ApiResponse, IButton, PriceList, PrinterPrintIn, PrintType } from '@types';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -77,7 +75,6 @@ export class ListVariantsComponent {
     private _router: Router,
     public _printerService: PrinterService,
     public _alertConfig: NgbAlertConfig,
-    public _priceListService: PriceListService,
     public _printService: PrintService,
     private _toastService: ToastService,
     private _modalService: NgbModal

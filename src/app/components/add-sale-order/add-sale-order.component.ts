@@ -4,7 +4,6 @@ import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-boots
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { PriceList } from 'app/components/price-list/price-list';
 import { SelectTableComponent } from 'app/components/table/select-table/select-table.component';
 import { User } from 'app/components/user/user';
 import { ArticleService } from 'app/core/services/article.service';
@@ -19,7 +18,17 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { CompanyType, Printer, PrinterPrintIn, RelationType, Table, TableState, Transport, UseOfCFDI } from '@types';
+import {
+  CompanyType,
+  PriceList,
+  Printer,
+  PrinterPrintIn,
+  RelationType,
+  Table,
+  TableState,
+  Transport,
+  UseOfCFDI,
+} from '@types';
 import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
@@ -47,7 +56,6 @@ import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-artic
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
-import { SelectPriceListComponent } from '../price-list/select-price-list/select-price-list.component';
 import { Print } from '../print/print';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
@@ -68,6 +76,7 @@ import { AuthService } from 'app/core/services/auth.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { ChangeObservationComponent } from 'app/modules/transaction/components/change-observation/change-observation.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
+import { SelectPriceListComponent } from 'app/modules/transaction/components/select-price-list/select-price-list.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
@@ -141,7 +150,7 @@ export class AddSaleOrderComponent {
   lastMovementOfArticle: MovementOfArticle;
   isCancellationAutomatic: boolean = false;
 
-  priceList: any;
+  priceList: PriceList;
   newPriceList: any;
   increasePrice = 0;
   lastIncreasePrice = 0;
@@ -340,19 +349,19 @@ export class AddSaleOrderComponent {
 
   getPriceList(id: string): Promise<PriceList> {
     return new Promise<PriceList>((resolve) => {
-      this._priceListService.getPriceList(id).subscribe(
-        (result) => {
-          if (!result.priceList) {
-            resolve(null);
+      this._priceListService.getById(id).subscribe({
+        next: (response: ApiResponse) => {
+          if (response.status === 200) {
+            resolve(response.result);
           } else {
-            resolve(result.priceList);
+            resolve(null);
           }
         },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
+        error: (error) => {
+          this._toastService.showToast(error);
           resolve(null);
-        }
-      );
+        },
+      });
     });
   }
 
@@ -1293,12 +1302,7 @@ export class AddSaleOrderComponent {
         );
       }
 
-      if (
-        movementOfArticle.article &&
-        this.priceList &&
-        this.database !== 'sangenemi' &&
-        this.database !== 'globalstore'
-      ) {
+      if (movementOfArticle.article && this.priceList && this.priceList.percentageType === 'final') {
         let increasePrice = 0;
 
         if (this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
@@ -1309,8 +1313,8 @@ export class AddSaleOrderComponent {
                 movementOfArticle.category &&
                 rule.make &&
                 movementOfArticle.make &&
-                rule.category._id === movementOfArticle.category._id &&
-                rule.make._id === movementOfArticle.make._id
+                rule.category === movementOfArticle.category._id &&
+                rule.make === movementOfArticle.make._id
               ) {
                 increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
@@ -1318,7 +1322,7 @@ export class AddSaleOrderComponent {
                 rule.make &&
                 movementOfArticle.make &&
                 rule.category == null &&
-                rule.make._id === movementOfArticle.make._id
+                rule.make === movementOfArticle.make._id
               ) {
                 increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
@@ -1326,7 +1330,7 @@ export class AddSaleOrderComponent {
                 rule.category &&
                 movementOfArticle.category &&
                 rule.make == null &&
-                rule.category._id === movementOfArticle.category._id
+                rule.category === movementOfArticle.category._id
               ) {
                 increasePrice = this.roundNumber.transform(rule.percentage + this.priceList.percentage);
               }
@@ -1342,7 +1346,7 @@ export class AddSaleOrderComponent {
         if (this.priceList.exceptions && this.priceList.exceptions.length > 0) {
           this.priceList.exceptions.forEach((exception) => {
             if (exception) {
-              if (exception.article._id === movementOfArticle.article._id) {
+              if (exception.article === movementOfArticle.article._id) {
                 increasePrice = this.roundNumber.transform(exception.percentage);
               }
             }
@@ -1356,12 +1360,7 @@ export class AddSaleOrderComponent {
         }
       }
 
-      if (
-        movementOfArticle.article &&
-        this.newPriceList &&
-        this.database !== 'sangenemi' &&
-        this.database !== 'globalstore'
-      ) {
+      if (movementOfArticle.article && this.newPriceList && this.newPriceList.percentageType === 'final') {
         let increasePrice = 0;
 
         if (this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {
@@ -1427,7 +1426,7 @@ export class AddSaleOrderComponent {
       movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.discountAmount);
 
       //logic for sangenemi quiere que se updatee por lista de precios esto lo vamos a mejorar y agregar una funcion en apiv2
-      if ((this.database === 'sangenemi' || this.database === 'globalstore') && (this.priceList || this.newPriceList)) {
+      if (this.priceList?.percentageType === 'margin' || this.newPriceList?.percentageType === 'margin') {
         const priceListToUse = this.newPriceList ?? this.priceList;
         let markupPrice = this.getIncreasePercentage(priceListToUse, movementOfArticle);
         if (markupPrice) {

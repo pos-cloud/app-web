@@ -85,5 +85,12 @@
   "bold": "Grassetto",
   "italic": "Corsivo",
   "size": "Dimensione",
-  "currentStock": "Stock attuale"
+  "currentStock": "Stock attuale",
+  "specialRules": "Regole speciali",
+  "exceptions": "Eccezioni",
+  "percentageType": "Tipo di Percentuale",
+  "basePrice": "Prezzo Base",
+  "costPrice": "Prezzo di Costo",
+  "finalPrice": "Prezzo Finale",
+  "margin": "Margine"
 }

@@ -7,18 +7,18 @@ export const PRICE_LIST_ROUTES: Routes = [
   },
   {
     path: 'add',
-    loadComponent: () => import('./crud/permission.component').then((m) => m.PermissionComponent),
+    loadComponent: () => import('./crud/price-list.component').then((m) => m.PriceListComponent),
   },
   {
     path: 'view/:id',
-    loadComponent: () => import('./crud/permission.component').then((m) => m.PermissionComponent),
+    loadComponent: () => import('./crud/price-list.component').then((m) => m.PriceListComponent),
   },
   {
     path: 'update/:id',
-    loadComponent: () => import('./crud/permission.component').then((m) => m.PermissionComponent),
+    loadComponent: () => import('./crud/price-list.component').then((m) => m.PriceListComponent),
   },
   {
     path: 'delete/:id',
-    loadComponent: () => import('./crud/permission.component').then((m) => m.PermissionComponent),
+    loadComponent: () => import('./crud/price-list.component').then((m) => m.PriceListComponent),
   },
 ];

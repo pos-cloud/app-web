@@ -3,10 +3,8 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PriceList } from 'app/components/price-list/price-list';
 import { BranchService } from 'app/core/services/branch.service';
 import { DepositService } from 'app/core/services/deposit.service';
-import { PriceListService } from 'app/core/services/price-list.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 
@@ -53,7 +51,6 @@ export class ListArticleStocksComponent implements OnInit {
   columns = attributes;
   title = 'Inventario';
   articleStocks: ArticleStock[] = new Array();
-  priceLists: PriceList[] = new Array();
   branches: Branch[] = new Array();
   branchesSelected: Branch[] = new Array();
   deposits: Deposit[] = new Array();
@@ -91,7 +88,6 @@ export class ListArticleStocksComponent implements OnInit {
 
   constructor(
     private _articleStockService: ArticleStockService,
-    private _priceList: PriceListService,
     private _router: Router,
     private _toastService: ToastService,
     private _printerService: PrinterService,
@@ -114,7 +110,6 @@ export class ListArticleStocksComponent implements OnInit {
   ngOnInit(): void {
     this.database = Config.database;
 
-    this.getPriceList();
     let pathLocation: string[] = this._router.url.split('/');
 
     this.userType = pathLocation[1];
@@ -495,21 +490,6 @@ export class ListArticleStocksComponent implements OnInit {
         }
       );
     });
-  }
-
-  public getPriceList(): void {
-    this._priceList.getPriceLists().subscribe(
-      (result) => {
-        if (result && result.priceLists) {
-          this.priceLists = result.priceLists;
-        } else {
-          this.priceLists = new Array();
-        }
-      },
-      (error) => {
-        this.showMessage(error._body, 'danger', false);
-      }
-    );
   }
 
   public getBranches(): void {
