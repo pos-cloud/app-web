@@ -92,5 +92,19 @@
   "basePrice": "Prezzo Base",
   "costPrice": "Prezzo di Costo",
   "finalPrice": "Prezzo Finale",
-  "margin": "Margine"
+  "margin": "Margine",
+  "currentAccount": "Conto Corrente",
+  "transactionDate": "Data Transazione",
+  "transactionTypeName": "Tipo Transazione",
+  "transactionOrigin": "Punto Vendita",
+  "transactionLetter": "Lettera",
+  "transactionNumber": "Numero",
+  "transactionTotalPrice": "Importo",
+  "paymentMethodName": "Metodo Pagamento",
+  "quota": "Quota",
+  "paymentMethodExpirationDate": "Data Scadenza",
+  "debe": "Dare",
+  "haber": "Avere",
+  "balance": "Saldo",
+  "transactionBalance": "Saldo Documento"
 }

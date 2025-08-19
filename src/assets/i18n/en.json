@@ -95,5 +95,19 @@
   "basePrice": "Base Price",
   "costPrice": "Cost Price",
   "finalPrice": "Final Price",
-  "margin": "Margin"
+  "margin": "Margin",
+  "currentAccount": "Current Account",
+  "transactionDate": "Transaction Date",
+  "transactionTypeName": "Transaction Type",
+  "transactionOrigin": "Point of Sale",
+  "transactionLetter": "Letter",
+  "transactionNumber": "Number",
+  "transactionTotalPrice": "Amount",
+  "paymentMethodName": "Payment Method",
+  "quota": "Quota",
+  "paymentMethodExpirationDate": "Expiration Date",
+  "debe": "Debit",
+  "haber": "Credit",
+  "balance": "Balance",
+  "transactionBalance": "Document Balance"
 }

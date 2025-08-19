@@ -8,6 +8,14 @@
         <button [disabled]="loading" class="btn" (click)="openModal('print')">
           <i class="fa fa-print"></i> Imprimir
         </button>
+
+        <app-export-excel
+          #exportExcelComponent
+          [title]="title"
+          [loading]="loading"
+          [columns]="columns"
+          (eventExport)="exportItems()"
+        ></app-export-excel>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -21,7 +29,12 @@
           <label for="detailsPaymentMethod" class="control-label">
             <b>Detallar método de pago</b>
           </label>
-          <select class="form-control" [(ngModel)]="detailsPaymentMethod" [disabled]="loading">
+          <select
+            class="form-control"
+            [(ngModel)]="detailsPaymentMethod"
+            [disabled]="loading"
+            (ngModelChange)="onFilterChange()"
+          >
             <option [ngValue]="true">Sí</option>
             <option [ngValue]="false">No</option>
           </select>
@@ -30,7 +43,12 @@
           <label for="showBalanceOfTransactions" class="control-label">
             <b>Saldo de transacciones</b>
           </label>
-          <select class="form-control" [(ngModel)]="showBalanceOfTransactions" [disabled]="loading">
+          <select
+            class="form-control"
+            [(ngModel)]="showBalanceOfTransactions"
+            [disabled]="loading"
+            (ngModelChange)="onFilterChange()"
+          >
             <option [ngValue]="true">Sí</option>
             <option [ngValue]="false">No</option>
           </select>

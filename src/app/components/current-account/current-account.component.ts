@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 //Paquetes de terceros
@@ -36,6 +36,7 @@ import { first, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';
 import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
+import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 
@@ -46,6 +47,9 @@ import { ViewTransactionComponent } from '../transaction/view-transaction/view-t
   providers: [NgbAlertConfig],
 })
 export class CurrentAccountComponent implements OnInit {
+  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
+
+  public title: string = 'Cuenta Corriente';
   public transactions: Transaction[];
   public companySelected: Company;
   public companyType: CompanyType;
@@ -96,6 +100,113 @@ export class CurrentAccountComponent implements OnInit {
     delete: true,
     export: true,
   };
+
+  public columns = [
+    {
+      name: 'transactionDate',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'transactionTypeName',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'transactionOrigin',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'transactionLetter',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'transactionNumber',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'transactionTotalPrice',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+    },
+    {
+      name: 'paymentMethodName',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'quota',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'paymentMethodExpirationDate',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+    },
+    {
+      name: 'debe',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+    },
+    {
+      name: 'haber',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+    },
+    {
+      name: 'balance',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+    },
+    {
+      name: 'transactionBalance',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      align: 'right',
+    },
+  ];
 
   constructor(
     public _transactionService: TransactionService,
@@ -154,6 +265,9 @@ export class CurrentAccountComponent implements OnInit {
       } else {
         this.invertedView = this.config.reports.summaryOfAccounts.invertedViewProvider;
       }
+
+      // Inicializar columnas
+      this.updateColumns();
     });
   }
 
@@ -217,6 +331,9 @@ export class CurrentAccountComponent implements OnInit {
           );
           this.getBalance();
           this.showPaymentMethod = this.detailsPaymentMethod;
+
+          // Actualizar columnas según las opciones seleccionadas
+          this.updateColumns();
         }
         this.loading = false;
       },
@@ -264,6 +381,11 @@ export class CurrentAccountComponent implements OnInit {
     } else {
       this.showMessage('Debe seleccionar una empresa.', 'info', true);
     }
+  }
+
+  public onFilterChange(): void {
+    // Actualizar columnas cuando cambien los filtros
+    this.updateColumns();
   }
 
   public getBalance(): void {
@@ -559,5 +681,32 @@ export class CurrentAccountComponent implements OnInit {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  public exportItems(): void {
+    this.exportExcelComponent.items = this.items;
+    this.exportExcelComponent.export();
+  }
+
+  private updateColumns(): void {
+    // Actualizar visibilidad de columnas según las opciones seleccionadas
+    this.columns.forEach((column) => {
+      switch (column.name) {
+        case 'transactionOrigin':
+          column.visible = this.userCountry === 'AR';
+          break;
+        case 'paymentMethodName':
+        case 'quota':
+        case 'paymentMethodExpirationDate':
+          column.visible = this.showPaymentMethod;
+          break;
+        case 'transactionBalance':
+          column.visible = this.showBalanceOfTransactions;
+          break;
+        default:
+          column.visible = true;
+          break;
+      }
+    });
   }
 }
