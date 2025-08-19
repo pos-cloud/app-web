@@ -1302,7 +1302,7 @@ export class AddSaleOrderComponent {
         );
       }
 
-      if (movementOfArticle.article && this.priceList && this.priceList.percentageType === 'final') {
+      if (movementOfArticle.article && this.priceList && this.priceList?.percentageType === 'final') {
         let increasePrice = 0;
 
         if (this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
@@ -1360,7 +1360,7 @@ export class AddSaleOrderComponent {
         }
       }
 
-      if (movementOfArticle.article && this.newPriceList && this.newPriceList.percentageType === 'final') {
+      if (movementOfArticle.article && this.newPriceList && this.newPriceList?.percentageType === 'final') {
         let increasePrice = 0;
 
         if (this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {

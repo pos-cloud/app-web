@@ -280,7 +280,7 @@ export class ListArticlesPosComponent implements OnInit {
     increasePrice -= this.discountCompany;
     increasePrice -= this.discountCompanyGroup;
 
-    if (this.priceList.percentageType === 'margin') {
+    if (this.priceList?.percentageType === 'margin') {
       return this.roundNumber.transform(article.costPrice + (article.costPrice * increasePrice) / 100);
     }
 
