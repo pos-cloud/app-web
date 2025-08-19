@@ -419,7 +419,7 @@ export class ListArticlesPosComponent implements OnInit {
               movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
             }
 
-            if (increasePrice != 0) {
+            if (increasePrice != 0 && priceList.percentageType === 'final') {
               movementOfArticle.markupPrice = this.roundNumber.transform(
                 movementOfArticle.markupPrice + (movementOfArticle.markupPrice * increasePrice) / 100
               );
@@ -431,9 +431,9 @@ export class ListArticlesPosComponent implements OnInit {
               );
             }
 
-            if (priceList?.percentageType === 'margin') {
-              movementOfArticle.markupPrice = this.roundNumber.transform(priceList.percentage);
-              let aux = (movementOfArticle.costPrice * priceList.percentage) / 100;
+            if (increasePrice != 0 && priceList?.percentageType === 'margin') {
+              movementOfArticle.markupPrice = this.roundNumber.transform(increasePrice);
+              let aux = (movementOfArticle.costPrice * increasePrice) / 100;
               movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + aux);
               movementOfArticle.unitPrice = this.roundNumber.transform(
                 movementOfArticle.salePrice / movementOfArticle.amount
