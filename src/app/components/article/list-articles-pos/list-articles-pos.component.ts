@@ -432,7 +432,7 @@ export class ListArticlesPosComponent implements OnInit {
               );
             }
 
-            if (priceList.percentageType === 'margin') {
+            if (priceList?.percentageType === 'margin') {
               movementOfArticle.markupPrice = this.roundNumber.transform(priceList.percentage);
               let aux = (movementOfArticle.costPrice * priceList.percentage) / 100;
               movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + aux);
