@@ -99,10 +99,10 @@
         </div>
         <div class="item-header" *ngIf="!transaction?.company?.priceList && transaction?.type?.allowPriceList">
           <div class="btn-group">
-            <button type="button" class="btn btn-outline-light" (click)="openModal('priceList')">
+            <button type="button" class="btn btn-outline-light" (click)="changePriceList()">
               Lista de Precio: {{ transaction?.priceList?.name }}
             </button>
-            <button type="button" class="btn btn-light fa fa-pencil" (click)="openModal('priceList')"></button>
+            <button type="button" class="btn btn-light fa fa-pencil" (click)="changePriceList()"></button>
           </div>
         </div>
         <div class="item-header" *ngIf="transaction?.type?.requestShipmentMethod">

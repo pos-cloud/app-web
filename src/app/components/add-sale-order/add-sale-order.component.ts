@@ -2251,30 +2251,7 @@ export class AddSaleOrderComponent {
           }
         });
         break;
-      case 'priceList':
-        modalRef = this._modalService.open(SelectPriceListComponent).result.then(async (result) => {
-          if (result && result.priceList) {
-            if (this.transaction) {
-              if (!this.transaction.priceList) {
-                this.transaction.priceList = result.priceList;
-                this.newPriceList = result.priceList;
-              } else {
-                if (!this.priceList) {
-                  this.priceList = this.transaction.priceList;
-                }
-                this.transaction.priceList = result.priceList;
-                this.newPriceList = result.priceList;
-              }
-              await this.updateTransaction().then(async (transaction) => {
-                if (transaction) {
-                  this.transaction = transaction;
-                  this.updatePrices();
-                }
-              });
-            }
-          }
-        });
-        break;
+
       case 'change-information-cancellation':
         modalRef = this._modalService.open(this.contentInformCancellation).result.then(async (result) => {
           if (result !== 'cancel' && result !== '') {
@@ -3633,6 +3610,32 @@ export class AddSaleOrderComponent {
       .catch(() => {
         // Modal cerrado sin cambios
       });
+  }
+
+  changePriceList() {
+    const modalRef = this._modalService.open(SelectPriceListComponent);
+    modalRef.result.then(async (result) => {
+      if (result && result.priceList) {
+        if (this.transaction) {
+          if (!this.transaction.priceList) {
+            this.transaction.priceList = result.priceList;
+            this.newPriceList = result.priceList;
+          } else {
+            if (!this.priceList) {
+              this.priceList = this.transaction.priceList;
+            }
+            this.transaction.priceList = result.priceList;
+            this.newPriceList = result.priceList;
+          }
+          await this.updateTransaction().then(async (transaction) => {
+            if (transaction) {
+              this.transaction = transaction;
+              this.updatePrices();
+            }
+          });
+        }
+      }
+    });
   }
 
   /**

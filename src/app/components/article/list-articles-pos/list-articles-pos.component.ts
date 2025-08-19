@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -35,7 +44,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
   providers: [NgbAlertConfig, RoundNumberPipe, TranslateMePipe],
   encapsulation: ViewEncapsulation.None,
 })
-export class ListArticlesPosComponent implements OnInit {
+export class ListArticlesPosComponent implements OnInit, OnChanges {
   @Output() eventAddItem = new EventEmitter<{
     parent: MovementOfArticle;
     child: MovementOfArticle[];
@@ -100,19 +109,13 @@ export class ListArticlesPosComponent implements OnInit {
       await this.getTransaction().then(async (transaction) => {
         if (transaction) {
           this.transaction = transaction;
-          if (
-            this.transaction &&
-            this.transaction.company &&
-            this.transaction.company.priceList &&
-            this.transaction.company.type === CompanyType.Client
-          ) {
-            this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
-          } else if (this.transaction.priceList) {
-            this.priceList = this.transaction.priceList;
-          }
+          await this.updatePriceList();
         }
       });
+    } else {
+      await this.updatePriceList();
     }
+
     if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount)
       this.discountCompany = this.transaction.company.discount;
     if (
@@ -124,6 +127,25 @@ export class ListArticlesPosComponent implements OnInit {
       this.discountCompanyGroup = this.transaction.company.group.discount;
 
     this.getArticles();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['transaction'] && !changes['transaction'].firstChange) {
+      this.updatePriceList();
+    }
+  }
+
+  private async updatePriceList(): Promise<void> {
+    if (
+      this.transaction &&
+      this.transaction.company &&
+      this.transaction.company.priceList &&
+      this.transaction.company.type === CompanyType.Client
+    ) {
+      this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
+    } else if (this.transaction.priceList) {
+      this.priceList = this.transaction.priceList;
+    }
   }
 
   public getTransaction(): Promise<Transaction> {
