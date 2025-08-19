@@ -231,9 +231,8 @@ export class ListArticlesPosComponent implements OnInit {
 
   public getRealPrice(article: Article): void {
     let increasePrice: number = 0;
-    console.log(this.priceList);
     if (this.priceList) {
-      if (this.priceList.allowSpecialRules) {
+      if (this.priceList.rules.length > 0) {
         this.priceList.rules.forEach((rule) => {
           if (rule) {
             if (
@@ -326,7 +325,7 @@ export class ListArticlesPosComponent implements OnInit {
               priceList = await this.getPriceList(this.transaction.company.priceList._id);
             }
             if (priceList) {
-              if (priceList.allowSpecialRules) {
+              if (priceList?.rules?.length > 0) {
                 priceList.rules.forEach((rule) => {
                   if (rule) {
                     if (

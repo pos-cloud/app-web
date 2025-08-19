@@ -1073,7 +1073,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         let priceList = this.transaction.priceList;
 
         if (priceList) {
-          if (priceList.allowSpecialRules) {
+          if (priceList?.rules?.length > 0) {
             priceList.rules.forEach((rule) => {
               if (rule) {
                 if (

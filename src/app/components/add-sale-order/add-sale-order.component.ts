@@ -1305,7 +1305,7 @@ export class AddSaleOrderComponent {
       if (movementOfArticle.article && this.priceList && this.priceList?.percentageType === 'final') {
         let increasePrice = 0;
 
-        if (this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
+        if (this.priceList?.rules && this.priceList?.rules?.length > 0) {
           this.priceList.rules.forEach((rule) => {
             if (rule) {
               if (
@@ -1363,7 +1363,7 @@ export class AddSaleOrderComponent {
       if (movementOfArticle.article && this.newPriceList && this.newPriceList?.percentageType === 'final') {
         let increasePrice = 0;
 
-        if (this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {
+        if (this.newPriceList.rules && this.newPriceList.rules.length > 0) {
           this.newPriceList.rules.forEach((rule) => {
             if (rule) {
               if (
@@ -3548,7 +3548,7 @@ export class AddSaleOrderComponent {
     }
 
     // 2. Verificar si hay reglas especiales
-    if (priceList.allowSpecialRules && priceList.rules?.length) {
+    if (priceList?.rules?.length && priceList?.rules?.length > 0) {
       for (const rule of priceList.rules) {
         if (!rule) continue;
 
