@@ -143,4 +143,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'business-rules',
     loadChildren: () => import('./business-rules/business-rules.routes').then((m) => m.BUSINESS_RULES_ROUTES),
   },
+  {
+    path: 'price-list',
+    loadChildren: () => import('./price-list/price-list.routes').then((m) => m.PRICE_LIST_ROUTES),
+  },
 ];

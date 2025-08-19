@@ -26,7 +26,6 @@ import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.c
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
-import { ListPriceListsComponent } from './components/price-list/list-price-lists/list-price-lists.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
@@ -173,11 +172,6 @@ export const _routes: Routes = [
   {
     path: 'admin/states',
     component: ListStatesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/price-list',
-    component: ListPriceListsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

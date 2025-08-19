@@ -183,6 +183,7 @@
   "containsStructure": "Contiene Estructura",
   "containsVariants": "Contiene Variantes",
   "costPrice": "Precio de Costo",
+  "finalPrice": "Precio Final",
   "count": "Cantidad",
   "interval": "Intervalo",
   "creationDate": "Fecha de Creación",
@@ -445,6 +446,8 @@
   "parent.description": "Padre",
   "parent.code": "Código Padre",
   "percentage": "Porcentaje",
+  "percentageType": "Tipo de Porcentaje",
+  "margin": "Margen",
   "period.description": "Período",
   "permission": "Permiso",
   "permissions": "Permisos",
@@ -809,5 +812,7 @@
   "taxes": "Impuestos",
   "priceWithoutTax": "Precio sin impuestos",
   "discountRate": "Tasa de descuento",
-  "printBalanceAccount": "Imprimir saldo de cuenta"
+  "printBalanceAccount": "Imprimir saldo de cuenta",
+  "specialRules": "Reglas especiales",
+  "exceptions": "Excepciones"
 }

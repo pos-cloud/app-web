@@ -1,0 +1,366 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add'">{{ 'add-price-list' | translate | capitalize }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ priceList?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ priceList?.name ?? '' }}</span
+      >
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i>
+          <span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handlePriceListOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger active"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="handlePriceListOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="priceListForm" autocomplete="off" *ngIf="!loading">
+        <!-- Datos principales -->
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <!-- Primera fila: Nombre, Porcentaje, Tipo de Porcentaje y Por Defecto -->
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              id="name"
+              [readonly]="operation === 'view' || operation === 'delete'"
+              [ngClass]="{
+                'is-invalid': priceListForm.get('name')?.touched && priceListForm.get('name')?.invalid
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="priceListForm.get('name')?.touched && priceListForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="percentage" class="control-label">{{ 'percentage' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="percentage"
+              id="percentage"
+              min="0"
+              max="100"
+              step="0.01"
+              [readonly]="operation === 'view' || operation === 'delete'"
+              [ngClass]="{
+                'is-invalid': priceListForm.get('percentage')?.touched && priceListForm.get('percentage')?.invalid
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="priceListForm.get('percentage')?.touched && priceListForm.get('percentage')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="priceListForm.get('percentage')?.touched && priceListForm.get('percentage')?.hasError('min')"
+            >
+              El porcentaje debe ser mayor o igual a 0
+            </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="priceListForm.get('percentage')?.touched && priceListForm.get('percentage')?.hasError('max')"
+            >
+              El porcentaje debe ser menor o igual a 100
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="percentageType" class="control-label">{{ 'percentageType' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="percentageType"
+              id="percentageType"
+              [disabled]="operation === 'view' || operation === 'delete'"
+              [ngClass]="{
+                'is-invalid':
+                  priceListForm.get('percentageType')?.touched && priceListForm.get('percentageType')?.invalid
+              }"
+            >
+              <option value="final">{{ 'finalPrice' | translate | capitalize }}</option>
+              <option value="margin">{{ 'margin' | translate | capitalize }}</option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="priceListForm.get('percentageType')?.touched && priceListForm.get('percentageType')?.invalid"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="default" class="control-label">{{ 'default' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="default"
+              id="default"
+              [disabled]="operation === 'view' || operation === 'delete'"
+              [ngClass]="{
+                'is-invalid': priceListForm.get('default')?.touched && priceListForm.get('default')?.invalid
+              }"
+            >
+              <option value="false">{{ 'no' | translate | capitalize }}</option>
+              <option value="true">{{ 'yes' | translate | capitalize }}</option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="priceListForm.get('default')?.touched && priceListForm.get('default')?.invalid"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- Reglas especiales -->
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'specialRules' | translate | capitalize }}</b>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary ml-2"
+              *ngIf="operation !== 'view' && operation !== 'delete'"
+              (click)="addRule()"
+            >
+              <i class="fa fa-plus"></i> {{ 'add' | translate | capitalize }}
+            </button>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th style="width: 35%">{{ 'category' | translate | capitalize }}</th>
+                    <th style="width: 35%">{{ 'make' | translate | capitalize }}</th>
+                    <th style="width: 20%">{{ 'percentage' | translate | capitalize }}</th>
+                    <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
+                      {{ 'actions' | translate | capitalize }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="rules">
+                  <tr *ngFor="let rule of rulesArray.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <div class="typeahead-wrapper">
+                        <app-typeahead-dropdown
+                          [control]="rule.get('category')"
+                          [data]="categories"
+                          [keyField]="'_id'"
+                          [displayField]="'description'"
+                          [disabled]="operation === 'view' || operation === 'delete'"
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="typeahead-wrapper">
+                        <app-typeahead-dropdown
+                          [control]="rule.get('make')"
+                          [data]="makes"
+                          [keyField]="'_id'"
+                          [displayField]="'description'"
+                          [disabled]="operation === 'view' || operation === 'delete'"
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="percentage"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                        [ngClass]="{
+                          'is-invalid': rule.get('percentage')?.touched && rule.get('percentage')?.invalid
+                        }"
+                      />
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="rule.get('percentage')?.touched && rule.get('percentage')?.hasError('required')"
+                      >
+                        {{ 'fieldRequired' | translate | capitalize }}
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="rule.get('percentage')?.touched && rule.get('percentage')?.hasError('min')"
+                      >
+                        El porcentaje debe ser mayor o igual a 0
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="rule.get('percentage')?.touched && rule.get('percentage')?.hasError('max')"
+                      >
+                        El porcentaje debe ser menor o igual a 100
+                      </div>
+                    </td>
+                    <td *ngIf="operation !== 'view' && operation !== 'delete'">
+                      <button type="button" class="btn btn-danger btn-sm" (click)="removeRule(i)">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- Excepciones -->
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'exceptions' | translate | capitalize }}</b>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary ml-2"
+              *ngIf="operation !== 'view' && operation !== 'delete'"
+              (click)="addException()"
+            >
+              <i class="fa fa-plus"></i> {{ 'add' | translate | capitalize }}
+            </button>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th style="width: 70%">{{ 'article' | translate | capitalize }}</th>
+                    <th style="width: 20%">{{ 'percentage' | translate | capitalize }}</th>
+                    <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
+                      {{ 'actions' | translate | capitalize }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="exceptions">
+                  <tr *ngFor="let exception of exceptionsArray.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <app-typeahead-dropdown
+                        [control]="exception.get('article')"
+                        [data]="articles"
+                        [keyField]="'_id'"
+                        [displayField]="'description'"
+                        [disabled]="operation === 'view' || operation === 'delete'"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="percentage"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        [readonly]="operation === 'view' || operation === 'delete'"
+                        [ngClass]="{
+                          'is-invalid': exception.get('percentage')?.touched && exception.get('percentage')?.invalid
+                        }"
+                      />
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          exception.get('percentage')?.touched && exception.get('percentage')?.hasError('required')
+                        "
+                      >
+                        {{ 'fieldRequired' | translate | capitalize }}
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="exception.get('percentage')?.touched && exception.get('percentage')?.hasError('min')"
+                      >
+                        El porcentaje debe ser mayor o igual a 0
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="exception.get('percentage')?.touched && exception.get('percentage')?.hasError('max')"
+                      >
+                        El porcentaje debe ser menor o igual a 100
+                      </div>
+                    </td>
+                    <td *ngIf="operation !== 'view' && operation !== 'delete'">
+                      <button type="button" class="btn btn-danger btn-sm" (click)="removeException(i)">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Estilos para solucionar el problema del dropdown en la tabla */
+  .typeahead-wrapper {
+    position: relative;
+  }
+
+  .typeahead-wrapper .dropdown-menu {
+    z-index: 9999 !important;
+    position: absolute !important;
+  }
+
+  .table-responsive {
+    overflow: visible !important;
+  }
+
+  .table {
+    overflow: visible !important;
+  }
+
+  .table tbody {
+    overflow: visible !important;
+  }
+
+  .table td {
+    overflow: visible !important;
+  }
+</style>

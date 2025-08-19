@@ -88,5 +88,12 @@
   "bold": "Bold",
   "italic": "Italic",
   "size": "Size",
-  "currentStock": "Current stock"
+  "currentStock": "Current stock",
+  "specialRules": "Special rules",
+  "exceptions": "Exceptions",
+  "percentageType": "Percentage Type",
+  "basePrice": "Base Price",
+  "costPrice": "Cost Price",
+  "finalPrice": "Final Price",
+  "margin": "Margin"
 }

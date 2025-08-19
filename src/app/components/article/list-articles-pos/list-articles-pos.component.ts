@@ -12,7 +12,7 @@ import { Article, Type } from '../article';
 
 import { ArticleService } from '../../../core/services/article.service';
 
-import { CompanyType, PriceList, Structure, Utilization } from '@types';
+import { ApiResponse, CompanyType, PriceList, Structure, Utilization } from '@types';
 import { Tax } from 'app/components/tax/tax';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
@@ -231,6 +231,7 @@ export class ListArticlesPosComponent implements OnInit {
 
   public getRealPrice(article: Article): void {
     let increasePrice: number = 0;
+    console.log(this.priceList);
     if (this.priceList) {
       if (this.priceList.allowSpecialRules) {
         this.priceList.rules.forEach((rule) => {
@@ -240,19 +241,19 @@ export class ListArticlesPosComponent implements OnInit {
               article.category &&
               rule.make &&
               article.make &&
-              rule.category._id === article.category.toString() &&
-              rule.make._id === article.make._id
+              rule.category === article.category.toString() &&
+              rule.make === article.make._id
             ) {
               increasePrice = rule.percentage + this.priceList.percentage;
             }
-            if (rule.make && article.make && rule.category == null && rule.make._id === article.make._id) {
+            if (rule.make && article.make && rule.category == null && rule.make === article.make._id) {
               increasePrice = rule.percentage + this.priceList.percentage;
             }
             if (
               rule.category &&
               article.category &&
               rule.make == null &&
-              rule.category._id === article.category.toString()
+              rule.category === article.category.toString()
             ) {
               increasePrice = rule.percentage + this.priceList.percentage;
             }
@@ -268,7 +269,7 @@ export class ListArticlesPosComponent implements OnInit {
       if (this.priceList.exceptions && this.priceList.exceptions.length > 0) {
         this.priceList.exceptions.forEach((exception) => {
           if (exception) {
-            if (article && exception.article && exception.article._id === article._id) {
+            if (article && exception.article && exception.article === article._id) {
               increasePrice = exception.percentage;
             }
           }
@@ -279,7 +280,7 @@ export class ListArticlesPosComponent implements OnInit {
     increasePrice -= this.discountCompany;
     increasePrice -= this.discountCompanyGroup;
 
-    if (this.database == 'sangenemi' || this.database == 'globalstore') {
+    if (this.priceList.percentageType === 'margin') {
       return this.roundNumber.transform(article.costPrice + (article.costPrice * increasePrice) / 100);
     }
 
@@ -287,20 +288,20 @@ export class ListArticlesPosComponent implements OnInit {
   }
 
   public getPriceList(id: string): Promise<PriceList> {
-    return new Promise<PriceList>((resolve, reject) => {
-      this._priceListService.getPriceList(id).subscribe(
-        (result) => {
-          if (!result.priceList) {
-            resolve(null);
+    return new Promise<PriceList>((resolve) => {
+      this._priceListService.getById(id).subscribe({
+        next: (response: ApiResponse) => {
+          if (response.status === 200) {
+            resolve(response.result);
           } else {
-            resolve(result.priceList);
+            resolve(null);
           }
         },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
+        error: (error) => {
+          this._toastService.showToast(error);
           resolve(null);
-        }
-      );
+        },
+      });
     });
   }
 
@@ -333,19 +334,19 @@ export class ListArticlesPosComponent implements OnInit {
                       article.category &&
                       rule.make &&
                       article.make &&
-                      rule.category._id === article.category._id &&
-                      rule.make._id === article.make._id
+                      rule.category === article.category._id &&
+                      rule.make === article.make._id
                     ) {
                       increasePrice = rule.percentage + priceList.percentage;
                     }
-                    if (rule.make && article.make && rule.category == null && rule.make._id === article.make._id) {
+                    if (rule.make && article.make && rule.category == null && rule.make === article.make._id) {
                       increasePrice = rule.percentage + priceList.percentage;
                     }
                     if (
                       rule.category &&
                       article.category &&
                       rule.make == null &&
-                      rule.category._id === article.category._id
+                      rule.category === article.category._id
                     ) {
                       increasePrice = rule.percentage + priceList.percentage;
                     }
@@ -361,7 +362,7 @@ export class ListArticlesPosComponent implements OnInit {
               if (priceList.exceptions && priceList.exceptions.length > 0) {
                 priceList.exceptions.forEach((exception) => {
                   if (exception) {
-                    if (article && exception.article && exception.article._id === article._id) {
+                    if (article && exception.article && exception.article === article._id) {
                       increasePrice = exception.percentage;
                     }
                   }
@@ -431,7 +432,7 @@ export class ListArticlesPosComponent implements OnInit {
               );
             }
 
-            if ((this.database == 'sangenemi' || this.database == 'globalstore') && priceList) {
+            if (priceList.percentageType === 'margin') {
               movementOfArticle.markupPrice = this.roundNumber.transform(priceList.percentage);
               let aux = (movementOfArticle.costPrice * priceList.percentage) / 100;
               movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + aux);

@@ -8,8 +8,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import * as printJS from 'print-js';
 
-import { ApiResponse, Category, Make, PrintType } from '@types';
-import { PriceList } from 'app/components/price-list/price-list';
+import { ApiResponse, Category, Make, PriceList, PrintType } from '@types';
 
 import { PrintService } from '@core/services/print.service';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';

@@ -2,8 +2,7 @@ import { Component, EventEmitter, Input, OnInit, ViewEncapsulation } from '@angu
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Account, CompanyType, Structure, Utilization } from '@types';
-import { PriceList } from 'app/components/price-list/price-list';
+import { Account, ApiResponse, PriceList, Structure, Utilization } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { AccountService } from 'app/core/services/account.service';
 import { ArticleService } from 'app/core/services/article.service';
@@ -389,20 +388,20 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   getPriceList(id: string): Promise<PriceList> {
-    return new Promise<PriceList>((resolve, reject) => {
-      this._priceListService.getPriceList(id).subscribe(
-        (result) => {
-          if (!result.priceList) {
-            resolve(null);
+    return new Promise<PriceList>((resolve) => {
+      this._priceListService.getById(id).subscribe({
+        next: (response: ApiResponse) => {
+          if (response.status === 200) {
+            resolve(response.result);
           } else {
-            resolve(result.priceList);
+            resolve(null);
           }
         },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
+        error: (error) => {
+          this._toastService.showToast(error);
           resolve(null);
-        }
-      );
+        },
+      });
     });
   }
 
@@ -1033,26 +1032,6 @@ export class AddMovementOfArticleComponent implements OnInit {
       this.transaction.type &&
       this.transaction.type.transactionMovement === TransactionMovement.Sale
     ) {
-      let fields: ArticleFields[] = new Array();
-
-      if (this.movementOfArticle.otherFields && this.movementOfArticle.otherFields.length > 0) {
-        for (const field of this.movementOfArticle.otherFields) {
-          if (
-            field.articleField.datatype === ArticleFieldType.Percentage ||
-            field.articleField.datatype === ArticleFieldType.Number
-          ) {
-            if (field.articleField.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform(
-                (this.movementOfArticle.basePrice * parseFloat(field.value)) / 100
-              );
-            } else if (field.articleField.datatype === ArticleFieldType.Number) {
-              field.amount = parseFloat(field.value);
-            }
-          }
-          fields.push(field);
-        }
-      }
-      this.movementOfArticle.otherFields = fields;
       this.movementOfArticle.costPrice = this.roundNumber.transform(articleSelected.costPrice);
       this.movementOfArticle.markupPercentage = articleSelected.markupPercentage;
       this.movementOfArticle.markupPrice = this.roundNumber.transform(articleSelected.markupPrice);
@@ -1090,29 +1069,20 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       let increasePrice = 0;
 
-      if (
-        this.movementOfArticle &&
-        this.transaction &&
-        this.transaction.company &&
-        this.transaction.company.priceList &&
-        this.transaction.company.priceList != null &&
-        this.transaction.company.type === CompanyType.Client
-      ) {
-        let priceList = await this.getPriceList(this.transaction.company.priceList._id);
+      if (this.movementOfArticle && this.transaction && this.transaction.priceList) {
+        let priceList = this.transaction.priceList;
 
         if (priceList) {
           if (priceList.allowSpecialRules) {
             priceList.rules.forEach((rule) => {
               if (rule) {
                 if (
-                  this.movementOfArticle &&
-                  this.movementOfArticle.article &&
-                  this.movementOfArticle.article.category &&
-                  this.movementOfArticle.article.make &&
+                  this.movementOfArticle?.article?.category &&
+                  this.movementOfArticle?.article?.make &&
                   rule.category &&
                   rule.make &&
-                  rule.category._id === this.movementOfArticle.article.category._id &&
-                  rule.make._id === this.movementOfArticle.article.make._id
+                  rule.category === this.movementOfArticle.article.category._id &&
+                  rule.make === this.movementOfArticle.article.make._id
                 ) {
                   increasePrice = rule.percentage + priceList.percentage;
                 }
@@ -1122,17 +1092,15 @@ export class AddMovementOfArticleComponent implements OnInit {
                   this.movementOfArticle.article.make &&
                   rule.make &&
                   rule.category === null &&
-                  rule.make._id === this.movementOfArticle.article.make._id
+                  rule.make === this.movementOfArticle.article.make._id
                 ) {
                   increasePrice = rule.percentage + priceList.percentage;
                 }
                 if (
-                  this.movementOfArticle &&
-                  this.movementOfArticle.article &&
-                  this.movementOfArticle.article.category &&
+                  this.movementOfArticle?.article?.category &&
                   rule.category &&
                   rule.make === null &&
-                  rule.category._id === this.movementOfArticle.article.category._id
+                  rule.category === this.movementOfArticle.article.category._id
                 ) {
                   increasePrice = rule.percentage + priceList.percentage;
                 }
@@ -1149,10 +1117,9 @@ export class AddMovementOfArticleComponent implements OnInit {
             priceList.exceptions.forEach((exception) => {
               if (exception) {
                 if (
-                  this.movementOfArticle &&
-                  this.movementOfArticle.article &&
+                  this.movementOfArticle?.article &&
                   exception.article &&
-                  exception.article._id === this.movementOfArticle.article._id
+                  exception.article === this.movementOfArticle.article._id
                 ) {
                   increasePrice = exception.percentage;
                 }
@@ -1176,32 +1143,6 @@ export class AddMovementOfArticleComponent implements OnInit {
       let taxedAmount = this.movementOfArticle.basePrice;
 
       this.movementOfArticle.costPrice = 0;
-
-      let fields: ArticleFields[] = new Array();
-
-      if (this.movementOfArticle.otherFields && this.movementOfArticle.otherFields.length > 0) {
-        for (const field of this.movementOfArticle.otherFields) {
-          if (
-            field.articleField.datatype === ArticleFieldType.Percentage ||
-            field.articleField.datatype === ArticleFieldType.Number
-          ) {
-            if (field.articleField.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform(
-                (this.movementOfArticle.basePrice * parseFloat(field.value)) / 100
-              );
-            } else if (field.articleField.datatype === ArticleFieldType.Number) {
-              field.amount = parseFloat(field.value);
-            }
-            if (field.articleField.modifyVAT) {
-              taxedAmount += field.amount;
-            } else {
-              this.movementOfArticle.costPrice += field.amount;
-            }
-          }
-          fields.push(field);
-        }
-      }
-      this.movementOfArticle.otherFields = fields;
       if (this.transaction.type.requestTaxes) {
         let taxes: Taxes[] = new Array();
 

@@ -67,9 +67,6 @@ import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.c
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
-import { ListPriceListsComponent } from './components/price-list/list-price-lists/list-price-lists.component';
-import { PriceListComponent } from './components/price-list/price-list/price-list.component';
-import { SelectPriceListComponent } from './components/price-list/select-price-list/select-price-list.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { PrintQRComponent } from './components/print/print-qr/print-qr.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
@@ -177,8 +174,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectOriginComponent,
     ListCashBoxComponent,
     CurrentAccountDetailsComponent,
-    PriceListComponent,
-    ListPriceListsComponent,
     ListArticlesPosComponent,
     EditCheckComponent,
     PrintVatBookComponent,
@@ -200,7 +195,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportTransactionTypeComponent,
     PrintQRComponent,
     SelectMovementsOfCashesComponent,
-    SelectPriceListComponent,
     KardexCheckComponent,
     MenuComponent,
   ],

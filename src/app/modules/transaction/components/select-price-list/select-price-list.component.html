@@ -1,0 +1,48 @@
+<div class="modal-header">
+  <h4 class="modal-title">Seleccionar Lista de Precios</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
+      {{ alertMessage }}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="priceListForm" (ngSubmit)="selectPriceList()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <div class="center-content">
+            <div class="btn-group-vertical">
+              <button
+                type="button"
+                *ngFor="let priceList of priceLists"
+                class="btn btn-priceList mb-2"
+                style="min-width: 200px; text-align: left"
+                [ngClass]="{
+                  'btn-primary': priceList._id === priceListSelected?._id,
+                  'btn-outline-primary': priceList._id !== priceListSelected?._id
+                }"
+                (click)="priceListSelected = priceList; priceListForm.patchValue({ priceList: priceList._id })"
+              >
+                <div class="text-left">
+                  <strong>{{ priceList.name }}</strong>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!priceListSelected || loading">
+        <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+        <span *ngIf="!loading">Cambiar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>
