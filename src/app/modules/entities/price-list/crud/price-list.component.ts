@@ -7,7 +7,7 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
@@ -53,13 +53,12 @@ export class PriceListComponent implements OnInit {
     public _makeService: MakeService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
-    private _route: ActivatedRoute,
     private _toastService: ToastService
   ) {
     this.priceListForm = this._fb.group({
       _id: ['', []],
       name: ['', [Validators.required]],
-      percentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+      percentage: ['', [Validators.required]],
       percentageType: ['final', [Validators.required]], // Nuevo campo
       allowSpecialRules: [false, []],
       default: [false, [Validators.required]],
@@ -84,7 +83,7 @@ export class PriceListComponent implements OnInit {
       _id: [null, []],
       category: [null, []],
       make: [null, []],
-      percentage: [0, [Validators.min(0), Validators.max(100)]],
+      percentage: [0, []],
     });
   }
 
@@ -93,7 +92,7 @@ export class PriceListComponent implements OnInit {
     return this._fb.group({
       _id: [null, []],
       article: [null, []],
-      percentage: [0, [Validators.min(0), Validators.max(100)]],
+      percentage: [0, []],
     });
   }
 
@@ -211,7 +210,7 @@ export class PriceListComponent implements OnInit {
               _id: [rule._id || null, []],
               category: [categoryObj || null, []],
               make: [makeObj || null, []],
-              percentage: [rule.percentage, [Validators.min(0), Validators.max(100)]],
+              percentage: [rule.percentage, []],
             })
           );
         });
@@ -227,7 +226,7 @@ export class PriceListComponent implements OnInit {
             this._fb.group({
               _id: [exception._id || null, []],
               article: [articleObj || null, []],
-              percentage: [exception.percentage, [Validators.min(0), Validators.max(100)]],
+              percentage: [exception.percentage, []],
             })
           );
         });
@@ -264,11 +263,6 @@ export class PriceListComponent implements OnInit {
     }
 
     const formValue = this.priceListForm.value;
-
-    console.log('Form Value:', formValue);
-    console.log('Rules:', formValue.rules);
-    console.log('Exceptions:', formValue.exceptions);
-    console.log('this.priceList:', this.priceList);
 
     // Preparar el objeto priceList con las reglas y excepciones
     const priceListData: PriceList = {
@@ -311,8 +305,6 @@ export class PriceListComponent implements OnInit {
         };
       }),
     };
-
-    console.log('Final Data:', priceListData);
 
     switch (this.operation) {
       case 'add':
