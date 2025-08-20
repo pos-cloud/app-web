@@ -14,7 +14,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
-import { Deposit, VariantType, VariantValue } from '@types';
+import { VariantType, VariantValue } from '@types';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -23,8 +23,6 @@ import { ArticleStockService } from '../../../core/services/article-stock.servic
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { VariantService } from '../../../core/services/variant.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { ArticleFieldType } from '../../article-field/article-field';
-import { ArticleFields } from '../../article-field/article-fields';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { Article } from '../../article/article';
 import { ArticleComponent } from '../../article/crud/article.component';
@@ -181,28 +179,6 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   loadLocationAndStock(): void {
-    let depositArticle: Deposit;
-
-    // if (this.movementOfArticle?.article?.deposits && this.movementOfArticle?.article?.deposits?.length > 0) {
-    //   this.movementOfArticle.article.deposits.forEach((element) => {
-    //     if (element.deposit.branch._id === this.transaction.depositDestination.branch._id) {
-    //       this.position += `Dep. ${element.deposit.name} - `;
-    //       depositArticle = element.deposit;
-    //     } else {
-    //       depositArticle = this.transaction.depositDestination;
-    //     }
-    //   });
-    // } else {
-    //   depositArticle = this.transaction.depositDestination;
-    // }
-
-    // if (this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
-    //   this.movementOfArticle.article.locations.forEach((element) => {
-    //     if (element.location && element.location.deposit && element.location.deposit._id === depositArticle._id) {
-    //       this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
-    //     }
-    //   });
-    // }
     if (Config.modules && Config.modules.stock) {
       this.getArticleStock(this.movementOfArticle).then((articleStock) => {
         if (articleStock) {
@@ -1584,29 +1560,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     movementOfArticle.costPrice = 0;
 
-    let fields: ArticleFields[] = new Array();
-
-    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-      for (const field of movementOfArticle.otherFields) {
-        if (
-          field.articleField.datatype === ArticleFieldType.Percentage ||
-          field.articleField.datatype === ArticleFieldType.Number
-        ) {
-          if (field.articleField.datatype === ArticleFieldType.Percentage) {
-            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value)) / 100);
-          } else if (field.articleField.datatype === ArticleFieldType.Number) {
-            field.amount = parseFloat(field.value);
-          }
-          if (field.articleField.modifyVAT) {
-            taxedAmount += this.roundNumber.transform(field.amount);
-          } else {
-            movementOfArticle.costPrice += this.roundNumber.transform(field.amount);
-          }
-        }
-        fields.push(field);
-      }
-    }
-    movementOfArticle.otherFields = fields;
     if (this.transaction.type.requestTaxes) {
       if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
         let taxes: Taxes[] = new Array();
@@ -1660,25 +1613,6 @@ export class AddMovementOfArticleComponent implements OnInit {
       ) {
         movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
-
-      let fields: ArticleFields[] = new Array();
-
-      if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-        for (const field of movementOfArticle.otherFields) {
-          if (
-            field.articleField.datatype === ArticleFieldType.Percentage ||
-            field.articleField.datatype === ArticleFieldType.Number
-          ) {
-            if (field.articleField.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value)) / 100);
-            } else if (field.articleField.datatype === ArticleFieldType.Number) {
-              field.amount = parseFloat(field.value);
-            }
-          }
-          fields.push(field);
-        }
-      }
-      movementOfArticle.otherFields = fields;
 
       movementOfArticle.costPrice = this.roundNumber.transform(
         movementOfArticle.article.costPrice * movementOfArticle.amount
