@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
@@ -3665,5 +3665,46 @@ export class AddSaleOrderComponent {
         // Modal cerrado sin cambios
       }
     );
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    // No ejecutar si hay modales abiertos (evitar conflictos con modales hijos)
+    const modalsOpen = document.querySelectorAll('.modal.show');
+    if (modalsOpen.length > 0) {
+      return;
+    }
+
+    switch (event.code) {
+      case 'F1':
+        event.preventDefault();
+        this.handleF1Shortcut();
+        break;
+      case 'F2':
+        event.preventDefault();
+        this.handleF2Shortcut();
+        break;
+    }
+  }
+
+  handleF1Shortcut() {
+    if (this.loading) return;
+
+    if (
+      this.transaction?.type?.fastPayment &&
+      this.transactionMovement &&
+      this.transactionMovement !== 'Stock' &&
+      this.transactionMovement !== 'Producción'
+    ) {
+      this.openModal('charge', null, this.transaction.type.fastPayment);
+    }
+  }
+
+  handleF2Shortcut() {
+    if (this.loading) return;
+
+    if (this.transactionMovement && this.transactionMovement !== 'Stock' && this.transactionMovement !== 'Producción') {
+      this.openModal('charge');
+    }
   }
 }

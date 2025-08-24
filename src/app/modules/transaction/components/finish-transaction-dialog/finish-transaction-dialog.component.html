@@ -24,10 +24,10 @@
                 'btn-outline-primary': option.id !== selectedOption.id
               }"
               (click)="selectOption(option)"
+              [disabled]="loading"
             >
               <i class="fa {{ option.icon }}"></i>
               {{ option.name }}
-              <small class="text-muted ml-2">[F{{ i + 1 }}]</small>
             </button>
           </div>
         </div>
@@ -36,9 +36,16 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="finishTransaction()">
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="loading"
+      (click)="finishTransaction()"
+      ngbTooltip="↑↓ para navegar, Enter para confirmar"
+      placement="top"
+    >
       <i class="fa" [ngClass]="{ 'fa-check': !loading, 'fa-spinner fa-spin': loading }"></i>
-      <span *ngIf="!loading">Confirmar <small class="text-muted ml-2">[E]</small></span>
+      <span *ngIf="!loading">Confirmar</span>
       <span *ngIf="loading">Procesando...</span>
     </button>
   </div>

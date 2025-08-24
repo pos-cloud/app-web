@@ -23,9 +23,7 @@
               *ngIf="transaction && transaction.type"
               [disabled]="loading"
             >
-              1-
               {{ transaction.type.name }}
-              <small class="text-muted ml-2">[F1]</small>
             </button>
             <button
               type="button"
@@ -42,9 +40,7 @@
               (click)="cancellationTypeSelected = cancellationType"
               [disabled]="loading"
             >
-              {{ i + 2 }}-
               {{ cancellationType.destination.name }}
-              <small class="text-muted ml-2">[F{{ i + 2 }}]</small>
             </button>
           </div>
         </div>
@@ -53,9 +49,17 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-    <button type="button" class="btn btn-primary" (click)="finishSelection()" [focus]="focusEvent" [disabled]="loading">
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="finishSelection()"
+      [focus]="focusEvent"
+      [disabled]="loading"
+      ngbTooltip="↑↓ para navegar, Enter para aceptar"
+      placement="top"
+    >
       <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
-      <span *ngIf="!loading">Aceptar <small class="text-muted ml-2">[E]</small></span>
+      <span *ngIf="!loading">Aceptar</span>
       <span *ngIf="loading">Espere por favor</span>
     </button>
   </div>

@@ -29,7 +29,6 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 @Component({
   selector: 'app-cancellation-types-automatic',
   templateUrl: './cancellation-types-automatic.component.html',
-  styleUrls: ['./cancellation-types-automatic.component.scss'],
   providers: [NgbAlertConfig, TranslateMePipe],
 })
 export class CancellationTypeAutomaticComponent implements OnInit {
@@ -643,19 +642,75 @@ export class CancellationTypeAutomaticComponent implements OnInit {
       return;
     }
 
-    const match = /^F(\d+)$/.exec(key);
-    if (!match) return;
+    if (key === 'ArrowUp' || key === 'ArrowDown') {
+      event.preventDefault();
+      this.navigateOptions(key === 'ArrowUp' ? -1 : 1);
+    }
+  }
 
-    event.preventDefault();
-    const fnNumber = parseInt(match[1], 10);
-    if (fnNumber === 1) {
-      this.cancellationTypeSelected = null;
-      return;
+  private navigateOptions(direction: number): void {
+    const allOptions = this.getAllOptionsForNavigation();
+    if (allOptions.length === 0) return;
+
+    const currentIndex = this.getCurrentSelectionIndex();
+    let newIndex = currentIndex + direction;
+
+    // Wrap around - si llega al final, va al principio y viceversa
+    if (newIndex >= allOptions.length) {
+      newIndex = 0;
+    } else if (newIndex < 0) {
+      newIndex = allOptions.length - 1;
     }
 
-    const index = fnNumber - 2;
-    if (this.cancellationTypes && index >= 0 && index < this.cancellationTypes.length) {
-      this.cancellationTypeSelected = this.cancellationTypes[index];
+    this.selectOptionByIndex(newIndex);
+  }
+
+  private getAllOptionsForNavigation(): any[] {
+    const options = [];
+
+    // Agregar primera opción (transaction.type) si existe
+    if (this.transaction && this.transaction.type) {
+      options.push({ type: 'transaction', data: this.transaction.type });
+    }
+
+    // Agregar todas las opciones de cancellationTypes
+    if (this.cancellationTypes) {
+      this.cancellationTypes.forEach((cancellationType) => {
+        options.push({ type: 'cancellation', data: cancellationType });
+      });
+    }
+
+    return options;
+  }
+
+  private getCurrentSelectionIndex(): number {
+    const allOptions = this.getAllOptionsForNavigation();
+
+    if (!this.cancellationTypeSelected) {
+      // Si no hay selección, está seleccionada la primera opción (transaction.type)
+      return 0;
+    }
+
+    // Buscar en cancellationTypes
+    for (let i = 0; i < allOptions.length; i++) {
+      if (allOptions[i].type === 'cancellation' && allOptions[i].data._id === this.cancellationTypeSelected._id) {
+        return i;
+      }
+    }
+
+    return 0;
+  }
+
+  private selectOptionByIndex(index: number): void {
+    const allOptions = this.getAllOptionsForNavigation();
+    if (index < 0 || index >= allOptions.length) return;
+
+    const selectedOption = allOptions[index];
+
+    if (selectedOption.type === 'transaction') {
+      this.cancellationTypeSelected = null;
+    } else {
+      this.cancellationTypeSelected = selectedOption.data;
     }
   }
 }

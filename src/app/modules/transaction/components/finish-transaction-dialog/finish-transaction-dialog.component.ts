@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostListener, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbAlertModule, NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PrintService } from '@core/services/print.service';
@@ -24,7 +24,7 @@ interface TransactionOption {
   selector: 'app-finish-transaction-dialog',
   templateUrl: './finish-transaction-dialog.component.html',
   standalone: true,
-  imports: [CommonModule, FormsModule, PipesModule, TranslateModule],
+  imports: [CommonModule, FormsModule, PipesModule, TranslateModule, NgbTooltipModule, NgbAlertModule],
 })
 export class FinishTransactionDialogComponent implements OnInit {
   @Input() transaction: any;
@@ -176,11 +176,10 @@ export class FinishTransactionDialogComponent implements OnInit {
 
     if (this.transaction && this.transaction.company) {
       modalRef.componentInstance.to = this.transaction.company.emails;
-      modalRef.componentInstance.subject = `${this.transaction.type.name} ${this.padNumber(
-        this.transaction.origin,
-        4
-      )}-${this.transaction.letter}-${this.padNumber(this.transaction.number, 8)}`;
     }
+    modalRef.componentInstance.subject = `${this.transaction.type.name} ${this.padNumber(this.transaction.origin, 4)}-${
+      this.transaction.letter
+    }-${this.padNumber(this.transaction.number, 8)}`;
     modalRef.componentInstance.transactionId = this.transaction._id;
 
     try {
@@ -223,14 +222,25 @@ export class FinishTransactionDialogComponent implements OnInit {
       return;
     }
 
-    const match = /^F(\d+)$/.exec(key);
-    if (!match) return;
-
-    const fnNumber = parseInt(match[1], 10);
-    const index = fnNumber - 1; // F1 => 0, F2 => 1
-    if (this.transactionOptions && index >= 0 && index < this.transactionOptions.length) {
+    if (key === 'ArrowUp' || key === 'ArrowDown') {
       event.preventDefault();
-      this.selectedOption = this.transactionOptions[index];
+      this.navigateOptions(key === 'ArrowUp' ? -1 : 1);
     }
+  }
+
+  private navigateOptions(direction: number): void {
+    if (!this.transactionOptions || this.transactionOptions.length === 0) return;
+
+    const currentIndex = this.transactionOptions.findIndex((option) => option.id === this.selectedOption.id);
+    let newIndex = currentIndex + direction;
+
+    // Wrap around - si llega al final, va al principio y viceversa
+    if (newIndex >= this.transactionOptions.length) {
+      newIndex = 0;
+    } else if (newIndex < 0) {
+      newIndex = this.transactionOptions.length - 1;
+    }
+
+    this.selectedOption = this.transactionOptions[newIndex];
   }
 }

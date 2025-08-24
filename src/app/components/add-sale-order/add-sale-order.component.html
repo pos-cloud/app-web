@@ -427,6 +427,8 @@
           class="col-md-12 btn-action btn-large center-content"
           (click)="!loading ? openModal('charge') : $event.stopPropagation()"
           [ngClass]="{ disabled: loading, enabled: !loading }"
+          ngbTooltip="Atajo: F2"
+          placement="top"
         >
           <span
             *ngIf="transactionMovement && transactionMovement === 'Compra' && transaction.type.requestPaymentMethods"
@@ -445,6 +447,8 @@
           class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"
           (click)="!loading ? openModal('charge', null, transaction.type.fastPayment) : $event.stopPropagation()"
           [ngClass]="{ disabled: loading, enabled: !loading }"
+          ngbTooltip="Atajo: F1"
+          placement="top"
         >
           <span>{{ transaction.type.fastPayment.name }}</span>
         </div>
@@ -453,6 +457,8 @@
           class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"
           (click)="!loading ? openModal('charge') : $event.stopPropagation()"
           [ngClass]="{ disabled: loading, enabled: !loading }"
+          ngbTooltip="Atajo: F2"
+          placement="top"
         >
           <span *ngIf="transactionMovement && transactionMovement === 'Compra'">Pagar</span>
           <span *ngIf="transactionMovement && transactionMovement === 'Venta'">Cobrar</span>
