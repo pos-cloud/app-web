@@ -42,6 +42,13 @@
       ></ng-multiselect-dropdown>
     </div>
   </div>
+  <div class="container mb-4" *ngIf="model === 'company'">
+    <ngb-alert class="alert alert-primary" [dismissible]="false">
+      <strong>Importante:</strong> Al importar compañías desde Excel, solo se agregarán nuevas. No se modificarán las
+      que ya existen.
+    </ngb-alert>
+  </div>
+
   <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" class="d-inline">
     <div class="modal-body" class="d-inline">
       <div class="row">
