@@ -723,8 +723,8 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
             if (art.type === Type.Final) {
               if (
                 isCodePrefix &&
-                this.padNumber(art.code, this.config.article.code.validators.maxLength) ===
-                  this.padNumber(this.filterArticle, this.config.article.code.validators.maxLength)
+                this.padNumber(art.code, this.config.tradeBalance.numberOfCode) ===
+                  this.padNumber(this.filterArticle, this.config.tradeBalance.numberOfCode)
               ) {
                 count++;
                 article = art;
