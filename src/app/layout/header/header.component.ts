@@ -365,7 +365,8 @@ export class HeaderComponent implements OnInit {
           pathLocation[7] === 'agregar-transaccion' ||
           pathLocation[7] === 'editar-transaccion' ||
           pathLocation[8] === 'agregar-transaccion' ||
-          pathLocation[2] === 'ver-galeria'
+          pathLocation[2] === 'ver-galeria' ||
+          (pathLocation[1] === 'transaction' && pathLocation[2] === 'view' && pathLocation[3] === 'formal')
         ) {
           this.hideMenu = true;
         } else {

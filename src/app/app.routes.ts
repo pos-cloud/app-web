@@ -490,6 +490,14 @@ export const _routes: Routes = [
     canActivate: [AuthGuard],
     loadComponent: () => import('./layout/license/license.component').then((m) => m.LicenseComponent),
   },
+  {
+    path: 'transaction/view/formal/:id',
+    loadComponent: () =>
+      import('./modules/transaction/views/formal/formal-transaction-view.component').then(
+        (m) => m.FormalTransactionViewComponent
+      ),
+    canActivate: [AuthGuard],
+  },
   // {
   //   path: 'transaction',
   // },

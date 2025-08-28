@@ -323,7 +323,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   public createMovementOfArticle(movementData: any): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-articles/create`;
+    const URL = `${environment.apiv2}movements-of-articles/create`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
