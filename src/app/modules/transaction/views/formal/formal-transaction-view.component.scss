@@ -1,0 +1,104 @@
+// Sobrescribir estilos globales de Bootstrap específicos para este componente
+app-formal-transaction-view {
+  // Quitar min-height de las cards para que se adapten al contenido
+  .card {
+    min-height: unset !important;
+  }
+
+  // Ajustar el header para que sea más compacto
+  .card-header {
+    min-height: unset !important;
+    padding: 0.75rem 1rem;
+  }
+
+  // Optimizar el body de las cards
+  .card-body {
+    min-height: unset !important;
+  }
+
+  // Mejorar la presentación de las tablas
+  .table {
+    margin-bottom: 0;
+  }
+
+  // Mejorar el diseño de los tabs
+  .nav-tabs {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+
+    .nav-link {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid transparent;
+      border-bottom: none;
+      color: #6c757d;
+      font-weight: 500;
+      transition: all 0.15s ease-in-out;
+
+      &:hover {
+        border-color: #e9ecef #e9ecef #dee2e6;
+        color: #495057;
+        background-color: #fff;
+      }
+
+      &.active {
+        color: #495057;
+        background-color: #fff;
+        border-color: #dee2e6 #dee2e6 #fff;
+        border-bottom: 1px solid #fff;
+        margin-bottom: -1px;
+      }
+
+      .badge {
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Mejorar el contenido de los tabs
+  [ngbNavOutlet] {
+    background-color: #fff;
+  }
+
+  // Estilo para el logo en el header
+  .card-header img {
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  // Estilos para los botones de edición en el header de datos
+  .card-body {
+    .btn-sm {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      opacity: 0.7;
+      transition: all 0.2s ease;
+
+      &:hover {
+        opacity: 1;
+        background-color: #f8f9fa;
+        border-color: #6c757d;
+        transform: translateY(-1px);
+      }
+
+      i {
+        font-size: 12px;
+      }
+    }
+
+    // Hacer que los botones aparezcan solo en hover del contenedor padre
+    .d-flex:hover .btn-sm {
+      opacity: 1;
+    }
+  }
+}

@@ -14,7 +14,6 @@ import { ViewTransactionComponent } from 'app/components/transaction/view-transa
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { DatatableService } from 'app/core/services/datatable.service';
-import { PrinterService } from 'app/core/services/printer.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { WooCommerceService } from 'app/core/services/woocommerce.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
@@ -52,7 +51,6 @@ export class ListOrdersWooCommerceComponent implements OnInit {
 
   constructor(
     private _transactionService: TransactionService,
-    private _printerService: PrinterService,
     private _toastService: ToastService,
     private _modalService: NgbModal,
     private _authService: AuthService,

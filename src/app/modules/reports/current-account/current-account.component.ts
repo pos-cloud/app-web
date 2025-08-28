@@ -21,7 +21,6 @@ import { ViewTransactionComponent } from 'app/components/transaction/view-transa
 import { User } from 'app/components/user/user';
 import { CompanyService } from 'app/core/services/company.service';
 import { PrinterService } from 'app/core/services/printer.service';
-import { TransactionService } from 'app/core/services/transaction.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -93,7 +92,6 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private _transactionService: TransactionService,
     private _service: CurrentAccountService,
     private _companyService: CompanyService,
     private _router: Router,

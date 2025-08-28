@@ -321,4 +321,25 @@ export class MovementOfArticleService extends ModelService {
         })
       );
   }
+
+  public createMovementOfArticle(movementData: any): Observable<any> {
+    const URL = `${Config.apiURL}movements-of-articles/create`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, movementData, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
 }

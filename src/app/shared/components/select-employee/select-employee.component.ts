@@ -7,7 +7,6 @@ import { Employee, EmployeeType, Table } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { EmployeeTypeService } from 'app/core/services/employee-type.service';
 import { TableService } from 'app/core/services/table.service';
-import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -38,7 +37,6 @@ export class SelectEmployeeComponent implements OnInit {
     public _employeeTypeService: EmployeeTypeService,
     public _tableService: TableService,
     public _authService: AuthService,
-    public _transactionService: TransactionService,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
     public _toast: ToastService,
@@ -66,8 +64,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._employeeService.getEmployees(query).subscribe(
       (result) => {
         if (!result.employees) {
-          if (result.message && result.message !== '')
-            this._toast.showToast(result.message, 'info');
+          if (result.message && result.message !== '') this._toast.showToast(result.message, 'info');
           this.loading = false;
         } else {
           this.loading = false;
@@ -126,8 +123,7 @@ export class SelectEmployeeComponent implements OnInit {
     if (this.requireLogin && (!this.password || this.password === '')) {
       isValid = false;
       this._toast.showToast({
-        message:
-          'Debe completar la contraseña del ' + this.typeEmployee.description,
+        message: 'Debe completar la contraseña del ' + this.typeEmployee.description,
       });
     }
 

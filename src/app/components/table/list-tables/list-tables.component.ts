@@ -16,7 +16,6 @@ import { Table, TableState } from '@types';
 
 import { TableService } from '../../../core/services/table.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
-import { TransactionService } from '../../../core/services/transaction.service';
 import { UserService } from '../../../core/services/user.service';
 
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -57,7 +56,6 @@ export class ListTablesComponent implements OnInit {
 
   constructor(
     public _tableService: TableService,
-    public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
     public _userService: UserService,
     public _router: Router,

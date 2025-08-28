@@ -1,0 +1,372 @@
+<div class="px-4 py-2">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 300px">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading">
+    <!-- Header Section -->
+    <div class="card mb-3">
+      <div class="card-header bg-white border-bottom">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <img src="assets/img/logo.png" alt="Logo" style="height: 40px; width: auto; margin-right: 2rem" />
+            <h3 class="mb-0">
+              {{ transaction.type?.name }}
+              {{ transaction.number }}
+            </h3>
+          </div>
+          <span class="badge" [ngClass]="getStateClass()">{{ getStateText() }}</span>
+        </div>
+      </div>
+
+      <div class="card-body bg-light py-2">
+        <div class="row g-2">
+          <div class="col-md-3">
+            <small class="text-muted d-block mb-1">Cliente</small>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="fw-semibold">{{ transaction.company?.name || 'Consumidor Final' }}</div>
+              <button
+                class="btn btn-sm btn-outline-secondary ms-2"
+                (click)="changeCompany()"
+                ngbTooltip="Cambiar cliente"
+              >
+                <i class="fa fa-pencil"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <small class="text-muted d-block mb-1">Fecha</small>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="fw-semibold">{{ transaction.endDate | date : 'dd/MM/yyyy' }}</div>
+              <button class="btn btn-sm btn-outline-secondary ms-2" (click)="changeDate()" ngbTooltip="Cambiar fecha">
+                <i class="fa fa-calendar"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <small class="text-muted d-block mb-1">Vendedor</small>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="fw-semibold">{{ transaction.employeeClosing?.name || 'Sin asignar' }}</div>
+              <button
+                class="btn btn-sm btn-outline-secondary ms-2"
+                (click)="changeEmployee()"
+                ngbTooltip="Cambiar vendedor"
+              >
+                <i class="fa fa-user"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <small class="text-muted d-block mb-1">Moneda</small>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="fw-semibold">{{ transaction.currency?.symbol || 'Sin moneda' }}</div>
+              <button
+                class="btn btn-sm btn-outline-secondary ms-2"
+                (click)="changeCurrency()"
+                ngbTooltip="Cambiar moneda"
+              >
+                <i class="fa fa-dollar"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body Section with Tabs -->
+    <div class="card">
+      <!-- Tabs Navigation with ngbNav -->
+      <nav ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
+        <ng-container ngbNavItem="products">
+          <a ngbNavLink>
+            Productos
+            <span class="badge bg-primary ms-2">{{ totalQuantity }}</span>
+          </a>
+          <ng-template ngbNavContent>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0">Lista de Productos</h5>
+              <button class="btn btn-outline-primary" (click)="addProduct()" *ngIf="!showAddProductForm">
+                <i class="fa fa-plus"></i> Agregar Producto
+              </button>
+            </div>
+
+            <!-- Formulario para agregar producto -->
+            <div *ngIf="showAddProductForm" class="card mb-3">
+              <div class="card-header bg-light">
+                <h6 class="mb-0">Agregar Nuevo Producto</h6>
+              </div>
+              <div class="card-body">
+                <form [formGroup]="addProductForm" (ngSubmit)="saveProduct()">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Artículo</label>
+                      <app-typeahead-dropdown
+                        [control]="addProductForm.get('article')"
+                        [data]="articles"
+                        [keyField]="'_id'"
+                        [displayField]="'description'"
+                        placeholder="Buscar artículo..."
+                      />
+                    </div>
+                    <div class="col-md-2">
+                      <label class="form-label">Cantidad</label>
+                      <input type="number" class="form-control" formControlName="quantity" step="0.01" min="0.01" />
+                    </div>
+                    <div class="col-md-2">
+                      <label class="form-label">Precio Unit.</label>
+                      <input type="number" class="form-control" formControlName="unitPrice" step="0.01" min="0" />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                      <div class="btn-group w-100">
+                        <button type="submit" class="btn btn-success" [disabled]="addProductForm.invalid">
+                          <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <button type="button" class="btn btn-secondary" (click)="cancelAddProduct()">
+                          <i class="fa fa-times"></i> Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 100px">Cantidad</th>
+                    <th>Descripción</th>
+                    <th style="width: 120px">Código</th>
+                    <th style="width: 130px" class="text-end">Precio Unit.</th>
+                    <th style="width: 130px" class="text-end">Subtotal</th>
+                    <th style="width: 80px" class="text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let movement of movementsOfArticles; trackBy: trackByMovementId" class="table-row-hover">
+                    <td>
+                      <span class="badge bg-info fs-6">{{ movement.amount }}</span>
+                    </td>
+                    <td>
+                      <div class="product-info">
+                        <strong class="product-name">{{ movement.description }}</strong>
+                        <div
+                          *ngIf="
+                            movement.article?.posDescription && movement.article.posDescription !== movement.description
+                          "
+                          class="text-muted small"
+                        >
+                          {{ movement.article.posDescription }}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <code class="text-muted">{{ movement.code }}</code>
+                    </td>
+                    <td class="text-end">
+                      <span class="price">{{ movement.unitPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+                    </td>
+                    <td class="text-end">
+                      <strong class="price">{{
+                        movement.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                      }}</strong>
+                    </td>
+                    <td class="text-center">
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        (click)="editProduct(movement)"
+                        ngbTooltip="Editar producto"
+                      >
+                        <i class="fa fa-pencil"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="movementsOfArticles.length === 0">
+                    <td colspan="6" class="text-center text-muted py-4">
+                      <div>No hay productos cargados</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-template>
+        </ng-container>
+
+        <ng-container ngbNavItem="payments">
+          <a ngbNavLink>
+            Métodos de Pago
+            <span class="badge bg-success ms-2">{{ movementsOfCash.length }}</span>
+          </a>
+          <ng-template ngbNavContent>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0">Métodos de Pago</h5>
+              <button class="btn btn-outline-success" (click)="addPayment()">Agregar Pago</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Método de Pago</th>
+                    <th style="width: 150px">Fecha</th>
+                    <th style="width: 150px">Número/Ref.</th>
+                    <th style="width: 130px" class="text-end">Importe</th>
+                    <th style="width: 80px" class="text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let movement of movementsOfCash; trackBy: trackByPaymentId" class="table-row-hover">
+                    <td>
+                      <div class="payment-method">
+                        <strong>{{ movement.type?.name }}</strong>
+                        <div *ngIf="movement.bank?.name" class="text-muted small">
+                          {{ movement.bank.name }}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="text-muted">{{ movement.date | date : 'dd/MM/yyyy HH:mm' }}</span>
+                    </td>
+                    <td>
+                      <code *ngIf="movement.number" class="text-muted">{{ movement.number }}</code>
+                      <span *ngIf="!movement.number" class="text-muted">-</span>
+                    </td>
+                    <td class="text-end">
+                      <strong class="price text-success">{{
+                        movement.amountPaid | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                      }}</strong>
+                    </td>
+                    <td class="text-center">
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        (click)="editPayment(movement)"
+                        ngbTooltip="Editar pago"
+                      >
+                        <i class="fa fa-pencil"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="movementsOfCash.length === 0">
+                    <td colspan="5" class="text-center text-muted py-4">
+                      <div>No hay pagos registrados</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-template>
+        </ng-container>
+
+        <!-- <ng-container ngbNavItem="actions">
+          <a ngbNavLink>Acciones</a>
+          <ng-template ngbNavContent>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">Acciones de Transacción</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-success" (click)="saveTransaction()">
+                        <i class="fa fa-save"></i> Guardar Transacción
+                      </button>
+                      <button class="btn btn-info" (click)="printTransaction()">Imprimir Comprobante</button>
+                      <button class="btn btn-warning" (click)="cancelTransaction()">Cancelar Transacción</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0">Información Adicional</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="info-item mb-2">
+                      <span class="label">ID de Transacción:</span>
+                      <span class="value">{{ transactionId }}</span>
+                    </div>
+                    <div class="info-item mb-2">
+                      <span class="label">Fecha de Creación:</span>
+                      <span class="value">{{ transaction.startDate | date : 'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Última Modificación:</span>
+                      <span class="value">{{ transaction.updateDate | date : 'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ng-container> -->
+      </nav>
+
+      <div class="card-body">
+        <div [ngbNavOutlet]="nav" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Section - Totals -->
+  <div class="card mt-4">
+    <div class="card-body">
+      <div class="row">
+        <!-- Left Side - Summary -->
+        <div class="col-lg-6">
+          <!-- <h6 class="text-muted mb-3">Resumen</h6> -->
+          <div class="d-flex mb-2">
+            <span>Cantidad de Productos:</span>
+            <strong>{{ totalQuantity }}</strong>
+          </div>
+          <div class="d-flex mb-2">
+            <span>M3:</span>
+            <strong>{{ 300 }}</strong>
+          </div>
+        </div>
+
+        <!-- Right Side - Financial Totals -->
+        <div class="col-lg-6">
+          <!-- <h6 class="text-muted mb-3">Totales Financieros</h6> -->
+
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal:</span>
+            <span class="fw-bold">{{ subtotal | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2" *ngIf="transaction.discountAmount > 0">
+            <span>Descuento:</span>
+            <span class="fw-bold text-danger"
+              >-{{ transaction.discountAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span
+            >
+          </div>
+
+          <div class="d-flex justify-content-between mb-2" *ngIf="totalTaxesBase > 0">
+            <span>Neto Gravado:</span>
+            <span class="fw-bold">{{ totalTaxesBase | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2" *ngIf="totalTaxesAmount > 0">
+            <span>Impuestos:</span>
+            <span class="fw-bold">{{ totalTaxesAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+          </div>
+
+          <hr class="my-3" />
+
+          <div class="d-flex justify-content-between mb-3">
+            <span class="h5 text-primary">TOTAL:</span>
+            <span class="h5 text-primary fw-bold">{{
+              transaction.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
