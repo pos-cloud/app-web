@@ -84,8 +84,8 @@ export class BusinessRuleComponent implements OnInit {
   // Método para crear un FormGroup para un article
   private createArticleFormGroup(): UntypedFormGroup {
     return this._fb.group({
-      article: ['', [Validators.required]],
-      quantity: ['', [Validators.required, Validators.min(1)]],
+      article: ['', this.operation !== 'delete' ? [Validators.required] : []],
+      quantity: ['', this.operation !== 'delete' ? [Validators.required, Validators.min(1)] : []],
     });
   }
 
@@ -180,8 +180,11 @@ export class BusinessRuleComponent implements OnInit {
         const article = this.articles?.find((item) => item._id === articleItem.article?.toString());
         this.articlesArray.push(
           this._fb.group({
-            article: [article ?? null, [Validators.required]],
-            quantity: [articleItem.quantity ?? 1, [Validators.required, Validators.min(1)]],
+            article: [article ?? null, this.operation !== 'delete' ? [Validators.required] : []],
+            quantity: [
+              articleItem.quantity ?? 1,
+              this.operation !== 'delete' ? [Validators.required, Validators.min(1)] : [],
+            ],
           })
         );
       });
@@ -214,15 +217,20 @@ export class BusinessRuleComponent implements OnInit {
 
   public handleBusinessRuleOperation() {
     this.loading = true;
-    this.businessRuleForm.markAllAsTouched();
-    if (this.businessRuleForm.invalid) {
-      this.loading = false;
-      return;
+
+    // Solo validar el formulario si no es una operación de eliminación
+    if (this.operation !== 'delete') {
+      this.businessRuleForm.markAllAsTouched();
+      if (this.businessRuleForm.invalid) {
+        this.loading = false;
+        return;
+      }
+      this.businessRule = {
+        ...this.businessRule,
+        ...this.businessRuleForm.value,
+      };
     }
-    this.businessRule = {
-      ...this.businessRule,
-      ...this.businessRuleForm.value,
-    };
+
     switch (this.operation) {
       case 'add':
         this.saveBusinessRule();
