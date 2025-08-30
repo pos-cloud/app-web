@@ -25,7 +25,7 @@ export class ListCompanyComponent implements OnInit {
   private destroy$ = new Subject<void>();
   public sort = { name: 1 };
   public type;
-  user;
+  public user;
   public columns: IAttribute[] = [
     {
       name: 'name',
@@ -211,7 +211,6 @@ export class ListCompanyComponent implements OnInit {
       case 'view':
         this._router.navigateByUrl('entities/companies/view/' + this.companyType + '/' + obj._id);
         break;
-
       case 'update':
         this._router.navigateByUrl('entities/companies/update/' + this.companyType + '/' + obj._id);
         break;
@@ -261,7 +260,6 @@ export class ListCompanyComponent implements OnInit {
   private getPermissions(): void {
     this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
       if (identity) {
-        console.log(identity);
         this.user = identity;
         this.configureButtons();
       }
