@@ -1,5 +1,6 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '@core/services/auth.service';
 import { PrintService } from '@core/services/print.service';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
@@ -18,13 +19,14 @@ import { attributesVariant } from '../article';
   templateUrl: './list-variants.component.html',
   encapsulation: ViewEncapsulation.None,
 })
-export class ListVariantsComponent {
+export class ListVariantsComponent implements OnInit {
   public title: string = 'variants';
   public sort = { code: 1 };
   public columns = attributesVariant;
   public pathLocation: string[];
   public priceListId: string;
   public loading: boolean = false;
+  user;
   public headerButtons: IButton[] = [
     {
       title: 'Imprimir Etiquetas',
@@ -39,32 +41,7 @@ export class ListVariantsComponent {
       click: `this.refresh()`,
     },
   ];
-  public rowButtons: IButton[] = [
-    {
-      title: 'view',
-      class: 'btn btn-success btn-sm',
-      icon: 'fa fa-eye',
-      click: `this.emitEvent('view', item, null)`,
-    },
-    {
-      title: 'update',
-      class: 'btn btn-primary btn-sm',
-      icon: 'fa fa-pencil',
-      click: `this.emitEvent('update', item, null)`,
-    },
-    {
-      title: 'Imprimir Etiqueta',
-      class: 'btn btn-light btn-sm',
-      icon: 'fa fa-barcode',
-      click: `this.emitEvent('print-label', item, null)`,
-    },
-    {
-      title: 'Historial de Cambios',
-      class: 'btn btn-light btn-sm',
-      icon: 'fa fa-history',
-      click: `this.emitEvent('history', item, null)`,
-    },
-  ];
+  public rowButtons: IButton[] = [];
   public priceLists: PriceList[];
   private destroy$ = new Subject<void>();
 
@@ -77,8 +54,13 @@ export class ListVariantsComponent {
     public _alertConfig: NgbAlertConfig,
     public _printService: PrintService,
     private _toastService: ToastService,
-    private _modalService: NgbModal
+    private _modalService: NgbModal,
+    private _authService: AuthService
   ) {}
+
+  async ngOnInit() {
+    this.getPermissions();
+  }
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj, event.items);
@@ -177,5 +159,54 @@ export class ListVariantsComponent {
           this.loading = false;
         },
       });
+  }
+  private getPermissions(): void {
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
+      if (identity) {
+        this.user = identity;
+        this.configureButtons();
+      }
+    });
+  }
+
+  private configureButtons(): void {
+    this.rowButtons.push({
+      title: 'view',
+      class: 'btn btn-success btn-sm',
+      icon: 'fa fa-eye',
+      click: `this.emitEvent('view', item, null)`,
+    });
+
+    if (this.user.permission.collections.articles.edit) {
+      this.rowButtons.push({
+        title: 'update',
+        class: 'btn btn-primary btn-sm',
+        icon: 'fa fa-pencil',
+        click: `this.emitEvent('update', item, null)`,
+      });
+    }
+    if (this.user.permission.collections.articles.delete) {
+      this.rowButtons.push({
+        title: 'delete',
+        class: 'btn btn-danger btn-sm',
+        icon: 'fa fa-trash-o',
+        click: `this.emitEvent('delete', item, null)`,
+      });
+    }
+
+    this.rowButtons.push(
+      {
+        title: 'Imprimir Etiqueta',
+        class: 'btn btn-light btn-sm',
+        icon: 'fa fa-barcode',
+        click: `this.emitEvent('print-label', item, null)`,
+      },
+      {
+        title: 'Historial de Cambios',
+        class: 'btn btn-light btn-sm',
+        icon: 'fa fa-history',
+        click: `this.emitEvent('history', item, null)`,
+      }
+    );
   }
 }
