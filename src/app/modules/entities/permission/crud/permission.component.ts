@@ -44,28 +44,24 @@ export class PermissionComponent implements OnInit {
       name: ['', [Validators.required]],
       collections: this._fb.group({
         transactions: this._fb.group({
-          view: [true],
           add: [true],
           edit: [true],
           delete: [true],
           export: [true],
         }),
         articles: this._fb.group({
-          view: [true],
           add: [true],
           edit: [true],
           delete: [true],
           export: [true],
         }),
         companies: this._fb.group({
-          view: [true],
           add: [true],
           edit: [true],
           delete: [true],
           export: [true],
         }),
         movementsOfArticles: this._fb.group({
-          view: [true],
           add: [true],
           edit: [true],
           delete: [true],
@@ -165,28 +161,24 @@ export class PermissionComponent implements OnInit {
       name: this.permission.name ?? '',
       collections: {
         transactions: {
-          view: this.permission.collections?.transactions?.view ?? true,
           add: this.permission.collections?.transactions?.add ?? true,
           edit: this.permission.collections?.transactions?.edit ?? true,
           delete: this.permission.collections?.transactions?.delete ?? true,
           export: this.permission.collections?.transactions?.export ?? true,
         },
         articles: {
-          view: this.permission.collections?.articles?.view ?? true,
           add: this.permission.collections?.articles?.add ?? true,
           edit: this.permission.collections?.articles?.edit ?? true,
           delete: this.permission.collections?.articles?.delete ?? true,
           export: this.permission.collections?.articles?.export ?? true,
         },
         companies: {
-          view: this.permission.collections?.companies?.view ?? true,
           add: this.permission.collections?.companies?.add ?? true,
           edit: this.permission.collections?.companies?.edit ?? true,
           delete: this.permission.collections?.companies?.delete ?? true,
           export: this.permission.collections?.companies?.export ?? true,
         },
         movementsOfArticles: {
-          view: this.permission.collections?.movementsOfArticles?.view ?? true,
           add: this.permission.collections?.movementsOfArticles?.add ?? true,
           edit: this.permission.collections?.movementsOfArticles?.edit ?? true,
           delete: this.permission.collections?.movementsOfArticles?.delete ?? true,
