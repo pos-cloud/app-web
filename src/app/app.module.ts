@@ -73,12 +73,9 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
 import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
 import { PrintComponent } from './components/print/print/print.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
-import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
-import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
-import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StateComponent } from './components/state/state/state.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
@@ -159,8 +156,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
-    ReportSalesByCategoryComponent,
-    ReportSalesByEmployeeComponent,
     CashBoxComponent,
     ListMovementOfCashesComponent,
     PushNotificationComponent,
@@ -192,7 +187,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectChecksComponent,
     ListCategoriesPosComponent,
     ListMovementsOfCancellationsComponent,
-    ReportTransactionTypeComponent,
     PrintQRComponent,
     SelectMovementsOfCashesComponent,
     KardexCheckComponent,

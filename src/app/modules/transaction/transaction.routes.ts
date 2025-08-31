@@ -1,16 +1,9 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { FormalTransactionViewComponent } from './views/formal/formal-transaction-view.component';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [
+export const TRANSACTION_ROUTES: Routes = [
   {
     path: 'view/formal/:id',
-    component: FormalTransactionViewComponent,
+    loadComponent: () =>
+      import('./views/formal/formal-transaction-view.component').then((m) => m.FormalTransactionViewComponent),
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-})
-export class TransactionRoutingModule {}

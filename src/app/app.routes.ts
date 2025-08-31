@@ -28,16 +28,13 @@ import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.compon
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
-import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
-import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
-import { ReportTransactionTypeComponent } from './components/report-transaction-type/report-transaction-type.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
-import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
+
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { AuthGuard } from './core/guards/auth.guard';
@@ -88,12 +85,6 @@ export const _routes: Routes = [
     data: { module: 'config.modules.sale' },
   },
   {
-    path: 'admin/venta/ventas-por-empleado',
-    component: ReportSalesByEmployeeComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
-  },
-  {
     path: 'admin/venta/marcas-mas-vendidas',
     component: ReportSalesByMakeComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -106,12 +97,6 @@ export const _routes: Routes = [
     data: { module: 'config.modules.sale' },
   },
   {
-    path: 'admin/venta/rubros-mas-vendidos',
-    component: ReportSalesByCategoryComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
-  },
-  {
     path: 'admin/compra/statistics',
     component: StatisticsComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -120,12 +105,6 @@ export const _routes: Routes = [
   {
     path: 'admin/compra/productos-mas-comprados',
     component: ReportBestSellingArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
-  },
-  {
-    path: 'admin/compras/compras-por-empleado',
-    component: ReportSalesByEmployeeComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.purchase' },
   },
@@ -144,12 +123,6 @@ export const _routes: Routes = [
   {
     path: 'admin/compra/compras-por-proveedor',
     component: ReportSalesByClientComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
-  },
-  {
-    path: 'admin/compra/rubros-mas-comprados',
-    component: ReportSalesByCategoryComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.purchase' },
   },
@@ -173,36 +146,6 @@ export const _routes: Routes = [
     path: 'admin/states',
     component: ListStatesComponent,
     canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/ventas',
-    component: ListTransactionsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
-  },
-  {
-    path: 'admin/compras',
-    component: ListTransactionsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
-  },
-  {
-    path: 'admin/stock',
-    component: ListTransactionsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.stock' },
-  },
-  {
-    path: 'admin/fondos',
-    component: ListTransactionsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' },
-  },
-  {
-    path: 'admin/production',
-    component: ListTransactionsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    //data: { module: 'config.modules.production' }
   },
 
   {
@@ -355,24 +298,6 @@ export const _routes: Routes = [
     data: { module: 'config.modules.sale.resto' },
   },
   {
-    path: 'report/compra/compras-por-tipo-de-transacción',
-    component: ReportTransactionTypeComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
-  },
-  {
-    path: 'report/venta/ventas-por-tipo-de-transacción',
-    component: ReportTransactionTypeComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
-  },
-  {
-    path: 'report/fondo/fondos-por-tipo-de-transacción',
-    component: ReportTransactionTypeComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' },
-  },
-  {
     path: 'report/current-account',
     component: CurrentAccountDetailsComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -486,21 +411,15 @@ export const _routes: Routes = [
     loadChildren: () => import('./modules/pos/pos.routes').then((m) => m.POS_ROUTES),
   },
   {
+    path: 'transaction',
+    canActivate: [AuthGuard, LicenseGuard],
+    loadChildren: () => import('./modules/transaction/transaction.routes').then((m) => m.TRANSACTION_ROUTES),
+  },
+  {
     path: 'license',
     canActivate: [AuthGuard],
     loadComponent: () => import('./layout/license/license.component').then((m) => m.LicenseComponent),
   },
-  {
-    path: 'transaction/view/formal/:id',
-    loadComponent: () =>
-      import('./modules/transaction/views/formal/formal-transaction-view.component').then(
-        (m) => m.FormalTransactionViewComponent
-      ),
-    canActivate: [AuthGuard],
-  },
-  // {
-  //   path: 'transaction',
-  // },
   {
     path: '**',
     pathMatch: 'full',
