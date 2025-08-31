@@ -14,6 +14,7 @@ export interface BusinessRule extends Activity {
   articleDiscount: Article;
   articles: BusinessRuleArticle[];
   days: Day[];
+  includeInApplyAll?: boolean;
 }
 
 export enum DiscountType {

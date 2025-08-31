@@ -74,7 +74,7 @@
               Solo se permiten letras y números
             </div>
           </div>
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-3">
             <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <input
               type="text"
@@ -105,6 +105,21 @@
               <option [ngValue]="true">{{ 'yes' | translate | capitalize }}</option>
               <option [ngValue]="false">{{ 'no' | translate | capitalize }}</option>
             </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="includeInApplyAll" class="control-label">Incluir en "Aplicar Todas":</label>
+            <select
+              class="form-control"
+              formControlName="includeInApplyAll"
+              id="includeInApplyAll"
+              [disabled]="operation === 'view' || operation === 'delete'"
+            >
+              <option [ngValue]="true">Sí</option>
+              <option [ngValue]="false">No</option>
+            </select>
+            <small class="form-text text-muted">
+              Indica si esta regla se aplicará cuando se presione "Aplicar Todas las Reglas"
+            </small>
           </div>
         </div>
 

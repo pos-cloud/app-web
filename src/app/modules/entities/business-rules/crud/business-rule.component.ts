@@ -73,6 +73,7 @@ export class BusinessRuleComponent implements OnInit {
       articleDiscount: ['', [Validators.required]],
       days: ['', []],
       articles: this._fb.array([]),
+      includeInApplyAll: [true, []],
     });
   }
 
@@ -165,6 +166,7 @@ export class BusinessRuleComponent implements OnInit {
       discountValue: this.businessRule?.discountValue ?? '',
       articleDiscount: articleDiscount ?? null,
       days: this.businessRule?.days ?? [],
+      includeInApplyAll: this.businessRule?.includeInApplyAll ?? true,
     };
     this.businessRuleForm.patchValue(values);
 
