@@ -35,6 +35,7 @@ import { ListStatesComponent } from './components/state/list-states/list-states.
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 
+import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { AuthGuard } from './core/guards/auth.guard';
@@ -136,6 +137,36 @@ export const _routes: Routes = [
     path: 'admin/variantes',
     component: ListArticlesComponent,
     canActivate: [AuthGuard, LicenseGuard],
+  },
+  {
+    path: 'admin/ventas',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.sale' },
+  },
+  {
+    path: 'admin/compras',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.purchase' },
+  },
+  {
+    path: 'admin/stock',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.stock' },
+  },
+  {
+    path: 'admin/fondos',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    data: { module: 'config.modules.money' },
+  },
+  {
+    path: 'admin/production',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard, LicenseGuard],
+    //data: { module: 'config.modules.production' }
   },
   {
     path: 'admin/variantes/:id',
