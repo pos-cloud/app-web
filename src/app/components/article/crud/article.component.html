@@ -540,12 +540,12 @@
           </div>
         </div>
         <hr />
-        <div class="row" *ngIf="articleType === 'Producto'">
+        <div class="row" *ngIf="articleType === 'Producto' && !(operation === 'update' && !article.containsVariants)">
           <label class="form-group col-md-5">
             <b>{{ 'variant' | translate | capitalize }}</b>
           </label>
         </div>
-        <div class="row" *ngIf="articleType === 'Producto'">
+        <div class="row" *ngIf="articleType === 'Producto' && !(operation === 'update' && !article.containsVariants)">
           <div class="col-md-12">
             <form #variantsForm="ngForm" (ngSubmit)="addVariant(variantsForm)">
               <div class="row">
