@@ -99,7 +99,8 @@ export interface Article extends Activity {
   variantValue1: VariantValue;
   variantType2: VariantType;
   variantValue2: VariantValue;
-  articlesToPublishTn: boolean;
+  publishTiendaNube: boolean;
+  publishWooCommerce: boolean;
 }
 
 export enum Type {
