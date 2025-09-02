@@ -623,19 +623,35 @@
           </label>
         </div>
         <div class="row">
-          <div
-            formArrayName="applications"
-            *ngFor="let appControl of articleForm.get('applications')['controls']; let i = index"
-            class="col-md-3"
-          >
-            <label>
-              {{ applications[i].name }}
-            </label>
-            <select class="form-control" [formControl]="appControl" (change)="onAppChange($event, i)">
-              <option value="true" [disabled]="readonly">
+          <div class="form-group col-md-2">
+            <label for="publishWooCommerce" class="control-label">WooCommerce</label>
+            <select class="form-control" formControlName="publishWooCommerce">
+              <option [ngValue]="true" [disabled]="readonly">
                 {{ 'true' | translate | capitalize }}
               </option>
-              <option value="false" [disabled]="readonly">
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="publishTiendaNube" class="control-label">Tienda Nube</label>
+            <select class="form-control" formControlName="publishTiendaNube">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="showMenu" class="control-label">Carta Digital</label>
+            <select class="form-control" formControlName="showMenu">
+              <option [ngValue]="true" [disabled]="readonly">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false" [disabled]="readonly">
                 {{ 'false' | translate | capitalize }}
               </option>
             </select>
