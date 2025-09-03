@@ -185,14 +185,6 @@ export class ListVariantsComponent implements OnInit {
         click: `this.emitEvent('update', item, null)`,
       });
     }
-    if (this.user.permission.collections.articles.delete) {
-      this.rowButtons.push({
-        title: 'delete',
-        class: 'btn btn-danger btn-sm',
-        icon: 'fa fa-trash-o',
-        click: `this.emitEvent('delete', item, null)`,
-      });
-    }
 
     this.rowButtons.push(
       {
