@@ -215,6 +215,12 @@ export class ListPrintersComponent {
       class: 'btn btn-danger btn-sm',
       click: `this.emitEvent('delete', item)`,
     },
+    {
+      title: 'Copiar',
+      class: 'btn btn-light btn-sm',
+      icon: ' fa fa-copy',
+      click: `this.emitEvent('copy', item, null)`,
+    },
   ];
 
   public headerButtons: IButton[] = [
@@ -248,11 +254,15 @@ export class ListPrintersComponent {
       case 'add':
         await this._router.navigate(['/entities/printers/add']);
         break;
+
       case 'update':
         await this._router.navigate([`/entities/printers/update/${obj._id}`]);
         break;
       case 'delete':
         await this._router.navigate([`/entities/printers/delete/${obj._id}`]);
+        break;
+      case 'copy':
+        await this._router.navigate([`/entities/printers/copy/${obj._id}`]);
         break;
       default:
         break;

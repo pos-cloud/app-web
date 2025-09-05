@@ -186,6 +186,7 @@ export class PrinterComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this.printer = result.result;
+          if (this.operation === 'copy') delete this.printer._id;
           if (result.status == 200) this.setValueForm();
         },
         error: (error) => {
@@ -209,6 +210,7 @@ export class PrinterComponent implements OnInit {
 
     switch (this.operation) {
       case 'add':
+      case 'copy':
         this.savePrinter();
         break;
       case 'update':

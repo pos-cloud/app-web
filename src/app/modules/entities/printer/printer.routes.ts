@@ -18,6 +18,10 @@ export const PRINTER_ROUTES: Routes = [
     loadComponent: () => import('./crud/printer.component').then((m) => m.PrinterComponent),
   },
   {
+    path: 'copy/:id',
+    loadComponent: () => import('./crud/printer.component').then((m) => m.PrinterComponent),
+  },
+  {
     path: 'delete/:id',
     loadComponent: () => import('./crud/printer.component').then((m) => m.PrinterComponent),
   },
