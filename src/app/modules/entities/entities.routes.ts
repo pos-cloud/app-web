@@ -147,4 +147,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'price-list',
     loadChildren: () => import('./price-list/price-list.routes').then((m) => m.PRICE_LIST_ROUTES),
   },
+   {
+    path: 'cash-box-types',
+    loadChildren: () => import('./cash-box-types/cash-box-types.routes').then((m) => m.CASH_BOX_TYPES_ROUTES),
+  },
 ];
