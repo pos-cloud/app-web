@@ -1,0 +1,58 @@
+<div class="hierarchical-multiselect-container" [id]="uniqueId">
+  <!-- Campo de entrada -->
+  <div class="input-container" (click)="toggleDropdown()" [class.disabled]="disabled">
+    <div class="selected-items-display">
+      <div class="placeholder">
+        {{ placeholder }}
+      </div>
+    </div>
+    <div class="dropdown-arrow">
+      <i class="fa" [ngClass]="{ 'fa-chevron-down': !isOpen, 'fa-chevron-up': isOpen }"></i>
+    </div>
+  </div>
+
+  <!-- Dropdown -->
+  <div *ngIf="isOpen" class="dropdown-panel" [style.max-height]="maxHeight">
+    <!-- Barra de búsqueda -->
+    <div class="search-container">
+      <i class="fa fa-search search-icon"></i>
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        [placeholder]="searchPlaceholder"
+        (click)="$event.stopPropagation()"
+      />
+    </div>
+
+    <!-- Lista de elementos -->
+    <div class="items-container">
+      <div *ngIf="filteredItems.length === 0" class="no-results">No se encontraron resultados</div>
+
+      <div *ngFor="let item of filteredItems" class="item-wrapper">
+        <div
+          class="hierarchical-item"
+          [style.padding-left]="getItemPadding(item.level || 0)"
+          [class.selected]="isSelected(item)"
+          (click)="toggleSelection(item)"
+        >
+          <!-- Checkbox -->
+          <div class="checkbox-container">
+            <input
+              type="checkbox"
+              [checked]="isSelected(item)"
+              (click)="$event.stopPropagation(); toggleSelection(item)"
+              class="item-checkbox"
+            />
+          </div>
+
+          <!-- Contenido del elemento -->
+          <div class="item-content">
+            <span class="item-text">{{ item.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
