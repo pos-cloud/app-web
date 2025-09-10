@@ -34,7 +34,6 @@ import { Variant } from '../../variant/variant';
 import { Article, ArticlePrintIn, Type } from '../article';
 
 import { AccountService } from '../../../core/services/account.service';
-import { ApplicationService } from '../../../core/services/application.service';
 import { ClassificationService } from '../../../core/services/classification.service';
 import { ConfigService } from '../../../core/services/config.service';
 
@@ -327,7 +326,6 @@ export class ArticleComponent implements OnInit {
     private _classificationService: ClassificationService,
     public _companyService: CompanyService,
     private _unitOfMeasurementService: UnitOfMeasurementService,
-    private _applicationService: ApplicationService,
     private _accountService: AccountService,
     private _currencyService: CurrencyService,
     private _configService: ConfigService,

@@ -244,7 +244,16 @@ export class ListArticlesComponent {
       align: 'left',
       required: false,
     },
-
+    {
+      name: 'season',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
     {
       name: 'printIn',
       visible: false,
@@ -336,16 +345,6 @@ export class ListArticlesComponent {
       required: false,
     },
     {
-      name: 'applicationsName',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: `{"$reduce":{"input":"$applications.name","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"},""]}]}}}`,
-      align: 'left',
-      required: false,
-    },
-    {
       name: 'picture',
       visible: false,
       disabled: false,
@@ -386,6 +385,16 @@ export class ListArticlesComponent {
       required: false,
     },
     {
+      name: 'publishWooCommerce',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'wooId',
       visible: false,
       disabled: false,
@@ -396,14 +405,14 @@ export class ListArticlesComponent {
       required: true,
     },
     {
-      name: 'meliId',
+      name: 'publishTiendaNube',
       visible: false,
       disabled: false,
       filter: true,
-      datatype: 'string',
+      datatype: 'boolean',
       project: null,
       align: 'left',
-      required: true,
+      required: false,
     },
     {
       name: 'tiendaNubeId',
@@ -616,7 +625,6 @@ export class ListArticlesComponent {
   ) {}
 
   public async emitEvent(event) {
-    console.log(event);
     this.openModal(event.op, event.obj, event.items);
   }
 

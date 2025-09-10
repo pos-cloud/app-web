@@ -127,7 +127,6 @@ export class ArticleComponent implements OnInit {
       favourite: [false, []],
       basePrice: ['', [Validators.required]],
       taxes: this._fb.array([]),
-
       codeProvider: ['', []],
       codeSAT: ['', []],
       currency: ['', []],
@@ -147,7 +146,6 @@ export class ArticleComponent implements OnInit {
       allowStock: ['', []],
       allowSaleWithoutStock: ['', []],
       allowMeasure: ['', []],
-      ecommerceEnabled: ['', []],
       posKitchen: ['', []],
       isWeigth: ['', []],
       providers: ['', []],
@@ -155,7 +153,6 @@ export class ArticleComponent implements OnInit {
       lastPricePurchase: [0.0, []],
       lastDatePurchase: [0.0, []],
       classification: ['', []],
-      applications: this._fb.array([]),
       url: ['', []],
       forShipping: ['', []],
       salesAccount: ['', []],
@@ -176,6 +173,8 @@ export class ArticleComponent implements OnInit {
       updateVariants: ['', []],
       variants: this._fb.array([]),
       salePriceTN: ['', []],
+      publishTiendaNube: [[false, []]],
+      publishWooCommerce: [[false, []]],
     });
   }
 
@@ -249,6 +248,8 @@ export class ArticleComponent implements OnInit {
       observation: this.article?.observation,
       basePrice: this.article?.basePrice ?? 0,
       taxes: [],
+      publishTiendaNube: this.article.publishTiendaNube ?? false,
+      publishWooCommerce: this.article.publishWooCommerce ?? false,
     };
     this.articleForm.patchValue(values);
 
