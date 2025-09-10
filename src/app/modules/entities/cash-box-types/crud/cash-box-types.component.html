@@ -2,13 +2,13 @@
   <div class="card">
     <div class="card-header">
       <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
-        'add-currency' | translate | capitalize
+        'add-cash-box-types' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ currency?.name ?? '' }}</span
+        >{{ 'edit' | translate | capitalize }} {{ cashBoxType?.name ?? '' }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
-        {{ currency?.name ?? '' }}</span
+        {{ cashBoxType?.name ?? '' }}</span
       >
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">

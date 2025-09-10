@@ -151,4 +151,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'cash-box-types',
     loadChildren: () => import('./cash-box-types/cash-box-types.routes').then((m) => m.CASH_BOX_TYPES_ROUTES),
   },
+     {
+    path: 'vat-condition',
+    loadChildren: () => import('./vat-condition/vat-condition.routes').then((m) => m.VAT_CONDITION_ROUTES),
+  },
 ];
