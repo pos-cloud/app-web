@@ -1,6 +1,5 @@
-import { Employee } from '@types';
+import { CashBoxType, Employee } from '@types';
 import * as moment from 'moment';
-import { CashBoxType } from '../cash-box-type/cash-box-type.model';
 
 export class CashBox {
   public _id: string;

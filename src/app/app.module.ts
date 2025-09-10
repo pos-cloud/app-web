@@ -94,8 +94,6 @@ import { AddUserComponent } from './components/user/user/add-user.component';
 import { AddVariantComponent } from './components/variant/add-variant/add-variant.component';
 import { DeleteVariantComponent } from './components/variant/delete-variant/delete-variant.component';
 import { ListVariantsComponent } from './components/variant/list-variants/list-variants.component';
-import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
-import { VATConditionComponent } from './components/vat-condition/vat-condition/vat-condition.component';
 import { VoucherReaderComponent } from './components/voucher-reader/voucher-reader.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
@@ -124,8 +122,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListCashBoxesComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
-    ListVATConditionsComponent,
-    VATConditionComponent,
     PointOfSaleComponent,
     LoginComponent,
     AddUserComponent,

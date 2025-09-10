@@ -1,6 +1,5 @@
-import { Account, Currency, IdentificationType, IService } from '@types';
+import { Account, Currency, IdentificationType, IService, VATCondition } from '@types';
 import * as moment from 'moment';
-import { VATCondition } from './components/vat-condition/vat-condition';
 
 export class Config {
   public _id: string;

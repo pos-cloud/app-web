@@ -7,7 +7,6 @@ import { State } from 'app/components/state/state';
 import { Tax, TaxClassification } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
 import { Movements, TransactionMovement } from 'app/components/transaction-type/transaction-type';
-import { VATCondition } from 'app/components/vat-condition/vat-condition';
 import { BranchService } from 'app/core/services/branch.service';
 import { ClassificationService } from 'app/core/services/classification.service';
 import { StateService } from 'app/core/services/state.service';
@@ -20,7 +19,7 @@ import * as moment from 'moment';
 import { CompanyService } from '../../../core/services/company.service';
 import { TransactionService } from '../../../core/services/transaction.service';
 
-import { Branch, Classification } from '@types';
+import { Branch, Classification, VATCondition } from '@types';
 import 'moment/locale/es';
 
 @Component({

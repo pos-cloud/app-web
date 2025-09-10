@@ -10,14 +10,13 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 
 //service
-import { Classification } from '@types';
+import { Classification, VATCondition } from '@types';
 import { Config } from 'app/app.config';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { TaxClassification } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
 import { Movements, TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { Transaction } from 'app/components/transaction/transaction';
-import { VATCondition } from 'app/components/vat-condition/vat-condition';
 import { ClassificationService } from 'app/core/services/classification.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';

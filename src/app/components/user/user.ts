@@ -1,5 +1,4 @@
-import { Branch, Company, Employee, Permission, Printer } from '@types';
-import { CashBoxType } from '../cash-box-type/cash-box-type.model';
+import { Branch, CashBoxType, Company, Employee, Permission, Printer } from '@types';
 import { Origin } from '../origin/origin';
 
 export class User {

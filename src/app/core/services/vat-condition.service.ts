@@ -5,17 +5,14 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { VATCondition } from '../../components/vat-condition/vat-condition';
 import { AuthService } from './auth.service';
+import { VATCondition } from '@types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VATConditionService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `vat-conditions`, // PATH
       _http,

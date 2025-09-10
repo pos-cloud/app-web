@@ -37,7 +37,6 @@ import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.compo
 
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
-import { ListVATConditionsComponent } from './components/vat-condition/list-vat-conditions/list-vat-conditions.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
@@ -184,11 +183,6 @@ export const _routes: Routes = [
     component: ListMovementsOfArticlesComponent,
     canActivate: [AuthGuard, LicenseGuard],
     //data: { module: 'config.modules.production' }
-  },
-  {
-    path: 'admin/condiciones-de-iva',
-    component: ListVATConditionsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/categories',

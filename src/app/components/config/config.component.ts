@@ -8,7 +8,6 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Router } from '@angular/router';
 
-import { VATCondition } from 'app/components/vat-condition/vat-condition';
 import { Config } from './../../app.config';
 
 import { AuthService } from 'app/core/services/auth.service';
@@ -18,7 +17,7 @@ import { UserService } from '../../core/services/user.service';
 import { VATConditionService } from '../../core/services/vat-condition.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 
-import { Account, Currency, IdentificationType, MediaCategory } from '@types';
+import { Account, Currency, IdentificationType, MediaCategory, VATCondition } from '@types';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { FileService } from 'app/core/services/file.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
