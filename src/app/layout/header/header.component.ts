@@ -183,7 +183,7 @@ export class HeaderComponent implements OnInit {
             },
             {
               label: 'Reportes',
-              children: [{ label: 'Inventario', link: 'admin/stock-de-productos' }],
+              children: [{ label: 'Inventario', link: 'entities/article-stock' }],
             },
           ],
         },
@@ -271,7 +271,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Periodos contable', link: 'account-periods' },
             { label: 'Asientos contable', link: 'account-seats' },
             { label: 'Impuestos', link: 'admin/impuestos' },
-            { label: 'Tipos de cajas', link: 'entities/cash-box-types'  },
+            { label: 'Tipos de cajas', link: 'entities/cash-box-types' },
             { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
           ],
         },
@@ -660,7 +660,7 @@ export class HeaderComponent implements OnInit {
                 {
                   label: 'Reportes',
                   children: [
-                    { label: 'Inventario', link: 'admin/stock-de-productos' },
+                    { label: 'Inventario', link: 'entities/article-stock' },
                     { label: 'Kardex de producto', link: 'reports/article-ledger' },
                     { label: 'Stock Valorizado', link: 'reports/inventory-valued' },
                     { label: 'Inventario por fecha', link: 'reports/inventory-for-date' },

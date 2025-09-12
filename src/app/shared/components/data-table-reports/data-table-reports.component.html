@@ -9,9 +9,13 @@
         [columns]="columns"
         (eventExport)="exportItems()"
       ></app-export-excel> -->
-      <button type="button" class="btn" (click)="eventExport.emit(true)" [disabled]="loading">
+      <button type="button" class="btn btn-light mr-2" (click)="eventExport.emit(true)" [disabled]="loading">
         <i class="fa fa-download"></i>
         <span>Exportar</span>
+      </button>
+      <button type="button" class="btn btn-warning" (click)="eventAdjust.emit(true)" [disabled]="loading">
+        <i class="fa fa-adjust"></i>
+        <span>Ajustar</span>
       </button>
     </div>
   </div>

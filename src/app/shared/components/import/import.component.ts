@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { BranchService } from '@core/services/branch.service';
+import { DepositService } from '@core/services/deposit.service';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Deposit } from '@types';
@@ -20,10 +22,10 @@ import { ImportService } from './import.service';
   providers: [NgbAlertConfig, TranslateMePipe, ImportService],
 })
 export class ImportComponent implements OnInit {
-  @Input() branches: Branch[];
-  @Input() allDeposits: Deposit[];
   @Input() model: string;
   @Input() title: string;
+  branches: Branch[];
+  deposits: Deposit[];
   branchesSelected: Branch[] = new Array();
   depositsSelected: Deposit[] = new Array();
   selectedValuePrice: boolean = false;
@@ -60,7 +62,9 @@ export class ImportComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal,
     public translatePipe: TranslateMePipe,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private _branchService: BranchService,
+    private _depositService: DepositService
   ) {}
 
   ngOnInit(): void {
@@ -68,6 +72,8 @@ export class ImportComponent implements OnInit {
 
     if (this.model === 'articles-stock') {
       this.getTransactionTypes();
+      this.getBranches();
+      this.getDeposits();
     }
   }
 
@@ -82,7 +88,7 @@ export class ImportComponent implements OnInit {
 
   onBranchSelect(branch: Branch) {
     const branchId = branch._id;
-    const filteredDeposits = this.allDeposits.filter((deposit) => deposit.branch.toString() === branchId);
+    const filteredDeposits = this.deposits.filter((deposit) => deposit.branch.toString() === branchId);
 
     const uniqueDepositIds = new Set<string>();
 
@@ -208,5 +214,27 @@ export class ImportComponent implements OnInit {
         },
         (error) => {}
       );
+  }
+
+  getBranches(): void {
+    this._branchService.getAll({ match: { operationType: { $ne: 'D' } } }).subscribe({
+      next: (result) => {
+        this.branches = result.result;
+      },
+      error: (error) => {
+        this._toastService.showToast(error);
+      },
+    });
+  }
+
+  getDeposits(): void {
+    this._depositService.getAll({ match: { operationType: { $ne: 'D' } } }).subscribe({
+      next: (result) => {
+        this.deposits = result.result;
+      },
+      error: (error) => {
+        this._toastService.showToast(error);
+      },
+    });
   }
 }

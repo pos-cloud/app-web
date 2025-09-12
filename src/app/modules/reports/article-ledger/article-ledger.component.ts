@@ -223,4 +223,34 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
         })
     );
   }
+
+  public onAdjust(event): void {
+    if (!this.articleControl?.value?._id) {
+      this._toastService.showToast({ message: 'Debe seleccionar un artículo para ajustar' });
+      return;
+    }
+
+    this.loading = true;
+    const articleId = this.articleControl.value._id;
+
+    this.subscription.add(
+      this._service
+        .adjustByArticle(articleId, this.depositSelectedId[0])
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            this._toastService.showToast(result);
+            // Refrescar el reporte después del ajuste
+            this.getReport();
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
+  }
 }

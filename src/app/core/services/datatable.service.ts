@@ -33,7 +33,7 @@ export class DatatableService {
     if (exists) {
       switch (column.datatype) {
         case 'number':
-          value = this.roundNumberPipe.transform(eval(val));
+          value = eval(val);
           break;
         case 'currency':
           value = this.currencyPipe.transform(
@@ -54,13 +54,7 @@ export class DatatableService {
     return value;
   }
 
-  public getItems(
-    filters: any,
-    currentPage: number,
-    itemsPerPage: number,
-    sort: any,
-    group: any = null
-  ): Promise<any> {
+  public getItems(filters: any, currentPage: number, itemsPerPage: number, sort: any, group: any = null): Promise<any> {
     return new Promise((resolve, reject) => {
       let timezone = '-03:00';
       if (Config.timezone && Config.timezone !== '') {
@@ -104,10 +98,7 @@ export class DatatableService {
           }
           j++;
           if (!this.columns[i].project) {
-            if (
-              this.columns[i].datatype !== 'string' &&
-              this.columns[i].datatype !== 'boolean'
-            ) {
+            if (this.columns[i].datatype !== 'string' && this.columns[i].datatype !== 'boolean') {
               if (this.columns[i].datatype === 'date') {
                 project += `"${this.columns[i].name}": { "$dateToString": { "date": "$${this.columns[i].name}", "format": "%d/%m/%Y", "timezone": "${timezone}" }}`;
               } else {

@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArticleStockService } from '@core/services/article-stock.service';
-import { BranchService } from '@core/services/branch.service';
-import { DepositService } from '@core/services/deposit.service';
 import { PrintService } from '@core/services/print.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, Branch, Deposit, IAttribute, IButton, PrintType } from '@types';
+import { ApiResponse, IAttribute, IButton, PrintType } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import * as printJS from 'print-js';
@@ -22,9 +20,6 @@ import { Subject, takeUntil } from 'rxjs';
 export class ListArticleStockComponent implements OnInit {
   public title: string = 'inventory';
   public sort = { code: 1 };
-
-  branches: Branch[] = new Array();
-  deposits: Deposit[] = new Array();
 
   public pathLocation: string[];
   public loading: boolean = false;
@@ -423,14 +418,9 @@ export class ListArticleStockComponent implements OnInit {
     private _router: Router,
     private _modalService: NgbModal,
     private _toastService: ToastService,
-    public _printService: PrintService,
-    private _branchService: BranchService,
-    private _depositService: DepositService
+    private _printService: PrintService
   ) {}
-  ngOnInit() {
-    this.getBranches();
-    this.getDeposits();
-  }
+  ngOnInit() {}
 
   public async emitEvent(event) {
     this.redirect(event.op, event.obj);
@@ -453,7 +443,6 @@ export class ListArticleStockComponent implements OnInit {
         break;
       case 'print-inventario':
         this.toPrint(PrintType.Inventory, null);
-        this.loading = false;
         break;
       case 'uploadFile':
         modalRef = this._modalService.open(ImportComponent, {
@@ -461,8 +450,6 @@ export class ListArticleStockComponent implements OnInit {
           backdrop: 'static',
         });
         modalRef.componentInstance.model = 'articles-stock';
-        modalRef.componentInstance.branches = this.branches;
-        modalRef.componentInstance.allDeposits = this.deposits;
         modalRef.componentInstance.title = 'Importar stock';
 
         break;
@@ -499,42 +486,6 @@ export class ListArticleStockComponent implements OnInit {
         },
         error: (error) => {
           this._toastService.showToast({ message: 'Error al generar el PDF' });
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
-  }
-
-  getBranches(): void {
-    this._branchService
-      .getAll({ match: { operationType: { $ne: 'D' } } })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: ApiResponse) => {
-          this.branches = result.result;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
-  }
-
-  public getDeposits() {
-    this.loading = true;
-
-    this._depositService
-      .getAll({ match: { operationType: { $ne: 'D' } } })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: ApiResponse) => {
-          this.deposits = result.result;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;

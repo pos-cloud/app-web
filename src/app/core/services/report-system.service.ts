@@ -74,4 +74,29 @@ export class ReportSystemService {
         })
       );
   }
+
+  public adjustByArticle(articleId: string, depositId: string): Observable<any> {
+    const URL = `${environment.apiv2}/stock/adjust-by-article/${articleId}/${depositId}`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .put(
+        URL,
+        {},
+        {
+          headers: headers,
+        }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
 }
