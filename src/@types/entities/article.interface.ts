@@ -91,10 +91,12 @@ export interface Article extends Activity {
   updateVariants: boolean;
   tiendaNubeId: number;
   salePriceTN: number;
-  variants: {
-    value: VariantValue;
-    type: VariantType;
-  };
+  variants: [
+    {
+      value: VariantValue;
+      type: VariantType;
+    }
+  ];
   variantType1: VariantType;
   variantValue1: VariantValue;
   variantType2: VariantType;
