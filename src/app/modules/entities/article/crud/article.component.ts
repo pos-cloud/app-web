@@ -1,11 +1,9 @@
 import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import {
   FormArray,
-  FormGroup,
   FormsModule,
   NgForm,
   ReactiveFormsModule,
-  UntypedFormArray,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
@@ -24,7 +22,7 @@ import {
   VariantValue,
 } from '@types';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { ArticleService } from '@core/services/article.service';
 import { CategoryService } from '@core/services/category.service';
 import { MakeService } from '@core/services/make.service';
@@ -71,6 +69,7 @@ Quill.register('modules/imageResize', ImageResize);
     ProgressbarModule,
     FormsModule,
   ],
+  providers: [DecimalPipe],
 })
 export class ArticleComponent implements OnInit {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
@@ -94,7 +93,6 @@ export class ArticleComponent implements OnInit {
   public notes: string[];
   public tags: string[];
   public userType: string;
-  public articleType: string;
   public variant: Variant;
   public variantsByTypes: any[];
   public typeSelect = [];
@@ -104,6 +102,7 @@ export class ArticleComponent implements OnInit {
   public variantTypeSelected: VariantType;
   public variantValueSelected: VariantValue;
   public variantValues: VariantValue[];
+  public allVariantValues: VariantValue[]; // Almacenar todos los valores disponibles
   public variants: Variant[] = new Array();
 
   public categories: Category[] = [];
@@ -154,6 +153,7 @@ export class ArticleComponent implements OnInit {
   };
   public taxes: Tax[] = [];
   public taxForm: UntypedFormGroup;
+  public totalTaxes: number = 0;
 
   constructor(
     private _articleService: ArticleService,
@@ -169,7 +169,8 @@ export class ArticleComponent implements OnInit {
     private _classificationService: ClassificationService,
     private _companyService: CompanyService,
     private _variantTypeService: VariantTypeService,
-    private _variantValueService: VariantValueService
+    private _variantValueService: VariantValueService,
+    private roundNumber: DecimalPipe
   ) {
     this.articleForm = this._fb.group({
       _id: ['', []],
@@ -238,20 +239,6 @@ export class ArticleComponent implements OnInit {
     });
 
     this.buildTaxForm();
-
-    const pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
-    this.operation = pathLocation[3];
-    if (pathLocation[2] === 'articles') {
-      console.log('acacac');
-      this.articleType = 'Producto';
-      this.readonly = false;
-
-      if (pathLocation[3] === 'view') this.readonly = true;
-    } else if (pathLocation[2] === 'variants') {
-      this.readonly = true;
-      this.articleType = 'Variante';
-    }
   }
 
   ngOnInit() {
@@ -296,6 +283,7 @@ export class ArticleComponent implements OnInit {
           this.variantTypes = variantTypes || [];
           this.config = config || [];
           this.variantValues = variantValues || [];
+          this.allVariantValues = variantValues || []; // Almacenar todos los valores
 
           if (articleId) {
             this.getArticle(articleId);
@@ -323,6 +311,20 @@ export class ArticleComponent implements OnInit {
   }
 
   public setValueForm(): void {
+    // Configurar propiedades del artículo
+    this.notes = this.article?.notes || [];
+    this.tags = this.article?.tags || [];
+
+    // Filtrar tipos de variantes si el artículo tiene variantes
+    if (this.article?.variants && this.article.variants.length > 0) {
+      const variantTypeIds = this.article.variants.map((item) =>
+        typeof item.type === 'string' ? item.type : item.type._id
+      );
+      const uniqueTypeIds = [...new Set(variantTypeIds)];
+      this.variantTypes = this.variantTypes.filter((variantType: any) => uniqueTypeIds.includes(variantType._id));
+    }
+
+    // Buscar objetos relacionados
     const category = this.categories?.find((item) => item._id === this.article?.category?.toString());
     const classification = this.classifications?.find((item) => item._id === this.article?.classification?.toString());
     const make = this.makes?.find((item) => item._id === this.article?.make?.toString());
@@ -345,6 +347,14 @@ export class ArticleComponent implements OnInit {
       favourite: this.article?.favourite,
       observation: this.article?.observation,
       basePrice: this.article?.basePrice ?? 0,
+      purchasePrice: this.article?.purchasePrice ?? 0,
+      costPrice2: this.article?.costPrice2 ?? 0,
+      costPrice: this.article?.costPrice ?? 0,
+      markupPercentage: this.article?.markupPercentage ?? 0,
+      markupPrice: this.article?.markupPrice ?? 0,
+      salePrice: this.article?.salePrice ?? 0,
+      markupPriceWithoutVAT: 0, // Campo calculado
+      salePriceWithoutVAT: 0, // Campo calculado
       classification: classification ?? null,
       provider: provider ?? null,
       taxes: [],
@@ -398,29 +408,50 @@ export class ArticleComponent implements OnInit {
       });
     }
 
+    // Cargar variantes existentes
     if (this.article?.variants?.length > 0 && this.variantTypes.length > 0) {
-      let variants = this.articleForm.controls.variants as UntypedFormArray;
-      this.article.variants.forEach((x) => {
-        const selectedType = this.variantTypes.find(
-          (varianType) => varianType._id === (typeof x.type === 'string' ? x.type : x.type._id)
-        );
-        const selectedValue = this.variantValues.find((variantValue) => {
-          const valueId = typeof x.value === 'string' ? x.value : x.value._id;
-          return variantValue._id === valueId;
-        });
-        variants.push(
-          this._fb.group({
-            type: selectedType,
-            value: [selectedValue],
-          })
-        );
-      });
+      this.loadExistingVariants();
     }
-    console.log(this.variantValues);
   }
 
   public deleteArticleTax(index: number): void {
     (this.articleForm.get('taxes') as FormArray).removeAt(index);
+    this.updatePrices('taxes');
+  }
+
+  /**
+   * Carga las variantes existentes del artículo en el FormArray
+   */
+  private loadExistingVariants(): void {
+    const variantsArray = this.articleForm.get('variants') as FormArray;
+
+    // Limpiar el array existente
+    while (variantsArray.length !== 0) {
+      variantsArray.removeAt(0);
+    }
+
+    this.article.variants.forEach((variant) => {
+      const selectedType = this.variantTypes.find(
+        (variantType) => variantType._id === (typeof variant.type === 'string' ? variant.type : variant.type._id)
+      );
+
+      const selectedValue = this.variantValues.find((variantValue) => {
+        const valueId = typeof variant.value === 'string' ? variant.value : variant.value._id;
+        return variantValue._id === valueId;
+      });
+
+      if (selectedType && selectedValue) {
+        variantsArray.push(
+          this._fb.group({
+            type: [selectedType, Validators.required],
+            value: [selectedValue, Validators.required],
+          })
+        );
+      }
+    });
+
+    // Actualizar la vista agrupada por tipos
+    this.setVariantByType(variantsArray.value);
   }
 
   returnTo() {
@@ -436,15 +467,6 @@ export class ArticleComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this.article = result.result;
-          this.notes = this.article.notes;
-          this.tags = this.article.tags;
-          if (this.article.variants.length > 0) {
-            const types = this.article.variants.map((item) => item.type);
-            const uniqueTypes = [...new Set(types)];
-            const filteredObjects = this.variantTypes.filter((item: any) => uniqueTypes.includes(item._id));
-
-            this.variantTypes = filteredObjects;
-          }
           this.setValueForm();
         },
         error: (error) => {
@@ -530,7 +552,8 @@ export class ArticleComponent implements OnInit {
         message: `Impuesto ${selectedTax.name} agregado correctamente`,
       });
 
-      console.log('Taxes array:', taxesArray.value);
+      // Actualizar los precios después de agregar el impuesto
+      this.updatePrices('taxes');
     } else {
       this._toastService.showToast({
         type: 'warning',
@@ -607,90 +630,139 @@ export class ArticleComponent implements OnInit {
     }
   }
 
-  updatePrices(op): void {
+  updatePrices(op: string): void {
     let taxedAmount = 0;
+    const taxesArray = this.articleForm.get('taxes') as FormArray;
 
-    // switch (op) {
-    //   case 'basePrice':
-    //     this.articleForm.value.costPrice = 0;
-    //     taxedAmount = this.articleForm.value.basePrice;
-    //     if (this.taxes && this.taxes.length > 0) {
-    //       this.totalTaxes = 0;
-    //       for (const articleTax of this.taxes) {
-    //         if (articleTax.tax.percentage && articleTax.tax.percentage != 0) {
-    //           articleTax.taxBase = taxedAmount;
-    //           articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage) / 100);
-    //           this.totalTaxes += articleTax.taxAmount;
-    //         }
-    //         this.articleForm.value.costPrice += articleTax.taxAmount;
-    //       }
-    //     }
-    //     this.articleForm.value.costPrice += taxedAmount;
-    //     if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
-    //       this.articleForm.value.markupPrice = this.roundNumber.transform(
-    //         (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
-    //       );
-    //       this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
-    //     }
-    //     break;
-    //   case 'taxes':
-    //     this.articleForm.value.costPrice = 0;
-    //     taxedAmount = this.articleForm.value.basePrice;
-    //     if (this.taxes && this.taxes.length > 0) {
-    //       this.totalTaxes = 0;
-    //       for (const articleTax of this.taxes) {
-    //         this.articleForm.value.costPrice += articleTax.taxAmount;
-    //         this.totalTaxes += articleTax.taxAmount;
-    //       }
-    //     }
-    //     this.articleForm.value.costPrice += taxedAmount;
-    //     if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
-    //       this.articleForm.value.markupPrice = this.roundNumber.transform(
-    //         (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
-    //       );
-    //       this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
-    //     }
-    //     break;
-    //   case 'markupPercentage':
-    //     if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
-    //       this.articleForm.value.markupPrice = this.roundNumber.transform(
-    //         (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
-    //       );
-    //       this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
-    //     }
-    //     break;
-    //   case 'markupPrice':
-    //     if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
-    //       this.articleForm.value.markupPercentage = this.roundNumber.transform(
-    //         (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100
-    //       );
-    //       this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
-    //     }
-    //     break;
-    //   case 'salePrice':
-    //     if (this.articleForm.value.basePrice === 0) {
-    //       this.articleForm.value.costPrice === 0;
-    //       this.articleForm.value.markupPercentage = 100;
-    //       this.articleForm.value.markupPrice = this.articleForm.value.salePrice;
-    //     } else {
-    //       this.articleForm.value.markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
-    //       this.articleForm.value.markupPercentage = this.roundNumber.transform(
-    //         (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100
-    //       );
-    //     }
-    //     break;
-    //   default:
-    //     break;
-    // }
+    switch (op) {
+      case 'basePrice':
+        this.articleForm.patchValue({ costPrice: 0 });
+        taxedAmount = this.articleForm.value.basePrice;
 
-    // this.articleForm.value.basePrice = this.roundNumber.transform(this.articleForm.value.basePrice);
-    // this.articleForm.value.costPrice = this.roundNumber.transform(this.articleForm.value.costPrice);
-    // this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
-    // this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
-    // this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
-    // this.articleForm.value.salePriceTN = this.roundNumber.transform(this.articleForm.value.salePriceTN);
-    // this.article = Object.assign(this.article, this.articleForm.value);
-    // this.setValuesForm();
+        if (taxesArray && taxesArray.length > 0) {
+          this.totalTaxes = 0;
+          taxesArray.controls.forEach((taxControl) => {
+            const tax = taxControl.get('tax')?.value;
+            const percentage = taxControl.get('percentage')?.value;
+            if (tax && percentage && percentage !== 0) {
+              taxControl.patchValue({ taxBase: taxedAmount });
+              const taxAmount = this.roundNumber.transform((taxedAmount * percentage) / 100, '1.2-2');
+              taxControl.patchValue({ taxAmount: taxAmount });
+              this.totalTaxes += parseFloat(taxAmount.toString());
+            }
+            this.articleForm.patchValue({
+              costPrice: this.articleForm.value.costPrice + parseFloat(taxControl.get('taxAmount')?.value || 0),
+            });
+          });
+        }
+        this.articleForm.patchValue({
+          costPrice: this.articleForm.value.costPrice + taxedAmount,
+        });
+
+        if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
+          const markupPrice = this.roundNumber.transform(
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100,
+            '1.2-2'
+          );
+          this.articleForm.patchValue({
+            markupPrice: markupPrice,
+            salePrice: this.articleForm.value.costPrice + parseFloat(markupPrice.toString()),
+          });
+        }
+        break;
+
+      case 'taxes':
+        this.articleForm.patchValue({ costPrice: 0 });
+        taxedAmount = this.articleForm.value.basePrice;
+
+        if (taxesArray && taxesArray.length > 0) {
+          this.totalTaxes = 0;
+          taxesArray.controls.forEach((taxControl) => {
+            this.articleForm.patchValue({
+              costPrice: this.articleForm.value.costPrice + parseFloat(taxControl.get('taxAmount')?.value || 0),
+            });
+            this.totalTaxes += parseFloat(taxControl.get('taxAmount')?.value || 0);
+          });
+        }
+
+        this.articleForm.patchValue({
+          costPrice: this.articleForm.value.costPrice + taxedAmount,
+        });
+
+        if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
+          const markupPrice = this.roundNumber.transform(
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100,
+            '1.2-2'
+          );
+          this.articleForm.patchValue({
+            markupPrice: markupPrice,
+            salePrice: this.articleForm.value.costPrice + parseFloat(markupPrice.toString()),
+          });
+        }
+        break;
+
+      case 'markupPercentage':
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+          const markupPrice = this.roundNumber.transform(
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100,
+            '1.2-2'
+          );
+          this.articleForm.patchValue({
+            markupPrice: markupPrice,
+            salePrice: this.articleForm.value.costPrice + parseFloat(markupPrice.toString()),
+          });
+        }
+        break;
+
+      case 'markupPrice':
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+          const markupPercentage = this.roundNumber.transform(
+            (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100,
+            '1.2-2'
+          );
+          this.articleForm.patchValue({
+            markupPercentage: markupPercentage,
+            salePrice: this.articleForm.value.costPrice + this.articleForm.value.markupPrice,
+          });
+        }
+        break;
+
+      case 'salePrice':
+        if (this.articleForm.value.basePrice === 0) {
+          this.articleForm.patchValue({
+            costPrice: 0,
+            markupPercentage: 100,
+            markupPrice: this.articleForm.value.salePrice,
+          });
+        } else {
+          const markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
+          const markupPercentage = this.roundNumber.transform(
+            (markupPrice / this.articleForm.value.costPrice) * 100,
+            '1.2-2'
+          );
+          this.articleForm.patchValue({
+            markupPrice: markupPrice,
+            markupPercentage: markupPercentage,
+          });
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    // Redondear todos los valores
+    this.articleForm.patchValue({
+      basePrice: this.roundNumber.transform(this.articleForm.value.basePrice, '1.2-2'),
+      costPrice: this.roundNumber.transform(this.articleForm.value.costPrice, '1.2-2'),
+      markupPercentage: this.roundNumber.transform(this.articleForm.value.markupPercentage, '1.2-2'),
+      markupPrice: this.roundNumber.transform(this.articleForm.value.markupPrice, '1.2-2'),
+      salePrice: this.roundNumber.transform(this.articleForm.value.salePrice, '1.2-2'),
+      salePriceTN: this.roundNumber.transform(this.articleForm.value.salePriceTN, '1.2-2'),
+    });
+
+    // Actualizar el artículo
+    this.article = Object.assign(this.article, this.articleForm.value);
   }
 
   addTag(tag: string): void {
@@ -851,48 +923,62 @@ export class ArticleComponent implements OnInit {
   }
 
   public addVariant(variantsForm: NgForm): void {
-    if (
-      typeof variantsForm.value.type !== 'undefined' &&
-      typeof variantsForm.value.type !== null &&
-      typeof variantsForm.value.value !== 'undefined' &&
-      typeof variantsForm.value.value !== null
-    ) {
-      this.variant = variantsForm.value;
-      const uniqueIds = Array.from(new Set(this.typeSelect));
-
-      // Verificar si el nuevo ID ya está en el array
-      if (uniqueIds.includes(this.variant.type._id)) {
-        this.typeSelect.push(this.variant.type._id);
-      } else if (uniqueIds.length < 2) {
-        this.typeSelect.push(this.variant.type._id);
-      } else {
-        return this._toastService.showToast(
-          null,
-          'info',
-          undefined,
-          'No puedes agregar más de un tipo de variante diferente.'
-        );
-      }
-      //Comprobamos que la variante no existe
-      if (!this.variantExists(this.variant)) {
-        this.variants.push(this.variant);
-        this.articleForm.controls.variants.value.push(variantsForm.value);
-        this.setVariantByType(this.articleForm.controls.variants.value);
-        let variantTypeAux = this.variant.type;
-        let variantValueAux = this.variant.value;
-        this.variant = new Variant();
-        this.variant.type = variantTypeAux;
-        this.variant.value = variantValueAux;
-        this.setValueVariants();
-      } else {
-        this._toastService.showToast(
-          null,
-          'info',
-          undefined,
-          'La variante ' + this.variant.type.name + ' ' + this.variant.value.description + ' ya existe'
-        );
-      }
+    if (!variantsForm.valid || !variantsForm.value.type || !variantsForm.value.value) {
+      this._toastService.showToast({
+        type: 'warning',
+        message: 'Por favor seleccione un tipo y valor de variante',
+      });
+      return;
     }
+
+    const newVariant = {
+      type: variantsForm.value.type,
+      value: variantsForm.value.value,
+    };
+
+    // Verificar si la variante ya existe
+    if (this.variantExists(newVariant)) {
+      this._toastService.showToast({
+        type: 'info',
+        message: `La variante ${newVariant.type.name} - ${newVariant.value.description} ya existe`,
+      });
+      return;
+    }
+
+    // Verificar límite de tipos de variantes (máximo 2 tipos diferentes)
+    const variantsArray = this.articleForm.get('variants') as FormArray;
+    const existingTypes = new Set(variantsArray.value.map((v) => v.type._id));
+
+    if (!existingTypes.has(newVariant.type._id) && existingTypes.size >= 2) {
+      this._toastService.showToast({
+        type: 'info',
+        message: 'No puedes agregar más de dos tipos de variantes diferentes',
+      });
+      return;
+    }
+
+    // Agregar la nueva variante al FormArray
+    variantsArray.push(
+      this._fb.group({
+        _id: [null],
+        type: [newVariant.type, Validators.required],
+        value: [newVariant.value, Validators.required],
+      })
+    );
+
+    // Actualizar la vista agrupada
+    this.setVariantByType(variantsArray.value);
+
+    // Limpiar el formulario
+    variantsForm.reset();
+    this.variantTypeSelected = null;
+    this.variantValueSelected = null;
+    this.variantValues = [];
+
+    this._toastService.showToast({
+      type: 'success',
+      message: `Variante ${newVariant.type.name} - ${newVariant.value.description} agregada correctamente`,
+    });
   }
 
   public setValueVariants(): void {
@@ -907,97 +993,55 @@ export class ArticleComponent implements OnInit {
 
     variantsArray.push(variantGroup);
   }
-  public variantExists(variant: Variant): boolean {
-    let exists: boolean = false;
-
-    if (this.variants && this.variants.length > 0) {
-      for (let variantAux of this.variants) {
-        if (variantAux.type._id === variant.type._id && variantAux.value._id === variant.value._id) {
-          exists = true;
-        }
-      }
-    }
-
-    return exists;
-  }
-
-  public deleteVariant(v) {
-    // Verifica si solo hay un tipo con un valor en variantsByTypes
-    const typeId = v.type?._id; // Obtén el ID del tipo desde el objeto v
-    const typeIndex = this.variantsByTypes.findIndex((type) => type.type._id === typeId);
-
-    if (typeIndex !== -1) {
-      const type = this.variantsByTypes[typeIndex];
-
-      // Permitir la eliminación solo si hay más de un value
-      if (type.value.length > 1) {
-        // Procede con la eliminación
-        let countvt: number = 0;
-
-        // Encuentra y elimina el value correspondiente
-        for (let vt of this.variantsByTypes) {
-          if (vt.type._id === typeId) {
-            let countval: number = 0;
-            let delval: number = -1;
-            for (let val of vt.value) {
-              if (val._id === v._id) {
-                delval = countval;
-              }
-              countval++;
-            }
-
-            // Eliminar el value encontrado
-            if (delval !== -1) {
-              vt.value.splice(delval, 1);
-            }
-
-            // Si el array de values está vacío, eliminar el tipo
-            if (vt.value.length === 0) {
-              this.variantsByTypes.splice(countvt, 1);
-            }
-          }
-          countvt++;
-        }
-
-        // Eliminar de this.variants si corresponde
-        if (this.variants && this.variants.length > 0) {
-          let countvar: number = 0;
-          let delvar: number = -1;
-          for (let variantAux of this.variants) {
-            if (variantAux.value._id === v._id) {
-              delvar = countvar;
-            }
-            countvar++;
-          }
-          if (delvar !== -1) {
-            this.variants.splice(delvar, 1);
-          }
-        }
-
-        // Eliminar la variante del FormArray
-        this.deleteVariantFromFormArray(v);
-      } else {
-        this._toastService.showToast(null, 'info', undefined, 'No se puede eliminar la única variante restante.');
-        return;
-      }
-    }
-  }
-
-  private deleteVariantFromFormArray(variant): void {
+  public variantExists(variant: any): boolean {
     const variantsArray = this.articleForm.get('variants') as FormArray;
 
-    for (let i = 0; i < variantsArray.length; i++) {
-      const variantGroup = variantsArray.at(i) as FormGroup;
-      const variantId =
-        typeof variantGroup.value.value === 'string' ? variantGroup.value.value : variantGroup.value.value._id;
-      if (variantId === variant._id) {
-        variantsArray.removeAt(i);
-        break;
-      }
-    }
+    return variantsArray.value.some(
+      (existingVariant) =>
+        existingVariant.type._id === variant.type._id && existingVariant.value._id === variant.value._id
+    );
   }
 
-  private setVariantByType(variants: Variant[]): void {
+  public deleteVariant(variant: any): void {
+    const variantsArray = this.articleForm.get('variants') as FormArray;
+
+    // Encontrar el índice de la variante en el FormArray
+    const variantIndex = variantsArray.value.findIndex(
+      (v) => v.type._id === variant.type._id && v.value._id === variant.value._id
+    );
+
+    if (variantIndex === -1) {
+      this._toastService.showToast({
+        type: 'error',
+        message: 'No se encontró la variante a eliminar',
+      });
+      return;
+    }
+
+    // Verificar si es la última variante de ese tipo
+    const sameTypeVariants = variantsArray.value.filter((v) => v.type._id === variant.type._id);
+
+    if (sameTypeVariants.length === 1) {
+      this._toastService.showToast({
+        type: 'info',
+        message: 'No se puede eliminar la única variante de este tipo',
+      });
+      return;
+    }
+
+    // Eliminar del FormArray
+    variantsArray.removeAt(variantIndex);
+
+    // Actualizar la vista agrupada
+    this.setVariantByType(variantsArray.value);
+
+    this._toastService.showToast({
+      type: 'success',
+      message: `Variante ${variant.type.name} - ${variant.value.description} eliminada correctamente`,
+    });
+  }
+
+  private setVariantByType(variants: any[]): void {
     // Crear un mapa para almacenar los valores únicos por tipo
     const typeMap = new Map<string, { type: any; value: any[] }>();
 
@@ -1022,40 +1066,61 @@ export class ArticleComponent implements OnInit {
         });
       }
     }
-    // Convertir el mapa a un array y ordenar
-    console.log(typeMap.values());
+
+    // Convertir el mapa a un array
     this.variantsByTypes = Array.from(typeMap.values());
   }
 
   public refreshValues(): void {
     if (this.variantTypeSelected) {
-      this.getVariantValuesByType(this.variantTypeSelected);
+      // Filtrar los valores de variantes que pertenecen al tipo seleccionado
+      // desde todos los valores disponibles
+      this.variantValues = this.allVariantValues.filter((value) => {
+        // Verificar diferentes estructuras posibles
+        let typeId = null;
+
+        if (value.type) {
+          // Si type es un objeto
+          if (typeof value.type === 'object' && value.type._id) {
+            typeId = value.type._id;
+          }
+          // Si type es un string (ID)
+          else if (typeof value.type === 'string') {
+            typeId = value.type;
+          }
+        }
+
+        return typeId === this.variantTypeSelected._id;
+      });
     } else {
       this.variantValues = [];
     }
   }
 
   public getVariantValuesByType(variantType: VariantType): void {
-    this.loading = true;
+    if (!variantType) {
+      this.variantValues = [];
+      return;
+    }
 
-    let query = 'where="type":"' + variantType._id + '"&sort="order":1,"description":1';
+    // Filtrar los valores de variantes que pertenecen al tipo seleccionado
+    // desde todos los valores disponibles
+    this.variantValues = this.allVariantValues.filter((value) => {
+      let typeId = null;
 
-    this._variantValueService.getVariantValues(query).subscribe(
-      (result) => {
-        if (!result.variantValues) {
-          this.loading = false;
-          this.variantValues = new Array();
-        } else {
-          //  this.hideMessage();
-          this.loading = false;
-          this.variantValues = result.variantValues;
+      if (value.type) {
+        // Si type es un objeto
+        if (typeof value.type === 'object' && value.type._id) {
+          typeId = value.type._id;
         }
-      },
-      (error) => {
-        //   this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+        // Si type es un string (ID)
+        else if (typeof value.type === 'string') {
+          typeId = value.type;
+        }
       }
-    );
+
+      return typeId === variantType._id;
+    });
   }
 
   padString(n, length) {

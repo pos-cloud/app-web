@@ -106,5 +106,7 @@
   "debe": "Dare",
   "haber": "Avere",
   "balance": "Saldo",
-  "transactionBalance": "Saldo Documento"
+  "transactionBalance": "Saldo Documento",
+  "complementary information": "Informazioni complementari",
+  "measurements and dimensions": "Misure e dimensioni"
 }

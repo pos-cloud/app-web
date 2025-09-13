@@ -833,5 +833,7 @@
   "discountRate": "Tasa de descuento",
   "printBalanceAccount": "Imprimir saldo de cuenta",
   "specialRules": "Reglas especiales",
-  "exceptions": "Excepciones"
+  "exceptions": "Excepciones",
+  "complementary information": "Información complementaria",
+  "measurements and dimensions": "Medidas y dimensiones"
 }

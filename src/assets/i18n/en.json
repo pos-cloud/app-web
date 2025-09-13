@@ -109,5 +109,7 @@
   "debe": "Debit",
   "haber": "Credit",
   "balance": "Balance",
-  "transactionBalance": "Document Balance"
+  "transactionBalance": "Document Balance",
+  "complementary information": "Complementary information",
+  "measurements and dimensions": "Measurements and dimensions"
 }
