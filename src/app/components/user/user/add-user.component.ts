@@ -13,8 +13,7 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { User, UserState } from '../user';
 
-import { Branch, CashBoxType, Company, Employee, Permission, Printer } from '@types';
-import { Origin } from 'app/components/origin/origin';
+import { Branch, CashBoxType, Company, Employee, Origin, Permission, Printer } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { CashBoxTypeService } from 'app/core/services/cash-box-type.service';

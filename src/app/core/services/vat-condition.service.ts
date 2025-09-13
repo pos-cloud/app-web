@@ -3,10 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { VATCondition } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
-import { VATCondition } from '@types';
 
 @Injectable({
   providedIn: 'root',
