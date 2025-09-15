@@ -328,7 +328,7 @@ export class ListArticleStockComponent implements OnInit {
     },
     {
       name: 'article.costPrice',
-      visible: true,
+      visible: false,
       disabled: false,
       filter: true,
       datatype: 'currency',
