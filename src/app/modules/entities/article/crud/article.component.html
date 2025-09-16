@@ -40,7 +40,7 @@
     </div>
     <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
-      <form [formGroup]="articleForm" (ngSubmit)="handleArticleOperation()" autocomplete="off" *ngIf="!loading">
+      <form [formGroup]="articleForm" (ngSubmit)="handleArticleOperation()" autocomplete="off">
         <div class="row">
           <label class="col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
@@ -346,7 +346,7 @@
             <tbody>
               <tr
                 [formGroup]="articleTaxAux"
-                *ngFor="let articleTaxAux of this.articleForm.get('taxes').controls; let i = index"
+                *ngFor="let articleTaxAux of this.articleForm.get('taxes')?.controls; let i = index"
               >
                 <td align="left" width="130">
                   <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteArticleTax(i)">
@@ -621,25 +621,89 @@
               </option>
             </select>
           </div>
-          <div class="form-group col-md-3">
-            <label for="salePriceTN" class="control-label">{{ 'salePriceTN' | translate | capitalize }}:</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+          <ng-container *ngIf="articleForm.get('publishTiendaNube')?.value === true">
+            <div class="form-group col-md-3">
+              <label for="typeTN" class="control-label">{{ 'Tipo de producto' | translate | capitalize }}:</label>
+              <select class="form-control" formControlName="typeTN">
+                <option [ngValue]="true" [disabled]="readonly">
+                  {{ 'Fisico' | translate | capitalize }}
+                </option>
+                <option [ngValue]="false" [disabled]="readonly">
+                  {{ 'Digital / Servicio' | translate | capitalize }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="salePriceTN" class="control-label">{{ 'salePriceTN' | translate | capitalize }}:</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">$</span>
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="salePriceTN"
+                  [readonly]="operation === 'view'"
+                  name="salePriceTN"
+                  id="salePriceTN"
+                  (blur)="updatePrices('basePrice')"
+                />
               </div>
+            </div>
+
+            <div class="form-group col-md-3" *ngIf="hierarchicalCategories.length > 0">
+              <label for="categoryTN">{{ 'categories' | translate | capitalize }}:</label>
+              <app-hierarchical-multi-select
+                [items]="hierarchicalCategories"
+                [placeholder]="'Seleccionar categorías...'"
+                [disabled]="readonly"
+                [searchPlaceholder]="'Buscar categorías...'"
+                [displayText]="categoriesDisplayText"
+                formControlName="categoryTN"
+                (ngModelChange)="updateCategoriesDisplayText()"
+              ></app-hierarchical-multi-select>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="seoTitleTN" class="control-label">{{ 'seoTitle' | translate | capitalize }}:</label>
               <input
-                type="number"
+                type="text"
                 class="form-control"
-                formControlName="salePriceTN"
+                formControlName="seoTitleTN"
+                name="seoTitleTN"
+                id="seoTitleTN"
                 [readonly]="operation === 'view'"
-                name="salePriceTN"
-                id="salePriceTN"
-                (blur)="updatePrices('basePrice')"
               />
             </div>
-          </div>
-        </div>
 
+            <div class="form-group col-md-3">
+              <label for="seoDescriptionTN" class="control-label"
+                >{{ 'seoDescription' | translate | capitalize }}:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="seoDescriptionTN"
+                name="seoDescriptionTN"
+                id="seoDescriptionTN"
+                [readonly]="operation === 'view'"
+              />
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="videoUrlTN" class="control-label">{{ 'video_url' | translate | capitalize }}:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="videoUrlTN"
+                name="videoUrlTN"
+                id="videoUrlTN"
+                [readonly]="operation === 'view'"
+              />
+            </div>
+          </ng-container>
+        </div>
         <div class="row">
           <div class="form-group col-md-2">
             <label for="publishWooCommerce" class="control-label">WooCommerce</label>
@@ -779,7 +843,6 @@
               id="tag"
               (keydown.enter)="addTag($event.target.value); $event.stopPropagation(); $event.preventDefault()"
               placeholder="Ingresar el tag y luego presionar enter por cada tag."
-              [focus]="focusTagEvent"
               [readonly]="readonly"
             />
 

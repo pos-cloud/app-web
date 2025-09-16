@@ -49,6 +49,10 @@ import { FileService } from '@core/services/file.service';
 import { TaxService } from '@core/services/tax.service';
 import { VariantTypeService } from '@core/services/variant-type.service';
 import { VariantValueService } from '@core/services/variant-value.service';
+import {
+  HierarchicalItem,
+  HierarchicalMultiSelectComponent,
+} from '@shared/components/hierarchical-multi-select/hierarchical-multi-select.component';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
 import { Variant } from 'app/components/variant/variant';
@@ -67,6 +71,7 @@ Quill.register('modules/imageResize', ImageResize);
     PipesModule,
     TranslateModule,
     TypeaheadDropdownComponent,
+    HierarchicalMultiSelectComponent,
     UploadFileComponent,
     QuillModule,
     ProgressbarModule,
@@ -83,6 +88,7 @@ export class ArticleComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public focusNoteEvent = new EventEmitter<boolean>();
+
   public articleForm: UntypedFormGroup;
   public config: Config;
   private destroy$ = new Subject<void>();
@@ -110,6 +116,7 @@ export class ArticleComponent implements OnInit {
   public code: string;
 
   public categories: Category[] = [];
+  public categoriesTN: Category[] = [];
   public classifications: Classification[] = [];
   public makes: Make[] = [];
   public unitOfMeasurements: UnitOfMeasurement[] = [];
@@ -159,6 +166,9 @@ export class ArticleComponent implements OnInit {
   public taxForm: UntypedFormGroup;
   public totalTaxes: number = 0;
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
+
+  public hierarchicalCategories;
+  public categoriesDisplayText;
 
   constructor(
     private _articleService: ArticleService,
@@ -241,6 +251,11 @@ export class ArticleComponent implements OnInit {
       publishWooCommerce: [false, []],
       pictures: this._fb.array([]),
       season: ['', []],
+      typeTN: [true, []],
+      categoryTN: [null, []],
+      seoTitleTN: ['', []],
+      seoDescriptionTN: ['', []],
+      videoUrlTN: ['', []],
     });
 
     this.taxForm = this._fb.group({
@@ -286,6 +301,7 @@ export class ArticleComponent implements OnInit {
           code,
         }) => {
           this.categories = categories || [];
+
           this.makes = makes || [];
           this.unitOfMeasurements = unitOfMeasurements || [];
           this.taxes = taxes || [];
@@ -308,6 +324,7 @@ export class ArticleComponent implements OnInit {
           this._toastService.showToast(error);
         },
         complete: () => {
+          this.processHierarchicalCategories();
           this.loading = false;
         },
       });
@@ -400,6 +417,12 @@ export class ArticleComponent implements OnInit {
       tiendaNubeId: this.article?.tiendaNubeId ?? null,
       wooId: this.article?.wooId ?? null,
       salePriceTN: this.article?.salePriceTN ?? 0,
+      picture: this.article?.picture ?? '',
+      typeTN: this.article?.typeTN ?? true,
+      categoryTN: this.article?.categoryTN ?? null,
+      seoTitleTN: this.article?.seoTitleTN ?? '',
+      seoDescriptionTN: this.article?.seoDescriptionTN ?? '',
+      videoUrlTN: this.article?.videoUrlTN ?? '',
     };
 
     this.articleForm.patchValue(values);
@@ -1232,5 +1255,45 @@ export class ArticleComponent implements OnInit {
     }
 
     return n;
+  }
+
+  public processHierarchicalCategories(): void {
+    // Crear lista plana con niveles jerárquicos
+    const hierarchicalItems: HierarchicalItem[] = [];
+    let categoriesTN = this.categories.filter((category) => category.tiendaNubeId) || [];
+    // Primero agregar categorías raíz (level 0)
+    categoriesTN
+      .filter((category) => !category.parent)
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
+      .forEach((category) => {
+        hierarchicalItems.push({
+          _id: category.tiendaNubeId,
+          name: category.description,
+          level: 0,
+        });
+      });
+
+    // Luego agregar categorías hijas (level 1)
+    categoriesTN
+      .filter((category) => category.parent)
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
+      .forEach((category) => {
+        hierarchicalItems.push({
+          _id: category.tiendaNubeId,
+          name: category.description,
+          level: 1,
+        });
+      });
+    this.hierarchicalCategories = hierarchicalItems;
+    this.updateCategoriesDisplayText();
+  }
+
+  public updateCategoriesDisplayText(): void {
+    const selectedCount = this.articleForm.get('categories')?.value?.length || 0;
+    if (selectedCount === 0) {
+      this.categoriesDisplayText = '';
+    } else {
+      this.categoriesDisplayText = `Items + ${selectedCount} seleccionados`;
+    }
   }
 }

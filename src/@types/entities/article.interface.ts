@@ -103,6 +103,11 @@ export interface Article extends Activity {
   variantValue2: VariantValue;
   publishTiendaNube: boolean;
   publishWooCommerce: boolean;
+  typeTN: boolean;
+  categoryTN: number[];
+  videoUrlTN: string;
+  seoDescriptionTN: string;
+  seoTitleTN: string;
 }
 
 export enum Type {

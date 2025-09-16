@@ -4,12 +4,16 @@ import { ArticleService } from '@core/services/article.service';
 import { PrintService } from '@core/services/print.service';
 import { PrinterService } from '@core/services/printer.service';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IAttribute, IButton, PrintType } from '@types';
+import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
+import { ToastService } from '@shared/components/toast/toast.service';
+import { ApiResponse, IAttribute, IButton, PrinterPrintIn, PrintType } from '@types';
 import { PrintPriceListComponent } from 'app/components/article/actions/print-price-list/print-price-list.component';
 import { UpdateArticlePriceComponent } from 'app/components/article/actions/update-article-price/update-article-price.component';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { ImportComponent } from 'app/shared/components/import/import.component';
+import * as printJS from 'print-js';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-list-articles',
@@ -22,6 +26,7 @@ export class ListArticlesComponent {
   public title: string = 'articles';
   public sort = { code: 1 };
   public loading: boolean = false;
+  private destroy$ = new Subject<void>();
   public columns: IAttribute[] = [
     {
       name: '_id',
@@ -621,7 +626,8 @@ export class ListArticlesComponent {
     private _router: Router,
     public _printerService: PrinterService,
     public _printService: PrintService,
-    public _alertConfig: NgbAlertConfig
+    public _alertConfig: NgbAlertConfig,
+    public _toastService: ToastService
   ) {}
 
   public async emitEvent(event) {
@@ -671,19 +677,30 @@ export class ListArticlesComponent {
         });
         break;
       case 'print-label':
-        const datalabel = {
-          quantity: 1,
-          articleId: obj._id,
-        };
-        this._printService.toPrint(PrintType.Article, datalabel);
-        this.loading = false;
+        modalRef = this._modalService.open(SelectPrinterComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.typePrinter = PrinterPrintIn.Label;
+        modalRef.result.then(
+          (result) => {
+            if (result.data) {
+              const datalabel = {
+                quantity: 1,
+                articleId: obj._id,
+                printerId: result.data._id,
+              };
+              this.toPrint(PrintType.Article, datalabel);
+            }
+          },
+          (reason) => {}
+        );
         break;
       case 'print-labels':
         const dataLabels = {
           articlesIds: items.map((objeto) => objeto._id),
         };
-        this._printService.toPrint(PrintType.Labels, dataLabels);
-        this.loading = false;
+        this.toPrint(PrintType.Labels, dataLabels);
         break;
 
       case 'update-prices':
@@ -715,5 +732,37 @@ export class ListArticlesComponent {
 
   public refresh() {
     this.datatableComponent.refresh();
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+
+    this._printService
+      .toPrint(type, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | ApiResponse) => {
+          if (!result) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            return;
+          }
+          if (result instanceof Blob) {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              printJS(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 }

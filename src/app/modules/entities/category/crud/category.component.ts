@@ -156,7 +156,7 @@ export class CategoryComponent implements OnInit {
       });
   }
 
-  public handleCategoryOperation() {
+  async handleCategoryOperation() {
     this.loading = true;
     this.categoryForm.markAllAsTouched();
     if (this.categoryForm.invalid) {
@@ -164,6 +164,7 @@ export class CategoryComponent implements OnInit {
       return;
     }
 
+    await this.uploadFileComponent.uploadImages();
     this.category = this.categoryForm.value;
 
     switch (this.operation) {
