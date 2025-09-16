@@ -21,4 +21,8 @@ export const ARTICLE_ROUTES: Routes = [
     path: 'delete/:id',
     loadComponent: () => import('./crud/article.component').then((m) => m.ArticleComponent),
   },
+  {
+    path: 'copy/:id',
+    loadComponent: () => import('./crud/article.component').then((m) => m.ArticleComponent),
+  },
 ];

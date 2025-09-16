@@ -82,6 +82,7 @@
               <div class="col-md-6">
                 <label for="make"> {{ 'make' | translate | capitalize }}:</label>
                 <app-typeahead-dropdown
+                  placeholder="{{ 'make' | translate | capitalize }}"
                   [control]="articleForm.get('make')"
                   [data]="makes"
                   [readonly]="readonly"
@@ -93,6 +94,7 @@
               <div class="col-md-6">
                 <label for="category">{{ 'category' | translate | capitalize }}:</label>
                 <app-typeahead-dropdown
+                  placeholder="{{ 'category' | translate | capitalize }}"
                   [control]="articleForm.get('category')"
                   [data]="categories"
                   [readonly]="readonly"
@@ -175,6 +177,7 @@
           <div class="col-md-4">
             <label for="unitOfMeasurement">{{ 'unitOfMeasurement' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
+              placeholder="{{ 'unitOfMeasurement' | translate | capitalize }}"
               [control]="articleForm.get('unitOfMeasurement')"
               [data]="unitOfMeasurements"
               [readonly]="readonly"
@@ -237,7 +240,7 @@
                 class="form-control"
                 formControlName="basePrice"
                 name="basePrice"
-                (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
+                (blur)="updatePrices('basePrice')"
                 [ngClass]="{
                   'is-invalid': articleForm.get('basePrice')?.touched && articleForm.get('basePrice')?.invalid,
                 }"
@@ -270,48 +273,65 @@
           </div>
         </div>
         <hr />
-        <div class="row" [formGroup]="taxForm">
-          <div class="col-md-3">
-            <label for="tax" class="control-label">Impuesto:</label>
-            <select class="form-control" formControlName="tax" [disabled]="readonly">
-              <option [ngValue]="null">Seleccionar impuesto...</option>
-              <option *ngFor="let tax of taxes" [ngValue]="tax">
-                {{ tax.name }}
-              </option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label for="percentage" class="control-label">Porcentaje:</label>
-            <div class="input-group">
-              <input type="number" class="form-control" formControlName="percentage" step="0.01" min="0" max="100" />
-              <div class="input-group-prepend">
-                <span class="input-group-text">%</span>
+        <form [formGroup]="taxForm" autocomplete="off">
+          <div class="row">
+            <div class="col-md-3">
+              <label for="tax" class="control-label">Impuesto:</label>
+              <select class="form-control" formControlName="tax" [disabled]="readonly" (change)="changeTax('tax')">
+                <option [ngValue]="null">Seleccionar impuesto...</option>
+                <option *ngFor="let tax of taxes" [ngValue]="tax">
+                  {{ tax.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="percentage" class="control-label">Porcentaje:</label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="percentage"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  (blur)="changeTax('percentage')"
+                />
+                <div class="input-group-prepend">
+                  <span class="input-group-text">%</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="taxAmount" class="control-label">Monto:</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="taxAmount"
+                  step="0.01"
+                  min="0"
+                  (blur)="changeTax('taxAmount')"
+                />
+              </div>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="value" class="control-label">Acción:</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  (click)="addArticleTax()"
+                  [disabled]="readonly || !taxForm.valid"
+                >
+                  Agregar
+                </button>
               </div>
             </div>
           </div>
-          <div class="col-md-3">
-            <label for="taxAmount" class="control-label">Monto:</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text">$</span>
-              </div>
-              <input type="number" class="form-control" formControlName="taxAmount" step="0.01" min="0" />
-            </div>
-          </div>
-          <div class="form-group col-md-2">
-            <label for="value" class="control-label">Acción:</label>
-            <div class="input-group">
-              <button
-                type="button"
-                class="btn btn-success"
-                (click)="addArticleTax()"
-                [disabled]="readonly || !taxForm.valid"
-              >
-                Agregar
-              </button>
-            </div>
-          </div>
-        </div>
+        </form>
         <div class="row">
           <table class="table table-striped">
             <thead>
@@ -387,7 +407,7 @@
                 formControlName="markupPercentage"
                 name="markupPercentage"
                 id="markupPercentage"
-                (blur)="updatePrices('markupPercentage'); onValueChanged($event.target.id)"
+                (blur)="updatePrices('markupPercentage')"
                 [ngClass]="{
                   'is-invalid': articleForm.get('markupPercentage')?.touched && articleForm.get('markupPercentage')?.invalid,
                 }"
@@ -431,7 +451,7 @@
                 formControlName="markupPrice"
                 name="markupPrice"
                 id="markupPrice"
-                (blur)="updatePrices('markupPrice'); onValueChanged($event.target.id)"
+                (blur)="updatePrices('markupPrice')"
                 [ngClass]="{
                   'is-invalid': articleForm.get('markupPrice')?.touched && articleForm.get('markupPrice')?.invalid,
                 }"
@@ -475,7 +495,7 @@
                 formControlName="salePrice"
                 name="salePrice"
                 id="salePrice"
-                (blur)="updatePrices('salePrice'); onValueChanged($event.target.id)"
+                (blur)="updatePrices('salePrice')"
                 [ngClass]="{
                   'is-invalid': articleForm.get('salePrice')?.touched && articleForm.get('salePrice')?.invalid,
                 }"
@@ -614,7 +634,7 @@
                 [readonly]="operation === 'view'"
                 name="salePriceTN"
                 id="salePriceTN"
-                (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
+                (blur)="updatePrices('basePrice')"
               />
             </div>
           </div>
@@ -828,7 +848,9 @@
                     </button>
                   </div>
                 </div>
-                <div class="text-muted" *ngIf="!notes || notes.length === 0">No hay notas agregadas</div>
+                <div *ngIf="!notes || notes.length === 0" class="text-muted small mt-2">
+                  <i class="fa fa-info-circle me-1"></i>No hay notas agregadas
+                </div>
               </div>
             </div>
           </div>
@@ -995,6 +1017,7 @@
               <div class="form-group col-md-4">
                 <label class="control-label">{{ 'classification' | translate | capitalize }}</label>
                 <app-typeahead-dropdown
+                  placeholder="{{ 'classification' | translate | capitalize }}"
                   [control]="articleForm.get('classification')"
                   [data]="classifications"
                   [readonly]="readonly"
@@ -1005,6 +1028,7 @@
               <div class="form-group col-md-4 typeahead-container">
                 <label class="control-label">{{ 'article.provider.name' | translate | capitalize }}</label>
                 <app-typeahead-dropdown
+                  placeholder="{{ 'article.provider.name' | translate | capitalize }}"
                   [control]="articleForm.get('provider')"
                   [data]="companies"
                   [readonly]="readonly"

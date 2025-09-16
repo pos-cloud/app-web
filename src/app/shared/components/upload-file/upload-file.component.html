@@ -19,6 +19,11 @@
   <input type="file" #fileInput id="fileInput" (change)="onFileSelected($event)" hidden />
 
   <div class="image-wrapper" (click)="fileInput.click()">
-    <img [src]="imageUrl || './../../../assets/img/default.jpg'" alt="No hay imagen" class="preview-image" />
+    <img
+      [src]="imageUrl || './../../../assets/img/default.jpg'"
+      style="height: 200px; width: 250px; display: block; margin: auto"
+      alt="No hay imagen"
+      class="preview-image"
+    />
   </div>
 </div>

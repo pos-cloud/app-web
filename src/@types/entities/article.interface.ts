@@ -28,8 +28,8 @@ export interface Article extends Activity {
   quantityPerMeasure: string;
   unitOfMeasurement: UnitOfMeasurement;
   observation: string;
-  notes: [];
-  tags: [];
+  notes: string[];
+  tags: string[];
   basePrice: number;
   taxes: Taxes[];
   costPrice: number;

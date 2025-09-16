@@ -17,6 +17,9 @@ import {
   Company,
   Config,
   Make,
+  Tax,
+  TaxBase,
+  Taxes,
   UnitOfMeasurement,
   VariantType,
   VariantValue,
@@ -47,7 +50,7 @@ import { TaxService } from '@core/services/tax.service';
 import { VariantTypeService } from '@core/services/variant-type.service';
 import { VariantValueService } from '@core/services/variant-value.service';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
-import { Tax } from 'app/components/tax/tax';
+import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
 import { Variant } from 'app/components/variant/variant';
 import Quill from 'quill';
 import ImageResize from 'quill-image-resize';
@@ -89,7 +92,7 @@ export class ArticleComponent implements OnInit {
   public imageURL: string;
   public fileNamePrincipal: string;
   public fileNameArray: string;
-  public articleTaxes;
+  public articleTax: Taxes;
   public notes: string[];
   public tags: string[];
   public userType: string;
@@ -104,6 +107,7 @@ export class ArticleComponent implements OnInit {
   public variantValues: VariantValue[];
   public allVariantValues: VariantValue[]; // Almacenar todos los valores disponibles
   public variants: Variant[] = new Array();
+  public code: string;
 
   public categories: Category[] = [];
   public classifications: Classification[] = [];
@@ -154,6 +158,7 @@ export class ArticleComponent implements OnInit {
   public taxes: Tax[] = [];
   public taxForm: UntypedFormGroup;
   public totalTaxes: number = 0;
+  public roundNumber: RoundNumberPipe = new RoundNumberPipe();
 
   constructor(
     private _articleService: ArticleService,
@@ -169,12 +174,12 @@ export class ArticleComponent implements OnInit {
     private _classificationService: ClassificationService,
     private _companyService: CompanyService,
     private _variantTypeService: VariantTypeService,
-    private _variantValueService: VariantValueService,
-    private roundNumber: DecimalPipe
+    private _variantValueService: VariantValueService //  private roundNumber: DecimalPipe
   ) {
     this.articleForm = this._fb.group({
       _id: ['', []],
       order: [1, []],
+      type: ['Final', []],
       code: ['', [Validators.required]],
       make: [null, []],
       category: [null, [Validators.required]],
@@ -184,11 +189,11 @@ export class ArticleComponent implements OnInit {
       unitOfMeasurement: [null, []],
       printIn: [ArticlePrintIn.Counter, []],
       favourite: [false, []],
-      basePrice: ['', [Validators.required]],
+      basePrice: [0, [Validators.required]],
       taxes: this._fb.array([]),
       codeProvider: ['', []],
       codeSAT: ['', []],
-      currency: ['', []],
+      currency: [null, []],
       costPrice: ['', [Validators.required]],
       costPrice2: [''],
       markupPercentage: ['', [Validators.required]],
@@ -196,49 +201,53 @@ export class ArticleComponent implements OnInit {
       markupPrice: ['', [Validators.required]],
       salePrice: ['', [Validators.required]],
       salePriceWithoutVAT: [''],
-      quantityPerMeasure: ['', []],
+      quantityPerMeasure: [1, []],
       children: this._fb.array([]),
       observation: ['', []],
       barcode: ['', []],
-      allowPurchase: ['', []],
-      allowSale: ['', []],
-      allowStock: ['', []],
-      allowSaleWithoutStock: ['', []],
-      allowMeasure: ['', []],
-      posKitchen: ['', []],
-      isWeigth: ['', []],
+      allowPurchase: [true, []],
+      allowSale: [true, []],
+      allowStock: [true, []],
+      allowSaleWithoutStock: [true, []],
+      allowMeasure: [false, []],
+      posKitchen: [false, []],
+      isWeigth: [false, []],
       providers: ['', []],
       provider: ['', []],
       lastPricePurchase: [0.0, []],
       lastDatePurchase: [0.0, []],
       classification: ['', []],
       url: ['', []],
-      forShipping: ['', []],
-      salesAccount: ['', []],
-      purchaseAccount: ['', []],
+      forShipping: [false, []],
+      salesAccount: [null, []],
+      purchaseAccount: [null, []],
       minStock: ['', []],
       maxStock: ['', []],
       pointOfOrder: ['', []],
       meliId: ['', []],
       wooId: ['', []],
-      purchasePrice: ['', []],
+      purchasePrice: [0, []],
       m3: ['', []],
       weight: ['', []],
       width: ['', []],
       height: ['', []],
       depth: ['', []],
-      showMenu: ['', []],
+      showMenu: [false, []],
       tiendaNubeId: ['', []],
-      updateVariants: [false, []],
+      updateVariants: [true, []],
       variants: this._fb.array([]),
-      salePriceTN: ['', []],
-      publishTiendaNube: [[false, []]],
-      publishWooCommerce: [[false, []]],
+      salePriceTN: [0, []],
+      publishTiendaNube: [false, []],
+      publishWooCommerce: [false, []],
       pictures: this._fb.array([]),
       season: ['', []],
     });
 
-    this.buildTaxForm();
+    this.taxForm = this._fb.group({
+      tax: [null, [Validators.required]],
+      percentage: [0, []],
+      taxAmount: [0, []],
+    });
   }
 
   ngOnInit() {
@@ -260,6 +269,7 @@ export class ArticleComponent implements OnInit {
       variantTypes: this._variantTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       variantValues: this._variantValueService.find({ query: { operationType: { $ne: 'D' } } }),
       config: this._configService.find({ query: { operationType: { $ne: 'D' } } }),
+      code: this._articleService.getLasCode(),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -273,6 +283,7 @@ export class ArticleComponent implements OnInit {
           variantTypes,
           config,
           variantValues,
+          code,
         }) => {
           this.categories = categories || [];
           this.makes = makes || [];
@@ -283,12 +294,14 @@ export class ArticleComponent implements OnInit {
           this.variantTypes = variantTypes || [];
           this.config = config || [];
           this.variantValues = variantValues || [];
-          this.allVariantValues = variantValues || []; // Almacenar todos los valores
+          this.allVariantValues = variantValues || [];
+          this.code = code.code;
 
           if (articleId) {
             this.getArticle(articleId);
           } else {
             this.setValueForm();
+            this.setValueFormTax();
           }
         },
         error: (error) => {
@@ -315,6 +328,13 @@ export class ArticleComponent implements OnInit {
     this.notes = this.article?.notes || [];
     this.tags = this.article?.tags || [];
 
+    let codeArticle;
+    if (this.operation === 'add' || this.operation === 'copy') {
+      codeArticle = !this.code ? this.padString(1, this.config.article.code.validators.maxLength) : this.code;
+    } else {
+      codeArticle = this.article.code;
+    }
+
     // Filtrar tipos de variantes si el artículo tiene variantes
     if (this.article?.variants && this.article.variants.length > 0) {
       const variantTypeIds = this.article.variants.map((item) =>
@@ -335,17 +355,18 @@ export class ArticleComponent implements OnInit {
 
     const values = {
       _id: this.article?._id ?? '',
+      type: this.article?.type ?? 'Final',
       order: this.article?.order ?? 1,
-      code: this.article.code ?? this.padString(1, this.config.article.code.validators.maxLength),
+      code: codeArticle,
       barcode: this.article?.barcode ?? '',
       make: make ?? null,
       category: category ?? null,
       description: this.article?.description ?? '',
       posDescription: this.article?.posDescription ?? '',
       unitOfMeasurement: unitOfMeasurement ?? null,
-      printIn: this.article?.printIn,
-      favourite: this.article?.favourite,
-      observation: this.article?.observation,
+      printIn: this.article?.printIn ?? ArticlePrintIn.Counter,
+      favourite: this.article?.favourite ?? false,
+      observation: this.article?.observation ?? '',
       basePrice: this.article?.basePrice ?? 0,
       purchasePrice: this.article?.purchasePrice ?? 0,
       costPrice2: this.article?.costPrice2 ?? 0,
@@ -361,16 +382,16 @@ export class ArticleComponent implements OnInit {
       publishTiendaNube: this.article?.publishTiendaNube ?? false,
       publishWooCommerce: this.article?.publishWooCommerce ?? false,
       season: this.article?.season ?? '',
-      allowPurchase: this.article?.allowPurchase ?? false,
-      allowSale: this.article?.allowSale ?? false,
-      allowStock: this.article?.allowStock ?? false,
-      allowSaleWithoutStock: this.article?.allowSaleWithoutStock ?? false,
+      allowPurchase: this.article?.allowPurchase ?? true,
+      allowSale: this.article?.allowSale ?? true,
+      allowStock: this.article?.allowStock ?? true,
+      allowSaleWithoutStock: this.article?.allowSaleWithoutStock ?? true,
       isWeigth: this.article?.isWeigth ?? false,
-      quantityPerMeasure: this.article?.quantityPerMeasure ?? '',
+      quantityPerMeasure: this.article?.quantityPerMeasure ?? 1,
       allowMeasure: this.article?.allowMeasure ?? false,
       posKitchen: this.article?.posKitchen ?? false,
       codeProvider: this.article?.codeProvider ?? '',
-      updateVariants: this.article?.updateVariants ?? false,
+      updateVariants: this.article?.updateVariants ?? true,
       weight: this.article?.weight ?? '',
       width: this.article?.width ?? '',
       height: this.article?.height ?? '',
@@ -380,6 +401,7 @@ export class ArticleComponent implements OnInit {
       wooId: this.article?.wooId ?? null,
       salePriceTN: this.article?.salePriceTN ?? 0,
     };
+
     this.articleForm.patchValue(values);
 
     const taxesArray = this.articleForm.get('taxes') as FormArray;
@@ -395,7 +417,7 @@ export class ArticleComponent implements OnInit {
       );
     });
 
-    if (this.article.pictures && this.article.pictures.length > 0) {
+    if (this.article?.pictures && this.article?.pictures?.length > 0) {
       let pictures = this.articleForm.get('pictures') as FormArray;
 
       this.article?.pictures?.forEach((x) => {
@@ -411,6 +433,87 @@ export class ArticleComponent implements OnInit {
     // Cargar variantes existentes
     if (this.article?.variants?.length > 0 && this.variantTypes.length > 0) {
       this.loadExistingVariants();
+    }
+  }
+
+  public setValueFormTax(): void {
+    // Si no existe, inicializamos el objeto completo
+    if (!this.articleTax) {
+      this.articleTax = {
+        _id: '',
+        tax: null,
+        percentage: 0,
+        taxAmount: 0,
+        taxBase: 0,
+      };
+    }
+
+    // Valores que se van a setear en el Form
+    const values = {
+      tax: this.articleTax.tax,
+      percentage: this.articleTax.percentage,
+      taxAmount: this.articleTax.taxAmount,
+    };
+
+    this.taxForm.setValue(values);
+  }
+
+  public changeTax(op: string): void {
+    if (this.taxForm.value.tax) {
+      let taxedAmount = 0;
+
+      if (this.article) {
+        taxedAmount = this.article.basePrice;
+      }
+
+      switch (op) {
+        case 'tax':
+          this.articleTax.tax = this.taxForm.value.tax;
+          this.articleTax.percentage = this.articleTax.tax.percentage;
+          this.articleTax.taxAmount = this.articleTax.tax.amount;
+          if (this.articleTax.percentage && this.articleTax.percentage !== 0) {
+            if (this.articleTax.tax.taxBase === TaxBase.Neto) {
+              console.log(this.roundNumber.transform(taxedAmount));
+              this.articleTax.taxBase = Number(this.roundNumber.transform(taxedAmount));
+              this.articleTax.taxAmount = Number(
+                this.roundNumber.transform((this.articleTax.taxBase * this.articleTax.percentage) / 100)
+              );
+            }
+          }
+          break;
+        case 'percentage':
+          this.articleTax.tax = this.taxForm.value.tax;
+          this.articleTax.percentage = this.taxForm.value.percentage;
+          this.articleTax.taxAmount = this.articleTax.tax.amount;
+          if (this.articleTax.percentage && this.articleTax.percentage !== 0) {
+            if (this.articleTax.tax.taxBase === TaxBase.Neto) {
+              this.articleTax.taxBase = parseFloat(this.roundNumber.transform(taxedAmount) as any);
+
+              this.articleTax.taxAmount = parseFloat(
+                this.roundNumber.transform((this.articleTax.taxBase * this.articleTax.percentage) / 100) as any
+              );
+            }
+          }
+          break;
+        case 'taxAmount':
+          this.articleTax.tax = this.taxForm.value.tax;
+          this.articleTax.taxAmount = this.taxForm.value.taxAmount;
+          if (this.articleTax.percentage && this.articleTax.percentage !== 0) {
+            if (this.articleTax.tax.taxBase === TaxBase.Neto) {
+              this.articleTax.taxBase = parseFloat(this.roundNumber.transform(taxedAmount) as any);
+
+              this.taxForm.value.percentage = this.roundNumber.transform(
+                (this.articleTax.taxAmount * 100) / this.articleTax.taxBase
+              );
+              this.articleTax.percentage = this.taxForm.value.percentage;
+            }
+          }
+          break;
+        default:
+          break;
+      }
+      this.setValueForm();
+      this.setValueFormTax();
     }
   }
 
@@ -467,7 +570,9 @@ export class ArticleComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this.article = result.result;
+          if (this.operation === 'copy') delete this.article._id;
           this.setValueForm();
+          this.setValueFormTax();
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -488,10 +593,11 @@ export class ArticleComponent implements OnInit {
 
     await this.uploadFileComponent.uploadImages();
 
-    this.article = this.articleForm.value;
+    this.article = { ...this.article, ...this.articleForm.value };
 
     switch (this.operation) {
       case 'add':
+      case 'copy':
         this.saveArticle();
         break;
       case 'update':
@@ -502,14 +608,6 @@ export class ArticleComponent implements OnInit {
       default:
         break;
     }
-  }
-
-  public buildTaxForm(): void {
-    this.taxForm = this._fb.group({
-      tax: [null, [Validators.required]],
-      percentage: [0, []],
-      taxAmount: [0, []],
-    });
   }
 
   public addArticleTax(): void {
@@ -646,7 +744,7 @@ export class ArticleComponent implements OnInit {
             const percentage = taxControl.get('percentage')?.value;
             if (tax && percentage && percentage !== 0) {
               taxControl.patchValue({ taxBase: taxedAmount });
-              const taxAmount = this.roundNumber.transform((taxedAmount * percentage) / 100, '1.2-2');
+              const taxAmount = this.roundNumber.transform((taxedAmount * percentage) / 100);
               taxControl.patchValue({ taxAmount: taxAmount });
               this.totalTaxes += parseFloat(taxAmount.toString());
             }
@@ -661,8 +759,7 @@ export class ArticleComponent implements OnInit {
 
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
           const markupPrice = this.roundNumber.transform(
-            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100,
-            '1.2-2'
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
           );
           this.articleForm.patchValue({
             markupPrice: markupPrice,
@@ -691,8 +788,7 @@ export class ArticleComponent implements OnInit {
 
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
           const markupPrice = this.roundNumber.transform(
-            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100,
-            '1.2-2'
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
           );
           this.articleForm.patchValue({
             markupPrice: markupPrice,
@@ -704,8 +800,7 @@ export class ArticleComponent implements OnInit {
       case 'markupPercentage':
         if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
           const markupPrice = this.roundNumber.transform(
-            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100,
-            '1.2-2'
+            (this.articleForm.value.costPrice * this.articleForm.value.markupPercentage) / 100
           );
           this.articleForm.patchValue({
             markupPrice: markupPrice,
@@ -717,8 +812,7 @@ export class ArticleComponent implements OnInit {
       case 'markupPrice':
         if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
           const markupPercentage = this.roundNumber.transform(
-            (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100,
-            '1.2-2'
+            (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100
           );
           this.articleForm.patchValue({
             markupPercentage: markupPercentage,
@@ -736,10 +830,7 @@ export class ArticleComponent implements OnInit {
           });
         } else {
           const markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
-          const markupPercentage = this.roundNumber.transform(
-            (markupPrice / this.articleForm.value.costPrice) * 100,
-            '1.2-2'
-          );
+          const markupPercentage = this.roundNumber.transform((markupPrice / this.articleForm.value.costPrice) * 100);
           this.articleForm.patchValue({
             markupPrice: markupPrice,
             markupPercentage: markupPercentage,
@@ -752,17 +843,23 @@ export class ArticleComponent implements OnInit {
     }
 
     // Redondear todos los valores
-    this.articleForm.patchValue({
-      basePrice: this.roundNumber.transform(this.articleForm.value.basePrice, '1.2-2'),
-      costPrice: this.roundNumber.transform(this.articleForm.value.costPrice, '1.2-2'),
-      markupPercentage: this.roundNumber.transform(this.articleForm.value.markupPercentage, '1.2-2'),
-      markupPrice: this.roundNumber.transform(this.articleForm.value.markupPrice, '1.2-2'),
-      salePrice: this.roundNumber.transform(this.articleForm.value.salePrice, '1.2-2'),
-      salePriceTN: this.roundNumber.transform(this.articleForm.value.salePriceTN, '1.2-2'),
-    });
+    this.articleForm.value.basePrice = this.roundNumber.transform(this.articleForm.value.basePrice);
+    this.articleForm.value.costPrice = this.roundNumber.transform(this.articleForm.value.costPrice);
+    this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
+    this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
+    this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
+    this.articleForm.value.salePriceTN = this.roundNumber.transform(this.articleForm.value.salePriceTN);
+    // this.articleForm.patchValue({
+    //   basePrice: this.roundNumber.transform(this.articleForm.value.basePrice),
+    //   costPrice: this.roundNumber.transform(this.articleForm.value.costPrice),
+    //   markupPercentage: this.roundNumber.transform(this.articleForm.value.markupPercentage),
+    //   markupPrice: this.roundNumber.transform(this.articleForm.value.markupPrice),
+    //   salePrice: this.roundNumber.transform(this.articleForm.value.salePrice),
+    //   salePriceTN: this.roundNumber.transform(this.articleForm.value.salePriceTN),
+    // });
 
     // Actualizar el artículo
-    this.article = Object.assign(this.article, this.articleForm.value);
+    this.article = { ...this.article, ...this.articleForm.value };
   }
 
   addTag(tag: string): void {
@@ -969,11 +1066,13 @@ export class ArticleComponent implements OnInit {
     // Actualizar la vista agrupada
     this.setVariantByType(variantsArray.value);
 
-    // Limpiar el formulario
-    variantsForm.reset();
-    this.variantTypeSelected = null;
+    // Limpiar solo el valor seleccionado y mantener el tipo
+    if (variantsForm && variantsForm.controls && variantsForm.controls['value']) {
+      variantsForm.controls['value'].reset();
+    }
+
     this.variantValueSelected = null;
-    this.variantValues = [];
+    this.getVariantValuesByType(this.variantTypeSelected);
 
     this._toastService.showToast({
       type: 'success',
@@ -993,6 +1092,7 @@ export class ArticleComponent implements OnInit {
 
     variantsArray.push(variantGroup);
   }
+
   public variantExists(variant: any): boolean {
     const variantsArray = this.articleForm.get('variants') as FormArray;
 
@@ -1004,12 +1104,14 @@ export class ArticleComponent implements OnInit {
 
   public deleteVariant(variant: any): void {
     const variantsArray = this.articleForm.get('variants') as FormArray;
-
+    const variantData = {
+      ...variant,
+      type: this.variantTypes.find((type) => type._id === variant.type),
+    };
     // Encontrar el índice de la variante en el FormArray
     const variantIndex = variantsArray.value.findIndex(
-      (v) => v.type._id === variant.type._id && v.value._id === variant.value._id
+      (v) => v.type._id === variantData.type._id && v.value._id === variantData._id
     );
-
     if (variantIndex === -1) {
       this._toastService.showToast({
         type: 'error',
@@ -1019,7 +1121,7 @@ export class ArticleComponent implements OnInit {
     }
 
     // Verificar si es la última variante de ese tipo
-    const sameTypeVariants = variantsArray.value.filter((v) => v.type._id === variant.type._id);
+    const sameTypeVariants = variantsArray.value.filter((v) => v.type._id === variantData.type._id);
 
     if (sameTypeVariants.length === 1) {
       this._toastService.showToast({
@@ -1037,7 +1139,7 @@ export class ArticleComponent implements OnInit {
 
     this._toastService.showToast({
       type: 'success',
-      message: `Variante ${variant.type.name} - ${variant.value.description} eliminada correctamente`,
+      message: `Variante ${variantData.type.name} - ${variantData.description} eliminada correctamente`,
     });
   }
 

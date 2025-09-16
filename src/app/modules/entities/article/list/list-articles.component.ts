@@ -644,6 +644,9 @@ export class ListArticlesComponent {
       case 'delete':
         this._router.navigateByUrl('entities/articles/delete/' + obj._id);
         break;
+      case 'copy':
+        await this._router.navigateByUrl(`entities/articles/copy/${obj._id}`);
+        break;
       case 'uploadFile':
         modalRef = this._modalService.open(ImportComponent, {
           size: 'lg',
@@ -682,12 +685,7 @@ export class ListArticlesComponent {
         this._printService.toPrint(PrintType.Labels, dataLabels);
         this.loading = false;
         break;
-      case 'copy':
-        currentUrl = encodeURIComponent(this._router.url);
-        this._router.navigate(['/entities/articles/copy', obj._id], {
-          queryParams: { returnURL: currentUrl },
-        });
-        break;
+
       case 'update-prices':
         modalRef = this._modalService.open(UpdateArticlePriceComponent);
         modalRef.componentInstance.articles = items;
