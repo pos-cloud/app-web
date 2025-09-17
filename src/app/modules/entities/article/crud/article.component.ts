@@ -535,8 +535,16 @@ export class ArticleComponent implements OnInit {
         default:
           break;
       }
-      this.setValueForm();
-      this.setValueFormTax();
+      // No reseteamos el formulario del artículo ni los typeahead al cambiar impuestos
+      // Solo reflejamos los valores calculados en el formulario de impuestos
+      this.taxForm.patchValue(
+        {
+          tax: this.articleTax.tax,
+          percentage: this.articleTax.percentage,
+          taxAmount: this.articleTax.taxAmount,
+        },
+        { emitEvent: false }
+      );
     }
   }
 
@@ -880,7 +888,7 @@ export class ArticleComponent implements OnInit {
     //   salePrice: this.roundNumber.transform(this.articleForm.value.salePrice),
     //   salePriceTN: this.roundNumber.transform(this.articleForm.value.salePriceTN),
     // });
-
+    console.log(this.article, this.articleForm.value);
     // Actualizar el artículo
     this.article = { ...this.article, ...this.articleForm.value };
   }
