@@ -169,11 +169,11 @@ export class ImportComponent implements OnInit {
   public downloadModel() {
     const urls = {
       'articles-stock':
-        'https://docs.google.com/spreadsheets/d/1UbWtqcHvWHn-PpVNe3xN72Y2iaWSJQog/edit?usp=sharing&ouid=108486146537654534304&rtpof=true&sd=true',
+        'https://docs.google.com/spreadsheets/d/1BRDIZE3jLOJCxS--OfLbbIB9MLqM1kg0/edit?gid=2096715443#gid=2096715443',
       articles:
-        'https://docs.google.com/spreadsheets/d/1Et1Wj2nYSN9EQwfegTdWhWU3ICK37dW2/edit?usp=sharing&ouid=108486146537654534304&rtpof=true&sd=true',
+        'https://docs.google.com/spreadsheets/d/1lbHhg1uPGDEybCbppTVaPAj5q_3yyeIV4fh-GOlmmkg/edit?gid=2144488028#gid=2144488028',
       company:
-        'https://docs.google.com/spreadsheets/d/1KNaAP55GU4_2bmIXE9aopwHX-vzxuf3r/edit?usp=sharing&ouid=108486146537654534304&rtpof=true&sd=true',
+        'https://docs.google.com/spreadsheets/d/17ASWtOItH6FfFaQpgWS0MeAu1Pm6QPw8/edit?gid=1719187905#gid=1719187905',
     };
 
     const url = urls[this.model];
