@@ -40,7 +40,6 @@ import {
   TableState,
 } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
-import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
 import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
@@ -149,8 +148,7 @@ export class PointOfSaleComponent implements OnInit {
     public translatePipe: TranslateMePipe,
     private _toastService: ToastService,
     private _movementOfCashService: MovementOfCashService,
-    private _movementOfCancellationService: MovementOfCancellationService,
-    private _tiendaNubeService: TiendaNubeService
+    private _movementOfCancellationService: MovementOfCancellationService
   ) {
     this.transactionTypes = new Array();
     this.originsToFilter = new Array();
@@ -1137,20 +1135,6 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public async canceledStatusTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
-    this.transaction = await this.getTransaction(transaction._id);
-    if (this.transaction) {
-      this.openModal('canceledTn', state);
-    }
-  }
-
-  public async fulfilledStatusTransaction(transaction: Transaction, state: TransactionState = TransactionState.Closed) {
-    this.transaction = await this.getTransaction(transaction._id);
-    if (this.transaction) {
-      this.openModal('fulfilledTn', state);
-    }
-  }
-
   public async changeCompany(transaction: Transaction) {
     this.transaction = await this.getTransaction(transaction._id);
     if (this.transaction) {
@@ -2107,27 +2091,6 @@ export class PointOfSaleComponent implements OnInit {
           }
         });
       }
-    } else if (this.transaction && this.transaction.tiendaNubeId && this.config.tiendaNube.userID) {
-      return new Promise<Transaction>((resolve, reject) => {
-        this._tiendaNubeService
-          .updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state)
-          .subscribe(
-            (result: ApiResponse) => {
-              if (result.status === 201) {
-                this.refresh();
-                resolve(result.result);
-              } else {
-                this.refresh();
-                reject(result);
-              }
-              this.refresh();
-            },
-            (error) => {
-              this._toastService.showToast(error);
-              reject(error);
-            }
-          );
-      });
     }
   }
 

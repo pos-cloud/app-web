@@ -155,7 +155,7 @@
                       </button>
                       <button
                         ngbDropdownItem
-                        (click)="changeStateOfTransaction(transaction, 'closed')"
+                        (click)="changeStateOfTransaction(transaction, 'close')"
                         *ngIf="
                           transaction?.state?.toString() !== 'Anulado' && transaction?.state?.toString() !== 'Cerrado'
                         "
@@ -164,7 +164,7 @@
                       </button>
                       <button
                         ngbDropdownItem
-                        (click)="openModal('canceledTn', 'canceled', transaction)"
+                        (click)="openModal('canceledTn', 'cancel', transaction)"
                         *ngIf="
                           transaction?.state?.toString() !== 'Cerrado' && transaction?.state?.toString() !== 'Anulado'
                         "
@@ -250,14 +250,14 @@
                           transaction?.state?.toString() !== 'Cerrado'
                         "
                         ngbDropdownItem
-                        (click)="changeStateOfTransaction(transaction, 'packed')"
+                        (click)="changeStateOfTransaction(transaction, 'pack')"
                       >
                         Empaquetado
                       </button>
                       <button
                         *ngIf="transaction?.state?.toString() !== 'Cerrado'"
                         ngbDropdownItem
-                        (click)="openModal('fulfilledTn', 'fulfilled', transaction)"
+                        (click)="openModal('fulfilledTn', 'fulfill', transaction)"
                       >
                         Enviado
                       </button>
@@ -275,10 +275,10 @@
                 {{ transaction?.observation }}
               </td>
               <td>
-                {{ transaction?.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ transaction?.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td>
-                {{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ transaction?.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </ng-container>
           </tr>

@@ -18,7 +18,6 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class FulfilledComponent implements OnInit {
   @Input() tiendaNubeId: string;
-  @Input() userID: string;
   @Input() state: string;
   fulfilledForm: FormGroup;
   loading = false;
@@ -45,7 +44,6 @@ export class FulfilledComponent implements OnInit {
       shipping_tracking_number: [''],
       shipping_tracking_url: [''],
       notify_customer: [true],
-      storeIdTn: [this.userID],
     });
   }
 
@@ -54,13 +52,11 @@ export class FulfilledComponent implements OnInit {
       this.loading = true;
       const formData = this.fulfilledForm.value;
       this._tiendaNubeService
-        .updateTransactionStatus(this.tiendaNubeId, formData, this.state)
+        .updateTransactionTn(this.tiendaNubeId, formData, this.state)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {
-            this._toastService.showToast({
-              message: 'Operacion realizada con exito',
-            });
+            this._toastService.showToast(result);
           },
           error: (error) => {
             this._toastService.showToast(error);

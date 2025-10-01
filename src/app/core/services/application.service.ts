@@ -9,10 +9,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class ApplicationService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `applications`, // PATH
       _http,
@@ -20,30 +17,20 @@ export class ApplicationService extends ModelService {
     );
   }
 
-  public createWebhookTn(
-    userId: string,
-    authentication: string
-  ): Observable<any> {
+  public createWebhookTn(): Observable<any> {
     const URL = `${environment.apiv2}/tienda-nube/webhook`;
 
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
 
-    return this._http
-      .post(
-        URL,
-        {
-          userId: userId,
-          authentication: authentication,
-        },
-        { headers: headers }
-      )
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
+    return this._http.post(URL, {}, { headers: headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
   }
 }
