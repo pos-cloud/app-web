@@ -1304,4 +1304,17 @@ export class ArticleComponent implements OnInit {
       this.categoriesDisplayText = `Items + ${selectedCount} seleccionados`;
     }
   }
+
+  public onEnter(): void {
+    const isInQuill = event.target instanceof HTMLDivElement && event.target.classList.contains('ql-editor');
+
+    if (isInQuill) {
+      event.preventDefault();
+      return;
+    }
+
+    if (this.articleForm.valid) {
+      this.handleArticleOperation();
+    }
+  }
 }

@@ -40,7 +40,12 @@
     </div>
     <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
-      <form [formGroup]="articleForm" (ngSubmit)="handleArticleOperation()" autocomplete="off">
+      <form
+        [formGroup]="articleForm"
+        (ngSubmit)="handleArticleOperation()"
+        autocomplete="off"
+        (keydown.enter)="onEnter()"
+      >
         <div class="row">
           <label class="col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
