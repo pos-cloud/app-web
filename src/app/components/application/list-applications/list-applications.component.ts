@@ -322,37 +322,20 @@ export class ListApplicationsComponent implements OnInit {
 
   generateWebhook() {
     this.loading = true;
-
-    if (this.tiendaNubeForm.value.userId && this.tiendaNubeForm.value.token) {
-      this._service.createWebhookTn(this.tiendaNubeForm.value.userId, this.tiendaNubeForm.value.token).subscribe(
-        (result: ApiResponse) => {
-          if (result.status == 200) {
-            this._toastService.showToast({
-              type: 'success',
-              message: 'Los webhooks se han creado con éxito.',
-            });
-            this.loading = false;
-          } else {
-            this._toastService.showToast({
-              type: 'danger',
-              message: result.result,
-            });
-            this.loading = false;
-          }
+    this._service
+      .createWebhookTn()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this._toastService.showToast(result);
         },
-        (error) => {
-          this._toastService.showToast({
-            type: 'danger',
-            message: 'Error al crear los webhooks.',
-          });
-        }
-      );
-    } else {
-      this._toastService.showToast({
-        type: 'info',
-        message: 'Completa el UserId y el Token para generar los webhooks.',
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
       });
-    }
   }
 
   upsertApplication(type) {

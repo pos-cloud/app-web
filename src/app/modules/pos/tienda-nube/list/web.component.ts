@@ -494,7 +494,6 @@ export class WebComponent implements OnInit {
             backdrop: 'static',
           });
           modalRef.componentInstance.tiendaNubeId = transaction.tiendaNubeId;
-          modalRef.componentInstance.userID = this.config?.tiendaNube?.userID;
           modalRef.componentInstance.state = state;
           modalRef.result.then(() => {
             this.refresh();
@@ -509,7 +508,6 @@ export class WebComponent implements OnInit {
             backdrop: 'static',
           });
           modalRef.componentInstance.tiendaNubeId = transaction.tiendaNubeId;
-          modalRef.componentInstance.userID = this.config?.tiendaNube?.userID;
           modalRef.componentInstance.state = state;
           modalRef.result.then(() => {
             setTimeout(() => {
@@ -610,13 +608,11 @@ export class WebComponent implements OnInit {
     this.loading = true;
     if (transaction && transaction.tiendaNubeId && this.config.tiendaNube.userID) {
       this._tiendaNubeService
-        .updateTransactionStatus(transaction.tiendaNubeId, this.config.tiendaNube.userID, state)
+        .updateTransactionTn(transaction.tiendaNubeId, this.config.tiendaNube.userID, state)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {
-            this._toastService.showToast({
-              message: 'Opereción realizada con éxito',
-            });
+            this._toastService.showToast(result);
           },
           error: (error) => {
             this._toastService.showToast(error);
