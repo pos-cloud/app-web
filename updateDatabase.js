@@ -321,3 +321,30 @@ for (let i = 0; i < applicationTypes.length; i++) {
     print("⚠️ Aplicación '" + type + "' ya existe.");
   }
 }
+
+//Unificar APLICACIONES
+// 1️⃣ Seleccionar todos los documentos
+const allDocs = db.applications.find().toArray();
+
+// 2️⃣ Crear documento unificado
+const unifiedDoc = {
+  tiendaNube: {},
+  cartaDigital: {},
+  wooCommerce: {},
+};
+
+// 3️⃣ Recorrer documentos y asignar según type
+allDocs.forEach((doc) => {
+  if (doc.type === 'TiendaNube') {
+    unifiedDoc.tiendaNube = doc.tiendaNube || {};
+  } else if (doc.type === 'Carta digital') {
+    unifiedDoc.cartaDigital = doc.menu;
+  } else if (doc.type === 'WooCommerce') {
+    unifiedDoc.wooCommerce = doc.wooCommerce || {};
+  }
+});
+
+db.applications.deleteMany({});
+db.applications.insertOne(unifiedDoc);
+
+print('✅ Documento unificado creado en cualquier base de datos');
