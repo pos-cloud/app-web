@@ -2604,32 +2604,6 @@ export class AddSaleOrderComponent {
     });
   }
 
-  async updateArticleTiendaNube(idArticle: string) {
-    return new Promise<boolean>(async (resolve) => {
-      this._articleService.updateArticleTiendaNube(idArticle).subscribe(
-        (result) => {
-          if (result.error) {
-            this._toastService.showToast({
-              type: 'info',
-              message:
-                result.error && result.error.message ? result.error.message : result.message ? result.message : '',
-            });
-          } else {
-            this._toastService.showToast({
-              type: 'success',
-              message: 'Producto actualizado con éxito en TiendaNube',
-            });
-          }
-          resolve(true);
-        },
-        (error) => {
-          resolve(true);
-          this._toastService.showToast(error);
-        }
-      );
-    });
-  }
-
   getVariantsByArticleChild(id): Promise<any> {
     return new Promise((resolve, reject) => {
       this.loading = true;
@@ -2751,65 +2725,11 @@ export class AddSaleOrderComponent {
       } else {
         this.openModal('cancelation-type-automatic');
       }
-      // if (
-      //   this.transaction.type.requestArticles &&
-      //   this.transaction.type.modifyStock &&
-      //   this.config.tiendaNube !== undefined &&
-      //   this.config.tiendaNube.userID &&
-      //   this.config.tiendaNube.userID !== '' &&
-      //   this.movementsOfArticles.length > 0
-      // ) {
-      //   let articlesForUpdate = [];
-
-      //   for (let movement of this.movementsOfArticles) {
-      //     if (movement.article.tiendaNubeId) {
-      //       if (movement.article.type === Type.Final) {
-      //         await this.updateArticleTiendaNube(movement.article._id);
-      //       }
-      //       if (movement.article.type === Type.Variant) {
-      //         const result = await this.getVariantsByArticleChild(movement.article._id);
-
-      //         if (result && result.length > 0) {
-      //           if (!articlesForUpdate.includes(result[0].articleParent._id)) {
-      //             articlesForUpdate.push(result[0].articleParent._id);
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      //   if (articlesForUpdate.length > 0) {
-      //     for (let articleId of articlesForUpdate) {
-      //       await this.updateArticleTiendaNube(articleId);
-      //     }
-      //   }
-      // }
 
       this.loading = false;
     } catch (error) {
       this._toastService.showToast(error);
     }
-  }
-
-  async updateArticlesTiendaNube(tiendaNubeIds: string[]) {
-    this.loading = true;
-
-    this._articleService.updateArticlesTiendaNube(tiendaNubeIds).subscribe(
-      (result) => {
-        if (result.error) {
-          this._toastService.showToast({
-            type: 'info',
-            message: result.error && result.error.message ? result.error.message : result.message ? result.message : '',
-          });
-        } else {
-          this._toastService.showToast({
-            type: 'success',
-            message: 'Operación realizada con éxito en TiendaNube',
-          });
-          this.activeModal.close();
-        }
-      },
-      (error) => this._toastService.showToast(error)
-    );
   }
 
   async changeArticlesStatusToPending(): Promise<boolean> {

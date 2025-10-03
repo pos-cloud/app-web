@@ -15,10 +15,7 @@ import { PriceType } from '../../components/transaction-type/transaction-type';
   providedIn: 'root',
 })
 export class ArticleService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `articles`, // PATH
       _http,
@@ -211,12 +208,7 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public updatePrices(
-    articlesCode: string[],
-    field: PriceType,
-    decimal: number,
-    percentage: number
-  ): Observable<any> {
+  public updatePrices(articlesCode: string[], field: PriceType, decimal: number, percentage: number): Observable<any> {
     const URL = `${environment.apiv2}/articles/update-prices`;
 
     const headers = new HttpHeaders()
@@ -392,60 +384,5 @@ export class ArticleService extends ModelService {
           return of(err);
         })
       );
-  }
-
-  public updateArticleTiendaNube(id: string): Observable<any> {
-    const URL = `${environment.apiTiendaNube}/products/${id}`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http.patch(URL, {}, { headers: headers }).pipe(
-      map((res) => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
-  }
-
-  public updateArticlesTiendaNube(tiendaNubeIds: string[]): Observable<any> {
-    const URL = `${environment.apiTiendaNube}/products/massive`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .put(URL, { tiendaNubeIds: tiendaNubeIds }, { headers: headers })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public deleteArticleTiendaNube(tiendaNubeId: string): Observable<any> {
-    const URL = `${environment.apiTiendaNube}/products/${tiendaNubeId}`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('tiendaNubeId', tiendaNubeId);
-
-    return this._http.delete(URL, { headers: headers }).pipe(
-      map((res) => {
-        return res;
-      }),
-      catchError((err) => {
-        return of(err);
-      })
-    );
   }
 }
