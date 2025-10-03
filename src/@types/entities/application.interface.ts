@@ -1,9 +1,6 @@
 import { Activity, Article, Company, PaymentMethod, ShipmentMethod, TransactionType } from '@types';
 
 export interface Application extends Activity {
-  name: string;
-  url: string;
-  type: ApplicationType;
   tiendaNube: {
     userId: number;
     token: string;
