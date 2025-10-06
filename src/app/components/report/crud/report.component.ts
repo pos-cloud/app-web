@@ -1,9 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   NgForm,
   UntypedFormArray,
@@ -19,10 +14,9 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FormField } from '@types';
+import { Category, FormField } from '@types';
 import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
-import { Category } from 'app/components/category/category';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
@@ -147,12 +141,8 @@ export class ReportComponent implements OnInit {
   public async ngOnInit() {
     let pathUrl: string[] = this._router.url.split('/');
     this.operation = pathUrl[2];
-    if (this.operation !== 'add' && this.operation !== 'update')
-      this.readonly = false;
-    this.title =
-      this.translatePipe.transform(this.operation) +
-      ' ' +
-      this.translatePipe.transform(this.title);
+    if (this.operation !== 'add' && this.operation !== 'update') this.readonly = false;
+    this.title = this.translatePipe.transform(this.operation) + ' ' + this.translatePipe.transform(this.title);
     this.title = this.capitalizePipe.transform(this.title);
     this._title.setTitle(this.title);
     this.buildForm();
@@ -203,8 +193,7 @@ export class ReportComponent implements OnInit {
       params: this._fb.array([]),
     };
     for (let field of this.formFields) {
-      if (field.tag !== 'separator')
-        fields[field.name] = [this.obj[field.name], field.validators];
+      if (field.tag !== 'separator') fields[field.name] = [this.obj[field.name], field.validators];
     }
     this.objForm = this._fb.group(fields);
     this.objForm.valueChanges.subscribe((data) => this.onValueChanged(data));
@@ -253,10 +242,7 @@ export class ReportComponent implements OnInit {
           let entro: boolean = false;
           for (let f of field.name.split('.')) {
             sumF += `['${f}']`;
-            if (
-              eval(`this.obj${sumF}`) == null ||
-              eval(`this.obj${sumF}`) == undefined
-            ) {
+            if (eval(`this.obj${sumF}`) == null || eval(`this.obj${sumF}`) == undefined) {
               entro = true;
               eval(`this.obj${sumF} = {}`);
             }
@@ -278,10 +264,7 @@ export class ReportComponent implements OnInit {
             break;
           default:
             if (field.tag !== 'separator')
-              values[field.name] =
-                eval('this.obj.' + field.name) !== undefined
-                  ? eval('this.obj.' + field.name)
-                  : null;
+              values[field.name] = eval('this.obj.' + field.name) !== undefined ? eval('this.obj.' + field.name) : null;
             break;
         }
       }
@@ -337,13 +320,7 @@ export class ReportComponent implements OnInit {
       (result) => {
         if (result.status === 200) {
           try {
-            eval(
-              'this.obj.' +
-                fieldName +
-                ' = this.obj.' +
-                fieldName +
-                '.filter(item => item !== filename)'
-            );
+            eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
           } catch (error) {
             eval('this.obj.' + fieldName + ' = null');
           }
@@ -380,32 +357,18 @@ export class ReportComponent implements OnInit {
       for (let field of this.formFields) {
         switch (field.tagType) {
           case 'date':
-            this.obj[field.name] =
-              moment(this.obj[field.name]).format('YYYY-MM-DD') +
-              moment().format('THH:mm:ssZ');
+            this.obj[field.name] = moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
             break;
           case 'number':
             this.obj[field.name] = parseFloat(this.obj[field.name]);
             break;
           case 'file':
-            if (
-              this.filesToUpload &&
-              this.filesToUpload[field.name] &&
-              this.filesToUpload[field.name].length > 0
-            ) {
+            if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
               this.loading = true;
               this._objService.deleteFile(this.obj[field.name]);
-              if (
-                this.filesToUpload[field.name] &&
-                this.filesToUpload[field.name].length > 0
-              ) {
+              if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
                 this.obj[field.name] = this.oldFiles[field.name];
-                if (
-                  field.multiple &&
-                  (!this.obj ||
-                    !this.obj[field.name] ||
-                    this.obj[field.name].length === 0)
-                ) {
+                if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
                   this.obj[field.name] = new Array();
                 }
                 for (let file of this.filesToUpload[field.name]) {
@@ -439,18 +402,15 @@ export class ReportComponent implements OnInit {
               }
               this.loading = false;
             } else {
-              if (this.oldFiles)
-                this.obj[field.name] = this.oldFiles[field.name];
+              if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
             }
             break;
           case 'boolean':
-            this.obj[field.name] =
-              this.obj[field.name] == 'true' || this.obj[field.name] == true;
+            this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
           case 'text':
             if (
               field.tag === 'autocomplete' &&
-              (this.obj[field.name] == '' ||
-                (this.obj[field.name] && !this.obj[field.name]['_id']))
+              (this.obj[field.name] == '' || (this.obj[field.name] && !this.obj[field.name]['_id']))
             ) {
               this.obj[field.name] = null;
             }

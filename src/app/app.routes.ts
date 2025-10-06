@@ -7,7 +7,6 @@ import { ListArticlesComponent } from './components/article/list-articles/list-a
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-cash-box.component';
 import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
-import { ListCategoriesComponent } from './components/category/list-categories/list-categories.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
@@ -183,11 +182,6 @@ export const _routes: Routes = [
     component: ListMovementsOfArticlesComponent,
     canActivate: [AuthGuard, LicenseGuard],
     //data: { module: 'config.modules.production' }
-  },
-  {
-    path: 'admin/categories',
-    component: ListCategoriesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
   },
   {
     path: 'admin/usuarios',

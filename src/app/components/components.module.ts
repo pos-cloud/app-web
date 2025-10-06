@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { AccountSeatModule } from './account-seat/account-seat.module';
 import { ApplicationModule } from './application/application.module';
 import { ArticleModule } from './article/article.module';
-import { CategoryModule } from './category/category.module';
 import { DatatableModule } from './datatable/datatable.module';
 import { ExportersModule } from './export/exporters.module';
 import { HistoryModule } from './history/history.module';
@@ -19,7 +18,6 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
     HistoryModule,
     ShipmentMethodModule,
     TransactionTypeModule,
-    CategoryModule,
     AccountSeatModule,
     ReportModule,
     ArticleModule,

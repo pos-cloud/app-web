@@ -13,7 +13,6 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Config } from '../../../app.config';
-import { Category } from '../../category/category';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { Taxes } from '../../tax/taxes';
 import { Transaction } from '../../transaction/transaction';
@@ -21,7 +20,7 @@ import { Article, Type } from '../article';
 
 import { ArticleService } from '../../../core/services/article.service';
 
-import { ApiResponse, CompanyType, PriceList, Structure, Utilization } from '@types';
+import { ApiResponse, Category, CompanyType, PriceList, Structure, Utilization } from '@types';
 import { Tax } from 'app/components/tax/tax';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';

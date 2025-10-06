@@ -19,6 +19,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import {
+  Category,
   CompanyType,
   PriceList,
   Printer,
@@ -49,7 +50,6 @@ import { Article, ArticlePrintIn } from '../article/article';
 import { ArticleComponent } from '../article/crud/article.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
-import { Category } from '../category/category';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
 import { AddMovementOfArticleComponent } from '../movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article/movement-of-article';

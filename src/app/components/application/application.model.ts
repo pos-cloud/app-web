@@ -1,8 +1,7 @@
-import { IAttribute } from '@types';
+import { Category, IAttribute } from '@types';
 
 import { Company } from '@types';
 import { Article } from '../article/article';
-import { Category } from '../category/category';
 import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
 import { PaymentMethod } from '../payment-method/payment-method';

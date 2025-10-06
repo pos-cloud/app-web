@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 
+import { Category } from '@types';
 import { CategoryService } from '../../../core/services/category.service';
-import { Category } from '../category';
 
 @Component({
   selector: 'app-list-categories-pos',

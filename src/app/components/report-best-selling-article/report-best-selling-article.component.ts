@@ -10,7 +10,7 @@ import 'moment/locale/es';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
-import { Branch } from '@types';
+import { Branch, Category } from '@types';
 import { Config } from 'app/app.config';
 import { Movements, TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { AuthService } from 'app/core/services/auth.service';
@@ -21,7 +21,6 @@ import { ArticleService } from '../../core/services/article.service';
 import { CategoryService } from '../../core/services/category.service';
 import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
-import { Category } from '../category/category';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 
 @Component({

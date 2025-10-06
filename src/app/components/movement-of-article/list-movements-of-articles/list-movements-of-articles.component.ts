@@ -6,9 +6,8 @@ import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Branch } from '@types';
+import { Branch, Category } from '@types';
 import { Config } from 'app/app.config';
-import { Category } from 'app/components/category/category';
 import { attributes, MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { AuthService } from 'app/core/services/auth.service';

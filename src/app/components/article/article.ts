@@ -1,4 +1,5 @@
 import {
+  Category,
   Classification,
   Currency,
   Deposit,
@@ -9,7 +10,6 @@ import {
   VariantValue,
 } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
-import { Category } from '../category/category';
 import { Taxes } from '../tax/taxes';
 import { User } from '../user/user';
 

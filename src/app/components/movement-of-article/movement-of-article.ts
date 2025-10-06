@@ -1,9 +1,8 @@
 import * as moment from 'moment';
 
-import { Account, Deposit, Make } from '@types';
+import { Account, Category, Deposit, Make } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Article, ArticlePrintIn } from '../article/article';
-import { Category } from '../category/category';
 import { Taxes } from '../tax/taxes';
 import { StockMovement } from '../transaction-type/transaction-type';
 import { Transaction } from '../transaction/transaction';

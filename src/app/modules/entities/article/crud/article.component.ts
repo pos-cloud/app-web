@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import {
   ApiResponse,
   Article,
+  Category,
   Classification,
   Company,
   Config,
@@ -33,7 +34,6 @@ import { UnitOfMeasurementService } from '@core/services/unit-of-measurement.ser
 import { TranslateModule } from '@ngx-translate/core';
 import { UploadFileComponent } from '@shared/components/upload-file/upload-file.component';
 import { ArticlePrintIn } from 'app/components/article/article';
-import { Category } from 'app/components/category/category';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
@@ -1275,7 +1275,7 @@ export class ArticleComponent implements OnInit {
       .sort((a, b) => (a.order || 0) - (b.order || 0))
       .forEach((category) => {
         hierarchicalItems.push({
-          _id: category.tiendaNubeId,
+          _id: category.tiendaNubeId.toString(),
           name: category.description,
           level: 0,
         });
@@ -1287,7 +1287,7 @@ export class ArticleComponent implements OnInit {
       .sort((a, b) => (a.order || 0) - (b.order || 0))
       .forEach((category) => {
         hierarchicalItems.push({
-          _id: category.tiendaNubeId,
+          _id: category.tiendaNubeId.toString(),
           name: category.description,
           level: 1,
         });
