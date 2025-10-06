@@ -1,9 +1,6 @@
 import { Activity, Article, Company, PaymentMethod, ShipmentMethod, TransactionType } from '@types';
 
 export interface Application extends Activity {
-  name: string;
-  url: string;
-  type: ApplicationType;
   tiendaNube: {
     userId: number;
     token: string;
@@ -60,13 +57,4 @@ export interface Application extends Activity {
     accountSid: string;
     authToken: string;
   };
-}
-
-export enum ApplicationType {
-  Web = <any>'Web',
-  App = <any>'App',
-  WooCommerce = <any>'WooCommerce',
-  MercadoLibre = <any>'MercadoLibre',
-  TiendaNube = <any>'TiendaNube',
-  Menu = <any>'Carta digital',
 }
