@@ -156,7 +156,7 @@ export const ENTITIES_ROUTES: Routes = [
     loadChildren: () => import('./vat-condition/vat-condition.routes').then((m) => m.VAT_CONDITION_ROUTES),
   },
   {
-    path: 'application',
+    path: 'applications',
     loadChildren: () => import('./applications/application.routes').then((m) => m.APPLICATION_ROUTES),
   },
 ];

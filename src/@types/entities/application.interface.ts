@@ -58,12 +58,3 @@ export interface Application extends Activity {
     authToken: string;
   };
 }
-
-export enum ApplicationType {
-  Web = <any>'Web',
-  App = <any>'App',
-  WooCommerce = <any>'WooCommerce',
-  MercadoLibre = <any>'MercadoLibre',
-  TiendaNube = <any>'TiendaNube',
-  Menu = <any>'Carta digital',
-}

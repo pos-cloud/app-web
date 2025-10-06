@@ -2,7 +2,7 @@
 export { AccountPeriod } from './entities/account-period.interface';
 export { Account, Modes, Types } from './entities/account.interface';
 export { Address } from './entities/address.interface';
-export { Application, ApplicationType } from './entities/application.interface';
+export { Application } from './entities/application.interface';
 export { Article } from './entities/article.interface';
 export { Bank } from './entities/bank.interface';
 export { Branch } from './entities/branch.interface';
