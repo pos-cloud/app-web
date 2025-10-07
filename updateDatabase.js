@@ -329,7 +329,7 @@ const allDocs = db.applications.find().toArray();
 // 2️⃣ Crear documento unificado
 const unifiedDoc = {
   tiendaNube: {},
-  cartaDigital: {},
+  menu: {},
   wooCommerce: {},
 };
 
@@ -338,7 +338,7 @@ allDocs.forEach((doc) => {
   if (doc.type === 'TiendaNube') {
     unifiedDoc.tiendaNube = doc.tiendaNube || {};
   } else if (doc.type === 'Carta digital') {
-    unifiedDoc.cartaDigital = doc.menu;
+    unifiedDoc.menu = doc.menu;
   } else if (doc.type === 'WooCommerce') {
     unifiedDoc.wooCommerce = doc.wooCommerce || {};
   }
