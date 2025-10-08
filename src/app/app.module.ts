@@ -68,7 +68,6 @@ import { PosClientViewComponent } from './components/pos-client-view/pos-client-
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
-import { PrintQRComponent } from './components/print/print-qr/print-qr.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
 import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
 import { PrintComponent } from './components/print/print/print.component';
@@ -183,7 +182,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectChecksComponent,
     ListCategoriesPosComponent,
     ListMovementsOfCancellationsComponent,
-    PrintQRComponent,
     SelectMovementsOfCashesComponent,
     KardexCheckComponent,
     MenuComponent,

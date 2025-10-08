@@ -1,18 +1,11 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import {
-  UntypedFormArray,
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import 'moment/locale/es';
 
 import { Title } from '@angular/platform-browser';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ApiResponse, FormField } from '@types';
-import { Application } from 'app/components/application/application.model';
+import { ApiResponse, Application, FormField } from '@types';
 import { Article } from 'app/components/article/article';
 import { ApplicationService } from 'app/core/services/application.service';
 import { ArticleService } from 'app/core/services/article.service';
@@ -20,12 +13,7 @@ import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
@@ -59,19 +47,13 @@ export class ShipmentMethodComponent implements OnInit {
   public applications: Application[];
 
   public searchArticles = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged()
-    );
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const inputFocus$ = this.focus$['article'];
 
     return merge(debouncedText$, inputFocus$).pipe(
       tap(() => (this.loading = true)),
       switchMap(async (term) => {
-        let match: {} =
-          term && term !== ''
-            ? { description: { $regex: term, $options: 'i' } }
-            : {};
+        let match: {} = term && term !== '' ? { description: { $regex: term, $options: 'i' } } : {};
 
         match['operationType'] = { $ne: 'D' };
         match['type'] = 'Final';
@@ -146,10 +128,7 @@ export class ShipmentMethodComponent implements OnInit {
   }
 
   public async ngOnInit() {
-    this.title =
-      this.translatePipe.transform(this.operation) +
-      ' ' +
-      this.translatePipe.transform(this.title);
+    this.title = this.translatePipe.transform(this.operation) + ' ' + this.translatePipe.transform(this.title);
     this.title = this.capitalizePipe.transform(this.title);
     this._title.setTitle(this.title);
     this.buildForm();
@@ -262,13 +241,10 @@ export class ShipmentMethodComponent implements OnInit {
       switch (field.tagType) {
         case 'date':
           values[field.name] =
-            this.obj[field.name] !== undefined
-              ? moment(this.obj[field.name]).format('YYYY-MM-DD')
-              : null;
+            this.obj[field.name] !== undefined ? moment(this.obj[field.name]).format('YYYY-MM-DD') : null;
           break;
         default:
-          values[field.name] =
-            this.obj[field.name] !== undefined ? this.obj[field.name] : null;
+          values[field.name] = this.obj[field.name] !== undefined ? this.obj[field.name] : null;
           break;
       }
     }
@@ -276,28 +252,20 @@ export class ShipmentMethodComponent implements OnInit {
       this.applications.forEach((x) => {
         let exists: boolean = false;
 
-        if (
-          this.obj &&
-          this.obj.applications &&
-          this.obj.applications.length > 0
-        ) {
+        if (this.obj && this.obj.applications && this.obj.applications.length > 0) {
           this.obj.applications.forEach((y) => {
             if (x._id === y._id) {
               exists = true;
               const control = new UntypedFormControl(y);
 
-              (this.objForm.controls.applications as UntypedFormArray).push(
-                control
-              );
+              (this.objForm.controls.applications as UntypedFormArray).push(control);
             }
           });
         }
         if (!exists) {
           const control = new UntypedFormControl(false);
 
-          (this.objForm.controls.applications as UntypedFormArray).push(
-            control
-          );
+          (this.objForm.controls.applications as UntypedFormArray).push(control);
         }
       });
     }
@@ -343,22 +311,18 @@ export class ShipmentMethodComponent implements OnInit {
       for (let field of this.formFields) {
         switch (field.tagType) {
           case 'date':
-            this.obj[field.name] =
-              moment(this.obj[field.name]).format('YYYY-MM-DD') +
-              moment().format('THH:mm:ssZ');
+            this.obj[field.name] = moment(this.obj[field.name]).format('YYYY-MM-DD') + moment().format('THH:mm:ssZ');
             break;
           case 'number':
             this.obj[field.name] = parseFloat(this.obj[field.name]);
             break;
           case 'boolean':
-            this.obj[field.name] =
-              this.obj[field.name] == 'true' || this.obj[field.name] == true;
+            this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
             break;
           case 'text':
             if (
               field.tag === 'autocomplete' &&
-              (this.obj[field.name] == '' ||
-                (this.obj[field.name] && !this.obj[field.name]['_id']))
+              (this.obj[field.name] == '' || (this.obj[field.name] && !this.obj[field.name]['_id']))
             ) {
               this.obj[field.name] = null;
             }

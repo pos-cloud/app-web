@@ -1,8 +1,7 @@
 import { User } from '../user/user';
 
-import { Account, Currency } from '@types';
+import { Account, Application, Currency } from '@types';
 import * as moment from 'moment';
-import { Application } from '../application/application.model';
 import { Article } from '../article/article';
 
 export class PaymentMethod {

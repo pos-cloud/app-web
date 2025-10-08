@@ -20,7 +20,6 @@ import { UserService } from '../../../core/services/user.service';
 
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from '../../../shared/pipes/translate-me';
-import { PrintQRComponent } from './../../../components/print/print-qr/print-qr.component';
 import { TransactionType } from './../../../components/transaction-type/transaction-type';
 
 @Component({
@@ -216,10 +215,6 @@ export class ListTablesComponent implements OnInit {
             this.loading = false;
           }
         );
-        break;
-      case 'print-qr':
-        modalRef = this._modalService.open(PrintQRComponent);
-        modalRef.componentInstance.tables = this.tables;
         break;
       default:
     }

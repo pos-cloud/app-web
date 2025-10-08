@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CompanyType, PaymentMethod } from '../payment-method';
 
-import { Account, ApiResponse, Currency } from '@types';
-import { Application } from 'app/components/application/application.model';
+import { Account, ApiResponse, Application, Currency } from '@types';
 import { Article } from 'app/components/article/article';
 import { AccountService } from 'app/core/services/account.service';
 import { ApplicationService } from 'app/core/services/application.service';

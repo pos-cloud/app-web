@@ -1,8 +1,7 @@
-import { Branch, CashBoxType, Company, CompanyType, IAttribute, UseOfCFDI } from '@types';
+import { Application, Branch, CashBoxType, Company, CompanyType, IAttribute, UseOfCFDI } from '@types';
 import * as moment from 'moment';
 
 import { EmployeeType, Printer } from '@types';
-import { Application } from '../application/application.model';
 import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
 import { PaymentMethod } from '../payment-method/payment-method';

@@ -1,5 +1,4 @@
-import { IAttribute } from '@types';
-import { Application } from '../application/application.model';
+import { Application, IAttribute } from '@types';
 import { Article } from '../article/article';
 import { Model } from '../model/model.model';
 

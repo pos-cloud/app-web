@@ -1,4 +1,5 @@
 import {
+  Application,
   Category,
   Classification,
   Currency,
@@ -15,7 +16,6 @@ import { User } from '../user/user';
 
 import { Account, Company } from '@types';
 import * as moment from 'moment';
-import { Application } from '../application/application.model';
 
 export class Article {
   public _id: string;
