@@ -1489,7 +1489,12 @@ export class ArticleComponent implements OnInit {
     this.loading = true;
 
     if (await this.isValid()) {
-      if (this.filesToUpload) this.article.picture = await this.uploadFile(this.article.picture);
+      if (this.filesToUpload) {
+        let picture = await this.uploadFile(this.article.picture);
+        this.article.picture = picture;
+
+        this.article.picturePOS = picture;
+      }
       this._articleService.saveArticle(this.article).subscribe({
         next: (result) => {
           if (!result.result) {
@@ -1596,6 +1601,7 @@ export class ArticleComponent implements OnInit {
       this._fileService.uploadImage(MediaCategory.ARTICLE, this.filesToUpload).then(
         (result: string) => {
           this.article.picture = result;
+          this.article.picturePOS = result;
           this.imageURL = result;
           resolve(result);
         },
