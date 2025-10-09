@@ -194,6 +194,7 @@ export class ArticleComponent implements OnInit {
       make: [null, []],
       category: [null, [Validators.required]],
       picture: ['', []],
+      picturePOS: ['', []],
       description: ['', [Validators.required]],
       posDescription: ['', [Validators.required, Validators.maxLength(20)]],
       unitOfMeasurement: [null, []],
@@ -418,6 +419,7 @@ export class ArticleComponent implements OnInit {
       wooId: this.article?.wooId ?? null,
       salePriceTN: this.article?.salePriceTN ?? 0,
       picture: this.article?.picture ?? '',
+      picturePOS: this.article?.picturePOS ?? '',
       typeTN: this.article?.typeTN ?? true,
       categoryTN: this.article?.categoryTN ?? null,
       seoTitleTN: this.article?.seoTitleTN ?? '',
@@ -748,6 +750,7 @@ export class ArticleComponent implements OnInit {
   onImagesUploaded(urls: string[]): void {
     if (urls && urls.length > 0) {
       this.articleForm.get('picture')?.setValue(urls[0]);
+      this.articleForm.get('picturePOS')?.setValue(urls[0]);
     }
   }
 
