@@ -25,6 +25,22 @@ export class DateTimeModel implements NgbDateTimeStruct {
       return null;
     }
 
+    // Verificar si el string es solo fecha (formato YYYY-MM-DD o similar sin hora)
+    // En ese caso, usar métodos UTC para evitar problemas de zona horaria
+    const isDateOnly = /^\d{4}-\d{1,2}-\d{1,2}$/.test(dateString.trim());
+
+    if (isDateOnly) {
+      return new DateTimeModel({
+        year: date.getUTCFullYear(),
+        month: date.getUTCMonth() + 1,
+        day: date.getUTCDate(),
+        hour: 0,
+        minute: 0,
+        second: 0,
+        timeZoneOffset: date.getTimezoneOffset(),
+      });
+    }
+
     return new DateTimeModel({
       year: date.getFullYear(),
       month: date.getMonth() + 1,
@@ -70,7 +86,9 @@ export class DateTimeModel implements NgbDateTimeStruct {
           return (norm < 10 ? '0' : '') + norm;
         };
 
-      const isoString = `${pad(year)}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:${pad(second)}${dif}${pad(tzo / 60)}:${pad(tzo % 60)}`;
+      const isoString = `${pad(year)}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:${pad(second)}${dif}${pad(
+        tzo / 60
+      )}:${pad(tzo % 60)}`;
       return isoString;
     }
 
