@@ -70,6 +70,7 @@ export interface Article extends Activity {
   isWeigth: boolean;
   forShipping: boolean;
   picture: string;
+  picturePOS: string;
   provider: Company;
   applications: Application;
   classification: Classification;
