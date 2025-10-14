@@ -138,6 +138,16 @@ export let attributes = [
     required: false,
   },
   {
+    name: 'transaction.company.phones',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'center',
+    required: false,
+  },
+  {
     name: 'transaction.company.city',
     visible: false,
     disabled: false,
