@@ -119,12 +119,12 @@ export class ConfigService extends ModelService {
 
   public getCountry() {
     return this._http.get(
-      'https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;timezones;alpha3Code;flag;callingCodes'
+      'https://restcountries.com/v2/all?fields=name,alpha2Code,alpha3Code,callingCodes,timezones,flag'
     );
   }
 
   public getTimeZone(country: string) {
-    return this._http.get('https://restcountries.eu/rest/v2/alpha/' + country);
+    return this._http.get('https://restcountries.com/v3.1/name/' + country);
   }
 
   public saveConfig(config: Config): Observable<any> {

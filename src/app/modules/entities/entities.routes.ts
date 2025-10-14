@@ -159,4 +159,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'applications',
     loadChildren: () => import('./applications/application.routes').then((m) => m.APPLICATION_ROUTES),
   },
+  {
+    path: 'config',
+    loadChildren: () => import('./config/config.routes').then((m) => m.CONFIG_ROUTES),
+  },
 ];

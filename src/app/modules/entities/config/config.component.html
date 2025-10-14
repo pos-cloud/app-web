@@ -1,0 +1,522 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span class="fw-bold">Configuración</span>
+      <div class="pull-right">
+        <button type="button" class="btn" [disabled]="loading" (click)="handleApplicationOperation()">
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body scroll">
+      <form [formGroup]="configForm" autocomplete="off">
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'companyData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-group mb-2">
+              <div class="input-group">
+                <span for="companyName" style="min-width: 120px">
+                  {{ 'transaction.company.name' | translate | capitalize }}:
+                </span>
+                <input type="text" class="form-control" formControlName="companyName" id="companyName" />
+              </div>
+            </div>
+            <div class="form-group mb-2">
+              <div class="input-group">
+                <label for="companyFantasyName" style="min-width: 120px">
+                  {{ 'company.fantasyName' | translate | capitalize }}:
+                </label>
+                <input type="text" class="form-control" formControlName="companyFantasyName" id="companyFantasyName" />
+              </div>
+            </div>
+            <div class="form-group mb-2">
+              <div class="input-group">
+                <label for="companyIdentificationType" style="min-width: 120px">
+                  {{ 'identificationType' | translate | capitalize }}:
+                </label>
+                <app-typeahead-dropdown
+                  class="w-30"
+                  placeholder="{{ 'identificationType' | translate | capitalize }}"
+                  [control]="configForm.get('companyIdentificationType')"
+                  [data]="identificationTypes"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+
+                <label for="companyIdentificationValue" style="min-width: 120px">
+                  {{ 'identificationValue' | translate | capitalize }}:
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="companyIdentificationValue"
+                  placeholder="{{ 'identificationValue' | translate | capitalize }}"
+                />
+              </div>
+            </div>
+            <div class="form-group mb-2 d-flex align-items-center">
+              <label for="companyVatCondition" style="width: 150px; white-space: nowrap">
+                {{ 'vatCondition' | translate | capitalize }}:
+              </label>
+
+              <div style="flex: 1; min-width: 0">
+                <app-typeahead-dropdown
+                  class="w-100 d-inline-block"
+                  style="display: inline-block; width: 100% !important"
+                  placeholder="{{ 'vatCondition' | translate | capitalize }}"
+                  [control]="configForm.get('companyVatCondition')"
+                  [data]="vatConditions"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 text-center">
+            <app-upload-file
+              (uploadedUrls)="onImagesUploaded($event)"
+              [folder]="'article'"
+              [existingImageUrl]="configForm.get('companyPicture')?.value"
+            >
+            </app-upload-file>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-group md-2">
+              <div class="input-group">
+                <label class="input-group-addon" id="basic-addon1">{{
+                  'companyStartOfActivity' | translate | capitalize
+                }}</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="companyStartOfActivity"
+                  placeholder="DD/MM/AAAA"
+                  aria-describedby="basic-addon1"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-group md-2">
+              <div class="input-group">
+                <label class="input-group-addon" id="basic-addon1">{{ 'grossIncome' | translate | capitalize }}</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="companyGrossIncome"
+                  name="companyGrossIncome"
+                  id="companyGrossIncome"
+                  aria-describedby="basic-addon1"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'locationAndContact' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="input-group-addon" id="basic-addon1">{{ 'phone' | translate | capitalize }}</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="companyPhone"
+              name="companyPhone"
+              id="companyPhone"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <div class="col-md-4">
+            <label class="input-group-addon" id="basic-addon1">{{ 'address' | translate | capitalize }}</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="companyAddress"
+              name="companyAddress"
+              id="companyAddress"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <div class="col-md-4">
+            <label class="input-group-addon" id="basic-addon1">{{ 'zipCode' | translate | capitalize }}</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="companyPostalCode"
+              name="companyPostalCode"
+              id="companyPostalCode"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">{{ 'country' | translate | capitalize }}</label>
+            <select
+              class="form-control"
+              formControlName="country"
+              name="country"
+              id="country"
+              (ngModelChange)="getTimeZone($event)"
+            >
+              <option *ngFor="let country of countries" [value]="country.name">
+                {{ country.name }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">{{ 'latitude' | translate | capitalize }}</label>
+            <input type="text" class="form-control" formControlName="latitude" aria-describedby="basic-addon1" />
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">{{ 'longitude' | translate | capitalize }}</label>
+            <input type="text" class="form-control" formControlName="longitude" aria-describedby="basic-addon1" />
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"> {{ 'timezone' | translate | capitalize }}</label>
+            <select class="form-control" formControlName="timezone" name="timezone" id="timezone">
+              <option *ngFor="let timezone of timezones" [value]="timezone">
+                {{ timezone }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'configSystem' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'article' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">Longitud de código interno en artículo:</label>
+            <input
+              type="number"
+              class="form-control"
+              [formControl]="configForm.get('article.code.validators.maxLength')"
+              name="article.code.validators.maxLength"
+              id="article.code.validators.maxLength"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="article.salesAccount.default">
+              {{ 'Cuenta Venta defecto del artículo' | translate | capitalize }}:</label
+            >
+            <app-typeahead-dropdown
+              placeholder="{{ 'Cuenta Venta defecto de Producto' | translate | capitalize }}"
+              [control]="configForm.get('article.salesAccount.default')"
+              [data]="accounts"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="col-md-3">
+            <label for="article.purchaseAccount.default">
+              {{ 'Cuenta Compra defecto del artículo' | translate | capitalize }}:</label
+            >
+            <app-typeahead-dropdown
+              placeholder="{{ 'Cuenta Compra defecto de Producto' | translate | capitalize }}"
+              [control]="configForm.get('article.purchaseAccount.default')"
+              [data]="accounts"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Valor defecto si el artículo es pesable al dar de alta:</label
+            >
+            <select class="form-control" [formControl]="configForm.get('article.isWeigth.default')">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Valor defecto si el artículo se puede vender sin stock:</label
+            >
+            <select class="form-control" [formControl]="configForm.get('article.allowSaleWithoutStock.default')">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'company' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">Cóndicion de IVA defecto para las empresas:</label>
+
+            <app-typeahead-dropdown
+              placeholder="{{ 'Cóndicion de IVA defecto para las empresas' | translate | capitalize }}"
+              [control]="configForm.get('company.vatCondition.default')"
+              [data]="vatConditions"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Valor por defecto de cuenta corriente al alta del proveedor:</label
+            >
+            <select class="form-control" [formControl]="configForm.get('company.allowCurrentAccountProvider.default')">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Valor defecto si permite cuenta corriente al dar de alta un cliente :</label
+            >
+            <select class="form-control" [formControl]="configForm.get('company.allowCurrentAccountClient.default')">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="company.accountClient.default">Valor Defecto de cuenta para clientes:</label>
+
+            <app-typeahead-dropdown
+              placeholder="{{ 'Valor Defecto de cuenta para clientes' | translate | capitalize }}"
+              [control]="configForm.get('company.accountClient.default')"
+              [data]="accounts"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="col-md-3">
+            <label for="company.accountProvider.default">Valor Defecto de cuenta para proveedores:</label>
+
+            <app-typeahead-dropdown
+              placeholder="{{ 'Valor Defecto de cuenta para proveedores' | translate | capitalize }}"
+              [control]="configForm.get('company.accountProvider.default')"
+              [data]="accounts"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">Vista invertida en cuenta corriente de clientes:</label>
+
+            <select class="form-control" [formControl]="configForm.get('reports.summaryOfAccounts.invertedViewClient')">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <span class="input-group-addon" id="basic-addon1">Vista invertida en cuenta corriente de proveedores:</span>
+            <select
+              class="form-control"
+              [formControl]="configForm.get('reports.summaryOfAccounts.invertedViewProvider')"
+            >
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Detallar método de pago en el reporte de cuentas corrientes por empresa:</label
+            >
+            <select
+              class="form-control"
+              [formControl]="configForm.get('reports.summaryOfAccounts.detailsPaymentMethod')"
+            >
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'money' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">Administrar caja por usuario:</label>
+            <select class="form-control" [formControl]="configForm.get('cashBox.perUser')">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'Balanza' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">Prefijo del código de barra de la balanza:</label>
+            <input
+              type="number"
+              class="form-control"
+              [formControl]="configForm.get('tradeBalance.codePrefix')"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Cantidad de digitos del código de producto para la balanza:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              [formControl]="configForm.get('tradeBalance.numberOfCode')"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Número de cantidad de producto del código de barra de la balanza:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              [formControl]="configForm.get('tradeBalance.numberOfQuantity')"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Número de enteros del precio del código de barra de la balanza:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              [formControl]="configForm.get('tradeBalance.numberOfIntegers')"
+              name="tradeBalance.numberOfIntegers"
+              id="tradeBalance.numberOfIntegers"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1"
+              >Número de decimales del precio en el código de barra de la balanza:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              [formControl]="configForm.get('tradeBalance.numberOfDecimals')"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'Voucher' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">Cantidad de lecturas por voucher permitidas:</label>
+            <input
+              type="number"
+              class="form-control"
+              [formControl]="configForm.get('voucher.readingLimit')"
+              name="voucher.readingLimit"
+              id="voucher.readingLimit"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">Expiración del voucher (en minutos):</label>
+            <input
+              type="number"
+              class="form-control"
+              [formControl]="configForm.get('voucher.minutesOfExpiration')"
+              name="voucher.minutesOfExpiration"
+              id="voucher.minutesOfExpiration"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'printName' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="input-group-addon" id="basic-addon1">Pie de Impresión:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="footerInvoice"
+              name="footerInvoice"
+              id="footerInvoice"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
