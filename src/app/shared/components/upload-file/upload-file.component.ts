@@ -16,8 +16,8 @@ export class UploadFileComponent {
 
   @Output() uploadedUrls = new EventEmitter<string[]>();
   @Input() folder = '';
-  @Input() set existingImageUrl(url: string) {
-    if (url.includes('https')) {
+  @Input() set existingImageUrl(url: string | undefined) {
+    if (url && url.includes('https')) {
       this.imageUrl = url;
     }
   }
@@ -47,5 +47,21 @@ export class UploadFileComponent {
       }
     }
     this.uploadedUrls.emit(urls);
+  }
+
+  // UploadFileComponent
+  async onDeleteImage(event: Event, pictureDelete: string): Promise<void> {
+    event.stopPropagation(); // Evita que se abra el selector de archivos
+
+    if (!this.imageUrl) return;
+    try {
+      await this.uploadService.deleteImage(this.imageUrl).toPromise(); // o await si es promesa
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
+
+    this.imageUrl = undefined; // Limpia la imagen
+    this.selectedFiles = []; // Limpia los archivos seleccionados
+    this.uploadedUrls.emit([]); // Emite vacío para notificar al padre
   }
 }

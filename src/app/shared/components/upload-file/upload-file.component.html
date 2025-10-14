@@ -25,5 +25,7 @@
       alt="No hay imagen"
       class="preview-image"
     />
+
+    <button type="button" class="delete-btn" *ngIf="imageUrl" (click)="onDeleteImage($event, imageUrl)">×</button>
   </div>
 </div>

@@ -236,8 +236,6 @@ export class CategoryComponent implements OnInit {
   }
 
   onImagesUploaded(urls: string[]): void {
-    if (urls && urls.length > 0) {
-      this.categoryForm.get('picture')?.setValue(urls[0]);
-    }
+    this.categoryForm.get('picture')?.setValue(urls.length > 0 ? urls[0] : '');
   }
 }
