@@ -1757,13 +1757,6 @@ export class AddMovementOfCashComponent implements OnInit {
     }
   }
 
-  @HostListener('window:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && this.disableEnterKey) {
-      event.preventDefault();
-    }
-  }
-
   cancel(): void {
     this.activeModal.close('cancel');
   }
@@ -2023,5 +2016,39 @@ export class AddMovementOfCashComponent implements OnInit {
       this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  public handleKeyboardShortcuts(event: KeyboardEvent): void {
+    if (this.loading) return;
+
+    const key = event.key;
+
+    if (key === 'Enter') {
+      event.preventDefault();
+      this.addMovementOfCash();
+      return;
+    }
+
+    if (key === 'ArrowUp' || key === 'ArrowDown') {
+      event.preventDefault();
+      this.navigateOptions(key === 'ArrowUp' ? -1 : 1);
+    }
+  }
+
+  private navigateOptions(direction: number): void {
+    if (!this.paymentMethods || this.paymentMethods.length === 0) return;
+
+    const currentIndex = this.paymentMethods.findIndex((option) => option._id === this.paymentMethodSelected._id);
+    let newIndex = currentIndex + direction;
+
+    // Wrap around - si llega al final, va al principio y viceversa
+    if (newIndex >= this.paymentMethods.length) {
+      newIndex = 0;
+    } else if (newIndex < 0) {
+      newIndex = this.paymentMethods.length - 1;
+    }
+
+    this.paymentMethodSelected = this.paymentMethods[newIndex];
   }
 }
