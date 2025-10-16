@@ -1,30 +1,17 @@
 <div class="modal-header">
   <h4 class="modal-title" *ngIf="userCountry === 'AR'">
-    {{ transaction?.type?.name }} {{ transaction.origin }}-{{
-      transaction.letter
-    }}-{{ transaction.number }}
+    {{ transaction?.type?.name }} {{ transaction.origin }}-{{ transaction.letter }}-{{ transaction.number }}
   </h4>
   <h4 class="modal-title" *ngIf="userCountry !== 'AR'">
-    {{ transaction.type.name }} {{ transaction.letter }}-{{
-      transaction.number
-    }}
+    {{ transaction.type.name }} {{ transaction.letter }}-{{ transaction.number }}
   </h4>
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    (click)="activeModal.dismiss('close_click')"
-  >
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <section class="container-fluid">
   <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert
-      [type]="alertConfig.type"
-      [dismissible]="alertConfig.dismissible"
-      (close)="alertMessage = ''"
-    >
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
       {{ alertMessage }}
     </ngb-alert>
   </div>
@@ -33,28 +20,18 @@
       <li ngbNavItem>
         <a ngbNavLink>Datos</a>
         <ng-template ngbNavContent>
-          <div
-            class="row"
-            *ngIf="
-              transaction?.type?.transactionMovement?.toString() !== 'Stock'
-            "
-          >
+          <div class="row" *ngIf="transaction?.type?.transactionMovement?.toString() !== 'Stock'">
             <div class="form-group col-md-8">
               <label
                 for="company"
                 class="control-label"
-                *ngIf="
-                  transaction?.type?.transactionMovement?.toString() === 'Venta'
-                "
+                *ngIf="transaction?.type?.transactionMovement?.toString() === 'Venta'"
                 >Cliente</label
               >
               <label
                 for="company"
                 class="control-label"
-                *ngIf="
-                  transaction?.type?.transactionMovement?.toString() ===
-                  'Compra'
-                "
+                *ngIf="transaction?.type?.transactionMovement?.toString() === 'Compra'"
                 >Proveedor</label
               >
               <div class="input-group">
@@ -95,13 +72,7 @@
             </div>
             <div class="form-group col-md-2">
               <label for="state" class="control-label">Estado</label>
-              <input
-                type="text"
-                class="form-control"
-                name="state"
-                value="{{ transaction?.state }}"
-                readonly
-              />
+              <input type="text" class="form-control" name="state" value="{{ transaction?.state }}" readonly />
             </div>
             <div class="form-group col-md-2">
               <label for="cashBox" class="control-label">Caja</label>
@@ -144,7 +115,7 @@
                 type="text"
                 class="form-control"
                 name="date"
-                value="{{ transaction?.endDate | dateFormat: 'DD/MM/YYYY' }}"
+                value="{{ transaction?.endDate | dateFormat : 'DD/MM/YYYY' }}"
                 readonly
                 *ngIf="transaction?.endDate"
               />
@@ -152,7 +123,7 @@
                 type="text"
                 class="form-control"
                 name="date"
-                value="{{ transaction?.startDate | dateFormat: 'DD/MM/YYYY' }}"
+                value="{{ transaction?.startDate | dateFormat : 'DD/MM/YYYY' }}"
                 readonly
                 *ngIf="!transaction?.endDate"
               />
@@ -170,13 +141,7 @@
             </div>
             <div class="form-group col-md-2">
               <label for="letter" class="control-label">Tipo:</label>
-              <input
-                type="text"
-                class="form-control"
-                name="letter"
-                value="{{ transaction?.letter }}"
-                readonly
-              />
+              <input type="text" class="form-control" name="letter" value="{{ transaction?.letter }}" readonly />
             </div>
             <div class="form-group col-md-3">
               <label for="number" class="control-label">Número:</label>
@@ -213,9 +178,7 @@
               />
             </div>
             <div class="form-group col-md-4">
-              <label for="priceList" class="control-label"
-                >Lista de Precio:</label
-              >
+              <label for="priceList" class="control-label">Lista de Precio:</label>
               <input
                 type="text"
                 class="form-control"
@@ -229,18 +192,10 @@
           <div class="row">
             <div class="form-group col-md-4">
               <label for="exempt" class="control-label">Importe Exento:</label>
-              <input
-                type="text"
-                class="form-control"
-                name="exempt"
-                value="{{ transaction?.exempt }}"
-                readonly
-              />
+              <input type="text" class="form-control" name="exempt" value="{{ transaction?.exempt }}" readonly />
             </div>
             <div class="form-group col-md-4">
-              <label for="discountAmount" class="control-label"
-                >Descuento ($):</label
-              >
+              <label for="discountAmount" class="control-label">Descuento ($):</label>
               <input
                 type="text"
                 class="form-control"
@@ -250,9 +205,7 @@
               />
             </div>
             <div class="form-group col-md-2">
-              <label for="discountPercent" class="control-label"
-                >Descuento (%):</label
-              >
+              <label for="discountPercent" class="control-label">Descuento (%):</label>
               <input
                 type="text"
                 class="form-control"
@@ -262,23 +215,13 @@
               />
             </div>
             <div class="form-group col-md-2">
-              <label for="VATPeriod" class="control-label"
-                >Período de IVA:</label
-              >
-              <input
-                type="text"
-                class="form-control"
-                name="VATPeriod"
-                value="{{ transaction?.VATPeriod }}"
-                readonly
-              />
+              <label for="VATPeriod" class="control-label">Período de IVA:</label>
+              <input type="text" class="form-control" name="VATPeriod" value="{{ transaction?.VATPeriod }}" readonly />
             </div>
           </div>
           <div class="row">
             <div class="form-group col-md-4">
-              <label for="totalPrice" class="control-label"
-                >Importe Total:</label
-              >
+              <label for="totalPrice" class="control-label">Importe Total:</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="basic-addon1">$</span>
@@ -331,17 +274,8 @@
           </div>
           <div class="row">
             <div class="form-group col-md-12">
-              <label for="observation" class="control-label"
-                >Observación:</label
-              >
-              <textarea
-                type="text"
-                class="form-control"
-                name="observation"
-                id="observation"
-                rows="2"
-                readonly
-              >
+              <label for="observation" class="control-label">Observación:</label>
+              <textarea type="text" class="form-control" name="observation" id="observation" rows="2" readonly>
                     {{ transaction?.observation }}
                   </textarea
               >
@@ -406,23 +340,14 @@
                   </td>
                   <td>{{ movementOfArticle?.article?.posDescription }}</td>
                   <td>
-                    {{
-                      movementOfArticle?.unitPrice
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfArticle?.unitPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>{{ movementOfArticle?.discountRate + ' %' }}</td>
                   <td>
-                    {{
-                      movementOfArticle?.discountAmount
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfArticle?.discountAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{
-                      movementOfArticle?.salePrice
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfArticle?.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>{{ movementOfArticle?.deposit?.name }}</td>
                   <td>{{ movementOfArticle?.op }}</td>
@@ -455,15 +380,10 @@
                   <td>{{ tax?.tax?.name }}</td>
                   <td>{{ tax.percentage }}</td>
                   <td>
-                    {{
-                      tax?.taxBase | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ tax?.taxBase | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{
-                      tax?.taxAmount
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ tax?.taxAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                 </tr>
               </tbody>
@@ -497,95 +417,58 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="
-                    let movementOfCash of movementsOfCashes
-                      | orderBy: orderTerm : propertyTerm
-                  "
-                >
+                <tr *ngFor="let movementOfCash of movementsOfCashes | orderBy : orderTerm : propertyTerm">
                   <td (click)="pushCurrencyValue(movementOfCash)">
                     {{ movementOfCash?.type?.name }}
                   </td>
                   <td>{{ movementOfCash?.number }}</td>
                   <td>{{ movementOfCash?.quota }}</td>
                   <td>
-                    {{
-                      movementOfCash.expirationDate | dateFormat: 'DD/MM/YYYY'
-                    }}
+                    {{ movementOfCash.expirationDate | dateFormat : 'DD/MM/YYYY' }}
                   </td>
                   <td>{{ movementOfCash?.bank?.name }}</td>
                   <td>
-                    {{
-                      movementOfCash.amountPaid
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfCash.amountPaid | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
                     {{
-                      movementOfCash?.amountPaid -
-                        movementOfCash?.balanceCanceled
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                      movementOfCash?.amountPaid - movementOfCash?.balanceCanceled
+                        | currency : 'USD' : 'symbol-narrow' : '1.2-2'
                     }}
                   </td>
                   <td>{{ movementOfCash?.status }}</td>
                   <td>
-                    {{
-                      movementOfCash?.paymentChange
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfCash?.paymentChange | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td style="white-space: normal">
                     {{ movementOfCash?.observation }}
                   </td>
                   <td>
-                    {{
-                      movementOfCash?.commissionAmount
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfCash?.commissionAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{
-                      movementOfCash?.administrativeExpenseAmount
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfCash?.administrativeExpenseAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{
-                      movementOfCash?.otherExpenseAmount
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfCash?.otherExpenseAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{
-                      movementOfCash?.capital
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfCash?.capital | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{
-                      movementOfCash?.interestAmount
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfCash?.interestAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{
-                      movementOfCash?.taxAmount
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ movementOfCash?.taxAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                 </tr>
 
                 <tr align="center " *ngIf="movementsOfCashes?.length === 0">
-                  <td colspan="10">
-                    No existen método de pagos en la transacción
-                  </td>
+                  <td colspan="10">No existen método de pagos en la transacción</td>
                 </tr>
               </tbody>
             </table>
-            <table
-              class="table table-striped"
-              *ngIf="showDetails && currencyValue && currencyValue.length > 0"
-            >
+            <table class="table table-striped" *ngIf="showDetails && currencyValue && currencyValue.length > 0">
               <thead>
                 <th>Cantidad</th>
                 <th>Valor</th>
@@ -597,10 +480,7 @@
                   <td>{{ currency?.quantity }}</td>
                   <td>{{ currency?.value }}</td>
                   <td>
-                    {{
-                      currency?.quantity * currency?.value
-                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                    }}
+                    {{ currency?.quantity * currency?.value | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td></td>
                 </tr>
@@ -651,15 +531,7 @@
         </ng-template>
       </li>
       <li ngbNavItem>
-        <a
-          ngbNavLink
-          *ngIf="
-            transaction.type &&
-            transaction.type.electronics &&
-            userCountry === 'AR'
-          "
-          >AFIP</a
-        >
+        <a ngbNavLink *ngIf="transaction.type && transaction.type.electronics && userCountry === 'AR'">AFIP</a>
         <ng-template ngbNavContent>
           <div class="table-responsive">
             <table class="table table-striped">
@@ -672,7 +544,7 @@
               <tbody>
                 <td>{{ transaction.CAE }}</td>
                 <td>
-                  {{ transaction.CAEExpirationDate | dateFormat: 'DD/MM/YYYY' }}
+                  {{ transaction.CAEExpirationDate | dateFormat : 'DD/MM/YYYY' }}
                 </td>
               </tbody>
             </table>
@@ -680,11 +552,7 @@
         </ng-template>
       </li>
       <li ngbNavItem>
-        <a
-          ngbNavLink
-          *ngIf="transaction?.type?.electronics && userCountry === 'MX'"
-          >SAT</a
-        >
+        <a ngbNavLink *ngIf="transaction?.type?.electronics && userCountry === 'MX'">SAT</a>
         <ng-template ngbNavContent>
           <div class="table-responsive">
             <table class="table table-striped">
@@ -723,20 +591,38 @@
       <li ngbNavItem>
         <a ngbNavLink>Transacciones Canceladas</a>
         <ng-template ngbNavContent>
-          <app-movement-of-cancellation
-            [transactionDestinationViewId]="transaction._id"
-            [selectionView]="false"
-          >
+          <div class="p-3" *ngIf="transaction.canceledTransactions">
+            <h5 class="mb-3 text-primary fw-bold">Informe de comprobante cancelado</h5>
+
+            <div class="d-flex flex-wrap align-items-center" style="gap: 1.5rem">
+              <div>
+                <strong>Tipo de transacción:</strong>
+                <span> {{ transaction.canceledTransactions.typeId.name }}</span>
+              </div>
+              <div>
+                <strong>Número:</strong>
+                <span> {{ transaction.canceledTransactions.number }}</span>
+              </div>
+              <div>
+                <strong>Punto de venta:</strong>
+                <span> {{ transaction.canceledTransactions.origin }}</span>
+              </div>
+              <div>
+                <strong>Letra:</strong>
+                <span> {{ transaction.canceledTransactions.letter }}</span>
+              </div>
+            </div>
+          </div>
+
+          <app-movement-of-cancellation [transactionDestinationViewId]="transaction._id" [selectionView]="false">
           </app-movement-of-cancellation>
         </ng-template>
       </li>
+
       <li ngbNavItem>
         <a ngbNavLink>Transacciones Cancelatorias</a>
         <ng-template ngbNavContent>
-          <app-movement-of-cancellation
-            [transactionOriginViewId]="transaction._id"
-            [selectionView]="false"
-          >
+          <app-movement-of-cancellation [transactionOriginViewId]="transaction._id" [selectionView]="false">
           </app-movement-of-cancellation>
         </ng-template>
       </li>
@@ -753,12 +639,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="
-                  let field of objForm.get('items')['controls'];
-                  let i = index
-                "
-              >
+              <tr *ngFor="let field of objForm.get('items')['controls']; let i = index">
                 <td>
                   {{ field?.value?.account?.description }}
                 </td>
@@ -791,10 +672,7 @@
                   <label class="control-label">El día:</label>
                   <label class="control-label">
                     <b>
-                      {{
-                        transaction?.creationDate
-                          | dateFormat: 'DD/MM/YYYY hh:mm:ss'
-                      }}
+                      {{ transaction?.creationDate | dateFormat : 'DD/MM/YYYY hh:mm:ss' }}
                     </b>
                   </label>
                 </div>
@@ -809,9 +687,7 @@
                 <div class="form-group col-md-6">
                   <label class="control-label">El día:</label>
                   <label class="control-label"
-                    ><b>{{
-                      transaction.updateDate | dateFormat: 'DD/MM/YYYY hh:mm:ss'
-                    }}</b></label
+                    ><b>{{ transaction.updateDate | dateFormat : 'DD/MM/YYYY hh:mm:ss' }}</b></label
                   >
                 </div>
               </div>

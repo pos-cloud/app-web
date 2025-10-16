@@ -87,6 +87,13 @@ export class Transaction {
   updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   tracking: { date: string; state: TransactionState }[];
   tiendaNubeId: string;
+  canceledTransactions: {
+    typeId: string;
+    code: number;
+    origin: number;
+    letter: string;
+    number: number;
+  };
 
   constructor() {}
 }

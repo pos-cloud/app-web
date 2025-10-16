@@ -74,6 +74,7 @@ import { Transaction, TransactionState } from '../transaction/transaction';
 import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
+import { CancelledTransactionsComponent } from 'app/modules/transaction/components/canceled-transactions/canceled-transactions.component';
 import { ChangeObservationComponent } from 'app/modules/transaction/components/change-observation/change-observation.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
 import { SelectPriceListComponent } from 'app/modules/transaction/components/select-price-list/select-price-list.component';
@@ -94,9 +95,7 @@ import { Config } from './../../app.config';
 export class AddSaleOrderComponent {
   @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
   @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
-
   @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
-  @ViewChild('contentInformCancellation', { static: true }) contentInformCancellation: ElementRef;
   @ViewChild('containerMovementsOfArticles', { static: true }) containerMovementsOfArticles: ElementRef;
   @ViewChild('containerTaxes', { static: true }) containerTaxes: ElementRef;
   @ViewChild(ListArticlesPosComponent) listArticlesComponent: ListArticlesPosComponent;
@@ -159,19 +158,6 @@ export class AddSaleOrderComponent {
 
   movementsOfCancellations: MovementOfCancellation[] = new Array();
   email: EmailProps;
-  canceledTransactions: {
-    typeId: string;
-    code: number;
-    origin: number;
-    letter: string;
-    number: number;
-  } = {
-    typeId: '',
-    code: 0,
-    origin: 0,
-    letter: '',
-    number: 0,
-  };
   m3: number = 0;
   weight: number = 0;
   width: number = 0;
@@ -1773,26 +1759,30 @@ export class AddSaleOrderComponent {
     this.loading = true;
     this.transaction.type.defectEmailTemplate = null;
 
-    this.canceledTransactions =
-      this.canceledTransactions && this.canceledTransactions.typeId && this.canceledTransactions.typeId != ''
-        ? this.canceledTransactions
+    this.transaction.canceledTransactions =
+      this.transaction.canceledTransactions &&
+      this.transaction.canceledTransactions.typeId &&
+      this.transaction.canceledTransactions.typeId != ''
+        ? this.transaction.canceledTransactions
         : null;
-    this._transactionService.validateElectronicTransactionAR(this.transaction, this.canceledTransactions).subscribe(
-      (result: ApiResponse) => {
-        if (result.status === 200) {
-          let transactionResponse: Transaction = result.result;
+    this._transactionService
+      .validateElectronicTransactionAR(this.transaction, this.transaction.canceledTransactions)
+      .subscribe(
+        (result: ApiResponse) => {
+          if (result.status === 200) {
+            let transactionResponse: Transaction = result.result;
 
-          this.transaction.CAE = transactionResponse.CAE;
-          this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
-          this.transaction.number = transactionResponse.number;
-          this.transaction.state = transactionResponse.state;
-          this.finish();
-        } else this._toastService.showToast(result);
-      },
-      (error) => {
-        this._toastService.showToast(error);
-      }
-    );
+            this.transaction.CAE = transactionResponse.CAE;
+            this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
+            this.transaction.number = transactionResponse.number;
+            this.transaction.state = transactionResponse.state;
+            this.finish();
+          } else this._toastService.showToast(result);
+        },
+        (error) => {
+          this._toastService.showToast(error);
+        }
+      );
   }
 
   updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
@@ -2248,14 +2238,6 @@ export class AddSaleOrderComponent {
                 this.lastQuotation = this.transaction.quotation;
               }
             });
-          }
-        });
-        break;
-
-      case 'change-information-cancellation':
-        modalRef = this._modalService.open(this.contentInformCancellation).result.then(async (result) => {
-          if (result !== 'cancel' && result !== '') {
-            this.checkInformationCancellation();
           }
         });
         break;
@@ -3298,41 +3280,6 @@ export class AddSaleOrderComponent {
     }
   }
 
-  checkInformationCancellation() {
-    if (this.canceledTransactions && this.canceledTransactions.typeId) {
-      this.loading = true;
-
-      let query = `where= "type":"${this.canceledTransactions.typeId}","origin":${this.canceledTransactions.origin},"letter":"${this.canceledTransactions.letter}","operationType":{"$ne":"D"}`;
-
-      if (this.transaction.company) {
-        query += `,"company":"${this.transaction.company._id}"`;
-      }
-
-      query += `&limit=1`;
-
-      this._transactionService.getTransactions(query).subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.transactions || result.transactions.length === 0) {
-            this.showMessage('Debe informar un comprobante válido', 'info', false);
-          } else {
-            for (let cod of result.transactions[0].type.codes) {
-              if (cod.letter === this.canceledTransactions.letter) {
-                this.canceledTransactions.code = cod.code;
-              }
-            }
-          }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-        }
-      );
-    } else {
-      this.showMessage('Debe informar todos los campos del comprobante a informar', 'info', true);
-    }
-  }
-
   async filterArticles() {
     this.listArticlesComponent.filterArticle = this.filterArticle;
     let article: Article = null;
@@ -3584,6 +3531,28 @@ export class AddSaleOrderComponent {
       (reason) => {
         // Modal cerrado sin cambios
       }
+    );
+  }
+
+  cancelledTransactions() {
+    const modalRef = this._modalService.open(CancelledTransactionsComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.cancellationTypes = this.cancellationTypes;
+    modalRef.componentInstance.transaction = this.transaction;
+    modalRef.result.then(
+      async (result) => {
+        if (result.data) {
+          this.transaction.canceledTransactions = result.data;
+          await this.updateTransaction().then(async (transaction) => {
+            if (transaction) {
+              this.transaction = transaction;
+            }
+          });
+        }
+      },
+      (reason) => {}
     );
   }
 
