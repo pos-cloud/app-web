@@ -279,7 +279,7 @@ export class HeaderComponent implements OnInit {
           label: 'Sucursales y Puntos de Venta',
           children: [
             { label: 'Sucursales', link: 'admin/sucursales' },
-            { label: 'Puntos de venta', link: 'admin/puntos-de-venta' },
+            { label: 'Puntos de venta', link: 'entities/origins' },
             { label: 'Transportes', link: 'entities/transports' },
           ],
         },
@@ -771,7 +771,7 @@ export class HeaderComponent implements OnInit {
               label: 'Sucursales y Puntos de Venta',
               children: [
                 { label: 'Sucursales', link: 'entities/branches' },
-                { label: 'Puntos de venta', link: 'admin/puntos-de-venta' },
+                { label: 'Puntos de venta', link: 'entities/origins' },
                 { label: 'Transportes', link: 'entities/transports' },
               ],
             },
