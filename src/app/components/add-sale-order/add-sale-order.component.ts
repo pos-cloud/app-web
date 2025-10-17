@@ -30,12 +30,10 @@ import {
   Transport,
   UseOfCFDI,
 } from '@types';
-import { AccountSeatService } from '../../core/services/account-seat.service';
 import { ArticleStockService } from '../../core/services/article-stock.service';
 import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
 import { PrinterService } from '../../core/services/printer.service';
 import { TableService } from '../../core/services/table.service';
-import { TaxService } from '../../core/services/tax.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { UserService } from '../../core/services/user.service';
 import { SelectTransportComponent } from '../../modules/transaction/components/select-transport/select-transport.component';
@@ -177,11 +175,9 @@ export class AddSaleOrderComponent {
     private _printerService: PrinterService,
     private _userService: UserService,
     private _variantService: VariantService,
-    private _taxService: TaxService,
     private _relationTypeService: RelationTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,
-    private _accountSeatService: AccountSeatService,
     private _priceListService: PriceListService,
     private _configService: ConfigService,
     private _structureService: StructureService,
@@ -2692,10 +2688,6 @@ export class AddSaleOrderComponent {
         }
         this.transaction.table = await this.updateTable(table);
       }
-
-      if (this.transaction.type.allowAccounting)
-        this._accountSeatService.addAccountSeatByTransaction(this.transaction._id);
-
       let cancellationTypesAutomatic = await this.getCancellationTypesAutomatic();
 
       if (!cancellationTypesAutomatic || cancellationTypesAutomatic.length == 0) {

@@ -1006,16 +1006,6 @@ export class AddMovementOfCashComponent implements OnInit {
         this.transaction = await this.updateTransaction();
       }
 
-      if (this.transaction.type.allowAccounting) {
-        this._accountSeatService.addAccountSeatByTransaction(this.transaction._id).subscribe(
-          (result) => {
-            this._toastService.showToast(result);
-          },
-          (error) => {
-            this._toastService.showToast(error);
-          }
-        );
-      }
 
       this.activeModal.close({
         movementsOfCashes: this.movementsOfCashes,
