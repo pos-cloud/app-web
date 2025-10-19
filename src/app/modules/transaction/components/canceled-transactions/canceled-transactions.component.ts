@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { ApiResponse } from '@types';
-import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { Transaction } from 'app/components/transaction/transaction';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -18,7 +17,6 @@ import { takeUntil } from 'rxjs/operators';
   imports: [CommonModule, NgbModule, TranslateModule, PipesModule, FormsModule],
 })
 export class CancelledTransactionsComponent implements OnInit, OnDestroy {
-  @Input() cancellationTypes: CancellationType[];
   @Input() transaction: Transaction;
   public canceledTransactions: {
     typeId: string;
