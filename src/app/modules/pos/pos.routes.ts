@@ -9,4 +9,8 @@ export const POS_ROUTES: Routes = [
     path: 'woo-commerce',
     loadComponent: () => import('./woo-commerce/list-orders.component').then((m) => m.ListOrdersWooCommerceComponent),
   },
+  {
+    path: 'subscription',
+    loadComponent: () => import('./subscription/subscription.component').then((m) => m.SubscriptionComponent),
+  },
 ];

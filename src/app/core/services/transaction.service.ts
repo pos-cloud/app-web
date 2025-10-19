@@ -17,10 +17,7 @@ import { Transaction } from '../../components/transaction/transaction';
   providedIn: 'root',
 })
 export class TransactionService extends ModelService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {
+  constructor(public _http: HttpClient, public _authService: AuthService) {
     super(
       `transactions`, // PATH
       _http,
@@ -182,22 +179,14 @@ export class TransactionService extends ModelService {
       );
   }
 
-  public exportCiti(
-    VATPeriod: string,
-    transactionMovement: TransactionMovement
-  ): Observable<any> {
+  public exportCiti(VATPeriod: string, transactionMovement: TransactionMovement): Observable<any> {
     const URL = `${Config.apiURL}export-citi`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    let query =
-      '{ "VATPeriod": "' +
-      VATPeriod +
-      '", "transactionMovement": "' +
-      transactionMovement +
-      '" }';
+    let query = '{ "VATPeriod": "' + VATPeriod + '", "transactionMovement": "' + transactionMovement + '" }';
 
     const params = new HttpParams().set('query', query);
 
@@ -282,10 +271,7 @@ export class TransactionService extends ModelService {
     //const URL = `${Config.apiURL_FE_MX}`;
     const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/mx/01_CFDI_fe.php`;
 
-    const headers = new HttpHeaders().set(
-      'Content-Type',
-      'application/x-www-form-urlencoded'
-    );
+    const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
 
     let body =
       'transaction=' +
@@ -345,56 +331,6 @@ export class TransactionService extends ModelService {
       );
   }
 
-  public syncMeli(): Observable<any> {
-    const URL = `${environment.apiv2}/meli/import-transactions`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(
-        URL,
-        {},
-        {
-          headers: headers,
-        }
-      )
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public syncWoocommerce(): Observable<any> {
-    const URL = `${environment.apiv2}/woo/sync-transactions`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(
-        URL,
-        {},
-        {
-          headers: headers,
-        }
-      )
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public setOrderNumber(transaction: Transaction): Observable<any> {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -416,5 +352,22 @@ export class TransactionService extends ModelService {
           return of(err);
         })
       );
+  }
+
+  public generateSubscriptions(): Observable<any> {
+    const URL = `${environment.apiv2}/transaction/subscription`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, {}, { headers: headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
   }
 }

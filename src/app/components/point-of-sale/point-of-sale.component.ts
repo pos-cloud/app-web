@@ -491,44 +491,6 @@ export class PointOfSaleComponent implements OnInit {
     );
   }
 
-  syncMeli() {
-    this.loading = true;
-    this._transactionService.syncMeli().subscribe(
-      (result) => {
-        this._toastService.showToast(result);
-        this.loading = false;
-        this.refresh();
-      },
-      (error) => {
-        this._toastService.showToast(error);
-        this.loading = false;
-        this.refresh();
-      }
-    );
-  }
-
-  syncWoocommerce() {
-    this.loading = true;
-    this._transactionService.syncWoocommerce().subscribe(
-      (result) => {
-        if (result.status === 200) {
-          this._toastService.showToast({
-            type: 'success',
-            message: 'Finalizó la sincronización de woocommerce.',
-          });
-          this.refresh();
-        } else {
-          this._toastService.showToast(result);
-          this.refresh();
-        }
-      },
-      (error) => {
-        this._toastService.showToast(error);
-        this.refresh();
-      }
-    );
-  }
-
   async refresh() {
     let pathLocation: string[] = this._router.url.split('/');
 

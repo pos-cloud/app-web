@@ -42,6 +42,7 @@ export interface Permission extends Activity {
       delivery: boolean;
       voucherReader: boolean;
       resto: boolean;
+      subscription: boolean;
     };
     money: boolean;
     production: boolean;
