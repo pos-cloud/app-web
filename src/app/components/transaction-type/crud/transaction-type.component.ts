@@ -1311,49 +1311,7 @@ export class TransactionTypeComponent implements OnInit {
           case 'number':
             this.obj[field.name] = parseFloat(this.obj[field.name]);
             break;
-          case 'file':
-            if (this.filesToUpload && this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
-              this.loading = true;
-              this._objService.deleteFile(this.obj[field.name]);
-              if (this.filesToUpload[field.name] && this.filesToUpload[field.name].length > 0) {
-                this.obj[field.name] = this.oldFiles[field.name];
-                if (field.multiple && (!this.obj || !this.obj[field.name] || this.obj[field.name].length === 0)) {
-                  this.obj[field.name] = new Array();
-                }
-                for (let file of this.filesToUpload[field.name]) {
-                  await this._objService
-                    .uploadFile(null, file)
-                    .then((result) => {
-                      this.loading = false;
-                      if (result['result']) {
-                        if (!field.multiple) {
-                          this.obj[field.name] = result['result'];
-                        } else {
-                          this.obj[field.name].push(result['result']);
-                        }
-                      } else {
-                        this._toast.showToast({
-                          message: result['error'].message,
-                          type: 'info',
-                        });
-                        isValid = false;
-                      }
-                    })
-                    .catch((error) => {
-                      this.loading = false;
-                      isValid = false;
-                      this._toast.showToast({
-                        message: error.message,
-                        type: 'danger',
-                      });
-                    });
-                }
-              }
-              this.loading = false;
-            } else {
-              if (this.oldFiles) this.obj[field.name] = this.oldFiles[field.name];
-            }
-            break;
+
           case 'boolean':
             this.obj[field.name] = this.obj[field.name] == 'true' || this.obj[field.name] == true;
             break;
@@ -1446,33 +1404,6 @@ export class TransactionTypeComponent implements OnInit {
         message: 'Revise los errores marcados en el formulario',
       });
     }
-  }
-
-  public deleteFile(typeFile: string, fieldName: string, filename: string) {
-    this._objService.deleteFile(filename).subscribe(
-      (result) => {
-        if (result.status === 200) {
-          try {
-            eval('this.obj.' + fieldName + ' = this.obj.' + fieldName + '.filter(item => item !== filename)');
-          } catch (error) {
-            eval('this.obj.' + fieldName + ' = null');
-          }
-          this.loading = true;
-          this.subscription.add(
-            this._objService.update(this.obj).subscribe(
-              (result) => {
-                this._toast.showToast(result);
-                this.setValuesForm();
-              },
-              (error) => this._toast.showToast(error)
-            )
-          );
-        } else {
-          this._toast.showToast(result);
-        }
-      },
-      (error) => this._toast.showToast(error)
-    );
   }
 
   public saveObj() {

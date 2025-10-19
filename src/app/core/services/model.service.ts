@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { MediaCategory } from '@types';
 import { DatatableHistory } from 'app/components/datatable/datatable-history.interface';
 import { AuthService } from 'app/core/services/auth.service';
 import { environment } from 'environments/environment';
@@ -145,59 +144,6 @@ export class ModelService {
       .delete(`${this.URL}/${_id}`, {
         headers: headers,
         params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public uploadFile(origin: MediaCategory, file: File): Promise<any> {
-    if (origin) {
-    }
-    let xhr: XMLHttpRequest = new XMLHttpRequest();
-
-    xhr.open('POST', `${environment.apiStorage}/upload`, true);
-    xhr.setRequestHeader('Authorization', this._authService.getToken());
-
-    return new Promise((resolve, reject) => {
-      let formData: any = new FormData();
-
-      formData.append('file', file, file.name);
-
-      formData.append('origin', origin);
-
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4) {
-          if (xhr.status == 201) {
-            resolve(xhr.response);
-          } else {
-            reject(xhr.response);
-          }
-        }
-      };
-
-      xhr.send(formData);
-    });
-  }
-
-  public deleteFile(filename: string): Observable<any> {
-    const URL = `${environment.apiStorage}/upload`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .delete(URL, {
-        headers: headers,
-        body: {
-          origin: filename,
-        },
       })
       .pipe(
         map((res) => {
