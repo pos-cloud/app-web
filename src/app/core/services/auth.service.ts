@@ -10,13 +10,9 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AuthService {
-  private identity: BehaviorSubject<User | null> =
-    new BehaviorSubject<User | null>(null);
+  private identity: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
 
-  constructor(
-    private _router: Router,
-    private _http: HttpClient
-  ) {
+  constructor(private _router: Router, private _http: HttpClient) {
     const storedUser = sessionStorage.getItem('user');
     if (storedUser) {
       this.identity.next(JSON.parse(storedUser));
@@ -96,35 +92,9 @@ export class AuthService {
   isValidToken(token: string): Observable<any> {
     const URL = `${Config.apiURL}validate_token`;
 
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this.getToken());
+    const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
 
     const params = new HttpParams().set('token', token.replace(/"/gi, ''));
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  checkPermission(employee: string): Observable<any> {
-    const URL = `${Config.apiURL}check_permission`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this.getToken());
-
-    const params = new HttpParams().set('employee', employee);
 
     return this._http
       .get(URL, {
