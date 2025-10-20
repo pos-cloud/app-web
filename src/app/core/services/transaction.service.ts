@@ -355,7 +355,7 @@ export class TransactionService extends ModelService {
   }
 
   public generateSubscriptions(): Observable<any> {
-    const URL = `${environment.apiv2}/transaction/subscription`;
+    const URL = `${environment.apiv2}/transactions/subscription`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

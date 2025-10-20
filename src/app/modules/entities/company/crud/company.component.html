@@ -263,6 +263,46 @@
         <hr />
         <div class="row">
           <label class="form-group col-md-12">
+            <b>{{ 'subscription' | translate | capitalize }}</b>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="subscriptionActive" class="control-label">{{
+              'subscriptionActive' | translate | capitalize
+            }}</label>
+            <select class="form-control" [formControl]="companyForm.get('subscription.active')">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="subscription.article" class="control-label">{{
+              'subscriptionArticle.description' | translate | capitalize
+            }}</label>
+            <app-typeahead-dropdown
+              [control]="companyForm.get('subscription.article')"
+              [data]="articles"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="subscription.paymentMethod" class="control-label">{{
+              'subscriptionPaymentMethod.name' | translate | capitalize
+            }}</label>
+            <app-typeahead-dropdown
+              [control]="companyForm.get('subscription.paymentMethod')"
+              [data]="paymentMethods"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
             <b>{{ 'config' | translate | capitalize }}</b>
           </label>
         </div>

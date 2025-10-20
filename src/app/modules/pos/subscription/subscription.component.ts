@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { Transaction, TransactionMovement, User } from '@types';
+import { Transaction, TransactionMovement, TransactionState, User } from '@types';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -66,7 +66,7 @@ export class SubscriptionComponent implements OnInit {
       orderNumber: 1,
       observation: 1,
       totalPrice: 1,
-      isSubscription: 1,
+      'type.isSubscription': 1,
       balance: 1,
       state: 1,
       madein: 1,
@@ -78,8 +78,8 @@ export class SubscriptionComponent implements OnInit {
     };
 
     let match = {
-      // state: TransactionState.Open,
-      // isSubscription: true,
+      state: TransactionState.Open,
+      'type.isSubscription': true,
       operationType: { $ne: 'D' },
       'type.transactionMovement': TransactionMovement.Sale,
     };

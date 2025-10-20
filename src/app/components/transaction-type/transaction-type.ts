@@ -90,6 +90,7 @@ export class TransactionType extends Model {
   creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   updateUser: User;
   updateDate: string;
+  isSubscription: boolean = false;
 
   constructor() {
     super();

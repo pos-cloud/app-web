@@ -612,6 +612,13 @@ export class TransactionTypeComponent implements OnInit {
       class: 'form-group col-md-2',
     },
     {
+      name: 'isSubscription',
+      tag: 'select',
+      tagType: 'boolean',
+      values: ['false', 'true'],
+      class: 'form-group col-md-2',
+    },
+    {
       name: 'Producto',
       tag: 'separator',
       tagType: null,
@@ -1040,6 +1047,7 @@ export class TransactionTypeComponent implements OnInit {
         printDescriptionType: 1,
         numberPrint: 1,
         codes: 1,
+        isSubscription: 1,
         'branch._id': 1,
         'branch.name': 1,
         'company._id': 1,

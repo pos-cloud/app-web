@@ -4,12 +4,14 @@ import { Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { AddressService } from '@core/services/address.service';
+import { ArticleService } from '@core/services/article.service';
 import { CompanyGroupService } from '@core/services/company-group.service';
 import { CompanyService } from '@core/services/company.service';
 import { ConfigService } from '@core/services/config.service';
 import { CountryService } from '@core/services/country.service';
 import { EmployeeService } from '@core/services/employee.service';
 import { IdentificationTypeService } from '@core/services/identification-type.service';
+import { PaymentMethodService } from '@core/services/payment-method.service';
 import { PriceListService } from '@core/services/price-list.service';
 import { StateService } from '@core/services/state.service';
 import { TransportService } from '@core/services/transport.service';
@@ -21,12 +23,14 @@ import {
   Account,
   Address,
   ApiResponse,
+  Article,
   Company,
   CompanyGroup,
   CompanyType,
   Employee,
   GenderType,
   IdentificationType,
+  PaymentMethod,
   PriceList,
   State,
   Transport,
@@ -79,6 +83,8 @@ export class CompanyComponent implements OnInit {
   public countries: any;
   public transports: Transport[];
   public priceLists: PriceList[];
+  public articles: Article[];
+  public paymentMethods: PaymentMethod[];
   public identificationTypes: IdentificationType[];
   public type: string;
   public genders: any[] = ['', GenderType.Male, GenderType.Female];
@@ -96,6 +102,8 @@ export class CompanyComponent implements OnInit {
     public _countryService: CountryService,
     public _transportService: TransportService,
     public _priceListService: PriceListService,
+    public _articleService: ArticleService,
+    public _paymentMethod: PaymentMethodService,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public _router: Router,
@@ -132,6 +140,11 @@ export class CompanyComponent implements OnInit {
       account: ['', []],
       creditLimit: ['', []],
       zipCode: ['', []],
+      subscription: this._fb.group({
+        article: [false, []],
+        paymentMethod: [null, []],
+        active: [null, []],
+      }),
     });
   }
 
@@ -161,6 +174,8 @@ export class CompanyComponent implements OnInit {
       identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       accounts: this._accountService.find({ query: { operationType: { $ne: 'D' }, mode: 'Analitico' } }),
       config: this._configService.find({ query: { operationType: { $ne: 'D' } } }),
+      article: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
+      paymentMethod: this._paymentMethod.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -176,6 +191,8 @@ export class CompanyComponent implements OnInit {
           identificationTypes,
           accounts,
           config,
+          paymentMethod,
+          article,
         }) => {
           this.vatConditions = vatConditions ?? [];
           this.companiesGroups = companiesGroups ?? [];
@@ -188,6 +205,8 @@ export class CompanyComponent implements OnInit {
           this.identificationTypes = identificationTypes ?? [];
           this.accounts = accounts ?? [];
           this.config = config[0] ?? null;
+          this.articles = article ?? null;
+          this.paymentMethods = paymentMethod;
 
           if (this.companyId) {
             if (this.companyId) this.getCompany(this.companyId);
@@ -229,6 +248,10 @@ export class CompanyComponent implements OnInit {
     const priceList = this.priceLists?.find((item) => item._id === this.company?.priceList?.toString());
     const state = this.states?.find((item) => item._id === this.company?.state?.toString());
     const accountData = this.accounts?.find((item) => item._id === this.company?.account?.toString());
+    const article = this.articles?.find((item) => item._id === this.company?.subscription?.article?.toString());
+    const paymentMethod = this.paymentMethods?.find(
+      (item) => item._id === this.company?.subscription?.paymentMethod?.toString()
+    );
     let account;
     let allowCurrentAccount;
     if (type === CompanyType.Client) {
@@ -277,6 +300,11 @@ export class CompanyComponent implements OnInit {
       account: account,
       creditLimit: this.company?.creditLimit ?? '',
       zipCode: this.company?.zipCode ?? '',
+      subscription: {
+        article: article ?? null,
+        paymentMethod: paymentMethod ?? null,
+        active: this.company?.subscription?.active ?? false,
+      },
     };
     this.companyForm.setValue(values);
   }

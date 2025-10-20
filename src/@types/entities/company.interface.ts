@@ -1,10 +1,12 @@
 import {
   Account,
   Activity,
+  Article,
   CompanyGroup,
   Country,
   Employee,
   IdentificationType,
+  PaymentMethod,
   PriceList,
   State,
   Transport,
@@ -45,6 +47,11 @@ export interface Company extends Activity {
   account: Account;
   creditLimit: number;
   zipCode: string;
+  subscription: {
+    article: Article;
+    paymentMethod: PaymentMethod;
+    active: boolean;
+  };
 }
 
 export enum CompanyType {
