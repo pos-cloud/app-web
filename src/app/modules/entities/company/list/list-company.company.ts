@@ -132,7 +132,7 @@ export class ListCompanyComponent implements OnInit {
       required: false,
     },
     {
-      name: 'suscription.active',
+      name: 'subscription.active',
       visible: false,
       disabled: false,
       filter: true,
@@ -141,7 +141,7 @@ export class ListCompanyComponent implements OnInit {
       required: false,
     },
     {
-      name: 'suscription.paymentMethod.name',
+      name: 'subscription.paymentMethod.name',
       visible: false,
       disabled: false,
       filter: true,
@@ -150,7 +150,7 @@ export class ListCompanyComponent implements OnInit {
       required: false,
     },
     {
-      name: 'suscription.article.description',
+      name: 'subscription.article.description',
       visible: false,
       disabled: false,
       filter: true,

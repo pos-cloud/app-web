@@ -269,8 +269,8 @@
 
         <div class="row">
           <div class="form-group col-md-3">
-            <label for="subscriptionActive" class="control-label">{{
-              'subscriptionActive' | translate | capitalize
+            <label for="subscription.active" class="control-label">{{
+              'subscription.active' | translate | capitalize
             }}</label>
             <select class="form-control" [formControl]="companyForm.get('subscription.active')">
               <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
@@ -279,7 +279,7 @@
           </div>
           <div class="form-group col-md-3">
             <label for="subscription.article" class="control-label">{{
-              'subscriptionArticle.description' | translate | capitalize
+              'subscription.article.description' | translate | capitalize
             }}</label>
             <app-typeahead-dropdown
               [control]="companyForm.get('subscription.article')"
@@ -290,7 +290,7 @@
           </div>
           <div class="form-group col-md-3">
             <label for="subscription.paymentMethod" class="control-label">{{
-              'subscriptionPaymentMethod.name' | translate | capitalize
+              'subscription.paymentMethod.name' | translate | capitalize
             }}</label>
             <app-typeahead-dropdown
               [control]="companyForm.get('subscription.paymentMethod')"

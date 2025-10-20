@@ -5,6 +5,7 @@ import { AuthService } from '@core/services/auth.service';
 import { TransactionService } from '@core/services/transaction.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { DeleteTransactionComponent } from '@shared/components/delete-transaction/delete-transaction.component';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
@@ -73,6 +74,8 @@ export class SubscriptionComponent implements OnInit {
       operationType: 1,
       'type.name': 1,
       'type.transactionMovement': 1,
+      'type.automaticCreation': 1,
+      'type._id': 1,
       'company.name': 1,
       'company._id': 1,
     };
@@ -166,11 +169,39 @@ export class SubscriptionComponent implements OnInit {
 
   public openTransaction(transaction: Transaction): void {
     // Navegar a editar la transacción
-    this._router.navigate(['/pos/mostrador/editar-transaccion'], {
-      queryParams: {
-        transactionId: transaction._id,
-      },
+    let route = '/pos/mostrador/editar-transaccion';
+
+    let queryParams = {
+      transactionId: transaction._id,
+      returnURL: this.removeParam(this._router.url, 'automaticCreation'),
+    };
+
+    if (transaction.type.automaticCreation) {
+      queryParams['automaticCreation'] = transaction.type._id;
+    }
+    this._router.navigate([route], {
+      queryParams,
     });
+  }
+
+  private removeParam(sourceURL: string, key: string) {
+    let rtn = sourceURL.split('?')[0],
+      param,
+      params_arr = [],
+      queryString = sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
+
+    if (queryString !== '') {
+      params_arr = queryString.split('&');
+      for (let i = params_arr.length - 1; i >= 0; i -= 1) {
+        param = params_arr[i].split('=')[0];
+        if (param === key) {
+          params_arr.splice(i, 1);
+        }
+      }
+      rtn = rtn + '?' + params_arr.join('&');
+    }
+
+    return rtn;
   }
 
   public toggleSelection(transactionId: string): void {
@@ -224,21 +255,18 @@ export class SubscriptionComponent implements OnInit {
   }
 
   public deleteTransaction(transaction: Transaction): void {
-    // Mostrar confirmación antes de eliminar
-    if (confirm(`¿Está seguro que desea eliminar la transacción #${transaction.number}?`)) {
-      this.loading = true;
-
-      // TODO: Implementar la llamada al servicio para eliminar
-      console.log('Eliminar transacción:', transaction._id);
-
-      this._toastService.showToast({
-        type: 'info',
-        message: `Transacción #${transaction.number} eliminada`,
-      });
-
-      this.loading = false;
-      // Refrescar la lista después de eliminar
-      // this.getTransactions();
-    }
+    let modalRef = this._modalService.open(DeleteTransactionComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.transactionId = transaction._id;
+    modalRef.result.then(
+      (result) => {
+        if (result === 'delete_close') {
+          this.getTransactions();
+        }
+      },
+      (reason) => {}
+    );
   }
 }
