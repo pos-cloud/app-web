@@ -9,7 +9,7 @@ import { DeleteTransactionComponent } from '@shared/components/delete-transactio
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { Transaction, TransactionMovement, TransactionState, User } from '@types';
+import { ApiResponse, Transaction, TransactionMovement, TransactionState, User } from '@types';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -25,9 +25,11 @@ import { takeUntil } from 'rxjs/operators';
 export class SubscriptionComponent implements OnInit {
   public loading: boolean = false;
   public transactions: Transaction[] = [];
+  public transaction;
   public selectedTransactions: Set<string> = new Set();
   public user: User | any;
   public itemsPerPage = 10;
+
   public currentPage: number = 1;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
@@ -226,7 +228,7 @@ export class SubscriptionComponent implements OnInit {
     this.selectedTransactions.clear();
   }
 
-  public finishSelected(): void {
+  public async finishSelected() {
     if (this.selectedTransactions.size === 0) {
       this._toastService.showToast({
         type: 'info',
@@ -236,13 +238,53 @@ export class SubscriptionComponent implements OnInit {
     }
 
     // Aquí puedes implementar la lógica para finalizar las transacciones seleccionadas
-    const selectedIds = Array.from(this.selectedTransactions);
-    console.log('Finalizar transacciones:', selectedIds);
+    const transactionsIds = Array.from(this.selectedTransactions);
 
-    // TODO: Implementar la llamada al servicio para finalizar
-    this._toastService.showToast({
-      type: 'info',
-      message: `Se finalizarán ${selectedIds.length} transacciones`,
+    for (let transactionId of transactionsIds) {
+      this.transaction = this.transactions.find((data) => data._id === transactionId);
+      await this.validateElectronicTransactionAR();
+    }
+  }
+
+  async validateElectronicTransactionAR() {
+    this.loading = true;
+    this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
+      (result: ApiResponse) => {
+        if (result.status === 200) {
+          const transactionResponse: Transaction = result.result;
+          this.transaction.CAE = transactionResponse.CAE;
+          this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
+          this.transaction.number = transactionResponse.number;
+          this.transaction.state = transactionResponse.state;
+          this.updateTransaction();
+        } else {
+          this._toastService.showToast(result);
+        }
+        this.loading = false; // ✅ Ocultamos el overlay
+      },
+      (error) => {
+        this._toastService.showToast(error);
+        this.loading = false; // ✅ También acá
+      }
+    );
+  }
+
+  async updateTransaction(): Promise<Transaction> {
+    return new Promise<Transaction>((resolve, reject) => {
+      this._transactionService.update(this.transaction).subscribe(
+        (result: ApiResponse) => {
+          if (result.status === 200) {
+            resolve(result.result);
+          } else {
+            this._toastService.showToast(result);
+            reject(result);
+          }
+        },
+        (error) => {
+          this._toastService.showToast(error);
+          reject(error);
+        }
+      );
     });
   }
 

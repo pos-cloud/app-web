@@ -1,4 +1,4 @@
-<section class="container-fluid">
+<section class="container-fluid position-relative">
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <span style="color: #607d8b">{{ 'subscription' | translate | capitalize }} - Suscripciones Abiertas</span>
@@ -13,7 +13,9 @@
         </button>
       </div>
     </div>
+
     <app-progressbar [loading]="loading"></app-progressbar>
+
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -87,6 +89,7 @@
         </table>
       </div>
     </div>
+
     <div class="card-footer d-flex justify-content-between align-items-center">
       <div>
         <button class="btn btn-sm" (click)="selectAll()" [disabled]="loading || transactions.length === 0">
@@ -101,6 +104,7 @@
           Total: {{ transactions.length }} | Seleccionadas: {{ selectedTransactions.size }}
         </small>
       </div>
+
       <div>
         <button
           class="btn btn-success"
@@ -112,5 +116,13 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- 🔹 Overlay de carga -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner-border text-light" role="status" style="width: 4rem; height: 4rem">
+      <span class="sr-only">Cargando...</span>
+    </div>
+    <p class="text-light mt-3">Validando comprobante con AFIP...</p>
   </div>
 </section>
