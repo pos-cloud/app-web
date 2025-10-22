@@ -41,8 +41,8 @@ import {
 } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
+import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
-import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';

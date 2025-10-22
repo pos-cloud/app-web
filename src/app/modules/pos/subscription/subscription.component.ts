@@ -5,12 +5,12 @@ import { AuthService } from '@core/services/auth.service';
 import { TransactionService } from '@core/services/transaction.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { DeleteTransactionComponent } from '@shared/components/delete-transaction/delete-transaction.component';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { ApiResponse, Transaction, TransactionMovement, TransactionState, User } from '@types';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
+import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 

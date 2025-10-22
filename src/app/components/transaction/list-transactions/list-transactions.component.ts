@@ -29,7 +29,7 @@ import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, Branch, PrintType } from '@types';
 import { User } from 'app/components/user/user';
-import { DeleteTransactionComponent } from 'app/shared/components/delete-transaction/delete-transaction.component';
+import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import 'moment/locale/es';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
