@@ -748,8 +748,11 @@ export class ArticleComponent implements OnInit {
   }
 
   onImagesUploaded(urls: string[]): void {
-    this.articleForm.get('picture')?.setValue(urls.length > 0 ? urls[0] : '');
-    this.articleForm.get('picturePOS')?.setValue(urls.length > 0 ? urls[0] : '');
+    // Solo actualizar si hay URLs nuevas, no si el array está vacío
+    if (urls && urls.length > 0) {
+      this.articleForm.get('picture')?.setValue(urls[0]);
+      this.articleForm.get('picturePOS')?.setValue(urls[0]);
+    }
   }
 
   loadPosDescription(): void {
@@ -881,15 +884,6 @@ export class ArticleComponent implements OnInit {
     this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
     this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
     this.articleForm.value.salePriceTN = this.roundNumber.transform(this.articleForm.value.salePriceTN);
-    // this.articleForm.patchValue({
-    //   basePrice: this.roundNumber.transform(this.articleForm.value.basePrice),
-    //   costPrice: this.roundNumber.transform(this.articleForm.value.costPrice),
-    //   markupPercentage: this.roundNumber.transform(this.articleForm.value.markupPercentage),
-    //   markupPrice: this.roundNumber.transform(this.articleForm.value.markupPrice),
-    //   salePrice: this.roundNumber.transform(this.articleForm.value.salePrice),
-    //   salePriceTN: this.roundNumber.transform(this.articleForm.value.salePriceTN),
-    // });
-    console.log(this.article, this.articleForm.value);
     // Actualizar el artículo
     this.article = { ...this.article, ...this.articleForm.value };
   }

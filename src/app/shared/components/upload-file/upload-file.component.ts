@@ -17,7 +17,7 @@ export class UploadFileComponent {
   @Output() uploadedUrls = new EventEmitter<string[]>();
   @Input() folder = '';
   @Input() set existingImageUrl(url: string | undefined) {
-    if (url && url.includes('https')) {
+    if (url && url.includes('https') && url !== this.imageUrl) {
       this.imageUrl = url;
     }
   }
@@ -37,6 +37,11 @@ export class UploadFileComponent {
 
   async uploadImages() {
     const urls: string[] = [];
+
+    // Si no hay archivos seleccionados pero hay una imagen existente, no emitir nada
+    if (this.selectedFiles.length === 0 && this.imageUrl) {
+      return;
+    }
 
     for (const file of this.selectedFiles) {
       try {
