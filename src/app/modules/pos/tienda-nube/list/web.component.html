@@ -222,6 +222,8 @@
                       'btn-state-canceled': transaction?.deliveryAddress?.shippingStatus === 'Desempaquetado',
                       'btn-state-close': transaction?.deliveryAddress?.shippingStatus === 'Enviado',
                       'btn-state-open': transaction?.deliveryAddress?.shippingStatus === 'No enviado',
+                      'btn btn-primary': transaction?.deliveryAddress?.shippingStatus === 'Retiro',
+                         'btn btn-success': transaction?.deliveryAddress?.shippingStatus === 'Entregado',
                     }"
                   >
                     {{ transaction?.deliveryAddress?.shippingStatus ?? '' }}
@@ -241,9 +243,21 @@
                         'btn-state-canceled': transaction?.deliveryAddress?.shippingStatus === 'Desempaquetado',
                         'btn-state-close': transaction?.deliveryAddress?.shippingStatus === 'Enviado',
                         'btn-state-open': transaction?.deliveryAddress?.shippingStatus === 'No enviado',
+                          'btn btn-primary': transaction?.deliveryAddress?.shippingStatus === 'Retiro',
+                          'btn btn-success': transaction?.deliveryAddress?.shippingStatus === 'Entregado',
                       }"
                     ></button>
                     <div class="dropdown-menu" ngbDropdownMenu>
+                      <button
+                        *ngIf="
+                          transaction?.deliveryAddress?.shippingStatus === 'Retiro' &&
+                          transaction?.state?.toString() !== 'Cerrado'
+                        "
+                        ngbDropdownItem
+                        (click)="openModal('fulfilledTn', 'fulfill', transaction)"
+                      >
+                        Entregado
+                      </button>
                       <button
                         *ngIf="
                           transaction?.deliveryAddress?.shippingStatus === 'Desempaquetado' &&
@@ -255,7 +269,11 @@
                         Empaquetado
                       </button>
                       <button
-                        *ngIf="transaction?.state?.toString() !== 'Cerrado'"
+                        *ngIf="
+                          transaction?.state?.toString() !== 'Cerrado' &&
+                          transaction?.deliveryAddress?.shippingStatus !== 'Retiro' &&
+                          transaction?.deliveryAddress?.shippingStatus !== 'Entregado'
+                        "
                         ngbDropdownItem
                         (click)="openModal('fulfilledTn', 'fulfill', transaction)"
                       >
