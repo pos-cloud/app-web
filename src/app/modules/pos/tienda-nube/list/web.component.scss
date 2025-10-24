@@ -25,6 +25,24 @@ app-web-transactions {
     background-color: #dae0e5;
     border-color: #d3d9df;
   }
+  .btn-state-primary,
+  .btn-state-primary:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  .btn-state-success,
+  .btn-state-success:hover {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  .btn-state-shipped,
+  .btn-state-shipped:hover {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+  }
 
   .has-data {
     background-color: #d4edda;
