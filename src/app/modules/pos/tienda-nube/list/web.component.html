@@ -224,7 +224,10 @@
                       'btn-state-open': transaction?.deliveryAddress?.shippingStatus === 'No enviado',
                       'btn-state-primary': transaction?.deliveryAddress?.shippingStatus === 'Retiro',
                       'btn-state-success': transaction?.deliveryAddress?.shippingStatus === 'Entregado',
-                      'btn-state-not-sent': transaction?.deliveryAddress?.shippingStatus === 'Sin enviar'
+                      'btn-state-not-sent':
+                        transaction?.deliveryAddress?.shippingStatus === 'Sin enviar' ||
+                        transaction?.deliveryAddress?.shippingStatus === 'sin enviar' ||
+                        transaction?.deliveryAddress?.shippingStatus === 'Sin Enviar'
                     }"
                   >
                     {{ transaction?.deliveryAddress?.shippingStatus ?? '' }}
@@ -246,7 +249,7 @@
                         'btn-state-open': transaction?.deliveryAddress?.shippingStatus === 'No enviado',
                         'btn-state-primary': transaction?.deliveryAddress?.shippingStatus === 'Retiro',
                         'btn-state-success': transaction?.deliveryAddress?.shippingStatus === 'Entregado',
-                        'btn-state-not-sent': transaction?.deliveryAddress?.shippingStatus === 'Sin enviar'
+                        'btn-state-not-sent': transaction?.deliveryAddress?.shippingStatus === 'Sin Enviar'
                       }"
                     ></button>
                     <div class="dropdown-menu" ngbDropdownMenu>
