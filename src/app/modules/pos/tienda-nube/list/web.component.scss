@@ -43,6 +43,12 @@ app-web-transactions {
     background-color: #28a745;
     border-color: #28a745;
   }
+  .btn-state-not-sent,
+  .btn-state-not-sent:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
 
   .has-data {
     background-color: #d4edda;
