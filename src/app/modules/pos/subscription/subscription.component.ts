@@ -24,6 +24,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class SubscriptionComponent implements OnInit {
   public loading: boolean = false;
+  public loadingAfip: boolean = false;
   public transactions: Transaction[] = [];
   public transaction;
   public selectedTransactions: Set<string> = new Set();
@@ -69,6 +70,7 @@ export class SubscriptionComponent implements OnInit {
       orderNumber: 1,
       observation: 1,
       totalPrice: 1,
+      letter: 1,
       'type.isSubscription': 1,
       balance: 1,
       state: 1,
@@ -247,7 +249,7 @@ export class SubscriptionComponent implements OnInit {
   }
 
   async validateElectronicTransactionAR() {
-    this.loading = true;
+    this.loadingAfip = true;
     this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
       (result: ApiResponse) => {
         if (result.status === 200) {
@@ -260,11 +262,11 @@ export class SubscriptionComponent implements OnInit {
         } else {
           this._toastService.showToast(result);
         }
-        this.loading = false; // ✅ Ocultamos el overlay
+        this.loadingAfip = false;
       },
       (error) => {
         this._toastService.showToast(error);
-        this.loading = false; // ✅ También acá
+        this.loadingAfip = false;
       }
     );
   }

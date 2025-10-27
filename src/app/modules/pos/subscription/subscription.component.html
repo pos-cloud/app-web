@@ -22,10 +22,11 @@
           <thead>
             <tr>
               <th width="50"></th>
-              <th>Número</th>
               <th>Fecha</th>
+              <th>Número</th>
+              <th>Letra</th>
+              <th>Punto de venta</th>
               <th>Cliente</th>
-              <th>Observación</th>
               <th class="text-right">Precio Total</th>
               <th>Estado</th>
               <th>Acciones</th>
@@ -40,36 +41,41 @@
                   (change)="toggleSelection(transaction._id)"
                 />
               </td>
-              <td (click)="openTransaction(transaction)" style="cursor: pointer">
-                <b>{{ transaction.number }}</b>
-              </td>
-              <td (click)="openTransaction(transaction)" style="cursor: pointer">
+              <td>
                 {{ transaction.startDate | dateFormat : 'DD/MM/YYYY HH:mm' }}
               </td>
-              <td (click)="openTransaction(transaction)" style="cursor: pointer">
+              <td>
+                <b>{{ transaction.number }}</b>
+              </td>
+              <td>
+                <b>{{ transaction.letter }}</b>
+              </td>
+              <td>
+                <b>{{ transaction.origin }}</b>
+              </td>
+
+              <td>
                 {{ transaction.company?.name || '-' }}
               </td>
-              <td (click)="openTransaction(transaction)" style="cursor: pointer">
-                {{ transaction.observation || '-' }}
-              </td>
-              <td (click)="openTransaction(transaction)" style="cursor: pointer" class="text-right">
+
+              <td class="text-right">
                 {{ transaction.totalPrice | currency }}
               </td>
-              <td (click)="openTransaction(transaction)" style="cursor: pointer">
+              <td>
                 <span class="badge badge-info">{{ transaction.state }}</span>
               </td>
               <td>
                 <button type="button" class="btn btn-sm btn-success" (click)="viewTransaction(transaction)" title="Ver">
                   <i class="fa fa-eye"></i>
                 </button>
-                <button
+                <!-- <button
                   type="button"
                   class="btn btn-sm btn-primary"
                   (click)="openTransaction(transaction)"
                   title="Editar"
                 >
                   <i class="fa fa-edit"></i>
-                </button>
+                </button> -->
                 <button
                   type="button"
                   class="btn btn-sm btn-danger"
@@ -119,7 +125,7 @@
   </div>
 
   <!-- 🔹 Overlay de carga -->
-  <div class="loading-overlay" *ngIf="loading">
+  <div class="loading-overlay" *ngIf="loadingAfip">
     <div class="spinner-border text-light" role="status" style="width: 4rem; height: 4rem">
       <span class="sr-only">Cargando...</span>
     </div>

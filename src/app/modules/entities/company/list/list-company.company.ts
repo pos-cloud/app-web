@@ -132,6 +132,15 @@ export class ListCompanyComponent implements OnInit {
       required: false,
     },
     {
+      name: 'group.description',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'subscription.active',
       visible: false,
       disabled: false,
