@@ -134,7 +134,7 @@
     </div>
   </div>
   <div class="row" style="padding-left: 10px; margin-bottom: 100px">
-    <div *ngFor="let table of tables | orderBy : [orderTerm] | filter : filterRoom : 'description' : 'room'">
+    <div *ngFor="let table of tables | filter : filterRoom : 'description' : 'room'">
       <div
         class="itable"
         [ngClass]="{

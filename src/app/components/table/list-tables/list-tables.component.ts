@@ -128,7 +128,7 @@ export class ListTablesComponent implements OnInit {
           this.areTablesEmpty = true;
         } else {
           this.hideMessage();
-          this.tables = result.tables;
+          this.tables = this.naturalSort(result.tables);
           this.totalItems = this.tables.length;
           this.areTablesEmpty = false;
           this.calculateAmountOfDiners();
@@ -142,6 +142,37 @@ export class ListTablesComponent implements OnInit {
         }
       }
     );
+  }
+
+  private naturalSort(tables: Table[]): Table[] {
+    return tables.sort((a, b) => {
+      return this.naturalCompare(a.description, b.description);
+    });
+  }
+
+  private naturalCompare(a: string, b: string): number {
+    // Extraer números y texto por separado
+    const chunksA = a.match(/(\d+|\D+)/g) || [];
+    const chunksB = b.match(/(\d+|\D+)/g) || [];
+
+    // Comparar cada chunk
+    for (let i = 0; i < Math.min(chunksA.length, chunksB.length); i++) {
+      const chunkA = chunksA[i];
+      const chunkB = chunksB[i];
+
+      // Si ambos son números, compararlos numéricamente
+      if (!isNaN(Number(chunkA)) && !isNaN(Number(chunkB))) {
+        const diff = Number(chunkA) - Number(chunkB);
+        if (diff !== 0) return diff;
+      } else {
+        // Si no, comparar como strings
+        const diff = chunkA.localeCompare(chunkB);
+        if (diff !== 0) return diff;
+      }
+    }
+
+    // Si todos los chunks coincidieron, comparar por longitud
+    return chunksA.length - chunksB.length;
   }
 
   public async selectTable(table: Table) {
