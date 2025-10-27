@@ -348,3 +348,31 @@ db.applications.deleteMany({});
 db.applications.insertOne(unifiedDoc);
 
 print('✅ Documento unificado creado en cualquier base de datos');
+
+// eliminar duplicados de movements-of-cashes
+// 1️⃣ Primero obtenemos los duplicados
+const duplicates = db['movements-of-cashes']
+  .aggregate([
+    {
+      $group: {
+        _id: {
+          transaction: '$transaction',
+          type: '$type',
+          amount: '$amount',
+        },
+        count: { $sum: 1 },
+        docs: { $push: '$_id' },
+      },
+    },
+    { $match: { count: { $gt: 1 } } },
+  ])
+  .toArray();
+
+// 2️⃣ Iteramos y eliminamos todos menos el primero
+duplicates.forEach((group) => {
+  // docs = array de ObjectId de los duplicados
+  const [keep, ...remove] = group.docs;
+  if (remove.length > 0) {
+    db['movements-of-cashes'].deleteMany({ _id: { $in: remove } });
+  }
+});

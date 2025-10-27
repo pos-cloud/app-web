@@ -127,6 +127,7 @@ export class AddMovementOfCashComponent implements OnInit {
     number: { pattern: ' Ingrese solo números ' },
   };
   disableEnterKey: boolean = false;
+  private lastAddMovementTime: number = 0;
 
   constructor(
     private _paymentMethodService: PaymentMethodService,
@@ -1006,7 +1007,6 @@ export class AddMovementOfCashComponent implements OnInit {
         this.transaction = await this.updateTransaction();
       }
 
-
       this.activeModal.close({
         movementsOfCashes: this.movementsOfCashes,
         movementOfArticle: this.movementOfArticle,
@@ -1564,11 +1564,20 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   async addMovementOfCash() {
-    if (this.loading) {
+    // Debounce: prevenir múltiples llamadas en menos de 500ms
+    const now = Date.now();
+    if (now - this.lastAddMovementTime < 500) {
       return;
     }
+    this.lastAddMovementTime = now;
+
+    if (this.loading || this.disableEnterKey) {
+      return;
+    }
+    // Establecer ambas flags inmediatamente para prevenir doble entrada
     this.loading = true;
     this.disableEnterKey = true;
+
     try {
       if (this.movementOfCashForm.valid) {
         if (!this.fastPayment) {
@@ -1740,10 +1749,11 @@ export class AddMovementOfCashComponent implements OnInit {
     } catch (error) {
       this._toastService.showToast(error);
     } finally {
-      setTimeout(function () {
-        this.loading = false;
+      this.loading = false;
+      // Mantener el bloqueo de Enter por un breve momento para evitar doble entrada
+      setTimeout(() => {
         this.disableEnterKey = false;
-      }, 2000);
+      }, 300);
     }
   }
 
@@ -2010,12 +2020,14 @@ export class AddMovementOfCashComponent implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   public handleKeyboardShortcuts(event: KeyboardEvent): void {
-    if (this.loading) return;
-
     const key = event.key;
 
     if (key === 'Enter') {
       event.preventDefault();
+      // Solo verificar, no establecer aquí - el método addMovementOfCash lo hará
+      if (this.loading || this.disableEnterKey) {
+        return;
+      }
       this.addMovementOfCash();
       return;
     }
