@@ -48,7 +48,7 @@ export class TableComponent implements OnInit {
       _id: ['', []],
       description: ['', [Validators.required, Validators.maxLength(5)]],
       room: ['', [Validators.required]],
-      chair: ['', [Validators.required]],
+      chair: [1, [Validators.required, Validators.min(1)]],
       state: [TableState.Available, []],
     });
   }
@@ -129,7 +129,7 @@ export class TableComponent implements OnInit {
       _id: this.table?._id ?? '',
       description: this.table?.description ?? '',
       room: room ?? null,
-      chair: this.table?.chair ?? 0,
+      chair: this.table?.chair ?? 1,
       state: this.table?.state ?? TableState.Available,
     });
   }

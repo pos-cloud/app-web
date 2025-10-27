@@ -105,6 +105,7 @@
               formControlName="chair"
               name="chair"
               id="chair"
+              min="1"
               [ngClass]="{
                 'is-invalid': tableForm.get('chair')?.touched && tableForm.get('chair')?.invalid,
               }"
@@ -114,6 +115,12 @@
               *ngIf="tableForm.get('chair')?.touched && tableForm.get('chair')?.hasError('required')"
             >
               Este campo es obligatorio.
+            </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="tableForm.get('chair')?.touched && tableForm.get('chair')?.hasError('min')"
+            >
+              La cantidad de sillas debe ser al menos 1.
             </div>
           </div>
         </div>
