@@ -88,6 +88,7 @@ export class SubscriptionComponent implements OnInit {
       state: TransactionState.Open,
       'type.isSubscription': true,
       operationType: { $ne: 'D' },
+      madein: 'subscription',
       'type.transactionMovement': TransactionMovement.Sale,
     };
 
@@ -250,6 +251,7 @@ export class SubscriptionComponent implements OnInit {
 
   async validateElectronicTransactionAR() {
     this.loadingAfip = true;
+    this.loading = true;
     this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
       (result: ApiResponse) => {
         if (result.status === 200) {
@@ -262,11 +264,14 @@ export class SubscriptionComponent implements OnInit {
         } else {
           this._toastService.showToast(result);
         }
+        this.loading = false;
         this.loadingAfip = false;
+        this.refresh();
       },
       (error) => {
         this._toastService.showToast(error);
         this.loadingAfip = false;
+        this.loading = false;
       }
     );
   }
