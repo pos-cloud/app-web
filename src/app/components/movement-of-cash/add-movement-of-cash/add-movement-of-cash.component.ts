@@ -293,6 +293,12 @@ export class AddMovementOfCashComponent implements OnInit {
 
   changePaymentMethod(paymentMethod: PaymentMethod): void {
     this.paymentMethodSelected = paymentMethod;
+    // Actualizar el método de pago en el formulario
+    if (this.movementOfCashForm) {
+      this.movementOfCashForm.patchValue({
+        paymentMethod: paymentMethod,
+      });
+    }
     this.updateAmounts('paymentMethod');
   }
 
@@ -1234,6 +1240,15 @@ export class AddMovementOfCashComponent implements OnInit {
   async isValidAmount(isCopy: boolean = false) {
     return new Promise(async (resolve) => {
       try {
+        // Obtener el valor del formulario para validaciones
+        let amountToPayForm = this.movementOfCashForm.value.amountToPay;
+        if (typeof amountToPayForm === 'string') {
+          amountToPayForm = parseFloat(amountToPayForm);
+        }
+        if (isNaN(amountToPayForm)) {
+          amountToPayForm = this.amountToPay;
+        }
+
         if (this.paymentMethodSelected.checkDetail && !isCopy) {
           let query = `where="number":"${this.movementOfCashForm.value.number}","type":"${this.paymentMethodSelected._id}","statusCheck":"Disponible"`;
 
@@ -1248,7 +1263,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
         if (
           this.transaction.totalPrice !== 0 &&
-          this.roundNumber.transform(this.amountPaid + this.amountToPay) >
+          this.roundNumber.transform(this.amountPaid + amountToPayForm) >
             this.roundNumber.transform(this.transactionAmount + this.totalInterestAmount + this.totalTaxAmount) &&
           !this.paymentMethodSelected.acceptReturned
         ) {
@@ -1262,7 +1277,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (
           this.movementOfCash.discount &&
           this.movementOfCash.discount > 0 &&
-          this.amountToPay >
+          amountToPayForm >
             this.roundNumber.transform(
               (this.transaction.totalPrice * this.movementOfCash.discount) / 100 + this.transaction.totalPrice
             ) &&
@@ -1278,7 +1293,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (
           this.movementOfCash.surcharge &&
           this.movementOfCash.surcharge > 0 &&
-          this.amountToPay - 0.01 >
+          amountToPayForm - 0.01 >
             this.roundNumber.transform(
               (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100 + this.transaction.totalPrice
             ) &&
@@ -1583,19 +1598,31 @@ export class AddMovementOfCashComponent implements OnInit {
         if (!this.fastPayment) {
           if (await this.isValidAmount()) {
             if (!this.paymentMethodSelected.allowToFinance) {
+              // Asegurarse de usar el valor del formulario, no el de la variable
+              let amountToPayForm = this.movementOfCashForm.value.amountToPay;
+              if (typeof amountToPayForm === 'string') {
+                amountToPayForm = parseFloat(amountToPayForm);
+              }
+
+              // Verificar si el valor es válido, de lo contrario usar el valor calculado
+              if (isNaN(amountToPayForm) || amountToPayForm <= 0) {
+                amountToPayForm = this.amountToPay;
+              }
+
               if (
-                this.roundNumber.transform(this.amountPaid + this.amountToPay) >
+                this.roundNumber.transform(this.amountPaid + amountToPayForm) >
                 this.roundNumber.transform(this.transactionAmount)
               ) {
                 this.movementOfCash.amountPaid = this.roundNumber.transform(
-                  this.amountToPay - this.roundNumber.transform(parseFloat(this.movementOfCashForm.value.paymentChange))
+                  amountToPayForm - this.roundNumber.transform(parseFloat(this.movementOfCashForm.value.paymentChange))
                 );
               } else {
-                this.movementOfCash.amountPaid = this.amountToPay;
+                this.movementOfCash.amountPaid = amountToPayForm;
               }
               this.movementOfCash.transaction = this.transaction;
               this.movementOfCash.paymentChange = this.movementOfCashForm.value.paymentChange;
-              this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+              // Usar el método de pago seleccionado actual (por si cambió con las flechas)
+              this.movementOfCash.type = this.paymentMethodSelected;
               this.movementOfCash.observation = this.movementOfCashForm.value.observation;
               this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format(
                 'YYYY-MM-DDTHH:mm:ssZ'
@@ -2028,6 +2055,7 @@ export class AddMovementOfCashComponent implements OnInit {
       if (this.loading || this.disableEnterKey) {
         return;
       }
+
       this.addMovementOfCash();
       return;
     }
@@ -2052,5 +2080,11 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     this.paymentMethodSelected = this.paymentMethods[newIndex];
+    // Actualizar el método de pago en el formulario
+    if (this.movementOfCashForm) {
+      this.movementOfCashForm.patchValue({
+        paymentMethod: this.paymentMethodSelected,
+      });
+    }
   }
 }
