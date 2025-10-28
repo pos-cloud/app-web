@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface HierarchicalItem {
@@ -22,7 +22,7 @@ export interface HierarchicalItem {
     },
   ],
 })
-export class HierarchicalMultiSelectComponent implements OnInit, ControlValueAccessor {
+export class HierarchicalMultiSelectComponent implements OnInit, OnChanges, ControlValueAccessor {
   @Input() items: HierarchicalItem[] = [];
   @Input() placeholder: string = 'Seleccionar categorías...';
   @Input() disabled: boolean = false;
@@ -38,6 +38,7 @@ export class HierarchicalMultiSelectComponent implements OnInit, ControlValueAcc
 
   private onChange = (value: string[]) => {};
   private onTouched = () => {};
+  private lastValue: string[] = [];
 
   constructor() {
     this.uniqueId = 'hierarchical-multiselect-' + Math.random().toString(36).substr(2, 9);
@@ -47,9 +48,19 @@ export class HierarchicalMultiSelectComponent implements OnInit, ControlValueAcc
     this.filteredItems = [...this.items];
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['items']) {
+      this.filteredItems = [...this.items];
+      if (this.lastValue && this.lastValue.length > 0) {
+        this.selectedItems = this.items.filter((item) => this.lastValue.includes(item._id));
+      }
+    }
+  }
+
   writeValue(value: string[]): void {
-    if (value && value.length > 0) {
-      this.selectedItems = this.items.filter((item) => value.includes(item._id));
+    this.lastValue = value || [];
+    if (this.lastValue.length > 0) {
+      this.selectedItems = this.items.filter((item) => this.lastValue.includes(item._id));
     } else {
       this.selectedItems = [];
     }

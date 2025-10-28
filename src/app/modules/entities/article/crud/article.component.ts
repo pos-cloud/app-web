@@ -253,7 +253,7 @@ export class ArticleComponent implements OnInit {
       pictures: this._fb.array([]),
       season: ['', []],
       typeTN: [true, []],
-      categoryTN: [null, []],
+      categoryTN: [[], []],
       seoTitleTN: ['', []],
       seoDescriptionTN: ['', []],
       videoUrlTN: ['', []],
@@ -421,7 +421,9 @@ export class ArticleComponent implements OnInit {
       picture: this.article?.picture ?? '',
       picturePOS: this.article?.picturePOS ?? '',
       typeTN: this.article?.typeTN ?? true,
-      categoryTN: this.article?.categoryTN ?? null,
+      categoryTN: Array.isArray(this.article?.categoryTN)
+        ? this.article.categoryTN.map((id: any) => id?.toString())
+        : [],
       seoTitleTN: this.article?.seoTitleTN ?? '',
       seoDescriptionTN: this.article?.seoDescriptionTN ?? '',
       videoUrlTN: this.article?.videoUrlTN ?? '',
@@ -1292,7 +1294,7 @@ export class ArticleComponent implements OnInit {
   }
 
   public updateCategoriesDisplayText(): void {
-    const selectedCount = this.articleForm.get('categories')?.value?.length || 0;
+    const selectedCount = this.articleForm.get('categoryTN')?.value?.length || 0;
     if (selectedCount === 0) {
       this.categoriesDisplayText = '';
     } else {
