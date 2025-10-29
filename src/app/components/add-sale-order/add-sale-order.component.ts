@@ -1018,24 +1018,29 @@ export class AddSaleOrderComponent {
           this.transaction.type.transactionMovement === TransactionMovement.Sale &&
           movementOfArticle.article &&
           !movementOfArticle.article.allowSale
-        )
+        ) {
           throw new Error(
             `El producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}) no esta habilitado para la venta`
           );
+        }
 
         if (
           this.transaction.type &&
           this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
           movementOfArticle.article &&
           !movementOfArticle.article.allowPurchase
-        )
+        ) {
           throw new Error(
             `El producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}) no esta habilitado para la compra`
           );
-        if (verifyStock && !(await this.hasStock(movementOfArticle))) this.beep();
-        throw new Error(
-          `No tiene el stock suficiente del producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}).`
-        );
+        }
+
+        if (verifyStock && !(await this.hasStock(movementOfArticle))) {
+          this.beep();
+          throw new Error(
+            `No tiene el stock suficiente del producto ${movementOfArticle.article.description} (${movementOfArticle.article.code}).`
+          );
+        }
 
         resolve(true);
       } catch (error) {
