@@ -281,7 +281,7 @@
         <form [formGroup]="taxForm" autocomplete="off">
           <div class="row">
             <div class="col-md-3">
-              <label for="tax" class="control-label">Impuesto:</label>
+              <label for="tax" class="control-label">{{ 'totalTaxAmount' | translate | capitalize }}:</label>
               <select class="form-control" formControlName="tax" [disabled]="readonly" (change)="changeTax('tax')">
                 <option [ngValue]="null">Seleccionar impuesto...</option>
                 <option *ngFor="let tax of taxes" [ngValue]="tax">
@@ -290,7 +290,7 @@
               </select>
             </div>
             <div class="col-md-3">
-              <label for="percentage" class="control-label">Porcentaje:</label>
+              <label for="percentage" class="control-label">{{ 'percentage' | translate | capitalize }}:</label>
               <div class="input-group">
                 <input
                   type="number"
@@ -302,12 +302,12 @@
                   (blur)="changeTax('percentage')"
                 />
                 <div class="input-group-prepend">
-                  <span class="input-group-text">%</span>
+                  <span clasms="input-group-text">%</span>
                 </div>
               </div>
             </div>
             <div class="col-md-3">
-              <label for="taxAmount" class="control-label">Monto:</label>
+              <label for="taxAmount" class="control-label">{{ 'amountPaid' | translate | capitalize }}:</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text">$</span>
@@ -323,7 +323,7 @@
               </div>
             </div>
             <div class="form-group col-md-2">
-              <label for="value" class="control-label">Acción:</label>
+              <label for="value" class="control-label">{{ 'action' | translate | capitalize }}:</label>
               <div class="input-group">
                 <button
                   type="button"
@@ -331,7 +331,7 @@
                   (click)="addArticleTax()"
                   [disabled]="readonly || !taxForm.valid"
                 >
-                  Agregar
+                  {{ 'add' | translate | capitalize }}
                 </button>
               </div>
             </div>
@@ -341,11 +341,11 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th width="130">Acción</th>
-                <th>Impuesto</th>
-                <th>Base Imponible</th>
-                <th>Porcentaje</th>
-                <th>Monto del Impuesto</th>
+                <th width="130">{{ 'totalTaxAmount' | translate | capitalize }}:</th>
+                <th>{{ 'action' | translate | capitalize }}</th>
+                <th>{{ 'taxBase' | translate | capitalize }}</th>
+                <th>{{ 'percentage' | translate | capitalize }}</th>
+                <th>{{ 'taxAmount' | translate | capitalize }}</th>
               </tr>
             </thead>
             <tbody>
