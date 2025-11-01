@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -10,7 +10,6 @@ import { BranchService } from '@core/services/branch.service';
 import { OriginService } from '@core/services/origin.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
-import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject } from 'rxjs';
@@ -28,12 +27,9 @@ import { takeUntil } from 'rxjs/operators';
     PipesModule,
     TranslateModule,
     TypeaheadDropdownComponent,
-    UploadFileComponent,
   ],
 })
 export class OriginComponent implements OnInit, OnDestroy {
-  @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
-
   public operation: string;
   public originForm: UntypedFormGroup;
   public loading: boolean = false;
@@ -203,11 +199,5 @@ export class OriginComponent implements OnInit, OnDestroy {
           this.loading = false;
         },
       });
-  }
-
-  onImagesUploaded(urls: string[]): void {
-    if (urls && urls.length > 0) {
-      this.originForm.get('picture')?.setValue(urls[0]);
-    }
   }
 }
