@@ -87,12 +87,14 @@ export class CancelledTransactionsComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {
-            if (!result.result || result.result.length === 0) {
-              this._toastService.showToast({ message: 'No se encontro ningún c0omprobante con esos datos.' });
-            } else {
+            if (result.status == 200) {
+              if (!result.result.length) {
+                this._toastService.showToast({ message: 'No se encontro ningún comprobante con esos datos.' });
+              }
               let codeType = result.result[0].type.codes.find((cod) => cod.letter === this.canceledTransactions.letter);
 
               this.canceledTransactions.code = codeType.code;
+              this._toastService.showToast(result);
               this.activeModal.close({ data: this.canceledTransactions });
             }
           },
