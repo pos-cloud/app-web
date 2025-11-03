@@ -167,4 +167,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'origins',
     loadChildren: () => import('./origin/origin.routes').then((m) => m.ORIGIN_ROUTES),
   },
+  {
+    path: 'users',
+    loadChildren: () => import('./user/user.routers').then((m) => m.USER_ROUTES),
+  },
 ];

@@ -1,0 +1,412 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-user' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ user?.description }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{ user?.name }}</span>
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="addUser()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger active"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="addUser()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="userForm" autocomplete="off" (keydown.enter)="onEnter()" *ngIf="!loading">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="branch" class="control-label">Sucursal</label>
+            <div class="d-flex align-items-start">
+              <div class="flex-grow-1">
+                <app-typeahead-dropdown
+                  [control]="userForm.get('branch')"
+                  [data]="branches"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+              <button
+                type="button"
+                class="btn btn-light ms-2"
+                placement="right"
+                popoverClass="popover-class"
+                ngbPopover="Indica qué sucursal pertenece el usuario."
+              >
+                <b>?</b>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group col-md-5">
+            <label class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              name="name"
+              id="name"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': userForm.get('name')?.touched && userForm.get('name')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="userForm.get('name')?.touched && userForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="state" class="control-label">Habilitado</label>
+            <select class="form-control" formControlName="state">
+              <option
+                *ngFor="let state of states"
+                [value]="state"
+                [disabled]="
+                  readonly ||
+                  (identity &&
+                    identity.employee &&
+                    identity.employee.type &&
+                    identity.employee.type.description !== 'Administrador')
+                "
+                [focus]="focusEvent"
+                [ngClass]="{
+                'is-invalid': userForm.get('state')?.touched && userForm.get('state')?.invalid,
+              }"
+              >
+                {{ state }}
+              </option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="userForm.get('state')?.touched && userForm.get('state')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="level" class="control-label">Nivel:</label>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="level"
+                name="level"
+                id="level"
+                [readonly]="readonly"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="email" class="control-label">Email:</label>
+            <input
+              type="email"
+              class="form-control"
+              formControlName="email"
+              name="user_email"
+              autocomplete="off"
+              id="email"
+              [readonly]="readonly"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': userForm.get('name')?.touched && userForm.get('name')?.invalid,
+              }"
+            />
+
+            <div
+              class="invalid-feedback"
+              *ngIf="userForm.get('email')?.touched && userForm.get('email')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="password" class="control-label">Contraseña:</label>
+            <input
+              type="password"
+              class="form-control"
+              formControlName="password"
+              name="user_password"
+              autocomplete="new-password"
+              id="password"
+              [readonly]="readonly"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': userForm.get('name')?.touched && userForm.get('name')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="userForm.get('email')?.touched && userForm.get('email')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="tokenExpiration" class="control-label">Expiración de sesión:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="tokenExpiration"
+              name="tokenExpiration"
+              id="tokenExpiration"
+              [readonly]="readonly"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="employee" class="control-label">Empleado Asociado</label>
+            <app-typeahead-dropdown
+              [control]="userForm.get('employee')"
+              [data]="employees"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="company">Compañia Asociada:</label>
+            <app-typeahead-dropdown
+              [control]="userForm.get('company')"
+              [data]="companies"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="origin" class="control-label">Punto de Venta</label>
+            <app-typeahead-dropdown
+              [control]="userForm.get('origin')"
+              [data]="origins"
+              [keyField]="'_id'"
+              [displayField]="'number'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="cashBoxType">{{ 'cashBoxType' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="userForm.get('cashBoxType')"
+              [data]="cashBoxTypes"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="permission" class="control-label">{{ 'permission' | translate | capitalize }}</label>
+            <app-typeahead-dropdown
+              [control]="userForm.get('permission')"
+              [data]="permissions"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'shortcut' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <form #shortcutsForm="ngForm">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>URL</th>
+                <th width="50"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Fila para agregar nuevo shortcut -->
+              <tr>
+                <td class="flat">
+                  <input
+                    class="form-control"
+                    placeholder="Name"
+                    [(ngModel)]="shortcut.name"
+                    name="shortcutName"
+                    [ngModelOptions]="{ standalone: true }"
+                    [focus]="focusEvent"
+                  />
+                </td>
+                <td class="flat">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">{{ dominio }}</span>
+                    </div>
+                    <input
+                      class="form-control"
+                      placeholder="URL"
+                      [(ngModel)]="shortcut.url"
+                      name="shortcutUrl"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
+                  </div>
+                </td>
+                <td align="left">
+                  <button type="button" class="btn btn-success btn-sm" (click)="addShortcut()" title="Agregar">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Fila para cada shortcut existente -->
+              <tr *ngFor="let shortcut of shortcuts; let i = index">
+                <td class="flat">
+                  <pre>{{ shortcut.name }}</pre>
+                </td>
+                <td class="flat">
+                  <pre>{{ dominio }}{{ shortcut.url }}</pre>
+                </td>
+                <td align="left">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="deleteShortcut(shortcut)"
+                    title="Eliminar"
+                  >
+                    <i class="fa fa-trash-o"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'print' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <form #printerForm="ngForm" (ngSubmit)="addPrinter(printerForm)">
+          <div class="row align-items-end">
+            <div class="form-group col-md-8">
+              <label for="printer" class="control-label">Impresora</label>
+              <select class="form-control" ngModel name="printer">
+                <option *ngFor="let printer of printers" [ngValue]="printer?._id" [disabled]="readonly">
+                  {{ printer?.name }} - {{ printer?.printIn }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group col-md-2 d-flex justify-content-start">
+              <button type="submit" class="btn btn-success btn-sm mt-4">
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <table class="table table-striped">
+          <thead>
+            <tr class="separation">
+              <th>Impresoras Disponibles</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="separation" *ngFor="let printerAux of userForm.get('printers').controls; let i = index">
+              <div *ngFor="let printer of printers; let i = index">
+                <td
+                  *ngIf="
+                    printerAux &&
+                    printerAux.value &&
+                    printerAux.value.printer &&
+                    printerAux.value.printer === printer._id
+                  "
+                >
+                  {{ printer.name }} - {{ printer.printIn }}
+                </td>
+              </div>
+              <td align="right" width="10">
+                <button type="button" class="btn btn-danger btn-sm" (click)="deletePrinter(i)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot></tfoot>
+        </table>
+
+        <hr />
+        <div class="row">
+          <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ user?.creationUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ user?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ user?.updateUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ user?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  ID:<b>{{ user?._id || '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
