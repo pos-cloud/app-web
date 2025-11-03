@@ -1,0 +1,782 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    {{ transaction?.type?.name }} {{ transaction?.origin }}-{{ transaction?.letter }}-{{ transaction?.number }}
+  </h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="modal-body">
+    <ul ngbNav #nav="ngbNav" class="nav-tabs" [(activeId)]="activeTab" (navChange)="onTabChange($event)">
+      <li [ngbNavItem]="'datos'">
+        <a ngbNavLink>{{ 'data' | translate | capitalize }}</a>
+        <ng-template ngbNavContent>
+          <div class="row" *ngIf="transaction?.type?.transactionMovement?.toString() !== 'Stock'">
+            <div class="form-group col-md-8">
+              <label
+                for="company"
+                class="control-label"
+                *ngIf="transaction?.type?.transactionMovement?.toString() === 'Venta'"
+                >{{ 'client' | translate | capitalize }}</label
+              >
+              <label
+                for="company"
+                class="control-label"
+                *ngIf="transaction?.type?.transactionMovement?.toString() === 'Compra'"
+                >{{ 'provider' | translate | capitalize }}</label
+              >
+              <div class="input-group">
+                <div class="input-group-prepend" *ngIf="transaction?.company">
+                  <span
+                    class="input-group-text bg-success pointer"
+                    id="basic-addon1"
+                    (click)="openModal('view-company')"
+                  >
+                    <i class="fa fa-eye" style="color: white"></i>
+                  </span>
+                  <span
+                    *ngIf="transaction?.madein === 'mercadolibre'"
+                    class="input-group-text bg-primary pointer"
+                    id="basic-addon1"
+                    (click)="openModal('edit-company')"
+                  >
+                    <i class="fa fa-pencil" style="color: white"></i>
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="date"
+                  *ngIf="transaction?.company"
+                  value="{{ transaction?.company?.name }}"
+                  readonly
+                />
+                <input
+                  type="text"
+                  class="form-control"
+                  name="date"
+                  *ngIf="!transaction?.company"
+                  value="Consumidor Final"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="state" class="control-label">{{ 'state' | translate | capitalize }}</label>
+              <input type="text" class="form-control" name="state" value="{{ transaction?.state }}" readonly />
+            </div>
+            <div class="form-group col-md-2">
+              <label for="cashBox" class="control-label">{{
+                'transaction.cashBox.number' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                name="cashBox"
+                value="{{ transaction?.cashBox?.number }}"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="row" *ngIf="transaction?.type?.requestEmployee">
+            <div class="form-group col-md-12">
+              <label for="employeeOpening" class="control-label">{{
+                transaction?.type?.requestEmployee?.description | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                name="date"
+                *ngIf="transaction?.employeeClosing"
+                value="{{ transaction?.employeeClosing?.name }}"
+                readonly
+              />
+              <input
+                type="text"
+                class="form-control"
+                name="date"
+                *ngIf="!transaction?.employeeClosing"
+                value=""
+                readonly
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-3">
+              <label for="date" class="control-label">{{ 'date' | translate | capitalize }}:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="date"
+                value="{{ transaction?.endDate | dateFormat : 'DD/MM/YYYY' }}"
+                readonly
+                *ngIf="transaction?.endDate"
+              />
+              <input
+                type="text"
+                class="form-control"
+                name="date"
+                value="{{ transaction?.startDate | dateFormat : 'DD/MM/YYYY' }}"
+                readonly
+                *ngIf="!transaction?.endDate"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label for="origin" class="control-label">{{ 'fixedOrigin' | translate | capitalize }}:</label>
+              <input
+                type="origin"
+                class="form-control"
+                name="origin"
+                min="0"
+                value="{{ transaction?.origin }}"
+                readonly
+              />
+            </div>
+            <div class="form-group col-md-2">
+              <label for="letter" class="control-label">{{ 'type' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" name="letter" value="{{ transaction?.letter }}" readonly />
+            </div>
+            <div class="form-group col-md-2">
+              <label for="number" class="control-label">{{ 'number' | translate | capitalize }}:</label>
+              <input
+                type="number"
+                class="form-control"
+                name="number"
+                min="0"
+                value="{{ transaction?.number }}"
+                readonly
+              />
+            </div>
+            <div class="form-group col-md-2">
+              <label for="table" class="control-label">{{ 'table.description' | translate | capitalize }}:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="table"
+                min="0"
+                value="{{ transaction?.table?.description }}"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="row" *ngIf="transaction?.branchDestination">
+            <div class="form-group col-md-4">
+              <label for="letter" class="control-label">{{ 'agency' | translate | capitalize }}:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="letter"
+                value="{{ transaction?.branchDestination?.name }}"
+                readonly
+              />
+            </div>
+            <div class="form-group col-md-4">
+              <label for="number" class="control-label">{{ 'deposit' | translate | capitalize }}:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="number"
+                min="0"
+                value="{{ transaction?.depositDestination?.name }}"
+                readonly
+              />
+            </div>
+            <div class="form-group col-md-4">
+              <label for="priceList" class="control-label">{{ 'priceList.name' | translate | capitalize }}:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="priceList"
+                min="0"
+                value="{{ transaction?.priceList?.name }}"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label for="exempt" class="control-label">{{ 'exemptImport' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" name="exempt" value="{{ transaction?.exempt }}" readonly />
+            </div>
+            <div class="form-group col-md-4">
+              <label for="discountAmount" class="control-label">{{ 'discount' | translate | capitalize }} ($):</label>
+              <input
+                type="text"
+                class="form-control"
+                name="discountAmount"
+                value="{{ transaction?.discountAmount }}"
+                readonly
+              />
+            </div>
+            <div class="form-group col-md-2">
+              <label for="discountPercent" class="control-label">{{ 'discount' | translate | capitalize }} (%):</label>
+              <input
+                type="text"
+                class="form-control"
+                name="discountPercent"
+                value="{{ transaction?.discountPercent }}%"
+                readonly
+              />
+            </div>
+            <div class="form-group col-md-2">
+              <label for="VATPeriod" class="control-label">{{ 'VATPeriod' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" name="VATPeriod" value="{{ transaction?.VATPeriod }}" readonly />
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label for="totalPrice" class="control-label">{{ 'importTotal' | translate | capitalize }}:</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">$</span>
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="totalPrice"
+                  min="0"
+                  step="1"
+                  value="{{ transaction?.totalPrice }}"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="balance" class="control-label">{{ 'balance' | translate | capitalize }}:</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">$</span>
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="balance"
+                  min="0"
+                  step="1"
+                  value="{{ transaction?.balance }}"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="balance" class="control-label">{{ 'quotation' | translate | capitalize }}:</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">$</span>
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="balance"
+                  min="0"
+                  step="1"
+                  value="{{ transaction?.quotation }}"
+                  readonly
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}:</label>
+              <textarea type="text" class="form-control" name="observation" id="observation" rows="2" readonly>
+                    {{ transaction?.observation }}
+                  </textarea
+              >
+            </div>
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem [disabled]="areMovementsOfArticlesEmpty">
+        <a ngbNavLink>{{ 'articles' | translate | capitalize }}</a>
+        <ng-template ngbNavContent>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>{{ 'quantity' | translate | capitalize }}</th>
+                  <th>{{ 'category' | translate | capitalize }}</th>
+                  <th>{{ 'make' | translate | capitalize }}</th>
+                  <th>{{ 'code' | translate | capitalize }}</th>
+                  <th>{{ 'article.description' | translate | capitalize }}</th>
+                  <th>{{ 'article.posDescription' | translate | capitalize }}</th>
+                  <th>{{ 'unitPrice' | translate | capitalize }}</th>
+                  <th>{{ 'discount' | translate | capitalize }} (%)</th>
+                  <th>{{ 'discount' | translate | capitalize }} ($)</th>
+                  <th>{{ 'totalPrice' | translate | capitalize }}</th>
+                  <th>{{ 'deposit' | translate | capitalize }}</th>
+                  <th>OP</th>
+                  <th>{{ 'reading' | translate | capitalize }}</th>
+                  <th>_Id</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let movementOfArticle of movementsOfArticles">
+                  <td align="left" width="100">
+                    <button
+                      type="button"
+                      class="btn btn-success btn-sm"
+                      *ngIf="movementOfArticle?.article?._id"
+                      (click)="openModal('view-article', movementOfArticle)"
+                      title="Ver"
+                    >
+                      <i class="fa fa-eye"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-light btn-sm"
+                      (click)="openModal('print-label', movementOfArticle)"
+                      title="Imprimir Etiqueta"
+                    >
+                      <i class="fa fa-barcode"></i>
+                    </button>
+                  </td>
+                  <td>{{ movementOfArticle?.amount }}</td>
+                  <td>{{ movementOfArticle?.category?.description }}</td>
+                  <td>{{ movementOfArticle?.make?.description }}</td>
+                  <td>{{ movementOfArticle?.code }}</td>
+                  <td>
+                    {{ movementOfArticle?.description }}
+                    <strong>
+                      <br />
+                      {{ movementOfArticle?.notes }}
+                    </strong>
+                  </td>
+                  <td>{{ movementOfArticle?.article?.posDescription }}</td>
+                  <td>
+                    {{ movementOfArticle?.unitPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>{{ movementOfArticle?.discountRate + ' %' }}</td>
+                  <td>
+                    {{ movementOfArticle?.discountAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ movementOfArticle?.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>{{ movementOfArticle?.deposit?.name }}</td>
+                  <td>{{ movementOfArticle?.op }}</td>
+                  <td>{{ movementOfArticle?.read }}</td>
+                  <td>{{ movementOfArticle?._id }}</td>
+                </tr>
+                <tr align="center " *ngIf="areMovementsOfArticlesEmpty">
+                  <td colspan="10 ">No existen productos en la transacción</td>
+                </tr>
+              </tbody>
+              <tbody></tbody>
+            </table>
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem [disabled]="transaction?.taxes?.length === 0">
+        <a ngbNavLink>{{ 'taxes' | translate | capitalize }}</a>
+        <ng-template ngbNavContent>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>{{ 'totalTaxAmount' | translate | capitalize }}</th>
+                  <th>{{ 'percentage' | translate | capitalize }}</th>
+                  <th>Gravado</th>
+                  <th>{{ 'amountPaind' | translate | capitalize }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tax of transaction.taxes">
+                  <td>{{ tax?.tax?.name }}</td>
+                  <td>{{ tax.percentage }}</td>
+                  <td>
+                    {{ tax?.taxBase | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ tax?.taxAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem [disabled]="areMovementsOfCashesEmpty">
+        <a ngbNavLink>{{ 'paymentMethodEcommerce' | translate | capitalize }}</a>
+        <ng-template ngbNavContent>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>{{ 'method' | translate | capitalize }}</th>
+                  <th>Comprobante</th>
+                  <th>{{ 'quota' | translate | capitalize }}</th>
+                  <th>{{ 'expirationDate' | translate | capitalize }}</th>
+                  <th>{{ 'bank.name' | translate | capitalize }}</th>
+                  <th>{{ 'amountPaid' | translate | capitalize }}</th>
+                  <th>{{ 'balance' | translate | capitalize }}</th>
+                  <th>{{ 'status' | translate | capitalize }}</th>
+                  <th>{{ 'turned' | translate | capitalize }}</th>
+                  <th>{{ 'observation' | translate | capitalize }}</th>
+                  <th>{{ 'daily service rate' | translate | capitalize }}</th>
+                  <th>{{ 'administrativeExpense' | translate | capitalize }}</th>
+                  <th>{{ 'other expenses' | translate | capitalize }}</th>
+                  <th>Amort.</th>
+                  <th>{{ 'interestAmount' | translate | capitalize }}</th>
+                  <th>IVA</th>
+                  <th>_Id</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let movementOfCash of movementsOfCashes">
+                  <td>
+                    {{ movementOfCash?.type?.name }}
+                  </td>
+                  <td>{{ movementOfCash?.number }}</td>
+                  <td>{{ movementOfCash?.quota }}</td>
+                  <td>
+                    {{ movementOfCash.expirationDate | dateFormat : 'DD/MM/YYYY' }}
+                  </td>
+                  <td>{{ movementOfCash?.bank?.name }}</td>
+                  <td>
+                    {{ movementOfCash.amountPaid | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{
+                      movementOfCash?.amountPaid - movementOfCash?.balanceCanceled
+                        | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                    }}
+                  </td>
+                  <td>{{ movementOfCash?.status }}</td>
+                  <td>
+                    {{ movementOfCash?.paymentChange | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td style="white-space: normal">
+                    {{ movementOfCash?.observation }}
+                  </td>
+                  <td>
+                    {{ movementOfCash?.commissionAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ movementOfCash?.administrativeExpenseAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ movementOfCash?.otherExpenseAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ movementOfCash?.capital | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ movementOfCash?.interestAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ movementOfCash?.taxAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ movementOfCash?._id }}
+                  </td>
+                </tr>
+
+                <tr align="center " *ngIf="movementsOfCashes?.length === 0">
+                  <td colspan="10">No existen método de pagos en la transacción</td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="table table-striped" *ngIf="showDetails && currencyValue && currencyValue.length > 0">
+              <thead>
+                <th>{{ 'quantity' | translate | capitalize }}</th>
+                <th>{{ 'value' | translate | capitalize }}</th>
+                <th>{{ 'total' | translate | capitalize }}</th>
+                <th></th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let currency of currencyValue">
+                  <td>{{ currency?.quantity }}</td>
+                  <td>{{ currency?.value }}</td>
+                  <td>
+                    {{ currency?.quantity * currency?.value | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem *ngIf="transaction?.shipmentMethod">
+        <a ngbNavLink>{{ 'delivery' | translate | capitalize }}</a>
+        <ng-template ngbNavContent>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>{{ 'method' | translate | capitalize }}</th>
+                  <th>{{ 'type' | translate | capitalize }}</th>
+                  <th>{{ 'state' | translate | capitalize }}</th>
+                  <th>{{ 'company.state.name' | translate | capitalize }}</th>
+                  <th>{{ 'city' | translate | capitalize }}</th>
+                  <th>{{ 'address' | translate | capitalize }}</th>
+                  <th>{{ 'number' | translate | capitalize }}</th>
+                  <th>{{ 'flat' | translate | capitalize }}</th>
+                  <th>{{ 'department' | translate | capitalize }}</th>
+                  <th>{{ 'zipCode' | translate | capitalize }}</th>
+                  <th>{{ 'observation' | translate | capitalize }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ transaction?.shipmentMethod?.name }}</td>
+                  <td>{{ transaction?.deliveryAddress?.type }}</td>
+                  <td>{{ transaction?.deliveryAddress?.shippingStatus }}</td>
+                  <td>{{ transaction?.deliveryAddress?.state }}</td>
+                  <td>{{ transaction?.deliveryAddress?.city }}</td>
+                  <td>{{ transaction?.deliveryAddress?.name }}</td>
+                  <td>{{ transaction?.deliveryAddress?.number }}</td>
+                  <td>{{ transaction?.deliveryAddress?.flat }}</td>
+                  <td>{{ transaction?.deliveryAddress?.floor }}</td>
+                  <td>{{ transaction?.deliveryAddress?.postalCode }}</td>
+                  <td style="white-space: normal">
+                    {{ transaction?.deliveryAddress?.observation }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink *ngIf="transaction?.type && transaction?.type?.electronics">AFIP</a>
+        <ng-template ngbNavContent>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>CAE</th>
+                  <th>Fecha Vencimiento CAE</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>{{ transaction.CAE }}</td>
+                <td>
+                  {{ transaction.CAEExpirationDate | dateFormat : 'DD/MM/YYYY' }}
+                </td>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+      </li>
+
+      <li [ngbNavItem]="'canceladas'">
+        <a ngbNavLink>{{ 'cancelledTransactions' | translate | capitalize }}</a>
+        <ng-template ngbNavContent>
+          <div class="p-3" *ngIf="transaction?.canceledTransactions?.typeId">
+            <h5 class="mb-3 text-primary fw-bold">Informe de comprobante cancelado</h5>
+
+            <div class="d-flex flex-wrap align-items-center" style="gap: 1.5rem">
+              <div>
+                <strong>Tipo de transacción:</strong>
+                <span> {{ transaction?.canceledTransactions?.typeId?.name }}</span>
+              </div>
+              <div>
+                <strong>Número:</strong>
+                <span> {{ transaction?.canceledTransactions?.number }}</span>
+              </div>
+              <div>
+                <strong>Punto de venta:</strong>
+                <span> {{ transaction?.canceledTransactions?.origin }}</span>
+              </div>
+              <div>
+                <strong>Letra:</strong>
+                <span> {{ transaction?.canceledTransactions?.letter }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Fecha</th>
+                  <th>Nombre</th>
+                  <th>POS</th>
+                  <th>Letra</th>
+                  <th>Número</th>
+                  <th>Ciudad</th>
+                  <th>Provincia</th>
+                  <th>Grupo</th>
+                  <th>Precio Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let transactionDestination of transactionDestinations">
+                  <td align="left" width="50">
+                    <button
+                      type="button"
+                      class="btn btn-success btn-sm"
+                      (click)="openModal('view-transaction', null, transactionDestination?._id)"
+                      title="Ver"
+                    >
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </td>
+                  <td>{{ transactionDestination?.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
+                  <td>
+                    {{ transactionDestination?.type?.name }}
+                  </td>
+                  <td>
+                    {{ transactionDestination?.origin }}
+                  </td>
+                  <td>{{ transactionDestination?.letter }}</td>
+                  <td>{{ transactionDestination?.number }}</td>
+                  <td>
+                    {{ transactionDestination?.company?.city }}
+                  </td>
+                  <td>
+                    {{ transactionDestination?.company?.state?.name }}
+                  </td>
+                  <td>
+                    {{ transactionDestination?.company?.group?.description }}
+                  </td>
+                  <td>$ {{ transactionDestination?.totalPrice }}</td>
+
+                  <td></td>
+                </tr>
+              </tbody>
+              <tbody></tbody>
+            </table>
+          </div>
+        </ng-template>
+      </li>
+
+      <li [ngbNavItem]="'cancelatorias'">
+        <a ngbNavLink>Transacciones Cancelatorias</a>
+        <ng-template ngbNavContent>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Fecha</th>
+                  <th>Nombre</th>
+                  <th>POS</th>
+                  <th>Letra</th>
+                  <th>Número</th>
+                  <th>Ciudad</th>
+                  <th>Provincia</th>
+                  <th>Grupo</th>
+                  <th>Precio Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let transactionOrigin of transactionOrigins">
+                  <td align="left" width="50">
+                    <button
+                      type="button"
+                      class="btn btn-success btn-sm"
+                      (click)="openModal('view-transaction', null, transactionOrigin?._id)"
+                      title="Ver"
+                    >
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </td>
+                  <td>{{ transactionOrigin?.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
+                  <td>
+                    {{ transactionOrigin?.type?.name }}
+                  </td>
+                  <td>
+                    {{ transactionOrigin?.origin }}
+                  </td>
+                  <td>{{ transactionOrigin?.letter }}</td>
+                  <td>{{ transactionOrigin?.number }}</td>
+                  <td>
+                    {{ transactionOrigin?.company?.city }}
+                  </td>
+                  <td>
+                    {{ transactionOrigin?.company?.state?.name }}
+                  </td>
+                  <td>
+                    {{ transactionOrigin?.company.group?.description }}
+                  </td>
+                  <td>$ {{ transactionOrigin?.totalPrice }}</td>
+
+                  <td></td>
+                </tr>
+              </tbody>
+              <tbody></tbody>
+            </table>
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Auditoría</a>
+        <ng-template ngbNavContent>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">Creado por:</label>
+                  <label class="control-label"
+                    ><b>{{ transaction?.creationUser?.name }}</b></label
+                  >
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="control-label">El día:</label>
+                  <label class="control-label">
+                    <b>
+                      {{ transaction?.creationDate | dateFormat : 'DD/MM/YYYY hh:mm:ss' }}
+                    </b>
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">Última modificación por:</label>
+                  <label class="control-label"
+                    ><b>{{ transaction?.updateUser?.name }}</b></label
+                  >
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="control-label">El día:</label>
+                  <label class="control-label"
+                    ><b>{{ transaction.updateDate | dateFormat : 'DD/MM/YYYY hh:mm:ss' }}</b></label
+                  >
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">Id de POS:</label>
+                  <label class="control-label"
+                    ><b>{{ transaction?._id }}</b></label
+                  >
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">Id de Mercadolibre:</label>
+                  <label class="control-label"
+                    ><b>{{ transaction?.meliId }}</b></label
+                  >
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">Id de Woocommerce:</label>
+                  <label class="control-label"
+                    ><b>{{ transaction?.wooId }}</b></label
+                  >
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">Id de Tienda Nube:</label>
+                  <label class="control-label"
+                    ><b>{{ transaction?.tiendaNubeId }}</b></label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+  <div class="modal-footer"></div>
+</section>

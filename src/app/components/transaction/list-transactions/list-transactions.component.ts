@@ -10,7 +10,19 @@ import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import * as moment from 'moment';
 import { Observable, Subscription, of as observableOf } from 'rxjs';
 
-import { Printer } from '@types';
+import { PrintService } from '@core/services/print.service';
+import { UserService } from '@core/services/user.service';
+import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
+import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
+import { ToastService } from '@shared/components/toast/toast.service';
+import { ApiResponse, Branch, PrintType, Printer } from '@types';
+import { User } from 'app/components/user/user';
+import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
+import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
+import 'moment/locale/es';
+import * as printJS from 'print-js';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Config } from '../../../app.config';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
@@ -20,20 +32,6 @@ import { ExportIvaComponent } from '../../export/export-iva/export-iva.component
 import { TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction';
-import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
-
-import { PrintService } from '@core/services/print.service';
-import { UserService } from '@core/services/user.service';
-import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
-import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
-import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, Branch, PrintType } from '@types';
-import { User } from 'app/components/user/user';
-import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
-import 'moment/locale/es';
-import * as printJS from 'print-js';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-transactions',
@@ -526,7 +524,7 @@ export class ListTransactionsComponent implements OnInit {
 
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });
