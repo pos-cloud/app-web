@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse, MovementOfCash, PrinterPrintIn, PrintType, Transaction, TransactionState } from '@types';
+import { ApiResponse, MovementOfCash, PrinterPrintIn, PrintType, Transaction } from '@types';
 import { Subject, Subscription } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
@@ -83,6 +83,8 @@ export class ViewTransactionComponentNew implements OnInit {
           this.transaction = result.result;
           this.getMovementsOfArticlesByTransaction();
           this.getMovementsOfCashesByTransaction();
+          this.getCancellationsOfMovementDestination();
+          this.getCancellationsOfMovementOrigin();
 
           this.loading = false;
         },
@@ -91,35 +93,6 @@ export class ViewTransactionComponentNew implements OnInit {
           this.loading = false;
         },
       });
-  }
-
-  getTransactionCancelations(transactionId: string): Promise<Transaction> {
-    return new Promise<Transaction>((resolve, reject) => {
-      this.loading = true;
-
-      this._transactionService
-        .getById(transactionId)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            if (!result.result) {
-              resolve(null);
-            } else {
-              this.loading = false;
-              resolve(result.result);
-            }
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-            this.loading = false;
-            resolve(null);
-          },
-          complete() {
-            this.loading = false;
-            resolve(null);
-          },
-        });
-    });
   }
 
   public getMovementsOfArticlesByTransaction(): void {
@@ -132,6 +105,7 @@ export class ViewTransactionComponentNew implements OnInit {
         'category.description': 1,
         'make.description': 1,
         'article.posDescription': 1,
+        'article._id': 1,
         'deposit.name': 1,
         code: 1,
         description: 1,
@@ -221,67 +195,93 @@ export class ViewTransactionComponentNew implements OnInit {
       });
   }
 
-  public getCancellationsOfMovements(transactionOrigin: boolean): void {
+  public getCancellationsOfMovementDestination(): void {
     this.loading = true;
-
-    let match;
-    if (transactionOrigin) {
-      match = {
-        transactionOrigin: { $oid: this.transactionId },
-        operationType: { $ne: 'D' },
-      };
-    } else {
-      match = {
-        transactionDestination: { $oid: this.transactionId },
-        operationType: { $ne: 'D' },
-      };
-    }
     let data = {
       project: {
         balance: 1,
-        transactionOrigin: 1,
-        transactionDestination: 1,
         operationType: 1,
+        'transactionDestination.operationType': 1,
+        'transactionDestination._id': 1,
+        'transactionDestination.endDate': 1,
+        'transactionDestination.type.name': 1,
+        'transactionDestination.company.city': 1,
+        'transactionDestination.origin': 1,
+        'transactionDestination.letter': 1,
+        'transactionDestination.number': 1,
+        'transactionDestination.company.state.name': 1,
+        'transactionDestination.company.group.description': 1,
+        'transactionDestination.totalPrice': 1,
+        'transactionDestination.state': 1,
       },
-      match: match,
+      match: {
+        'transactionDestination._id': { $oid: this.transactionId },
+        'transactionDestination.operationType': { $ne: 'D' },
+        'transactionDestination.state': { $nin: ['Open', 'Pending'] },
+        operationType: { $ne: 'D' },
+      },
     };
 
-    this._movementOfCancellation.getAll(data).subscribe(
-      async (result) => {
-        if (result && result.result && result.result.length > 0) {
-          for (let index = 0; index < result.result.length; index++) {
-            let transactionData;
-            if (transactionOrigin) {
-              transactionData = await this.getTransactionCancelations(result.result[index].transactionDestination);
-            } else {
-              transactionData = await this.getTransactionCancelations(result.result[index].transactionOrigin);
-            }
-            if (
-              transactionData &&
-              transactionData.state !== TransactionState.Open &&
-              transactionData.state !== TransactionState.Pending
-            ) {
-              transactionData.balance = this.roundNumber.transform(result.result[index].balance);
-              if (transactionOrigin) {
-                this.transactionOrigins.push(transactionData);
-              } else {
-                this.transactionDestinations.push(transactionData);
-              }
-            } else {
-              this.loading = false;
-            }
+    this._movementOfCancellation
+      .getAll(data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          for (let data of result.result) {
+            this.transactionDestinations.push(data.transactionDestination);
           }
-        } else {
-          this._toastService.showToast({ message: 'No se encontraron transactiones relacionadas' });
-        }
-        this.loading = false;
-      },
-      (error) => {
-        this._toastService.showToast(error);
-      }
-    );
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.loading = false;
+        },
+        complete() {},
+      });
   }
 
+  public getCancellationsOfMovementOrigin(): void {
+    this.loading = true;
+    let data = {
+      project: {
+        balance: 1,
+        operationType: 1,
+        'transactionOrigin.operationType': 1,
+        'transactionOrigin._id': 1,
+        'transactionOrigin.endDate': 1,
+        'transactionOrigin.type.name': 1,
+        'transactionOrigin.company.city': 1,
+        'transactionOrigin.origin': 1,
+        'transactionOrigin.letter': 1,
+        'transactionOrigin.number': 1,
+        'transactionOrigin.company.state.name': 1,
+        'transactionOrigin.company.group.description': 1,
+        'transactionOrigin.totalPrice': 1,
+        'transactionOrigin.state': 1,
+      },
+      match: {
+        'transactionOrigin._id': { $oid: this.transactionId },
+        'transactionOrigin.operationType': { $ne: 'D' },
+        'transactionOrigin.state': { $nin: ['Open', 'Pending'] },
+        operationType: { $ne: 'D' },
+      },
+    };
+
+    this._movementOfCancellation
+      .getAll(data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          for (let data of result.result) {
+            this.transactionOrigins.push(data.transactionOrigin);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.loading = false;
+        },
+        complete() {},
+      });
+  }
   async openModal(op: string, movement?: MovementOfArticle, transactionId?: string) {
     let modalRef;
     switch (op) {
@@ -337,17 +337,6 @@ export class ViewTransactionComponentNew implements OnInit {
         break;
       default:
         break;
-    }
-  }
-
-  onTabChange(event: any): void {
-    this.activeTab = event.nextId;
-    if (event.nextId === 'canceladas' && !this.transactionDestinations.length) {
-      this.getCancellationsOfMovements(false);
-    }
-
-    if (event.nextId === 'cancelatorias' && !this.transactionOrigins.length) {
-      this.getCancellationsOfMovements(true);
     }
   }
 

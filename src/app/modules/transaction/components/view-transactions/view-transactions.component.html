@@ -8,8 +8,8 @@
 </div>
 <section class="container-fluid">
   <div class="modal-body">
-    <ul ngbNav #nav="ngbNav" class="nav-tabs" [(activeId)]="activeTab" (navChange)="onTabChange($event)">
-      <li [ngbNavItem]="'datos'">
+    <ul ngbNav #nav="ngbNav" class="nav-tabs">
+      <li ngbNavItem>
         <a ngbNavLink>{{ 'data' | translate | capitalize }}</a>
         <ng-template ngbNavContent>
           <div class="row" *ngIf="transaction?.type?.transactionMovement?.toString() !== 'Stock'">
@@ -500,7 +500,7 @@
           </div>
         </ng-template>
       </li>
-      <li ngbNavItem *ngIf="transaction?.shipmentMethod">
+      <li ngbNavItem [disabled]="!transaction?.shipmentMethod">
         <a ngbNavLink>{{ 'delivery' | translate | capitalize }}</a>
         <ng-template ngbNavContent>
           <div class="table-responsive">
@@ -563,7 +563,7 @@
         </ng-template>
       </li>
 
-      <li [ngbNavItem]="'canceladas'">
+      <li ngbNavItem [disabled]="!transactionDestinations.length">
         <a ngbNavLink>{{ 'cancelledTransactions' | translate | capitalize }}</a>
         <ng-template ngbNavContent>
           <div class="p-3" *ngIf="transaction?.canceledTransactions?.typeId">
@@ -645,7 +645,7 @@
         </ng-template>
       </li>
 
-      <li [ngbNavItem]="'cancelatorias'">
+      <li ngbNavItem [disabled]="!transactionOrigins.length">
         <a ngbNavLink>Transacciones Cancelatorias</a>
         <ng-template ngbNavContent>
           <div class="table-responsive">
@@ -692,7 +692,7 @@
                     {{ transactionOrigin?.company?.state?.name }}
                   </td>
                   <td>
-                    {{ transactionOrigin?.company.group?.description }}
+                    {{ transactionOrigin?.company?.group?.description }}
                   </td>
                   <td>$ {{ transactionOrigin?.totalPrice }}</td>
 
