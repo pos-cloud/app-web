@@ -93,7 +93,7 @@ export class CancelledTransactionsComponent implements OnInit, OnDestroy {
               }
               let codeType = result.result[0].type.codes.find((cod) => cod.letter === this.canceledTransactions.letter);
 
-              this.canceledTransactions.code = codeType.code;
+              this.canceledTransactions.code = codeType?.code ?? 0;
               this._toastService.showToast(result);
               this.activeModal.close({ data: this.canceledTransactions });
             }
