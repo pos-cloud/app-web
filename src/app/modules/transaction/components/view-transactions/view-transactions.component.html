@@ -563,7 +563,33 @@
         </ng-template>
       </li>
 
-      <li ngbNavItem [disabled]="!transactionDestinations.length && !transaction?.canceledTransactions?.typeId">
+      <li ngbNavItem [disabled]="!transaction?.canceledTransactions?.typeId">
+        <a ngbNavLink>{{ 'comprobantes informados' | translate | capitalize }}</a>
+        <ng-template ngbNavContent>
+          <div class="p-3" *ngIf="transaction?.canceledTransactions?.typeId">
+            <div class="d-flex flex-wrap align-items-center" style="gap: 1.5rem">
+              <div>
+                <strong>Tipo de transacción:</strong>
+                <span> {{ transaction?.canceledTransactions?.typeId?.name }}</span>
+              </div>
+              <div>
+                <strong>Número:</strong>
+                <span> {{ transaction?.canceledTransactions?.number }}</span>
+              </div>
+              <div>
+                <strong>Punto de venta:</strong>
+                <span> {{ transaction?.canceledTransactions?.origin }}</span>
+              </div>
+              <div>
+                <strong>Letra:</strong>
+                <span> {{ transaction?.canceledTransactions?.letter }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+
+      <li ngbNavItem [disabled]="!transactionDestinations.length">
         <a ngbNavLink>{{ 'cancelledTransactions' | translate | capitalize }}</a>
         <ng-template ngbNavContent>
           <div class="p-3" *ngIf="transaction?.canceledTransactions?.typeId">
