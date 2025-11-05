@@ -11,7 +11,7 @@
       <select class="form-control" [(ngModel)]="canceledTransactions.typeId">
         <option
           *ngFor="let canc of cancellationTypes"
-          [selected]="canc?.origin._id && canc?.origin._id === canceledTransactions.typeId._id"
+          [selected]="canc?.origin?._id && canc?.origin?._id === canceledTransactions?.typeId?._id"
           [value]="canc.origin._id"
         >
           {{ canc?.origin?.name }}

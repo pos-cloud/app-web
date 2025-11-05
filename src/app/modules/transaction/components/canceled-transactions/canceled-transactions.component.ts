@@ -36,13 +36,13 @@ export class CancelledTransactionsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.transaction?.canceledTransactions) {
-      const canceled = this.transaction.canceledTransactions;
+      const canceled = this.transaction?.canceledTransactions;
       this.canceledTransactions = {
-        typeId: canceled.typeId._id ?? null,
-        code: canceled.code || 0,
-        origin: canceled.origin || 0,
-        letter: canceled.letter || '',
-        number: canceled.number || 0,
+        typeId: canceled?.typeId?._id ?? null,
+        code: canceled?.code ?? 0,
+        origin: canceled?.origin ?? 0,
+        letter: canceled?.letter ?? '',
+        number: canceled?.number ?? 0,
       };
     }
   }
@@ -77,6 +77,7 @@ export class CancelledTransactionsComponent implements OnInit, OnDestroy {
             if (result.status == 200) {
               if (!result.result.length) {
                 this._toastService.showToast({ message: 'No se encontro ningún comprobante con esos datos.' });
+                return;
               }
               let codeType = result.result[0].type.codes.find((cod) => cod.letter === this.canceledTransactions.letter);
 
