@@ -6,9 +6,8 @@ import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { ApiResponse } from '@types';
+import { ApiResponse, Transaction } from '@types';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
-import { Transaction } from 'app/components/transaction/transaction';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 @Component({
@@ -20,19 +19,7 @@ import { takeUntil } from 'rxjs/operators';
 export class CancelledTransactionsComponent implements OnInit, OnDestroy {
   @Input() cancellationTypes: CancellationType[];
   @Input() transaction: Transaction;
-  public canceledTransactions: {
-    typeId: string;
-    code: number;
-    origin: number;
-    letter: string;
-    number: number;
-  } = {
-    typeId: '',
-    code: 0,
-    origin: 0,
-    letter: '',
-    number: 0,
-  };
+  public canceledTransactions;
   public loading;
   private destroy$ = new Subject<void>();
 
@@ -51,7 +38,7 @@ export class CancelledTransactionsComponent implements OnInit, OnDestroy {
     if (this.transaction?.canceledTransactions) {
       const canceled = this.transaction.canceledTransactions;
       this.canceledTransactions = {
-        typeId: canceled.typeId || '',
+        typeId: canceled.typeId._id ?? null,
         code: canceled.code || 0,
         origin: canceled.origin || 0,
         letter: canceled.letter || '',

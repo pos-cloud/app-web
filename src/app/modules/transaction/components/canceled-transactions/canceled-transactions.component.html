@@ -9,7 +9,11 @@
     <div class="col-md-3" *ngIf="cancellationTypes?.length > 0">
       <label for="type">{{ 'transaction' | translate | capitalize }}</label>
       <select class="form-control" [(ngModel)]="canceledTransactions.typeId">
-        <option *ngFor="let canc of cancellationTypes" [value]="canc.origin._id">
+        <option
+          *ngFor="let canc of cancellationTypes"
+          [selected]="canc?.origin._id && canc?.origin._id === canceledTransactions.typeId._id"
+          [value]="canc.origin._id"
+        >
           {{ canc?.origin?.name }}
         </option>
       </select>
