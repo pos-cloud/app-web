@@ -598,9 +598,7 @@
                   <th>POS</th>
                   <th>Letra</th>
                   <th>Número</th>
-                  <th>Ciudad</th>
-                  <th>Provincia</th>
-                  <th>Grupo</th>
+
                   <th>Precio Total</th>
                 </tr>
               </thead>
@@ -625,15 +623,7 @@
                   </td>
                   <td>{{ transactionDestination?.letter }}</td>
                   <td>{{ transactionDestination?.number }}</td>
-                  <td>
-                    {{ transactionDestination?.company?.city }}
-                  </td>
-                  <td>
-                    {{ transactionDestination?.company?.state?.name }}
-                  </td>
-                  <td>
-                    {{ transactionDestination?.company?.group?.description }}
-                  </td>
+
                   <td>$ {{ transactionDestination?.totalPrice }}</td>
 
                   <td></td>
@@ -658,9 +648,7 @@
                   <th>POS</th>
                   <th>Letra</th>
                   <th>Número</th>
-                  <th>Ciudad</th>
-                  <th>Provincia</th>
-                  <th>Grupo</th>
+
                   <th>Precio Total</th>
                 </tr>
               </thead>
@@ -685,15 +673,7 @@
                   </td>
                   <td>{{ transactionOrigin?.letter }}</td>
                   <td>{{ transactionOrigin?.number }}</td>
-                  <td>
-                    {{ transactionOrigin?.company?.city }}
-                  </td>
-                  <td>
-                    {{ transactionOrigin?.company?.state?.name }}
-                  </td>
-                  <td>
-                    {{ transactionOrigin?.company?.group?.description }}
-                  </td>
+
                   <td>$ {{ transactionOrigin?.totalPrice }}</td>
 
                   <td></td>
