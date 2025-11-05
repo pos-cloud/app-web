@@ -41,7 +41,7 @@ export { ShipmentMethod } from './entities/shipment-method.interface';
 export { State } from './entities/state.interface';
 export { Structure, Utilization } from './entities/structure.interface';
 export { Table, TableState } from './entities/table.interface';
-export { Tax, TaxBase, Taxes } from './entities/tax.interface';
+export { Tax, TaxBase, TaxClassification, Taxes, TaxType } from './entities/tax.interface';
 export { TransactionType } from './entities/transaction-type.interface';
 export {
   Transaction,

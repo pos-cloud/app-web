@@ -229,16 +229,7 @@ export class TransactionService extends ModelService {
       );
   }
 
-  public validateElectronicTransactionAR(
-    transaction: Transaction,
-    canceledTransactions: {
-      typeId: string;
-      code: number;
-      origin: number;
-      letter: string;
-      number: number;
-    }
-  ): Observable<any> {
+  public validateElectronicTransactionAR(transaction: Transaction, canceledTransactions): Observable<any> {
     const URL = `${environment.apiv2}/transactions/validate-electronic/${transaction._id}`;
 
     const headers = new HttpHeaders()

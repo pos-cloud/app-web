@@ -1767,12 +1767,9 @@ export class AddSaleOrderComponent {
     this.loading = true;
     this.transaction.type.defectEmailTemplate = null;
 
-    this.transaction.canceledTransactions =
-      this.transaction.canceledTransactions &&
-      this.transaction.canceledTransactions.typeId &&
-      this.transaction.canceledTransactions.typeId != ''
-        ? this.transaction.canceledTransactions
-        : null;
+    this.transaction.canceledTransactions = this.transaction?.canceledTransactions?.typeId?._id
+      ? this.transaction.canceledTransactions
+      : null;
     this._transactionService
       .validateElectronicTransactionAR(this.transaction, this.transaction.canceledTransactions)
       .subscribe(

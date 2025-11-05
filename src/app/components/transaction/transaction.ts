@@ -88,7 +88,7 @@ export class Transaction {
   tracking: { date: string; state: TransactionState }[];
   tiendaNubeId: string;
   canceledTransactions: {
-    typeId: string;
+    typeId: TransactionType;
     code: number;
     origin: number;
     letter: string;

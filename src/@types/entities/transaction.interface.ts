@@ -81,6 +81,13 @@ export interface Transaction extends Activity {
   };
   tracking: { date: string; state: TransactionState }[];
   tiendaNubeId: string;
+  canceledTransactions: {
+    typeId: TransactionType;
+    code: number;
+    origin: number;
+    letter: string;
+    number: number;
+  };
 }
 
 export enum TransactionState {
