@@ -1,0 +1,245 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-tax' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ tax?.name ?? '' }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'"> {{ tax?.name ?? '' }}</span>
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleTaxOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          *ngIf="operation === 'delete'"
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="loading"
+          (click)="handleTaxOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="taxForm" (ngSubmit)="handleTaxOperation()" autocomplete="off" *ngIf="!loading">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="code" class="control-label">{{ 'code' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              name="code"
+              autocomplete="nope"
+              id="code"
+              [ngClass]="{
+                'is-invalid': taxForm.get('code')?.touched && taxForm.get('code')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="taxForm.get('code')?.touched && taxForm.get('code')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              name="name"
+              autocomplete="nope"
+              id="name"
+              [ngClass]="{
+                'is-invalid': taxForm.get('name')?.touched && taxForm.get('name')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="taxForm.get('name')?.touched && taxForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="classification" class="control-label"> {{ 'classification' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="classification">
+              <option
+                *ngFor="let classification of taxClassifications"
+                [selected]="tax?.classification && classification === tax?.classification"
+                [value]="classification"
+                [disabled]="readonly"
+                [ngClass]="{
+                'is-invalid': taxForm.get('name')?.touched && taxForm.get('name')?.invalid,
+              }"
+              >
+                {{ classification }}
+              </option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="taxForm.get('name')?.touched && taxForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="type" class="control-label"> {{ 'type' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="type">
+              <option
+                *ngFor="let type of taxTypes"
+                [selected]="tax?.type && type === tax.type"
+                [value]="type"
+                [disabled]="readonly"
+              >
+                {{ type }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="taxBase" class="control-label">{{ 'calculatedOn' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="taxBase">
+              <option
+                *ngFor="let taxBase of taxBases"
+                [selected]="tax?.taxBase && taxBase === tax.taxBase"
+                [value]="taxBase"
+                [disabled]="readonly"
+              >
+                {{ taxBase }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="percentage" class="control-label">{{ 'percentage' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="percentage"
+              name="percentage"
+              id="percentage"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-3">
+            <label for="amount" class="control-label">{{ 'amountPaid' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount"
+              name="amount"
+              id="amount"
+              [readonly]="readonly"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="lastNumber" class="control-label">{{ 'lastNumber' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="lastNumber"
+              name="lastNumber"
+              id="lastNumber"
+              [readonly]="readonly"
+            />
+          </div>
+          <div class="form-group col-md-3">
+            <label for="debitAccount">{{ 'debitAccount.description' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="taxForm.get('debitAccount')"
+              [data]="accounts"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="creditAccount">{{ 'creditAccount.description' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="taxForm.get('creditAccount')"
+              [data]="accounts"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="printer">{{ 'printer' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="taxForm.get('printer')"
+              [data]="printers"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ state?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ state?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ tax?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ tax?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ tax?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
