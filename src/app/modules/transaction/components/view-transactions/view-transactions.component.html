@@ -563,7 +563,7 @@
         </ng-template>
       </li>
 
-      <li ngbNavItem [disabled]="!transactionDestinations.length">
+      <li ngbNavItem [disabled]="!transactionDestinations.length && !transaction?.canceledTransactions?.typeId">
         <a ngbNavLink>{{ 'cancelledTransactions' | translate | capitalize }}</a>
         <ng-template ngbNavContent>
           <div class="p-3" *ngIf="transaction?.canceledTransactions?.typeId">
