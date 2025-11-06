@@ -751,10 +751,9 @@ export class ArticleComponent implements OnInit {
 
   onImagesUploaded(urls: string[]): void {
     // Solo actualizar si hay URLs nuevas, no si el array está vacío
-    if (urls && urls.length > 0) {
-      this.articleForm.get('picture')?.setValue(urls[0]);
-      this.articleForm.get('picturePOS')?.setValue(urls[0]);
-    }
+
+    this.articleForm.get('picture')?.setValue(urls.length > 0 ? urls[0] : '');
+    this.articleForm.get('picturePOS')?.setValue(urls.length > 0 ? urls[0] : '');
   }
 
   loadPosDescription(): void {
