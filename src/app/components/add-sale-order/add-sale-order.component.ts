@@ -57,7 +57,6 @@ import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-
 import { Print } from '../print/print';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
-import { SelectShipmentMethodComponent } from '../shipment-method/select-shipment-method/select-shipment-method.component';
 import { TaxBase, TaxClassification } from '../tax/tax';
 import { Taxes } from '../tax/taxes';
 import {
@@ -77,6 +76,7 @@ import { ChangeObservationComponent } from 'app/modules/transaction/components/c
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
 import { SelectPriceListComponent } from 'app/modules/transaction/components/select-price-list/select-price-list.component';
+import { SelectShipmentMethodComponentNew } from 'app/modules/transaction/components/select-shipment-method/select-shipment-method';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
 import { ApplyBusinessRuleComponent } from '../../modules/transaction/components/apply-business-rule/apply-business-rule.component';
@@ -2362,7 +2362,7 @@ export class AddSaleOrderComponent {
         break;
       case 'change-shipment-method':
         if (this.transaction.company) {
-          modalRef = this._modalService.open(SelectShipmentMethodComponent, {
+          modalRef = this._modalService.open(SelectShipmentMethodComponentNew, {
             size: 'lg',
             backdrop: 'static',
           });

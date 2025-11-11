@@ -17,6 +17,9 @@ export interface Address extends Activity {
   forBilling: boolean;
   forShipping: boolean;
   shippingStatus: ShippingStatus;
+  street: string;
+  streetNumber: string;
+  zipCode: string;
 }
 
 export enum ShippingStatus {
