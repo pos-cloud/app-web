@@ -755,9 +755,18 @@
                 id="weight"
                 aria-describedby="basic-addon1"
                 [readonly]="operation === 'view'"
+                [ngClass]="{
+                      'is-invalid': articleForm.get('weight')?.touched && articleForm.get('weight')?.invalid,
+                    }"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">Kg</span>
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="articleForm.get('weight')?.touched && articleForm.get('weight')?.hasError('min')"
+              >
+                El peso no puede ser un valor negativo.
               </div>
             </div>
           </div>
@@ -772,9 +781,18 @@
                 id="width"
                 aria-describedby="basic-addon1"
                 [readonly]="operation === 'view'"
+                [ngClass]="{
+                      'is-invalid': articleForm.get('width')?.touched && articleForm.get('width')?.invalid,
+                    }"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">cm</span>
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="articleForm.get('width')?.touched && articleForm.get('width')?.hasError('min')"
+              >
+                El largo no puede ser un valor negativo.
               </div>
             </div>
           </div>
@@ -789,9 +807,18 @@
                 id="height"
                 aria-describedby="basic-addon1"
                 [readonly]="operation === 'view'"
+                [ngClass]="{
+                      'is-invalid': articleForm.get('height')?.touched && articleForm.get('height')?.invalid,
+                    }"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">cm</span>
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="articleForm.get('height')?.touched && articleForm.get('height')?.hasError('min')"
+              >
+                El alto no puede ser un valor negativo.
               </div>
             </div>
           </div>
@@ -806,9 +833,18 @@
                 id="depth"
                 aria-describedby="basic-addon1"
                 [readonly]="operation === 'view'"
+                [ngClass]="{
+                      'is-invalid': articleForm.get('depth')?.touched && articleForm.get('depth')?.invalid,
+                    }"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">cm</span>
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="articleForm.get('depth')?.touched && articleForm.get('depth')?.hasError('min')"
+              >
+                La profundidad no puede ser un valor negativo.
               </div>
             </div>
           </div>
