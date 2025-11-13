@@ -1,0 +1,279 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">
+        {{ 'add-cancellation-type' | translate | capitalize }}
+      </span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'">
+        {{ 'edit' | translate | capitalize }} {{ branch?.name ?? '' }}
+      </span>
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
+        {{ 'cancellation-type' | translate | capitalize }}
+      </span>
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleCancellationTypeOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger active"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="handleCancellationTypeOperation()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body scroll">
+      <form [formGroup]="cancellationTypeForm" (ngSubmit)="handleCancellationTypeOperation()" autocomplete="off">
+        <!-- Datos principales -->
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="origin" class="control-label">{{ 'origin' | translate | capitalize }}</label>
+            <app-typeahead-dropdown
+              [control]="cancellationTypeForm.get('origin')"
+              [data]="origins"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="origin" class="control-label">{{ 'destination' | translate | capitalize }}</label>
+            <app-typeahead-dropdown
+              [control]="cancellationTypeForm.get('destination')"
+              [data]="destinations"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="stateOrigin" class="control-label">¿Estado en que queda la transaccion cancelada?</label>
+            <div class="input-group">
+              <select class="form-control" formControlName="stateOrigin">
+                <option value="Armando">Armando</option>
+                <option value="Abierto">Abierto</option>
+                <option value="Cerrado">Cerrado</option>
+                <option value="Entregado">Entregado</option>
+                <option value="Enviado">Enviado</option>
+                <option value="Pago Confirmado">Pago Confirmado</option>
+                <option value="Pago Rechazado">Pago Rechazado</option>
+                <option value="Pendiente de pago">Pendiente de pago</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Preparando">Preparando</option>
+                <option value="En Producción">En Producción</option>
+              </select>
+              <button
+                type="button"
+                class="btn btn-light"
+                placement="right"
+                ngbPopover="¿Estado en que queda la transaccion de origen al cerrar la transaccion destino?"
+              >
+                <b>?</b>
+              </button>
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="modifyBalance" class="control-label">¿Modifica el saldo?</label>
+            <div class="input-group">
+              <select class="form-control" formControlName="modifyBalance">
+                <option [ngValue]="true">
+                  {{ 'true' | translate | capitalize }}
+                </option>
+                <option [ngValue]="false">
+                  {{ 'false' | translate | capitalize }}
+                </option>
+              </select>
+              <button
+                type="button"
+                class="btn btn-light"
+                placement="right"
+                ngbPopover="¿Al cancelar la transacción modifica el saldo asignado a la misma?"
+              >
+                <b>?</b>
+              </button>
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="requestAutomatic" class="control-label">¿Solicita al final?</label>
+            <div class="input-group">
+              <select class="form-control" formControlName="requestAutomatic">
+                <option [ngValue]="true">
+                  {{ 'true' | translate | capitalize }}
+                </option>
+                <option [ngValue]="false">
+                  {{ 'false' | translate | capitalize }}
+                </option>
+              </select>
+              <button
+                type="button"
+                class="btn btn-light"
+                placement="right"
+                ngbPopover="¿Al finalizar la transacción, solicita realizar automáticamente la transacción cancelatoria?"
+              >
+                <b>?</b>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="automaticSelection" class="control-label">¿Selecciona automaticamente?</label>
+            <div class="input-group">
+              <select class="form-control" formControlName="automaticSelection">
+                <option [ngValue]="true">
+                  {{ 'true' | translate | capitalize }}
+                </option>
+                <option [ngValue]="false">
+                  {{ 'false' | translate | capitalize }}
+                </option>
+              </select>
+              <button
+                type="button"
+                class="btn btn-light"
+                placement="right"
+                ngbPopover="¿Al buscar transacciones a cancelar selecciona automaticamente las transacciones pendientes?"
+              >
+                <b>?</b>
+              </button>
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="requestStatusOrigin" class="control-label">Acota por estado</label>
+            <div class="input-group">
+              <select class="form-control" formControlName="requestStatusOrigin">
+                <option value="Armando">Armando</option>
+                <option value="Abierto">Abierto</option>
+                <option value="Cerrado">Cerrado</option>
+                <option value="Entregado">Entregado</option>
+                <option value="Enviado">Enviado</option>
+                <option value="Pago Confirmado">Pago Confirmado</option>
+                <option value="Pago Rechazado">Pago Rechazado</option>
+                <option value="Pendiente de pago">Pendiente de pago</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Preparando">Preparando</option>
+                <option value="En Producción">En Producción</option>
+              </select>
+              <button
+                type="button"
+                class="btn btn-light"
+                placement="right"
+                ngbPopover="¿Por qué estado filtra los documentos a cancelar?"
+              >
+                <b>?</b>
+              </button>
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="requestCompany" class="control-label">Acota por Empresa</label>
+            <div class="input-group">
+              <select class="form-control" formControlName="requestCompany">
+                <option [ngValue]="true">
+                  {{ 'true' | translate | capitalize }}
+                </option>
+                <option [ngValue]="false">
+                  {{ 'false' | translate | capitalize }}
+                </option>
+              </select>
+              <button
+                type="button"
+                class="btn btn-light"
+                placement="right"
+                ngbPopover="¿Filtra los documentos a cancelar por empresa?"
+              >
+                <b>?</b>
+              </button>
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="updatePrices" class="control-label">Actualiza Precios</label>
+            <div class="input-group">
+              <select class="form-control" formControlName="updatePrices">
+                <option [ngValue]="true">
+                  {{ 'true' | translate | capitalize }}
+                </option>
+                <option [ngValue]="false">
+                  {{ 'false' | translate | capitalize }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'config' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row"></div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ cancellationType?.creationUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ cancellationType?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ cancellationType?.updateUser?.name ?? '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ cancellationType?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'id' | translate | capitalize }}:
+                  <b>{{ cancellationType?._id ?? '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
