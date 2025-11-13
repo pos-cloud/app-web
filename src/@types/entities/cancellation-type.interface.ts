@@ -1,7 +1,9 @@
+import { Activity } from '@types';
 import { TransactionType } from './transaction-type.interface';
 import { TransactionState } from './transaction.interface';
 
-export interface CancelationType {
+export interface CancellationType extends Activity {
+  _id: string;
   origin: TransactionType;
   destination: TransactionType;
   automaticSelection: boolean;

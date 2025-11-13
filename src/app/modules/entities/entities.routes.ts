@@ -179,4 +179,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'taxes',
     loadChildren: () => import('./tax/tax.routes').then((m) => m.TAX_ROUTES),
   },
+  {
+    path: 'cancellation-types',
+    loadChildren: () => import('./cancellation-type/cancellation-type.routes').then((m) => m.CANCELLATION_TYPE_ROUTES),
+  },
 ];
