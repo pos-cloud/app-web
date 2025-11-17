@@ -926,7 +926,7 @@
               class="form-control"
               name="note"
               id="note"
-              (keydown.enter)="addNote($event.target.value)"
+              (keydown.enter)="addNote($event.target.value); $event.stopPropagation(); $event.preventDefault()"
               placeholder="Ingresar la nota y luego presionar enter por cada nota."
               [focus]="focusNoteEvent"
               [readonly]="readonly"
