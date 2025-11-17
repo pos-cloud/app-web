@@ -62,7 +62,7 @@ export class UserComponent implements OnInit {
   private destroy$ = new Subject<void>();
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
 
-  public dominio = 'http://localhost:4200/';
+  public dominio: string;
   public shortcut = { name: '', url: '' };
   public shortcuts: { name: string; url: string }[] = [];
 
@@ -103,6 +103,7 @@ export class UserComponent implements OnInit {
     const pathUrl = this._router.url.split('/');
     const userId = pathUrl[4];
     this.operation = pathUrl[3];
+    this.dominio = window.location.origin + '/';
     if (this.operation === 'view' || this.operation === 'delete') this.userForm.disable();
 
     this.loading = true;
