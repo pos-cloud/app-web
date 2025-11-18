@@ -543,84 +543,88 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   async getStructureForStock(articleSelected: Article, amount?: number, salePrice?: number) {
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sortAux = {};
+    if (articleSelected && articleSelected?.containsStructure) {
+      /// ORDENAMOS LA CONSULTA
+      let sortAux = {};
 
-    // FILTRAMOS LA CONSULTA
+      // FILTRAMOS LA CONSULTA
 
-    let match = `{
+      let match = `{
         "operationType": { "$ne": "D" },
         "parent._id": { "$oid" : "${articleSelected._id}"},
         "optional" : false
       }`;
 
-    match = JSON.parse(match);
+      match = JSON.parse(match);
 
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = {
-      _id: 1,
-      'parent._id': 1,
-      'child._id': 1,
-      optional: 1,
-      utilization: 1,
-      quantity: 1,
-      operationType: 1,
-    };
+      // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+      let project = {
+        _id: 1,
+        'parent._id': 1,
+        'child._id': 1,
+        optional: 1,
+        utilization: 1,
+        quantity: 1,
+        operationType: 1,
+      };
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {
-      _id: null,
-      count: { $sum: 1 },
-      structures: { $push: '$$ROOT' },
-    };
+      // AGRUPAMOS EL RESULTADO
+      let group = {
+        _id: null,
+        count: { $sum: 1 },
+        structures: { $push: '$$ROOT' },
+      };
 
-    this._structureService
-      .getStructures(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
-      .subscribe(
-        async (result) => {
-          this.loading = false;
+      this._structureService
+        .getStructures(
+          project, // PROJECT
+          match, // MATCH
+          sortAux, // SORT
+          group, // GROUP
+          0, // LIMIT
+          0 // SKIP
+        )
+        .subscribe(
+          async (result) => {
+            this.loading = false;
 
-          let parent: MovementOfArticle;
-          let child: MovementOfArticle[] = new Array();
-          if (result && result[0] && result[0].structures) {
-            let structures: Structure[] = result[0].structures;
-            parent = await this.addItem(articleSelected, amount, salePrice);
-            if (structures.length > 0) {
-              for (const struct of structures) {
-                if (
-                  struct.utilization == Utilization.Production &&
-                  this.transaction?.type?.transactionMovement == TransactionMovement.Production
-                ) {
-                  child.push(await this.addItem(struct.child, struct.quantity, null, StockMovement.Outflows));
-                }
+            let parent: MovementOfArticle;
+            let child: MovementOfArticle[] = new Array();
+            if (result && result[0] && result[0].structures) {
+              let structures: Structure[] = result[0].structures;
+              parent = await this.addItem(articleSelected, amount, salePrice);
+              if (structures.length > 0) {
+                for (const struct of structures) {
+                  if (
+                    struct.utilization == Utilization.Production &&
+                    this.transaction?.type?.transactionMovement == TransactionMovement.Production
+                  ) {
+                    child.push(await this.addItem(struct.child, struct.quantity, null, StockMovement.Outflows));
+                  }
 
-                if (
-                  struct.utilization == Utilization.Sale &&
-                  this.transaction?.type?.transactionMovement == TransactionMovement.Sale
-                ) {
-                  child.push(await this.addItem(struct.child, struct.quantity));
+                  if (
+                    struct.utilization == Utilization.Sale &&
+                    this.transaction?.type?.transactionMovement == TransactionMovement.Sale
+                  ) {
+                    child.push(await this.addItem(struct.child, struct.quantity));
+                  }
                 }
               }
-            }
 
-            this.eventAddItem.emit({ parent, child });
-          } else {
-            parent = await this.addItem(articleSelected, amount, salePrice);
-            this.eventAddItem.emit({ parent, child });
+              this.eventAddItem.emit({ parent, child });
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
           }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
-      );
+        );
+    } else {
+      let parent: MovementOfArticle;
+      let child: MovementOfArticle[] = new Array();
+      parent = await this.addItem(articleSelected, amount, salePrice);
+      this.eventAddItem.emit({ parent, child });
+    }
   }
 
   public getTaxes(query?: string): Promise<Tax[]> {

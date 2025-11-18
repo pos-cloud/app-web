@@ -1744,6 +1744,17 @@ export class AddMovementOfArticleComponent implements OnInit {
             //le meto a todos el movimiento del padre
             for (let index = 0; index < this.movChild.length; index++) {
               this.movChild[index].movementParent = result.movementOfArticle;
+
+              const structure = this.structures.find(
+                (data) =>
+                  data.parent._id === result.movementOfArticle.article._id &&
+                  data.child._id === this.movChild[index].article._id
+              );
+              this.movChild[index].stockMovement =
+                structure.utilization == Utilization.Production &&
+                this.transaction?.type?.transactionMovement == TransactionMovement.Production
+                  ? StockMovement.Outflows
+                  : result.movementOfArticle.stockMovement;
             }
 
             //guardo todas las estrcturas
@@ -1819,8 +1830,18 @@ export class AddMovementOfArticleComponent implements OnInit {
             //le meto a todos el movimiento del padre
             for (let index = 0; index < this.movChild.length; index++) {
               this.movChild[index].movementParent = result.movementOfArticle;
-            }
 
+              const structure = this.structures.find(
+                (data) =>
+                  data.parent._id === result.movementOfArticle.article._id &&
+                  data.child._id === this.movChild[index].article._id
+              );
+              this.movChild[index].stockMovement =
+                structure.utilization == Utilization.Production &&
+                this.transaction?.type?.transactionMovement == TransactionMovement.Production
+                  ? StockMovement.Outflows
+                  : result.movementOfArticle.stockMovement;
+            }
             //guardo todas las estrcturas
             if (await this.saveMovementsOfArticle(this.movChild)) {
               this.activeModal.close('update');
