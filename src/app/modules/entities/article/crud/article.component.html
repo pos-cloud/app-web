@@ -1129,31 +1129,6 @@
                   [displayField]="'name'"
                 ></app-typeahead-dropdown>
               </div>
-              <div class="form-group col-md-4 typeahead-container">
-                <label class="control-label">{{ 'article.provider.name' | translate | capitalize }}</label>
-                <app-typeahead-dropdown
-                  placeholder="{{ 'article.provider.name' | translate | capitalize }}"
-                  [control]="articleForm.get('provider')"
-                  [data]="companies"
-                  [readonly]="readonly"
-                  [keyField]="'_id'"
-                  [displayField]="'name'"
-                ></app-typeahead-dropdown>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-4">
-                <label class="control-label">{{ 'article.codeProvider' | translate | capitalize }}:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="codeProvider"
-                  name="codeProvider"
-                  id="codeProvider"
-                  [readonly]="readonly"
-                />
-              </div>
-
               <div class="form-group col-md-4">
                 <label for="updateVariants" class="control-label">{{
                   'updateVariants' | translate | capitalize
@@ -1166,6 +1141,54 @@
                     {{ 'false' | translate | capitalize }}
                   </option>
                 </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4 typeahead-container">
+                <label class="control-label">{{ 'article.provider.name' | translate | capitalize }}</label>
+                <app-typeahead-dropdown
+                  placeholder="{{ 'article.provider.name' | translate | capitalize }}"
+                  [control]="articleForm.get('provider')"
+                  [data]="companies"
+                  [readonly]="readonly"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">{{ 'article.codeProvider' | translate | capitalize }}:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="codeProvider"
+                  name="codeProvider"
+                  id="codeProvider"
+                  [readonly]="readonly"
+                />
+              </div>
+              <div class="form-group col-md-4 typeahead-container">
+                <label class="control-label">{{ 'salesAccount' | translate | capitalize }}</label>
+                <app-typeahead-dropdown
+                  placeholder="{{ 'salesAccount' | translate | capitalize }}"
+                  [control]="articleForm.get('salesAccount')"
+                  [data]="accounts"
+                  [readonly]="readonly"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4 typeahead-container">
+                <label class="control-label">{{ 'salesAccount' | translate | capitalize }}</label>
+                <app-typeahead-dropdown
+                  placeholder="{{ 'salesAccount' | translate | capitalize }}"
+                  [control]="articleForm.get('salesAccount')"
+                  [data]="accounts"
+                  [readonly]="readonly"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
               </div>
             </div>
           </div>

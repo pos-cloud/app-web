@@ -11,6 +11,7 @@ import {
 import { Router } from '@angular/router';
 
 import {
+  Account,
   ApiResponse,
   Article,
   Category,
@@ -42,6 +43,7 @@ import { QuillModule } from 'ngx-quill';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { AccountService } from '@core/services/account.service';
 import { ClassificationService } from '@core/services/classification.service';
 import { CompanyService } from '@core/services/company.service';
 import { ConfigService } from '@core/services/config.service';
@@ -114,6 +116,7 @@ export class ArticleComponent implements OnInit {
   public allVariantValues: VariantValue[]; // Almacenar todos los valores disponibles
   public variants: Variant[] = new Array();
   public code: string;
+  public accounts: Account[];
 
   public categories: Category[] = [];
   public categoriesTN: Category[] = [];
@@ -184,7 +187,8 @@ export class ArticleComponent implements OnInit {
     private _classificationService: ClassificationService,
     private _companyService: CompanyService,
     private _variantTypeService: VariantTypeService,
-    private _variantValueService: VariantValueService //  private roundNumber: DecimalPipe
+    private _variantValueService: VariantValueService, //  private roundNumber: DecimalPipe
+    private _accountService: AccountService
   ) {
     this.articleForm = this._fb.group({
       _id: ['', []],
@@ -286,6 +290,7 @@ export class ArticleComponent implements OnInit {
       variantValues: this._variantValueService.find({ query: { operationType: { $ne: 'D' } } }),
       config: this._configService.find({ query: { operationType: { $ne: 'D' } } }),
       code: this._articleService.getLasCode(),
+      accounts: this._accountService.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -300,6 +305,7 @@ export class ArticleComponent implements OnInit {
           config,
           variantValues,
           code,
+          accounts,
         }) => {
           this.categories = categories || [];
 
@@ -313,6 +319,7 @@ export class ArticleComponent implements OnInit {
           this.variantValues = variantValues || [];
           this.allVariantValues = variantValues || [];
           this.code = code.code;
+          this.accounts = accounts;
 
           if (articleId) {
             this.getArticle(articleId);
@@ -370,6 +377,8 @@ export class ArticleComponent implements OnInit {
       (item) => item._id === this.article?.unitOfMeasurement?.toString()
     );
     const provider = this.companies?.find((item) => item._id === this.article?.provider?.toString());
+    const salesAccounts = this.accounts?.find((item) => item._id === this.article?.salesAccount?.toString());
+    const purchaseAccounts = this.accounts?.find((item) => item._id === this.article?.purchaseAccount?.toString());
 
     const values = {
       _id: this.article?._id ?? '',
@@ -427,6 +436,8 @@ export class ArticleComponent implements OnInit {
       seoTitleTN: this.article?.seoTitleTN ?? '',
       seoDescriptionTN: this.article?.seoDescriptionTN ?? '',
       videoUrlTN: this.article?.videoUrlTN ?? '',
+      salesAccount: salesAccounts ?? null,
+      purchaseAccount: purchaseAccounts ?? null,
     };
 
     this.articleForm.patchValue(values);
