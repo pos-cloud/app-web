@@ -198,6 +198,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
       quantityPerMeasure: 1,
       isWeigth: 1,
       codeProvider: 1,
+      containsStructure: 1,
     };
 
     if (
@@ -542,7 +543,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
 
   async getStructureForStock(articleSelected: Article, amount?: number, salePrice?: number) {
     this.loading = true;
-
+    console.log(articleSelected);
     if (articleSelected && articleSelected?.containsStructure) {
       /// ORDENAMOS LA CONSULTA
       let sortAux = {};
