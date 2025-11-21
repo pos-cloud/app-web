@@ -269,7 +269,7 @@ export class HeaderComponent implements OnInit {
           children: [
             { label: 'Cuenta contable', link: 'entities/accounts' },
             { label: 'Periodos contable', link: 'account-periods' },
-            { label: 'Asientos contable', link: 'account-seats' },
+            { label: 'Asientos contable', link: 'entities/account-seat' },
             { label: 'Impuestos', link: 'entities/taxes' },
             { label: 'Tipos de cajas', link: 'entities/cash-box-types' },
             { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
@@ -764,7 +764,7 @@ export class HeaderComponent implements OnInit {
               children: [
                 { label: 'Cuenta contable', link: 'entities/accounts' },
                 { label: 'Periodos contable', link: 'entities/account-periods' },
-                { label: 'Asientos contable', link: 'account-seats' },
+                { label: 'Asientos contable', link: 'entities/account-seat' },
                 { label: 'Impuestos', link: 'entities/taxes' },
                 { label: 'Tipos de cajas', link: 'entities/cash-box-types' },
                 { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
