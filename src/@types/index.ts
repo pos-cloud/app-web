@@ -1,5 +1,6 @@
 // entities
 export { AccountPeriod } from './entities/account-period.interface';
+export { AccountSeat, TypeAccountSeat } from './entities/account-seat.interface';
 export { Account, Modes, Types } from './entities/account.interface';
 export { Address } from './entities/address.interface';
 export { Application } from './entities/application.interface';
@@ -48,7 +49,7 @@ export {
   TransactionMovement,
   TransactionState,
   TransactionStateTiendaNube,
-  TransactionStatusWooCommerce,
+  TransactionStatusWooCommerce
 } from './entities/transaction.interface';
 export { Transport } from './entities/transport.interface';
 export { UnitOfMeasurement } from './entities/unit-of-measurement.interface';
@@ -69,3 +70,4 @@ export { FormField } from './common/form-field.interface';
 export { MediaCategory } from './common/media-category.enum';
 export { PrintType } from './common/print-type';
 export { IService } from './common/service.interface';
+

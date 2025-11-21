@@ -1,11 +1,12 @@
-import { Account, AccountPeriod, Transaction } from '@types';
+import { Account, AccountPeriod, Activity, Transaction } from '@types';
 
-export interface AccountSeat {
+export interface AccountSeat extends Activity {
   _id: string;
   transaction: Transaction;
   period: AccountPeriod;
   date: Date;
   observation: string;
+  type: TypeAccountSeat,
   items: [
     {
       account: Account;
@@ -13,4 +14,10 @@ export interface AccountSeat {
       credit: Number;
     }
   ];
+}
+
+export enum TypeAccountSeat {
+  Automatic = 'automatic',
+  Manual = 'manual',
+  Reversal = 'reversal',
 }
