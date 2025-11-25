@@ -5,10 +5,10 @@
         {{ 'add-account-seat' | translate | capitalize }}
       </span>
       <span style="color: #607d8b" *ngIf="operation === 'update'">
-        {{ 'edit' | translate | capitalize }} {{ accountSeat?.description ?? '' }}
+        {{ 'edit' | translate | capitalize }}
       </span>
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
-        {{ accountSeat ?? '' }}
+        {{ 'delete' | translate | capitalize }}
       </span>
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
@@ -38,19 +38,26 @@
         </button>
       </div>
     </div>
+
     <div class="card-body scroll">
-      <form [formGroup]="accountSeatForm" (ngSubmit)="handleAccountSeatOperation()" autocomplete="off">
-        <!-- Datos principales -->
+      <form
+        [formGroup]="accountSeatForm"
+        (ngSubmit)="handleAccountSeatOperation()"
+        autocomplete="off"
+        (keydown.enter)="$event.stopPropagation(); $event.preventDefault()"
+      >
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
           </label>
         </div>
+
         <div class="row">
           <div class="form-group col-md-3">
             <label for="date" class="control-label">{{ 'date' | translate | capitalize }}:</label>
-            <input type="date" class="form-control" formControlName="date" name="date" id="date" />
+            <input type="date" class="form-control" formControlName="date" id="date" />
           </div>
+
           <div class="form-group col-md-3">
             <label for="period" class="control-label">{{ 'period.description' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
@@ -60,6 +67,7 @@
               [displayField]="'description'"
             ></app-typeahead-dropdown>
           </div>
+
           <div class="form-group col-md-3">
             <label for="type" class="control-label">{{ 'type' | translate | capitalize }}:</label>
             <select class="form-control" formControlName="type">
@@ -68,47 +76,59 @@
               </option>
             </select>
           </div>
+
           <div class="form-group col-md-3">
             <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}:</label>
             <input type="text" class="form-control" formControlName="observation" name="observation" />
           </div>
         </div>
+
         <hr />
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'Asiento' | translate | capitalize }}</b>
           </label>
         </div>
-        <div [formGroup]="accountForm">
+
+        <div [formGroup]="accountForm" (keyup.enter)="addItem()">
           <div class="row">
-            <div class="form-group col-md-6">
+            <div class="col-md-6">
               <label for="account">Cuenta:</label>
               <app-typeahead-dropdown
                 [control]="accountForm.get('account')"
                 [data]="accounts"
                 [keyField]="'_id'"
                 [displayField]="'description'"
+                [ngClass]="{
+                      'is-invalid': accountForm.get('account')?.touched && accountForm.get('account')?.invalid,
+                    }"
               ></app-typeahead-dropdown>
+              <div
+                class="invalid-feedback"
+                *ngIf="accountForm.get('account')?.invalid && accountForm.get('account')?.touched"
+              >
+                {{ 'fieldRequired' | translate | capitalize }}
+              </div>
             </div>
-            <div class="form-group col-md-2">
+            <div class="col-md-2">
               <label for="debit" class="control-label">{{ 'debit' | translate | capitalize }}:</label>
               <div class="input-group">
                 <input type="number" class="form-control" name="debit" formControlName="debit" />
               </div>
             </div>
-            <div class="form-group col-md-2">
+            <div class="col-md-2">
               <label for="credit" class="control-label">{{ 'credit' | translate | capitalize }}:</label>
               <div class="input-group">
                 <input type="number" class="form-control" name="credit" formControlName="credit" />
               </div>
             </div>
-            <div class="form-group col-md-1">
-              <label class="control-label">Acción:</label>
-
-              <!-- antes era type="submit", ahora debe ser botón manual -->
-              <button type="button" class="btn btn-success btn-sm" (click)="addItem()">
-                <i class="fa fa-plus"></i>
-              </button>
+            <div class="form-group col-md-2">
+              <label for="value" class="control-label">{{ 'action' | translate | capitalize }}:</label>
+              <div class="input-group">
+                <button type="button" class="btn btn-success" (click)="addItem()">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -156,6 +176,8 @@
         </div>
 
         <hr />
+
+        <!-- AUDITORÍA – queda igual -->
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'audit' | translate | capitalize }}</b>
@@ -177,6 +199,7 @@
                 </label>
               </div>
             </div>
+
             <div class="row">
               <div class="form-group col-md-6">
                 <label class="control-label">
@@ -184,6 +207,7 @@
                   <b>{{ accountSeat?.updateUser?.name || '' }}</b>
                 </label>
               </div>
+
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
@@ -191,6 +215,7 @@
                 </label>
               </div>
             </div>
+
             <div class="row">
               <div class="form-group col-md-6">
                 <label class="control-label">

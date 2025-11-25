@@ -29,8 +29,8 @@ export class ListAccountSeatComponent {
         visible: true,
         disabled: false,
         filter: true,
-        datatype: 'string',
-        project: `{ "$dateToString": { "date": "$date", "format": "%d/%m/%Y", "timezone": "-03:00" } }`,
+        datatype: 'date',
+        project: `{ "$dateToString": { "date": "$date", "format": "%d/%m/%Y" } }`,
         align: 'center',
         required: true,
       },
@@ -92,13 +92,7 @@ export class ListAccountSeatComponent {
         datatype: 'string',
         align: 'left',
       },
-      {
-        name: 'observation',
-        visible: false,
-        filter: true,
-        datatype: 'string',
-        align: 'left',
-      },
+
       {
         name: 'transaction.totalPrice',
         visible: true,
@@ -200,7 +194,7 @@ export class ListAccountSeatComponent {
         click: `this.refresh()`,
       },
     ];
-    this.title = 'Account-seat';
+    this.title = 'account-seats';
   }
 
   public async emitEvent(event) {

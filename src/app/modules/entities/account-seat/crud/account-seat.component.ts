@@ -267,6 +267,7 @@ export class AccountSeatComponent implements OnInit, OnDestroy {
     const debit = this.accountForm.get('debit')?.value ?? 0;
     const credit = this.accountForm.get('credit')?.value ?? 0;
 
+    if (!account) return this._toastService.showToast({ message: 'Selecciona una cuenta para guardar' });
     items.push(
       this._fb.group({
         account: account,
