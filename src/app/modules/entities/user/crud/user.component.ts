@@ -121,7 +121,11 @@ export class UserComponent implements OnInit {
         next: ({ employees, cashBoxTypes, companies, origins, branches, permissions, printers }) => {
           this.employees = employees ?? [];
           this.cashBoxTypes = cashBoxTypes ?? [];
-          this.origins = origins ?? [];
+          this.origins =
+            origins.map((origin) => ({
+              number: String(origin.number),
+              _id: origin._id,
+            })) ?? [];
           this.branches = branches ?? [];
           this.permissions = permissions ?? [];
           this.companies = companies ?? [];
