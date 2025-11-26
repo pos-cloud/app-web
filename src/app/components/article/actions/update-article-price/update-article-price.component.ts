@@ -1,13 +1,15 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 //model
 
 //service
-import { Category, Make } from '@types';
+import { ToastService } from '@shared/components/toast/toast.service';
+import { ApiResponse, Category } from '@types';
+import { Subject, takeUntil } from 'rxjs';
 import { ArticleService } from '../../../../core/services/article.service';
 import { Article } from '../../article';
 
@@ -16,88 +18,42 @@ import { Article } from '../../article';
   templateUrl: './update-article-price.component.html',
   styleUrls: ['./update-article-price.component.css'],
 })
-export class UpdateArticlePriceComponent implements OnInit {
+export class UpdateArticlePriceComponent {
   @Input() articles: Article[];
   public updatePriceForm: UntypedFormGroup;
-  public alertMessage: string = '';
-  public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public makes: Make;
+  private destroy$ = new Subject<void>();
+
   public categories: Category;
   public optionUpdate: string = 'make';
   public decimal = 2;
-
-  public formErrors = {
-    optionUpdate: '',
-    percentage: '',
-    field: '',
-    decimal: '',
-  };
-
-  public validationMessages = {
-    optionUpdate: {
-      required: 'Este campo es requerido.',
-    },
-    percentage: {
-      required: 'Este campo es requerido.',
-    },
-    field: {
-      required: 'Este campo es requerido.',
-    },
-    decimal: {
-      required: 'Este campo es requerido.',
-    },
-  };
 
   constructor(
     public _articleService: ArticleService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
-  ) {}
-
-  ngOnInit(): void {
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
-    this.buildForm();
+    public _toastService: ToastService
+  ) {
+    this.updatePriceForm = this._fb.group({
+      optionUpdate: [this.optionUpdate, [Validators.required]],
+      percentage: [, []],
+      field: [, [Validators.required]],
+      fieldsIncrease: [, [Validators.required]],
+      decimal: [, [Validators.required]],
+      amount: [, []],
+    });
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
   }
 
-  public buildForm(): void {
-    this.updatePriceForm = this._fb.group({
-      optionUpdate: [this.optionUpdate, [Validators.required]],
-      percentage: [, [Validators.required]],
-      field: [, [Validators.required]],
-      decimal: [, [Validators.required]],
-    });
-
-    this.updatePriceForm.valueChanges.subscribe((data) => this.onValueChanged(data));
-
-    this.onValueChanged();
-  }
-
-  public onValueChanged(data?: any): void {
-    if (!this.updatePriceForm) {
-      return;
-    }
-    const form = this.updatePriceForm;
-
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
-        }
-      }
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
   public updatePrice(): void {
@@ -111,29 +67,25 @@ export class UpdateArticlePriceComponent implements OnInit {
     }
     const query = {
       articlesCode: articles,
-      percentage: this.updatePriceForm.value.percentage,
+      percentage:
+        this.updatePriceForm.value.fieldsIncrease === 'percentage' ? this.updatePriceForm.value.percentage : 0,
       field: this.updatePriceForm.value.field,
       decimal: this.updatePriceForm.value.decimal,
+      amount: this.updatePriceForm.value.fieldsIncrease === 'amount' ? this.updatePriceForm.value.amount : 0,
     };
-    this._articleService.updatePrices(query.articlesCode, query.field, query.decimal, query.percentage).subscribe(
-      (result) => {
-        this.showMessage(result.message, 'success', false);
-        this.loading = false;
-      },
-      (error) => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage(): void {
-    this.alertMessage = '';
+    this._articleService
+      .updatePrices(query.articlesCode, query.field, query.decimal, query.percentage, query.amount)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this._toastService.showToast(result);
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 }

@@ -208,7 +208,13 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public updatePrices(articlesCode: string[], field: PriceType, decimal: number, percentage: number): Observable<any> {
+  public updatePrices(
+    articlesCode: string[],
+    field: PriceType,
+    decimal: number,
+    percentage: number,
+    amount: number
+  ): Observable<any> {
     const URL = `${environment.apiv2}/articles/update-prices`;
 
     const headers = new HttpHeaders()
@@ -218,7 +224,7 @@ export class ArticleService extends ModelService {
     return this._http
       .post(
         URL,
-        { articlesCode, field, decimal, percentage },
+        { articlesCode, field, decimal, percentage, amount },
         {
           headers: headers,
         }
