@@ -34,11 +34,20 @@
       </app-multi-select-dropdown>
     </div>
 
-    <div class="form-group ml-auto">
-      <label class="control-label"> </label>
-      <button class="btn btn-primary" (click)="getReport()">
-        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
-      </button>
+    <div class="row form-group ml-auto">
+      <div class="col-md-6">
+        <button type="button" class="btn btn-warning" (click)="onAdjust($event)" [disabled]="loading">
+          <i class="fa fa-adjust"></i>
+          <span>Ajustar</span>
+        </button>
+      </div>
+
+      <div class="col-md-6">
+        <button class="btn btn-primary" (click)="getReport()">
+          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i>
+          {{ 'refresh' | translate | capitalize }}
+        </button>
+      </div>
     </div>
   </div>
 
@@ -59,7 +68,6 @@
     [(sorting)]="sort"
     (sortingChange)="onSortingChange($event)"
     (eventExport)="onExportExcel($event)"
-    (eventAdjust)="onAdjust($event)"
   >
   </app-data-table-reports>
 </section>

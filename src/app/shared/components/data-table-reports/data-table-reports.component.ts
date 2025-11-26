@@ -29,7 +29,6 @@ export class DataTableReportsComponent implements OnInit {
   @Input() sorting: { column: string; direction: string };
   @Output() sortingChange = new EventEmitter<{ column: string; direction: string }>();
   @Output() eventExport = new EventEmitter<boolean>();
-  @Output() eventAdjust = new EventEmitter<boolean>();
   @Output() eventFunction = new EventEmitter<{
     op: string;
     obj: any;
@@ -38,10 +37,6 @@ export class DataTableReportsComponent implements OnInit {
 
   public exportItems(): void {
     this.eventExport.emit(true);
-  }
-
-  public adjustItems(): void {
-    this.eventAdjust.emit(true);
   }
 
   constructor(private _title: Title) {}
