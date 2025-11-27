@@ -444,7 +444,7 @@ export class TransactionType extends Model {
         align: 'left',
       },
       {
-        name: 'requestEmailTemaplte',
+        name: 'requestEmailTemplate',
         filter: true,
         datatype: 'boolean',
         align: 'left',
