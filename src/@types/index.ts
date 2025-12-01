@@ -43,13 +43,13 @@ export { State } from './entities/state.interface';
 export { Structure, Utilization } from './entities/structure.interface';
 export { Table, TableState } from './entities/table.interface';
 export { Tax, TaxBase, TaxClassification, Taxes, TaxType } from './entities/tax.interface';
-export { TransactionType } from './entities/transaction-type.interface';
+export { CurrentAccount, TransactionType } from './entities/transaction-type.interface';
 export {
   Transaction,
   TransactionMovement,
   TransactionState,
   TransactionStateTiendaNube,
-  TransactionStatusWooCommerce
+  TransactionStatusWooCommerce,
 } from './entities/transaction.interface';
 export { Transport } from './entities/transport.interface';
 export { UnitOfMeasurement } from './entities/unit-of-measurement.interface';
@@ -70,4 +70,3 @@ export { FormField } from './common/form-field.interface';
 export { MediaCategory } from './common/media-category.enum';
 export { PrintType } from './common/print-type';
 export { IService } from './common/service.interface';
-
