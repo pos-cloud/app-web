@@ -1224,7 +1224,7 @@ export class PointOfSaleComponent implements OnInit {
                   this.transaction.type.currentAccount === CurrentAccount.Charge &&
                   this.transaction.type.electronics
                 ) {
-                  this.validateAfipCobro();
+                  this.validateArcaCharge();
                 }
               } else {
                 this.refresh();
@@ -1504,33 +1504,26 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  validateAfipCobro() {
+  validateArcaCharge() {
     if (
       this.transaction.type.transactionMovement === TransactionMovement.Sale ||
       this.transaction.type.currentAccount === CurrentAccount.Charge
     ) {
+      if (!this.transaction.type.electronics && !this.transaction.CAE) {
+        return;
+      }
+      if (this.transaction.type.fixedLetter !== this.transaction.letter) {
+        this.assignTransactionNumber();
+      }
+
       if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
         this.transaction.origin = this.transaction.type.fixedOrigin;
       }
 
-      if (this.transaction.type.electronics) {
-        if (this.config['country'] === 'AR') {
-          if (!this.transaction.CAE) {
-            this.validateElectronicTransactionAR();
-          } else {
-            return; //SE FINALIZA POR ERROR EN LA FE
-          }
-        } else {
-          this.showMessage('Facturación electrónica no esta habilitada para tu país.', 'info', true);
-        }
-      } else if (this.transaction.type.electronics && this.transaction.CAE) {
-        return; //SE FINALIZA POR ERROR EN LA FE
+      if (this.config['country'] === 'AR') {
+        this.validateElectronicTransactionAR();
       } else {
-        if (this.transaction.type.fixedLetter !== this.transaction.letter) {
-          this.assignTransactionNumber();
-        } else {
-          return;
-        }
+        this.showMessage('Facturación electrónica no esta habilitada para tu país.', 'info', true);
       }
     } else {
       return;
