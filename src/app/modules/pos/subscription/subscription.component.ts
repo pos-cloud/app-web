@@ -79,6 +79,7 @@ export class SubscriptionComponent implements OnInit {
       'type.name': 1,
       'type.transactionMovement': 1,
       'type.automaticCreation': 1,
+      'type.electronics': 1,
       'type._id': 1,
       'company.name': 1,
       'company._id': 1,
@@ -245,7 +246,12 @@ export class SubscriptionComponent implements OnInit {
 
     for (let transactionId of transactionsIds) {
       this.transaction = this.transactions.find((data) => data._id === transactionId);
-      await this.validateElectronicTransactionAR();
+      if (this.transaction.type.electronics) {
+        await this.validateElectronicTransactionAR();
+      } else {
+        this.transaction.state = TransactionState.Closed;
+        this.updateTransaction();
+      }
     }
   }
 
