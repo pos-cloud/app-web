@@ -104,7 +104,7 @@ export class LoginComponent {
               });
             } else {
               this._toastService.showToast({
-                message: 'El usuario y/o contraseña son incorrectos',
+                message: 'El usuario no tiene un empleado asociado.',
                 type: 'info',
               });
             }

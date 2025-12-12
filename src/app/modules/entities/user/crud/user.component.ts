@@ -87,7 +87,7 @@ export class UserComponent implements OnInit {
       state: [UserState.Enabled, [Validators.required]],
 
       origin: [null, []],
-      employee: [null, []],
+      employee: [null, [Validators.required]],
       company: [null, []],
       printers: this._fb.array([]),
       shortcuts: this._fb.array([]),
@@ -204,7 +204,7 @@ export class UserComponent implements OnInit {
       level: this.user?.level ?? 99,
     };
 
-    if (this.user.shortcuts && this.user.shortcuts.length > 0) {
+    if (this.user?.shortcuts && this.user?.shortcuts?.length > 0) {
       let shortcuts = <UntypedFormArray>this.userForm.controls.shortcuts;
       this.user.shortcuts.forEach((x) => {
         shortcuts.push(
@@ -217,7 +217,7 @@ export class UserComponent implements OnInit {
       });
     }
 
-    if (this.user.printers && this.user.printers.length > 0) {
+    if (this.user?.printers && this.user?.printers?.length > 0) {
       let printers = <UntypedFormArray>this.userForm.controls.printers;
       this.user.printers.forEach((x) => {
         printers.push(
