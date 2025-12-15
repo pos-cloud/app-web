@@ -46,9 +46,8 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="loading">
-        <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
-        <span *ngIf="!loading">Enviar</span>
-        <span *ngIf="loading">Espere por favor</span>
+        <i *ngIf="loading" class="fa fa-spinner fa-spin me-2"></i>
+        <span>{{ loading ? 'Espere por favor' : 'Enviar' }}</span>
       </button>
     </div>
   </form>
