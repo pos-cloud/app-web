@@ -9,95 +9,94 @@ import { DatatableModule } from 'app/components/datatable/datatable.module';
   selector: 'app-list-vat-condition',
   templateUrl: './list-vat-condition.component.html',
   standalone: true,
-   imports: [DatatableModule],
+  imports: [DatatableModule],
 })
 export class ListVatConditionComponent {
   public title: string = 'vat-condition';
   public sort = { code: 1 };
   public columns: IAttribute[] = [
-     
-      {
-        name: 'code',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'number',
-        project: null,
-        align: 'left',
-        required: true,
-      },
-      {
-        name: 'description',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: true,
-      },
-       {
-        name: 'descriminate',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'boolean',
-        project: null,
-        align: 'left',
-        required: true,
-      },
-       {
-        name: 'transactionLetter',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: true,
-      },
-           {
-        name: 'observation',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: true,
-      },
-      {
-        name: 'creationDate',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'date',
-        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'updateDate',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'date',
-        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'operationType',
-        visible: false,
-        disabled: true,
-        filter: false,
-        datatype: 'string',
-        defaultFilter: `{ "$ne": "D" }`,
-        project: null,
-        align: 'left',
-        required: true,
-      },
-    ];
+    {
+      name: 'code',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'number',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'description',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'discriminate',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'transactionLetter',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'observation',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'creationDate',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'date',
+      project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'updateDate',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'date',
+      project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'operationType',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: `{ "$ne": "D" }`,
+      project: null,
+      align: 'left',
+      required: true,
+    },
+  ];
   public rowButtons: IButton[] = [
     {
       title: 'view',
@@ -135,10 +134,7 @@ export class ListVatConditionComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(
-    public _service: VATConditionService,
-        private _router: Router,
-  ) {}
+  constructor(public _service: VATConditionService, private _router: Router) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);
@@ -146,7 +142,7 @@ export class ListVatConditionComponent {
 
   public async openModal(op: string, obj: any) {
     switch (op) {
-       case 'view':
+      case 'view':
         this._router.navigateByUrl('entities/vat-condition/view/' + obj._id);
         break;
       case 'add':
