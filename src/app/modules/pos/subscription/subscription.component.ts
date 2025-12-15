@@ -13,6 +13,7 @@ import { ViewTransactionComponent } from 'app/components/transaction/view-transa
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ApplyVatPeriodComponent } from '../../../shared/components/apply-vat-period/apply-vat-period.component';
 
 @Component({
   selector: 'app-subscription',
@@ -75,6 +76,7 @@ export class SubscriptionComponent implements OnInit {
       balance: 1,
       state: 1,
       madein: 1,
+      VATPeriod: 1,
       operationType: 1,
       'type.name': 1,
       'type.transactionMovement': 1,
@@ -145,28 +147,16 @@ export class SubscriptionComponent implements OnInit {
   }
 
   public generateSubscriptions(): void {
-    this.loading = true;
+    let modalRef;
+    modalRef = this._modalService.open(ApplyVatPeriodComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
 
-    this.subscription.add(
-      this._transactionService
-        .generateSubscriptions()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this._toastService.showToast(result);
-            if (result.status === 200) {
-              this.getTransactions();
-            }
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-            this.loading = false;
-          },
-          complete: () => {
-            this.loading = false;
-          },
-        })
-    );
+    modalRef.result.then(() => {
+      this.refresh();
+      this.loading = false;
+    });
   }
 
   public refresh(): void {

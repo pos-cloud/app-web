@@ -345,14 +345,14 @@ export class TransactionService extends ModelService {
       );
   }
 
-  public generateSubscriptions(): Observable<any> {
+  public generateSubscriptions(vatPeriod): Observable<any> {
     const URL = `${environment.apiv2}/transactions/subscription`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    return this._http.post(URL, {}, { headers: headers }).pipe(
+    return this._http.post(URL, { vatPeriod }, { headers: headers }).pipe(
       map((res) => {
         return res;
       }),

@@ -23,6 +23,7 @@
             <tr>
               <th width="70"></th>
               <th>Fecha</th>
+              <th>período</th>
               <th>Tipo de transacción</th>
               <th>Número</th>
               <th>Letra</th>
@@ -44,6 +45,9 @@
               </td>
               <td>
                 {{ transaction.startDate | dateFormat : 'DD/MM/YYYY HH:mm' }}
+              </td>
+              <td>
+                {{ transaction?.VATPeriod }}
               </td>
               <td>
                 {{ transaction.type.name }}
