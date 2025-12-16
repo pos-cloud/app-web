@@ -236,11 +236,12 @@ export class SubscriptionComponent implements OnInit {
 
     for (let transactionId of transactionsIds) {
       this.transaction = this.transactions.find((data) => data._id === transactionId);
-      if (this.transaction.type.electronics) {
+      if (this.transaction?.type?.electronics) {
         await this.validateElectronicTransactionAR();
       } else {
         this.transaction.state = TransactionState.Closed;
         this.updateTransaction();
+        this.selectedTransactions.clear();
       }
     }
   }
@@ -260,9 +261,10 @@ export class SubscriptionComponent implements OnInit {
         } else {
           this._toastService.showToast(result);
         }
+        this.refresh();
+        this.selectedTransactions.clear();
         this.loading = false;
         this.loadingAfip = false;
-        this.refresh();
       },
       (error) => {
         this._toastService.showToast(error);
@@ -277,6 +279,7 @@ export class SubscriptionComponent implements OnInit {
       this._transactionService.update(this.transaction).subscribe(
         (result: ApiResponse) => {
           if (result.status === 200) {
+            this.refresh();
             resolve(result.result);
           } else {
             this._toastService.showToast(result);
