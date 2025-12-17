@@ -219,7 +219,7 @@ export class ListCashBoxesComponent implements OnInit {
           }
         },
         error: (error) => {
-          this._toastService.showToast({ message: 'Error al generar el PDF' });
+          this._toastService.showToast(error);
         },
         complete: () => {
           this.loading = false;

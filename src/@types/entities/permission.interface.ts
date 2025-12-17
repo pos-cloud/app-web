@@ -32,6 +32,9 @@ export interface Permission extends Activity {
       delete: boolean;
       export: boolean;
     };
+    boxes: {
+      print: boolean;
+    };
   };
 
   menu: {

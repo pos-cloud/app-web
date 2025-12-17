@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 
@@ -35,7 +35,7 @@ export class PermissionComponent implements OnInit {
     private _service: PermissionService,
     private _transactionTypeService: TransactionTypeService,
     private _router: Router,
-    private _route: ActivatedRoute,
+
     private _fb: FormBuilder,
     private _toast: ToastService
   ) {
@@ -66,6 +66,9 @@ export class PermissionComponent implements OnInit {
           edit: [true],
           delete: [true],
           export: [true],
+        }),
+        boxes: this._fb.group({
+          print: [true],
         }),
       }),
       menu: this._fb.group({
@@ -184,6 +187,9 @@ export class PermissionComponent implements OnInit {
           edit: this.permission.collections?.movementsOfArticles?.edit ?? true,
           delete: this.permission.collections?.movementsOfArticles?.delete ?? true,
           export: this.permission.collections?.movementsOfArticles?.export ?? true,
+        },
+        boxes: {
+          print: this.permission.collections?.boxes?.print ?? true,
         },
       },
       menu: {

@@ -410,6 +410,17 @@
               <label class="form-check-label" for="movements_export">{{ 'export' | translate | capitalize }}</label>
             </div>
           </div>
+
+          <!-- Print Cash -->
+          <div class="mb-2">
+            <b>{{ 'boxes' | translate | capitalize }}</b>
+          </div>
+          <div formGroupName="boxes" class="d-flex flex-wrap mb-3">
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="boxes_print" formControlName="print" />
+              <label class="form-check-label" for="print">{{ 'print' | translate | capitalize }}</label>
+            </div>
+          </div>
         </div>
 
         <hr />

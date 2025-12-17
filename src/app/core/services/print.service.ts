@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { PrintType } from '@types';
@@ -25,8 +25,27 @@ export class PrintService {
         console.log(res);
         return res;
       }),
-      catchError((err) => {
-        return of(err);
+      catchError((err: HttpErrorResponse) => {
+        if (err.error instanceof Blob) {
+          return new Observable<Blob>((observer) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+              try {
+                const errorJson = JSON.parse(reader.result as string);
+                console.log(errorJson.message);
+
+                observer.error(errorJson);
+              } catch (e) {
+                observer.error(err);
+              }
+            };
+
+            reader.readAsText(err.error);
+          });
+        }
+
+        return throwError(() => err);
       })
     );
   }
