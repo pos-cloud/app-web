@@ -30,6 +30,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { CompanyCurrentAccountService } from '../../../core/services/company-current-account.service';
 import { CurrentAccountService } from './current-account.service';
 @Component({
   selector: 'app-current-account',
@@ -94,6 +95,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   constructor(
     private _service: CurrentAccountService,
     private _companyService: CompanyService,
+    private _companyCurrentAccountService: CompanyCurrentAccountService,
     private _router: Router,
     private _route: ActivatedRoute,
     private _modalService: NgbModal,
@@ -173,13 +175,16 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
 
   public getTotalOfAccountsByCompany(): void {
     // Esta consulta se ejecuta en paralelo, no afecta el loading principal
-    this._service
-      .getTotalOfAccountsByCompany(this.data)
+    this._companyCurrentAccountService
+      .getAll({
+        project: { 'company._id': 1, 'company.operationType': 1, balance: 1 },
+        match: { 'company._id': { $oid: this.companySelected._id }, 'company.operationType': { $ne: 'D' } },
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
           if (result.status === 200) {
-            this.totalPrice = result.result[0]?.totalPrice || 0;
+            this.totalPrice = result.result[0]?.balance || 0;
           }
         },
         error: (error) => {
@@ -243,56 +248,11 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
             this.hasInitialized = true;
             this.loading = false; // Solo aquí terminamos el loading
           } else {
-            if (this.isFirstTime && result?.result?.[0]?.count > 0) {
-              // CONSULTA 1: Primera vez - calcular total de páginas y obtener la última
-              const totalCount = result.result[0].count;
-              const totalPages = Math.ceil(totalCount / limit);
-              const lastPageSkip = (totalPages - 1) * limit;
-
-              // Actualizar la página actual
-              this.currentPage = totalPages;
-
-              // CONSULTA 2: Obtener datos de la última página
-              // El loading se mantiene activo durante esta segunda consulta
-              this.data = {
-                company: this.companySelected._id,
-                transactionMovement: this.transactionMovement,
-                skip: lastPageSkip,
-                limit,
-              };
-
-              // Llamar al servicio para la última página
-              this._service
-                .getPaymentMethodOfAccountsByCompany(this.data)
-                .pipe(takeUntil(this.destroy$))
-                .subscribe({
-                  next: (lastPageResult) => {
-                    if (lastPageResult.result.length) {
-                      this.items = lastPageResult.result[0].items;
-                      this.totalItems = lastPageResult.result[0].count;
-                    }
-                    this.isFirstTime = false;
-                    this.hasInitialized = true;
-                  },
-                  error: (error) => {
-                    this._toastService.showToast(error);
-                    this.items = [];
-                    this.totalItems = 0;
-                    this.isFirstTime = false;
-                    this.hasInitialized = true;
-                  },
-                  complete: () => {
-                    this.loading = false; // Aquí terminamos el loading de los comprobantes
-                  },
-                });
-              return; // Salir temprano para evitar el código siguiente
-            } else {
-              // Caso normal: no es la primera vez, mostrar datos de la página actual
-              this.items = result.result[0].items;
-              this.totalItems = result.result[0].count;
-              this.hasInitialized = true;
-              this.loading = false; // Terminar loading
-            }
+            // Caso normal: no es la primera vez, mostrar datos de la página actual
+            this.items = result.result[0].items;
+            this.totalItems = result.result[0].count;
+            this.hasInitialized = true;
+            this.loading = false; // Terminar loading
           }
         },
         error: (error) => {
