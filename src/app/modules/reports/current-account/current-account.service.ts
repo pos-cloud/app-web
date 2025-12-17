@@ -10,34 +10,10 @@ import { AuthService } from 'app/core/services/auth.service';
   providedIn: 'root',
 })
 export class CurrentAccountService {
-  constructor(
-    public _http: HttpClient,
-    public _authService: AuthService
-  ) {}
+  constructor(public _http: HttpClient, public _authService: AuthService) {}
 
   public getSummaryOfAccountsByCompany(data: {}): Observable<any> {
     const URL = `${environment.apiv2}/companies/details-of-accounts-by-company`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, data, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getTotalOfAccountsByCompany(data: {}): Observable<any> {
-    const URL = `${environment.apiv2}/companies/total-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
