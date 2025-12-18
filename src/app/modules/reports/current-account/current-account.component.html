@@ -148,20 +148,20 @@
                   <i class="fa fa-envelope"></i>
                 </button>
               </td>
-              <td class="align-center" *ngIf="item.endDate">
-                {{ item.endDate | dateFormat : 'DD/MM/YYYY' }}
+              <td class="align-center" *ngIf="item?.transaction?.endDate">
+                {{ item?.transaction?.endDate | dateFormat : 'DD/MM/YYYY' }}
               </td>
-              <td class="align-center" *ngIf="!item.startDate">
-                {{ item.startDate | dateFormat : 'DD/MM/YYYY' }}
+              <td class="align-center" *ngIf="!item?.transaction?.startDate">
+                {{ item?.transaction?.startDate | dateFormat : 'DD/MM/YYYY' }}
               </td>
-              <td *ngIf="item.transactionType">
-                {{ item.transactionType }}
+              <td *ngIf="item.transaction?.type?.name" class="align-center">
+                {{ item?.transaction?.type?.name }}
               </td>
               <td class="align-center">
-                {{ item.origin }}
+                {{ item?.transaction?.origin }}
               </td>
-              <td class="align-center">{{ item.letter }}</td>
-              <td class="align-center">{{ item.number }}</td>
+              <td class="align-center">{{ item?.transaction?.letter }}</td>
+              <td class="align-center">{{ item?.transaction?.number }}</td>
               <td class="align-left">
                 {{ item.paymentMethodName }}
               </td>
@@ -172,7 +172,7 @@
                 {{ item.paymentMethodExpirationDate | dateFormat : 'DD/MM/YYYY' }}
               </td>
               <td class="align-right">
-                {{ item.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item?.transaction?.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" [ngClass]="{ credit: item.debe > 0 }">
                 {{ item.debe | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
@@ -181,7 +181,7 @@
                 {{ item.haber | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" *ngIf="showBalanceOfTransactions">
-                {{ item.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item?.transaction?.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </tr>
             <tr align="center" *ngIf="items.length === 0 && !loading && hasInitialized">

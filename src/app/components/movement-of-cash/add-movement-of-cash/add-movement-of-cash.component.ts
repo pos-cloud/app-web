@@ -16,9 +16,7 @@ import { Config } from 'app/app.config';
 // COMPONENTS
 
 import { Bank, Currency, Holiday } from '@types';
-import { AccountSeatService } from 'app/core/services/account-seat.service';
 import { BankService } from 'app/core/services/bank.service';
-import { CompanyService } from 'app/core/services/company.service';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { HolidayService } from 'app/core/services/holiday.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
@@ -28,7 +26,6 @@ import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operato
 import Keyboard from 'simple-keyboard';
 
 import { ApiResponse } from '@types';
-import { CurrentAccountService } from 'app/modules/reports/current-account/current-account.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
@@ -40,7 +37,7 @@ import { MovementOfArticle } from '../../movement-of-article/movement-of-article
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { Tax } from '../../tax/tax';
 import { Taxes } from '../../tax/taxes';
-import { CurrentAccount, Movements, TransactionMovement } from '../../transaction-type/transaction-type';
+import { Movements } from '../../transaction-type/transaction-type';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
 import { MovementOfCash, StatusCheck } from '../movement-of-cash';
@@ -135,13 +132,10 @@ export class AddMovementOfCashComponent implements OnInit {
     private _transactionService: TransactionService,
     private _bankService: BankService,
     private _holidayService: HolidayService,
-    private _accountSeatService: AccountSeatService,
-    private _companyService: CompanyService,
     private _taxService: TaxService,
     private _movementOfArticleService: MovementOfArticleService,
     private _toastService: ToastService,
     private _currencyService: CurrencyService,
-    private _currencyAccountService: CurrentAccountService,
     public activeModal: NgbActiveModal,
     public _fb: UntypedFormBuilder,
     public alertConfig: NgbAlertConfig,
@@ -1656,32 +1650,28 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.movementOfCash.statusCheck = StatusCheck.Available;
               }
 
-              if (await this.validateCredit()) {
-                this.movementOfCash = await this.saveMovementOfCash();
-                if (this.transactionAmount !== this.transaction.totalPrice) {
-                  this.transaction.totalPrice = this.transactionAmount;
-                  if (this.transaction.type.requestArticles) {
-                    this.addMovementOfArticle();
-                  } else {
-                    this.transaction = await this.updateTransaction();
-                    if (this.keyboard) this.keyboard.setInput('');
-                    this.getMovementOfCashesByTransaction();
-                  }
+              this.movementOfCash = await this.saveMovementOfCash();
+              if (this.transactionAmount !== this.transaction.totalPrice) {
+                this.transaction.totalPrice = this.transactionAmount;
+                if (this.transaction.type.requestArticles) {
+                  this.addMovementOfArticle();
                 } else {
-                  this.movementsOfCashes = new Array();
-                  this.movementsOfCashes.push(this.movementOfCash);
-                  if (!this.fastPayment) {
-                    this.getMovementOfCashesByTransaction();
-                  } else {
-                    if (this.amountDiscount && this.amountDiscount !== 0) {
-                      this.addMovementOfArticle();
-                    } else {
-                      this.getMovementOfCashesByTransaction();
-                    }
-                  }
+                  this.transaction = await this.updateTransaction();
+                  if (this.keyboard) this.keyboard.setInput('');
+                  this.getMovementOfCashesByTransaction();
                 }
               } else {
-                this.activeModal.dismiss('close_click');
+                this.movementsOfCashes = new Array();
+                this.movementsOfCashes.push(this.movementOfCash);
+                if (!this.fastPayment) {
+                  this.getMovementOfCashesByTransaction();
+                } else {
+                  if (this.amountDiscount && this.amountDiscount !== 0) {
+                    this.addMovementOfArticle();
+                  } else {
+                    this.getMovementOfCashesByTransaction();
+                  }
+                }
               }
             } else {
               if (this.totalInterestAmount + this.totalTaxAmount > 0 && this.transaction.totalPrice !== 0) {
@@ -1741,7 +1731,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.transactionAmount = this.transaction.totalPrice;
           this.movementOfCash.amountPaid = this.transactionAmount;
 
-          if ((await this.isValidAmount()) && (await this.validateCredit())) {
+          if (await this.isValidAmount()) {
             this.movementOfCash = await this.saveMovementOfCash();
             if (this.transactionAmount !== this.transaction.totalPrice) {
               this.transaction.totalPrice = this.transactionAmount;
@@ -1798,63 +1788,6 @@ export class AddMovementOfCashComponent implements OnInit {
         },
         (error) => reject(error)
       );
-    });
-  }
-
-  validateCredit(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      try {
-        if (this.movementOfCash.type.isCurrentAccount && !this.transaction.company) {
-          this._toastService.showToast({
-            message: 'Debe seleccionar una empresa para este método de pago',
-            type: 'warning',
-          });
-          resolve(false);
-        }
-        if (
-          this.movementOfCash?.type?.isCurrentAccount &&
-          this.transaction?.company?.creditLimit > 0 &&
-          this.transaction.type.transactionMovement === TransactionMovement.Sale &&
-          this.transaction.type.currentAccount === CurrentAccount.Yes
-        ) {
-          let query = {
-            company: this.transaction?.company?._id,
-            transactionMovement: this.transaction?.type?.transactionMovement,
-          };
-          this._currencyAccountService.getTotalOfAccountsByCompany(JSON.stringify(query)).subscribe(
-            (result) => {
-              if (result.status === 200) {
-                let total = result.result[0]?.totalPrice ?? 0;
-                if (
-                  total > this.transaction?.company?.creditLimit ||
-                  this.movementOfCash?.amountPaid > this.transaction?.company?.creditLimit
-                ) {
-                  this._toastService.showToast({
-                    message: `El limite de credito es de ${
-                      this.transaction?.company?.creditLimit
-                    } y esta transaccion lo supera por ${
-                      this.transaction?.company?.creditLimit - this.movementOfCash?.amountPaid
-                    }`,
-                    type: 'warning',
-                  });
-                  resolve(false);
-                } else {
-                  resolve(true);
-                }
-              } else resolve(false);
-            },
-            (error) => {
-              this._toastService.showToast(error);
-              resolve(false);
-            }
-          );
-        } else {
-          resolve(true);
-        }
-      } catch (error) {
-        this._toastService.showToast(error);
-        resolve(false);
-      }
     });
   }
 
