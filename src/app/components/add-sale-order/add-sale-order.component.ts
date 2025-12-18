@@ -2077,6 +2077,7 @@ export class AddSaleOrderComponent {
             }
 
             this.updatePrices();
+            this.focusEvent.emit(true);
           }
         });
         break;
@@ -3472,11 +3473,13 @@ export class AddSaleOrderComponent {
                 this.lastQuotation = this.transaction.quotation;
               }
             });
+            this.focusEvent.emit(true);
           }
         }
       })
       .catch(() => {
         // Modal cerrado sin cambios
+        this.focusEvent.emit(true);
       });
   }
 
