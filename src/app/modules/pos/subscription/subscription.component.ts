@@ -33,6 +33,8 @@ export class SubscriptionComponent implements OnInit {
   public itemsPerPage = 10;
 
   public currentPage: number = 1;
+  public processingProgress: { current: number; total: number } | null = null;
+  public isProcessing: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
 
@@ -231,47 +233,140 @@ export class SubscriptionComponent implements OnInit {
       return;
     }
 
-    // Aquí puedes implementar la lógica para finalizar las transacciones seleccionadas
-    const transactionsIds = Array.from(this.selectedTransactions);
+    if (this.isProcessing) {
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Ya hay un proceso en ejecución',
+      });
+      return;
+    }
 
-    for (let transactionId of transactionsIds) {
-      this.transaction = this.transactions.find((data) => data._id === transactionId);
-      if (this.transaction?.type?.electronics) {
-        await this.validateElectronicTransactionAR();
-      } else {
-        this.transaction.state = TransactionState.Closed;
-        this.updateTransaction();
-        this.selectedTransactions.clear();
+    this.isProcessing = true;
+    const transactionsIds = Array.from(this.selectedTransactions);
+    const total = transactionsIds.length;
+    let processed = 0;
+    let hasError = false;
+
+    this.processingProgress = { current: 0, total };
+
+    try {
+      for (let i = 0; i < transactionsIds.length; i++) {
+        if (hasError) {
+          break;
+        }
+
+        const transactionId = transactionsIds[i];
+        this.transaction = this.transactions.find((data) => data._id === transactionId);
+
+        if (!this.transaction) {
+          continue;
+        }
+
+        this.processingProgress = { current: i + 1, total };
+
+        if (this.transaction?.type?.electronics) {
+          try {
+            const result = await this.validateElectronicTransactionAR();
+            if (!result.success) {
+              hasError = true;
+              // El error ya se mostró en validateElectronicTransactionAR, solo indicamos que se detuvo
+              this._toastService.showToast({
+                type: 'warning',
+                message: `El proceso se ha detenido debido a un error en la validación electrónica.`,
+              });
+              break;
+            }
+          } catch (error) {
+            hasError = true;
+            this._toastService.showToast({
+              type: 'danger',
+              message: `Error al validar transacción ${
+                this.transaction.number || transactionId
+              }. El proceso se ha detenido.`,
+            });
+            break;
+          }
+        } else {
+          try {
+            this.transaction.state = TransactionState.Closed;
+            await this.updateTransaction();
+          } catch (error) {
+            hasError = true;
+            this._toastService.showToast({
+              type: 'danger',
+              message: `Error al actualizar transacción ${
+                this.transaction.number || transactionId
+              }. El proceso se ha detenido.`,
+            });
+            break;
+          }
+        }
+
+        processed++;
+
+        // Permitir que la UI se actualice entre iteraciones
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
+
+      if (!hasError) {
+        this._toastService.showToast({
+          type: 'success',
+          message: `Se procesaron exitosamente ${processed} de ${total} transacciones`,
+        });
+      }
+
+      // Remover las transacciones procesadas exitosamente del set
+      if (processed > 0) {
+        const processedIds = transactionsIds.slice(0, processed);
+        processedIds.forEach((id) => this.selectedTransactions.delete(id));
+      }
+
+      this.refresh();
+    } catch (error) {
+      this._toastService.showToast({
+        type: 'danger',
+        message: 'Error inesperado durante el procesamiento',
+      });
+    } finally {
+      this.isProcessing = false;
+      this.processingProgress = null;
+      this.loading = false;
+      this.loadingAfip = false;
     }
   }
 
-  async validateElectronicTransactionAR() {
-    this.loadingAfip = true;
-    this.loading = true;
-    this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
-      (result: ApiResponse) => {
-        if (result.status === 200) {
-          const transactionResponse: Transaction = result.result;
-          this.transaction.CAE = transactionResponse.CAE;
-          this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
-          this.transaction.number = transactionResponse.number;
-          this.transaction.state = transactionResponse.state;
-          this.updateTransaction();
-        } else {
-          this._toastService.showToast(result);
+  async validateElectronicTransactionAR(): Promise<{ success: boolean; error?: any }> {
+    return new Promise((resolve) => {
+      this.loadingAfip = true;
+      this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
+        async (result: ApiResponse) => {
+          if (result.status === 200) {
+            const transactionResponse: Transaction = result.result;
+            this.transaction.CAE = transactionResponse.CAE;
+            this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
+            this.transaction.number = transactionResponse.number;
+            this.transaction.state = transactionResponse.state;
+
+            try {
+              await this.updateTransaction();
+              resolve({ success: true });
+            } catch (error) {
+              resolve({ success: false, error });
+            }
+          } else {
+            // Mostrar el toast como en el código original cuando el status no es 200
+            this._toastService.showToast(result);
+            resolve({ success: false, error: result });
+          }
+          this.loadingAfip = false;
+        },
+        (error) => {
+          this.loadingAfip = false;
+          this._toastService.showToast(error);
+          resolve({ success: false, error });
         }
-        this.refresh();
-        this.selectedTransactions.clear();
-        this.loading = false;
-        this.loadingAfip = false;
-      },
-      (error) => {
-        this._toastService.showToast(error);
-        this.loadingAfip = false;
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
   async updateTransaction(): Promise<Transaction> {
@@ -279,7 +374,6 @@ export class SubscriptionComponent implements OnInit {
       this._transactionService.update(this.transaction).subscribe(
         (result: ApiResponse) => {
           if (result.status === 200) {
-            this.refresh();
             resolve(result.result);
           } else {
             this._toastService.showToast(result);

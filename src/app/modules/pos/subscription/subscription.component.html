@@ -118,15 +118,20 @@
         </small>
       </div>
 
-      <div>
+      <div class="d-flex align-items-center">
         <button
           class="btn btn-success"
           (click)="finishSelected()"
-          [disabled]="loading || selectedTransactions.size === 0"
+          [disabled]="loading || selectedTransactions.size === 0 || isProcessing"
         >
           <i class="fa fa-check"></i>
           <span> Finalizar</span>
         </button>
+        <div *ngIf="processingProgress" class="ml-3">
+          <small class="text-muted">
+            Procesando: {{ processingProgress.current }} / {{ processingProgress.total }}
+          </small>
+        </div>
       </div>
     </div>
   </div>
@@ -137,5 +142,8 @@
       <span class="sr-only">Cargando...</span>
     </div>
     <p class="text-light mt-3">Validando comprobante con AFIP...</p>
+    <p *ngIf="processingProgress" class="text-light mt-2">
+      {{ processingProgress.current }} de {{ processingProgress.total }} comprobantes
+    </p>
   </div>
 </section>
