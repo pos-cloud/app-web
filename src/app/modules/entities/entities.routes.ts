@@ -187,4 +187,9 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'account-seat',
     loadChildren: () => import('./account-seat/account-seat.routes').then((m) => m.ACCOUNT_SER_ROUTES),
   },
+  {
+    path: 'movements-of-articles',
+    loadChildren: () =>
+      import('./movement-of-article/movement-of-article.routes').then((m) => m.MOVEMENT_OF_ARTICLE_ROUTES),
+  },
 ];

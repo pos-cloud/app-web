@@ -333,7 +333,6 @@
   "endDate": "Fecha Fin",
   "endDate2": "Fecha 2",
   "Entregado": "Para Retirar",
-
   "entryAmount": "Monto a editar",
   "entryDate": "Fecha de Alta",
   "exempt": "Exento",
@@ -466,6 +465,7 @@
   "movements-of-cash": "Movimiento de medio",
   "movements-of-cashes": "Movimientos de medios",
   "movementsOfArticles": "Movimientos de Artículos",
+  "movements-of-articles": "Movimientos de Artículos",
   "mov-art-by-category": "Categorias por tipo de transaccion",
   "must select payment method": "Debe seleccionar una moneda",
   "must select person": "Debe seleccionar una persona",
