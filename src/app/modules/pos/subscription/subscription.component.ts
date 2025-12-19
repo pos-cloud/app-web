@@ -1,33 +1,51 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { DatatableService } from '@core/services/datatable.service';
 import { TransactionService } from '@core/services/transaction.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ToastService } from '@shared/components/toast/toast.service';
+import { DateFormatPipe } from '@shared/pipes/date-format.pipe';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { ApiResponse, Transaction, TransactionMovement, TransactionState, User } from '@types';
+import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
+import { ApiResponse, Transaction, TransactionState, User } from '@types';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { ExportExcelComponent } from '../../../components/export/export-excel/export-excel.component';
 import { ApplyVatPeriodComponent } from '../../../shared/components/apply-vat-period/apply-vat-period.component';
+import { attributes } from './attributes-subscription';
 
 @Component({
   selector: 'app-subscription',
   templateUrl: './subscription.component.html',
   styleUrls: ['./subscription.component.scss'],
   standalone: true,
-  imports: [CommonModule, TranslateModule, ProgressbarModule, PipesModule, NgbModule],
   encapsulation: ViewEncapsulation.None,
+  imports: [CommonModule, NgbModule, DatatableModule, PipesModule, TranslateModule, FormsModule, ProgressbarModule],
 })
 export class SubscriptionComponent implements OnInit {
   public loading: boolean = false;
+  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
+
+  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
+  private subscription: Subscription = new Subscription();
+  dateFormat = new DateFormatPipe();
+  public _datatableService: DatatableService;
   public loadingAfip: boolean = false;
   public transactions: Transaction[] = [];
   public transaction;
+  public columns = attributes;
+  sort = { endDate: -1 };
+  totalItems: number = 0;
+  filters: any;
+
   public selectedTransactions: Set<string> = new Set();
   public user: User | any;
   public itemsPerPage = 10;
@@ -36,7 +54,7 @@ export class SubscriptionComponent implements OnInit {
   public processingProgress: { current: number; total: number } | null = null;
   public isProcessing: boolean = false;
   private destroy$ = new Subject<void>();
-  private subscription: Subscription = new Subscription();
+  saveFilters: boolean = true;
 
   constructor(
     private _transactionService: TransactionService,
@@ -52,7 +70,9 @@ export class SubscriptionComponent implements OnInit {
         this.user = identity;
       }
     });
-    this.getTransactions();
+    this._datatableService = new DatatableService(this._transactionService, this.columns);
+
+    this.processParams();
   }
 
   ngOnDestroy(): void {
@@ -61,91 +81,30 @@ export class SubscriptionComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public getTransactions(): void {
+  public async getItems() {
     this.loading = true;
 
-    let project = {
-      _id: 1,
-      startDate: 1,
-      endDate: 1,
-      origin: 1,
-      number: 1,
-      orderNumber: 1,
-      observation: 1,
-      totalPrice: 1,
-      letter: 1,
-      'type.isSubscription': 1,
-      balance: 1,
-      state: 1,
-      madein: 1,
-      VATPeriod: 1,
-      operationType: 1,
-      'type.name': 1,
-      'type.transactionMovement': 1,
-      'type.automaticCreation': 1,
-      'type.electronics': 1,
-      'type._id': 1,
-      'company.name': 1,
-      'company._id': 1,
-    };
-
-    let match = {
-      state: TransactionState.Open,
-      'type.isSubscription': true,
-      operationType: { $ne: 'D' },
-      madein: 'subscription',
-      'type.transactionMovement': TransactionMovement.Sale,
-    };
-
-    // Filtrar por usuario si tiene permisos de filtro
-    if (this.user?.permission?.filterTransaction) {
-      match['creationUser'] = { $oid: this.user._id };
-    }
-
-    // Filtrar por tipos de transacción si el usuario tiene permisos específicos
-    if (
-      this.user &&
-      this.user.permission &&
-      this.user.permission.transactionTypes &&
-      this.user.permission.transactionTypes.length > 0
-    ) {
-      let transactionTypes = [];
-      this.user.permission.transactionTypes.forEach((element) => {
-        transactionTypes.push({ $oid: element });
-      });
-      match['type._id'] = { $in: transactionTypes };
-    }
-
-    let sort = { startDate: -1 };
-
     this.subscription.add(
-      this._transactionService
-        .getTransactionsV2(
-          project, // PROJECT
-          match, // MATCH
-          sort, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            if (result && result.transactions) {
-              this.transactions = result.transactions;
+      await this._datatableService
+        .getItems(this.filters, this.currentPage, this.itemsPerPage, this.sort)
+        .then((result) => {
+          if (result.status === 200) {
+            if (result.result.length > 0) {
+              if (this.itemsPerPage === 0) {
+                this.itemsPerPage = 10;
+              } else {
+                this.transactions = result.result[0].items;
+                this.totalItems = result.result[0].count;
+              }
             } else {
               this.transactions = [];
+              this.totalItems = 0;
             }
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-            this.transactions = [];
-          },
-          complete: () => {
-            this.loading = false;
-          },
+          } else this._toastService.showToast(result);
         })
+        .catch((error) => this._toastService.showToast(error))
     );
+    this.loading = false;
   }
 
   public generateSubscriptions(): void {
@@ -161,45 +120,120 @@ export class SubscriptionComponent implements OnInit {
     });
   }
 
-  public refresh(): void {
-    this.getTransactions();
+  async validateElectronicTransactionAR() {
+    this.loadingAfip = true;
+    this.loading = true;
+    this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
+      (result: ApiResponse) => {
+        if (result.status === 200) {
+          const transactionResponse: Transaction = result.result;
+          this.transaction.CAE = transactionResponse.CAE;
+          this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
+          this.transaction.number = transactionResponse.number;
+          this.transaction.state = transactionResponse.state;
+          this.updateTransaction();
+        } else {
+          this._toastService.showToast(result);
+        }
+        this.refresh();
+        this.selectedTransactions.clear();
+        this.loading = false;
+        this.loadingAfip = false;
+      },
+      (error) => {
+        this._toastService.showToast(error);
+        this.loadingAfip = false;
+        this.loading = false;
+      }
+    );
   }
 
-  public openTransaction(transaction: Transaction): void {
-    // Navegar a editar la transacción
-    let route = '/pos/mostrador/editar-transaccion';
-
-    let queryParams = {
-      transactionId: transaction._id,
-      returnURL: this.removeParam(this._router.url, 'automaticCreation'),
-    };
-
-    if (transaction.type.automaticCreation) {
-      queryParams['automaticCreation'] = transaction.type._id;
-    }
-    this._router.navigate([route], {
-      queryParams,
+  async updateTransaction(): Promise<Transaction> {
+    return new Promise<Transaction>((resolve, reject) => {
+      this._transactionService.update(this.transaction).subscribe(
+        (result: ApiResponse) => {
+          if (result.status === 200) {
+            console.log(result);
+            this.refresh();
+            resolve(result.result);
+          } else {
+            this._toastService.showToast(result);
+            reject(result);
+          }
+        },
+        (error) => {
+          this._toastService.showToast(error);
+          reject(error);
+        }
+      );
     });
   }
 
-  private removeParam(sourceURL: string, key: string) {
-    let rtn = sourceURL.split('?')[0],
-      param,
-      params_arr = [],
-      queryString = sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
+  public refresh(): void {
+    this.getItems();
+  }
 
-    if (queryString !== '') {
-      params_arr = queryString.split('&');
-      for (let i = params_arr.length - 1; i >= 0; i -= 1) {
-        param = params_arr[i].split('=')[0];
-        if (param === key) {
-          params_arr.splice(i, 1);
-        }
-      }
-      rtn = rtn + '?' + params_arr.join('&');
+  public orderBy(term: string): void {
+    if (this.sort[term]) {
+      this.sort[term] *= -1;
+    } else {
+      this.sort = JSON.parse('{"' + term + '": 1 }');
     }
 
-    return rtn;
+    this.getItems();
+  }
+
+  public getValue(item, column): any {
+    let val: string = 'item';
+    let exists: boolean = true;
+    let value: any = '';
+
+    for (let a of column.name.split('.')) {
+      val += '.' + a;
+      if (exists && !eval(val)) {
+        exists = false;
+      }
+    }
+    if (exists) {
+      switch (column.datatype) {
+        case 'number':
+          value = this.roundNumberPipe.transform(eval(val));
+          break;
+        case 'currency':
+          value = this.currencyPipe.transform(
+            this.roundNumberPipe.transform(eval(val)),
+            'USD',
+            'symbol-narrow',
+            '1.2-2'
+          );
+          break;
+        case 'percent':
+          value = this.roundNumberPipe.transform(eval(val)) + '%';
+          break;
+        case 'date':
+          value = eval(val);
+          break;
+        default:
+          value = eval(val);
+          break;
+      }
+    }
+
+    return value;
+  }
+
+  private processParams(): void {
+    this.filters = {};
+
+    for (let field of this.columns) {
+      this.filters[field.name] = field.defaultFilter;
+    }
+    this.itemsPerPage = 10;
+    this.getItems();
+  }
+
+  public addFilters(): void {
+    this.getItems();
   }
 
   public toggleSelection(transactionId: string): void {
@@ -335,59 +369,6 @@ export class SubscriptionComponent implements OnInit {
     }
   }
 
-  async validateElectronicTransactionAR(): Promise<{ success: boolean; error?: any }> {
-    return new Promise((resolve) => {
-      this.loadingAfip = true;
-      this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
-        async (result: ApiResponse) => {
-          if (result.status === 200) {
-            const transactionResponse: Transaction = result.result;
-            this.transaction.CAE = transactionResponse.CAE;
-            this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
-            this.transaction.number = transactionResponse.number;
-            this.transaction.state = transactionResponse.state;
-
-            try {
-              await this.updateTransaction();
-              resolve({ success: true });
-            } catch (error) {
-              resolve({ success: false, error });
-            }
-          } else {
-            // Mostrar el toast como en el código original cuando el status no es 200
-            this._toastService.showToast(result);
-            resolve({ success: false, error: result });
-          }
-          this.loadingAfip = false;
-        },
-        (error) => {
-          this.loadingAfip = false;
-          this._toastService.showToast(error);
-          resolve({ success: false, error });
-        }
-      );
-    });
-  }
-
-  async updateTransaction(): Promise<Transaction> {
-    return new Promise<Transaction>((resolve, reject) => {
-      this._transactionService.update(this.transaction).subscribe(
-        (result: ApiResponse) => {
-          if (result.status === 200) {
-            resolve(result.result);
-          } else {
-            this._toastService.showToast(result);
-            reject(result);
-          }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          reject(error);
-        }
-      );
-    });
-  }
-
   public viewTransaction(transaction: Transaction): void {
     const modalRef = this._modalService.open(ViewTransactionComponent, {
       size: 'lg',
@@ -405,7 +386,7 @@ export class SubscriptionComponent implements OnInit {
     modalRef.result.then(
       (result) => {
         if (result === 'delete_close') {
-          this.getTransactions();
+          this.getItems();
         }
       },
       (reason) => {}
