@@ -1,7 +1,6 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { DatatableService } from '@core/services/datatable.service';
 import { TransactionService } from '@core/services/transaction.service';
@@ -16,8 +15,8 @@ import { ApiResponse, Transaction, TransactionState, User } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
-import { Subject, Subscription } from 'rxjs';
-import { ExportExcelComponent } from '../../../components/export/export-excel/export-excel.component';
+
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { ApplyVatPeriodComponent } from '../../../shared/components/apply-vat-period/apply-vat-period.component';
 import { attributes } from './attributes-subscription';
 
@@ -31,20 +30,20 @@ import { attributes } from './attributes-subscription';
 })
 export class SubscriptionComponent implements OnInit {
   public loading: boolean = false;
-  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
-
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
+  public datePipe = new DateFormatPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   private subscription: Subscription = new Subscription();
-  dateFormat = new DateFormatPipe();
   public _datatableService: DatatableService;
   public loadingAfip: boolean = false;
   public transactions: Transaction[] = [];
   public transaction;
   public columns = attributes;
-  sort = { endDate: -1 };
-  totalItems: number = 0;
-  filters: any;
+  public sort = { endDate: -1 };
+  public totalItems: number = 0;
+  public filters: any;
+  public processingProgress: { current: number; total: number } | null = null;
+  public isProcessing: boolean = false;
 
   public selectedTransactions: Set<string> = new Set();
   public user: User | any;
@@ -54,12 +53,10 @@ export class SubscriptionComponent implements OnInit {
   public processingProgress: { current: number; total: number } | null = null;
   public isProcessing: boolean = false;
   private destroy$ = new Subject<void>();
-  saveFilters: boolean = true;
 
   constructor(
     private _transactionService: TransactionService,
     private _authService: AuthService,
-    private _router: Router,
     private _modalService: NgbModal,
     private _toastService: ToastService
   ) {}
@@ -120,52 +117,25 @@ export class SubscriptionComponent implements OnInit {
     });
   }
 
-  async validateElectronicTransactionAR() {
-    this.loadingAfip = true;
-    this.loading = true;
-    this._transactionService.validateElectronicTransactionAR(this.transaction, null).subscribe(
-      (result: ApiResponse) => {
-        if (result.status === 200) {
-          const transactionResponse: Transaction = result.result;
-          this.transaction.CAE = transactionResponse.CAE;
-          this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
-          this.transaction.number = transactionResponse.number;
-          this.transaction.state = transactionResponse.state;
-          this.updateTransaction();
-        } else {
-          this._toastService.showToast(result);
-        }
-        this.refresh();
-        this.selectedTransactions.clear();
-        this.loading = false;
-        this.loadingAfip = false;
-      },
-      (error) => {
-        this._toastService.showToast(error);
-        this.loadingAfip = false;
-        this.loading = false;
-      }
-    );
-  }
-
   async updateTransaction(): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
-      this._transactionService.update(this.transaction).subscribe(
-        (result: ApiResponse) => {
-          if (result.status === 200) {
-            console.log(result);
-            this.refresh();
+      this._transactionService
+        .update(this.transaction)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            if (result.status !== 200) {
+              reject(result);
+            }
             resolve(result.result);
-          } else {
-            this._toastService.showToast(result);
-            reject(result);
-          }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          reject(error);
-        }
-      );
+          },
+          error: (error) => {
+            reject(error);
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
     });
   }
 
@@ -323,6 +293,7 @@ export class SubscriptionComponent implements OnInit {
         } else {
           try {
             this.transaction.state = TransactionState.Closed;
+
             await this.updateTransaction();
           } catch (error) {
             hasError = true;
@@ -367,6 +338,42 @@ export class SubscriptionComponent implements OnInit {
       this.loading = false;
       this.loadingAfip = false;
     }
+  }
+
+  async validateElectronicTransactionAR(): Promise<{ success: boolean; error?: any }> {
+    return new Promise((resolve) => {
+      this.loadingAfip = true;
+      this._transactionService
+        .validateElectronicTransactionAR(this.transaction, null)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: async (result: ApiResponse) => {
+            if (result.status === 200) {
+              const transactionResponse: Transaction = result.result;
+              this.transaction.CAE = transactionResponse.CAE;
+              this.transaction.CAEExpirationDate = transactionResponse.CAEExpirationDate;
+              this.transaction.number = transactionResponse.number;
+              this.transaction.state = transactionResponse.state;
+
+              resolve({ success: true });
+            } else {
+              // Mostrar el toast como en el código original cuando el status no es 200
+              this._toastService.showToast(result);
+              resolve({ success: false, error: result });
+            }
+            this.loadingAfip = false;
+          },
+          error: (error) => {
+            this.loadingAfip = false;
+            this._toastService.showToast(error);
+            resolve({ success: false, error });
+          },
+          complete: () => {
+            this.loading = false;
+            this.loadingAfip = false;
+          },
+        });
+    });
   }
 
   public viewTransaction(transaction: Transaction): void {
