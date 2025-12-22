@@ -9,7 +9,7 @@
         </button>
         <button class="btn" (click)="generateSubscriptions()" [disabled]="loading" title="Generar suscripciones">
           <i class="fa fa-plus"></i>
-          <span> Generar</span>
+          <span>Generar</span>
         </button>
       </div>
     </div>
@@ -21,81 +21,110 @@
         <table class="table table-striped table-hover">
           <thead>
             <tr>
-              <th width="70"></th>
-              <th>Fecha</th>
-              <th>período</th>
-              <th>Tipo de transacción</th>
-              <th>Número</th>
-              <th>Letra</th>
-              <th>Punto de venta</th>
-              <th>Cliente</th>
-              <th class="text-right">Precio Total</th>
-              <th>Estado</th>
+              <th>
+                <i class="fa fa-bars"></i>
+              </th>
+              <ng-container *ngFor="let column of columns">
+                <th *ngIf="column.visible" (click)="orderBy(column.name)">
+                  <i *ngIf="sort[column.name] === 1" class="fa fa-sort-up"></i>
+                  <i *ngIf="sort[column.name] === -1" class="fa fa-sort-down"></i>
+                  <i *ngIf="!sort[column.name]" class="fa fa-sort"></i>
+                  {{ column.name | translate | capitalize }}
+                </th>
+              </ng-container>
               <th>Acciones</th>
+            </tr>
+            <tr class="filters">
+              <th></th>
+              <ng-container *ngFor="let column of columns">
+                <th *ngIf="column.visible">
+                  <!-- Input para columnas sin defaultFilter -->
+                  <input
+                    *ngIf="!column.defaultFilter && column.datatype !== 'boolean'"
+                    type="text"
+                    class="form-control"
+                    [ngClass]="{
+                    disabled: loading,
+                    enabled: !loading,
+                    'has-data': filters[column.name],
+                  }"
+                    [(ngModel)]="filters[column.name]"
+                    (keydown.enter)="addFilters()"
+                    placeholder="{{ column.name | translate }}"
+                    [disabled]="!column.filter || loading"
+                  />
+
+                  <!-- Select para columnas booleanas -->
+                  <select
+                    class="form-control"
+                    *ngIf="column.datatype === 'boolean'"
+                    [(ngModel)]="filters[column.name]"
+                    (change)="addFilters()"
+                  >
+                    <option
+                      value=""
+                      [ngClass]="{ disabled: loading, enabled: !loading }"
+                      [disabled]="!column.filter || loading"
+                    >
+                      {{ 'select filter' | translate | capitalize }}
+                    </option>
+                    <option
+                      [value]="true"
+                      [ngClass]="{ disabled: loading, enabled: !loading }"
+                      [disabled]="!column.filter || loading"
+                    >
+                      {{ 'true' | translate | capitalize }}
+                    </option>
+                    <option
+                      [value]="false"
+                      [ngClass]="{ disabled: loading, enabled: !loading }"
+                      [disabled]="!column.filter || loading"
+                    >
+                      {{ 'false' | translate | capitalize }}
+                    </option>
+                  </select>
+                </th>
+              </ng-container>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of transactions">
-              <td>
-                <input
-                  type="checkbox"
-                  [checked]="isSelected(transaction._id)"
-                  (change)="toggleSelection(transaction._id)"
-                />
+            <tr>
+              <td
+                *ngIf="loading"
+                [attr.colspan]="_datatableService.getColumnsVisibles() + 1"
+                style="padding: 0px; height: 5px"
+              >
+                <app-progressbar [loading]="loading"></app-progressbar>
               </td>
+            </tr>
+            <tr *ngFor="let item of transactions">
               <td>
-                {{ transaction.startDate | dateFormat : 'DD/MM/YYYY HH:mm' }}
+                <input type="checkbox" [checked]="isSelected(item._id)" (change)="toggleSelection(item._id)" />
               </td>
+              <ng-container *ngFor="let column of columns">
+                <td
+                  *ngIf="column.visible && column.datatype !== 'boolean'"
+                  [attr.align]="column.align"
+                  (click)="onRowClick(item)"
+                >
+                  {{ getValue(item, column) }}
+                </td>
+                <td *ngIf="column.visible && column.datatype === 'boolean'" [attr.align]="column.align">
+                  <input type="checkbox" [checked]="getValue(item, column)" disabled />
+                </td>
+              </ng-container>
               <td>
-                {{ transaction?.VATPeriod }}
-              </td>
-              <td>
-                {{ transaction.type.name }}
-              </td>
-              <td>
-                <b>{{ transaction.number }}</b>
-              </td>
-              <td>
-                <b>{{ transaction.letter }}</b>
-              </td>
-              <td>
-                <b>{{ transaction.origin }}</b>
-              </td>
-              <td>
-                {{ transaction.company?.name || '-' }}
-              </td>
-
-              <td class="text-right">
-                {{ transaction.totalPrice | currency }}
-              </td>
-              <td>
-                <span class="badge badge-info">{{ transaction.state }}</span>
-              </td>
-              <td>
-                <button type="button" class="btn btn-sm btn-success" (click)="viewTransaction(transaction)" title="Ver">
+                <button type="button" class="btn btn-sm btn-success" (click)="viewTransaction(item)" title="Ver">
                   <i class="fa fa-eye"></i>
                 </button>
-                <!-- <button
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  (click)="openTransaction(transaction)"
-                  title="Editar"
-                >
-                  <i class="fa fa-edit"></i>
-                </button> -->
-                <button
-                  type="button"
-                  class="btn btn-sm btn-danger"
-                  (click)="deleteTransaction(transaction)"
-                  title="Eliminar"
-                >
+                <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction(item)" title="Eliminar">
                   <i class="fa fa-trash"></i>
                 </button>
               </td>
             </tr>
-            <tr *ngIf="!transactions || transactions.length === 0">
-              <td colspan="10" class="text-center">
-                <span *ngIf="!loading">Aún no hay suscripciones abiertas</span>
+            <tr align="center" *ngIf="totalItems === 0 && !loading">
+              <td [attr.colspan]="_datatableService.getColumnsVisibles() + 1">
+                {{ 'no data found' | translate | capitalize }}
               </td>
             </tr>
           </tbody>
@@ -134,16 +163,5 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- 🔹 Overlay de carga -->
-  <div class="loading-overlay" *ngIf="loadingAfip">
-    <div class="spinner-border text-light" role="status" style="width: 4rem; height: 4rem">
-      <span class="sr-only">Cargando...</span>
-    </div>
-    <p class="text-light mt-3">Validando comprobante con AFIP...</p>
-    <p *ngIf="processingProgress" class="text-light mt-2">
-      {{ processingProgress.current }} de {{ processingProgress.total }} comprobantes
-    </p>
   </div>
 </section>

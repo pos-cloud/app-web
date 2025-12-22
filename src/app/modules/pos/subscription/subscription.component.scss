@@ -1,24 +1,17 @@
 // Estilos mínimos - usando principalmente clases de Bootstrap
-.card-body {
-  max-height: 600px;
-  overflow-y: auto;
-  padding: 0;
+app-subscription {
+  .card-body {
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 0;
 
-  .table-responsive {
-    margin: 0;
+    .table-responsive {
+      margin: 0;
+    }
   }
-}
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 1050;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(2px);
+
+  .has-data {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
 }
