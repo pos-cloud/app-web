@@ -423,6 +423,7 @@ export class ArticleComponent implements OnInit {
       width: this.article?.width ?? '',
       height: this.article?.height ?? '',
       depth: this.article?.depth ?? '',
+      m3: this.article?.m3 ?? '',
       showMenu: this.article?.showMenu ?? false,
       tiendaNubeId: this.article?.tiendaNubeId ?? null,
       wooId: this.article?.wooId ?? null,
