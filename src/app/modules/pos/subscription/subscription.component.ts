@@ -50,8 +50,6 @@ export class SubscriptionComponent implements OnInit {
   public itemsPerPage = 10;
 
   public currentPage: number = 1;
-  public processingProgress: { current: number; total: number } | null = null;
-  public isProcessing: boolean = false;
   private destroy$ = new Subject<void>();
 
   constructor(
