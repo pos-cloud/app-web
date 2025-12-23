@@ -339,15 +339,6 @@ export class ConfigComponent implements OnInit {
       'company.accountClient.default': [this.config.company.accountClient.default, []],
       'company.accountProvider.default': [this.config.company.accountProvider.default, []],
       'cashBox.perUser': [this.config.cashBox.perUser, []],
-      'reports.summaryOfAccounts.detailsPaymentMethod': [
-        this.config.reports.summaryOfAccounts.detailsPaymentMethod,
-        [],
-      ],
-      'reports.summaryOfAccounts.invertedViewClient': [this.config.reports.summaryOfAccounts.invertedViewClient, []],
-      'reports.summaryOfAccounts.invertedViewProvider': [
-        this.config.reports.summaryOfAccounts.invertedViewProvider,
-        [],
-      ],
       'tradeBalance.codePrefix': [this.config.tradeBalance.codePrefix, []],
       'tradeBalance.numberOfCode': [this.config.tradeBalance.numberOfCode, []],
       'tradeBalance.numberOfQuantity': [this.config.tradeBalance.numberOfQuantity, []],
@@ -670,10 +661,7 @@ export class ConfigComponent implements OnInit {
     if (this.config.company.allowCurrentAccountClient.default === undefined)
       this.config.company.allowCurrentAccountClient.default = false;
     if (this.config.cashBox.perUser === undefined) this.config.cashBox.perUser = false;
-    if (this.config.reports.summaryOfAccounts.invertedViewClient === undefined)
-      this.config.reports.summaryOfAccounts.invertedViewClient = false;
-    if (this.config.reports.summaryOfAccounts.invertedViewProvider === undefined)
-      this.config.reports.summaryOfAccounts.invertedViewProvider = false;
+
     if (this.config.tradeBalance.codePrefix === undefined) this.config.tradeBalance.codePrefix = 0;
     if (this.config.tradeBalance.numberOfCode === undefined) this.config.tradeBalance.numberOfCode = 4;
     if (this.config.tradeBalance.numberOfQuantity === undefined) this.config.tradeBalance.numberOfQuantity = 2;
@@ -762,9 +750,6 @@ export class ConfigComponent implements OnInit {
       'company.accountClient.default': this.config.company.accountClient.default,
       'company.accountProvider.default': this.config.company.accountProvider.default,
       'cashBox.perUser': this.config.cashBox.perUser,
-      'reports.summaryOfAccounts.detailsPaymentMethod': this.config.reports.summaryOfAccounts.detailsPaymentMethod,
-      'reports.summaryOfAccounts.invertedViewClient': this.config.reports.summaryOfAccounts.invertedViewClient,
-      'reports.summaryOfAccounts.invertedViewProvider': this.config.reports.summaryOfAccounts.invertedViewProvider,
       'tradeBalance.codePrefix': this.config.tradeBalance.codePrefix,
       'tradeBalance.numberOfCode': this.config.tradeBalance.numberOfCode,
       'tradeBalance.numberOfQuantity': this.config.tradeBalance.numberOfQuantity,
