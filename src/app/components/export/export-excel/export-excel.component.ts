@@ -8,8 +8,7 @@ import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 
-const EXCEL_TYPE =
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 
 @Component({
@@ -33,13 +32,13 @@ export class ExportExcelComponent {
 
     for (let i = 0; i < this.items.length; i++) {
       const item = this.items[i];
+      if (item?.observation) {
+        item.observation = item.observation.replace(/<[^>]*>/g, '');
+      }
       data[i] = {};
       for (let column of this.columns) {
         if (column.visible) {
-          data[i][this._translatePipe.transform(column.name)] = this.getValue(
-            item,
-            column
-          );
+          data[i][this._translatePipe.transform(column.name)] = this.getValue(item, column);
         }
       }
     }
