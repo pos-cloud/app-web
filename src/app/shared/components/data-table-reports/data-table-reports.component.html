@@ -23,7 +23,7 @@
             <i class="fa fa-bars"></i>
           </th>
           <ng-container *ngFor="let column of columns">
-            <th (click)="changeSorting(column)">
+            <th (click)="changeSorting(column)" *ngIf="column.show !== false">
               <b>
                 {{ column.label | translate | capitalize }}
                 <i
@@ -60,9 +60,11 @@
               <i [class]="button.icon"></i>
             </button>
           </td>
-          <td *ngFor="let column of columns">
-            {{ item?.[column.label] | dynamicFormat: column.dataType }}
-          </td>
+          <ng-container *ngFor="let column of columns">
+            <td *ngIf="column.show !== false">
+              {{ item?.[column.label] | dynamicFormat: column.dataType }}
+            </td>
+          </ng-container>
         </tr>
 
         <tr align="center" *ngIf="(!data || data.length === 0) && !loading">
