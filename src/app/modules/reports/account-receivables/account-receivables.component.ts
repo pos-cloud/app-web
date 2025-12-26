@@ -4,9 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { CompanyType } from '@types';
+import { CompanyCurrentAccountService } from 'app/core/services/company-current-account.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
@@ -26,7 +26,6 @@ import { takeUntil } from 'rxjs/operators';
     TranslateModule,
     PipesModule,
     DataTableReportsComponent,
-    MultiSelectDropdownComponent,
     DateTimePickerComponent,
   ],
 })
@@ -52,6 +51,7 @@ export class AccountReceivablesComponent implements OnInit {
 
   constructor(
     private _service: ReportSystemService,
+    private _companyCurrentAccountService: CompanyCurrentAccountService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
     private _activatedRoute: ActivatedRoute,
@@ -144,6 +144,30 @@ export class AccountReceivablesComponent implements OnInit {
             } catch (e) {
               this._toastService.showToast({ message: 'Error al generar el Excel' });
             }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
+  }
+
+  public onAdjust(event): void {
+    this.loading = true;
+
+    this.subscription.add(
+      this._companyCurrentAccountService
+        .recalculate()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            this._toastService.showToast(result);
+            // Refrescar el reporte después del ajuste
+            this.getReport();
           },
           error: (error) => {
             this._toastService.showToast(error);

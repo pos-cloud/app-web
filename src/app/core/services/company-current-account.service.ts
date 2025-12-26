@@ -1,5 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
 import { ModelService } from './model.service';
@@ -14,5 +16,30 @@ export class CompanyCurrentAccountService extends ModelService {
       _http,
       _authService
     );
+  }
+
+  public recalculate(): Observable<any> {
+    const URL = `${this.URL}/recalculate`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .put(
+        URL,
+        {},
+        {
+          headers: headers,
+        }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
   }
 }
