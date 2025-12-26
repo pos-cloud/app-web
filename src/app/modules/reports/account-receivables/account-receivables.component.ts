@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { CompanyType } from '@types';
+import { CompanyType, IButton } from '@types';
 import { CompanyCurrentAccountService } from 'app/core/services/company-current-account.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -48,7 +48,14 @@ export class AccountReceivablesComponent implements OnInit {
     column: 'total',
     direction: 'desc',
   };
-
+  public rowButtons: IButton[] = [
+    {
+      title: 'current-account2',
+      class: 'btn btn-light btn-sm',
+      icon: 'fa fa-address-book',
+      click: `current-account2`,
+    },
+  ];
   constructor(
     private _service: ReportSystemService,
     private _companyCurrentAccountService: CompanyCurrentAccountService,
@@ -178,5 +185,11 @@ export class AccountReceivablesComponent implements OnInit {
           },
         })
     );
+  }
+
+  public onEventFunction(event: { op: string; obj: any; items: any[] }): void {
+    if (event.op === 'current-account2') {
+      this._router.navigateByUrl('reports/current-account/' + event?.obj?._id);
+    }
   }
 }

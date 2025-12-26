@@ -192,6 +192,8 @@
   "company.state.name": "Provincia",
   "company.country.name": "País",
   "company.type": "Tipo",
+  "company.phones": "Número de la empresa",
+  "company.identificationValue": "Identificación de Empresa",
   "companyType": "Tipo de Empresa",
   "companyStartOfActivity": "Fecha de inicio de actividades",
   "config": "Configuración",
