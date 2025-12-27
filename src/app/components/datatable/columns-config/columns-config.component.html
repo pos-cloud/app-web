@@ -1,0 +1,61 @@
+<div class="columns-config">
+  <!-- Buscador -->
+  <div class="search-container">
+    <div class="input-group">
+      <span class="input-group-text">
+        <i class="fa fa-search"></i>
+      </span>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="searchTerm"
+        [placeholder]="'search columns' | translate | capitalize"
+        (keydown.escape)="searchTerm = ''"
+      />
+      <button
+        *ngIf="searchTerm"
+        class="btn btn-sm btn-link"
+        type="button"
+        (click)="searchTerm = ''"
+        title="Clear search"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista de columnas con drag and drop -->
+  <div class="columns-list-container">
+    <div cdkDropList class="columns-list" (cdkDropListDropped)="drop($event)" [cdkDropListDisabled]="!!searchTerm">
+      <div
+        *ngFor="let column of filteredColumns; trackBy: trackByColumn"
+        cdkDrag
+        [cdkDragDisabled]="column.disabled || !!searchTerm"
+        class="column-item"
+      >
+        <!-- Handle de arrastre -->
+        <div class="drag-handle">
+          <i class="fa fa-grip-vertical"></i>
+        </div>
+
+        <!-- Checkbox y label -->
+        <label [for]="'column-' + column.name" class="column-label">
+          <input
+            type="checkbox"
+            [id]="'column-' + column.name"
+            [(ngModel)]="column.visible"
+            [disabled]="column.disabled"
+            (change)="onVisibilityChange()"
+          />
+          <span class="column-name">{{ column.name | translate }}</span>
+        </label>
+      </div>
+
+      <!-- Mensaje cuando no hay resultados -->
+      <div *ngIf="filteredColumns.length === 0" class="no-results">
+        <i class="fa fa-search"></i>
+        <p>{{ 'no columns found' | translate | capitalize }}</p>
+      </div>
+    </div>
+  </div>
+</div>

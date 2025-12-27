@@ -94,6 +94,49 @@ export class DatatableComponent {
         column.visible = storedColumnVisibility[column.name];
       }
     });
+
+    // Cargar el orden de las columnas guardado
+    this.loadColumnOrder();
+  }
+
+  private loadColumnOrder(): void {
+    const storedOrder = JSON.parse(localStorage.getItem(`${this.identifier}_columnOrder`) || '[]');
+
+    if (storedOrder.length > 0) {
+      // Crear un mapa de columnas por nombre para acceso rápido
+      const columnMap = new Map(this.columns.map((col) => [col.name, col]));
+
+      // Crear el nuevo orden basado en el orden guardado
+      const orderedColumns: IAttribute[] = [];
+      const usedColumns = new Set<string>();
+
+      // Primero agregar las columnas en el orden guardado
+      storedOrder.forEach((columnName: string) => {
+        const column = columnMap.get(columnName);
+        if (column) {
+          orderedColumns.push(column);
+          usedColumns.add(columnName);
+        }
+      });
+
+      // Agregar las columnas que no estaban en el orden guardado (columnas nuevas)
+      this.columns.forEach((column) => {
+        if (!usedColumns.has(column.name)) {
+          orderedColumns.push(column);
+        }
+      });
+
+      // Actualizar el array de columnas con el orden cargado
+      this.columns.length = 0;
+      this.columns.push(...orderedColumns);
+    } else {
+      // Si no hay orden guardado, ordenar poniendo primero las columnas visibles
+      this.columns.sort((a, b) => {
+        if (a.visible && !b.visible) return -1;
+        if (!a.visible && b.visible) return 1;
+        return 0;
+      });
+    }
   }
 
   public saveColumnVisibility(): void {
@@ -103,6 +146,21 @@ export class DatatableComponent {
     });
     localStorage.setItem(`${this.identifier}_columnVisibility`, JSON.stringify(columnVisibility));
     this.getItems();
+  }
+
+  public onColumnsChange(updatedColumns: IAttribute[]): void {
+    // Actualizar las columnas manteniendo la referencia para que Angular detecte los cambios
+    this.columns.length = 0;
+    this.columns.push(...updatedColumns);
+    // Guardar el orden de las columnas en localStorage
+    this.saveColumnOrder();
+    this.getItems();
+  }
+
+  private saveColumnOrder(): void {
+    // Guardar el orden como un array de nombres de columnas
+    const columnOrder = this.columns.map((column) => column.name);
+    localStorage.setItem(`${this.identifier}_columnOrder`, JSON.stringify(columnOrder));
   }
 
   private processParams(): void {

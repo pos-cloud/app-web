@@ -1,0 +1,201 @@
+.columns-config {
+  min-width: 280px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+
+  .search-container {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+
+    .input-group {
+      .input-group-text {
+        background-color: white;
+        border-right: none;
+        color: #6c757d;
+      }
+
+      .form-control {
+        border-left: none;
+        border-right: none;
+        &:focus {
+          box-shadow: none;
+          border-color: #ced4da;
+        }
+      }
+
+      .btn-link {
+        padding: 0.375rem 0.5rem;
+        color: #6c757d;
+        text-decoration: none;
+        &:hover {
+          color: #495057;
+        }
+      }
+    }
+  }
+
+  .columns-list-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 200px;
+    max-height: calc(70vh - 80px);
+
+    .columns-list {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .column-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        background-color: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        cursor: grab;
+        transition: all 0.2s ease;
+        user-select: none;
+
+        &:active {
+          cursor: grabbing;
+        }
+
+        &:hover {
+          background-color: #f8f9fa;
+          border-color: #007bff;
+          box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+        }
+
+        &.cdk-drag-disabled {
+          cursor: default;
+
+          &:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+          }
+        }
+
+        .drag-handle {
+          display: flex;
+          align-items: center;
+          margin-right: 10px;
+          color: #6c757d;
+          cursor: inherit;
+          transition: color 0.2s ease;
+
+          i {
+            font-size: 14px;
+          }
+
+          .column-item:not(.cdk-drag-disabled):hover & {
+            color: #007bff;
+          }
+
+          .column-item.cdk-drag-disabled & {
+            opacity: 0.5;
+          }
+        }
+
+        .column-label {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          margin: 0;
+          cursor: pointer;
+
+          input[type='checkbox'] {
+            margin-right: 10px;
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+          }
+
+          .column-name {
+            flex: 1;
+            font-size: 14px;
+            color: #212529;
+          }
+        }
+
+        // Estado durante el drag
+        &.cdk-drag-animating {
+          transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        // Preview durante el drag (clase aplicada por CDK)
+        &.cdk-drag-preview {
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+          opacity: 0.95;
+          border-color: #007bff;
+          background-color: white;
+        }
+      }
+
+      // Estilo para el placeholder durante el drag
+      .cdk-drop-list-dragging .column-item:not(.cdk-drag-placeholder) {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
+      .cdk-drag-placeholder {
+        opacity: 0.4;
+        background-color: #e3f2fd;
+        border: 2px dashed #2196f3;
+        border-radius: 4px;
+      }
+
+      .no-results {
+        padding: 40px 20px;
+        text-align: center;
+        color: #6c757d;
+
+        i {
+          font-size: 32px;
+          margin-bottom: 12px;
+          opacity: 0.5;
+        }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+    }
+
+    // Cuando está deshabilitado (durante la búsqueda)
+    .columns-list[cdkDropListDisabled] {
+      .column-item {
+        cursor: default;
+
+        .drag-handle {
+          cursor: default;
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+}
+
+// Scrollbar personalizado
+.columns-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.columns-list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.columns-list-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+
+  &:hover {
+    background: #a8a8a8;
+  }
+}

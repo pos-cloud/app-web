@@ -23,20 +23,12 @@
           >
             <i class="fa fa-columns"></i><span>{{ 'columns' | translate | capitalize }}</span>
           </button>
-          <div ngbDropdownMenu>
-            <div ngbDropdownItem cdkDropList class="example-list" (cdkDropListDropped)="_datatableService.drop($event)">
-              <div class="example-box" *ngFor="let column of columns" cdkDrag [cdkDragDisabled]="column.disabled">
-                <label for="column"
-                  ><input
-                    type="checkbox"
-                    [id]="column.name"
-                    (change)="saveColumnVisibility()"
-                    [(ngModel)]="column.visible"
-                    [disabled]="column.disabled"
-                  />{{ column.name | translate }}</label
-                >
-              </div>
-            </div>
+          <div ngbDropdownMenu class="columns-dropdown-menu">
+            <app-columns-config
+              [columns]="columns"
+              (columnsChange)="onColumnsChange($event)"
+              (visibilityChange)="saveColumnVisibility()"
+            ></app-columns-config>
           </div>
         </div>
         <!-- <span>|</span>

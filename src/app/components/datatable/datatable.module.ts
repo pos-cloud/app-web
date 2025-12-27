@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { ExportersModule } from '../export/exporters.module';
+import { ColumnsConfigComponent } from './columns-config/columns-config.component';
 import { DatatableComponent } from './datatable.component';
 
 @NgModule({
@@ -22,7 +23,7 @@ import { DatatableComponent } from './datatable.component';
     NgbModule,
   ],
   exports: [DatatableComponent],
-  declarations: [DatatableComponent],
+  declarations: [DatatableComponent, ColumnsConfigComponent],
   providers: [],
 })
 export class DatatableModule {}
