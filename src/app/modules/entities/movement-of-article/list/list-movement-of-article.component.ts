@@ -1,4 +1,3 @@
-import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +10,7 @@ import { Config } from 'app/app.config';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
+import { ColumnsConfigComponent } from 'app/shared/components/columns-config/columns-config.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -29,8 +29,8 @@ import { Subscription } from 'rxjs';
     ProgressbarModule,
     TranslateModule,
     ExportersModule,
-    DragDropModule,
     DateTimePickerComponent,
+    ColumnsConfigComponent,
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -997,10 +997,13 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
     this.getItems();
   }
 
-  public drop(event: CdkDragDrop<string[]>): void {
-    moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
-    // Guardar después de reordenar
-    this.saveColumnVisibility();
+  public onColumnsChange(updatedColumns: IAttribute[]): void {
+    // Actualizar las columnas manteniendo la referencia
+    this.columns.length = 0;
+    this.columns.push(...updatedColumns);
+    // Guardar el orden de las columnas
+    this.saveColumnOrder();
+    this.getItems();
   }
 
   public loadColumnVisibility(): void {
@@ -1011,6 +1014,9 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
         column.visible = storedColumnVisibility[column.name];
       }
     });
+
+    // Cargar el orden de las columnas guardado
+    this.loadColumnOrder();
   }
 
   public saveColumnVisibility(): void {
@@ -1020,5 +1026,52 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       columnVisibility[column.name] = column.visible;
     });
     localStorage.setItem(`${this.identifier}_columnVisibility`, JSON.stringify(columnVisibility));
+    this.getItems();
+  }
+
+  private loadColumnOrder(): void {
+    const storedOrder = JSON.parse(localStorage.getItem(`${this.identifier}_columnOrder`) || '[]');
+
+    if (storedOrder.length > 0) {
+      // Crear un mapa de columnas por nombre para acceso rápido
+      const columnMap = new Map(this.columns.map((col) => [col.name, col]));
+
+      // Crear el nuevo orden basado en el orden guardado
+      const orderedColumns: IAttribute[] = [];
+      const usedColumns = new Set<string>();
+
+      // Primero agregar las columnas en el orden guardado
+      storedOrder.forEach((columnName: string) => {
+        const column = columnMap.get(columnName);
+        if (column) {
+          orderedColumns.push(column);
+          usedColumns.add(columnName);
+        }
+      });
+
+      // Agregar las columnas que no estaban en el orden guardado (columnas nuevas)
+      this.columns.forEach((column) => {
+        if (!usedColumns.has(column.name)) {
+          orderedColumns.push(column);
+        }
+      });
+
+      // Actualizar el array de columnas con el orden cargado
+      this.columns.length = 0;
+      this.columns.push(...orderedColumns);
+    } else {
+      // Si no hay orden guardado, ordenar poniendo primero las columnas visibles
+      this.columns.sort((a, b) => {
+        if (a.visible && !b.visible) return -1;
+        if (!a.visible && b.visible) return 1;
+        return 0;
+      });
+    }
+  }
+
+  private saveColumnOrder(): void {
+    // Guardar el orden como un array de nombres de columnas
+    const columnOrder = this.columns.map((column) => column.name);
+    localStorage.setItem(`${this.identifier}_columnOrder`, JSON.stringify(columnOrder));
   }
 }

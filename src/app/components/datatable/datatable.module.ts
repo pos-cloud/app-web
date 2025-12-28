@@ -5,9 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { ColumnsConfigComponent } from '../../shared/components/columns-config/columns-config.component';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { ExportersModule } from '../export/exporters.module';
-import { ColumnsConfigComponent } from './columns-config/columns-config.component';
 import { DatatableComponent } from './datatable.component';
 
 @NgModule({
@@ -21,9 +21,10 @@ import { DatatableComponent } from './datatable.component';
     ProgressbarModule,
     PipesModule,
     NgbModule,
+    ColumnsConfigComponent,
   ],
   exports: [DatatableComponent],
-  declarations: [DatatableComponent, ColumnsConfigComponent],
+  declarations: [DatatableComponent],
   providers: [],
 })
 export class DatatableModule {}

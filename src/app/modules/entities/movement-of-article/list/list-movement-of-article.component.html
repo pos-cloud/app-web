@@ -57,20 +57,16 @@
           <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas">
             <i class="fa fa-columns"></i><span>Columnas</span>
           </button>
-          <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
-            <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-              <div class="example-box" *ngFor="let column of columns" cdkDrag [cdkDragDisabled]="column.disabled">
-                <label for="column">
-                  <input
-                    type="checkbox"
-                    [id]="column.name"
-                    (change)="saveColumnVisibility(); getItems()"
-                    [(ngModel)]="column.visible"
-                    [disabled]="column.disabled"
-                  />{{ column.name | translate }}</label
-                >
-              </div>
-            </div>
+          <div
+            class="dropdown-menu dropdown-menu-right"
+            ngbDropdownMenu
+            style="padding: 0; min-width: 320px; max-width: 320px; overflow: hidden"
+          >
+            <app-columns-config
+              [columns]="columns"
+              (columnsChange)="onColumnsChange($event)"
+              (visibilityChange)="saveColumnVisibility()"
+            ></app-columns-config>
           </div>
         </div>
       </div>
