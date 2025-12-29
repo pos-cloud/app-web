@@ -31,7 +31,6 @@ import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CompanyCurrentAccountService } from '../../../core/services/company-current-account.service';
-import { CurrentAccountService } from './current-account.service';
 @Component({
   selector: 'app-current-account',
   templateUrl: './current-account.component.html',
@@ -51,7 +50,7 @@ import { CurrentAccountService } from './current-account.service';
   ],
 })
 export class CurrentAccountComponent implements OnInit, OnDestroy {
-  public transactions: Transaction[];
+  public transactions: Transaction[] = [];
   public companySelected: Company;
   public companyType: CompanyType;
   public loading: boolean = false;
@@ -62,27 +61,14 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   public balance: number = 0;
   public currentPage: number = 1;
   public roundNumber: RoundNumberPipe;
-  public detailsPaymentMethod: boolean = false;
   public showPaymentMethod: boolean = false;
   public transactionMovement: TransactionMovement;
   public showBalanceOfTransactions: boolean = false;
   public data = {};
   public isFirstTime = true;
   public hasInitialized: boolean = false;
-  printers: Printer[];
+  public printers: Printer[] = [];
   private destroy$ = new Subject<void>();
-
-  public dropdownSettings = {
-    singleSelection: false,
-    defaultOpen: false,
-    idField: '_id',
-    textField: 'name',
-    selectAllText: 'Select All',
-    unSelectAllText: 'UnSelect All',
-    enableCheckAll: true,
-    itemsShowLimit: 1,
-    allowSearchFilter: true,
-  };
 
   public identity: User;
   public actions = {
@@ -93,7 +79,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private _service: CurrentAccountService,
+    private _service: CompanyService,
     private _companyService: CompanyService,
     private _companyCurrentAccountService: CompanyCurrentAccountService,
     private _router: Router,
@@ -220,10 +206,6 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
 
   public getPaymentMethodOfAccountsByCompany(): void {
     this.loading = true;
-
-    if (typeof this.detailsPaymentMethod !== 'boolean') {
-      this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
-    }
 
     let page = this.currentPage > 0 ? this.currentPage - 1 : 0;
     let skip = page * this.itemsPerPage;
@@ -391,10 +373,6 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   public getSummary(): void {
     this.loading = true;
 
-    if (typeof this.detailsPaymentMethod !== 'boolean') {
-      this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
-    }
-
     let page = 0;
 
     if (this.currentPage != 0) {
@@ -410,7 +388,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
       limit,
     };
 
-    this._service.getSummaryOfAccountsByCompany(this.data).subscribe(
+    this._service.getSummaryOfAccountsByCompanyV2(this.data).subscribe(
       (result) => {
         if (!result.result.length) {
           this._toastService.showToast(result);

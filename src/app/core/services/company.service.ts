@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 
 import { Company } from '@types';
 import { ModelService } from 'app/core/services/model.service';
+import { environment } from 'environments/environment';
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 
@@ -251,7 +252,7 @@ export class CompanyService extends ModelService {
       );
   }
 
-  public getSummaryOfAccountsByCompany(query: string): Observable<any> {
+  public getSummaryOfAccountsByCompanyV1(query: string): Observable<any> {
     const URL = `${Config.apiURL}summary-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
@@ -332,5 +333,67 @@ export class CompanyService extends ModelService {
     const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
 
     FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
+  }
+  public getSummaryOfAccountsByCompanyV2(data: {}): Observable<any> {
+    const URL = `${environment.apiv2}/companies/details-of-accounts-by-company`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, data, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public getBalanceOfAccountsByCompany(data: {}): Observable<any> {
+    const URL = `${environment.apiv2}/companies/balance-of-accounts-by-company`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, data, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public getPaymentMethodOfAccountsByCompany(data: {}): Observable<any> {
+    const URL = `${environment.apiv2}/companies/payment-method-of-accounts-by-company`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, data, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
   }
 }
