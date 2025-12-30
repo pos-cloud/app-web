@@ -312,7 +312,7 @@ export class CurrentAccountComponent implements OnInit {
         transactionBalance: { $gt: 0 },
       };
     }
-    this._companyService.getSummaryOfAccountsByCompanyV2(JSON.stringify(query)).subscribe(
+    this._companyService.getSummaryOfAccountsByCompanyV1(JSON.stringify(query)).subscribe(
       (result) => {
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
