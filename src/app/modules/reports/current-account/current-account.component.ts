@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 //Paquetes de terceros
-import { NgbAlertConfig, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,22 +11,17 @@ import { Title } from '@angular/platform-browser';
 import { PrintService } from '@core/services/print.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
-import { ApiResponse, Company, Printer, PrintType } from '@types';
+import { ApiResponse, Company, PrintType } from '@types';
 import { ExportersModule } from 'app/components/export/exporters.module';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
-import { User } from 'app/components/user/user';
 import { CompanyService } from 'app/core/services/company.service';
-import { PrinterService } from 'app/core/services/printer.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { NgxPaginationModule } from 'ngx-pagination';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -35,24 +30,11 @@ import { CompanyCurrentAccountService } from '../../../core/services/company-cur
   selector: 'app-current-account',
   templateUrl: './current-account.component.html',
   styleUrls: ['./current-account.component.scss'],
-  providers: [NgbAlertConfig],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ProgressbarModule,
-    TranslateModule,
-    PipesModule,
-    NgbModule,
-    NgMultiSelectDropDownModule,
-    NgxPaginationModule,
-    ExportersModule,
-  ],
+  imports: [CommonModule, FormsModule, ProgressbarModule, TranslateModule, PipesModule, NgbModule, ExportersModule],
 })
 export class CurrentAccountComponent implements OnInit, OnDestroy {
-  public transactions: Transaction[] = [];
   public companySelected: Company;
-  public companyType: CompanyType;
   public loading: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
@@ -60,38 +42,28 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   public totalPrice: number = 0;
   public balance: number = 0;
   public currentPage: number = 1;
-  public roundNumber: RoundNumberPipe;
-  public showPaymentMethod: boolean = false;
   public transactionMovement: TransactionMovement;
   public showBalanceOfTransactions: boolean = false;
   public data = {};
-  public isFirstTime = true;
-  public hasInitialized: boolean = false;
-  public printers: Printer[] = [];
   private destroy$ = new Subject<void>();
 
-  public identity: User;
-  public actions = {
-    add: true,
-    edit: true,
-    delete: true,
-    export: true,
-  };
+  // Getter para obtener los items paginados (para ngb-pagination)
+  get paginatedItems(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.items.slice(startIndex, endIndex);
+  }
 
   constructor(
-    private _service: CompanyService,
     private _companyService: CompanyService,
     private _companyCurrentAccountService: CompanyCurrentAccountService,
     private _router: Router,
     private _route: ActivatedRoute,
     private _modalService: NgbModal,
-    private _printerService: PrinterService,
     public _printService: PrintService,
     private _toastService: ToastService,
     private _title: Title
-  ) {
-    this.roundNumber = new RoundNumberPipe();
-  }
+  ) {}
 
   async ngOnInit() {
     const companyId = this._route.snapshot.paramMap.get('id');
@@ -131,19 +103,15 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           this._toastService.showToast(error);
           this._router.navigate(['/']);
         },
-        complete: () => {
-          // No cambiamos loading aquí porque refresh() lo maneja
-        },
+        complete: () => {},
       });
   }
 
   public refresh(): void {
     if (this.companySelected) {
       this.loading = true;
-      this.hasInitialized = false;
-      this.isFirstTime = true; // Resetear para que vaya a la última página
 
-      // Consulta 1: Comprobantes (con paginación automática a la última página)
+      // Consulta 1: Comprobantes
       this.getPaymentMethodOfAccountsByCompany();
 
       // Consulta 2: Saldo total (en paralelo, independiente)
@@ -160,7 +128,6 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   }
 
   public getTotalOfAccountsByCompany(): void {
-    // Esta consulta se ejecuta en paralelo, no afecta el loading principal
     this._companyCurrentAccountService
       .getAll({
         project: { 'company._id': 1, 'company.operationType': 1, balance: 1 },
@@ -177,15 +144,11 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           this._toastService.showToast(error);
           this.totalPrice = 0;
         },
-        complete: () => {
-          // No afecta el loading principal
-        },
       });
   }
 
   public getBalanceOfAccountsByCompany(): void {
-    // Esta consulta se ejecuta en paralelo, no afecta el loading principal
-    this._service
+    this._companyService
       .getBalanceOfAccountsByCompany(this.data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -198,27 +161,19 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
           this._toastService.showToast(error);
           this.balance = 0;
         },
-        complete: () => {
-          // No afecta el loading principal
-        },
       });
   }
 
   public getPaymentMethodOfAccountsByCompany(): void {
     this.loading = true;
 
-    let page = this.currentPage > 0 ? this.currentPage - 1 : 0;
-    let skip = page * this.itemsPerPage;
-    let limit = this.itemsPerPage;
-
+    // Obtenemos todos los datos sin paginación, el pipe pagination maneja la paginación del lado del cliente
     this.data = {
       company: this.companySelected._id,
       transactionMovement: this.transactionMovement,
-      skip,
-      limit,
     };
 
-    this._service
+    this._companyService
       .getPaymentMethodOfAccountsByCompany(this.data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -227,25 +182,32 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
             this._toastService.showToast(result);
             this.items = [];
             this.totalItems = 0;
-            this.hasInitialized = true;
-            this.loading = false; // Solo aquí terminamos el loading
+            this.loading = false;
           } else {
-            // Caso normal: no es la primera vez, mostrar datos de la página actual
             this.items = result.result[0].items;
-            this.totalItems = result.result[0].count;
-            this.hasInitialized = true;
-            this.loading = false; // Terminar loading
+            // Si el endpoint devuelve todos los items, usamos items.length
+            // Si tiene count, lo usamos (por si acaso el backend lo proporciona)
+            this.totalItems = result.result[0].count || result.result[0].items.length;
+
+            // Calcular y setear la última página automáticamente
+            if (this.totalItems > 0) {
+              const lastPage = Math.ceil(this.totalItems / this.itemsPerPage);
+              this.currentPage = lastPage > 0 ? lastPage : 1;
+            } else {
+              this.currentPage = 1;
+            }
+
+            this.loading = false;
           }
         },
         error: (error) => {
           this._toastService.showToast(error);
           this.items = [];
           this.totalItems = 0;
-          this.hasInitialized = true;
-          this.loading = false; // Terminar loading en caso de error
+          this.loading = false;
         },
         complete: () => {
-          // El loading se maneja en next() o error() según el caso
+          // El loading se maneja en next() o error()
         },
       });
   }
@@ -359,80 +321,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
 
   public pageChange(page): void {
     this.currentPage = page;
-    this.loading = true;
-    this.getPaymentMethodOfAccountsByCompany();
-  }
-
-  public selectItemsPerPage(value: number): void {
-    this.itemsPerPage = value;
-    this.currentPage = 1;
-    this.loading = true;
-    this.getPaymentMethodOfAccountsByCompany();
-  }
-
-  public getSummary(): void {
-    this.loading = true;
-
-    let page = 0;
-
-    if (this.currentPage != 0) {
-      page = this.currentPage - 1;
-    }
-    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
-    let limit = this.itemsPerPage;
-
-    this.data = {
-      company: this.companySelected._id,
-      transactionMovement: this.transactionMovement,
-      skip,
-      limit,
-    };
-
-    this._service.getSummaryOfAccountsByCompanyV2(this.data).subscribe(
-      (result) => {
-        if (!result.result.length) {
-          this._toastService.showToast(result);
-          this.items = new Array();
-          this.totalItems = 0;
-        } else {
-          this.items = result.result[0].items;
-          this.totalItems = result.result[0].count;
-
-          if (this.isFirstTime) {
-            const totalPages = Math.ceil(this.totalItems / limit);
-            const lastPageSkip = (totalPages - 1) * limit;
-            this.currentPage = totalPages;
-            this.pageChange(lastPageSkip);
-            this.isFirstTime = false;
-          }
-        }
-        this.loading = false;
-      },
-      (error) => {
-        this._toastService.showToast(error);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getPrinters(): Promise<Printer[]> {
-    return new Promise<Printer[]>((resolve, reject) => {
-      this.loading = true;
-
-      this._printerService.getPrinters().subscribe(
-        (result) => {
-          if (!result.printers) {
-            this.printers = new Array();
-          } else {
-            resolve(result.printers);
-          }
-          this.loading = false;
-        },
-        (error) => {
-          this.loading = false;
-        }
-      );
-    });
+    // No necesitamos llamar al servidor, el pipe pagination maneja la paginación del lado del cliente
   }
 
   ngOnDestroy() {

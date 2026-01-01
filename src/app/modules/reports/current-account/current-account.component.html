@@ -102,17 +102,7 @@
             <tr align="center" *ngIf="loading">
               <td colspan="13"><i class="fa fa-spinner fa-spin"></i> Cargando transacciones...</td>
             </tr>
-            <tr
-              *ngFor="
-                let item of items
-                  | paginate
-                    : {
-                        itemsPerPage: itemsPerPage,
-                        currentPage: currentPage,
-                        totalItems: totalItems
-                      }
-              "
-            >
+            <tr *ngFor="let item of paginatedItems">
               <td align="left" width="100">
                 <button
                   type="button"
@@ -124,7 +114,7 @@
                 </button>
                 <button
                   type="button"
-                  *ngIf="actions && actions.edit && item.transactionTypeAllowEdit"
+                  *ngIf="item.transactionTypeAllowEdit"
                   class="btn btn-primary btn-sm"
                   (click)="openModal('edit-transaction', item.transaction)"
                   title="Editar"
@@ -184,7 +174,7 @@
                 {{ item?.transaction?.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </tr>
-            <tr align="center" *ngIf="items.length === 0 && !loading && hasInitialized">
+            <tr align="center" *ngIf="totalItems === 0 && !loading">
               <td colspan="13">No se encontraron movimientos</td>
             </tr>
           </tbody>
@@ -192,10 +182,7 @@
             <td></td>
             <td></td>
             <td></td>
-            <td colspan="11" class="align-right" *ngIf="showPaymentMethod">
-              <strong>{{ 'totalBalance' | translate | capitalize }}</strong>
-            </td>
-            <td colspan="8" class="align-right" *ngIf="!showPaymentMethod">
+            <td [attr.colspan]="showBalanceOfTransactions ? 8 : 7" class="align-right">
               <strong>{{ 'totalBalance' | translate | capitalize }}</strong>
             </td>
             <td *ngIf="totalPrice >= 0" class="align-right">
@@ -214,18 +201,18 @@
     <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls
-            class="my-pagination"
+          <ngb-pagination
+            *ngIf="itemsPerPage < totalItems"
+            [collectionSize]="totalItems"
+            [(page)]="currentPage"
+            [maxSize]="5"
+            [boundaryLinks]="true"
+            [pageSize]="itemsPerPage"
             (pageChange)="pageChange($event)"
-            #api
-            previousLabel="Ant."
-            nextLabel="Sig."
-            autoHide="true"
-          >
-          </pagination-controls>
+          ></ngb-pagination>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getPaymentMethodOfAccountsByCompany()">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="currentPage = 1">
             <option [value]="5">Mostrar 5 ítems</option>
             <option [value]="10">Mostrar 10 ítems</option>
             <option [value]="15">Mostrar 15 ítems</option>
