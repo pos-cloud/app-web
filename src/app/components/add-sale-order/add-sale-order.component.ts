@@ -61,7 +61,6 @@ import { TaxBase, TaxClassification } from '../tax/tax';
 import { Taxes } from '../tax/taxes';
 import {
   optionalAFIP,
-  PriceType,
   StockMovement,
   TransactionMovement,
   TransactionType,
@@ -2412,95 +2411,6 @@ export class AddSaleOrderComponent {
     }
   }
 
-  async updateArticlesCostPrice(): Promise<number> {
-    let countArticle = 0;
-
-    for (const mov of this.movementsOfArticles) {
-      try {
-        if (mov && mov.article && mov.article._id) {
-          let unitPrice: number = 0;
-
-          if (this.transaction.quotation > 1) {
-            unitPrice = this.roundNumber.transform(mov.basePrice / mov.amount / this.transaction.quotation);
-          } else {
-            unitPrice = this.roundNumber.transform(mov.basePrice / mov.amount);
-          }
-
-          unitPrice = this.roundNumber.transform(unitPrice + mov.transactionDiscountAmount);
-
-          if (unitPrice !== mov.article.basePrice) {
-            const updated = await this.updateArticleCostPrice(mov.article, unitPrice);
-            if (updated) {
-              countArticle++;
-            }
-          }
-        }
-      } catch (error) {
-        console.error(`Error actualizando precio de costo para el artículo con ID ${mov?.article?._id}:`, error);
-        // Continúa con el siguiente artículo
-      }
-    }
-
-    return countArticle;
-  }
-
-  async updateArticleCostPrice(article: Article, basePrice: number): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      try {
-        if (basePrice && article) {
-          let taxedAmount = 0;
-
-          article.costPrice = 0;
-          article.basePrice = basePrice;
-          taxedAmount = basePrice;
-
-          if (article.otherFields && article.otherFields.length > 0) {
-            for (const field of article.otherFields) {
-              if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                field.amount = this.roundNumber.transform((basePrice * parseFloat(field.value)) / 100);
-              } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                field.amount = parseFloat(field.value);
-              }
-              if (field.articleField.modifyVAT) {
-                taxedAmount += field.amount;
-              } else {
-                if (field.amount) {
-                  article.costPrice += field.amount;
-                }
-              }
-            }
-          }
-
-          if (article.taxes && article.taxes.length > 0) {
-            for (const articleTax of article.taxes) {
-              if (articleTax.tax.percentage && articleTax.tax.percentage != 0) {
-                articleTax.taxBase = this.roundNumber.transform(taxedAmount);
-                articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage) / 100);
-              }
-              article.costPrice += articleTax.taxAmount;
-            }
-          }
-          article.costPrice += taxedAmount;
-
-          if (!(taxedAmount === 0 && article.salePrice !== 0)) {
-            article.markupPrice = this.roundNumber.transform((article.costPrice * article.markupPercentage) / 100);
-            article.salePrice = article.costPrice + article.markupPrice;
-          }
-
-          await this._articleService
-            .updateArticle(article)
-            .toPromise()
-            .then((result) => {
-              if (result && !result.article && result.message) throw new Error(result.message);
-            });
-        }
-        resolve(true);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-
   async isValidCharge(): Promise<boolean> {
     return new Promise(async (resolve) => {
       try {
@@ -2623,23 +2533,6 @@ export class AddSaleOrderComponent {
       if (!this.movementsOfArticles || this.movementsOfArticles.length === 0)
         throw new Error('No se encontraron productos en la transacción');
 
-      // ACTUALIZACIÓN DE PRECIOS DE COSTOS
-      if (this.transaction.type.updatePrice === PriceType.Base) {
-        let count = await this.updateArticlesCostPrice();
-        if (count === 1) {
-          this._toastService.showToast({
-            type: 'info',
-            message: 'Se actualizó : 1 producto',
-          });
-        } else {
-          if (count > 1) {
-            this._toastService.showToast({
-              type: 'info',
-              message: 'Se actualizaron : ' + count + ' productos',
-            });
-          }
-        }
-      }
       // ACTUALIZACIÓN DE A PREPARAR SI APARECE EN COCINA LOS ARTICULOS
       if (this.transaction.type.posKitchen) {
         await this.changeArticlesStatusToPending();
