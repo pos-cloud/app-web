@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const COMPANY_ROUTES: Routes = [
   {
     path: ':type',
-    loadComponent: () => import('./list/list-company.company').then((m) => m.ListCompanyComponent),
+    loadComponent: () => import('./list/list-company.component').then((m) => m.ListCompanyComponent),
   },
   {
     path: 'add/:type',
