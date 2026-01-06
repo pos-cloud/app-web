@@ -196,7 +196,7 @@ export class SubscriptionComponent implements OnInit {
     for (let field of this.columns) {
       this.filters[field.name] = field.defaultFilter;
     }
-    this.itemsPerPage = 10;
+    this.itemsPerPage = 99999999;
     this.getItems();
   }
 
