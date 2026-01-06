@@ -47,7 +47,7 @@ export class SubscriptionComponent implements OnInit {
 
   public selectedTransactions: Set<string> = new Set();
   public user: User | any;
-  public itemsPerPage = 10;
+  public itemsPerPage = 999999999;
 
   public currentPage: number = 1;
   private destroy$ = new Subject<void>();
@@ -196,7 +196,7 @@ export class SubscriptionComponent implements OnInit {
     for (let field of this.columns) {
       this.filters[field.name] = field.defaultFilter;
     }
-    this.itemsPerPage = 10;
+    this.itemsPerPage = 9999999999;
     this.getItems();
   }
 
