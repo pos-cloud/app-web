@@ -47,7 +47,7 @@ export class SubscriptionComponent implements OnInit {
 
   public selectedTransactions: Set<string> = new Set();
   public user: User | any;
-  public itemsPerPage = 10;
+  public itemsPerPage = 999999999;
 
   public currentPage: number = 1;
   private destroy$ = new Subject<void>();
