@@ -279,6 +279,43 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       align: 'right',
       required: false,
     },
+    //   {
+    //     name: 'amount',
+    //     visible: true,
+    //     disabled: false,
+    //     filter: true,
+    //     datatype: 'number',
+    //     project: `{
+    //   "$cond": {
+    //     "if": {
+    //       "$or": [
+    //         {
+    //           "$and": [
+    //             { "$eq": ["$transaction.type.movement", "Entrada"] },
+    //             { "$eq": ["$transaction.type.transactionMovement", "Venta"] }
+    //           ]
+    //         },
+    //         {
+    //           "$and": [
+    //             { "$eq": ["$transaction.type.movement", "Cobra"] },
+    //             { "$eq": ["$transaction.type.transactionMovement", "Venta"] }
+    //           ]
+    //         },
+    //         {
+    //           "$and": [
+    //             { "$eq": ["$transaction.type.movement", "Entrada"] },
+    //             { "$eq": ["$transaction.type.transactionMovement", "Compra"] }
+    //           ]
+    //         }
+    //       ]
+    //     },
+    //     "then": { "$multiply": ["$amount", 1] },
+    //     "else": { "$multiply": ["$amount", -1] }
+    //   }
+    // }`,
+    //     align: 'right',
+    //     required: false,
+    //   },
     {
       name: 'amount',
       visible: true,
