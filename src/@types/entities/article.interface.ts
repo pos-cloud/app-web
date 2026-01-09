@@ -109,10 +109,17 @@ export interface Article extends Activity {
   videoUrlTN: string;
   seoDescriptionTN: string;
   seoTitleTN: string;
+  productType: ProductType;
 }
 
 export enum Type {
   Final = <any>'Final',
   Variant = <any>'Variante',
   Ingredient = <any>'Ingrediente',
+}
+
+export enum ProductType {
+  Final = <any>'Final',
+  RawMaterial = <any>'Materia prima',
+  Semielaborado = <any>'Semielaborado',
 }

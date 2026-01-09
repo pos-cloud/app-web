@@ -19,6 +19,7 @@ import {
   Company,
   Config,
   Make,
+  ProductType,
   Tax,
   TaxBase,
   Taxes,
@@ -261,6 +262,7 @@ export class ArticleComponent implements OnInit {
       seoTitleTN: ['', []],
       seoDescriptionTN: ['', []],
       videoUrlTN: ['', []],
+      productType: [ProductType.Final, []],
     });
 
     this.taxForm = this._fb.group({
@@ -439,6 +441,7 @@ export class ArticleComponent implements OnInit {
       videoUrlTN: this.article?.videoUrlTN ?? '',
       salesAccount: salesAccounts ?? null,
       purchaseAccount: purchaseAccounts ?? null,
+      productType: this.article?.productType ?? ProductType.Final,
     };
 
     this.articleForm.patchValue(values);
