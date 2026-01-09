@@ -214,18 +214,22 @@
             </select>
           </div>
           <div class="col-md-3">
-            <label for="productType" class="control-label">{{ 'Tipo de producto' | translate | capitalize }}:</label>
-            <select class="form-control" formControlName="productType">
+            <label for="type" class="control-label">{{ 'Tipo de producto' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="type">
               <option value="Final" [disabled]="readonly">
                 {{ 'Final' | translate | capitalize }}
               </option>
-
               <option value="Materia prima" [disabled]="readonly">
                 {{ 'Materia prima' | translate | capitalize }}
               </option>
-
               <option value="Semielaborado" [disabled]="readonly">
                 {{ 'Semielaborado' | translate | capitalize }}
+              </option>
+              <option value="Ingrediente" [disabled]="readonly">
+                {{ 'Ingrediente' | translate | capitalize }}
+              </option>
+              <option value="Servicio" [disabled]="readonly">
+                {{ 'Servicio' | translate | capitalize }}
               </option>
             </select>
           </div>

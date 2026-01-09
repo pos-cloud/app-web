@@ -19,10 +19,10 @@ import {
   Company,
   Config,
   Make,
-  ProductType,
   Tax,
   TaxBase,
   Taxes,
+  Type,
   UnitOfMeasurement,
   VariantType,
   VariantValue,
@@ -194,7 +194,7 @@ export class ArticleComponent implements OnInit {
     this.articleForm = this._fb.group({
       _id: ['', []],
       order: [1, []],
-      type: ['Final', []],
+      type: [Type.Final, []],
       code: ['', [Validators.required]],
       make: [null, []],
       category: [null, [Validators.required]],
@@ -262,7 +262,6 @@ export class ArticleComponent implements OnInit {
       seoTitleTN: ['', []],
       seoDescriptionTN: ['', []],
       videoUrlTN: ['', []],
-      productType: [ProductType.Final, []],
     });
 
     this.taxForm = this._fb.group({
@@ -384,7 +383,7 @@ export class ArticleComponent implements OnInit {
 
     const values = {
       _id: this.article?._id ?? '',
-      type: this.article?.type ?? 'Final',
+      type: this.article?.type ?? Type.Final,
       order: this.article?.order ?? 1,
       code: codeArticle,
       barcode: this.article?.barcode ?? '',
@@ -441,7 +440,6 @@ export class ArticleComponent implements OnInit {
       videoUrlTN: this.article?.videoUrlTN ?? '',
       salesAccount: salesAccounts ?? null,
       purchaseAccount: purchaseAccounts ?? null,
-      productType: this.article?.productType ?? ProductType.Final,
     };
 
     this.articleForm.patchValue(values);
