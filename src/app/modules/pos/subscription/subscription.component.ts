@@ -17,7 +17,7 @@ import { ViewTransactionComponent } from 'app/components/transaction/view-transa
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 
 import { Subject, Subscription, takeUntil } from 'rxjs';
-import { ApplyVatPeriodComponent } from '../../../shared/components/apply-vat-period/apply-vat-period.component';
+import { ApplyVatPeriodComponent } from './apply-vat-period/apply-vat-period.component';
 import { attributes } from './attributes-subscription';
 
 @Component({

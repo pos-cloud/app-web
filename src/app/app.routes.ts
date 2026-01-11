@@ -15,7 +15,6 @@ import { ExportIvaComponent } from './components/export/export-iva/export-iva.co
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
-import { ListMovementsOfArticlesComponent } from './components/movement-of-article/list-movements-of-articles/list-movements-of-articles.component';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
 import { ListMovementOfCashesComponent } from './components/movement-of-cash/list-movements-of-cashes/list-movements-of-cashes.component';
@@ -178,12 +177,6 @@ export const _routes: Routes = [
   },
 
   {
-    path: 'admin/produccion/movimientos-de-productos',
-    component: ListMovementsOfArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    //data: { module: 'config.modules.production' }
-  },
-  {
     path: 'admin/usuarios',
     component: ListUsersComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -280,24 +273,6 @@ export const _routes: Routes = [
     component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard, LicenseGuard],
     data: { module: 'config.modules.money' },
-  },
-  {
-    path: 'admin/venta/movimientos-de-productos',
-    component: ListMovementsOfArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
-  },
-  {
-    path: 'admin/compra/movimientos-de-productos',
-    component: ListMovementsOfArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
-  },
-  {
-    path: 'admin/stock/movimientos-de-productos',
-    component: ListMovementsOfArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.stock' },
   },
   {
     path: 'admin/template-emails',

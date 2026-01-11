@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '@core/services/transaction.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastService } from 'app/shared/components/toast/toast.service';
+import { ToastService } from '@shared/components/toast/toast.service';
 import * as moment from 'moment';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
