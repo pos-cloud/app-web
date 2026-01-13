@@ -114,7 +114,6 @@ export interface Article extends Activity {
 export enum Type {
   Final = 'Final',
   Variant = 'Variante',
-  Ingredient = 'Ingrediente',
   RawMaterial = 'Materia Prima',
   SemiFinished = 'Semielaborado',
   Service = 'Servicio',
