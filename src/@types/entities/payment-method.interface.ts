@@ -1,4 +1,4 @@
-import { Account, Activity, Application, Article, CompanyType, Currency } from '@types';
+import { Account, Activity, Article, CompanyType } from '@types';
 
 export interface PaymentMethod extends Activity {
   _id: string;
@@ -25,16 +25,7 @@ export interface PaymentMethod extends Activity {
   allowToFinance: boolean;
   payFirstQuota: boolean;
   cashBoxImpact: boolean;
-  bankReconciliation: boolean;
-  company: CompanyType;
-  currency: Currency;
   allowCurrencyValue: boolean;
   allowBank: boolean;
-  mercadopagoAPIKey: string;
-  mercadopagoClientId: string;
-  mercadopagoAccessToken: string;
-  whatsappNumber: string;
-  observation: string;
-  applications: Application[];
   account: Account;
 }

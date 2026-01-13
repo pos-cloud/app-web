@@ -192,4 +192,8 @@ export const ENTITIES_ROUTES: Routes = [
     loadChildren: () =>
       import('./movement-of-article/movement-of-article.routes').then((m) => m.MOVEMENT_OF_ARTICLE_ROUTES),
   },
+  {
+    path: 'payment-methods',
+    loadChildren: () => import('./payment-method/payment-method.routes').then((m) => m.PAYMENT_METHOD_ROUTES),
+  },
 ];
