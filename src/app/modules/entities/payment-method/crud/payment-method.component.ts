@@ -74,7 +74,6 @@ export class PaymentMethodComponent implements OnInit {
       allowToFinance: ['', []],
       payFirstQuota: ['', []],
       cashBoxImpact: ['', []],
-      company: ['', []],
       allowCurrencyValue: ['', []],
       allowBank: ['', []],
       account: ['', []],
@@ -157,7 +156,7 @@ export class PaymentMethodComponent implements OnInit {
       payFirstQuota: this.paymentMethod?.payFirstQuota ?? false,
       cashBoxImpact: this.paymentMethod?.cashBoxImpact ?? false,
       account: this.accounts?.find((item) => item._id === this.paymentMethod?.account?.toString()) ?? null,
-      company: this.paymentMethod?.company ?? null,
+
       allowCurrencyValue: this.paymentMethod?.allowCurrencyValue ?? false,
       allowBank: this.paymentMethod?.allowBank ?? false,
     };
