@@ -584,13 +584,13 @@ export class ListArticlesComponent {
     {
       name: 'type',
       visible: false,
-      disabled: true,
+      disabled: false,
       filter: false,
       datatype: 'string',
-      defaultFilter: `{ "$eq": "Final" }`,
       project: null,
       align: 'left',
       required: true,
+      defaultFilter: `{ "$ne": "Variante" }`,
     },
   ];
   public headerButtons: IButton[] = [
