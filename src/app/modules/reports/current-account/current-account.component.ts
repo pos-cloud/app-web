@@ -40,10 +40,8 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   public totalItems = 0;
   public items: any[] = new Array();
   public totalPrice: number = 0;
-  public balance: number = 0;
   public currentPage: number = 1;
   public transactionMovement: TransactionMovement;
-  public showBalanceOfTransactions: boolean = false;
   public data = {};
   private destroy$ = new Subject<void>();
 
@@ -116,9 +114,6 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
 
       // Consulta 2: Saldo total (en paralelo, independiente)
       this.getTotalOfAccountsByCompany();
-
-      // Consulta 3: Balance (en paralelo, independiente)
-      this.getBalanceOfAccountsByCompany();
     } else {
       this._toastService.showToast({
         message: 'Not found',
@@ -143,23 +138,6 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         error: (error) => {
           this._toastService.showToast(error);
           this.totalPrice = 0;
-        },
-      });
-  }
-
-  public getBalanceOfAccountsByCompany(): void {
-    this._companyService
-      .getBalanceOfAccountsByCompany(this.data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          if (result) {
-            this.balance = result[0]?.balance || 0;
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.balance = 0;
         },
       });
   }
