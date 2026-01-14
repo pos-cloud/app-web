@@ -194,7 +194,7 @@
                 <i class="fa fa-trash-o"></i>
               </button>
               <button
-                *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'"
+                *ngIf="item.state !== 'Pendiente' && item.state !== 'Abierto'"
                 type="button"
                 class="btn btn-light btn-sm"
                 (click)="openModal('print', item)"
@@ -204,7 +204,7 @@
               </button>
               <button
                 type="button"
-                *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'"
+                *ngIf="item.state.toString() !== 'Pendiente' && item.state.toString() !== 'Abierto'"
                 class="btn btn-light btn-sm"
                 (click)="openModal('send-email', item)"
                 title="Enviar"
@@ -213,7 +213,7 @@
               </button>
               <button
                 type="button"
-                *ngIf="item.state.toString() !== 'Pendiente' || item.state.toString() !== 'Abierto'"
+                *ngIf="item.state.toString() !== 'Pendiente' && item.state.toString() !== 'Abierto'"
                 class="btn btn-light btn-sm"
                 (click)="openModal('send-wpp', item)"
                 title="Enviar"
