@@ -1,0 +1,229 @@
+<section class="fondo-register center-content">
+  <div class="box-register">
+    <div class="row" align="center">
+      <div class="logo">
+        <img width="130" src="assets/img/logo.png" />
+      </div>
+    </div>
+    <br />
+    <div class="row center-content">
+      <h5>Registro</h5>
+    </div>
+    <hr />
+    <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+      <div class="row">
+        <div class="center-content">
+          <div class="row">
+            <div class="col-md-12">
+              <label for="fullName" class="control-label">Nombre y Apellido:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="fullName"
+                name="fullName"
+                id="fullName"
+                [focus]="focusEvent"
+                [ngClass]="{
+                  'is-invalid': registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')"
+              >
+                Este campo es requerido.
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('minlength')"
+              >
+                El nombre debe tener al menos 2 caracteres.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label for="companyName" class="control-label">Nombre del negocio:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="companyName"
+                name="companyName"
+                id="companyName"
+                [ngClass]="{
+                  'is-invalid': registerForm.get('companyName')?.touched && registerForm.get('companyName')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('required')
+                "
+              >
+                Este campo es requerido.
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('minlength')
+                "
+              >
+                El nombre del negocio debe tener al menos 2 caracteres.
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('pattern')"
+              >
+                Solo se permiten letras y números (sin espacios).
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label for="email" class="control-label">Email:</label>
+              <input
+                type="email"
+                class="form-control"
+                formControlName="email"
+                name="email"
+                id="email"
+                placeholder="juan@example.com"
+                [ngClass]="{
+                  'is-invalid': registerForm.get('email')?.touched && registerForm.get('email')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')"
+              >
+                Este campo es requerido.
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')"
+              >
+                Ingrese un email válido.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label for="phone" class="control-label">Teléfono:</label>
+              <input
+                type="tel"
+                class="form-control"
+                formControlName="phone"
+                name="phone"
+                id="phone"
+                [ngClass]="{
+                  'is-invalid': registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('required')"
+              >
+                Este campo es requerido.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="country" class="control-label">País:</label>
+              <select
+                class="form-control"
+                formControlName="country"
+                name="country"
+                id="country"
+                [ngClass]="{
+                  'is-invalid': registerForm.get('country')?.touched && registerForm.get('country')?.invalid
+                }"
+              >
+                <option value="">Seleccione un país</option>
+                <option *ngFor="let country of countries" [value]="country.code">
+                  {{ country.name }}
+                </option>
+              </select>
+              <div
+                class="invalid-feedback"
+                *ngIf="registerForm.get('country')?.touched && registerForm.get('country')?.hasError('required')"
+              >
+                Debe seleccionar un país.
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="businessModel" class="control-label">Tipo de Negocio:</label>
+              <select
+                class="form-control"
+                formControlName="businessModel"
+                name="businessModel"
+                id="businessModel"
+                [ngClass]="{
+                  'is-invalid': registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.invalid
+                }"
+              >
+                <option value="">Seleccione un tipo de negocio</option>
+                <option *ngFor="let model of businessModels" [value]="model.key">
+                  {{ model.name }}
+                </option>
+              </select>
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.hasError('required')
+                "
+              >
+                Debe seleccionar un tipo de negocio.
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="getSelectedBusinessModel()">
+            <div class="col-md-12">
+              <small class="form-text text-muted">
+                {{ getSelectedBusinessModel()?.description }}
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="center-content">
+          <div class="row">
+            <div class="col-md-12">
+              <label class="control-label section-label">Integraciones:</label>
+              <small class="form-text text-muted"> Selecciona las integraciones que necesitas (opcional) </small>
+              <div [formGroupName]="'integrations'" class="checkbox-group">
+                <div class="checkbox-item" *ngFor="let integration of integrations">
+                  <label class="checkbox-label">
+                    <input type="checkbox" [formControlName]="integration.key" class="checkbox-input" />
+                    <span class="checkbox-text">{{ integration.name }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="center-content">
+          <div class="row">
+            <div class="col-md-12" align="center">
+              <button type="submit" class="btn btn-primary" [disabled]="loading">
+                <span *ngIf="!loading">Crear cuenta</span>
+                <span *ngIf="loading">Espere por favor</span>
+              </button>
+            </div>
+          </div>
+          <br /><br />
+          <div class="row">
+            <div class="col-md-12" align="center">
+              <b>¿Ya tienes una cuenta?</b><a routerLink="/login"> Iniciar sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

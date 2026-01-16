@@ -55,6 +55,10 @@ export const _routes: Routes = [
     component: LoginComponent,
   },
   {
+    path: 'register',
+    loadComponent: () => import('./auth/register/register.component').then((m) => m.RegisterComponent),
+  },
+  {
     path: 'histories',
     component: ListHistoriesComponent,
     canActivate: [AuthGuard, LicenseGuard],
