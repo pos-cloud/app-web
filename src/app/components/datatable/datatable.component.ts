@@ -197,9 +197,7 @@ export class DatatableComponent {
   }
 
   public getValue(item, column): any {
-    return typeof this._datatableService.getValue(item, column) === 'string'
-      ? this.translatePipe.transform(this._datatableService.getValue(item, column))
-      : this._datatableService.getValue(item, column);
+    return this._datatableService.getValue(item, column);
   }
 
   public exportItems(): void {
