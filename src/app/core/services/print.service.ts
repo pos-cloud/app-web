@@ -22,7 +22,6 @@ export class PrintService {
 
     return this._http.post(URL_PRINT, body, { headers, responseType: 'blob' }).pipe(
       map((res) => {
-        console.log(res);
         return res;
       }),
       catchError((err: HttpErrorResponse) => {
@@ -33,7 +32,6 @@ export class PrintService {
             reader.onload = () => {
               try {
                 const errorJson = JSON.parse(reader.result as string);
-                console.log(errorJson.message);
 
                 observer.error(errorJson);
               } catch (e) {

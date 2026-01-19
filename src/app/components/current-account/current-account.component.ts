@@ -464,7 +464,6 @@ export class CurrentAccountComponent implements OnInit {
           size: 'lg',
           backdrop: 'static',
         });
-        console.log(this.companyType);
         modalRef.componentInstance.type = this.companyType;
         modalRef.result.then(
           (result) => {
