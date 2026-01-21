@@ -78,6 +78,7 @@ export class TransactionType extends Model {
   level: number = 0;
   groupsArticles: boolean = false;
   printOrigin: boolean = false;
+  printBalanceOnCanceled: boolean = false;
   expirationDate: string;
   numberPrint: number = 0;
   orderNumber: number;

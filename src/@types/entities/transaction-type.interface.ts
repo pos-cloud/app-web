@@ -82,6 +82,7 @@ export interface TransactionType extends Activity {
   level: number; // default 0
   groupsArticles: boolean; // default false
   printOrigin: boolean; // default false
+  printBalanceOnCanceled: boolean; // default false
   expirationDate: string;
   numberPrint: number; // default 0
   orderNumber: number;

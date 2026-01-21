@@ -872,6 +872,13 @@ export class TransactionTypeComponent implements OnInit {
       class: 'form-group col-md-2',
     },
     {
+      name: 'printBalanceOnCanceled',
+      tag: 'select',
+      tagType: 'boolean',
+      values: ['false', 'true'],
+      class: 'form-group col-md-2',
+    },
+    {
       name: 'posKitchen',
       tag: 'select',
       tagType: 'boolean',
@@ -1043,6 +1050,7 @@ export class TransactionTypeComponent implements OnInit {
         readLayout: 1,
         posKitchen: 1,
         printOrigin: 1,
+        printBalanceOnCanceled: 1,
         printSign: 1,
         printDescriptionType: 1,
         numberPrint: 1,

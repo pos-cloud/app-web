@@ -617,6 +617,7 @@
   "print": "Imprimir",
   "printable": "Imprime al final",
   "printBalanceAccount": "Imprimir saldo de cuenta",
+  "printBalanceOnCanceled": "Mostrar saldo en comprobantes cancelados",
   "printDescriptionType": "Descripción que Imprime",
   "printer": "Impresora",
   "printer.name": "Impresoras",
