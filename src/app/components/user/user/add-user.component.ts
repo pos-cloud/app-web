@@ -91,8 +91,8 @@ export class AddUserComponent implements OnInit {
 
   public validationMessages = {
     name: { required: 'Este campo es requerido.' },
-    email: { required: 'Este campo es requerido.' },
-    password: { required: 'Este campo es requerido.' },
+    email: { required: 'Este campo es requerido.', email: 'Debe ingresar un email válido' },
+    password: { required: 'Este campo es requerido.', minlength: 'La contraseña debe tener al menos 6 caracteres' },
     state: { required: 'Este campo es requerido.' },
     origin: {},
     employee: {},
@@ -162,8 +162,8 @@ export class AddUserComponent implements OnInit {
     this.userForm = this._fb.group({
       _id: [this.user._id, []],
       name: [this.user.name, [Validators.required]],
-      email: [this.user.email, [Validators.required]],
-      password: [this.user.password, [Validators.required]],
+      email: [this.user.email, [Validators.required, Validators.email]],
+      password: [this.user.password, [Validators.required, Validators.minLength(6)]],
       state: [this.user.state, [Validators.required]],
       origin: [this.user.origin, []],
       employee: [this.user.employee, []],

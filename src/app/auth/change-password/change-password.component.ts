@@ -42,7 +42,7 @@ export class ChangePasswordComponent {
     });
     this.form = this.fb.group({
       _id: [this.user._id, []],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 

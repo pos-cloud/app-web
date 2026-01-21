@@ -69,13 +69,14 @@
           </div>
 
           <div class="form-group col-md-5">
-            <label class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <label for="user-name-new" class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <input
               type="text"
               class="form-control"
               formControlName="name"
-              name="name"
-              id="name"
+              name="user-name-new"
+              id="user-name-new"
+              autocomplete="off"
               [focus]="focusEvent"
               [ngClass]="{
                 'is-invalid': userForm.get('name')?.touched && userForm.get('name')?.invalid,
@@ -132,18 +133,18 @@
         </div>
         <div class="row">
           <div class="form-group col-md-4">
-            <label for="email" class="control-label">Email:</label>
+            <label for="user-email-input" class="control-label">Email:</label>
             <input
               type="email"
               class="form-control"
               formControlName="email"
-              name="user_email"
-              autocomplete="off"
-              id="email"
+              name="user-email-input"
+              autocomplete="new-password"
+              id="user-email-input"
               [readonly]="readonly"
               [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid': userForm.get('name')?.touched && userForm.get('name')?.invalid,
+                'is-invalid': userForm.get('email')?.touched && userForm.get('email')?.invalid,
               }"
             />
 
@@ -153,27 +154,39 @@
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="userForm.get('email')?.touched && userForm.get('email')?.hasError('email')"
+            >
+              Debe ingresar un email válido
+            </div>
           </div>
           <div class="form-group col-md-4">
-            <label for="password" class="control-label">Contraseña:</label>
+            <label for="new-password" class="control-label">Contraseña:</label>
             <input
               type="password"
               class="form-control"
               formControlName="password"
-              name="user_password"
+              name="new-password"
               autocomplete="new-password"
-              id="password"
+              id="new-password"
               [readonly]="readonly"
               [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid': userForm.get('name')?.touched && userForm.get('name')?.invalid,
+                'is-invalid': userForm.get('password')?.touched && userForm.get('password')?.invalid,
               }"
             />
             <div
               class="invalid-feedback"
-              *ngIf="userForm.get('email')?.touched && userForm.get('email')?.hasError('required')"
+              *ngIf="userForm.get('password')?.touched && userForm.get('password')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="userForm.get('password')?.touched && userForm.get('password')?.hasError('minlength')"
+            >
+              La contraseña debe tener al menos 6 caracteres
             </div>
           </div>
           <div class="form-group col-md-4">
