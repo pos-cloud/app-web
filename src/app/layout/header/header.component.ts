@@ -124,7 +124,7 @@ export class HeaderComponent implements OnInit {
               children: [
                 { label: 'Transacciones', link: 'admin/ventas' },
                 { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/venta' },
-                { label: 'Movimientos de Medios', link: 'entities/movements-of-cashes/venta' },
+                { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/venta' },
                 { label: 'Cancelaciones', link: 'admin/venta/movimientos-de-cancellaciones' },
               ],
             },
@@ -151,7 +151,7 @@ export class HeaderComponent implements OnInit {
               children: [
                 { label: 'Transacciones', link: 'admin/compra' },
                 { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/compra' },
-                { label: 'Movimientos de Medios', link: 'entities/movements-of-cashes/compra' },
+                { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/compra' },
                 { label: 'Cancelaciones', link: 'admin/compra/movimientos-de-cancellaciones' },
               ],
             },
@@ -178,7 +178,7 @@ export class HeaderComponent implements OnInit {
               children: [
                 { label: 'Transacciones', link: 'admin/stock' },
                 { label: 'Movimientos de Productos', link: 'admin/stock/movimientos-de-productos' },
-                { label: 'Movimientos de Medios', link: 'admin/stock/movimientos-de-medios' },
+                { label: 'Movimientos de Caja', link: 'admin/stock/movimientos-de-medios' },
               ],
             },
             {
@@ -195,7 +195,7 @@ export class HeaderComponent implements OnInit {
               children: [
                 { label: 'Transacciones', link: 'admin/production' },
                 { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/prodution' },
-                { label: 'Movimientos de Medios', link: 'entities/movements-of-cashes/prodution' },
+                { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/prodution' },
               ],
             },
             {
@@ -211,7 +211,7 @@ export class HeaderComponent implements OnInit {
               label: 'Listados',
               children: [
                 { label: 'Transacciones', link: 'admin/fondos' },
-                { label: 'Movimientos de Medios', link: 'entities/movements-of-cashes/fondos' },
+                { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/fondos' },
               ],
             },
             {
@@ -600,7 +600,7 @@ export class HeaderComponent implements OnInit {
                   children: [
                     { label: 'Transacciones', link: 'admin/ventas' },
                     { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/venta' },
-                    { label: 'Movimientos de Medios', link: 'aentities/movements-of-cashes/venta' },
+                    { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/venta' },
                     { label: 'Cancelaciones', link: 'admin/venta/movimientos-de-cancellaciones' },
                   ],
                 },
@@ -629,7 +629,7 @@ export class HeaderComponent implements OnInit {
                   children: [
                     { label: 'Transacciones', link: 'admin/compras' },
                     { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/compra' },
-                    { label: 'Movimientos de Medios', link: 'entities/movements-of-cashes/compra' },
+                    { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/compra' },
                     { label: 'Cancelaciones', link: 'report/compra/movimientos-de-cancellaciones' },
                   ],
                 },
@@ -679,7 +679,7 @@ export class HeaderComponent implements OnInit {
                   children: [
                     { label: 'Transacciones', link: 'admin/production' },
                     { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/prodution' },
-                    { label: 'Movimientos de Medios', link: 'entities/movements-of-cashes/production' },
+                    { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/production' },
                   ],
                 },
                 {
@@ -701,7 +701,7 @@ export class HeaderComponent implements OnInit {
                   label: 'Listados',
                   children: [
                     { label: 'Transacciones', link: 'admin/fondos' },
-                    { label: 'Movimientos de Medios', link: 'entities/movements-of-cashes/fondos' },
+                    { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/fondos' },
                     { label: 'Cajas', link: 'admin/cajas' },
                   ],
                 },
