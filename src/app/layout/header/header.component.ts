@@ -678,8 +678,7 @@ export class HeaderComponent implements OnInit {
                   label: 'Listados',
                   children: [
                     { label: 'Transacciones', link: 'admin/production' },
-                    { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/prodution' },
-                    { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/production' },
+                    { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/production' },
                   ],
                 },
                 {
