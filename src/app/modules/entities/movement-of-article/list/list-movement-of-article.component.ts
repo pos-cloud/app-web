@@ -160,16 +160,6 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'barcode',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
       name: 'article.barcode',
       visible: true,
       disabled: false,
