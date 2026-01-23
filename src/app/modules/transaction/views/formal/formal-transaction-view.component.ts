@@ -186,11 +186,34 @@ export class FormalTransactionViewComponent implements OnInit {
       (result) => {
         if (result.company) {
           this.transaction.company = result.company;
-          this.toastService.showToast({
-            message: 'Cliente actualizado correctamente',
-            type: 'success',
+          // Actualizar transacción en el servidor
+          this.transactionService.update(this.transaction).subscribe({
+            next: (response) => {
+              if (response.status === 200) {
+                this.toastService.showToast({
+                  message: 'Cliente actualizado correctamente',
+                  type: 'success',
+                });
+                // Recargar la transacción para asegurar sincronización
+                this.loadTransaction();
+              } else {
+                this.toastService.showToast({
+                  message: response.message || 'Error al actualizar el cliente',
+                  type: 'error',
+                });
+                // Revertir el cambio local si falla
+                this.loadTransaction();
+              }
+            },
+            error: (error) => {
+              this.toastService.showToast({
+                message: 'Error al actualizar el cliente',
+                type: 'error',
+              });
+              // Revertir el cambio local si falla
+              this.loadTransaction();
+            },
           });
-          // TODO: Actualizar transacción en el servidor
         }
       },
       (reason) => {
@@ -211,11 +234,34 @@ export class FormalTransactionViewComponent implements OnInit {
       (result) => {
         if (result.employee) {
           this.transaction.employeeClosing = result.employee;
-          this.toastService.showToast({
-            message: 'Vendedor actualizado correctamente',
-            type: 'success',
+          // Actualizar transacción en el servidor
+          this.transactionService.update(this.transaction).subscribe({
+            next: (response) => {
+              if (response.status === 200) {
+                this.toastService.showToast({
+                  message: 'Vendedor actualizado correctamente',
+                  type: 'success',
+                });
+                // Recargar la transacción para asegurar sincronización
+                this.loadTransaction();
+              } else {
+                this.toastService.showToast({
+                  message: response.message || 'Error al actualizar el vendedor',
+                  type: 'error',
+                });
+                // Revertir el cambio local si falla
+                this.loadTransaction();
+              }
+            },
+            error: (error) => {
+              this.toastService.showToast({
+                message: 'Error al actualizar el vendedor',
+                type: 'error',
+              });
+              // Revertir el cambio local si falla
+              this.loadTransaction();
+            },
           });
-          // TODO: Actualizar transacción en el servidor
         }
       },
       (reason) => {
