@@ -5,10 +5,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { PaymentMethodService } from '@core/services/payment-method.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
-import { PaymentMethod } from '@types';
+import { IButton, PaymentMethod } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
+import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
@@ -56,10 +58,20 @@ export class ReportPaymentMethodComponent implements OnInit {
     direction: 'desc',
   };
 
+  public rowButtons: IButton[] = [
+    {
+      title: 'view-transaction',
+      class: 'btn btn-success btn-sm',
+      icon: 'fa fa-eye',
+      click: `view-transaction`,
+    },
+  ];
+
   constructor(
     private _service: ReportSystemService,
     public _paymentMethodService: PaymentMethodService,
     public _router: Router,
+    private _modalService: NgbModal,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
     private _title: Title,
@@ -80,7 +92,7 @@ export class ReportPaymentMethodComponent implements OnInit {
 
   private get requestPayload() {
     return {
-      reportType: 'payment-method',
+      reportType: 'payment-methods',
       filters: {
         startDate: this.startDate,
         endDate: this.endDate,
@@ -107,7 +119,7 @@ export class ReportPaymentMethodComponent implements OnInit {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            this.title = result?.result?.title ?? `payment-methods`;
+            this.title = result?.result?.title ?? `Métodos de pago`;
             this._title.setTitle(this.title);
 
             this.cdRef.detectChanges();
@@ -191,5 +203,17 @@ export class ReportPaymentMethodComponent implements OnInit {
           },
         })
     );
+  }
+
+  public onEventFunction(event: { op: string; obj: any; items: any[] }): void {
+    console.log(event?.obj?.transaction?._id);
+    if (event.op === 'view-transaction') {
+      let modalRef;
+      modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        size: 'lg',
+        backdrop: 'static',
+      });
+      modalRef.componentInstance.transactionId = event?.obj?.transaction?._id;
+    }
   }
 }

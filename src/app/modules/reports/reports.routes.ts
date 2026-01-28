@@ -91,7 +91,7 @@ export const REPORTS_ROUTES: Routes = [
   },
 
   {
-    path: 'payment-method',
+    path: 'payment-methods',
     loadComponent: () =>
       import('./payment-method/payment-method.component').then((m) => m.ReportPaymentMethodComponent),
   },
