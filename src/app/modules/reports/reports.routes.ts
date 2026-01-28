@@ -89,4 +89,10 @@ export const REPORTS_ROUTES: Routes = [
     loadComponent: () =>
       import('./transactions-by-hour/transactions-by-hour.component').then((m) => m.TransactionsComponetByHour),
   },
+
+  {
+    path: 'payment-method',
+    loadComponent: () =>
+      import('./payment-method/payment-method.component').then((m) => m.ReportPaymentMethodComponent),
+  },
 ];

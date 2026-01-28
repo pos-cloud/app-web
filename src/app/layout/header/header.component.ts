@@ -718,6 +718,7 @@ export class HeaderComponent implements OnInit {
               children: [
                 { label: 'Cumpleaños', link: 'reports/birthday' },
                 { label: 'Dashboard', link: 'reports/dashboard' },
+                { label: 'kardex de metodo de pago', link: 'reports/payment-method' },
               ],
             },
           ],

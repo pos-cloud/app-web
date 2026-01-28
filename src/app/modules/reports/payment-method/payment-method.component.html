@@ -1,0 +1,50 @@
+<section class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
+      <label for="startDate" class="control-label">
+        <b>{{ 'startDate' | translate | capitalize }}:</b>
+      </label>
+      <app-date-time-picker [(ngModel)]="startDate" name="activeStartDate"></app-date-time-picker>
+    </div>
+
+    <div class="form-group mr-2">
+      <label for="endDate" class="control-label">
+        <b>{{ 'endDate' | translate | capitalize }}:</b>
+      </label>
+      <app-date-time-picker [(ngModel)]="endDate" name="activeEndDate"></app-date-time-picker>
+    </div>
+
+    <div class="form-group mr-2 pt-3 w-40">
+      <label for="article" class="control-label">
+        <b>{{ 'payment-methods' | translate | capitalize }}</b></label
+      >
+      <app-typeahead-dropdown
+        [control]="paymentMethodControl"
+        [data]="paymentMethods"
+        [keyField]="'_id'"
+        [displayField]="'name'"
+        [placeholder]="''"
+      ></app-typeahead-dropdown>
+    </div>
+
+    <!-- Botón de Actualizar -->
+    <div class="form-group ml-auto">
+      <label class="control-label"> </label>
+      <button class="btn btn-primary" (click)="getReport()">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+      </button>
+    </div>
+  </div>
+
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="title"
+    [loading]="loading"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
+    (eventExport)="onExportExcel($event)"
+  >
+  </app-data-table-reports>
+</section>
