@@ -143,6 +143,7 @@
   "automaticSelection": "Selección automática",
   "bad provided credentials": "Credenciales proporcionadas incorrectas",
   "balance": "Saldo",
+  "balanceAccount": "Saldo a la fecha",
   "balanceCanceled": "Saldo Cancelado",
   "balances": "Saldos",
   "bank.name": "Banco",

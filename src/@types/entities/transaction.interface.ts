@@ -88,6 +88,7 @@ export interface Transaction extends Activity {
     letter: string;
     number: number;
   };
+  balanceAccount: number;
 }
 
 export enum TransactionState {

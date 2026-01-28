@@ -13,7 +13,7 @@
         <a ngbNavLink>{{ 'data' | translate | capitalize }}</a>
         <ng-template ngbNavContent>
           <div class="row" *ngIf="transaction?.type?.transactionMovement?.toString() !== 'Stock'">
-            <div class="form-group col-md-8">
+            <div class="form-group col-md-4">
               <label
                 for="company"
                 class="control-label"
@@ -58,6 +58,23 @@
                   name="date"
                   *ngIf="!transaction?.company"
                   value="Consumidor Final"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="balanceAccount" class="control-label">{{ 'balanceAccount' | translate | capitalize }}:</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">$</span>
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="balanceAccount"
+                  min="0"
+                  step="1"
+                  value="{{ transaction?.balanceAccount }}"
                   readonly
                 />
               </div>
