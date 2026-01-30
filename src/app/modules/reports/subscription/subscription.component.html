@@ -1,0 +1,104 @@
+<section class="container-fluid dashboard subscription-dashboard">
+  <div class="d-flex align-items-end mb-3 flex-wrap filters-row">
+    <div class="form-group filters-group-item">
+      <label for="month" class="control-label">
+        <b>Mes</b>
+      </label>
+      <select id="month" class="form-control" [(ngModel)]="selectedMonth" name="month">
+        <option *ngFor="let m of months" [value]="m.value">{{ m.label }}</option>
+      </select>
+    </div>
+    <div class="form-group filters-group-item">
+      <label for="year" class="control-label">
+        <b>Año</b>
+      </label>
+      <select id="year" class="form-control" [(ngModel)]="selectedYear" name="year">
+        <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+      </select>
+    </div>
+    <div class="form-group filters-group-item">
+      <label class="control-label">&nbsp;</label>
+      <button type="button" class="btn btn-primary" (click)="actualizar()" [disabled]="loading">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i>
+        Actualizar
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="data">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="chart kpi">
+          <div class="kpi-value">{{ data.totalIncome }}</div>
+          <div class="kpi-title">Ingresos totales (período)</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="chart kpi">
+          <div class="kpi-value">{{ data.activeSubscription?.activeSubscription?.clients ?? 0 }}</div>
+          <div class="kpi-title">Suscripciones activas (clientes)</div>
+        </div>
+        <div class="chart kpi">
+          <div class="kpi-value">{{ data.activeSubscription?.activeSubscription?.estimatedMoney ?? 0 | number }}</div>
+          <div class="kpi-title">Dinero estimado (activas)</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="chart kpi">
+          <div class="kpi-value">{{ data.activeSubscription?.inactiveSubscription?.clients ?? 0 }}</div>
+          <div class="kpi-title">Suscripciones inactivas (clientes)</div>
+        </div>
+        <div class="chart kpi">
+          <div class="kpi-value">{{ data.activeSubscription?.inactiveSubscription?.estimatedMoney ?? 0 | number }}</div>
+          <div class="kpi-title">Dinero estimado (inactivas)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="byTypeChartOptions">
+      <div class="col-12">
+        <div class="chart">
+          <span class="chart-title">Ingresos por tipo / métodos de pago</span>
+          <apx-chart
+            [series]="byTypeChartOptions.series"
+            [chart]="byTypeChartOptions.chart"
+            [xaxis]="byTypeChartOptions.xaxis"
+            [yaxis]="byTypeChartOptions.yaxis"
+            [dataLabels]="byTypeChartOptions.dataLabels"
+            [plotOptions]="byTypeChartOptions.plotOptions"
+            [tooltip]="byTypeChartOptions.tooltip"
+            [colors]="byTypeChartOptions.colors"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="data.byType?.length">
+      <div class="col-12">
+        <div class="chart table-chart">
+          <span>Detalle por tipo</span>
+          <table class="table table-striped table-sm mt-2">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th class="text-end">Total</th>
+                <th class="text-end">Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of data.byType">
+                <td>{{ item.type }}</td>
+                <td class="text-end">{{ item.total }}</td>
+                <td class="text-end">{{ item.count }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div *ngIf="!data && !loading" class="text-muted text-center py-5">
+    Seleccione mes y año y pulse <strong>Actualizar</strong> para cargar el reporte.
+  </div>
+</section>

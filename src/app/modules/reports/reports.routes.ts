@@ -6,6 +6,10 @@ export const REPORTS_ROUTES: Routes = [
     loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DasboardComponent),
   },
   {
+    path: 'subscription',
+    loadComponent: () => import('./subscription/subscription.component').then((m) => m.SubscriptionComponent),
+  },
+  {
     path: 'mov-art-by-article/:module',
     loadComponent: () =>
       import('./mov-art-by-article/mov-art-by-article.component').then((m) => m.ReportMovArtByArticleComponent),

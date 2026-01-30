@@ -1,0 +1,50 @@
+.subscription-dashboard {
+  width: 90%;
+}
+
+.filters-row {
+  .form-group.filters-group-item {
+    min-width: 120px;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+}
+
+.chart {
+  background-color: white;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px;
+
+  .chart-title {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+}
+
+.table-chart {
+  .table {
+    margin-bottom: 0;
+  }
+}
+
+.kpi {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.kpi-value {
+  font-size: 30px;
+  font-weight: bold;
+  color: #333;
+}
+
+.kpi-title {
+  font-size: 15px;
+  color: #777;
+  margin-top: 5px;
+}
