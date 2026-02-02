@@ -1,9 +1,10 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArticleService } from '@core/services/article.service';
+import { AuthService } from '@core/services/auth.service';
 import { PrintService } from '@core/services/print.service';
 import { PrinterService } from '@core/services/printer.service';
-import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, IAttribute, IButton, PrinterPrintIn, PrintType } from '@types';
@@ -22,11 +23,12 @@ import { Subject, takeUntil } from 'rxjs';
   standalone: true,
   imports: [DatatableModule],
 })
-export class ListArticlesComponent {
+export class ListArticlesComponent implements OnInit {
   public title: string = 'articles';
   public sort = { code: 1 };
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
+  public user;
   public columns: IAttribute[] = [
     {
       name: '_id',
@@ -593,82 +595,9 @@ export class ListArticlesComponent {
       defaultFilter: `{ "$ne": "Variante" }`,
     },
   ];
-  public headerButtons: IButton[] = [
-    {
-      title: 'add',
-      class: 'btn btn-light',
-      icon: 'fa fa-plus',
-      click: `this.emitEvent('add', null)`,
-    },
-    {
-      title: 'import',
-      class: 'btn btn-light',
-      icon: 'fa fa-upload',
-      click: `this.emitEvent('uploadFile', null)`,
-    },
-    {
-      title: 'Imprimir Etiquetas',
-      class: 'btn btn-light',
-      icon: 'fa fa-print',
-      click: `this.emitEvent('print-labels', null, items)`,
-    },
-    {
-      title: 'Actualizar Precios',
-      class: 'btn btn-light',
-      icon: 'fa fa-edit',
-      click: `this.emitEvent('update-prices', null, items)`,
-    },
-    {
-      title: ' Imprimir Lista',
-      class: 'btn btn-light',
-      icon: 'fa fa-print',
-      click: `this.emitEvent('print-list', null, items)`,
-    },
-    {
-      title: 'refresh',
-      class: 'btn btn-light',
-      icon: 'fa fa-refresh',
-      click: `this.refresh()`,
-    },
-  ];
-  public rowButtons: IButton[] = [
-    {
-      title: 'view',
-      class: 'btn btn-success btn-sm',
-      icon: 'fa fa-eye',
-      click: `this.emitEvent('view', item, null)`,
-    },
-    {
-      title: 'update',
-      class: 'btn btn-primary btn-sm',
-      icon: 'fa fa-pencil',
-      click: `this.emitEvent('update', item, null)`,
-    },
-    {
-      title: 'delete',
-      class: 'btn btn-danger btn-sm',
-      icon: 'fa fa-trash-o',
-      click: `this.emitEvent('delete', item, null)`,
-    },
-    {
-      title: 'Imprimir Etiqueta',
-      class: 'btn btn-light btn-sm',
-      icon: 'fa fa-barcode',
-      click: `this.emitEvent('print-label', item, null)`,
-    },
-    {
-      title: 'Copiar',
-      class: 'btn btn-light btn-sm',
-      icon: ' fa fa-copy',
-      click: `this.emitEvent('copy', item, null)`,
-    },
-    // {
-    //   title: 'Historial de Cambios',
-    //   class: 'btn btn-light btn-sm',
-    //   icon: 'fa fa-history',
-    //   click: `this.emitEvent('history', item, null)`,
-    // },
-  ];
+
+  public headerButtons: IButton[] = [];
+  public rowButtons: IButton[] = [];
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
   constructor(
@@ -677,9 +606,13 @@ export class ListArticlesComponent {
     private _router: Router,
     public _printerService: PrinterService,
     public _printService: PrintService,
-    public _alertConfig: NgbAlertConfig,
-    public _toastService: ToastService
+    public _toastService: ToastService,
+    private _authService: AuthService
   ) {}
+
+  async ngOnInit() {
+    this.getPermissions();
+  }
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj, event.items);
@@ -815,5 +748,95 @@ export class ListArticlesComponent {
           this.loading = false;
         },
       });
+  }
+
+  private getPermissions(): void {
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
+      if (identity) {
+        this.user = identity;
+        this.configureButtons();
+      }
+    });
+  }
+
+  private configureButtons(): void {
+    this.rowButtons.push({
+      title: 'view',
+      class: 'btn btn-success btn-sm',
+      icon: 'fa fa-eye',
+      click: `this.emitEvent('view', item, null)`,
+    });
+
+    if (this.user.permission.collections.articles.edit) {
+      this.rowButtons.push({
+        title: 'update',
+        class: 'btn btn-primary btn-sm',
+        icon: 'fa fa-pencil',
+        click: `this.emitEvent('update', item, null)`,
+      });
+    }
+    if (this.user.permission.collections.articles.delete) {
+      this.rowButtons.push({
+        title: 'delete',
+        class: 'btn btn-danger btn-sm',
+        icon: 'fa fa-trash-o',
+        click: `this.emitEvent('delete', item, null)`,
+      });
+    }
+    this.rowButtons.push(
+      {
+        title: 'Imprimir Etiqueta',
+        class: 'btn btn-light btn-sm',
+        icon: 'fa fa-barcode',
+        click: `this.emitEvent('print-label', item, null)`,
+      },
+      {
+        title: 'Copiar',
+        class: 'btn btn-light btn-sm',
+        icon: ' fa fa-copy',
+        click: `this.emitEvent('copy', item, null)`,
+      }
+    );
+    if (this.user.permission.collections.articles.add) {
+      this.headerButtons.push({
+        title: 'add',
+        class: 'btn btn-light',
+        icon: 'fa fa-plus',
+        click: `this.emitEvent('add', null)`,
+      });
+    }
+
+    this.headerButtons.push(
+      {
+        title: 'import',
+        class: 'btn btn-light',
+        icon: 'fa fa-upload',
+        click: `this.emitEvent('uploadFile', null)`,
+      },
+      {
+        title: 'Imprimir Etiquetas',
+        class: 'btn btn-light',
+        icon: 'fa fa-print',
+        click: `this.emitEvent('print-labels', null, items)`,
+      },
+      {
+        title: 'Actualizar Precios',
+        class: 'btn btn-light',
+        icon: 'fa fa-edit',
+        click: `this.emitEvent('update-prices', null, items)`,
+      },
+      {
+        title: ' Imprimir Lista',
+        class: 'btn btn-light',
+        icon: 'fa fa-print',
+        click: `this.emitEvent('print-list', null, items)`,
+      },
+      {
+        title: 'refresh',
+        class: 'btn btn-light',
+        icon: 'fa fa-refresh',
+        click: `this.refresh()`,
+      }
+    );
   }
 }
