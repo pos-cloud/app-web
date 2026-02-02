@@ -35,22 +35,22 @@
       </div>
       <div class="col-md-4">
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.activeSubscription?.activeSubscription?.clients ?? 0 }}</div>
+          <div class="kpi-value">{{ data.subscriptionData?.activeSubscription?.clients ?? 0 }}</div>
           <div class="kpi-title">Suscripciones activas (clientes)</div>
         </div>
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.activeSubscription?.activeSubscription?.estimatedMoney ?? 0 | number }}</div>
+          <div class="kpi-value">{{ data.subscriptionData?.activeSubscription?.estimatedMoney ?? 0 | number }}</div>
           <div class="kpi-title">Dinero estimado (activas)</div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.activeSubscription?.inactiveSubscription?.clients ?? 0 }}</div>
-          <div class="kpi-title">Suscripciones inactivas (clientes)</div>
+          <div class="kpi-value">{{ data.subscriptionData?.openTransactions?.clients ?? 0 }}</div>
+          <div class="kpi-title">Suscripciones Abiertas (clientes)</div>
         </div>
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.activeSubscription?.inactiveSubscription?.estimatedMoney ?? 0 | number }}</div>
-          <div class="kpi-title">Dinero estimado (inactivas)</div>
+          <div class="kpi-value">{{ data.subscriptionData?.openTransactions?.estimatedMoney ?? 0 | number }}</div>
+          <div class="kpi-title">Dinero estimado (abiertas)</div>
         </div>
       </div>
     </div>
