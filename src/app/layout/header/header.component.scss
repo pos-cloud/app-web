@@ -95,5 +95,10 @@ $topnav-background-color: #222;
     width: 100%;
     height: auto;
     background-color: white;
+    /* Hace scrollable el menú cuando está expandido para poder alcanzar niveles profundos del árbol */
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
   }
 }
