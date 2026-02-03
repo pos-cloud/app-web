@@ -47,6 +47,16 @@ export class ListUserComponent {
       required: false,
     },
     {
+      name: 'phone',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'tokenExpiration',
       visible: true,
       disabled: false,
@@ -56,7 +66,16 @@ export class ListUserComponent {
       align: 'left',
       required: false,
     },
-
+    {
+      name: 'token',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
     {
       name: 'employee.name',
       visible: false,
@@ -102,6 +121,16 @@ export class ListUserComponent {
       align: 'left',
       required: false,
     },
+    {
+      name: 'permission.name',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      align: 'left',
+      required: false,
+    },
+
     {
       name: 'level',
       visible: false,
@@ -211,7 +240,10 @@ export class ListUserComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: UserService, private _router: Router) {}
+  constructor(
+    public _service: UserService,
+    private _router: Router
+  ) {}
 
   public async emitEvent(event) {
     await this.openModal(event.op, event.obj);
