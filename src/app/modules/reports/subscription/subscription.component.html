@@ -35,12 +35,12 @@
       </div>
       <div class="col-md-4">
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.subscriptionData?.activeSubscription?.clients ?? 0 }}</div>
-          <div class="kpi-title">Suscripciones activas (clientes)</div>
+          <div class="kpi-value">{{ data.subscriptionData?.closeSubscription?.clients ?? 0 }}</div>
+          <div class="kpi-title">Suscripciones cerradas (clientes)</div>
         </div>
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.subscriptionData?.activeSubscription?.estimatedMoney ?? 0 | number }}</div>
-          <div class="kpi-title">Dinero estimado (activas)</div>
+          <div class="kpi-value">{{ data.subscriptionData?.closeSubscription?.estimatedMoney ?? 0 | number }}</div>
+          <div class="kpi-title">Dinero estimado (cerradas)</div>
         </div>
       </div>
       <div class="col-md-4">
