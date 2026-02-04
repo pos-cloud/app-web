@@ -57,7 +57,7 @@
               id="name"
               [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid': permissionForm.get('name')?.touched && permissionForm.get('name')?.invalid
+                'is-invalid': permissionForm.get('name')?.touched && permissionForm.get('name')?.invalid,
               }"
             />
             <div
@@ -363,6 +363,48 @@
               <input type="checkbox" class="form-check-input" id="article_export" formControlName="export" />
               <label class="form-check-label" for="article_export">{{ 'export' | translate | capitalize }}</label>
             </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_printLabel" formControlName="printLabel" />
+              <label class="form-check-label" for="article_printLabel">{{
+                'printLabel' | translate | capitalize
+              }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_copy" formControlName="copy" />
+              <label class="form-check-label" for="article_copy">{{ 'copy' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_import" formControlName="import" />
+              <label class="form-check-label" for="article_import">{{ 'import' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input type="checkbox" class="form-check-input" id="article_printLabels" formControlName="printLabels" />
+              <label class="form-check-label" for="article_printLabels">{{
+                'printLabels' | translate | capitalize
+              }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="article_updatePrices"
+                formControlName="updatePrices"
+              />
+              <label class="form-check-label" for="article_updatePrices">{{
+                'updatePrices' | translate | capitalize
+              }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="article_printPriceList"
+                formControlName="printPriceList"
+              />
+              <label class="form-check-label" for="article_printPriceList">{{
+                'printPriceList' | translate | capitalize
+              }}</label>
+            </div>
           </div>
 
           <!-- Companies -->
@@ -441,7 +483,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ permission?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ permission?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -455,7 +497,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ permission?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ permission?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

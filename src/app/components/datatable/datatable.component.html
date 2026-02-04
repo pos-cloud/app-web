@@ -35,6 +35,7 @@
         <button class="btn btn-light" (click)="refresh()" [disabled]="loading"><i
             class="fa fa-refresh"></i><span>Actualizar</span></button> -->
         <app-export-excel
+          *ngIf="exportPermision"
           #exportExcelComponent
           [title]="title"
           [loading]="loading"

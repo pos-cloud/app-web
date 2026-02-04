@@ -54,6 +54,12 @@ export class PermissionComponent implements OnInit {
           edit: [true],
           delete: [true],
           export: [true],
+          printLabel: [true],
+          copy: [true],
+          import: [true],
+          printLabels: [true],
+          updatePrices: [true],
+          printPriceList: [true],
         }),
         companies: this._fb.group({
           add: [true],
@@ -175,6 +181,12 @@ export class PermissionComponent implements OnInit {
           edit: this.permission.collections?.articles?.edit ?? true,
           delete: this.permission.collections?.articles?.delete ?? true,
           export: this.permission.collections?.articles?.export ?? true,
+          printLabel: this.permission.collections?.articles?.printLabel ?? true,
+          copy: this.permission.collections?.articles?.copy ?? true,
+          import: this.permission.collections?.articles?.import ?? true,
+          printLabels: this.permission.collections?.articles?.printLabels ?? true,
+          updatePrices: this.permission.collections?.articles?.updatePrices ?? true,
+          printPriceList: this.permission.collections?.articles?.printPriceList ?? true,
         },
         companies: {
           add: this.permission.collections?.companies?.add ?? true,
@@ -355,14 +367,17 @@ export class PermissionComponent implements OnInit {
   }
 
   private groupTransactionTypes(): [string, TransactionType[]][] {
-    const groups = this.transactionTypes.reduce((acc, type) => {
-      const movement = type.transactionMovement;
-      if (!acc[movement]) {
-        acc[movement] = [];
-      }
-      acc[movement].push(type);
-      return acc;
-    }, {} as Record<string, TransactionType[]>);
+    const groups = this.transactionTypes.reduce(
+      (acc, type) => {
+        const movement = type.transactionMovement;
+        if (!acc[movement]) {
+          acc[movement] = [];
+        }
+        acc[movement].push(type);
+        return acc;
+      },
+      {} as Record<string, TransactionType[]>
+    );
 
     return Object.entries(groups);
   }

@@ -17,6 +17,12 @@ export interface Permission extends Activity {
       edit: boolean;
       delete: boolean;
       export: boolean;
+      printLabel: boolean;
+      copy: boolean;
+      import: boolean;
+      printLabels: boolean;
+      updatePrices: boolean;
+      printPriceList: boolean;
     };
     companies: {
       view: boolean;

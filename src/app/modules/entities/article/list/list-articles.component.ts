@@ -25,6 +25,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class ListArticlesComponent implements OnInit {
   public title: string = 'articles';
+  public exportPermision = true;
   public sort = { code: 1 };
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
@@ -760,6 +761,7 @@ export class ListArticlesComponent implements OnInit {
   }
 
   private configureButtons(): void {
+    this.exportPermision = this.user.permission.collections.articles.export;
     this.rowButtons.push({
       title: 'view',
       class: 'btn btn-success btn-sm',
@@ -783,20 +785,24 @@ export class ListArticlesComponent implements OnInit {
         click: `this.emitEvent('delete', item, null)`,
       });
     }
-    this.rowButtons.push(
-      {
+    if (this.user.permission.collections.articles.printLabel) {
+      this.rowButtons.push({
         title: 'Imprimir Etiqueta',
         class: 'btn btn-light btn-sm',
         icon: 'fa fa-barcode',
         click: `this.emitEvent('print-label', item, null)`,
-      },
-      {
+      });
+    }
+
+    if (this.user.permission.collections.articles.copy) {
+      this.rowButtons.push({
         title: 'Copiar',
         class: 'btn btn-light btn-sm',
         icon: ' fa fa-copy',
         click: `this.emitEvent('copy', item, null)`,
-      }
-    );
+      });
+    }
+
     if (this.user.permission.collections.articles.add) {
       this.headerButtons.push({
         title: 'add',
@@ -806,37 +812,46 @@ export class ListArticlesComponent implements OnInit {
       });
     }
 
-    this.headerButtons.push(
-      {
+    if (this.user.permission.collections.articles.import) {
+      this.headerButtons.push({
         title: 'import',
         class: 'btn btn-light',
         icon: 'fa fa-upload',
         click: `this.emitEvent('uploadFile', null)`,
-      },
-      {
+      });
+    }
+
+    if (this.user.permission.collections.articles.printLabels) {
+      this.headerButtons.push({
         title: 'Imprimir Etiquetas',
         class: 'btn btn-light',
         icon: 'fa fa-print',
         click: `this.emitEvent('print-labels', null, items)`,
-      },
-      {
+      });
+    }
+
+    if (this.user.permission.collections.articles.updatePrices) {
+      this.headerButtons.push({
         title: 'Actualizar Precios',
         class: 'btn btn-light',
         icon: 'fa fa-edit',
         click: `this.emitEvent('update-prices', null, items)`,
-      },
-      {
+      });
+    }
+    if (this.user.permission.collections.articles.printPriceList) {
+      this.headerButtons.push({
         title: ' Imprimir Lista',
         class: 'btn btn-light',
         icon: 'fa fa-print',
         click: `this.emitEvent('print-list', null, items)`,
-      },
-      {
-        title: 'refresh',
-        class: 'btn btn-light',
-        icon: 'fa fa-refresh',
-        click: `this.refresh()`,
-      }
-    );
+      });
+    }
+
+    this.headerButtons.push({
+      title: 'refresh',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.refresh()`,
+    });
   }
 }

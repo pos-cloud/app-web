@@ -52,6 +52,7 @@ export class DatatableComponent {
   @Input() rowButtons: IButton[];
   @Input() headerButtons: IButton[];
   @Input() _service: any;
+  @Input() exportPermision: boolean = true;
 
   // Identificador único para este componente
   private identifier: string;
