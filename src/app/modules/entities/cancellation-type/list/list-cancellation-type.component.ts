@@ -23,7 +23,10 @@ export class ListCancellationTypeComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: CancellationTypeService, private _router: Router) {
+  constructor(
+    public _service: CancellationTypeService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'origin.transactionMovement',
@@ -173,6 +176,17 @@ export class ListCancellationTypeComponent {
         project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
         align: 'left',
         required: false,
+      },
+      {
+        name: 'operationType',
+        visible: false,
+        disabled: true,
+        filter: false,
+        datatype: 'string',
+        defaultFilter: `{ "$ne": "D" }`,
+        project: null,
+        align: 'left',
+        required: true,
       },
     ];
     this.rowButtons = [
