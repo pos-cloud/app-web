@@ -129,10 +129,10 @@
                 </button>
               </td>
               <td class="align-center" *ngIf="item?.transaction?.endDate">
-                {{ item?.transaction?.endDate | dateFormat : 'DD/MM/YYYY' }}
+                {{ item?.transaction?.endDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
               <td class="align-center" *ngIf="!item?.transaction?.startDate">
-                {{ item?.transaction?.startDate | dateFormat : 'DD/MM/YYYY' }}
+                {{ item?.transaction?.startDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
               <td *ngIf="item.transaction?.type?.name" class="align-center">
                 {{ item?.transaction?.type?.name }}
@@ -149,16 +149,16 @@
                 {{ item.quota }}
               </td>
               <td class="align-center">
-                {{ item.paymentMethodExpirationDate | dateFormat : 'DD/MM/YYYY' }}
+                {{ item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
               <td class="align-right">
-                {{ item?.amountPaid | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item?.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" [ngClass]="{ credit: item.debe > 0 }">
-                {{ item.debe | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.debe | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td class="align-right" [ngClass]="{ debit: item.haber > 0 }">
-                {{ item.haber | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.haber | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </tr>
             <tr align="center" *ngIf="totalItems === 0 && !loading">
@@ -166,17 +166,15 @@
             </tr>
           </tbody>
           <tfoot [ngClass]="{ credit: totalPrice > 0, debit: totalPrice < 0 }">
-            <td></td>
-            <td></td>
-            <td></td>
-            <td [attr.colspan]="7" class="align-right"></td>
+            <td colspan="11" class="align-right">
+              <strong>SALDO TOTAL</strong>
+            </td>
             <td *ngIf="totalPrice >= 0" class="align-right">
-              <strong>{{ totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+              <strong>{{ totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
             </td>
             <td *ngIf="totalPrice < 0" class="align-right">
-              <strong>{{ totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+              <strong>{{ totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
             </td>
-            <td></td>
           </tfoot>
         </table>
       </div>
