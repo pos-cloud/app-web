@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
   UntypedFormArray,
@@ -59,7 +59,8 @@ export class BusinessRuleComponent implements OnInit {
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     public _router: Router,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private _cdr: ChangeDetectorRef
   ) {
     this.businessRuleForm = this._fb.group({
       _id: ['', []],
@@ -214,18 +215,42 @@ export class BusinessRuleComponent implements OnInit {
 
     // Cargar articleGroup (objeto único)
     const ag = this.businessRule?.articleGroup;
-    if (ag && Array.isArray(ag.articles) && ag.articles.length > 0) {
-      const articleIds = ag.articles.map((a: any) => (typeof a === 'object' && a?._id ? a._id : a));
-      const articleControls = articleIds.map((id) =>
-        this._fb.control(this.articles?.find((item) => item._id === id) ?? null, [Validators.required])
-      );
-      while (this.articleGroupArticlesArray.length > 0) {
-        this.articleGroupArticlesArray.removeAt(0);
+    if (ag) {
+      const normId = (x: any) => (x == null ? '' : typeof x === 'object' && x?.toString ? x.toString() : String(x));
+      const findArticle = (a: any) => {
+        const id = typeof a === 'object' && a != null && a._id != null ? (a._id?.toString?.() ?? a._id) : a;
+        const idStr = normId(id);
+        if (!idStr) return null;
+        const found = this.articles?.find((item) => normId(item._id) === idStr);
+        if (found) return found;
+        // API puede devolver objeto poblado
+        if (typeof a === 'object' && a != null && a._id && a.description) return a;
+        // Solo vino el ID (string): crear stub para mostrar y conservar el id al guardar
+        return { _id: idStr, description: `(ID: ${idStr.substring(0, 8)}…)` };
+      };
+      if (Array.isArray(ag.articles) && ag.articles.length > 0) {
+        while (this.articleGroupArticlesArray.length > 0) {
+          this.articleGroupArticlesArray.removeAt(0);
+        }
+        ag.articles.forEach((a: any) => {
+          this.articleGroupArticlesArray.push(
+            this._fb.control(findArticle(a), [Validators.required])
+          );
+        });
       }
-      articleControls.forEach((c) => this.articleGroupArticlesArray.push(c));
-      this.articleGroupForm.patchValue({ quantity: ag.quantity ?? 1 });
-    } else if (ag && ag.quantity != null) {
-      this.articleGroupForm.patchValue({ quantity: ag.quantity });
+      if (ag.quantity != null) {
+        this.articleGroupForm.patchValue({ quantity: ag.quantity });
+      }
+      // Re-aplicar valores en el siguiente tick para que el typeahead pinte el texto (evita que quede vacío hasta tocar el input)
+      const articleValues = ag.articles.map((a: any) => findArticle(a));
+      setTimeout(() => {
+        articleValues.forEach((val, i) => {
+          if (this.articleGroupArticlesArray.at(i)) {
+            this.articleGroupArticlesArray.at(i).setValue(val, { emitEvent: false });
+          }
+        });
+        this._cdr.detectChanges();
+      }, 0);
     }
   }
 
