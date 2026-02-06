@@ -58,7 +58,7 @@
               id="code"
               [readonly]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
-                'is-invalid': businessRuleForm.get('code')?.touched && businessRuleForm.get('code')?.invalid
+                'is-invalid': businessRuleForm.get('code')?.touched && businessRuleForm.get('code')?.invalid,
               }"
             />
             <div
@@ -84,7 +84,7 @@
               [focus]="focusEvent"
               [readonly]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
-                'is-invalid': businessRuleForm.get('name')?.touched && businessRuleForm.get('name')?.invalid
+                'is-invalid': businessRuleForm.get('name')?.touched && businessRuleForm.get('name')?.invalid,
               }"
             />
             <div
@@ -154,7 +154,8 @@
               id="totalStock"
               [readonly]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
-                'is-invalid': businessRuleForm.get('totalStock')?.invalid && businessRuleForm.get('totalStock')?.touched
+                'is-invalid':
+                  businessRuleForm.get('totalStock')?.invalid && businessRuleForm.get('totalStock')?.touched,
               }"
             />
             <div
@@ -196,7 +197,7 @@
               [disabled]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
                 'is-invalid':
-                  businessRuleForm.get('discountType')?.invalid && businessRuleForm.get('discountType')?.touched
+                  businessRuleForm.get('discountType')?.invalid && businessRuleForm.get('discountType')?.touched,
               }"
             >
               <option value="percentage">{{ 'percentage' | translate | capitalize }}</option>
@@ -219,7 +220,7 @@
               [readonly]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
                 'is-invalid':
-                  businessRuleForm.get('discountValue')?.invalid && businessRuleForm.get('discountValue')?.touched
+                  businessRuleForm.get('discountValue')?.invalid && businessRuleForm.get('discountValue')?.touched,
               }"
             />
             <div
@@ -288,7 +289,7 @@
                         formControlName="quantity"
                         [readonly]="operation === 'view' || operation === 'delete'"
                         [ngClass]="{
-                          'is-invalid': article.get('quantity')?.invalid && article.get('quantity')?.touched
+                          'is-invalid': article.get('quantity')?.invalid && article.get('quantity')?.touched,
                         }"
                       />
                     </td>
@@ -309,25 +310,19 @@
           <label class="form-group col-md-12">
             <b>Grupo de artículos</b>
           </label>
-          <div class="col-md-12">
-            <small class="form-text text-muted">
-              La promo aplica si se cumple la cantidad con <em>cualquiera</em> de los artículos (ej: 4 chocolates sin importar el sabor). Para otro grupo, creá otra regla.
-            </small>
-          </div>
         </div>
         <div class="row" [formGroupName]="'articleGroup'">
           <div class="col-md-12">
-            <div class="d-flex align-items-center flex-wrap mb-2">
+            <div class="d-flex align-items-center flex-wrap mb-2" *ngIf="articleGroupArticlesArray.length > 0">
               <label class="mb-0 mr-1">{{ 'quantity' | translate | capitalize }}:</label>
               <input
                 type="number"
                 class="form-control form-control-sm mr-2 group-quantity-input"
                 formControlName="quantity"
-                min="1"
+                min="0"
                 [readonly]="operation === 'view' || operation === 'delete'"
                 [ngClass]="{
-                  'is-invalid':
-                    articleGroupForm.get('quantity')?.invalid && articleGroupForm.get('quantity')?.touched
+                  'is-invalid': articleGroupForm.get('quantity')?.invalid && articleGroupForm.get('quantity')?.touched,
                 }"
               />
               <div
@@ -343,7 +338,12 @@
                   <tr>
                     <th style="width: 90%">{{ 'article' | translate | capitalize }} (cualquiera del grupo)</th>
                     <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
-                      <button type="button" class="btn btn-success btn-sm" (click)="addArticleToGroup()" title="Agregar artículo">
+                      <button
+                        type="button"
+                        class="btn btn-success btn-sm"
+                        (click)="addArticleToGroup()"
+                        title="Agregar artículo"
+                      >
                         <i class="fa fa-plus"></i>
                       </button>
                     </th>
@@ -364,12 +364,7 @@
                       </div>
                     </td>
                     <td *ngIf="operation !== 'view' && operation !== 'delete'">
-                      <button
-                        type="button"
-                        class="btn btn-danger btn-sm"
-                        (click)="removeArticleFromGroup(aIdx)"
-                        [disabled]="articleGroupArticlesArray.length <= 1"
-                      >
+                      <button type="button" class="btn btn-danger btn-sm" (click)="removeArticleFromGroup(aIdx)">
                         <i class="fa fa-trash"></i>
                       </button>
                     </td>
@@ -429,7 +424,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ businessRule?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ businessRule?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -443,7 +438,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ businessRule?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ businessRule?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

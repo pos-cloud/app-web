@@ -76,7 +76,7 @@ export class BusinessRuleComponent implements OnInit {
       days: ['', []],
       articles: this._fb.array([]),
       articleGroup: this._fb.group({
-        articles: this._fb.array([this._fb.control(null)]),
+        articles: this._fb.array([]),
         quantity: [0],
       }),
       includeInApplyAll: [true, []],
@@ -121,9 +121,7 @@ export class BusinessRuleComponent implements OnInit {
   }
 
   public removeArticleFromGroup(articleIndex: number): void {
-    if (this.articleGroupArticlesArray.length > 1) {
-      this.articleGroupArticlesArray.removeAt(articleIndex);
-    }
+    this.articleGroupArticlesArray.removeAt(articleIndex);
   }
 
   ngOnInit() {
