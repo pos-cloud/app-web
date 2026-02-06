@@ -76,8 +76,8 @@ export class BusinessRuleComponent implements OnInit {
       days: ['', []],
       articles: this._fb.array([]),
       articleGroup: this._fb.group({
-        articles: this._fb.array([this._fb.control(null, [Validators.required])]),
-        quantity: [1, [Validators.required, Validators.min(1)]],
+        articles: this._fb.array([this._fb.control(null)]),
+        quantity: [0, [Validators.required, Validators.min(0)]],
       }),
       includeInApplyAll: [true, []],
     });
@@ -115,7 +115,7 @@ export class BusinessRuleComponent implements OnInit {
   }
 
   public addArticleToGroup(): void {
-    this.articleGroupArticlesArray.push(this._fb.control(null, [Validators.required]));
+    this.articleGroupArticlesArray.push(this._fb.control(null));
   }
 
   public removeArticleFromGroup(articleIndex: number): void {
@@ -234,7 +234,7 @@ export class BusinessRuleComponent implements OnInit {
         }
         ag.articles.forEach((a: any) => {
           this.articleGroupArticlesArray.push(
-            this._fb.control(findArticle(a), [Validators.required])
+            this._fb.control(findArticle(a))
           );
         });
       }
@@ -291,7 +291,7 @@ export class BusinessRuleComponent implements OnInit {
     const ag = formValue.articleGroup || {};
     const articleGroupPayload = {
       articles: (ag.articles || []).map((a: any) => (a && typeof a === 'object' && a._id ? a._id : a)).filter(Boolean),
-      quantity: ag.quantity ?? 1,
+      quantity: ag.quantity ?? 0,
     };
     this.businessRule = {
       ...this.businessRule,
