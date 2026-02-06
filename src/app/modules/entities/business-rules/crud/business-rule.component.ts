@@ -77,7 +77,7 @@ export class BusinessRuleComponent implements OnInit {
       articles: this._fb.array([]),
       articleGroup: this._fb.group({
         articles: this._fb.array([this._fb.control(null)]),
-        quantity: [0, [Validators.required, Validators.min(0)]],
+        quantity: [0],
       }),
       includeInApplyAll: [true, []],
     });
@@ -116,6 +116,8 @@ export class BusinessRuleComponent implements OnInit {
 
   public addArticleToGroup(): void {
     this.articleGroupArticlesArray.push(this._fb.control(null));
+    this._cdr.detectChanges();
+    setTimeout(() => this._cdr.detectChanges(), 0);
   }
 
   public removeArticleFromGroup(articleIndex: number): void {
