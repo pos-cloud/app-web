@@ -20,6 +20,9 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   @Input() readonly: boolean = false; // Deshabilitar el input si es necesario
   @Input() keyField: string = '_id'; // Campo clave del objeto (default: `_id`)
   @Input() displayField: string = 'description'; // Campo para mostrar en el dropdown (default: `description`)
+  /** Si true, solo muestra borde rojo cuando formSubmitted es true (no al salir del campo) */
+  @Input() showInvalidOnlyAfterSubmit: boolean = false;
+  @Input() formSubmitted: boolean = false;
 
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;
 

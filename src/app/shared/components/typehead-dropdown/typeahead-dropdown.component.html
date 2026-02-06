@@ -13,7 +13,7 @@
     [readonly]="readonly"
     [placeholder]="placeholder || ''"
     [ngClass]="{
-      'is-invalid': control?.touched && control?.invalid
+      'is-invalid': control?.invalid && (showInvalidOnlyAfterSubmit ? formSubmitted : control?.touched)
     }"
   />
 </div>

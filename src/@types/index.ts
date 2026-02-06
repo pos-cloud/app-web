@@ -7,7 +7,12 @@ export { Application } from './entities/application.interface';
 export { Article, Type } from './entities/article.interface';
 export { Bank } from './entities/bank.interface';
 export { Branch } from './entities/branch.interface';
-export { BusinessRule, Day, DiscountType } from './entities/business-rule.interface';
+export {
+  BusinessRule,
+  BusinessRuleArticleGroup,
+  Day,
+  DiscountType,
+} from './entities/business-rule.interface';
 export { CancellationType } from './entities/cancellation-type.interface';
 export { CashBoxType } from './entities/cash-box-type.interface';
 export { CashBox } from './entities/cash-box.interface';

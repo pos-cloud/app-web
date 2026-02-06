@@ -40,6 +40,7 @@ export class BusinessRuleComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public businessRuleForm: UntypedFormGroup;
+  public formSubmitted = false;
   private destroy$ = new Subject<void>();
   public articles: Article[] = [];
   public days: { name: string; _id: string }[] = [
@@ -73,6 +74,7 @@ export class BusinessRuleComponent implements OnInit {
       articleDiscount: ['', [Validators.required]],
       days: ['', []],
       articles: this._fb.array([]),
+      articleGroups: this._fb.array([]),
       includeInApplyAll: [true, []],
     });
   }
@@ -80,6 +82,11 @@ export class BusinessRuleComponent implements OnInit {
   // Getter para acceder fácilmente al FormArray de articles
   get articlesArray(): UntypedFormArray {
     return this.businessRuleForm.get('articles') as UntypedFormArray;
+  }
+
+  // Getter para el FormArray de articleGroups
+  get articleGroupsArray(): UntypedFormArray {
+    return this.businessRuleForm.get('articleGroups') as UntypedFormArray;
   }
 
   // Método para crear un FormGroup para un article
@@ -98,6 +105,35 @@ export class BusinessRuleComponent implements OnInit {
   // Método para eliminar un article
   public removeArticle(index: number): void {
     this.articlesArray.removeAt(index);
+  }
+
+  // Crear FormGroup para un article group (artículos opcionales entre sí + cantidad)
+  private createArticleGroupFormGroup(): UntypedFormGroup {
+    return this._fb.group({
+      articles: this._fb.array([this._fb.control(null, [Validators.required])]),
+      quantity: [1, [Validators.required, Validators.min(1)]],
+    });
+  }
+
+  public addArticleGroup(): void {
+    this.articleGroupsArray.push(this.createArticleGroupFormGroup());
+  }
+
+  public removeArticleGroup(index: number): void {
+    this.articleGroupsArray.removeAt(index);
+  }
+
+  public getGroupArticlesArray(groupIndex: number): UntypedFormArray {
+    return this.articleGroupsArray.at(groupIndex).get('articles') as UntypedFormArray;
+  }
+
+  public addArticleToGroup(groupIndex: number): void {
+    this.getGroupArticlesArray(groupIndex).push(this._fb.control(null, [Validators.required]));
+  }
+
+  public removeArticleFromGroup(groupIndex: number, articleIndex: number): void {
+    const arr = this.getGroupArticlesArray(groupIndex);
+    if (arr.length > 1) arr.removeAt(articleIndex);
   }
 
   ngOnInit() {
@@ -188,6 +224,29 @@ export class BusinessRuleComponent implements OnInit {
         );
       });
     }
+
+    // Cargar articleGroups
+    if (this.businessRule?.articleGroups && this.businessRule.articleGroups.length > 0) {
+      while (this.articleGroupsArray.length !== 0) {
+        this.articleGroupsArray.removeAt(0);
+      }
+      this.businessRule.articleGroups.forEach((group) => {
+        const articleIds = Array.isArray(group.articles)
+          ? group.articles.map((a: any) => (typeof a === 'object' && a?._id ? a._id : a))
+          : [];
+        const articleControls = articleIds.length
+          ? articleIds.map((id) =>
+              this._fb.control(this.articles?.find((item) => item._id === id) ?? null, [Validators.required])
+            )
+          : [this._fb.control(null, [Validators.required])];
+        this.articleGroupsArray.push(
+          this._fb.group({
+            articles: this._fb.array(articleControls),
+            quantity: [group.quantity ?? 1, [Validators.required, Validators.min(1)]],
+          })
+        );
+      });
+    }
   }
 
   public returnTo() {
@@ -215,6 +274,7 @@ export class BusinessRuleComponent implements OnInit {
   }
 
   public handleBusinessRuleOperation() {
+    this.formSubmitted = true;
     this.loading = true;
 
     this.businessRuleForm.markAllAsTouched();
@@ -222,9 +282,15 @@ export class BusinessRuleComponent implements OnInit {
       this.loading = false;
       return;
     }
+    const formValue = this.businessRuleForm.value;
+    const articleGroupsPayload = (formValue.articleGroups || []).map((group: any) => ({
+      articles: (group.articles || []).map((a: any) => (a && typeof a === 'object' && a._id ? a._id : a)).filter(Boolean),
+      quantity: group.quantity,
+    }));
     this.businessRule = {
       ...this.businessRule,
-      ...this.businessRuleForm.value,
+      ...formValue,
+      articleGroups: articleGroupsPayload,
     };
 
     switch (this.operation) {

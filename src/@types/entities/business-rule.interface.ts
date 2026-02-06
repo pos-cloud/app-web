@@ -13,8 +13,14 @@ export interface BusinessRule extends Activity {
   discountValue: number;
   articleDiscount: Article;
   articles: BusinessRuleArticle[];
+  articleGroups?: BusinessRuleArticleGroup[];
   days: Day[];
   includeInApplyAll?: boolean;
+}
+
+export interface BusinessRuleArticleGroup {
+  articles: string[] | Article[];
+  quantity: number;
 }
 
 export enum DiscountType {
