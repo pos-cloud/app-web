@@ -13,7 +13,8 @@ export interface BusinessRule extends Activity {
   discountValue: number;
   articleDiscount: Article;
   articles: BusinessRuleArticle[];
-  articleGroups?: BusinessRuleArticleGroup[];
+  /** Grupo de artículos: la promo aplica si se cumple la cantidad con cualquiera de estos artículos. Para varios grupos, crear varias reglas. */
+  articleGroup?: BusinessRuleArticleGroup;
   days: Day[];
   includeInApplyAll?: boolean;
 }

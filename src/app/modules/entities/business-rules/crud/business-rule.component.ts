@@ -74,7 +74,10 @@ export class BusinessRuleComponent implements OnInit {
       articleDiscount: ['', [Validators.required]],
       days: ['', []],
       articles: this._fb.array([]),
-      articleGroups: this._fb.array([]),
+      articleGroup: this._fb.group({
+        articles: this._fb.array([this._fb.control(null, [Validators.required])]),
+        quantity: [1, [Validators.required, Validators.min(1)]],
+      }),
       includeInApplyAll: [true, []],
     });
   }
@@ -84,9 +87,12 @@ export class BusinessRuleComponent implements OnInit {
     return this.businessRuleForm.get('articles') as UntypedFormArray;
   }
 
-  // Getter para el FormArray de articleGroups
-  get articleGroupsArray(): UntypedFormArray {
-    return this.businessRuleForm.get('articleGroups') as UntypedFormArray;
+  get articleGroupForm(): UntypedFormGroup {
+    return this.businessRuleForm.get('articleGroup') as UntypedFormGroup;
+  }
+
+  get articleGroupArticlesArray(): UntypedFormArray {
+    return this.articleGroupForm.get('articles') as UntypedFormArray;
   }
 
   // Método para crear un FormGroup para un article
@@ -107,33 +113,14 @@ export class BusinessRuleComponent implements OnInit {
     this.articlesArray.removeAt(index);
   }
 
-  // Crear FormGroup para un article group (artículos opcionales entre sí + cantidad)
-  private createArticleGroupFormGroup(): UntypedFormGroup {
-    return this._fb.group({
-      articles: this._fb.array([this._fb.control(null, [Validators.required])]),
-      quantity: [1, [Validators.required, Validators.min(1)]],
-    });
+  public addArticleToGroup(): void {
+    this.articleGroupArticlesArray.push(this._fb.control(null, [Validators.required]));
   }
 
-  public addArticleGroup(): void {
-    this.articleGroupsArray.push(this.createArticleGroupFormGroup());
-  }
-
-  public removeArticleGroup(index: number): void {
-    this.articleGroupsArray.removeAt(index);
-  }
-
-  public getGroupArticlesArray(groupIndex: number): UntypedFormArray {
-    return this.articleGroupsArray.at(groupIndex).get('articles') as UntypedFormArray;
-  }
-
-  public addArticleToGroup(groupIndex: number): void {
-    this.getGroupArticlesArray(groupIndex).push(this._fb.control(null, [Validators.required]));
-  }
-
-  public removeArticleFromGroup(groupIndex: number, articleIndex: number): void {
-    const arr = this.getGroupArticlesArray(groupIndex);
-    if (arr.length > 1) arr.removeAt(articleIndex);
+  public removeArticleFromGroup(articleIndex: number): void {
+    if (this.articleGroupArticlesArray.length > 1) {
+      this.articleGroupArticlesArray.removeAt(articleIndex);
+    }
   }
 
   ngOnInit() {
@@ -225,27 +212,20 @@ export class BusinessRuleComponent implements OnInit {
       });
     }
 
-    // Cargar articleGroups
-    if (this.businessRule?.articleGroups && this.businessRule.articleGroups.length > 0) {
-      while (this.articleGroupsArray.length !== 0) {
-        this.articleGroupsArray.removeAt(0);
+    // Cargar articleGroup (objeto único)
+    const ag = this.businessRule?.articleGroup;
+    if (ag && Array.isArray(ag.articles) && ag.articles.length > 0) {
+      const articleIds = ag.articles.map((a: any) => (typeof a === 'object' && a?._id ? a._id : a));
+      const articleControls = articleIds.map((id) =>
+        this._fb.control(this.articles?.find((item) => item._id === id) ?? null, [Validators.required])
+      );
+      while (this.articleGroupArticlesArray.length > 0) {
+        this.articleGroupArticlesArray.removeAt(0);
       }
-      this.businessRule.articleGroups.forEach((group) => {
-        const articleIds = Array.isArray(group.articles)
-          ? group.articles.map((a: any) => (typeof a === 'object' && a?._id ? a._id : a))
-          : [];
-        const articleControls = articleIds.length
-          ? articleIds.map((id) =>
-              this._fb.control(this.articles?.find((item) => item._id === id) ?? null, [Validators.required])
-            )
-          : [this._fb.control(null, [Validators.required])];
-        this.articleGroupsArray.push(
-          this._fb.group({
-            articles: this._fb.array(articleControls),
-            quantity: [group.quantity ?? 1, [Validators.required, Validators.min(1)]],
-          })
-        );
-      });
+      articleControls.forEach((c) => this.articleGroupArticlesArray.push(c));
+      this.articleGroupForm.patchValue({ quantity: ag.quantity ?? 1 });
+    } else if (ag && ag.quantity != null) {
+      this.articleGroupForm.patchValue({ quantity: ag.quantity });
     }
   }
 
@@ -283,14 +263,15 @@ export class BusinessRuleComponent implements OnInit {
       return;
     }
     const formValue = this.businessRuleForm.value;
-    const articleGroupsPayload = (formValue.articleGroups || []).map((group: any) => ({
-      articles: (group.articles || []).map((a: any) => (a && typeof a === 'object' && a._id ? a._id : a)).filter(Boolean),
-      quantity: group.quantity,
-    }));
+    const ag = formValue.articleGroup || {};
+    const articleGroupPayload = {
+      articles: (ag.articles || []).map((a: any) => (a && typeof a === 'object' && a._id ? a._id : a)).filter(Boolean),
+      quantity: ag.quantity ?? 1,
+    };
     this.businessRule = {
       ...this.businessRule,
       ...formValue,
-      articleGroups: articleGroupsPayload,
+      articleGroup: articleGroupPayload,
     };
 
     switch (this.operation) {

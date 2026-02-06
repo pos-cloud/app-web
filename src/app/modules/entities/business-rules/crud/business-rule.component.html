@@ -307,68 +307,35 @@
         <hr />
         <div class="row">
           <label class="form-group col-md-12">
-            <b>Grupos de artículos</b>
+            <b>Grupo de artículos</b>
           </label>
           <div class="col-md-12">
             <small class="form-text text-muted">
-              La promo aplica si se cumple la cantidad con <em>cualquiera</em> de los artículos del grupo (ej: 4 chocolates sin importar el sabor).
+              La promo aplica si se cumple la cantidad con <em>cualquiera</em> de los artículos (ej: 4 chocolates sin importar el sabor). Para otro grupo, creá otra regla.
             </small>
           </div>
         </div>
-        <div class="row" formArrayName="articleGroups">
-          <ng-container *ngIf="articleGroupsArray.length === 0 && operation !== 'view' && operation !== 'delete'">
-            <div class="col-md-12">
-              <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                  <tbody>
-                    <tr>
-                      <td class="text-muted text-center py-3">
-                        Aún no hay grupos. Agregá uno para definir artículos alternativos (ej: distintos sabores que suman a la misma cantidad).
-                        <div class="mt-2">
-                          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addArticleGroup()">
-                            <i class="fa fa-plus"></i> Agregar grupo
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </ng-container>
-          <div class="col-md-12" *ngFor="let group of articleGroupsArray.controls; let gIdx = index" [formGroupName]="gIdx">
+        <div class="row" [formGroupName]="'articleGroup'">
+          <div class="col-md-12">
             <div class="d-flex align-items-center flex-wrap mb-2">
-              <span class="font-weight-bold mr-2">Grupo {{ gIdx + 1 }}</span>
               <label class="mb-0 mr-1">{{ 'quantity' | translate | capitalize }}:</label>
               <input
                 type="number"
                 class="form-control form-control-sm mr-2 group-quantity-input"
-                [formControl]="articleGroupsArray.at(gIdx).get('quantity')"
+                formControlName="quantity"
                 min="1"
                 [readonly]="operation === 'view' || operation === 'delete'"
                 [ngClass]="{
                   'is-invalid':
-                    articleGroupsArray.at(gIdx).get('quantity')?.invalid &&
-                    articleGroupsArray.at(gIdx).get('quantity')?.touched
+                    articleGroupForm.get('quantity')?.invalid && articleGroupForm.get('quantity')?.touched
                 }"
               />
               <div
                 class="invalid-feedback d-block mb-0 mr-2"
-                *ngIf="
-                  articleGroupsArray.at(gIdx).get('quantity')?.invalid &&
-                  articleGroupsArray.at(gIdx).get('quantity')?.touched
-                "
+                *ngIf="articleGroupForm.get('quantity')?.invalid && articleGroupForm.get('quantity')?.touched"
               >
                 Mínimo 1
               </div>
-              <button
-                *ngIf="operation !== 'view' && operation !== 'delete'"
-                type="button"
-                class="btn btn-danger btn-sm"
-                (click)="removeArticleGroup(gIdx)"
-              >
-                <i class="fa fa-trash"></i> Quitar grupo
-              </button>
             </div>
             <div class="table-responsive mb-3">
               <table class="table table-bordered table-hover">
@@ -376,18 +343,18 @@
                   <tr>
                     <th style="width: 90%">{{ 'article' | translate | capitalize }} (cualquiera del grupo)</th>
                     <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
-                      <button type="button" class="btn btn-success btn-sm" (click)="addArticleToGroup(gIdx)" title="Agregar artículo a este grupo">
+                      <button type="button" class="btn btn-success btn-sm" (click)="addArticleToGroup()" title="Agregar artículo">
                         <i class="fa fa-plus"></i>
                       </button>
                     </th>
                   </tr>
                 </thead>
                 <tbody formArrayName="articles">
-                  <tr *ngFor="let art of getGroupArticlesArray(gIdx).controls; let aIdx = index" [formControlName]="aIdx">
+                  <tr *ngFor="let art of articleGroupArticlesArray.controls; let aIdx = index" [formControlName]="aIdx">
                     <td>
                       <div class="typeahead-wrapper">
                         <app-typeahead-dropdown
-                          [control]="getGroupArticlesArray(gIdx).at(aIdx)"
+                          [control]="articleGroupArticlesArray.at(aIdx)"
                           [data]="articles"
                           [keyField]="'_id'"
                           [displayField]="'description'"
@@ -400,8 +367,8 @@
                       <button
                         type="button"
                         class="btn btn-danger btn-sm"
-                        (click)="removeArticleFromGroup(gIdx, aIdx)"
-                        [disabled]="getGroupArticlesArray(gIdx).length <= 1"
+                        (click)="removeArticleFromGroup(aIdx)"
+                        [disabled]="articleGroupArticlesArray.length <= 1"
                       >
                         <i class="fa fa-trash"></i>
                       </button>
@@ -410,11 +377,6 @@
                 </tbody>
               </table>
             </div>
-          </div>
-          <div class="col-md-12" *ngIf="articleGroupsArray.length > 0 && operation !== 'view' && operation !== 'delete'">
-            <button type="button" class="btn btn-outline-primary btn-sm mb-3" (click)="addArticleGroup()">
-              <i class="fa fa-plus"></i> Agregar grupo
-            </button>
           </div>
         </div>
 
