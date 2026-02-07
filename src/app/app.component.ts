@@ -64,8 +64,14 @@ export class AppComponent {
     this._router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const currentUrl = event.url;
-        if (currentUrl.includes('menu') || currentUrl.includes('galleries/view')) {
+        if (
+          currentUrl.includes('menu') ||
+          currentUrl.includes('galleries/view') ||
+          currentUrl.includes('politicas-de-privacidad')
+        ) {
           this.showHeader = false;
+        } else {
+          this.showHeader = true;
         }
       }
     });

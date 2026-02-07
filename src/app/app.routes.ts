@@ -55,6 +55,13 @@ export const _routes: Routes = [
     component: LoginComponent,
   },
   {
+    path: 'politicas-de-privacidad',
+    loadComponent: () =>
+      import('./auth/politicas-de-privacidad/politicas-de-privacidad.component').then(
+        (m) => m.PoliticasDePrivacidadComponent
+      ),
+  },
+  {
     path: 'histories',
     component: ListHistoriesComponent,
     canActivate: [AuthGuard, LicenseGuard],

@@ -356,6 +356,7 @@ export class HeaderComponent implements OnInit {
         if (
           pathLocation[1] === 'login' ||
           pathLocation[1] === 'registrar' ||
+          pathLocation[1] === 'politicas-de-privacidad' ||
           pathLocation[2] === 'retiro-de-pedidos' ||
           pathLocation[2] === 'armado-de-pedidos' ||
           pathLocation[2] === 'cocina' ||
