@@ -1941,8 +1941,23 @@ export class AddSaleOrderComponent {
       case 'movement_of_article':
         const movementOfArticleCollection = this.user?.permission?.collections?.movementsOfArticles;
 
-        if (movementOfArticleCollection && movementOfArticleCollection.edit === false) {
-          this._toastService.showToast({ message: 'No tiene permisos para editar artículos.', type: 'danger' });
+        if (
+          movementOfArticleCollection &&
+          movementOfArticleCollection.edit === false &&
+          movementOfArticle?._id !== ''
+        ) {
+          this._toastService.showToast({
+            message: 'No tiene permisos para editar movimientos de artículos.',
+            type: 'danger',
+          });
+          return;
+        }
+        console.log(movementOfArticle._id === '', movementOfArticleCollection.add === true);
+        if (movementOfArticleCollection && movementOfArticleCollection.add === false && movementOfArticle?._id === '') {
+          this._toastService.showToast({
+            message: 'No tiene permisos para agregar movimientos de artículos.',
+            type: 'danger',
+          });
           return;
         }
 
