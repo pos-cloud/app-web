@@ -1952,7 +1952,6 @@ export class AddSaleOrderComponent {
           });
           return;
         }
-        console.log(movementOfArticle._id === '', movementOfArticleCollection.add === true);
         if (movementOfArticleCollection && movementOfArticleCollection.add === false && movementOfArticle?._id === '') {
           this._toastService.showToast({
             message: 'No tiene permisos para agregar movimientos de artículos.',
