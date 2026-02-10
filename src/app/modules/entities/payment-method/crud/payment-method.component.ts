@@ -52,8 +52,8 @@ export class PaymentMethodComponent implements OnInit {
   ) {
     this.paymentMethodForm = this._fb.group({
       _id: ['', []],
-      order: ['', []],
-      code: ['', []],
+      order: [0, []],
+      code: [0, []],
       name: ['', [Validators.required]],
       discount: ['', []],
       discountArticle: ['', []],
