@@ -2,72 +2,35 @@
   <h4 class="modal-title">
     {{ movementOfArticle.article ? movementOfArticle.article.description : '' }}
   </h4>
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    (click)="activeModal.dismiss('close_click')"
-  >
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <section class="container-fluid">
   <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert
-      [type]="alertConfig.type"
-      [dismissible]="alertConfig.dismissible"
-      (close)="alertMessage = ''"
-    >
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
       {{ alertMessage }}
     </ngb-alert>
   </div>
-  <form
-    [formGroup]="movementOfArticleForm"
-    (ngSubmit)="addMovementOfArticle()"
-    autocomplete="off"
-  >
+  <form [formGroup]="movementOfArticleForm" (ngSubmit)="addMovementOfArticle()" autocomplete="off">
     <div class="modal-body">
       <div class="row" *ngIf="config$ | async as config">
         <div class="form-group col-md-3">
           <label for="code" class="control-label">Código Interno:</label>
           <div class="input-group">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="code"
-              name="code"
-              id="code"
-              readonly
-            />
+            <input type="text" class="form-control" formControlName="code" name="code" id="code" readonly />
           </div>
         </div>
         <div class="form-group col-md-3">
           <label for="barcode" class="control-label">Código de Barras:</label>
           <div class="input-group">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="barcode"
-              name="barcode"
-              id="barcode"
-              readonly
-            />
+            <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" readonly />
           </div>
         </div>
-        <div
-          class="form-group col-md-1"
-          *ngIf="config && config.modules && config.modules.stock"
-        >
+        <div class="form-group col-md-1" *ngIf="config && config.modules && config.modules.stock">
           <label for="stock" class="control-label">Stock:</label>
           <div class="input-group">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="stock"
-              name="stock"
-              id="stock"
-              readonly
-            />
+            <input type="text" class="form-control" formControlName="stock" name="stock" id="stock" readonly />
           </div>
         </div>
         <div class="form-group col-md-5">
@@ -88,23 +51,11 @@
         <div class="form-group col-md-12">
           <label for="position" class="control-label">Posición:</label>
           <div class="input-group">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="position"
-              name="position"
-              id="position"
-              readonly
-            />
+            <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly />
           </div>
         </div>
       </div>
-      <div
-        class="row"
-        *ngIf="
-          movementOfArticle.article && movementOfArticle.article.allowMeasure
-        "
-      >
+      <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-6">
           <label class="control-label">Medida:</label>
           <div class="input-group">
@@ -134,32 +85,16 @@
           </div>
         </div>
       </div>
-      <div
-        class="row"
-        *ngIf="
-          movementOfArticle.article && movementOfArticle.article.allowMeasure
-        "
-      >
+      <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-12">
           <label class="control-label">Cantidad calculada:</label>
-          <input
-            type="number"
-            class="form-control"
-            formControlName="amount"
-            name="amount"
-            readonly
-          />
+          <input type="number" class="form-control" formControlName="amount" name="amount" readonly />
           <div *ngIf="formErrors.amount" class="alert alert-danger">
             {{ formErrors.amount }}
           </div>
         </div>
       </div>
-      <div
-        class="row"
-        *ngIf="
-          !movementOfArticle.article || !movementOfArticle.article.allowMeasure
-        "
-      >
+      <div class="row" *ngIf="!movementOfArticle.article || !movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-4" *ngIf="transaction?.type?.showPrices">
           <label for="auxPrice" class="control-label">Precio Unitario:</label>
           <div class="input-group">
@@ -196,12 +131,7 @@
         >
           <label class="control-label">Editar</label>
           <div class="input-group">
-            <button
-              type="button"
-              class="btn btn-primary"
-              (click)="openModal('update')"
-              title="Editar"
-            >
+            <button type="button" class="btn btn-primary" (click)="openModal('update')" title="Editar">
               <i class="fa fa-pencil"></i>
             </button>
           </div>
@@ -209,13 +139,7 @@
         <div class="form-group col-md-3">
           <label for="amount" class="control-label">Cantidad:</label>
           <div class="input-group">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="amount"
-              name="amount"
-              autofocus
-            />
+            <input type="number" class="form-control" formControlName="amount" name="amount" autofocus />
           </div>
           <div *ngIf="formErrors.amount" class="alert alert-danger">
             {{ formErrors.amount }}
@@ -224,20 +148,8 @@
         <div class="form-group col-md-3">
           <label for="amount" class="control-label">Acción:</label>
           <div class="input-group">
-            <button
-              type="button"
-              class="btn btn-danger btn-big"
-              (click)="subtractAmount()"
-            >
-              -
-            </button>
-            <button
-              type="button"
-              class="btn btn-success btn-big"
-              (click)="addAmount()"
-            >
-              +
-            </button>
+            <button type="button" class="btn btn-danger btn-big" (click)="subtractAmount()">-</button>
+            <button type="button" class="btn btn-success btn-big" (click)="addAmount()">+</button>
           </div>
         </div>
       </div>
@@ -252,9 +164,7 @@
               name="discountRate"
               (input)="changeDiscountRate()"
               [readOnly]="
-                this.user.permission.allowDiscount !== undefined
-                  ? !this.user.permission.allowDiscount
-                  : undefined
+                !user?.permission?.collections?.movementsOfArticles?.updateDiscount || !user?.permission?.allowDiscount
               "
             />
             <div class="input-group-prepend">
@@ -275,9 +185,7 @@
               name="discountAmount"
               (input)="changeDiscountAmount()"
               [readOnly]="
-                this.user.permission.allowDiscount !== undefined
-                  ? !this.user.permission.allowDiscount
-                  : undefined
+                !user?.permission?.collections?.movementsOfArticles?.updateDiscount || !user?.permission?.allowDiscount
               "
             />
           </div>
@@ -288,21 +196,13 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon1">$</span>
             </div>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="unitPrice"
-              name="unitPrice"
-              readonly
-            />
+            <input type="number" class="form-control" formControlName="unitPrice" name="unitPrice" readonly />
           </div>
         </div>
       </div>
       <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
         <div class="form-group col-md-12">
-          <label for="variants" class="control-label"
-            ><b>Seleccione las variantes:</b></label
-          >
+          <label for="variants" class="control-label"><b>Seleccione las variantes:</b></label>
         </div>
       </div>
       <div *ngIf="errVariant" class="alert alert-danger">
@@ -322,14 +222,10 @@
                     variant &&
                     variant.value &&
                     selectedVariants[variant.type.name] !== null &&
-                    selectedVariants[variant.type.name] ===
-                      variant.value.description,
+                    selectedVariants[variant.type.name] === variant.value.description,
                   'btn-light':
-                    (variant &&
-                      variant.value &&
-                      selectedVariants[variant.type.name] === null) ||
-                    selectedVariants[variant.type.name] !==
-                      variant.value.description
+                    (variant && variant.value && selectedVariants[variant.type.name] === null) ||
+                    selectedVariants[variant.type.name] !== variant.value.description,
                 }"
                 (click)="selectVariant(variant.type, variant.value)"
               >
@@ -341,9 +237,7 @@
       </div>
       <div class="row" *ngIf="grouped && grouped.length > 0">
         <div class="form-group col-md-12">
-          <label for="groups" class="control-label"
-            ><b>Seleccione las Opciones:</b></label
-          >
+          <label for="groups" class="control-label"><b>Seleccione las Opciones:</b></label>
           <div *ngFor="let group of grouped">
             <label for="groups" class="control-label"
               ><b>{{ group.name }}</b></label
@@ -354,7 +248,7 @@
               *ngFor="let child of group.names"
               [ngClass]="{
                 'btn-primary': child.color === 'blue',
-                'btn-light': child.color === 'white'
+                'btn-light': child.color === 'white',
               }"
               (click)="changeOptional(child.name, group.name)"
             >
@@ -387,9 +281,7 @@
             class="row"
             style="margin-top: 10px"
             *ngIf="
-              movementOfArticle.article &&
-              movementOfArticle.article.notes &&
-              movementOfArticle.article.notes.length > 0
+              movementOfArticle.article && movementOfArticle.article.notes && movementOfArticle.article.notes.length > 0
             "
           >
             <div class="form-group col-md-12">
@@ -400,7 +292,7 @@
                   *ngFor="let note of movementOfArticle.article.notes"
                   [ngClass]="{
                     'btn-primary': notes && notes.indexOf(note) !== -1,
-                    'btn-light': !notes || notes.indexOf(note) === -1
+                    'btn-light': !notes || notes.indexOf(note) === -1,
                   }"
                   (click)="addNote(note)"
                 >
@@ -411,25 +303,19 @@
           </div>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-primary" (click)="clearNotes()">
-            Limpiar Notas
-          </button>
+          <button type="button" class="btn btn-primary" (click)="clearNotes()">Limpiar Notas</button>
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button
-        type="button"
-        class="btn btn-light"
-        (click)="activeModal.close('cancel')"
-        [disabled]="loading"
-      >
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')" [disabled]="loading">
         Cancelar
       </button>
       <button
         type="button"
         class="btn btn-danger"
         *ngIf="
+          user?.permission?.collections?.movementsOfArticles?.delete !== false &&
           movementOfArticle &&
           movementOfArticle._id &&
           movementOfArticle._id !== ''
@@ -439,15 +325,8 @@
       >
         Eliminar
       </button>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="!movementOfArticleForm?.valid || loading"
-      >
-        <i
-          class="fa"
-          [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
-        ></i>
+      <button type="submit" class="btn btn-primary" [disabled]="!movementOfArticleForm?.valid || loading">
+        <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
         <span *ngIf="!loading">Guardar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>

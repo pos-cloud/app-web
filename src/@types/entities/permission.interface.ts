@@ -33,10 +33,11 @@ export interface Permission extends Activity {
     };
     movementsOfArticles: {
       view: boolean;
-      add: boolean;
       edit: boolean;
       delete: boolean;
       export: boolean;
+      updatePrice: boolean;
+      updateDiscount: boolean;
     };
     boxes: {
       print: boolean;

@@ -74,7 +74,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         quantity: number;
         increasePrice: number;
         utilization: Utilization;
-      }
+      },
     ];
   }[] = [];
   movChild: MovementOfArticle[];
@@ -164,12 +164,10 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   viewPrice(): boolean {
-    if (this?.user?.permission?.editArticle && this.movementOfArticle?.transaction?.type?.modifyArticle) {
-      return false;
-    }
-    if (!this.movementOfArticle?.transaction?.type?.modifyArticle && this.user?.permission?.editArticle) {
-      return false;
-    }
+    if (!this.user?.permission?.collections?.movementsOfArticles?.updatePrice) return true;
+    if (this.user?.permission?.editArticle && this.movementOfArticle?.transaction?.type?.modifyArticle) return false;
+    if (!this.movementOfArticle?.transaction?.type?.modifyArticle && this.user?.permission?.editArticle) return false;
+
     return true;
   }
 
@@ -1297,12 +1295,12 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       if (depositID) {
         query = `where= "article": "${movArticle.article._id}",
-                        "branch": "${this.transaction.branchOrigin._id}",
-                        "deposit": "${depositID}"`;
+                          "branch": "${this.transaction.branchOrigin._id}",
+                          "deposit": "${depositID}"`;
       } else {
         query = `where= "article": "${movArticle.article._id}",
-                        "branch": "${this.transaction.branchOrigin._id}",
-                        "deposit": "${this.transaction.depositOrigin._id}"`;
+                          "branch": "${this.transaction.branchOrigin._id}",
+                          "deposit": "${this.transaction.depositOrigin._id}"`;
       }
 
       this._articleStockService.getArticleStocks(query).subscribe(

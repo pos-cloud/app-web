@@ -68,10 +68,11 @@ export class PermissionComponent implements OnInit {
           export: [true],
         }),
         movementsOfArticles: this._fb.group({
-          add: [true],
           edit: [true],
           delete: [true],
           export: [true],
+          updatePrice: [true],
+          updateDiscount: [true],
         }),
         boxes: this._fb.group({
           print: [true],
@@ -195,10 +196,11 @@ export class PermissionComponent implements OnInit {
           export: this.permission.collections?.companies?.export ?? true,
         },
         movementsOfArticles: {
-          add: this.permission.collections?.movementsOfArticles?.add ?? true,
           edit: this.permission.collections?.movementsOfArticles?.edit ?? true,
           delete: this.permission.collections?.movementsOfArticles?.delete ?? true,
           export: this.permission.collections?.movementsOfArticles?.export ?? true,
+          updatePrice: this.permission.collections?.movementsOfArticles?.updatePrice ?? true,
+          updateDiscount: this.permission.collections?.movementsOfArticles?.updateDiscount ?? true,
         },
         boxes: {
           print: this.permission.collections?.boxes?.print ?? true,

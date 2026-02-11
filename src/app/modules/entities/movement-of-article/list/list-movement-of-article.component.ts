@@ -2,6 +2,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '@core/services/auth.service';
 import { MovementOfArticleService } from '@core/services/movement-of-article.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,7 +17,7 @@ import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-list-movement-of-articles',
@@ -716,19 +717,22 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
   public transactionMovement: string;
   public pathLocation: string[];
   private identifier: string = 'list-movement-of-article';
+  public export;
 
   private subscription: Subscription = new Subscription();
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
   private dateFormatPipe: DateFormatPipe = new DateFormatPipe();
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
+  private destroy$ = new Subject<void>();
 
   constructor(
     public _service: MovementOfArticleService,
     private _router: Router,
     private _route: ActivatedRoute,
     private _toastService: ToastService,
-    private _modalService: NgbModal
+    private _modalService: NgbModal,
+    private _authService: AuthService
   ) {
     // Inicializar fechas por defecto (hoy)
     this.setTodayDates();
@@ -757,6 +761,11 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
+      if (identity) {
+        this.export = identity.permission?.collections?.movementsOfArticles?.export === true;
+      }
+    });
     if (Config.timezone && Config.timezone !== '') {
       this.timezone = Config.timezone.split('UTC')[1];
     }

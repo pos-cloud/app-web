@@ -436,10 +436,6 @@
           </div>
           <div formGroupName="movementsOfArticles" class="d-flex flex-wrap mb-3">
             <div class="form-check mr-4 mb-2">
-              <input type="checkbox" class="form-check-input" id="movements_add" formControlName="add" />
-              <label class="form-check-label" for="movements_add">{{ 'add' | translate | capitalize }}</label>
-            </div>
-            <div class="form-check mr-4 mb-2">
               <input type="checkbox" class="form-check-input" id="movements_edit" formControlName="edit" />
               <label class="form-check-label" for="movements_edit">{{ 'edit' | translate | capitalize }}</label>
             </div>
@@ -450,6 +446,28 @@
             <div class="form-check mr-4 mb-2">
               <input type="checkbox" class="form-check-input" id="movements_export" formControlName="export" />
               <label class="form-check-label" for="movements_export">{{ 'export' | translate | capitalize }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="movements_updatePrice"
+                formControlName="updatePrice"
+              />
+              <label class="form-check-label" for="movements_updatePrice">{{
+                'updatePrice' | translate | capitalize
+              }}</label>
+            </div>
+            <div class="form-check mr-4 mb-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="movements_updateDiscount"
+                formControlName="updateDiscount"
+              />
+              <label class="form-check-label" for="movements_updateDiscount">{{
+                'updateDiscount' | translate | capitalize
+              }}</label>
             </div>
           </div>
 
