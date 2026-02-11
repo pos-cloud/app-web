@@ -7,12 +7,7 @@ export { Application } from './entities/application.interface';
 export { Article, Type } from './entities/article.interface';
 export { Bank } from './entities/bank.interface';
 export { Branch } from './entities/branch.interface';
-export {
-  BusinessRule,
-  BusinessRuleArticleGroup,
-  Day,
-  DiscountType,
-} from './entities/business-rule.interface';
+export { BusinessRule, BusinessRuleArticleGroup, Day, DiscountType } from './entities/business-rule.interface';
 export { CancellationType } from './entities/cancellation-type.interface';
 export { CashBoxType } from './entities/cash-box-type.interface';
 export { CashBox } from './entities/cash-box.interface';
@@ -48,7 +43,14 @@ export { State } from './entities/state.interface';
 export { Structure, Utilization } from './entities/structure.interface';
 export { Table, TableState } from './entities/table.interface';
 export { Tax, TaxBase, TaxClassification, Taxes, TaxType } from './entities/tax.interface';
-export { CurrentAccount, TransactionType } from './entities/transaction-type.interface';
+export {
+  CurrentAccount,
+  DescriptionType,
+  EntryAmount,
+  Movements,
+  PriceType,
+  TransactionType,
+} from './entities/transaction-type.interface';
 export {
   Transaction,
   TransactionMovement,

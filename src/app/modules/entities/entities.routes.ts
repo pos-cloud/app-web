@@ -200,4 +200,8 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'movements-of-cashes',
     loadChildren: () => import('./movement-of-cash/movement-of-cash.routes').then((m) => m.MOVEMENT_OF_CASH_ROUTES),
   },
+  {
+    path: 'transaction-types',
+    loadChildren: () => import('./transaction-type/transaction-type.routes').then((m) => m.TRANSANCTION_TYPE_ROUTES),
+  },
 ];

@@ -1,0 +1,478 @@
+<section class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-transaction-type' | translate | capitalize
+      }}</span>
+      <span style="color: #607d8b" *ngIf="operation === 'update'"
+        >{{ 'edit' | translate | capitalize }} {{ transactionType?.name }}</span
+      >
+      <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">{{
+        transactionType?.name
+      }}</span>
+      <div class="pull-right">
+        <button type="button" class="btn" (click)="returnTo()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'return' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [disabled]="loading"
+          *ngIf="operation !== 'delete' && operation !== 'view'"
+          (click)="handleTransactionTypes()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger active"
+          *ngIf="operation === 'delete'"
+          [disabled]="loading"
+          (click)="handleTransactionTypes()"
+        >
+          <i class="fa" [ngClass]="{ 'fa-trash': !loading, 'fa-spinner fa-spin': loading }"></i>
+          <span *ngIf="!loading">{{ 'delete' | translate | capitalize }}</span>
+          <span *ngIf="loading">{{ 'loading' | translate | capitalize }}</span>
+        </button>
+      </div>
+    </div>
+    <app-progressbar [loading]="loading"></app-progressbar>
+    <div class="card-body scroll">
+      <form [formGroup]="transactionTypeForm" autocomplete="off" (keydown.enter)="onEnter()" *ngIf="!loading">
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'mainData' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-1">
+            <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" formControlName="order" autocomplete="off" [focus]="focusEvent" />
+          </div>
+          <div class="form-group col-md-3">
+            <label for="branch" class="control-label">Sucursal</label>
+            <div class="d-flex align-items-start">
+              <div class="flex-grow-1">
+                <app-typeahead-dropdown
+                  [control]="transactionTypeForm.get('branch')"
+                  [data]="branches"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="user-name-new" class="control-label">{{ 'name' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              name="user-name-new"
+              id="user-name-new"
+              autocomplete="off"
+              [focus]="focusEvent"
+              [ngClass]="{
+                'is-invalid': transactionTypeForm.get('name')?.touched && transactionTypeForm.get('name')?.invalid,
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="transactionTypeForm.get('name')?.touched && transactionTypeForm.get('name')?.hasError('required')"
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="abbreviation" class="control-label">{{ 'abbreviation' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="abbreviation"
+              autocomplete="off"
+              [focus]="focusEvent"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label for="transactionMovement" class="control-label">{{ 'movement' | translate | capitalize }}:</label>
+            <select
+              class="form-control"
+              formControlName="transactionMovement"
+              [ngClass]="{
+                'is-invalid':
+                  transactionTypeForm.get('transactionMovement')?.touched &&
+                  transactionTypeForm.get('transactionMovement')?.invalid,
+              }"
+            >
+              <option [ngValue]="Venta">{{ 'sale' | translate | capitalize }}</option>
+              <option [ngValue]="Stock">{{ 'stock' | translate | capitalize }}</option>
+              <option [ngValue]="Fondos">{{ 'funds' | translate | capitalize }}</option>
+              <option [ngValue]="Produccion">{{ 'production' | translate | capitalize }}</option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                transactionTypeForm.get('transactionMovement')?.touched &&
+                transactionTypeForm.get('transactionMovement')?.hasError('required')
+              "
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="currentAccount" class="control-label">{{ 'currentAccount' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="currentAccount">
+              <option [ngValue]="Cobra">{{ 'charge' | translate | capitalize }}</option>
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label for="currentAccount" class="control-label">{{ 'currentAccount' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="currentAccount">
+              <option [ngValue]="Entrada">{{ 'inflows' | translate | capitalize }}</option>
+              <option [ngValue]="Salida">{{ 'outflows' | translate | capitalize }}</option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'permissions' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="level" class="control-label">{{ 'level' | translate | capitalize }}:</label>
+            <input type="number" class="form-control" formControlName="level" autocomplete="off" [focus]="focusEvent" />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="allowEdit" class="control-label">{{ 'allowEdit' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="allowEdit">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="allowEdit" class="control-label">{{ 'allowEdit' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="allowEdit">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="allowDelete" class="control-label">{{ 'allowDelete' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="allowDelete">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="allowAPP" class="control-label">{{ 'allowAPP' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="allowAPP">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="allowTransactionClose" class="control-label"
+              >{{ 'allowTransactionClose' | translate | capitalize }}:</label
+            >
+            <select class="form-control" formControlName="allowTransactionClose">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+            <b>{{ 'numeration' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="electronics" class="control-label">{{ 'electronics' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="electronics">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="tax" class="control-label">{{ 'tax' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="tax">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="requestTaxes" class="control-label">{{ 'requestTaxes' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="requestTaxes">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="automaticNumbering" class="control-label"
+              >{{ 'automaticNumbering' | translate | capitalize }}:</label
+            >
+            <select class="form-control" formControlName="automaticNumbering">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="fiscalCode" class="control-label">{{ 'fiscalCode' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fiscalCode"
+              autocomplete="off"
+              [focus]="focusEvent"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="defectUseOfCFDI" class="control-label">{{ 'defectUseOfCFDI' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="defectUseOfCFDI"
+              autocomplete="off"
+              [focus]="focusEvent"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <div>
+              <label for="codeA" class="control-label">{{ 'codeA' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeA" autocomplete="off" [focus]="focusEvent" />
+            </div>
+            <div>
+              <label for="codeB" class="control-label">{{ 'codeB' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeB" autocomplete="off" [focus]="focusEvent" />
+            </div>
+            <div>
+              <label for="codeC" class="control-label">{{ 'codeC' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeC" autocomplete="off" [focus]="focusEvent" />
+            </div>
+            <div>
+              <label for="codeD" class="control-label">{{ 'codeD' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeD" autocomplete="off" [focus]="focusEvent" />
+            </div>
+            <div>
+              <label for="codeE" class="control-label">{{ 'codeE' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeE" autocomplete="off" [focus]="focusEvent" />
+            </div>
+            <div>
+              <label for="codeM" class="control-label">{{ 'codeM' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeM" autocomplete="off" [focus]="focusEvent" />
+            </div>
+            <div>
+              <label for="codeR" class="control-label">{{ 'codeR' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeR" autocomplete="off" [focus]="focusEvent" />
+            </div>
+            <div>
+              <label for="codeT" class="control-label">{{ 'codeT' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeT" autocomplete="off" [focus]="focusEvent" />
+            </div>
+            <div>
+              <label for="codeZ" class="control-label">{{ 'codeZ' | translate | capitalize }}:</label>
+              <input type="text" class="form-control" formControlName="codeZ" autocomplete="off" [focus]="focusEvent" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="fixedOrigin" class="control-label">{{ 'fixedOrigin' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="fixedOrigin"
+              autocomplete="off"
+              [focus]="focusEvent"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="fixedLetter" class="control-label">{{ 'fixedLetter' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="fixedLetter">
+              <option [ngValue]="X">{{ 'X' | translate | capitalize }}</option>
+              <option [ngValue]="A">{{ 'A' | translate | capitalize }}</option>
+              <option [ngValue]="B">{{ 'B' | translate | capitalize }}</option>
+              <option [ngValue]="C">{{ 'C' | translate | capitalize }}</option>
+              <option [ngValue]="D">{{ 'D' | translate | capitalize }}</option>
+              <option [ngValue]="E">{{ 'E' | translate | capitalize }}</option>
+              <option [ngValue]="M">{{ 'M' | translate | capitalize }}</option>
+              <option [ngValue]="R">{{ 'R' | translate | capitalize }}</option>
+              <option [ngValue]="T">{{ 'T' | translate | capitalize }}</option>
+              <option [ngValue]="Z">{{ 'Z' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="expirationDate" class="control-label">{{ 'expirationDate' | translate | capitalize }}:</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="expirationDate"
+              autocomplete="off"
+              [focus]="focusEvent"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="automaticCreation" class="control-label"
+              >{{ 'automaticCreation' | translate | capitalize }}:</label
+            >
+            <select class="form-control" formControlName="automaticCreation">
+              <option [ngValue]="Si">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="No">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="resetOrderNumber" class="control-label"
+              >{{ 'resetOrderNumber' | translate | capitalize }}:</label
+            >
+            <select class="form-control" formControlName="resetOrderNumber">
+              <option [ngValue]="Caja">{{ 'Caja' | translate | capitalize }}</option>
+              <option [ngValue]="Cantidad">{{ 'Cantidad' | translate | capitalize }}</option>
+              <option [ngValue]="Tiempo">{{ 'Tiempo' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="maxOrderNumber" class="control-label">{{ 'maxOrderNumber' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="maxOrderNumber"
+              autocomplete="off"
+              [focus]="focusEvent"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="orderNumber" class="control-label">{{ 'orderNumber' | translate | capitalize }}:</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="orderNumber"
+              autocomplete="off"
+              [focus]="focusEvent"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="branch" class="control-label">{{ 'cashBoxType' | translate | capitalize }}:</label>
+            <div class="d-flex align-items-start">
+              <div class="flex-grow-1">
+                <app-typeahead-dropdown
+                  [control]="transactionTypeForm.get('cashBoxType')"
+                  [data]="cashBoxTypes"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="optionalAFIP" class="control-label">{{ 'optionalAFIP' | translate | capitalize }}:</label>
+            <div class="d-flex align-items-start">
+              <div class="flex-grow-1">
+                <!-- <app-typeahead-dropdown
+                  [control]="transactionTypeForm.get('optionalAFIP')"
+                  [data]="cashBoxTypes"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown> -->
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="optionalAFIP.value" class="control-label"
+              >{{ 'optionalAFIP.value' | translate | capitalize }}:</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="optionalAFIP.value"
+              autocomplete="off"
+              [focus]="focusEvent"
+            />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'Personalizado' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-2">
+            <label for="requestCompany" class="control-label">{{ 'requestCompany' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="allowEdit">
+              <option [ngValue]="null"></option>
+              <option [ngValue]="Cliente">{{ 'client' | translate | capitalize }}</option>
+              <option [ngValue]="Proveedor">{{ 'provider' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="company" class="control-label">{{ 'company' | translate | capitalize }}:</label>
+            <div class="d-flex align-items-start">
+              <div class="flex-grow-1">
+                <app-typeahead-dropdown
+                  [control]="transactionTypeForm.get('company')"
+                  [data]="companies"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+            <b>{{ 'audit' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'creationUser.name' | translate | capitalize }}:
+                  <b>{{ transactionType?.creationUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ transactionType?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'updateUser.name' | translate | capitalize }}:
+                  <b>{{ transactionType?.updateUser?.name || '' }}</b>
+                </label>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  {{ 'theDay' | translate | capitalize }}:
+                  <b>{{ transactionType?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">
+                  ID:<b>{{ transactionType?._id || '' }}</b>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

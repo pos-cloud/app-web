@@ -91,6 +91,8 @@ export interface TransactionType extends Activity {
   finishState: TransactionState;
   optionalAFIP: optionalAFIP;
   cashBoxType: CashBoxType;
+  printBalanceAccount: boolean; // default false
+  isSubscription: boolean; // default false
 }
 
 export enum Movements {
