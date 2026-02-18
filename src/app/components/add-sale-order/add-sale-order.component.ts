@@ -1594,7 +1594,7 @@ export class AddSaleOrderComponent {
           if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
             movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
           } else {
-            //  movementOfArticle = this.recalculateCostPrice(movementOfArticle);
+            movementOfArticle = this.recalculateCostPrice(movementOfArticle);
           }
           totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
           discountAmountAux += this.roundNumber.transform(
