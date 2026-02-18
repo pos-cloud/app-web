@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ImportComponent } from '@shared/components/import/import.component';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
@@ -1593,7 +1594,7 @@ export class AddSaleOrderComponent {
           if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
             movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
           } else {
-            movementOfArticle = this.recalculateCostPrice(movementOfArticle);
+            //  movementOfArticle = this.recalculateCostPrice(movementOfArticle);
           }
           totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
           discountAmountAux += this.roundNumber.transform(
@@ -2414,6 +2415,23 @@ export class AddSaleOrderComponent {
           }
         });
         break;
+      case 'uploadFile':
+        modalRef = this._modalService.open(ImportComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+
+        modalRef.componentInstance.model = 'movements-of-articles';
+        modalRef.componentInstance.title = 'Importar movimentos de artículos';
+        modalRef.componentInstance.transactionId = this.transactionId;
+        modalRef.result.then(
+          async (result) => {
+            this.getMovementsOfTransaction();
+          },
+          (reason) => {}
+        );
+        break;
+
       default:
     }
   }

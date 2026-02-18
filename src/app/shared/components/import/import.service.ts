@@ -81,4 +81,27 @@ export class ImportService {
         })
       );
   }
+
+  public importmovementsOfArticles(file: File, transactionId: string) {
+    const URL = `${environment.apiv2}/movements-of-articles/import-excel`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('transactionId', transactionId);
+
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, formData, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
 }

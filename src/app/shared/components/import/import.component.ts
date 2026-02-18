@@ -24,6 +24,7 @@ import { ImportService } from './import.service';
 export class ImportComponent implements OnInit {
   @Input() model: string;
   @Input() title: string;
+  @Input() transactionId: string;
   branches: Branch[];
   deposits: Deposit[];
   branchesSelected: Branch[] = new Array();
@@ -162,6 +163,19 @@ export class ImportComponent implements OnInit {
             this.loading = false;
           }
         });
+      } else if (this.model === 'movements-of-articles') {
+        this._excelUpdateService.importmovementsOfArticles(file, this.transactionId).subscribe((response) => {
+          if (response.status == 200) {
+            this.countNotUpdate = response.result.countNotUpdate;
+            this.countUpdate = response.result.countUpdate;
+            this.notUpdate = response.result.notUpdateArticle;
+            this.update = response.result.updateArticle;
+            this.loading = false;
+          } else {
+            this._toastService.showToast(response.error);
+            this.loading = false;
+          }
+        });
       }
     }
   }
@@ -174,6 +188,8 @@ export class ImportComponent implements OnInit {
         'https://docs.google.com/spreadsheets/d/1lbHhg1uPGDEybCbppTVaPAj5q_3yyeIV4fh-GOlmmkg/edit?gid=2144488028#gid=2144488028',
       company:
         'https://docs.google.com/spreadsheets/d/17ASWtOItH6FfFaQpgWS0MeAu1Pm6QPw8/edit?gid=1719187905#gid=1719187905',
+      'movements-of-articles':
+        'https://docs.google.com/spreadsheets/d/1vd4M5hfYuyar9OaZ4kcqdWryaVJH8voc1n-GENLcztQ/edit?gid=0#gid=0',
     };
 
     const url = urls[this.model];
