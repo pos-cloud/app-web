@@ -82,7 +82,7 @@ export class ImportService {
       );
   }
 
-  public importmovementsOfArticles(file: File, transactionId: string) {
+  public importMovementsOfArticles(file: File, transactionId: string) {
     const URL = `${environment.apiv2}/movements-of-articles/import-excel`;
 
     const formData = new FormData();

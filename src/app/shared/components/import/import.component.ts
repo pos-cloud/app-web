@@ -164,7 +164,7 @@ export class ImportComponent implements OnInit {
           }
         });
       } else if (this.model === 'movements-of-articles') {
-        this._excelUpdateService.importmovementsOfArticles(file, this.transactionId).subscribe((response) => {
+        this._excelUpdateService.importMovementsOfArticles(file, this.transactionId).subscribe((response) => {
           if (response.status == 200) {
             this.countNotUpdate = response.result.countNotUpdate;
             this.countUpdate = response.result.countUpdate;
