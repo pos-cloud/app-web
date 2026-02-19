@@ -702,7 +702,7 @@ export class HeaderComponent implements OnInit {
                   children: [
                     { label: 'Transacciones', link: 'admin/fondos' },
                     { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/fondos' },
-                    { label: 'Cajas', link: 'admin/cajas' },
+                    { label: 'Cajas', link: 'entities/cash-boxes' },
                   ],
                 },
                 {
