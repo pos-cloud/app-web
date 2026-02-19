@@ -16,6 +16,7 @@ import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 
+import * as moment from 'moment';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { ApplyVatPeriodComponent } from './apply-vat-period/apply-vat-period.component';
 import { attributes } from './attributes-subscription';
@@ -268,6 +269,8 @@ export class SubscriptionComponent implements OnInit {
 
         if (this.transaction?.type?.electronics) {
           try {
+            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+            await this.updateTransaction();
             const result = await this.validateElectronicTransactionAR();
             if (!result.success) {
               hasError = true;
@@ -291,7 +294,6 @@ export class SubscriptionComponent implements OnInit {
         } else {
           try {
             this.transaction.state = TransactionState.Closed;
-
             await this.updateTransaction();
           } catch (error) {
             hasError = true;
