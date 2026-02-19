@@ -68,8 +68,8 @@
                   id="code"
                   [focus]="focusEvent"
                   [ngClass]="{
-                      'is-invalid': articleForm.get('code')?.touched && articleForm.get('code')?.invalid,
-                    }"
+                    'is-invalid': articleForm.get('code')?.touched && articleForm.get('code')?.invalid,
+                  }"
                 />
                 <div
                   class="invalid-feedback"
@@ -119,8 +119,8 @@
                   id="description"
                   (blur)="loadPosDescription()"
                   [ngClass]="{
-                      'is-invalid': articleForm.get('description')?.touched && articleForm.get('description')?.invalid,
-                    }"
+                    'is-invalid': articleForm.get('description')?.touched && articleForm.get('description')?.invalid,
+                  }"
                 />
                 <div
                   class="invalid-feedback"
@@ -140,8 +140,9 @@
                   name="posDescription"
                   id="posDescription"
                   [ngClass]="{
-                      'is-invalid': articleForm.get('posDescription')?.touched && articleForm.get('posDescription')?.invalid,
-                    }"
+                    'is-invalid':
+                      articleForm.get('posDescription')?.touched && articleForm.get('posDescription')?.invalid,
+                  }"
                 />
                 <div
                   class="invalid-feedback"
@@ -161,7 +162,7 @@
                 >
                   {{
                     'max-length'
-                      | translate : { max: articleForm.get('posDescription')?.errors?.maxlength?.requiredLength || 0 }
+                      | translate: { max: articleForm.get('posDescription')?.errors?.maxlength?.requiredLength || 0 }
                       | capitalize
                   }}
                 </div>
@@ -377,11 +378,11 @@
                 </td>
                 <td class="flat">{{ articleTaxAux.get('tax').value?.name ?? '' }}</td>
                 <td class="flat">
-                  {{ articleTaxAux.get('taxBase').value | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  {{ articleTaxAux.get('taxBase').value | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                 </td>
                 <td class="flat">{{ articleTaxAux.get('percentage').value }} %</td>
                 <td class="flat">
-                  {{ articleTaxAux.get('taxAmount').value | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  {{ articleTaxAux.get('taxAmount').value | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                 </td>
               </tr>
             </tbody>
@@ -431,7 +432,8 @@
                 id="markupPercentage"
                 (blur)="updatePrices('markupPercentage')"
                 [ngClass]="{
-                  'is-invalid': articleForm.get('markupPercentage')?.touched && articleForm.get('markupPercentage')?.invalid,
+                  'is-invalid':
+                    articleForm.get('markupPercentage')?.touched && articleForm.get('markupPercentage')?.invalid,
                 }"
               />
             </div>
@@ -724,6 +726,17 @@
                 [readonly]="operation === 'view'"
               />
             </div>
+            <div class="form-group col-md-3">
+              <label for="visibleTN" class="control-label">Visible en la tienda online</label>
+              <select class="form-control" formControlName="visibleTN">
+                <option [ngValue]="true" [disabled]="readonly">
+                  {{ 'true' | translate | capitalize }}
+                </option>
+                <option [ngValue]="false" [disabled]="readonly">
+                  {{ 'false' | translate | capitalize }}
+                </option>
+              </select>
+            </div>
           </ng-container>
         </div>
         <div class="row">
@@ -773,8 +786,8 @@
                 aria-describedby="basic-addon1"
                 [readonly]="operation === 'view'"
                 [ngClass]="{
-                      'is-invalid': articleForm.get('weight')?.touched && articleForm.get('weight')?.invalid,
-                    }"
+                  'is-invalid': articleForm.get('weight')?.touched && articleForm.get('weight')?.invalid,
+                }"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">Kg</span>
@@ -799,8 +812,8 @@
                 aria-describedby="basic-addon1"
                 [readonly]="operation === 'view'"
                 [ngClass]="{
-                      'is-invalid': articleForm.get('width')?.touched && articleForm.get('width')?.invalid,
-                    }"
+                  'is-invalid': articleForm.get('width')?.touched && articleForm.get('width')?.invalid,
+                }"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">cm</span>
@@ -825,8 +838,8 @@
                 aria-describedby="basic-addon1"
                 [readonly]="operation === 'view'"
                 [ngClass]="{
-                      'is-invalid': articleForm.get('height')?.touched && articleForm.get('height')?.invalid,
-                    }"
+                  'is-invalid': articleForm.get('height')?.touched && articleForm.get('height')?.invalid,
+                }"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">cm</span>
@@ -851,8 +864,8 @@
                 aria-describedby="basic-addon1"
                 [readonly]="operation === 'view'"
                 [ngClass]="{
-                      'is-invalid': articleForm.get('depth')?.touched && articleForm.get('depth')?.invalid,
-                    }"
+                  'is-invalid': articleForm.get('depth')?.touched && articleForm.get('depth')?.invalid,
+                }"
               />
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">cm</span>
@@ -1233,7 +1246,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ article?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ article?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -1247,7 +1260,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ article?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ article?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

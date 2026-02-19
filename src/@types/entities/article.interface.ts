@@ -96,7 +96,7 @@ export interface Article extends Activity {
     {
       value: VariantValue;
       type: VariantType;
-    }
+    },
   ];
   variantType1: VariantType;
   variantValue1: VariantValue;
@@ -109,6 +109,7 @@ export interface Article extends Activity {
   videoUrlTN: string;
   seoDescriptionTN: string;
   seoTitleTN: string;
+  visibleTN: boolean;
 }
 
 export enum Type {

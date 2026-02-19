@@ -262,6 +262,7 @@ export class ArticleComponent implements OnInit {
       seoTitleTN: ['', []],
       seoDescriptionTN: ['', []],
       videoUrlTN: ['', []],
+      visibleTN: [true, []],
     });
 
     this.taxForm = this._fb.group({
@@ -435,6 +436,7 @@ export class ArticleComponent implements OnInit {
       categoryTN: Array.isArray(this.article?.categoryTN)
         ? this.article.categoryTN.map((id: any) => id?.toString())
         : [],
+      visibleTN: this.article?.visibleTN ?? true,
       seoTitleTN: this.article?.seoTitleTN ?? '',
       seoDescriptionTN: this.article?.seoDescriptionTN ?? '',
       videoUrlTN: this.article?.videoUrlTN ?? '',
