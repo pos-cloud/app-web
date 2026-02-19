@@ -1,22 +1,12 @@
 export let attributes = [
   {
-    name: 'endDate',
-    visible: true,
-    disabled: false,
-    filter: false,
-    datatype: 'string',
-    project: `{ "$dateToString": { "date": "$endDate", "format": "%d/%m/%Y %H:%M:%S", "timezone": "-03:00" } }`,
-    align: 'right',
-    required: false,
-  },
-  {
     name: 'VATPeriod',
     visible: true,
     disabled: false,
     filter: true,
     datatype: 'string',
     project: null,
-    align: 'right',
+    align: 'left',
     required: false,
   },
   {
