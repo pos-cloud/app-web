@@ -188,8 +188,9 @@ export class DatatableComponent {
     this.itemsPerPage = this.saveFilters
       ? parseInt(localStorage.getItem(`${this.identifier}_itemsPerPage`) || '10', 10)
       : 10;
-    this.sort = this.saveFilters ? JSON.parse(localStorage.getItem(`${this.identifier}_sort`) || '{}') : {};
+    const storedSort = this.saveFilters ? JSON.parse(localStorage.getItem(`${this.identifier}_sort`) || '{}') : {};
 
+    this.sort = Object.keys(storedSort).length ? storedSort : this.sort;
     this.getItems();
   }
 

@@ -17,7 +17,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class ListCashBoxComponent {
   public title: string = 'list-cash-boxs';
-  public sort = { state: 1 };
+  public sort = { number: -1 };
   public loading: boolean = false;
   public columns: IAttribute[] = [
     {
@@ -35,7 +35,7 @@ export class ListCashBoxComponent {
       visible: true,
       disabled: false,
       filter: true,
-      datatype: 'string',
+      datatype: 'number',
       project: null,
       align: 'left',
       required: true,
