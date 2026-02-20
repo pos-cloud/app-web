@@ -89,6 +89,9 @@ export interface Transaction extends Activity {
     number: number;
   };
   balanceAccount: number;
+  feArObj: any;
+  tiendaNubeObj: any;
+  wooObj: any;
 }
 
 export enum TransactionState {

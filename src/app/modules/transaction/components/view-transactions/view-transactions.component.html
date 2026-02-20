@@ -126,7 +126,7 @@
                 type="text"
                 class="form-control"
                 name="date"
-                value="{{ transaction?.endDate | dateFormat : 'DD/MM/YYYY' }}"
+                value="{{ transaction?.endDate | dateFormat: 'DD/MM/YYYY' }}"
                 readonly
                 *ngIf="transaction?.endDate"
               />
@@ -134,7 +134,7 @@
                 type="text"
                 class="form-control"
                 name="date"
-                value="{{ transaction?.startDate | dateFormat : 'DD/MM/YYYY' }}"
+                value="{{ transaction?.startDate | dateFormat: 'DD/MM/YYYY' }}"
                 readonly
                 *ngIf="!transaction?.endDate"
               />
@@ -363,14 +363,14 @@
                   </td>
                   <td>{{ movementOfArticle?.article?.posDescription }}</td>
                   <td>
-                    {{ movementOfArticle?.unitPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfArticle?.unitPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>{{ movementOfArticle?.discountRate + ' %' }}</td>
                   <td>
-                    {{ movementOfArticle?.discountAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfArticle?.discountAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{ movementOfArticle?.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfArticle?.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>{{ movementOfArticle?.deposit?.name }}</td>
                   <td>{{ movementOfArticle?.op }}</td>
@@ -404,10 +404,10 @@
                   <td>{{ tax?.tax?.name }}</td>
                   <td>{{ tax.percentage }}</td>
                   <td>
-                    {{ tax?.taxBase | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ tax?.taxBase | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{ tax?.taxAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ tax?.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                 </tr>
               </tbody>
@@ -449,42 +449,42 @@
                   <td>{{ movementOfCash?.number }}</td>
                   <td>{{ movementOfCash?.quota }}</td>
                   <td>
-                    {{ movementOfCash.expirationDate | dateFormat : 'DD/MM/YYYY' }}
+                    {{ movementOfCash.expirationDate | dateFormat: 'DD/MM/YYYY' }}
                   </td>
                   <td>{{ movementOfCash?.bank?.name }}</td>
                   <td>
-                    {{ movementOfCash.amountPaid | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
                     {{
                       movementOfCash?.amountPaid - movementOfCash?.balanceCanceled
-                        | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                     }}
                   </td>
                   <td>{{ movementOfCash?.status }}</td>
                   <td>
-                    {{ movementOfCash?.paymentChange | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.paymentChange | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td style="white-space: normal">
                     {{ movementOfCash?.observation }}
                   </td>
                   <td>
-                    {{ movementOfCash?.commissionAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.commissionAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{ movementOfCash?.administrativeExpenseAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.administrativeExpenseAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{ movementOfCash?.otherExpenseAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.otherExpenseAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{ movementOfCash?.capital | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.capital | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{ movementOfCash?.interestAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.interestAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{ movementOfCash?.taxAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
                     {{ movementOfCash?._id }}
@@ -508,7 +508,7 @@
                   <td>{{ currency?.quantity }}</td>
                   <td>{{ currency?.value }}</td>
                   <td>
-                    {{ currency?.quantity * currency?.value | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ currency?.quantity * currency?.value | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td></td>
                 </tr>
@@ -559,7 +559,7 @@
         </ng-template>
       </li>
       <li ngbNavItem>
-        <a ngbNavLink *ngIf="transaction?.type && transaction?.type?.electronics">AFIP</a>
+        <a ngbNavLink *ngIf="transaction?.type && transaction?.type?.electronics">ARCA</a>
         <ng-template ngbNavContent>
           <div class="table-responsive">
             <table class="table table-striped">
@@ -572,7 +572,7 @@
               <tbody>
                 <td>{{ transaction.CAE }}</td>
                 <td>
-                  {{ transaction.CAEExpirationDate | dateFormat : 'DD/MM/YYYY' }}
+                  {{ transaction.CAEExpirationDate | dateFormat: 'DD/MM/YYYY' }}
                 </td>
               </tbody>
             </table>
@@ -657,7 +657,7 @@
                       <i class="fa fa-eye"></i>
                     </button>
                   </td>
-                  <td>{{ transactionDestination?.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
+                  <td>{{ transactionDestination?.endDate | dateFormat: 'DD/MM/YYYY' }}</td>
                   <td>
                     {{ transactionDestination?.type?.name }}
                   </td>
@@ -707,7 +707,7 @@
                       <i class="fa fa-eye"></i>
                     </button>
                   </td>
-                  <td>{{ transactionOrigin?.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
+                  <td>{{ transactionOrigin?.endDate | dateFormat: 'DD/MM/YYYY' }}</td>
                   <td>
                     {{ transactionOrigin?.type?.name }}
                   </td>
@@ -743,7 +743,7 @@
                   <label class="control-label">El día:</label>
                   <label class="control-label">
                     <b>
-                      {{ transaction?.creationDate | dateFormat : 'DD/MM/YYYY hh:mm:ss' }}
+                      {{ transaction?.creationDate | dateFormat: 'DD/MM/YYYY hh:mm:ss' }}
                     </b>
                   </label>
                 </div>
@@ -758,7 +758,7 @@
                 <div class="form-group col-md-6">
                   <label class="control-label">El día:</label>
                   <label class="control-label"
-                    ><b>{{ transaction.updateDate | dateFormat : 'DD/MM/YYYY hh:mm:ss' }}</b></label
+                    ><b>{{ transaction.updateDate | dateFormat: 'DD/MM/YYYY hh:mm:ss' }}</b></label
                   >
                 </div>
               </div>
@@ -770,7 +770,7 @@
                   >
                 </div>
               </div>
-              <div class="row">
+              <div class="row" *ngIf="transaction.meliId">
                 <div class="form-group col-md-6">
                   <label class="control-label">Id de Mercadolibre:</label>
                   <label class="control-label"
@@ -778,20 +778,35 @@
                   >
                 </div>
               </div>
-              <div class="row">
+
+              <div class="row" *ngIf="transaction.wooId">
                 <div class="form-group col-md-6">
                   <label class="control-label">Id de Woocommerce:</label>
-                  <label class="control-label"
-                    ><b>{{ transaction?.wooId }}</b></label
-                  >
+                  <label class="control-label">
+                    <b (click)="openModal('modalObj', null, null, transaction?.wooObj)">
+                      {{ transaction?.wooId }}
+                    </b>
+                  </label>
                 </div>
               </div>
-              <div class="row">
+              <div class="row" *ngIf="transaction.tiendaNubeId">
                 <div class="form-group col-md-6">
                   <label class="control-label">Id de Tienda Nube:</label>
-                  <label class="control-label"
-                    ><b>{{ transaction?.tiendaNubeId }}</b></label
-                  >
+                  <label class="control-label">
+                    <b (click)="openModal('modalObj', null, null, transaction?.tiendaNubeObj)">
+                      {{ transaction?.tiendaNubeId }}
+                    </b>
+                  </label>
+                </div>
+              </div>
+              <div class="row" *ngIf="transaction.CAE">
+                <div class="form-group col-md-6">
+                  <label class="control-label">CAE:</label>
+                  <label class="control-label">
+                    <b (click)="openModal('modalObj', null, null, transaction?.feArObj)">
+                      {{ transaction?.CAE }}
+                    </b>
+                  </label>
                 </div>
               </div>
             </div>
@@ -803,3 +818,21 @@
   </div>
   <div class="modal-footer"></div>
 </section>
+
+<ng-template #modalObj let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Objecto</h4>
+    <button type="button" class="close" (click)="modal.dismiss()">×</button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Mostramos todo el objeto -->
+    <pre style="max-height: 500px; overflow: auto"
+      >{{ modalData | json }}
+    </pre>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+  </div>
+</ng-template>

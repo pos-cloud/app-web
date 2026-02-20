@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse, MovementOfCash, PrinterPrintIn, PrintType, Transaction } from '@types';
@@ -41,12 +41,14 @@ export class ViewTransactionComponentNew implements OnInit {
   currencyValue: [];
   showDetails = false;
   propertyTerm: string;
+  modalData: string;
   transactionDestinations: Transaction[] = [];
   transactionOrigins: Transaction[] = [];
   roundNumber = new RoundNumberPipe();
   public activeTab: string = 'datos';
 
   private destroy$ = new Subject<void>();
+  @ViewChild('modalObj') modalObj!: TemplateRef<any>;
 
   constructor(
     public _transactionService: TransactionService,
@@ -94,7 +96,6 @@ export class ViewTransactionComponentNew implements OnInit {
         },
       });
   }
-
   public getMovementsOfArticlesByTransaction(): void {
     this.loading = true;
 
@@ -276,7 +277,7 @@ export class ViewTransactionComponentNew implements OnInit {
         complete() {},
       });
   }
-  async openModal(op: string, movement?: MovementOfArticle, transactionId?: string) {
+  async openModal(op: string, movement?: MovementOfArticle, transactionId?: string, objData?: any) {
     let modalRef;
     switch (op) {
       case 'view-transaction':
@@ -328,6 +329,15 @@ export class ViewTransactionComponentNew implements OnInit {
           },
           (reason) => {}
         );
+        break;
+      case 'modalObj':
+        if (!objData) return;
+        this.modalData = objData;
+
+        this._modalService.open(this.modalObj, {
+          size: 'l',
+          backdrop: 'static',
+        });
         break;
       default:
         break;
