@@ -60,6 +60,16 @@ export let attributes = [
     required: false,
   },
   {
+    name: 'company.identificationValue',
+    visible: true,
+    disabled: false,
+    filter: true,
+    datatype: 'string',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
     name: 'totalPrice',
     visible: true,
     disabled: false,
