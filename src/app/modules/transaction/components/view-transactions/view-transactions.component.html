@@ -558,27 +558,6 @@
           </div>
         </ng-template>
       </li>
-      <li ngbNavItem>
-        <a ngbNavLink *ngIf="transaction?.type && transaction?.type?.electronics">ARCA</a>
-        <ng-template ngbNavContent>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>CAE</th>
-                  <th>Fecha Vencimiento CAE</th>
-                </tr>
-              </thead>
-              <tbody>
-                <td>{{ transaction.CAE }}</td>
-                <td>
-                  {{ transaction.CAEExpirationDate | dateFormat: 'DD/MM/YYYY' }}
-                </td>
-              </tbody>
-            </table>
-          </div>
-        </ng-template>
-      </li>
 
       <li ngbNavItem [disabled]="!transaction?.canceledTransactions?.typeId">
         <a ngbNavLink>{{ 'comprobantes informados' | translate | capitalize }}</a>
@@ -799,14 +778,21 @@
                   </label>
                 </div>
               </div>
+
               <div class="row" *ngIf="transaction.CAE">
                 <div class="form-group col-md-6">
-                  <label class="control-label">CAE:</label>
+                  <label class="control-label">ARCA CAE:</label>
                   <label class="control-label">
                     <b (click)="openModal('modalObj', null, null, transaction?.feArObj)">
                       {{ transaction?.CAE }}
                     </b>
                   </label>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="control-label">Fecha Vencimiento ARCA CAE:</label>
+                  <label class="control-label"
+                    ><b> {{ transaction.CAEExpirationDate | dateFormat: 'DD/MM/YYYY' }}</b></label
+                  >
                 </div>
               </div>
             </div>
