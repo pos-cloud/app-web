@@ -5,10 +5,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Config } from 'app/app.config';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { Transaction } from 'app/components/transaction/transaction';
-import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { AccountSeatService } from '../../../core/services/account-seat.service';
+import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
 
 @Component({
   selector: 'app-report-details-ledger',
@@ -207,7 +207,7 @@ export class ReportDetailsLedgerComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });

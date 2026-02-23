@@ -1,26 +1,12 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
-import {
-  MovementOfCash,
-  StatusCheck,
-} from 'app/components/movement-of-cash/movement-of-cash';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MovementOfCash, StatusCheck } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
-import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
+import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
 
 @Component({
@@ -42,8 +28,7 @@ export class SelectChecksComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible = false;
   public loading = false;
-  @Output() eventAddItem: EventEmitter<MovementOfCash> =
-    new EventEmitter<MovementOfCash>();
+  @Output() eventAddItem: EventEmitter<MovementOfCash> = new EventEmitter<MovementOfCash>();
   public itemsPerPage = 10;
   public totalItems = 0;
   public transactionMovement: string;
@@ -101,9 +86,7 @@ export class SelectChecksComponent implements OnInit {
   ngOnInit() {
     this.pathLocation = this._router.url.split('/');
     this.userType = this.pathLocation[1];
-    this.transactionMovement =
-      this.pathLocation[2].charAt(0).toUpperCase() +
-      this.pathLocation[2].slice(1);
+    this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
     this.getMovementOfCashes();
   }
 
@@ -230,12 +213,11 @@ export class SelectChecksComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionId =
-          movementOfCash.transaction._id;
+        modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
         modalRef.componentInstance.readonly = true;
         break;
       case 'edit':
@@ -261,8 +243,7 @@ export class SelectChecksComponent implements OnInit {
   public calculateTotal(): void {
     this.totalAmount = 0;
     for (let movementofCash of this.movementsOfCashes) {
-      this.totalAmount =
-        this.totalAmount + parseFloat(movementofCash.amountPaid.toString());
+      this.totalAmount = this.totalAmount + parseFloat(movementofCash.amountPaid.toString());
     }
   }
 
@@ -271,16 +252,13 @@ export class SelectChecksComponent implements OnInit {
   }
 
   public async selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
-    let movementOfCash = await this.getMovementOfCashById(
-      movementOfCashSelected._id
-    );
+    let movementOfCash = await this.getMovementOfCashById(movementOfCashSelected._id);
     if (this.isMovementOfCashSelected(movementOfCash)) {
       this.deleteMovementOfCashSelected(movementOfCash);
     } else {
       if (
         this.transactionAmount === 0 ||
-        this.transactionAmount >=
-          this.totalAmountSelected + movementOfCash.amountPaid ||
+        this.transactionAmount >= this.totalAmountSelected + movementOfCash.amountPaid ||
         this.transactionType.allowZero
       ) {
         this.totalAmountSelected += movementOfCash.amountPaid;
@@ -289,9 +267,7 @@ export class SelectChecksComponent implements OnInit {
         this.deleteMovementOfCashSelected(movementOfCash);
         if (this.pathLocation[2] !== 'fondos') {
           this.showMessage(
-            'El monto $' +
-              movementOfCashSelected.amountPaid +
-              ' es superior al de la transacción.',
+            'El monto $' + movementOfCashSelected.amountPaid + ' es superior al de la transacción.',
             'info',
             false
           );
@@ -316,16 +292,12 @@ export class SelectChecksComponent implements OnInit {
     let movementToDelete: number;
 
     for (let i = 0; i < this.movementsOfCashesSelected.length; i++) {
-      if (
-        this.movementsOfCashesSelected[i]._id.toString() ===
-        movementOfCash._id.toString()
-      ) {
+      if (this.movementsOfCashesSelected[i]._id.toString() === movementOfCash._id.toString()) {
         movementToDelete = i;
       }
     }
     if (movementToDelete !== undefined) {
-      this.totalAmountSelected -=
-        this.movementsOfCashesSelected[movementToDelete].amountPaid;
+      this.totalAmountSelected -= this.movementsOfCashesSelected[movementToDelete].amountPaid;
       this.movementsOfCashesSelected.splice(movementToDelete, 1);
     }
   }
@@ -360,11 +332,7 @@ export class SelectChecksComponent implements OnInit {
     this.getMovementOfCashes();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

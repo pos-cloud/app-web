@@ -7,15 +7,12 @@ import { ExportExcelComponent } from '../../export/export-excel/export-excel.com
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Config } from 'app/app.config';
-import {
-  attributes,
-  MovementOfCancellation,
-} from 'app/components/movement-of-cancellation/movement-of-cancellation';
+import { attributes, MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { Subscription } from 'rxjs';
 import { MovementOfCancellationService } from '../../../core/services/movement-of-cancellation.service';
-import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
+import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
 
 @Component({
   selector: 'app-list-movements-of-cancellations',
@@ -76,9 +73,7 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
     }
 
     this.pathLocation = this._router.url.split('/');
-    this.transactionMovement =
-      this.pathLocation[2].charAt(0).toUpperCase() +
-      this.pathLocation[2].slice(1);
+    this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
     this.getItems();
     this.initDragHorizontalScroll();
   }
@@ -122,12 +117,11 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });
-        modalRef.componentInstance.transactionId =
-          MovementOfCancellation.transactionOrigin._id;
+        modalRef.componentInstance.transactionId = MovementOfCancellation.transactionOrigin._id;
         modalRef.componentInstance.readonly = true;
         break;
       default:
@@ -173,8 +167,7 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
                     "$lte" : { "$date" : "${this.endDate}T23:59:59${this.timezone}" }
                 }`;
 
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
 
@@ -313,11 +306,7 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

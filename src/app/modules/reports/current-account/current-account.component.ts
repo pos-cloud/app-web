@@ -17,7 +17,6 @@ import { CompanyType } from 'app/components/payment-method/payment-method';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
-import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { CompanyService } from 'app/core/services/company.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -26,6 +25,7 @@ import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CompanyCurrentAccountService } from '../../../core/services/company-current-account.service';
+import { ViewTransactionComponentNew } from '../../transaction/components/view-transactions/view-transactions.component';
 @Component({
   selector: 'app-current-account',
   templateUrl: './current-account.component.html',
@@ -205,7 +205,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
 
         break;
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });

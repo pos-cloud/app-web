@@ -35,10 +35,10 @@ import { Subject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';
+import { ViewTransactionComponentNew } from '../../modules/transaction/components/view-transactions/view-transactions.component';
 import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
 import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
-import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-current-account',
@@ -438,7 +438,7 @@ export class CurrentAccountComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });

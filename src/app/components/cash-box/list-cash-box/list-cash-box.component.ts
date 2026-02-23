@@ -16,7 +16,7 @@ import { FilterPipe } from 'app/shared/pipes/filter.pipe';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import * as printJS from 'print-js';
 import { Subject, takeUntil } from 'rxjs';
-import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
+import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
 import { ListCashBoxesComponent } from '../list-cash-boxes/list-cash-boxes.component';
 
 @Component({
@@ -308,7 +308,7 @@ export class ListCashBoxComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });

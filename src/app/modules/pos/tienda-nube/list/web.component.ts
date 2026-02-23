@@ -20,7 +20,6 @@ import { Config } from 'app/app.config';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
-import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { DatatableService } from 'app/core/services/datatable.service';
@@ -28,6 +27,7 @@ import { MovementOfCashService } from 'app/core/services/movement-of-cash.servic
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
+import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -412,7 +412,7 @@ export class WebComponent implements OnInit {
     switch (op) {
       case 'view-transaction':
         if (transaction) {
-          modalRef = this._modalService.open(ViewTransactionComponent, {
+          modalRef = this._modalService.open(ViewTransactionComponentNew, {
             size: 'lg',
             backdrop: 'static',
           });

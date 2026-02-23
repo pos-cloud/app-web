@@ -16,8 +16,8 @@ import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
+import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
-import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
 import { MovementOfCash, attributes } from '../movement-of-cash';
 
 @Component({
@@ -501,7 +501,7 @@ export class ListMovementOfCashesComponent implements OnInit {
 
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });

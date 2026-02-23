@@ -56,6 +56,7 @@ import { MovementOfCashService } from '../../core/services/movement-of-cash.serv
 import { OriginService } from '../../core/services/origin.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
+import { ViewTransactionComponentNew } from '../../modules/transaction/components/view-transactions/view-transactions.component';
 import { SelectBranchComponent } from '../../shared/components/select-branch/select-branch.component';
 import { SelectDepositComponent } from '../../shared/components/select-deposit/select-deposit.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
@@ -66,7 +67,6 @@ import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { SelectOriginComponent } from '../origin/select-origin/select-origin.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
-import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 import { Config } from './../../app.config';
 import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
 import { Origin } from './../../components/origin/origin';
@@ -1302,7 +1302,7 @@ export class PointOfSaleComponent implements OnInit {
         }
         break;
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });

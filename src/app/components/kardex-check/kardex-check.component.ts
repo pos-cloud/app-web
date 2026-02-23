@@ -12,11 +12,11 @@ import { CurrencyPipe } from '@angular/common';
 import { AuthService } from 'app/core/services/auth.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { TransactionService } from '../../core/services/transaction.service';
+import { ViewTransactionComponentNew } from '../../modules/transaction/components/view-transactions/view-transactions.component';
 import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
 import { TransactionMovement } from '../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction/transaction';
-import { ViewTransactionComponent } from '../transaction/view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-kardex-check',
@@ -117,8 +117,7 @@ export class KardexCheckComponent implements OnInit {
       }
     }
 
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
 
     match += `}`;
 
@@ -216,7 +215,7 @@ export class KardexCheckComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });

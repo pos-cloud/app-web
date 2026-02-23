@@ -12,8 +12,8 @@ import { BranchService } from 'app/core/services/branch.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
+import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
-import { ViewTransactionComponent } from '../../transaction/view-transaction/view-transaction.component';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
 import { MovementOfCash } from '../movement-of-cash';
 
@@ -544,7 +544,7 @@ export class ListChecksComponent implements OnInit {
 
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponent, {
+        modalRef = this._modalService.open(ViewTransactionComponentNew, {
           size: 'lg',
           backdrop: 'static',
         });

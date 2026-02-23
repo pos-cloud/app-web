@@ -10,12 +10,12 @@ import { PrintTransactionTypeComponent } from 'app/components/print/print-transa
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { Transaction } from 'app/components/transaction/transaction';
-import { ViewTransactionComponent } from 'app/components/transaction/view-transaction/view-transaction.component';
 import { User } from 'app/components/user/user';
 import { AuthService } from 'app/core/services/auth.service';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { WooCommerceService } from 'app/core/services/woocommerce.service';
+import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -354,7 +354,7 @@ export class ListOrdersWooCommerceComponent implements OnInit {
     switch (op) {
       case 'view-transaction':
         if (transaction) {
-          modalRef = this._modalService.open(ViewTransactionComponent, {
+          modalRef = this._modalService.open(ViewTransactionComponentNew, {
             size: 'lg',
             backdrop: 'static',
           });
