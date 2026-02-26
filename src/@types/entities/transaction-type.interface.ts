@@ -13,6 +13,7 @@ import {
   TransactionState,
   UseOfCFDI,
 } from '@types';
+import { TransactionMovement } from './transaction.interface';
 
 export interface TransactionType extends Activity {
   _id: string;
@@ -96,21 +97,21 @@ export interface TransactionType extends Activity {
 }
 
 export enum Movements {
-  Inflows = <any>'Entrada',
-  Outflows = <any>'Salida',
+  Inflows = 'Entrada',
+  Outflows = 'Salida',
 }
 
 export enum StockMovement {
-  Inflows = <any>'Entrada',
-  Outflows = <any>'Salida',
-  Inventory = <any>'Inventario',
-  Transfer = <any>'Transferencia',
+  Inflows = 'Entrada',
+  Outflows = 'Salida',
+  Inventory = 'Inventario',
+  Transfer = 'Transferencia',
 }
 
 export enum CurrentAccount {
-  Yes = <any>'Si',
-  No = <any>'No',
-  Charge = <any>'Cobra',
+  Yes = 'Si',
+  No = 'No',
+  Charge = 'Cobra',
 }
 
 export class CodeAFIP {
@@ -118,32 +119,32 @@ export class CodeAFIP {
   code: number;
 }
 
-export enum TransactionMovement {
-  Sale = <any>'Venta',
-  Purchase = <any>'Compra',
-  Stock = <any>'Stock',
-  Money = <any>'Fondos',
-  Production = <any>'Producción',
-}
+// export enum TransactionMovement {
+//   Sale = <any>'Venta',
+//   Purchase = <any>'Compra',
+//   Stock = <any>'Stock',
+//   Money = <any>'Fondos',
+//   Production = <any>'Producción',
+// }
 
 export enum EntryAmount {
-  CostWithoutVAT = <any>'Costo sin IVA',
-  CostWithVAT = <any>'Costo con IVA',
-  SaleWithoutVAT = <any>'Venta sin IVA',
-  SaleWithVAT = <any>'Venta con IVA',
+  CostWithoutVAT = 'Costo sin IVA',
+  CostWithVAT = 'Costo con IVA',
+  SaleWithoutVAT = 'Venta sin IVA',
+  SaleWithVAT = 'Venta con IVA',
 }
 
 export enum PriceType {
-  Base = <any>'Precio Base',
-  Final = <any>'Precio Final',
-  SinTax = <any>'Precio Sin Impuestos',
-  Purchase = <any>'Ultima Compra',
+  Base = 'Precio Base',
+  Final = 'Precio Final',
+  SinTax = 'Precio Sin Impuestos',
+  Purchase = 'Ultima Compra',
 }
 
 export enum DescriptionType {
-  Code = <any>'Código',
-  Description = <any>'Descripción',
-  PosDescription = <any>'Descripción Corta',
+  Code = 'Código',
+  Description = 'Descripción',
+  PosDescription = 'Descripción Corta',
 }
 
 export interface optionalAFIP {

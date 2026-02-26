@@ -7,6 +7,7 @@ import { BranchService } from '@core/services/branch.service';
 import { CashBoxTypeService } from '@core/services/cash-box-type.service';
 import { CompanyService } from '@core/services/company.service';
 import { CountryService } from '@core/services/country.service';
+import { EmployeeTypeService } from '@core/services/employee-type.service';
 import { IdentificationTypeService } from '@core/services/identification-type.service';
 import { StateService } from '@core/services/state.service';
 import { TransactionTypeService } from '@core/services/transaction-type.service';
@@ -22,11 +23,14 @@ import {
   Country,
   CurrentAccount,
   DescriptionType,
+  EmployeeType,
   EntryAmount,
   IdentificationType,
   Movements,
   PriceType,
   State,
+  StockMovement,
+  TransactionState,
   TransactionType,
   VATCondition,
 } from '@types';
@@ -67,6 +71,15 @@ export class TransactionTypeComponent implements OnInit {
   public branches: Branch[];
   public cashBoxTypes: CashBoxType[];
   public companies: Company[]; // Reemplazar 'any' con el tipo correcto de Company
+  public employeeTypes: EmployeeType[];
+  public transactionState = Object.values(TransactionState);
+  public priceTypes = Object.values(PriceType);
+  public entryAmounts = Object.values(EntryAmount);
+  public descriptionTypes = Object.values(DescriptionType);
+  public currentAccounts = Object.values(CurrentAccount);
+  public movements = Object.values(Movements);
+  public stockMovements = Object.values(StockMovement);
+
   constructor(
     public _transactionTypeService: TransactionTypeService,
     public _vatConditionService: VATConditionService,
@@ -79,6 +92,7 @@ export class TransactionTypeComponent implements OnInit {
     public _branchService: BranchService,
     private _toastService: ToastService,
     private _cashBoxTypeService: CashBoxTypeService,
+    public _employeeTypeService: EmployeeTypeService,
     private _companyService: CompanyService
   ) {
     this.transactionTypeForm = this._fb.group({
@@ -136,7 +150,7 @@ export class TransactionTypeComponent implements OnInit {
       printBalanceAccount: [false, []],
       posKitchen: [false, []],
       readLayout: [false, []],
-      updatePrice: ['', []],
+      updatePrice: [null, []],
       resetNumber: [false, []],
       updateArticle: [false, []],
       finishCharge: [true, []],
@@ -146,7 +160,7 @@ export class TransactionTypeComponent implements OnInit {
       defectShipmentMethod: ['', []],
       application: ['', []],
       company: ['', []],
-      branch: ['', []],
+      branch: [null, []],
       level: [0, []],
       groupsArticles: [false, []],
       printOrigin: [false, []],
@@ -164,19 +178,20 @@ export class TransactionTypeComponent implements OnInit {
       updateUser: ['', []],
       updateDate: ['', []],
       isSubscription: [false, []],
-      codeA: ['', []],
-      codeB: ['', []],
-      codeC: ['', []],
-      codeD: ['', []],
-      codeE: ['', []],
-      codeM: ['', []],
-      codeR: ['', []],
-      codeZ: ['', []],
-      codeT: ['', []],
+      codeA: [''],
+      codeB: [''],
+      codeC: [''],
+      codeD: [''],
+      codeE: [''],
+      codeM: [''],
+      codeR: [''],
+      codeT: [''],
+      codeZ: [''],
     });
   }
 
   ngOnInit() {
+    console.log(this.transactionState);
     const pathUrl = this._router.url.split('/');
     this.transactionTypeId = pathUrl[4];
     this.operation = pathUrl[3];
@@ -190,14 +205,16 @@ export class TransactionTypeComponent implements OnInit {
       cashBoxTypes: this._cashBoxTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
       identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
+      employeeTypes: this._employeeTypeService.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ branch, cashBoxTypes, companies, identificationTypes }) => {
+        next: ({ branch, cashBoxTypes, companies, identificationTypes, employeeTypes }) => {
           this.branches = branch ?? [];
           this.cashBoxTypes = cashBoxTypes ?? [];
           this.companies = companies ?? [];
           this.identificationTypes = identificationTypes ?? [];
+          this.employeeTypes = employeeTypes ?? [];
 
           if (this.transactionTypeId) {
             this.getTransactionTypes(this.transactionTypeId);
@@ -230,11 +247,12 @@ export class TransactionTypeComponent implements OnInit {
     //   (item) => item._id === this.transport?.identificationType?.toString()
     // );
     // const country = this.countries?.find((item) => item._id === this.transport?.country?.toString());
-    // const state = this.states?.find((item) => item._id === this.transport?.state?.toString());
+    const branch = this.branches?.find((item) => item._id === this.transactionType?.branch?.toString());
 
     const values = {
       _id: this.transactionType?._id ?? '',
       order: this.transactionType?.order ?? 1,
+      branch: branch,
       transactionMovement: this.transactionType?.transactionMovement ?? '',
       abbreviation: this.transactionType?.abbreviation ?? '',
       name: this.transactionType?.name ?? '',
@@ -287,7 +305,7 @@ export class TransactionTypeComponent implements OnInit {
       printBalanceAccount: this.transactionType?.printBalanceAccount ?? false,
       posKitchen: this.transactionType?.posKitchen ?? false,
       readLayout: this.transactionType?.readLayout ?? false,
-      updatePrice: this.transactionType?.updatePrice ?? '',
+      updatePrice: this.transactionType?.updatePrice ?? null,
       resetNumber: this.transactionType?.resetNumber ?? false,
       updateArticle: this.transactionType?.updateArticle ?? false,
       finishCharge: this.transactionType?.finishCharge ?? true,
@@ -297,7 +315,6 @@ export class TransactionTypeComponent implements OnInit {
       defectShipmentMethod: this.transactionType?.defectShipmentMethod ?? '',
       application: this.transactionType?.application ?? '',
       company: this.transactionType?.company ?? '',
-      branch: this.transactionType?.branch ?? '',
       level: this.transactionType?.level ?? 0,
       groupsArticles: this.transactionType?.groupsArticles ?? false,
       printOrigin: this.transactionType?.printOrigin ?? false,
@@ -316,7 +333,7 @@ export class TransactionTypeComponent implements OnInit {
       updateDate: this.transactionType?.updateDate ?? '',
       isSubscription: this.transactionType?.isSubscription ?? false,
     };
-    this.transactionTypeForm.setValue(values);
+    this.transactionTypeForm.patchValue(values);
   }
 
   returnTo() {

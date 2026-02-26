@@ -49,6 +49,7 @@ export {
   EntryAmount,
   Movements,
   PriceType,
+  StockMovement,
   TransactionType,
 } from './entities/transaction-type.interface';
 export {

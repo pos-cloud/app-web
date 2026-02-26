@@ -95,18 +95,18 @@ export interface Transaction extends Activity {
 }
 
 export enum TransactionState {
-  Open = <any>'Abierto',
-  Outstanding = <any>'Pendiente de pago',
-  PaymentConfirmed = <any>'Pago Confirmado',
-  PaymentDeclined = <any>'Pago Rechazado',
-  Canceled = <any>'Anulado',
-  Packing = <any>'Armando',
-  Closed = <any>'Cerrado',
-  Delivered = <any>'Entregado',
-  Sent = <any>'Enviado',
-  Preparing = <any>'Preparando',
-  Pending = <any>'Pendiente',
-  Produccion = <any>'En Producción',
+  Open = 'Abierto',
+  Outstanding = 'Pendiente de pago',
+  PaymentConfirmed = 'Pago Confirmado',
+  PaymentDeclined = 'Pago Rechazado',
+  Canceled = 'Anulado',
+  Packing = 'Armando',
+  Closed = 'Cerrado',
+  Delivered = 'Entregado',
+  Sent = 'Enviado',
+  Preparing = 'Preparando',
+  Pending = 'Pendiente',
+  Produccion = 'En Producción',
 }
 
 export enum TransactionStateTiendaNube {
