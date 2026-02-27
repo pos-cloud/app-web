@@ -64,7 +64,16 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="fieldsIncrease" class="control-label">Forma a incrementar:</label>
+          <label for="fieldsIncrease" class="control-label">
+            Forma de actualización
+            <button
+              type="button"
+              class="btn btn-link p-0 ml-1"
+              (click)="showHelpFieldsIncrease = !showHelpFieldsIncrease"
+            >
+              ?
+            </button>
+          </label>
           <select
             class="form-control"
             formControlName="fieldsIncrease"
@@ -72,12 +81,19 @@
                       'is-invalid': updatePriceForm.get('fieldsIncrease')?.touched && updatePriceForm.get('fieldsIncrease')?.invalid,
                     }"
           >
-            <option></option>
-            <option *ngIf="updatePriceForm.get('field')?.value !== 'markupPercentage'" [value]="'amount'">
-              Monto fijo
-            </option>
+          
+            <option [value]="'fixedAmount'">Monto fijo</option>
             <option [value]="'percentage'">Porcentaje</option>
+            <option [value]="'amount'">Monto</option>
           </select>
+          <small
+            class="form-text text-muted mt-1"
+            *ngIf="showHelpFieldsIncrease"
+          >
+            <strong>Monto fijo:</strong> cambia el precio al monto ingresado, sin tener en cuenta el anterior.<br />
+            <strong>Porcentaje:</strong> modifica el precio actual sumando el monto anterior por el porcentaje ingresado.<br />
+            <strong>Monto:</strong> modifica el precio actual sumando el monto anterior por el monto ingresado.
+          </small>
           <div
             class="invalid-feedback"
             *ngIf="
@@ -90,24 +106,16 @@
         </div>
       </div>
 
-      <div class="row" *ngIf="updatePriceForm.get('fieldsIncrease')?.value === 'percentage'">
+      <div class="row">
         <div class="form-group col-md-12">
-          <label for="percentage" class="control-label">Porcentaje a incrementar:</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
-            <input type="number" class="form-control" formControlName="percentage" name="percentage" />
-          </div>
-        </div>
-      </div>
-      <div class="row" *ngIf="updatePriceForm.get('fieldsIncrease')?.value === 'amount'">
-        <div class="form-group col-md-12">
-          <label for="amount" class="control-label">Monto a incrementar:</label>
-          <div class="input-group">
+          <label for="amount" class="control-label">Valor a actualizar:</label>
+          <div class="input-group" *ngIf="updatePriceForm.get('fieldsIncrease')?.value === 'fixedAmount' || updatePriceForm.get('fieldsIncrease')?.value === 'amount'">
             <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">$</span></div>
             <input type="number" class="form-control" formControlName="amount" name="amount" />
           </div>
-          <div *ngIf="formErrors.percentage" class="alert alert-danger">
-            {{ formErrors.percentage }}
+          <div class="input-group" *ngIf="updatePriceForm.get('fieldsIncrease')?.value === 'percentage' || updatePriceForm.get('fieldsIncrease')?.value === 'fixed'">
+            <div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">%</span></div>
+            <input type="number" class="form-control" formControlName="percentage" name="percentage" />
           </div>
         </div>
       </div>

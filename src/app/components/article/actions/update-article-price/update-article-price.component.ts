@@ -28,6 +28,7 @@ export class UpdateArticlePriceComponent {
   public categories: Category;
   public optionUpdate: string = 'make';
   public decimal = 2;
+  public showHelpFieldsIncrease = false;
 
   constructor(
     public _articleService: ArticleService,
@@ -38,7 +39,7 @@ export class UpdateArticlePriceComponent {
   ) {
     this.updatePriceForm = this._fb.group({
       optionUpdate: [this.optionUpdate, [Validators.required]],
-      percentage: [, []],
+      type: ['', []],
       field: [, [Validators.required]],
       fieldsIncrease: [, [Validators.required]],
       decimal: [, [Validators.required]],
@@ -67,14 +68,13 @@ export class UpdateArticlePriceComponent {
     }
     const query = {
       articlesCode: articles,
-      percentage:
-        this.updatePriceForm.value.fieldsIncrease === 'percentage' ? this.updatePriceForm.value.percentage : 0,
+      type:this.updatePriceForm.value.type,
       field: this.updatePriceForm.value.field,
       decimal: this.updatePriceForm.value.decimal,
-      amount: this.updatePriceForm.value.fieldsIncrease === 'amount' ? this.updatePriceForm.value.amount : 0,
+      amount: this.updatePriceForm.value.amount
     };
     this._articleService
-      .updatePrices(query.articlesCode, query.field, query.decimal, query.percentage, query.amount)
+      .updatePrices(query.articlesCode, query.field, query.decimal, query.type, query.amount)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {

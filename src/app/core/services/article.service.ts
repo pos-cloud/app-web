@@ -212,7 +212,7 @@ export class ArticleService extends ModelService {
     articlesCode: string[],
     field: PriceType,
     decimal: number,
-    percentage: number,
+    type: string,
     amount: number
   ): Observable<any> {
     const URL = `${environment.apiv2}/articles/update-prices`;
@@ -224,7 +224,7 @@ export class ArticleService extends ModelService {
     return this._http
       .post(
         URL,
-        { articlesCode, field, decimal, percentage, amount },
+        { articlesCode, field, decimal, type, amount },
         {
           headers: headers,
         }
