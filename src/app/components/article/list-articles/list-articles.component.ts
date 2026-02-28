@@ -6,7 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, IAttribute, IButton, PrinterPrintIn, PrintType } from '@types';
-import { PrintPriceListComponent } from 'app/components/article/actions/print-price-list/print-price-list.component';
+import { PrintPriceListComponent } from 'app/modules/entities/article/actions/print-price-list/print-price-list.component';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
@@ -14,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ArticleService } from '../../../core/services/article.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
-import { UpdateArticlePriceComponent } from '../actions/update-article-price/update-article-price.component';
+import { UpdateArticlePriceComponent } from 'app/modules/entities/article/actions/update-article-price/update-article-price.component';
 
 @Component({
   selector: 'app-list-articles',

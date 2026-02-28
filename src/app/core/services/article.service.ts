@@ -9,7 +9,6 @@ import { AuthService } from './auth.service';
 
 import { ModelService } from 'app/core/services/model.service';
 import { Article } from '../../components/article/article';
-import { PriceType } from '../../components/transaction-type/transaction-type';
 
 @Injectable({
   providedIn: 'root',
@@ -208,27 +207,20 @@ export class ArticleService extends ModelService {
       );
   }
 
-  public updatePrices(
-    articlesCode: string[],
-    field: PriceType,
-    decimal: number,
-    type: string,
-    amount: number
-  ): Observable<any> {
+  public updatePrices(payload: {
+    articlesCode: string[];
+    field: string;
+    type: number;
+    decimal: number;
+    amount: number;
+  }): Observable<any> {
     const URL = `${environment.apiv2}/articles/update-prices`;
-
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
     return this._http
-      .post(
-        URL,
-        { articlesCode, field, decimal, type, amount },
-        {
-          headers: headers,
-        }
-      )
+      .post(URL, payload, { headers })
       .pipe(
         map((res) => {
           return res;

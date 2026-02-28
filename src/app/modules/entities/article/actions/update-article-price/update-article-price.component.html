@@ -1,0 +1,128 @@
+<div class="modal-header">
+  <h4 class="modal-title">Actualizar Precios</h4>
+  <button type="button" class="close" aria-label="Cerrar" (click)="activeModal.dismiss('close')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<form [formGroup]="form" (ngSubmit)="updatePrice()" autocomplete="off">
+  <section class="container-fluid">
+  <div class="modal-body">
+    <!-- Productos a actualizar -->
+    <div class="row">
+      <div class="col-12">
+        <label for="optionUpdate" class="control-label">Productos a actualizar</label>
+        <select
+          id="optionUpdate"
+          class="form-control"
+          formControlName="optionUpdate"
+          ngbTooltip="Todos: aplica a todos los artículos. Filtrados: solo los seleccionados en la lista."
+        >
+          <option value="all">Todos los productos</option>
+          <option value="filter">Productos filtrados</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Campo a modificar -->
+    <div class="row">
+      <div class="col-12">
+        <label for="field" class="control-label">Campo a actualizar</label>
+        <select
+          id="field"
+          class="form-control"
+          formControlName="field"
+          [ngClass]="{ 'is-invalid': form.get('field')?.touched && form.get('field')?.invalid }"
+          ngbTooltip="Qué valor modificar: precio base, precio de venta o margen porcentual"
+        >
+          <option [ngValue]="null" disabled>Seleccionar...</option>
+          <option *ngFor="let opt of fieldOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+        <div *ngIf="form.get('field')?.touched && form.get('field')?.hasError('required')" class="invalid-feedback">
+          {{ 'fieldRequired' | translate | capitalize }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Forma de actualización -->
+    <div class="row">
+      <div class="col-12">
+        <label for="type" class="control-label">
+          Forma de actualización
+          <i class="fa fa-info-circle text-muted ml-1" [ngbTooltip]="getTypeTooltip()"></i>
+        </label>
+        <select
+          id="type"
+          class="form-control"
+          formControlName="type"
+          [ngClass]="{ 'is-invalid': form.get('type')?.touched && form.get('type')?.invalid }"
+        >
+          <option [ngValue]="null" disabled>Seleccionar...</option>
+          <option
+            *ngFor="let opt of getTypeOptionsForField(form.get('field')?.value)"
+            [ngValue]="opt.value"
+          >
+            {{ opt.label }}
+          </option>
+        </select>
+        <div *ngIf="form.get('type')?.touched && form.get('type')?.hasError('required')" class="invalid-feedback">
+          {{ 'fieldRequired' | translate | capitalize }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Valor -->
+    <div class="row">
+      <div class="col-12">
+        <label for="amount" class="control-label">
+          Valor
+          <span class="text-muted" *ngIf="getAmountPrefix() === '$'">(monto en $)</span>
+          <span class="text-muted" *ngIf="getAmountPrefix() === '%'">(porcentaje %)</span>
+        </label>
+        <div class="input-group">
+          <div class="input-group-prepend" *ngIf="getAmountPrefix()">
+            <span class="input-group-text">{{ getAmountPrefix() }}</span>
+          </div>
+          <input
+            id="amount"
+            type="number"
+            step="0.01"
+            class="form-control"
+            formControlName="amount"
+            [ngClass]="{ 'is-invalid': form.get('amount')?.touched && form.get('amount')?.invalid }"
+            [placeholder]="getAmountPrefix() === '$' ? 'Ej: 150.50' : (getAmountPrefix() === '%' ? 'Ej: 10' : 'Seleccione la forma de actualización')"
+            [ngbTooltip]="getAmountPrefix() === '$' ? 'Monto en moneda local' : (getAmountPrefix() === '%' ? 'Porcentaje (10 = 10%)' : 'Seleccione primero la forma de actualización')"
+          />
+        </div>
+        <div *ngIf="form.get('amount')?.touched && form.get('amount')?.hasError('required')" class="invalid-feedback">
+          {{ 'fieldRequired' | translate | capitalize }}
+        </div>
+        <small *ngIf="getValueExample()" class="form-text text-muted d-block mt-2">
+          <strong>Ejemplo para Valor:</strong> {{ getValueExample() }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Decimales -->
+    <div class="row">
+      <div class="col-12">
+        <label for="decimal" class="control-label">Cantidad de decimales</label>
+        <select
+          id="decimal"
+          class="form-control"
+          formControlName="decimal"
+          ngbTooltip="Decimales a mostrar en los precios resultantes"
+        >
+          <option *ngFor="let d of decimalOptions" [value]="d">{{ d }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">
+      <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+      <span class="ml-2">{{ loading ? 'Actualizando...' : 'Actualizar' }}</span>
+    </button>
+  </div>
+</section>
+</form>

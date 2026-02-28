@@ -16,7 +16,7 @@ import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { MakeService } from 'app/core/services/make.service';
 import { PriceListService } from 'app/core/services/price-list.service';
-import { CategoryService } from '../../../../core/services/category.service';
+import { CategoryService } from '@core/services/category.service';
 
 @Component({
   selector: 'app-print-price-list',
