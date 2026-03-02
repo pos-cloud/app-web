@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse, MovementOfCash, PrinterPrintIn, PrintType, Transaction } from '@types';
+import { ApiResponse, MovementOfCash, PrinterPrintIn, PrintType, Transaction, TransactionState } from '@types';
 import { Subject, Subscription } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
@@ -85,8 +85,7 @@ export class ViewTransactionComponentNew implements OnInit {
           this.transaction = result.result;
           this.getMovementsOfArticlesByTransaction();
           this.getMovementsOfCashesByTransaction();
-          this.getCancellationsOfMovementDestination();
-          this.getCancellationsOfMovementOrigin();
+          this.getMovementsOfCancellations();
 
           this.loading = false;
         },
@@ -196,87 +195,74 @@ export class ViewTransactionComponentNew implements OnInit {
       });
   }
 
-  public getCancellationsOfMovementDestination(): void {
+  public getMovementsOfCancellations(): void {
     this.loading = true;
-    let data = {
-      project: {
-        balance: 1,
-        operationType: 1,
-        'transactionDestination.operationType': 1,
-        'transactionDestination._id': 1,
-        'transactionDestination.endDate': 1,
-        'transactionDestination.type.name': 1,
-        'transactionDestination.origin': 1,
-        'transactionDestination.letter': 1,
-        'transactionDestination.number': 1,
-        'transactionDestination.totalPrice': 1,
-        'transactionDestination.state': 1,
-      },
-      match: {
-        'transactionDestination._id': { $oid: this.transactionId },
-        'transactionDestination.operationType': { $ne: 'D' },
-        'transactionDestination.state': { $nin: ['Open', 'Pending'] },
-        operationType: { $ne: 'D' },
-      },
-    };
-
+    this.transactionOrigins = [];
+    this.transactionDestinations = [];
     this._movementOfCancellation
-      .getAll(data)
-      .pipe(takeUntil(this.destroy$))
+      .getAll({
+        project: {
+          _id: 1,
+          'transactionDestination.operationType': 1,
+          'transactionDestination._id': 1,
+          'transactionDestination.endDate': 1,
+          'transactionDestination.type.name': 1,
+          'transactionDestination.origin': 1,
+          'transactionDestination.letter': 1,
+          'transactionDestination.number': 1,
+          'transactionDestination.totalPrice': 1,
+          'transactionDestination.state': 1,
+          'transactionOrigin.operationType': 1,
+          'transactionOrigin._id': 1,
+          'transactionOrigin.endDate': 1,
+          'transactionOrigin.type.name': 1,
+          'transactionOrigin.origin': 1,
+          'transactionOrigin.letter': 1,
+          'transactionOrigin.number': 1,
+          'transactionOrigin.totalPrice': 1,
+          'transactionOrigin.state': 1,
+        },
+        match: {
+          $or: [
+            { 'transactionDestination._id': { $oid: this.transactionId } },
+            { 'transactionOrigin._id': { $oid: this.transactionId } },
+          ],
+          transactionOrigin: { $nin: [TransactionState.Open, TransactionState.Pending] },
+          transactionDestination: { $nin: [TransactionState.Open, TransactionState.Pending] },
+          operationType: { $ne: 'D' },
+        },
+      })
       .subscribe({
         next: (result: ApiResponse) => {
-          for (let data of result.result) {
-            this.transactionDestinations.push(data.transactionDestination);
+          if (result.result.length) {
+            for (let data of result.result) {
+              const originId = data.transactionOrigin?._id;
+              const destinationId = data.transactionDestination?._id;
+              const currentId = this.transactionId;
+
+              // Si la transacción que estoy viendo es la ORIGEN del movimiento,
+              // muestro la DESTINO (la otra) en transactionDestinations
+              if (originId === currentId && data.transactionDestination) {
+                this.transactionDestinations.push(data.transactionDestination);
+              }
+              // Si la transacción que estoy viendo es la DESTINO del movimiento,
+              // muestro la ORIGEN (la otra) en transactionOrigins
+              if (destinationId === currentId && data.transactionOrigin) {
+                this.transactionOrigins.push(data.transactionOrigin);
+              }
+            }
           }
         },
         error: (error) => {
           this._toastService.showToast(error);
           this.loading = false;
         },
-        complete() {},
-      });
-  }
-
-  public getCancellationsOfMovementOrigin(): void {
-    this.loading = true;
-    let data = {
-      project: {
-        balance: 1,
-        operationType: 1,
-        'transactionOrigin.operationType': 1,
-        'transactionOrigin._id': 1,
-        'transactionOrigin.endDate': 1,
-        'transactionOrigin.type.name': 1,
-        'transactionOrigin.origin': 1,
-        'transactionOrigin.letter': 1,
-        'transactionOrigin.number': 1,
-        'transactionOrigin.totalPrice': 1,
-        'transactionOrigin.state': 1,
-      },
-      match: {
-        'transactionOrigin._id': { $oid: this.transactionId },
-        'transactionOrigin.operationType': { $ne: 'D' },
-        'transactionOrigin.state': { $nin: ['Open', 'Pending'] },
-        operationType: { $ne: 'D' },
-      },
-    };
-
-    this._movementOfCancellation
-      .getAll(data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: ApiResponse) => {
-          for (let data of result.result) {
-            this.transactionOrigins.push(data.transactionOrigin);
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
+        complete: () => {
           this.loading = false;
         },
-        complete() {},
       });
   }
+
   async openModal(op: string, movement?: MovementOfArticle, transactionId?: string, objData?: any) {
     let modalRef;
     switch (op) {
