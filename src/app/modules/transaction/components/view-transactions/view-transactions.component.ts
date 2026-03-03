@@ -227,8 +227,6 @@ export class ViewTransactionComponentNew implements OnInit {
             { 'transactionDestination._id': { $oid: this.transactionId } },
             { 'transactionOrigin._id': { $oid: this.transactionId } },
           ],
-          transactionOrigin: { $nin: [TransactionState.Open, TransactionState.Pending] },
-          transactionDestination: { $nin: [TransactionState.Open, TransactionState.Pending] },
           operationType: { $ne: 'D' },
         },
       })
@@ -240,15 +238,21 @@ export class ViewTransactionComponentNew implements OnInit {
               const destinationId = data.transactionDestination?._id;
               const currentId = this.transactionId;
 
-              // Si la transacción que estoy viendo es la ORIGEN del movimiento,
-              // muestro la DESTINO (la otra) en transactionDestinations
+              // Si la transacción que estoy viendo es la ORIGEN del movimiento (la cancelada),
+              // la "otra" (destination) es la que cancela → mostrarla en Cancelatorias
               if (originId === currentId && data.transactionDestination) {
-                this.transactionDestinations.push(data.transactionDestination);
+                const other = data.transactionDestination;
+                if (other.state !== TransactionState.Open && other.state !== TransactionState.Pending) {
+                  this.transactionOrigins.push(other);
+                }
               }
-              // Si la transacción que estoy viendo es la DESTINO del movimiento,
-              // muestro la ORIGEN (la otra) en transactionOrigins
+              // Si la transacción que estoy viendo es la DESTINO del movimiento (la que cancela),
+              // la "otra" (origin) es la cancelada → mostrarla en Transacciones canceladas
               if (destinationId === currentId && data.transactionOrigin) {
-                this.transactionOrigins.push(data.transactionOrigin);
+                const other = data.transactionOrigin;
+                if (other.state !== TransactionState.Open && other.state !== TransactionState.Pending) {
+                  this.transactionDestinations.push(other);
+                }
               }
             }
           }
