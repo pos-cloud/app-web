@@ -387,9 +387,8 @@ export class ArticleComponent implements OnInit {
     await this._configService.getConfig.subscribe((config) => {
       this.config = config;
       // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
-      this.validationMessages.code[
-        'maxlength'
-      ] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
+      this.validationMessages.code['maxlength'] =
+        `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
       this.articleForm.controls['code'].setValidators([
         Validators.maxLength(this.config.article.code.validators.maxLength),
       ]);
@@ -514,6 +513,7 @@ export class ArticleComponent implements OnInit {
       updateVariants: [this.article.updateVariants, []],
       variants: this._fb.array([]),
       salePriceTN: [this.article.salePriceTN, []],
+      promotionalPriceTN: [this.article.promotionalPriceTN, []],
       publishTiendaNube: [[this.article.publishTiendaNube, []]],
       publishWooCommerce: [[this.article.publishWooCommerce, []]],
     });
@@ -1337,6 +1337,7 @@ export class ArticleComponent implements OnInit {
     this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
     this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
     this.articleForm.value.salePriceTN = this.roundNumber.transform(this.articleForm.value.salePriceTN);
+    this.articleForm.value.promotionalPriceTN = this.roundNumber.transform(this.articleForm.value.promotionalPriceTN);
     this.article = Object.assign(this.article, this.articleForm.value);
     this.setValuesForm();
   }
@@ -1413,6 +1414,7 @@ export class ArticleComponent implements OnInit {
       updateVariants: this.article.updateVariants ?? false,
       tiendaNubeId: this.article.tiendaNubeId ?? null,
       salePriceTN: this.roundNumber.transform(this.article.salePriceTN ?? 0.0),
+      promotionalPriceTN: this.roundNumber.transform(this.article.promotionalPriceTN ?? 0.0),
       publishTiendaNube: this.article.publishTiendaNube ?? false,
       publishWooCommerce: this.article.publishWooCommerce ?? false,
     };

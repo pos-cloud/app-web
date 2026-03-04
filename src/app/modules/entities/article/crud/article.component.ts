@@ -263,6 +263,8 @@ export class ArticleComponent implements OnInit {
       seoDescriptionTN: ['', []],
       videoUrlTN: ['', []],
       visibleTN: [true, []],
+      brandTN: ['', []],
+      promotionalPriceTN: [0, []],
     });
 
     this.taxForm = this._fb.group({
@@ -442,6 +444,8 @@ export class ArticleComponent implements OnInit {
       videoUrlTN: this.article?.videoUrlTN ?? '',
       salesAccount: salesAccounts ?? null,
       purchaseAccount: purchaseAccounts ?? null,
+      brandTN: this.article?.brandTN ?? '',
+      promotionalPriceTN: this.article?.promotionalPriceTN ?? 0,
     };
 
     this.articleForm.patchValue(values);

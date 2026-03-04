@@ -646,7 +646,7 @@
             </select>
           </div>
           <ng-container *ngIf="articleForm.get('publishTiendaNube')?.value === true">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
               <label for="typeTN" class="control-label">{{ 'Tipo de producto' | translate | capitalize }}:</label>
               <select class="form-control" formControlName="typeTN">
                 <option [ngValue]="true" [disabled]="readonly">
@@ -658,7 +658,7 @@
               </select>
             </div>
 
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
               <label for="salePriceTN" class="control-label">{{ 'salePriceTN' | translate | capitalize }}:</label>
               <div class="input-group">
                 <div class="input-group-prepend">
@@ -675,8 +675,26 @@
                 />
               </div>
             </div>
+            <div class="form-group col-md-2">
+              <label for="promotionalPriceTN" class="control-label"
+                >{{ 'promotionalPriceTN' | translate | capitalize }}:</label
+              >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">$</span>
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="promotionalPriceTN"
+                  [readonly]="operation === 'view'"
+                  name="promotionalPriceTN"
+                  id="promotionalPriceTN"
+                />
+              </div>
+            </div>
 
-            <div class="form-group col-md-3" *ngIf="hierarchicalCategories.length > 0">
+            <div class="form-group col-md-2" *ngIf="hierarchicalCategories.length > 0">
               <label for="categoryTN">{{ 'categories' | translate | capitalize }}:</label>
               <app-hierarchical-multi-select
                 [items]="hierarchicalCategories"
@@ -687,6 +705,17 @@
                 formControlName="categoryTN"
                 (ngModelChange)="updateCategoriesDisplayText()"
               ></app-hierarchical-multi-select>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="brandTN" class="control-label">{{ 'brandTN' | translate | capitalize }}:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="brandTN"
+                name="brandTN"
+                id="brandTN"
+                [readonly]="operation === 'view'"
+              />
             </div>
 
             <div class="form-group col-md-3">

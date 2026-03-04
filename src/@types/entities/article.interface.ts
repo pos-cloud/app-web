@@ -110,6 +110,8 @@ export interface Article extends Activity {
   seoDescriptionTN: string;
   seoTitleTN: string;
   visibleTN: boolean;
+  brandTN: string;
+  promotionalPriceTN: number;
 }
 
 export enum Type {

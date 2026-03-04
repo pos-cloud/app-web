@@ -45,32 +45,33 @@ export class Article {
   public purchasePrice: number = 0.0;
   public currency: Currency;
   public make: Make;
+  public promotionalPriceTN: number = 0.0;
   public deposits: [
     {
       _id: string;
       deposit: Deposit;
       capacity: number;
-    }
+    },
   ];
   public locations: [
     {
       _id: string;
       location: Location;
-    }
+    },
   ];
   public children: [
     {
       _id: string;
       article: Article;
       quantity: number;
-    }
+    },
   ];
   public pictures: [
     {
       _id: string;
       picture: string;
       meliId: string;
-    }
+    },
   ];
   public url: string;
   public category: Category;
@@ -123,7 +124,7 @@ export class Article {
     {
       value: VariantValue;
       type: VariantType;
-    }
+    },
   ];
   public publishTiendaNube: Boolean = false;
   public publishWooCommerce: Boolean = false;

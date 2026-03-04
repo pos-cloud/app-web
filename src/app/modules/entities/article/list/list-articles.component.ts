@@ -8,13 +8,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectPrinterComponent } from '@shared/components/select-printer/select-printer.component';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, IAttribute, IButton, PrinterPrintIn, PrintType } from '@types';
-import { PrintPriceListComponent } from '../actions/print-price-list/print-price-list.component';
-import { UpdateArticlePriceComponent } from '../actions/update-article-price/update-article-price.component';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { ImportComponent } from 'app/shared/components/import/import.component';
 import * as printJS from 'print-js';
 import { Subject, takeUntil } from 'rxjs';
+import { PrintPriceListComponent } from '../actions/print-price-list/print-price-list.component';
+import { UpdateArticlePriceComponent } from '../actions/update-article-price/update-article-price.component';
 
 @Component({
   selector: 'app-list-articles',
@@ -189,6 +189,26 @@ export class ListArticlesComponent implements OnInit {
       datatype: 'currency',
       project: null,
       align: 'right',
+      required: false,
+    },
+    {
+      name: 'promotionalPriceTN',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      project: null,
+      align: 'right',
+      required: false,
+    },
+    {
+      name: 'brandTN',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
       required: false,
     },
     {
