@@ -690,11 +690,12 @@
                   [readonly]="operation === 'view'"
                   name="promotionalPriceTN"
                   id="promotionalPriceTN"
+                  (blur)="updatePrices('basePrice')"
                 />
               </div>
             </div>
 
-            <div class="form-group col-md-2" *ngIf="hierarchicalCategories.length > 0">
+            <div class="form-group col-md-2">
               <label for="categoryTN">{{ 'categories' | translate | capitalize }}:</label>
               <app-hierarchical-multi-select
                 [items]="hierarchicalCategories"

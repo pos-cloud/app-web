@@ -688,6 +688,7 @@
                 [readonly]="operation === 'view'"
                 name="promotionalPriceTN"
                 id="promotionalPriceTN"
+                (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
               />
             </div>
           </div>

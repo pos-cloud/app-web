@@ -903,6 +903,7 @@ export class ArticleComponent implements OnInit {
     this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
     this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
     this.articleForm.value.salePriceTN = this.roundNumber.transform(this.articleForm.value.salePriceTN);
+    this.articleForm.value.promotionalPriceTN = this.roundNumber.transform(this.articleForm.value.promotionalPriceTN);
     // Actualizar el artículo
     this.article = { ...this.article, ...this.articleForm.value };
   }
