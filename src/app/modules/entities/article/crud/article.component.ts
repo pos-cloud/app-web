@@ -623,7 +623,15 @@ export class ArticleComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this.article = result.result;
-          if (this.operation === 'copy') delete this.article._id;
+          if (this.operation === 'copy') {
+            this.article._id = null;
+            this.article.wooId = null;
+            this.article.tiendaNubeId = null;
+            this.article.creationDate = '';
+            this.article.creationUser = null;
+            this.article.updateDate = '';
+            this.article.updateUser = null;
+          }
           this.setValueForm();
           this.setValueFormTax();
         },
