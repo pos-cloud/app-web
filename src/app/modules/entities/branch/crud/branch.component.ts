@@ -173,7 +173,9 @@ export class BranchComponent implements OnInit, OnDestroy {
       branchIdentificationType: identificationType ?? null,
       branchIdentificationValue: this.branch?.branchIdentificationValue ?? '',
       branchVatCondition: vatCondition ?? null,
-      branchStartOfActivity: this.branch?.branchStartOfActivity ?? '',
+      branchStartOfActivity: this.branch?.branchStartOfActivity
+        ? new Date(this.branch.branchStartOfActivity).toISOString().substring(0, 10)
+        : '',
       branchGrossIncome: this.branch?.branchGrossIncome ?? '',
       branchAddress: this.branch?.branchAddress ?? '',
       branchPicture: this.branch?.branchPicture ?? '',
