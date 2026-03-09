@@ -92,6 +92,7 @@ export interface Transaction extends Activity {
   feArObj: any;
   tiendaNubeObj: any;
   wooObj: any;
+  branchOriginObj: Branch;
 }
 
 export enum TransactionState {
