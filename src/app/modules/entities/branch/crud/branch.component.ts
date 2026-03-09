@@ -2,23 +2,34 @@ import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ApiResponse, Branch } from '@types';
+import { Account, ApiResponse, Branch, Currency, IdentificationType, VATCondition } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 
 import { CommonModule } from '@angular/common';
 import { BranchService } from '@core/services/branch.service';
+import { ConfigService } from '@core/services/config.service';
+import { IdentificationTypeService } from '@core/services/identification-type.service';
+import { VATConditionService } from '@core/services/vat-condition.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { Subject } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 @Component({
   selector: 'app-branch',
   templateUrl: './branch.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule, UploadFileComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FocusDirective,
+    PipesModule,
+    TranslateModule,
+    TypeaheadDropdownComponent,
+    UploadFileComponent,
+  ],
 })
 export class BranchComponent implements OnInit, OnDestroy {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
@@ -26,14 +37,24 @@ export class BranchComponent implements OnInit, OnDestroy {
   public operation: string;
   public branchForm: UntypedFormGroup;
   public loading: boolean = false;
+  public identificationTypes: IdentificationType[];
+  public vatConditions: VATCondition[];
+  public currencies: Currency[];
+  public accounts: Account[];
+  public countries: any;
   public focusEvent = new EventEmitter<boolean>();
   public branch: Branch;
+  public timezones: string;
   private destroy$ = new Subject<void>();
 
   constructor(
     private _branchService: BranchService,
+    public _configService: ConfigService,
+    public _vatCondition: VATConditionService,
+    public _identificationTypeService: IdentificationTypeService,
     private _fb: UntypedFormBuilder,
     private _router: Router,
+
     private _toastService: ToastService
   ) {
     this.branchForm = this._fb.group({
@@ -42,6 +63,21 @@ export class BranchComponent implements OnInit, OnDestroy {
       name: ['', [Validators.required]],
       default: [false, []],
       image: ['', []],
+      branchName: ['', []],
+      branchFantasyName: ['', []],
+      branchIdentificationType: [null, []],
+      branchIdentificationValue: ['', []],
+      branchVatCondition: [null, []],
+      branchStartOfActivity: ['', []],
+      branchGrossIncome: ['', []],
+      branchAddress: ['', []],
+      branchPicture: ['', []],
+      branchPhone: ['', []],
+      branchPostalCode: ['', []],
+      country: ['', []],
+      latitude: ['', []],
+      longitude: ['', []],
+      timezone: ['', []],
     });
   }
 
@@ -50,10 +86,30 @@ export class BranchComponent implements OnInit, OnDestroy {
     this.operation = pathUrl[3];
     const branchId = pathUrl[4];
 
-    if (this.operation === 'view' || this.operation === 'delete') this.branchForm.disable();
-    if (branchId) {
-      this.getBranch(branchId);
-    }
+    combineLatest({
+      countries: this._configService.getCountry(),
+      vatConditions: this._vatCondition.find({ query: { operationType: { $ne: 'D' } } }),
+      identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ countries, vatConditions, identificationTypes }) => {
+          this.countries = countries ?? [];
+          this.vatConditions = vatConditions ?? [];
+          this.identificationTypes = identificationTypes ?? [];
+          if (branchId) {
+            this.getBranch(branchId);
+          } else {
+            this.setValueForm();
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   ngAfterViewInit() {
@@ -84,13 +140,49 @@ export class BranchComponent implements OnInit, OnDestroy {
       });
   }
 
+  public getTimeZone(country: string) {
+    this._configService.getTimeZone(country).subscribe((result: any) => {
+      const data = result[0];
+      this.timezones = data.timezones;
+
+      const [lat, lng] = data.latlng?.length === 2 ? data.latlng : [0, 0];
+      // const currentLat = this.configForm.get('latitude')?.value;
+      // const currentLng = this.configForm.get('longitude')?.value;
+
+      // if (currentLat === '' || currentLng === '') {
+      //   this.configForm.patchValue({
+      //     latitude: String(lat),
+      //     longitude: String(lng),
+      //   });
+      // }
+    });
+  }
+
   setValueForm(): void {
+    const identificationType = this.identificationTypes.find(
+      (item) => item._id === this.branch?.branchIdentificationType?.toString()
+    );
+    const vatCondition = this.vatConditions.find((item) => item._id === this.branch?.branchVatCondition?.toString());
     this.branchForm.patchValue({
-      _id: this.branch._id ?? '',
-      number: this.branch.number ?? 0,
-      name: this.branch.name ?? '',
-      default: this.branch.default ?? false,
-      image: this.branch.image ?? '',
+      _id: this.branch?._id ?? '',
+      number: this.branch?.number ?? 0,
+      name: this.branch?.name ?? '',
+      default: this.branch?.default ?? false,
+      branchName: this.branch?.branchName ?? '',
+      branchFantasyName: this.branch?.branchFantasyName ?? '',
+      branchIdentificationType: identificationType ?? null,
+      branchIdentificationValue: this.branch?.branchIdentificationValue ?? '',
+      branchVatCondition: vatCondition ?? null,
+      branchStartOfActivity: this.branch?.branchStartOfActivity ?? '',
+      branchGrossIncome: this.branch?.branchGrossIncome ?? '',
+      branchAddress: this.branch?.branchAddress ?? '',
+      branchPicture: this.branch?.branchPicture ?? '',
+      branchPhone: this.branch?.branchPhone ?? '',
+      branchPostalCode: this.branch?.branchPostalCode ?? '',
+      country: this.branch?.country ?? '',
+      latitude: this.branch?.latitude ?? '',
+      longitude: this.branch?.longitude ?? '',
+      timezone: this.branch?.timezone ?? '',
     });
   }
 

@@ -47,7 +47,7 @@
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-1">
+          <div class="form-group col-md-2">
             <label for="number" class="control-label">{{ 'number' | translate | capitalize }}:</label>
             <input
               type="number"
@@ -66,7 +66,7 @@
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
-          <div class="form-group col-md-3">
+          <div class="col-md-6">
             <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <input
               type="text"
@@ -84,27 +84,165 @@
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
-          <div class="form-group col-md-3">
-            <app-upload-file
-              (uploadedUrls)="onImagesUploaded($event)"
-              [folder]="'branches'"
-              [existingImageUrl]="branchForm.get('image')?.value"
-            ></app-upload-file>
-          </div>
-        </div>
-        <hr />
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>{{ 'config' | translate | capitalize }}</b>
-          </label>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-4">
             <label for="default" class="control-label">{{ 'branch.default' | translate | capitalize }}</label>
             <select class="form-control" formControlName="default">
               <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
               <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
             </select>
+          </div>
+        </div>
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'Datos Fiscales' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="branchName" class="form-label"> {{ 'branchName' | translate | capitalize }} </label>
+                <input type="text" class="form-control" formControlName="branchName" id="branchName" />
+              </div>
+              <div class="col-md-6">
+                <label for="branchFantasyName" class="form-label">
+                  {{ 'branchFantasyName' | translate | capitalize }}
+                </label>
+                <input type="text" class="form-control" formControlName="branchFantasyName" id="branchFantasyName" />
+              </div>
+              <div class="col-md-6">
+                <label for="branchIdentificationType" class="form-label">
+                  {{ 'identificationType' | translate | capitalize }}
+                </label>
+                <app-typeahead-dropdown
+                  class="w-100"
+                  placeholder="{{ 'identificationType' | translate | capitalize }}"
+                  [control]="branchForm.get('branchIdentificationType')"
+                  [data]="identificationTypes"
+                  [keyField]="'_id'"
+                  [displayField]="'name'"
+                ></app-typeahead-dropdown>
+              </div>
+              <div class="col-md-6">
+                <label for="branchIdentificationValue" class="form-label">
+                  {{ 'identificationValue' | translate | capitalize }}
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="branchIdentificationValue"
+                  id="branchIdentificationValue"
+                  placeholder="{{ 'identificationValue' | translate | capitalize }}"
+                />
+              </div>
+              <div class="col-md-12">
+                <label for="branchVatCondition" class="form-label">
+                  {{ 'vatCondition' | translate | capitalize }}
+                </label>
+                <app-typeahead-dropdown
+                  class="w-100"
+                  placeholder="{{ 'vatCondition' | translate | capitalize }}"
+                  [control]="branchForm.get('branchVatCondition')"
+                  [data]="vatConditions"
+                  [keyField]="'_id'"
+                  [displayField]="'description'"
+                ></app-typeahead-dropdown>
+              </div>
+              <div class="col-md-6">
+                <label for="branchStartOfActivity" class="form-label">
+                  {{ 'branchStartOfActivity' | translate | capitalize }}
+                </label>
+                <input
+                  type="date"
+                  class="form-control"
+                  formControlName="branchStartOfActivity"
+                  id="branchStartOfActivity"
+                  placeholder="DD/MM/AAAA"
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="branchGrossIncome" class="form-label">
+                  {{ 'grossIncome' | translate | capitalize }}
+                </label>
+                <input type="text" class="form-control" formControlName="branchGrossIncome" id="branchGrossIncome" />
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 d-flex justify-content-center align-items-start pt-3 pt-lg-0">
+            <div class="border rounded p-3 bg-light w-100 text-center">
+              <app-upload-file
+                (uploadedUrls)="onImagesUploaded($event)"
+                [folder]="'branches'"
+                [existingImageUrl]="branchForm.get('branchPicture')?.value"
+              >
+              </app-upload-file>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <!-- Ubicación y contacto -->
+        <div class="row">
+          <label class="col-md-12">
+            <b>{{ 'locationAndContact' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="form-section mb-4">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="branchPhone" class="form-label">
+                {{ 'phone' | translate | capitalize }}
+              </label>
+              <input type="text" class="form-control" formControlName="branchPhone" id="branchPhone" />
+            </div>
+            <div class="col-md-4">
+              <label for="branchAddress" class="form-label">
+                {{ 'address' | translate | capitalize }}
+              </label>
+              <input type="text" class="form-control" formControlName="branchAddress" id="branchAddress" />
+            </div>
+            <div class="col-md-4">
+              <label for="branchPostalCode" class="form-label">
+                {{ 'zipCode' | translate | capitalize }}
+              </label>
+              <input type="text" class="form-control" formControlName="branchPostalCode" id="branchPostalCode" />
+            </div>
+            <div class="col-md-3">
+              <label for="country" class="form-label">
+                {{ 'country' | translate | capitalize }}
+              </label>
+              <select
+                class="form-control"
+                formControlName="country"
+                id="country"
+                (change)="getTimeZone(branchForm.get('country')?.value)"
+              >
+                <option *ngFor="let country of countries" [value]="country.name">
+                  {{ country.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="latitude" class="form-label">
+                {{ 'latitude' | translate | capitalize }}
+              </label>
+              <input type="text" class="form-control" formControlName="latitude" id="latitude" />
+            </div>
+            <div class="col-md-3">
+              <label for="longitude" class="form-label">
+                {{ 'longitude' | translate | capitalize }}
+              </label>
+              <input type="text" class="form-control" formControlName="longitude" id="longitude" />
+            </div>
+            <div class="col-md-3">
+              <label for="timezone" class="form-label">
+                {{ 'timezone' | translate | capitalize }}
+              </label>
+              <select class="form-control" formControlName="timezone" id="timezone">
+                <option *ngFor="let timezone of timezones" [value]="timezone">
+                  {{ timezone }}
+                </option>
+              </select>
+            </div>
           </div>
         </div>
         <hr />
@@ -125,7 +263,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ branch?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ branch?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -139,7 +277,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ branch?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ branch?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
