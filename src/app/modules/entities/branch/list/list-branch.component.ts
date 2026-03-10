@@ -59,7 +59,7 @@ export class ListBranchComponent {
         required: false,
       },
       {
-        name: 'branchName',
+        name: 'legalName',
         visible: false,
         disabled: false,
         filter: true,
@@ -69,7 +69,7 @@ export class ListBranchComponent {
         required: false,
       },
       {
-        name: 'branchFantasyName',
+        name: 'fantasyName',
         visible: false,
         disabled: false,
         filter: true,
@@ -79,7 +79,7 @@ export class ListBranchComponent {
         required: false,
       },
       {
-        name: 'branchIdentificationType.name',
+        name: 'identificationType.name',
         visible: false,
         disabled: false,
         filter: true,
@@ -89,7 +89,7 @@ export class ListBranchComponent {
         required: false,
       },
       {
-        name: 'branchIdentificationValue',
+        name: 'identificationValue',
         visible: false,
         disabled: false,
         filter: true,
@@ -99,7 +99,7 @@ export class ListBranchComponent {
         required: false,
       },
       {
-        name: 'branchVatCondition.description',
+        name: 'vatCondition.description',
         visible: false,
         disabled: false,
         filter: true,
@@ -109,17 +109,17 @@ export class ListBranchComponent {
         required: false,
       },
       {
-        name: 'branchStartOfActivity',
+        name: 'startOfActivity',
         visible: false,
         disabled: false,
         filter: true,
         datatype: 'date',
-        project: `{ "$dateToString": { "date": "$branchStartOfActivity", "format": "%d/%m/%Y"} }`,
+        project: `{ "$dateToString": { "date": "$startOfActivity", "format": "%d/%m/%Y"} }`,
         align: 'left',
         required: false,
       },
       {
-        name: 'branchGrossIncome',
+        name: 'grossIncome',
         visible: false,
         disabled: false,
         filter: true,
@@ -129,7 +129,7 @@ export class ListBranchComponent {
         required: false,
       },
       {
-        name: 'branchAddress',
+        name: 'address',
         visible: false,
         disabled: false,
         filter: true,
@@ -140,7 +140,7 @@ export class ListBranchComponent {
       },
 
       {
-        name: 'branchPhone',
+        name: 'phone',
         visible: false,
         disabled: false,
         filter: true,
@@ -191,27 +191,7 @@ export class ListBranchComponent {
         required: false,
       },
       {
-        name: 'branchPicture',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'branchPhone',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'branchPostalCode',
+        name: 'postalCode',
         visible: false,
         disabled: false,
         filter: true,

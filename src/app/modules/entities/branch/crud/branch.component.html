@@ -101,70 +101,70 @@
           <div class="col-lg-8">
             <div class="row g-3">
               <div class="col-md-6">
-                <label for="branchName" class="form-label"> {{ 'branchName' | translate | capitalize }} </label>
-                <input type="text" class="form-control" formControlName="branchName" id="branchName" />
+                <label for="legalName" class="form-label"> {{ 'legalName' | translate | capitalize }} </label>
+                <input type="text" class="form-control" formControlName="legalName" id="legalName" />
               </div>
               <div class="col-md-6">
-                <label for="branchFantasyName" class="form-label">
-                  {{ 'branchFantasyName' | translate | capitalize }}
+                <label for="fantasyName" class="form-label">
+                  {{ 'fantasyName' | translate | capitalize }}
                 </label>
-                <input type="text" class="form-control" formControlName="branchFantasyName" id="branchFantasyName" />
+                <input type="text" class="form-control" formControlName="fantasyName" id="fantasyName" />
               </div>
               <div class="col-md-6">
-                <label for="branchIdentificationType" class="form-label">
+                <label for="identificationType" class="form-label">
                   {{ 'identificationType' | translate | capitalize }}
                 </label>
                 <app-typeahead-dropdown
                   class="w-100"
                   placeholder="{{ 'identificationType' | translate | capitalize }}"
-                  [control]="branchForm.get('branchIdentificationType')"
+                  [control]="branchForm.get('identificationType')"
                   [data]="identificationTypes"
                   [keyField]="'_id'"
                   [displayField]="'name'"
                 ></app-typeahead-dropdown>
               </div>
               <div class="col-md-6">
-                <label for="branchIdentificationValue" class="form-label">
+                <label for="identificationValue" class="form-label">
                   {{ 'identificationValue' | translate | capitalize }}
                 </label>
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="branchIdentificationValue"
-                  id="branchIdentificationValue"
+                  formControlName="identificationValue"
+                  id="identificationValue"
                   placeholder="{{ 'identificationValue' | translate | capitalize }}"
                 />
               </div>
               <div class="col-md-12">
-                <label for="branchVatCondition" class="form-label">
+                <label for="vatCondition" class="form-label">
                   {{ 'vatCondition' | translate | capitalize }}
                 </label>
                 <app-typeahead-dropdown
                   class="w-100"
                   placeholder="{{ 'vatCondition' | translate | capitalize }}"
-                  [control]="branchForm.get('branchVatCondition')"
+                  [control]="branchForm.get('vatCondition')"
                   [data]="vatConditions"
                   [keyField]="'_id'"
                   [displayField]="'description'"
                 ></app-typeahead-dropdown>
               </div>
               <div class="col-md-6">
-                <label for="branchStartOfActivity" class="form-label">
-                  {{ 'branchStartOfActivity' | translate | capitalize }}
+                <label for="startOfActivity" class="form-label">
+                  {{ 'startOfActivity' | translate | capitalize }}
                 </label>
                 <input
                   type="date"
                   class="form-control"
-                  formControlName="branchStartOfActivity"
-                  id="branchStartOfActivity"
+                  formControlName="startOfActivity"
+                  id="startOfActivity"
                   placeholder="DD/MM/AAAA"
                 />
               </div>
               <div class="col-md-6">
-                <label for="branchGrossIncome" class="form-label">
+                <label for="grossIncome" class="form-label">
                   {{ 'grossIncome' | translate | capitalize }}
                 </label>
-                <input type="text" class="form-control" formControlName="branchGrossIncome" id="branchGrossIncome" />
+                <input type="text" class="form-control" formControlName="grossIncome" id="grossIncome" />
               </div>
             </div>
           </div>
@@ -173,9 +173,8 @@
               <app-upload-file
                 (uploadedUrls)="onImagesUploaded($event)"
                 [folder]="'branches'"
-                [existingImageUrl]="branchForm.get('branchPicture')?.value"
-              >
-              </app-upload-file>
+                [existingImageUrl]="branchForm.get('image')?.value"
+              ></app-upload-file>
             </div>
           </div>
         </div>
@@ -189,22 +188,22 @@
         <div class="form-section mb-4">
           <div class="row g-3">
             <div class="col-md-4">
-              <label for="branchPhone" class="form-label">
+              <label for="phone" class="form-label">
                 {{ 'phone' | translate | capitalize }}
               </label>
-              <input type="text" class="form-control" formControlName="branchPhone" id="branchPhone" />
+              <input type="text" class="form-control" formControlName="phone" id="phone" />
             </div>
             <div class="col-md-4">
-              <label for="branchAddress" class="form-label">
+              <label for="address" class="form-label">
                 {{ 'address' | translate | capitalize }}
               </label>
-              <input type="text" class="form-control" formControlName="branchAddress" id="branchAddress" />
+              <input type="text" class="form-control" formControlName="address" id="address" />
             </div>
             <div class="col-md-4">
-              <label for="branchPostalCode" class="form-label">
+              <label for="postalCode" class="form-label">
                 {{ 'zipCode' | translate | capitalize }}
               </label>
-              <input type="text" class="form-control" formControlName="branchPostalCode" id="branchPostalCode" />
+              <input type="text" class="form-control" formControlName="postalCode" id="postalCode" />
             </div>
             <div class="col-md-3">
               <label for="country" class="form-label">

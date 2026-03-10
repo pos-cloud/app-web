@@ -382,7 +382,7 @@ export class PrintComponent implements OnInit {
             "CFDStamp" : 1,
             "observation" : 1,
             "branchOrigin" : 1,
-            "branchDestination.branchPicture" : 1,
+            "branchDestination.image" : 1,
             "madein" : 1,
             "orderNumber" : 1,
             "exempt" : 1,
@@ -458,8 +458,8 @@ export class PrintComponent implements OnInit {
               this.printOrigin = true;
             }
 
-            if (this.transaction.branchDestination && this.transaction.branchDestination.branchPicture) {
-              this.branchImagen = this.transaction.branchDestination.branchPicture;
+            if (this.transaction.branchDestination && this.transaction.branchDestination.image) {
+              this.branchImagen = this.transaction.branchDestination.image;
             }
             /*if (this.transaction && this.transaction.type && this.transaction.type.defectPrinter && !this.printer) {
                         this.printer = this.transaction.type.defectPrinter;

@@ -63,17 +63,16 @@ export class BranchComponent implements OnInit, OnDestroy {
       name: ['', [Validators.required]],
       default: [false, []],
       image: ['', []],
-      branchName: ['', []],
-      branchFantasyName: ['', []],
-      branchIdentificationType: [null, []],
-      branchIdentificationValue: ['', []],
-      branchVatCondition: [null, []],
-      branchStartOfActivity: ['', []],
-      branchGrossIncome: ['', []],
-      branchAddress: ['', []],
-      branchPicture: ['', []],
-      branchPhone: ['', []],
-      branchPostalCode: ['', []],
+      legalName: ['', []],
+      fantasyName: ['', []],
+      identificationType: [null, []],
+      identificationValue: ['', []],
+      vatCondition: [null, []],
+      startOfActivity: ['', []],
+      grossIncome: ['', []],
+      address: ['', []],
+      phone: ['', []],
+      postalCode: ['', []],
       country: ['', []],
       latitude: ['', []],
       longitude: ['', []],
@@ -160,27 +159,27 @@ export class BranchComponent implements OnInit, OnDestroy {
 
   setValueForm(): void {
     const identificationType = this.identificationTypes.find(
-      (item) => item._id === this.branch?.branchIdentificationType?.toString()
+      (item) => item._id === this.branch?.identificationType?.toString()
     );
-    const vatCondition = this.vatConditions.find((item) => item._id === this.branch?.branchVatCondition?.toString());
+    const vatCondition = this.vatConditions.find((item) => item._id === this.branch?.vatCondition?.toString());
     this.branchForm.patchValue({
       _id: this.branch?._id ?? '',
       number: this.branch?.number ?? 0,
       name: this.branch?.name ?? '',
       default: this.branch?.default ?? false,
-      branchName: this.branch?.branchName ?? '',
-      branchFantasyName: this.branch?.branchFantasyName ?? '',
-      branchIdentificationType: identificationType ?? null,
-      branchIdentificationValue: this.branch?.branchIdentificationValue ?? '',
-      branchVatCondition: vatCondition ?? null,
-      branchStartOfActivity: this.branch?.branchStartOfActivity
-        ? new Date(this.branch.branchStartOfActivity).toISOString().substring(0, 10)
+      legalName: this.branch?.legalName ?? '',
+      fantasyName: this.branch?.fantasyName ?? '',
+      identificationType: identificationType ?? null,
+      identificationValue: this.branch?.identificationValue ?? '',
+      vatCondition: vatCondition ?? null,
+      startOfActivity: this.branch?.startOfActivity
+        ? new Date(this.branch.startOfActivity).toISOString().substring(0, 10)
         : '',
-      branchGrossIncome: this.branch?.branchGrossIncome ?? '',
-      branchAddress: this.branch?.branchAddress ?? '',
-      branchPicture: this.branch?.branchPicture ?? '',
-      branchPhone: this.branch?.branchPhone ?? '',
-      branchPostalCode: this.branch?.branchPostalCode ?? '',
+      image: this.branch?.image ?? '',
+      grossIncome: this.branch?.grossIncome ?? '',
+      address: this.branch?.address ?? '',
+      phone: this.branch?.phone ?? '',
+      postalCode: this.branch?.postalCode ?? '',
       country: this.branch?.country ?? '',
       latitude: this.branch?.latitude ?? '',
       longitude: this.branch?.longitude ?? '',
