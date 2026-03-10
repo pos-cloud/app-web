@@ -655,6 +655,8 @@ export class ArticleComponent implements OnInit {
     await this.uploadFileComponent.uploadImages();
 
     this.article = { ...this.article, ...this.articleForm.value };
+    this.article.salePriceTN = Number(this.article.salePriceTN) || 0;
+    this.article.promotionalPriceTN = Number(this.article.promotionalPriceTN) || 0;
 
     switch (this.operation) {
       case 'add':
@@ -910,8 +912,6 @@ export class ArticleComponent implements OnInit {
     this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
     this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
     this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
-    this.articleForm.value.salePriceTN = this.roundNumber.transform(this.articleForm.value.salePriceTN);
-    this.articleForm.value.promotionalPriceTN = this.roundNumber.transform(this.articleForm.value.promotionalPriceTN);
     // Actualizar el artículo
     this.article = { ...this.article, ...this.articleForm.value };
   }
