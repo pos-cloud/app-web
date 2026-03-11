@@ -453,6 +453,7 @@ export class MovementOfCancellationComponent implements OnInit {
             _id: 0,
             'transactionOrigin._id': 1,
             'transactionDestination._id': 1,
+            'transactionDestination.type.groupsArticles': 1,
             balance: 1,
             operationType: 1,
             'transactionOrigin.type.name': 1,
