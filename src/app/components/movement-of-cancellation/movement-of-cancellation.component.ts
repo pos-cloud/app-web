@@ -1100,7 +1100,7 @@ export class MovementOfCancellationComponent implements OnInit {
           movementOfArticle.article &&
           mov.article &&
           mov.article._id === movementOfArticle.article._id &&
-          mov.salePrice === movementOfArticle.salePrice
+          mov.unitPrice === movementOfArticle.unitPrice
         )
           movement = mov;
       }
