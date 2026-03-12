@@ -81,7 +81,7 @@ export class AddTransactionComponent implements OnInit {
   public transactionDate: string;
   public userCountry: string;
   public showButtonCancelation: boolean;
-  public filtersTaxClassification: TaxClassification[] = [TaxClassification.Perception, TaxClassification.Withholding];
+  public filtersTaxClassification: TaxClassification[] = [];
   public balanceTotal: number = -1; // SE ASIGNA -1 PARA VALIDAR SI SE NECESITA RECALCULAR EL SALDO, O SE EDITA MANUALMENTE.
   public movementsOfCashes: MovementOfCash[];
 
