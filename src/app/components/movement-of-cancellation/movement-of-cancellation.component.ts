@@ -794,7 +794,7 @@ export class MovementOfCancellationComponent implements OnInit {
           ) {
             let movementsOfArticles: MovementOfArticle[] = await this.getMovementOfArticles(mov.transactionOrigin);
             for (let movementOfArticle of movementsOfArticles) {
-              if (this.transactionDestination.type.groupsArticles) {
+              if (this.transactionDestination?.type?.groupsArticles) {
                 let movement = this.existsMovementOfArticle(movementOfArticle);
                 if (!movement) {
                   if (!this.movsOfArticles) this.movsOfArticles = new Array();
