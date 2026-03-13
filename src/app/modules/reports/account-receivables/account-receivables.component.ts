@@ -43,6 +43,8 @@ export class AccountReceivablesComponent implements OnInit {
   // filter
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
   company: string = '';
+  /** true cuando la ruta es account-receivables-by-date (reporte con filtro por fecha) */
+  public isByDate: boolean = false;
   // sort
   public sort = {
     column: 'total',
@@ -67,17 +69,22 @@ export class AccountReceivablesComponent implements OnInit {
   ) {}
 
   public ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.subscription.unsubscribe();
   }
 
   private get requestPayload() {
+    const filters: any = {
+      companyType: this.companyType,
+      company: this.company,
+    };
+    if (this.isByDate) {
+      filters.endDate = this.endDate;
+    }
     return {
-      reportType: 'account-receivables',
-      filters: {
-        companyType: this.companyType,
-        company: this.company,
-        endDate: this.endDate,
-      },
+      reportType: this.isByDate ? 'account-receivables-by-date' : 'account-receivables',
+      filters,
       pagination: {
         page: 1,
         pageSize: 10,
@@ -87,6 +94,7 @@ export class AccountReceivablesComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.isByDate = this._router.url.includes('account-receivables-by-date');
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.companyType = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
 
@@ -133,7 +141,7 @@ export class AccountReceivablesComponent implements OnInit {
   public onExportExcel(event): void {
     this.loading = true;
     const pathUrl = this._router.url.split('/');
-    const entity = pathUrl[2];
+    const entity = pathUrl[2] || 'account-receivables';
 
     this.subscription.add(
       this._service
