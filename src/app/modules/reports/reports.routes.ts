@@ -89,6 +89,11 @@ export const REPORTS_ROUTES: Routes = [
       import('./account-receivables/account-receivables.component').then((m) => m.AccountReceivablesComponent),
   },
   {
+    path: 'account-receivables-by-date/:module',
+    loadComponent: () =>
+      import('./account-receivables/account-receivables.component').then((m) => m.AccountReceivablesComponent),
+  },
+  {
     path: 'transactions-by-hour/:module',
     loadComponent: () =>
       import('./transactions-by-hour/transactions-by-hour.component').then((m) => m.TransactionsComponetByHour),

@@ -1,4 +1,4 @@
-import { Bank } from '@types';
+import { Bank, Company, Movements } from '@types';
 import * as moment from 'moment';
 import { PaymentMethod } from '../payment-method/payment-method';
 import { Transaction } from '../transaction/transaction';
@@ -41,6 +41,9 @@ export class MovementOfCash {
   currencyValues: currencyValue[];
   operationType: string;
   status: PaymentStatus;
+  transactionEndDate: string;
+  company: Company;
+  movement: Movements;
 
   constructor() {}
 }
