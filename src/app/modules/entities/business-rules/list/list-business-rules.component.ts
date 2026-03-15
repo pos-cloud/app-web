@@ -64,16 +64,6 @@ export class ListBusinessRulesComponent {
       required: false,
     },
     {
-      name: 'totalStock',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'number',
-      project: null,
-      align: 'right',
-      required: false,
-    },
-    {
       name: 'currentStock',
       visible: true,
       disabled: false,

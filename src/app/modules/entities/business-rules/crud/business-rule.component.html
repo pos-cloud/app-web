@@ -146,21 +146,21 @@
             />
           </div>
           <div class="form-group col-md-3">
-            <label for="totalStock" class="control-label">{{ 'totalStock' | translate | capitalize }}:</label>
+            <label for="currentStock" class="control-label">{{ 'currentStock' | translate | capitalize }}:</label>
             <input
               type="number"
               class="form-control"
-              formControlName="totalStock"
-              id="totalStock"
+              formControlName="currentStock"
+              id="currentStock"
               [readonly]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
                 'is-invalid':
-                  businessRuleForm.get('totalStock')?.invalid && businessRuleForm.get('totalStock')?.touched,
+                  businessRuleForm.get('currentStock')?.invalid && businessRuleForm.get('currentStock')?.touched,
               }"
             />
             <div
               class="invalid-feedback"
-              *ngIf="businessRuleForm.get('totalStock')?.invalid && businessRuleForm.get('totalStock')?.touched"
+              *ngIf="businessRuleForm.get('currentStock')?.invalid && businessRuleForm.get('currentStock')?.touched"
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
@@ -350,7 +350,7 @@
                   </tr>
                 </thead>
                 <tbody formArrayName="articles">
-                  <tr *ngFor="let art of articleGroupArticlesArray.controls; let aIdx = index" [formControlName]="aIdx">
+                  <tr *ngFor="let art of articleGroupArticlesArray.controls; let aIdx = index">
                     <td>
                       <div class="typeahead-wrapper">
                         <app-typeahead-dropdown

@@ -7,7 +7,6 @@ export interface BusinessRule extends Activity {
   active: boolean;
   startDate: Date;
   endDate: Date;
-  totalStock: number;
   currentStock: number;
   discountType: DiscountType;
   discountValue: number;
