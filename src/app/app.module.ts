@@ -85,7 +85,6 @@ import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.compo
 import { TaxComponent } from './components/tax/tax/tax.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
-import { ViewTransactionComponent } from './components/transaction/view-transaction/view-transaction.component';
 import { DeleteUserComponent } from './components/user/delete-user/delete-user.component';
 import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { ShortcutComponent } from './components/user/shortcut/shortcut.component';
@@ -132,7 +131,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddTransactionComponent,
     CurrentAccountComponent,
     PrintComponent,
-    ViewTransactionComponent,
     AddArticleStockComponent,
     UpdateArticleStockComponent,
     ListArticleStocksComponent,
