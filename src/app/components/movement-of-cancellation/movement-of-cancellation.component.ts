@@ -25,7 +25,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { ArticleService } from '../../core/services/article.service';
-import { ViewTransactionComponentNew } from '../../modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from '../../modules/transaction/components/view-transaction/view-transaction.component';
 import { Article } from '../article/article';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { SelectMovementsOfCashesComponent } from '../movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
@@ -523,7 +523,7 @@ export class MovementOfCancellationComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });

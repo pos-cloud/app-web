@@ -18,7 +18,7 @@ import { TransactionTypeService } from 'app/core/services/transaction-type.servi
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { Subscription } from 'rxjs';
-import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-list-movements-of-articles',
@@ -199,7 +199,7 @@ export class ListMovementsOfArticlesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'transaction':
-        modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });

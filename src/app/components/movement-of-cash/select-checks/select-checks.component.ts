@@ -6,7 +6,7 @@ import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
-import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
 
 @Component({
@@ -213,7 +213,7 @@ export class SelectChecksComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });

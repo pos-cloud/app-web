@@ -12,7 +12,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { Subscription } from 'rxjs';
 import { MovementOfCancellationService } from '../../../core/services/movement-of-cancellation.service';
-import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-list-movements-of-cancellations',
@@ -117,7 +117,7 @@ export class ListMovementsOfCancellationsComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'transaction':
-        modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });

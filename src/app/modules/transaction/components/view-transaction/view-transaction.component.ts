@@ -24,11 +24,11 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-view-transaction',
-  templateUrl: './view-transactions.component.html',
+  templateUrl: './view-transaction.component.html',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule, NgbModule, NgbNavModule],
 })
-export class ViewTransactionComponentNew implements OnInit {
+export class ViewTransactionComponent implements OnInit {
   @Input() transactionId: string;
   private subscription: Subscription = new Subscription();
   transaction: Transaction;
@@ -271,7 +271,7 @@ export class ViewTransactionComponentNew implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });

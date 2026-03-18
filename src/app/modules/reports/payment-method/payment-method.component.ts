@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { IButton, PaymentMethod } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
-import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
@@ -209,7 +209,7 @@ export class ReportPaymentMethodComponent implements OnInit {
     console.log(event?.obj?.transaction?._id);
     if (event.op === 'view-transaction') {
       let modalRef;
-      modalRef = this._modalService.open(ViewTransactionComponentNew, {
+      modalRef = this._modalService.open(ViewTransactionComponent, {
         size: 'lg',
         backdrop: 'static',
       });

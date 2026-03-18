@@ -27,7 +27,7 @@ import { MovementOfCashService } from 'app/core/services/movement-of-cash.servic
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { UserService } from 'app/core/services/user.service';
-import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -412,7 +412,7 @@ export class WebComponent implements OnInit {
     switch (op) {
       case 'view-transaction':
         if (transaction) {
-          modalRef = this._modalService.open(ViewTransactionComponentNew, {
+          modalRef = this._modalService.open(ViewTransactionComponent, {
             size: 'lg',
             backdrop: 'static',
           });

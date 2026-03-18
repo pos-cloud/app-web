@@ -8,7 +8,7 @@ import { Transaction } from 'app/components/transaction/transaction';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { AccountSeatService } from '../../../core/services/account-seat.service';
-import { ViewTransactionComponentNew } from '../../../modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-report-details-ledger',
@@ -207,7 +207,7 @@ export class ReportDetailsLedgerComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });

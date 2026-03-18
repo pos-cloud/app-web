@@ -18,7 +18,7 @@ import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, Branch, PrintType, Printer } from '@types';
 import { User } from 'app/components/user/user';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
-import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import 'moment/locale/es';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
@@ -524,7 +524,7 @@ export class ListTransactionsComponent implements OnInit {
 
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });

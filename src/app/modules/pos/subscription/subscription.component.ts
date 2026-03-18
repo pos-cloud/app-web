@@ -15,7 +15,7 @@ import { ApiResponse, Transaction, TransactionState, User } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 
-import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { ApplyVatPeriodComponent } from './apply-vat-period/apply-vat-period.component';
 import { attributes } from './attributes-subscription';
@@ -374,7 +374,7 @@ export class SubscriptionComponent implements OnInit {
   }
 
   public viewTransaction(transaction: Transaction): void {
-    const modalRef = this._modalService.open(ViewTransactionComponentNew, {
+    const modalRef = this._modalService.open(ViewTransactionComponent, {
       size: 'lg',
       backdrop: 'static',
     });

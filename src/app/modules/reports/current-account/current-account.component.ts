@@ -25,7 +25,7 @@ import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CompanyCurrentAccountService } from '../../../core/services/company-current-account.service';
-import { ViewTransactionComponentNew } from '../../transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from '../../transaction/components/view-transaction/view-transaction.component';
 @Component({
   selector: 'app-current-account',
   templateUrl: './current-account.component.html',
@@ -205,7 +205,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
 
         break;
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponentNew, {
+        modalRef = this._modalService.open(ViewTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
         });

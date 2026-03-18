@@ -10,7 +10,7 @@ import { IAttribute } from '@types';
 import { Config } from 'app/app.config';
 import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
 import { ExportersModule } from 'app/components/export/exporters.module';
-import { ViewTransactionComponentNew } from 'app/modules/transaction/components/view-transactions/view-transactions.component';
+import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { ColumnsConfigComponent } from 'app/shared/components/columns-config/columns-config.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
@@ -1021,7 +1021,7 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
     }
 
     if (op === 'view') {
-      const modalRef = this._modalService.open(ViewTransactionComponentNew, {
+      const modalRef = this._modalService.open(ViewTransactionComponent, {
         size: 'lg',
         backdrop: 'static',
       });
