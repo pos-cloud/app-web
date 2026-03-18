@@ -41,7 +41,7 @@ export class ViewTransactionComponentNew implements OnInit {
   currencyValue: [];
   showDetails = false;
   propertyTerm: string;
-  modalData: string;
+  modalData: any;
   transactionDestinations: Transaction[] = [];
   transactionOrigins: Transaction[] = [];
   roundNumber = new RoundNumberPipe();

@@ -177,16 +177,28 @@
               />
             </div>
           </div>
-          <div class="row" *ngIf="transaction?.branchDestination">
+          <div class="row" *ngIf="transaction?.branch || transaction?.branchDestination">
             <div class="form-group col-md-4">
               <label for="letter" class="control-label">{{ 'agency' | translate | capitalize }}:</label>
-              <input
-                type="text"
-                class="form-control"
-                name="letter"
-                value="{{ transaction?.branchDestination?.name }}"
-                readonly
-              />
+              <div class="input-group">
+                <div class="input-group-prepend" *ngIf="transaction?.branch || transaction?.branchDestination">
+                  <span
+                    class="input-group-text bg-success pointer"
+                    id="basic-addon1"
+                    (click)="openModal('modalObj', null, null, transaction?.branch || transaction?.branchDestination)"
+                    title="Ver sucursal"
+                  >
+                    <i class="fa fa-eye" style="color: white"></i>
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="letter"
+                  value="{{ (transaction?.branch || transaction?.branchDestination)?.name }}"
+                  readonly
+                />
+              </div>
             </div>
             <div class="form-group col-md-4">
               <label for="number" class="control-label">{{ 'deposit' | translate | capitalize }}:</label>
