@@ -15,8 +15,8 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-account-receivables',
-  templateUrl: './account-receivables.component.html',
+  selector: 'app-account-receivables-by-date',
+  templateUrl: './account-receivables-by-date.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -29,7 +29,7 @@ import { takeUntil } from 'rxjs/operators';
     DateTimePickerComponent,
   ],
 })
-export class AccountReceivablesComponent implements OnInit {
+export class AccountReceivablesByDateComponent implements OnInit {
   public data: any[] = [];
   public columns: any[] = [];
   public totals: any = {};
@@ -41,7 +41,9 @@ export class AccountReceivablesComponent implements OnInit {
   public companyType: CompanyType;
 
   // filter
+  endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
   company: string = '';
+
   // sort
   public sort = {
     column: 'total',
@@ -75,10 +77,11 @@ export class AccountReceivablesComponent implements OnInit {
     const filters: any = {
       companyType: this.companyType,
       company: this.company,
+      endDate: this.endDate,
     };
 
     return {
-      reportType: 'account-receivables',
+      reportType: 'account-receivables-by-date',
       filters,
       pagination: {
         page: 1,

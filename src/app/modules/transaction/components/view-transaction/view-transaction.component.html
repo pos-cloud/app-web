@@ -444,12 +444,8 @@
                   <th>{{ 'status' | translate | capitalize }}</th>
                   <th>{{ 'turned' | translate | capitalize }}</th>
                   <th>{{ 'observation' | translate | capitalize }}</th>
-                  <th>{{ 'daily service rate' | translate | capitalize }}</th>
-                  <th>{{ 'administrativeExpense' | translate | capitalize }}</th>
-                  <th>{{ 'other expenses' | translate | capitalize }}</th>
-                  <th>Amort.</th>
-                  <th>{{ 'interestAmount' | translate | capitalize }}</th>
-                  <th>IVA</th>
+                  <th>{{ 'movement' | translate | capitalize }}</th>
+
                   <th>_Id</th>
                 </tr>
               </thead>
@@ -481,23 +477,9 @@
                     {{ movementOfCash?.observation }}
                   </td>
                   <td>
-                    {{ movementOfCash?.commissionAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.movement }}
                   </td>
-                  <td>
-                    {{ movementOfCash?.administrativeExpenseAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-                  </td>
-                  <td>
-                    {{ movementOfCash?.otherExpenseAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-                  </td>
-                  <td>
-                    {{ movementOfCash?.capital | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-                  </td>
-                  <td>
-                    {{ movementOfCash?.interestAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-                  </td>
-                  <td>
-                    {{ movementOfCash?.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-                  </td>
+
                   <td>
                     {{ movementOfCash?._id }}
                   </td>

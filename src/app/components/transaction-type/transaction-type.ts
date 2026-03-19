@@ -521,8 +521,8 @@ export class TransactionType extends Model {
 }
 
 export enum Movements {
-  Inflows = <any>'Entrada',
-  Outflows = <any>'Salida',
+  Inflows = 'Entrada',
+  Outflows = 'Salida',
 }
 
 export enum StockMovement {
