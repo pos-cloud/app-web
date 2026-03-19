@@ -91,7 +91,9 @@ export const REPORTS_ROUTES: Routes = [
   {
     path: 'account-receivables-by-date/:module',
     loadComponent: () =>
-      import('./account-receivables/account-receivables.component').then((m) => m.AccountReceivablesComponent),
+      import('./account-receivables-by-date/account-receivables-by-date.component').then(
+        (m) => m.AccountReceivablesByDateComponent
+      ),
   },
   {
     path: 'transactions-by-hour/:module',
