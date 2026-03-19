@@ -1790,29 +1790,6 @@ export class AddSaleOrderComponent {
       );
   }
 
-  updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
-    return new Promise<MovementOfArticle>((resolve, reject) => {
-      this.loading = true;
-
-      this._movementOfArticleService.updateMovementsOfArticlesByWhere(where, set, sort).subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.movementOfArticle) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.movementOfArticle);
-          }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
   validateElectronicTransactionMX(): void {
     this.showMessage('Validando comprobante con SAT...', 'info', false);
 
@@ -2592,16 +2569,6 @@ export class AddSaleOrderComponent {
       this.transaction = await this.updateTransaction();
 
       // GUARDAMOS LA FECHA DE TRANSACCION EN LOS MOV DE ARTICULOS.
-      await this.updateMovementsOfArticlesByWhere(
-        {
-          transaction: this.transaction._id,
-          operationType: { $ne: 'D' },
-        },
-        {
-          transactionEndDate: this.transaction.endDate,
-        },
-        {}
-      );
 
       if (this.transaction.table) {
         let table: Table = await this.getTable(

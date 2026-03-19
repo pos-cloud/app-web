@@ -1614,10 +1614,7 @@ export class AddMovementOfCashComponent implements OnInit {
               }
               this.movementOfCash.transaction = this.transaction;
               this.movementOfCash.paymentChange = this.movementOfCashForm.value.paymentChange;
-              console.log(this.transaction.endDate);
-              this.movementOfCash.transactionEndDate = this.transaction.endDate;
-              this.movementOfCash.company = this.transaction.company;
-              this.movementOfCash.movement = this.transaction.type.movement;
+
               // Usar el método de pago seleccionado actual (por si cambió con las flechas)
               this.movementOfCash.type = this.paymentMethodSelected;
               this.movementOfCash.observation = this.movementOfCashForm.value.observation;
@@ -1706,10 +1703,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.movementOfCash.transaction = this.transaction;
           this.movementOfCash.type = this.fastPayment;
           this.paymentMethodSelected = this.fastPayment;
-          console.log(this.transaction.endDate);
-          this.movementOfCash.transactionEndDate = this.transaction.endDate;
-          this.movementOfCash.company = this.transaction.company;
-          this.movementOfCash.movement = this.transaction.type.movement;
+
           this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format(
             'YYYY-MM-DDTHH:mm:ssZ'
           );
