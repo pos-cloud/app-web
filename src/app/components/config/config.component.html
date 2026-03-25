@@ -7,326 +7,6 @@
 
   <div class="card">
     <div class="card-body scroll">
-      <form [formGroup]="configFormCompany" (ngSubmit)="addConfigCompany()" autocomplete="off">
-        <div class="row">
-          <div class="form-group col-md-2">
-            <img [src]="imageURL" height="150" width="300" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-3">
-            <div class="custom-file">
-              <label class="custom-file-label" for="customFileLang">Cambiar Imagen</label>
-              <input
-                type="file"
-                class="custom-file-input"
-                lang="es"
-                accept="image/*"
-                id="customFileLang"
-                (change)="fileChangeEvent($event)"
-              />
-            </div>
-          </div>
-          <div class="form-group col-md-3">
-            <label class="btn btn-primary" (click)="deletePicture(config['companyPicture'])">Eliminar Imagen</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Razón Social:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyName"
-                name="companyName"
-                id="companyName"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-            <div *ngIf="formErrors.companyName" class="alert alert-danger">
-              {{ formErrors.companyName }}
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Nombre de fantasía:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyFantasyName"
-                name="companyFantasyName"
-                id="companyFantasyName"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-6">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Tipo de Identificación:</span>
-              <select
-                class="form-control"
-                formControlName="companyIdentificationType"
-                name="companyIdentificationType"
-                id="companyIdentificationType"
-              >
-                <option
-                  *ngFor="let identificationType of identificationTypes"
-                  [selected]="
-                    (config['companyIdentificationType'] &&
-                      config['companyIdentificationType']._id &&
-                      identificationType._id === config['companyIdentificationType']._id) ||
-                    (config['companyIdentificationType'] &&
-                      identificationType._id === config['companyIdentificationType'])
-                  "
-                  [value]="identificationType._id"
-                >
-                  {{ identificationType.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group col-md-6">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Nro. de Identificación:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyIdentificationValue"
-                name="companyIdentificationValue"
-                id="companyIdentificationValue"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'AR'"
-                >Condición de IVA:</span
-              >
-              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country !== 'AR'"
-                >Régimen Fiscal:</span
-              >
-              <select
-                class="form-control"
-                formControlName="companyVatCondition"
-                name="companyVatCondition"
-                id="companyVatCondition"
-              >
-                <option
-                  *ngFor="let vatCondition of vatConditions"
-                  [selected]="
-                    (config['companyVatCondition'] &&
-                      config['companyVatCondition']._id &&
-                      vatCondition._id === config['companyVatCondition']._id) ||
-                    (config['companyVatCondition'] && vatCondition._id === config['companyVatCondition'])
-                  "
-                  [value]="vatCondition._id"
-                >
-                  {{ vatCondition.description }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Fecha de inicio de actividades:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyStartOfActivity"
-                placeholder="DD/MM/AAAA"
-                name="companyStartOfActivity"
-                id="companyStartOfActivity"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-            <div *ngIf="formErrors.companyStartOfActivity" class="alert alert-danger">
-              {{ formErrors.companyStartOfActivity }}
-            </div>
-          </div>
-        </div>
-        <div class="row" *ngIf="configFormCompany.value.country === 'AR'">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Ingresos Brutos:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyGrossIncome"
-                name="companyGrossIncome"
-                id="companyGrossIncome"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Teléfono:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyPhone"
-                name="companyPhone"
-                id="companyPhone"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">País:</span>
-              <select
-                class="form-control"
-                formControlName="country"
-                name="country"
-                id="country"
-                (ngModelChange)="getTimeZone($event)"
-              >
-                <option *ngFor="let country of countries" [value]="country.alpha2Code">
-                  {{ country.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Código Postal:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyPostalCode"
-                name="companyPostalCode"
-                id="companyPostalCode"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Dirección:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyAddress"
-                name="companyAddress"
-                id="companyAddress"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Zona Horaria:</span>
-              <select class="form-control" formControlName="timezone" name="timezone" id="timezone">
-                <option *ngFor="let timezone of timezones" [value]="timezone">
-                  {{ timezone }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Latitud:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="latitude"
-                name="latitude"
-                id="latitude"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Longitud:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="longitude"
-                name="longitude"
-                id="longitude"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Moneda:</span>
-              <select class="form-control" formControlName="currency" name="currency" id="currency">
-                <option
-                  *ngFor="let currency of currencies"
-                  [selected]="
-                    (config['currency'] && config['currency']._id && currency._id === config['currency']._id) ||
-                    (config['currency'] && currency._id === config['currency'])
-                  "
-                  [value]="currency._id"
-                >
-                  {{ currency.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Pie de Impresión:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="footerInvoice"
-                name="footerInvoice"
-                id="footerInvoice"
-                aria-describedby="basic-addon1"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <button type="submit" class="btn btn-primary" [disabled]="!configFormCompany.valid || loadingCompany">
-              <i
-                class="fa"
-                [ngClass]="{
-                  'fa-save': !loadingCompany,
-                  'fa-spinner fa-spin': loadingCompany,
-                }"
-              ></i>
-              <span *ngIf="!loadingCompany">Guardar</span>
-              <span *ngIf="loadingCompany">Espere por favor</span>
-            </button>
-          </div>
-        </div>
-      </form>
-
-      <hr />
-
       <div class="row">
         <label class="form-group col-md-12">
           <b>Correo</b>
@@ -405,7 +85,7 @@
 
       <div class="row">
         <label class="form-group col-md-12">
-          <b>AFIP</b>
+          <b>ARCA</b>
         </label>
       </div>
       <form (ngSubmit)="generateCRS()" autocomplete="off">
@@ -786,28 +466,28 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Tienda Nube Token:</span>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="tiendaNube.token"
-                name="tiendaNube.token"
-                id="tiendaNube.token"
-                aria-describedby="basic-addon1"
-              />
+              <span class="input-group-addon" id="basic-addon1">Moneda:</span>
+              <select class="form-control" formControlName="currency" name="currency" id="currency">
+                <option
+                  *ngFor="let currency of currencies"
+                  [value]="currency._id"
+                >
+                  {{ currency.name }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Tienda Nube Usuario:</span>
+              <span class="input-group-addon" id="basic-addon1">Pie de Impresión:</span>
               <input
                 type="text"
                 class="form-control"
-                formControlName="tiendaNube.userID"
-                name="tiendaNube.userID"
-                id="tiendaNube.userID"
+                formControlName="footerInvoice"
+                name="footerInvoice"
+                id="footerInvoice"
                 aria-describedby="basic-addon1"
               />
             </div>

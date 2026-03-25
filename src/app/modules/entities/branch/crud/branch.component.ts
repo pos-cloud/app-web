@@ -139,8 +139,11 @@ export class BranchComponent implements OnInit, OnDestroy {
       });
   }
 
-  public getTimeZone(country: string) {
-    this._configService.getTimeZone(country).subscribe((result: any) => {
+  public getTimeZone(countryCode: string) {
+    const selectedCountry = this.countries?.find((item) => item.alpha2Code === countryCode);
+    const countryName = selectedCountry?.name ?? countryCode;
+
+    this._configService.getTimeZone(countryName).subscribe((result: any) => {
       const data = result[0];
       this.timezones = data.timezones;
 

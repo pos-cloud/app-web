@@ -244,12 +244,12 @@ export class ConfigComponent implements OnInit {
       companyAddress: [this.config['companyAddress'], []],
       companyPhone: [this.config['companyPhone'], []],
       companyPostalCode: [this.config['companyPostalCode'], []],
-      footerInvoice: [this.config['footerInvoice'], []],
       country: [this.config['country'], []],
       latitude: [this.config['latitude'], []],
       longitude: [this.config['longitude'], []],
       timezone: [this.config['timezone'], []],
       currency: [this.config['currency'], []],
+      footerInvoice: [this.config['footerInvoice'], []],
     });
 
     this.configFormCompany.valueChanges.subscribe((data) => this.onValueChangedCompany(data));
@@ -346,13 +346,8 @@ export class ConfigComponent implements OnInit {
       'tradeBalance.numberOfDecimals': [this.config.tradeBalance.numberOfDecimals, []],
       'voucher.readingLimit': [this.config.voucher.readingLimit, []],
       'voucher.minutesOfExpiration': [this.config.voucher.minutesOfExpiration, []],
-      // 'twilio.senderNumber': [this.config.twilio.senderNumber, []],
-      // 'twilio.accountSid': [this.config.twilio.accountSid, []],
-      // 'twilio.authToken': [this.config.twilio.authToken, []],
-      'tiendaNube.token': [this.config.tiendaNube.token, []],
-      'tiendaNube.userID': [this.config.tiendaNube.userID, []],
-      // 'tiendaNube.appID': [this.config.tiendaNube.appID, []],
-      // 'tiendaNube.clientSecret': [this.config.tiendaNube.clientSecret, []],
+      footerInvoice: [this.config['footerInvoice'], []],
+      currency: [this.config?.['currency']?._id ?? this.config?.['currency'] ?? null, []],
     });
 
     this.configFormSystem.valueChanges.subscribe((data) => this.onValueChangedSystem(data));
@@ -419,9 +414,8 @@ export class ConfigComponent implements OnInit {
 
     this._currencyService.getCurrencies('sort="name":1').subscribe(
       (result) => {
-        if (!result.currencies) {
-        } else {
-          this.currencies = result.currencies;
+        if (result.result.length > 0) {
+          this.currencies = result.result;
         }
         this.loadingCompany = false;
       },
@@ -641,20 +635,11 @@ export class ConfigComponent implements OnInit {
     if (!this.config['longitude']) this.config['longitude'] = '';
     if (!this.config['timezone']) this.config['timezone'] = 'UTC-03:00';
 
-    let currency;
-    if (!this.config['currency']) {
-      currency = null;
-    } else {
-      if (this.config['currency']._id) {
-        currency = this.config['currency']._id;
-      } else {
-        currency = this.config['currency'];
-      }
-    }
+    const currencyId = this.config?.['currency']?._id ?? this.config?.['currency'] ?? null;
+    const currency = this.currencies?.find((item) => item._id === currencyId);
 
     if (this.config.article.code.validators.maxLength === undefined) this.config.article.code.validators.maxLength = 10;
     if (this.config.article.isWeigth.default === undefined) this.config.article.isWeigth.default = false;
-    // if (this.config.company.allowCurrentAccount.default === undefined) this.config.company.allowCurrentAccount.default = false;
 
     if (this.config.company.allowCurrentAccountProvider.default === undefined)
       this.config.company.allowCurrentAccountProvider.default = false;
@@ -669,28 +654,7 @@ export class ConfigComponent implements OnInit {
     if (this.config.tradeBalance.numberOfDecimals === undefined) this.config.tradeBalance.numberOfDecimals = 2;
     if (this.config.voucher.readingLimit === undefined) this.config.voucher.readingLimit = 0;
     if (this.config.voucher.minutesOfExpiration === undefined) this.config.voucher.minutesOfExpiration = 720;
-    // if (!this.config.twilio) {
-    //   this.config.twilio = {
-    //     senderNumber: '',
-    //     accountSid: '',
-    //     authToken: ''
-    //   }
-    // }
-    // if (!this.config.twilio.senderNumber) this.config.twilio.senderNumber = '';
-    // if (!this.config.twilio.accountSid) this.config.twilio.accountSid = '';
-    // if (!this.config.twilio.authToken) this.config.twilio.authToken = '';
 
-    // if (!this.config.tiendaNube) {
-    //   this.config.tiendaNube = {
-    //     appID: '',
-    //     clientSecret: '',
-    //     token: '',
-    //     userID: ''
-    //   }
-    // }
-
-    // if(!this.config.tiendaNube.appID) this.config.tiendaNube.appID;
-    // if(!this.config.tiendaNube.clientSecret) this.config.tiendaNube.clientSecret;
     if (!this.config.tiendaNube.token) this.config.tiendaNube.token;
     if (!this.config.tiendaNube.userID) this.config.tiendaNube.userID;
 
@@ -725,7 +689,8 @@ export class ConfigComponent implements OnInit {
       latitude: this.config['latitude'],
       longitude: this.config['longitude'],
       timezone: this.config['timezone'],
-      currency: currency,
+
+      currency: currency ?? null,
     });
 
     this.configFormEmail.setValue({
@@ -757,13 +722,8 @@ export class ConfigComponent implements OnInit {
       'tradeBalance.numberOfDecimals': this.config.tradeBalance.numberOfDecimals,
       'voucher.readingLimit': this.config.voucher.readingLimit,
       'voucher.minutesOfExpiration': this.config.voucher.minutesOfExpiration,
-      // 'twilio.senderNumber': this.config.twilio.senderNumber,
-      // 'twilio.accountSid': this.config.twilio.accountSid,
-      // 'twilio.authToken': this.config.twilio.authToken,
-      // 'tiendaNube.appID' : this.config.tiendaNube.appID,
-      // 'tiendaNube.clientSecret' : this.config.tiendaNube.clientSecret,
-      'tiendaNube.token': this.config.tiendaNube.token,
-      'tiendaNube.userID': this.config.tiendaNube.userID,
+      footerInvoice: this.config['footerInvoice'],
+      currency: currencyId,
     });
   }
 

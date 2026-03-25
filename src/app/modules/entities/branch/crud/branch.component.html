@@ -215,7 +215,7 @@
                 id="country"
                 (change)="getTimeZone(branchForm.get('country')?.value)"
               >
-                <option *ngFor="let country of countries" [value]="country.name">
+                <option *ngFor="let country of countries" [value]="country.alpha2Code">
                   {{ country.name }}
                 </option>
               </select>
