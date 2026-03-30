@@ -1,4 +1,4 @@
-import { Activity, Branch, CashBoxType, Company, Employee, Origin, Permission, Printer } from '@types';
+import { Activity, Branch, CashBoxType, Company, Employee, Make, Origin, Permission, Printer } from '@types';
 
 export interface User extends Activity {
   _id: string;
@@ -18,6 +18,7 @@ export interface User extends Activity {
   permission: Permission;
   printers: { _id: string; printer: Printer }[];
   level: number;
+  makes?: (string | Make)[];
 }
 
 export enum UserState {

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import {
   FormsModule,
+  FormControl,
   NgForm,
   ReactiveFormsModule,
   UntypedFormArray,
@@ -15,13 +16,14 @@ import { BranchService } from '@core/services/branch.service';
 import { CashBoxTypeService } from '@core/services/cash-box-type.service';
 import { CompanyService } from '@core/services/company.service';
 import { EmployeeService } from '@core/services/employee.service';
+import { MakeService } from '@core/services/make.service';
 import { OriginService } from '@core/services/origin.service';
 import { PermissionService } from '@core/services/permission.service';
 import { PrinterService } from '@core/services/printer.service';
 import { UserService } from '@core/services/user.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
-import { Branch, CashBoxType, Company, Employee, Origin, Permission, Printer, User } from '@types';
+import { Branch, CashBoxType, Company, Employee, Make, Origin, Permission, Printer, User } from '@types';
 import { UserState } from 'app/components/user/user';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
@@ -58,6 +60,7 @@ export class UserComponent implements OnInit {
   public branches: Branch[];
   public permissions: Permission[];
   public printers: Printer[];
+  public makes: Make[] = [];
   public focusEvent = new EventEmitter<boolean>();
   private destroy$ = new Subject<void>();
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
@@ -77,7 +80,8 @@ export class UserComponent implements OnInit {
     private _originService: OriginService,
     private _branchService: BranchService,
     private _permissionService: PermissionService,
-    private _printerService: PrinterService
+    private _printerService: PrinterService,
+    private _makeService: MakeService
   ) {
     this.userForm = this._fb.group({
       _id: ['', []],
@@ -96,6 +100,7 @@ export class UserComponent implements OnInit {
       permission: [null, []],
       level: [99, []],
       tokenExpiration: [9999, []],
+      makes: [[] as string[]],
     });
   }
 
@@ -115,10 +120,14 @@ export class UserComponent implements OnInit {
       branches: this._branchService.find({ query: { operationType: { $ne: 'D' } } }),
       permissions: this._permissionService.find({ query: { operationType: { $ne: 'D' } } }),
       printers: this._printerService.find({ query: { operationType: { $ne: 'D' } } }),
+      makes: this._makeService.find({
+        query: { operationType: { $ne: 'D' } },
+        project: { _id: 1, description: 1 },
+      }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ employees, cashBoxTypes, companies, origins, branches, permissions, printers }) => {
+        next: ({ employees, cashBoxTypes, companies, origins, branches, permissions, printers, makes }) => {
           this.employees = employees ?? [];
           this.cashBoxTypes = cashBoxTypes ?? [];
           this.origins =
@@ -130,6 +139,12 @@ export class UserComponent implements OnInit {
           this.permissions = permissions ?? [];
           this.companies = companies ?? [];
           this.printers = printers ?? [];
+          this.makes = (makes ?? []).sort((a, b) => (a?.description ?? '').localeCompare(b?.description ?? ''));
+          this.makes.forEach((make) => {
+            if (make?._id && !this.userForm.contains(make._id)) {
+              this.userForm.addControl(make._id, new FormControl(false));
+            }
+          });
 
           if (userId) {
             if (userId) this.getUser(userId);
@@ -187,6 +202,7 @@ export class UserComponent implements OnInit {
     const origin = this.origins.find((item) => item._id == this.user?.origin?.toString());
     const branch = this.branches.find((item) => item._id == this.user?.branch?.toString());
     const permission = this.permissions.find((item) => item._id == this.user?.permission?.toString());
+    const selectedMakes = ((this.user as any)?.makes ?? []).map((m: any) => (typeof m === 'string' ? m : m?._id)).filter(Boolean);
 
     const values = {
       _id: this.user?._id ?? '',
@@ -202,6 +218,7 @@ export class UserComponent implements OnInit {
       branch: branch ?? null,
       permission: permission ?? null,
       level: this.user?.level ?? 99,
+      makes: selectedMakes,
     };
 
     if (this.user?.shortcuts && this.user?.shortcuts?.length > 0) {
@@ -230,6 +247,14 @@ export class UserComponent implements OnInit {
     }
 
     this.userForm.patchValue(values);
+
+    if (this.makes && this.makes.length > 0) {
+      this.makes.forEach((make) => {
+        if (make?._id && this.userForm.contains(make._id)) {
+          this.userForm.get(make._id)?.setValue(selectedMakes.includes(make._id));
+        }
+      });
+    }
   }
 
   onEnter() {
@@ -251,7 +276,7 @@ export class UserComponent implements OnInit {
       this.loading = false;
       return;
     }
-    this.user = this.userForm.value;
+    this.user = this.buildUserPayload();
 
     switch (this.operation) {
       case 'add':
@@ -421,5 +446,38 @@ export class UserComponent implements OnInit {
   deletePrinter(index) {
     let control = <UntypedFormArray>this.userForm.controls.printers;
     control.removeAt(index);
+  }
+
+  onMakeChange(event: any, makeId: string) {
+    const current = (this.userForm.get('makes')?.value ?? []) as string[];
+    if (event?.target?.checked) {
+      this.userForm.get('makes')?.setValue([...new Set([...current, makeId])]);
+    } else {
+      this.userForm.get('makes')?.setValue(current.filter((id) => id !== makeId));
+    }
+  }
+
+  private buildUserPayload(): User {
+    const v = this.userForm.value ?? {};
+    return {
+      _id: v._id,
+      name: v.name,
+      phone: v.phone,
+      email: v.email,
+      password: v.password,
+      state: v.state,
+      token: v.token,
+      tokenExpiration: v.tokenExpiration,
+      employee: v.employee,
+      cashBoxType: v.cashBoxType,
+      company: v.company,
+      origin: v.origin,
+      branch: v.branch,
+      shortcuts: v.shortcuts,
+      permission: v.permission,
+      printers: v.printers,
+      level: v.level,
+      ...(v.makes ? { makes: v.makes } : {}),
+    } as any;
   }
 }

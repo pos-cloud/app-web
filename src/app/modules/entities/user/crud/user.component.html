@@ -249,6 +249,29 @@
             ></app-typeahead-dropdown>
           </div>
         </div>
+
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>Makes</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="d-flex flex-wrap">
+              <div class="form-check mr-4 mb-2" *ngFor="let make of makes">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'make-' + make._id"
+                  [formControlName]="make._id"
+                  (change)="onMakeChange($event, make._id)"
+                />
+                <label class="form-check-label" [for]="'make-' + make._id">{{ make.description }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
         <hr />
         <div class="row">
           <label class="form-group col-md-12">
