@@ -237,7 +237,7 @@
                 {{ 'timezone' | translate | capitalize }}
               </label>
               <select class="form-control" formControlName="timezone" id="timezone">
-                <option *ngFor="let timezone of timezones" [value]="timezone">
+                <option *ngFor="let timezone of timezones" [ngValue]="timezone">
                   {{ timezone }}
                 </option>
               </select>

@@ -44,7 +44,7 @@ export class BranchComponent implements OnInit, OnDestroy {
   public countries: any;
   public focusEvent = new EventEmitter<boolean>();
   public branch: Branch;
-  public timezones: string;
+  public timezones: string[] = [];
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -128,6 +128,7 @@ export class BranchComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result: ApiResponse) => {
           this.branch = result.result;
+          this.getTimeZone(this.branch.country);
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -141,23 +142,13 @@ export class BranchComponent implements OnInit, OnDestroy {
 
   public getTimeZone(countryCode: string) {
     const selectedCountry = this.countries?.find((item) => item.alpha2Code === countryCode);
-    const countryName = selectedCountry?.name ?? countryCode;
+    this.timezones = selectedCountry?.timezones ?? [];
 
-    this._configService.getTimeZone(countryName).subscribe((result: any) => {
-      const data = result[0];
-      this.timezones = data.timezones;
-
-      const [lat, lng] = data.latlng?.length === 2 ? data.latlng : [0, 0];
-      // const currentLat = this.configForm.get('latitude')?.value;
-      // const currentLng = this.configForm.get('longitude')?.value;
-
-      // if (currentLat === '' || currentLng === '') {
-      //   this.configForm.patchValue({
-      //     latitude: String(lat),
-      //     longitude: String(lng),
-      //   });
-      // }
-    });
+    const timezoneControl = this.branchForm.get('timezone');
+    const currentTimezone = timezoneControl?.value;
+    if (timezoneControl && currentTimezone && !this.timezones.includes(currentTimezone)) {
+      timezoneControl.setValue(this.timezones[0] ?? '');
+    }
   }
 
   setValueForm(): void {
