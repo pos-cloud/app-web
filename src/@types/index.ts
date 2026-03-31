@@ -4,6 +4,7 @@ export { AccountSeat, TypeAccountSeat } from './entities/account-seat.interface'
 export { Account, Modes, Types } from './entities/account.interface';
 export { Address } from './entities/address.interface';
 export { Application } from './entities/application.interface';
+export { Appointment, AppointmentStatus } from './entities/appointment.interface';
 export { Article, Type } from './entities/article.interface';
 export { Bank } from './entities/bank.interface';
 export { Branch } from './entities/branch.interface';

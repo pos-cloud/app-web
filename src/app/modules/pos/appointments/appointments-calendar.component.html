@@ -1,0 +1,146 @@
+<section class="container-fluid appointments-calendar">
+  <div class="card shadow-sm">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
+      <div class="d-flex align-items-center flex-wrap mb-1">
+        <h5 class="mb-0 text-secondary mr-3">Turnos</h5>
+        <div class="btn-group btn-group-sm view-mode-toggle" role="group" aria-label="Vista calendario">
+          <button
+            type="button"
+            class="btn view-mode-toggle__btn"
+            [class.view-mode-toggle__btn--active]="viewMode === 'month'"
+            [attr.aria-pressed]="viewMode === 'month'"
+            (click)="setViewMode('month')"
+          >
+            Mes
+          </button>
+          <button
+            type="button"
+            class="btn view-mode-toggle__btn"
+            [class.view-mode-toggle__btn--active]="viewMode === 'week'"
+            [attr.aria-pressed]="viewMode === 'week'"
+            (click)="setViewMode('week')"
+          >
+            Semana
+          </button>
+        </div>
+        <button type="button" class="btn btn-sm btn-calendar-toolbar ml-2 mb-1" (click)="openNewAppointment()">
+          <i class="fa fa-plus mr-1" aria-hidden="true"></i>
+          Nuevo turno
+        </button>
+        <span *ngIf="loadingAppointments" class="text-muted small ml-2 mb-1">
+          <i class="fa fa-refresh fa-spin"></i>
+        </span>
+      </div>
+
+      <div class="d-flex align-items-center flex-wrap calendar-toolbar">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary mr-1 mb-1"
+          (click)="navigatePrev()"
+          [attr.title]="viewMode === 'month' ? 'Mes anterior' : 'Semana anterior'"
+        >
+          <i class="fa fa-chevron-left"></i>
+        </button>
+        <span class="period-label px-1 mr-1 mb-1">{{ periodLabel }}</span>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary mr-2 mb-1"
+          (click)="navigateNext()"
+          [attr.title]="viewMode === 'month' ? 'Mes siguiente' : 'Semana siguiente'"
+        >
+          <i class="fa fa-chevron-right"></i>
+        </button>
+        <button type="button" class="btn btn-sm btn-calendar-today mb-1" (click)="goToday()">Hoy</button>
+        <button
+          type="button"
+          class="btn btn-sm btn-calendar-refresh mb-1 ml-1"
+          (click)="refreshAppointments()"
+          [disabled]="loadingAppointments"
+          title="Actualizar turnos"
+          aria-label="Actualizar turnos"
+        >
+          <i class="fa fa-refresh" [class.fa-spin]="loadingAppointments" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <!-- Vista mes -->
+      <div class="calendar-grid" *ngIf="viewMode === 'month'">
+        <div class="calendar-row calendar-row--head">
+          <div class="calendar-cell calendar-cell--head" *ngFor="let wd of weekDays">{{ wd }}</div>
+        </div>
+        <div class="calendar-row" *ngFor="let row of weeks">
+          <div
+            class="calendar-cell"
+            *ngFor="let cell of row"
+            [class.calendar-cell--empty]="!cell.day"
+            [class.calendar-cell--today]="isTodayCell(cell)"
+            [class.calendar-cell--day-clickable]="!!cell.day && !!cell.date"
+            [attr.title]="cell.day && cell.date ? 'Ver semana de este día' : null"
+            (click)="onMonthDayClick(cell)"
+          >
+            <span class="day-num" *ngIf="cell.day">{{ cell.day }}</span>
+            <div
+              class="month-cell__indicator"
+              *ngIf="cell.day && cell.date && countAppointmentsForDay(cell.date) > 0"
+              title="Turnos en este día"
+            >
+              <span class="month-cell__dot" aria-hidden="true"></span>
+              <span class="month-cell__count">{{ countAppointmentsForDay(cell.date) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista semana -->
+      <div class="week-view" *ngIf="viewMode === 'week'">
+        <div class="week-view__scroll">
+          <div class="week-view__header">
+            <div class="week-view__corner" aria-hidden="true"></div>
+            <div
+              class="week-view__day-head"
+              *ngFor="let d of weekDayHeaders"
+              [class.week-view__day-head--today]="d.isToday"
+            >
+              <span class="week-view__weekday">{{ d.weekdayShort }}</span>
+              <span class="week-view__daynum" [class.week-view__daynum--today]="d.isToday">{{ d.dayNum }}</span>
+            </div>
+          </div>
+
+          <div class="week-view__grid">
+            <div class="week-view__times-col">
+              <div class="week-view__time-slot" *ngFor="let slot of hourSlots">{{ slot.label }}</div>
+            </div>
+            <div class="week-view__columns">
+              <div
+                class="week-view__day-column"
+                *ngFor="let d of weekDayHeaders"
+                [class.week-view__day-column--today]="d.isToday"
+              >
+                <div
+                  class="week-view__track"
+                  [style.minHeight.px]="hourSlots.length * 48"
+                  (click)="openNewForDay(d.date)"
+                >
+                  <div class="week-view__hour-line" *ngFor="let slot of hourSlots"></div>
+                  <button
+                    type="button"
+                    class="week-view__event"
+                    *ngFor="let layout of getWeekLayoutsForDay(d.date)"
+                    [ngClass]="weekEventModifierClass(layout.appointment)"
+                    [ngStyle]="weekEventStyle(layout, d.date)"
+                    (click)="openEditAppointment(layout.appointment, $event)"
+                  >
+                    <span class="week-view__event-title">{{ layout.appointment.title }}</span>
+                    <span class="week-view__event-time">{{ weekEventTimeLabel(layout.appointment) }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

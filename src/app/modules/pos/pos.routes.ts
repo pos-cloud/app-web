@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 export const POS_ROUTES: Routes = [
   {
+    path: 'appointments',
+    loadComponent: () =>
+      import('./appointments/appointments-calendar.component').then((m) => m.AppointmentsCalendarComponent),
+  },
+  {
     path: 'tienda-nube',
     loadComponent: () => import('./tienda-nube/list/web.component').then((m) => m.WebComponent),
   },

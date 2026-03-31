@@ -1,0 +1,395 @@
+.appointments-calendar {
+  .view-mode-toggle {
+    border-radius: 6px;
+    padding: 2px;
+    background: #e8eaed;
+    border: 1px solid #dadce0;
+    gap: 0;
+
+    .btn:focus {
+      box-shadow: none;
+    }
+  }
+
+  .view-mode-toggle__btn {
+    flex: 1 1 auto;
+    min-width: 4.25rem;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    line-height: 1.25;
+    padding: 0.35rem 0.75rem;
+    border: none !important;
+    border-radius: 4px;
+    background: transparent !important;
+    color: #5f6368;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:hover:not(.view-mode-toggle__btn--active) {
+      background: rgba(255, 255, 255, 0.7);
+      color: #202124;
+    }
+
+    &--active {
+      background: #fff !important;
+      color: #1a73e8;
+      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.28);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #1a73e8;
+      outline-offset: 2px;
+    }
+  }
+
+  .calendar-toolbar .btn-calendar-refresh {
+    padding: 0.22rem 0.4rem;
+    line-height: 1;
+    font-size: 0.75rem;
+    color: #5f6368;
+    background: #fff;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+
+    &:hover:not(:disabled) {
+      color: #1a73e8;
+      border-color: #1a73e8;
+      background: #f8f9fa;
+    }
+
+    &:disabled {
+      opacity: 0.65;
+    }
+  }
+
+  /** "Nuevo turno" y "Hoy": borde azul, texto azul, fondo blanco (evita .btn-primary ilegible con algunos temas). */
+  .btn-calendar-toolbar,
+  .calendar-toolbar .btn-calendar-today {
+    color: #1a73e8 !important;
+    background-color: #fff !important;
+    border: 1px solid #1a73e8 !important;
+    font-weight: 600;
+    line-height: 1.25;
+    padding: 0.28rem 0.85rem;
+    border-radius: 4px;
+    box-shadow: none;
+
+    .fa {
+      color: inherit;
+    }
+
+    &:hover {
+      color: #fff !important;
+      background-color: #1a73e8 !important;
+      border-color: #1557b0 !important;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.15rem rgba(26, 115, 232, 0.35);
+    }
+  }
+
+  .period-label {
+    font-weight: 600;
+    min-width: 11rem;
+    text-align: center;
+  }
+
+  .calendar-grid {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .calendar-row {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    min-height: 4.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+    &--head {
+      min-height: auto;
+      background: #f8f9fa;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .calendar-cell {
+    padding: 0.35rem 0.5rem;
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &--head {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #5f6368;
+      text-transform: uppercase;
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    &--empty {
+      background: #fafafa;
+    }
+
+    &--day-clickable {
+      cursor: pointer;
+
+      &:hover:not(.calendar-cell--empty) {
+        background: #f1f3f4;
+      }
+    }
+
+    &--today {
+      background: #e8f0fe;
+
+      .day-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        background: #1a73e8;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .day-num {
+    font-size: 0.8rem;
+    color: #3c4043;
+    flex-shrink: 0;
+  }
+
+  /** Indicador mes: punto + cantidad de turnos */
+  .month-cell__indicator {
+    margin-top: auto;
+    padding-top: 0.2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    align-self: flex-start;
+  }
+
+  .month-cell__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1a73e8;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);
+  }
+
+  .month-cell__count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #1a73e8;
+    line-height: 1;
+    min-width: 1ch;
+  }
+
+  /* —— Vista semana —— */
+  $time-col: 52px;
+  $hour-h: 3rem;
+
+  .week-view {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .week-view__scroll {
+    overflow: auto;
+    max-height: min(70vh, 640px);
+  }
+
+  .week-view__header {
+    display: grid;
+    grid-template-columns: $time-col repeat(7, minmax(72px, 1fr));
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .week-view__corner {
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .week-view__day-head {
+    padding: 0.5rem 0.25rem;
+    text-align: center;
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &--today {
+      background: #e8f0fe;
+    }
+  }
+
+  .week-view__weekday {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #5f6368;
+  }
+
+  .week-view__daynum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.15rem;
+    min-width: 1.75rem;
+    min-height: 1.75rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #3c4043;
+
+    &--today {
+      border-radius: 50%;
+      background: #1a73e8;
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  .week-view__grid {
+    display: flex;
+    min-width: 640px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .week-view__times-col {
+    width: $time-col;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    background: #fafafa;
+  }
+
+  .week-view__time-slot {
+    height: $hour-h;
+    padding: 0.15rem 0.25rem 0 0;
+    font-size: 0.72rem;
+    color: #70757a;
+    text-align: right;
+    box-sizing: border-box;
+  }
+
+  .week-view__columns {
+    flex: 1;
+    display: flex;
+    min-width: 0;
+  }
+
+  .week-view__day-column {
+    flex: 1;
+    min-width: 72px;
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    background: #fff;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &--today {
+      background: rgba(232, 240, 254, 0.35);
+    }
+  }
+
+  .week-view__track {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .week-view__hour-line {
+    height: $hour-h;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  /** Bloques tipo Google Calendar: borde izquierdo, fondo claro, título + horario */
+  .week-view__event {
+    position: absolute;
+    z-index: 1;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 4px;
+    padding: 3px 4px 4px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1px;
+    text-align: left;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.25);
+    border-left: 4px solid #1a73e8;
+    background: #e8f0fe;
+    color: #3c4043;
+    min-height: 2.25rem;
+
+    &:hover {
+      box-shadow: 0 2px 4px rgba(60, 64, 67, 0.35);
+      z-index: 2;
+    }
+
+    &--scheduled {
+      border-left-color: #1a73e8;
+      background: #e8f0fe;
+    }
+
+    &--cancelled {
+      border-left-color: #ea4335;
+      background: #fce8e6;
+    }
+
+    &--completed {
+      border-left-color: #34a853;
+      background: #e6f4ea;
+    }
+
+    &--no-show {
+      border-left-color: #f9ab00;
+      background: #fef7e0;
+    }
+  }
+
+  .week-view__event-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: #202124;
+  }
+
+  .week-view__event-time {
+    font-size: 0.62rem;
+    font-weight: 500;
+    color: #5f6368;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
