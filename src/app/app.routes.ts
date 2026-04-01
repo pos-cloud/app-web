@@ -51,6 +51,13 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
+    path: 'eval/wysiwyg',
+    loadComponent: () =>
+      import('./shared/components/wysiwyg-eval-page/wysiwyg-eval-page.component').then(
+        (m) => m.WysiwygEvalPageComponent
+      ),
+  },
+  {
     path: 'login',
     component: LoginComponent,
   },

@@ -1,0 +1,6 @@
+.wysiwyg-preview {
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -1,0 +1,14 @@
+<div class="container py-4">
+  <h4 class="mb-2">Editor WYSIWYG (TinyMCE)</h4>
+  <p class="text-muted small mb-3">
+    Integración oficial <code>@tinymce/tinymce-angular</code> v6 (compatible con Angular 13+). El valor que guardarías en
+    API es <strong>HTML</strong> (<code>ngModel</code> / <code>formControl</code>).
+  </p>
+
+  <editor [ngModelOptions]="{ standalone: true }" [init]="tinymceInit" [(ngModel)]="html"></editor>
+
+  <div class="mt-4">
+    <h6 class="text-muted">HTML actual</h6>
+    <pre class="border rounded p-2 small bg-light wysiwyg-preview">{{ html }}</pre>
+  </div>
+</div>

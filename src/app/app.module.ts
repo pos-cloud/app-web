@@ -20,6 +20,7 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { QuillModule } from 'ngx-quill';
+import { TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
@@ -217,6 +218,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     QuillModule.forRoot(),
   ],
   providers: [
+    /** Misma copia self-hosted que /tinymce en assets (evita CDN + base_url cruzados). */
+    { provide: TINYMCE_SCRIPT_SRC, useValue: '/assets/tinymce/tinymce.min.js' },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

@@ -11,6 +11,9 @@ settings.json
 # dependencies
 /node_modules
 
+# TinyMCE (generado en postinstall desde node_modules/tinymce)
+/src/assets/tinymce
+
 ## services
 # apiv1
 /services/api-v1/node_modules
