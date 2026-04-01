@@ -10,7 +10,6 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:prod": "ng build --configuration production",
-    "build:granpaso": "ng build --configuration granpaso",
     "build:dev": "ng build --configuration dev",
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
     "tienda-nube": "cd services/tienda-nube && npm run start:dev",
