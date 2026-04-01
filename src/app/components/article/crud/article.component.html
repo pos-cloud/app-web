@@ -40,7 +40,7 @@
     </div>
     <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
-      <form [formGroup]="articleForm" autocomplete="off" (keydown.enter)="onEnter()">
+      <form [formGroup]="articleForm" autocomplete="off" (keydown.enter)="onEnter($event)">
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
@@ -263,13 +263,11 @@
             <div class="row">
               <div class="form-group col-md-6">
                 <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}</label>
-                <quill-editor
+                <editor
                   formControlName="observation"
-                  [(ngModel)]="observationContent"
-                  [modules]="quillConfig.modules"
-                  [theme]="quillConfig.theme"
-                >
-                </quill-editor>
+                  [init]="tinymceObservationInit"
+                  style="display: block; width: 100%"
+                ></editor>
               </div>
 
               <div class="form-group col-md-5">

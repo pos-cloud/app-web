@@ -40,7 +40,8 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { QuillModule } from 'ngx-quill';
+import { EditorModule } from '@tinymce/tinymce-angular';
+import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -59,9 +60,6 @@ import {
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
 import { Variant } from 'app/components/variant/variant';
-import Quill from 'quill';
-import ImageResize from 'quill-image-resize';
-Quill.register('modules/imageResize', ImageResize);
 
 @Component({
   selector: 'app-article',
@@ -76,7 +74,7 @@ Quill.register('modules/imageResize', ImageResize);
     TypeaheadDropdownComponent,
     HierarchicalMultiSelectComponent,
     UploadFileComponent,
-    QuillModule,
+    EditorModule,
     ProgressbarModule,
     FormsModule,
   ],
@@ -131,41 +129,11 @@ export class ArticleComponent implements OnInit {
     ArticlePrintIn.Bar,
     ArticlePrintIn.Voucher,
   ];
-  public quillConfig = {
-    formats: ['bold', 'italic', 'underline', 'strike', 'list', 'link'],
-    modules: {
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'],
-        ['blockquote', 'code-block'],
-        ['link', 'image', 'video', 'formula'],
-        [{ header: 1 }, { header: 2 }],
-        [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
-        [{ script: 'sub' }, { script: 'super' }],
-        [{ indent: '-1' }, { indent: '+1' }],
-        [{ direction: 'rtl' }],
-
-        [{ size: ['small', false, 'large', 'huge'] }],
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-        [{ color: [] }, { background: [] }],
-        [{ font: [] }],
-        [{ align: [] }],
-
-        ['clean'],
-      ],
-      imageResize: {
-        displayStyles: {
-          backgroundColor: 'black',
-          border: 'none',
-          color: 'white',
-        },
-        modules: ['Resize', 'DisplaySize', 'Toolbar'],
-      },
-    },
+  /** TinyMCE: observaciones (HTML en el mismo campo que antes con Quill). */
+  public readonly tinymceObservationInit = mergeTinymceInit({
     placeholder: 'Escribe aqui...',
-    theme: 'snow',
-    readOnly: false,
-  };
+    height: 360,
+  });
   public taxes: Tax[] = [];
   public taxForm: UntypedFormGroup;
   public totalTaxes: number = 0;
@@ -1328,10 +1296,9 @@ export class ArticleComponent implements OnInit {
     }
   }
 
-  public onEnter(): void {
-    const isInQuill = event.target instanceof HTMLDivElement && event.target.classList.contains('ql-editor');
-
-    if (isInQuill) {
+  public onEnter(event: KeyboardEvent): void {
+    const el = event.target as HTMLElement | null;
+    if (el?.closest?.('.tox-tinymce')) {
       event.preventDefault();
       return;
     }

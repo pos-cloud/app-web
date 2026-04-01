@@ -58,6 +58,7 @@ import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UnitOfMeasurementService } from '../../../core/services/unit-of-measurement.service';
 import { Tax, TaxClassification } from '../../tax/tax';
+import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 
 @Component({
   selector: 'app-article',
@@ -148,24 +149,10 @@ export class ArticleComponent implements OnInit {
   companiesClick$ = new Subject<string>();
   companiesFocus$ = new Subject<string>();
 
-  observationContent: string = '';
-  quillConfig = {
-    formats: ['bold', 'italic', 'underline', 'strike', 'list', 'link'],
-    modules: {
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'], // Estilos básicos
-        [{ list: 'ordered' }, { list: 'bullet' }], // Listas
-        ['link'], // Enlaces
-      ],
-    },
-    theme: 'snow', // Tema similar a "modern" en TinyMCE
-    readOnly: false, // Si quieres solo lectura, usa true
-    styles: {
-      height: '150px', // Altura del editor
-      width: '100%', // Ancho completo
-      'max-width': '600px',
-    },
-  };
+  readonly tinymceObservationInit = mergeTinymceInit({
+    placeholder: 'Escribe aqui...',
+    height: 200,
+  });
 
   formErrors = {
     code: '',
@@ -905,10 +892,9 @@ export class ArticleComponent implements OnInit {
     );
   }
 
-  onEnter() {
-    const isInQuill = event.target instanceof HTMLDivElement && event.target.classList.contains('ql-editor');
-
-    if (isInQuill) {
+  onEnter(event: KeyboardEvent) {
+    const el = event.target as HTMLElement | null;
+    if (el?.closest?.('.tox-tinymce')) {
       event.preventDefault();
       return;
     }

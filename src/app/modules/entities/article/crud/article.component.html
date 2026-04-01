@@ -44,7 +44,7 @@
         [formGroup]="articleForm"
         (ngSubmit)="handleArticleOperation()"
         autocomplete="off"
-        (keydown.enter)="onEnter()"
+        (keydown.enter)="onEnter($event)"
       >
         <div class="row">
           <label class="col-md-12">
@@ -235,13 +235,11 @@
         <div class="row">
           <div class="col-md-12">
             <label for="observation">{{ 'observation' | translate | capitalize }}</label>
-            <quill-editor
+            <editor
               formControlName="observation"
-              [modules]="quillConfig.modules"
-              [theme]="quillConfig.theme"
-              style="width: 100%"
-            >
-            </quill-editor>
+              [init]="tinymceObservationInit"
+              style="display: block; width: 100%"
+            ></editor>
           </div>
         </div>
         <hr />

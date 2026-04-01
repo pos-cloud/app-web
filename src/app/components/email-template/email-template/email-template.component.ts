@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { EmailTemplate } from 'app/components/email-template/email-template';
 import { EmailTemplateService } from '../../../core/services/email-template.service';
+import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 
 @Component({
   selector: 'app-email-template',
@@ -41,23 +42,10 @@ export class EmailTemplateComponent implements OnInit {
     },
   };
 
-  observationContent: string = '';
-  quillConfig = {
-    formats: ['bold', 'italic', 'underline', 'strike', 'list', 'link'],
-    modules: {
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'], // Estilos básicos
-        [{ list: 'ordered' }, { list: 'bullet' }], // Listas
-        ['link'], // Enlaces
-      ],
-    },
-    theme: 'snow', // Tema similar a "modern" en TinyMCE
-    readOnly: false, // Si quieres solo lectura, usa true
-    styles: {
-      height: '150px', // Altura del editor
-      width: '1000px',
-    },
-  };
+  readonly tinymceDesignInit = mergeTinymceInit({
+    height: 150,
+    width: '100%',
+  });
 
   constructor(
     public alertConfig: NgbAlertConfig,

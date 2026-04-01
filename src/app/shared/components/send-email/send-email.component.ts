@@ -7,7 +7,8 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FocusDirective } from '@shared/directives/focus.directive';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { QuillModule } from 'ngx-quill';
+import { EditorModule } from '@tinymce/tinymce-angular';
+import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 import { EmailService } from '../../../core/services/send-email.service';
 import { ToastService } from '../toast/toast.service';
 
@@ -15,7 +16,7 @@ import { ToastService } from '../toast/toast.service';
   selector: 'app-send-email',
   templateUrl: './send-email.component.html',
   standalone: true,
-  imports: [FormsModule, QuillModule, CommonModule, FocusDirective, ReactiveFormsModule, PipesModule, TranslateModule],
+  imports: [FormsModule, EditorModule, CommonModule, FocusDirective, ReactiveFormsModule, PipesModule, TranslateModule],
 })
 export class SendEmailComponent implements OnInit {
   sendEmailForm: UntypedFormGroup;
@@ -28,33 +29,10 @@ export class SendEmailComponent implements OnInit {
   @Input() transactionId: string = '';
   @Input() items: number;
 
-  quillConfig = {
-    formats: ['bold', 'italic', 'underline', 'strike', 'list', 'link'],
-    modules: {
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'],
-        ['blockquote', 'code-block'],
-        ['link', 'image', 'video', 'formula'],
-        [{ header: 1 }, { header: 2 }],
-        [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
-        [{ script: 'sub' }, { script: 'super' }],
-        [{ indent: '-1' }, { indent: '+1' }],
-        [{ direction: 'rtl' }],
-
-        [{ size: ['small', false, 'large', 'huge'] }],
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-        [{ color: [] }, { background: [] }],
-        [{ font: [] }],
-        [{ align: [] }],
-
-        ['clean'],
-      ],
-    },
+  readonly tinymceBodyInit = mergeTinymceInit({
+    height: 260,
     placeholder: 'Escribe aqui...',
-    theme: 'snow',
-    readOnly: false,
-  };
+  });
   constructor(
     private _serviceEmail: EmailService,
     private _fb: UntypedFormBuilder,

@@ -19,7 +19,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { QuillModule } from 'ngx-quill';
+import { EditorModule } from '@tinymce/tinymce-angular';
 import { TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { AppComponent } from './app.component';
@@ -215,7 +215,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       enabled: true,
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    QuillModule.forRoot(),
+    EditorModule,
   ],
   providers: [
     /** Misma copia self-hosted que /tinymce en assets (evita CDN + base_url cruzados). */

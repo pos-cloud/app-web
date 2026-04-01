@@ -40,14 +40,11 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-12">
-                    <quill-editor
+                    <editor
                       formControlName="design"
-                      [(ngModel)]="observationContent"
-                      [modules]="quillConfig.modules"
-                      [style]="quillConfig.styles"
-                      [theme]="quillConfig.theme"
-                    >
-                    </quill-editor>
+                      [init]="tinymceDesignInit"
+                      class="email-template-design-editor"
+                    ></editor>
                   </div>
                 </div>
               </div>

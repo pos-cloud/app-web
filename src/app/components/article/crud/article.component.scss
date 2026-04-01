@@ -59,19 +59,16 @@ app-article {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
 
-  .ql-editor {
-    height: 150px; /* Altura fija */
-    width: 100%; /* El editor ocupará el 100% del ancho disponible */
-    max-width: 100%; /* Asegura que no se agrande más allá del 100% de su contenedor */
-    min-width: 200px; /* Establece un ancho mínimo */
-    width: 500px; /* Establece el ancho inicial en 500px */
-    margin: 0 auto; /* Centra el editor (opcional) */
+  .tox-tinymce {
+    max-width: 100%;
+    min-width: 200px;
+    width: 500px;
+    margin: 0 auto;
   }
 
-  /* Media query para pantallas más pequeñas */
   @media (max-width: 768px) {
-    .ql-editor {
-      width: 100px; /* Permitir que el editor se ajuste al ancho disponible */
+    .tox-tinymce {
+      width: 100%;
     }
   }
 
@@ -80,7 +77,7 @@ app-article {
     margin-bottom: 10px; /* Espacio entre el label y el editor */
   }
 
-  quill-editor {
-    display: block; /* Hace que el editor ocupe toda la línea y esté abajo del label */
+  editor {
+    display: block;
   }
 }

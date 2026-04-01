@@ -130,10 +130,9 @@ export class ShipmentMethodComponent implements OnInit {
     });
   }
 
-  onEnter() {
-    const isInQuill = event.target instanceof HTMLDivElement && event.target.classList.contains('ql-editor');
-
-    if (isInQuill) {
+  onEnter(event: KeyboardEvent) {
+    const el = event.target as HTMLElement | null;
+    if (el?.closest?.('.tox-tinymce')) {
       event.preventDefault();
       return;
     }
