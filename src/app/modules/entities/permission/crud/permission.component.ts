@@ -91,6 +91,7 @@ export class PermissionComponent implements OnInit {
         money: [true],
         production: [true],
         purchases: [true],
+        appointments: [true],
         stock: [true],
         articles: [true],
         companies: this._fb.group({
@@ -219,6 +220,7 @@ export class PermissionComponent implements OnInit {
         money: this.permission.menu?.money ?? true,
         production: this.permission.menu?.production ?? true,
         purchases: this.permission.menu?.purchases ?? true,
+        appointments: this.permission.menu?.appointments ?? true,
         stock: this.permission.menu?.stock ?? true,
         articles: this.permission.menu?.articles ?? true,
         companies: {

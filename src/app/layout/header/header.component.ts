@@ -495,6 +495,14 @@ export class HeaderComponent implements OnInit {
         });
       }
 
+      if (user?.permission?.menu?.appointments) {
+        this.menu.push({
+          label: 'Turnos',
+          icon: 'fa fa-calendar',
+          link: 'pos/appointments',
+        });
+      }
+
       if (user?.permission?.menu?.stock) {
         this.menu.push({
           label: 'Stock',

@@ -57,6 +57,7 @@ export interface Permission extends Activity {
     money: boolean;
     production: boolean;
     purchases: boolean;
+    appointments?: boolean;
     stock: boolean;
     articles: boolean;
     companies: {
