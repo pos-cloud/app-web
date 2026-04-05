@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AppointmentService } from '@core/services/appointment.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Appointment } from '@types';
+import { Appointment, Company } from '@types';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { AppointmentFormModalComponent } from './components/appointment-form-modal/appointment-form-modal.component';
@@ -155,6 +155,23 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
       return [];
     }
     return computeWeekEventLayoutsForDay(this.appointments, date);
+  }
+
+  /** Texto principal del bloque: paciente/cliente; si no hay datos, el título del turno. */
+  protected appointmentCalendarLabel(apt: Appointment): string {
+    const fromPatient = apt.patientName?.trim();
+    if (fromPatient) {
+      return fromPatient;
+    }
+    const c = apt.company;
+    if (c && typeof c === 'object' && c !== null) {
+      const co = c as Company;
+      const n = (co.fantasyName || co.name || '').trim();
+      if (n) {
+        return n;
+      }
+    }
+    return (apt.title || '').trim() || 'Turno';
   }
 
   /** Vista semana: rango horario tipo calendario (ej. 09:00 – 10:30). */

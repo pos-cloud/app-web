@@ -25,10 +25,6 @@
       <label for="appt-desc">Descripción</label>
       <textarea id="appt-desc" class="form-control" formControlName="description" rows="2"></textarea>
     </div>
-    <div class="form-check mb-3">
-      <input class="form-check-input" type="checkbox" id="appt-allday" formControlName="allDay" />
-      <label class="form-check-label" for="appt-allday">Todo el día</label>
-    </div>
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="appt-start">Inicio</label>
@@ -46,6 +42,78 @@
         <option *ngFor="let o of statusOptions" [ngValue]="o.value">{{ o.label }}</option>
       </select>
     </div>
+
+    <ng-container *ngIf="!appointment?._id && false" formGroupName="recurrence">
+      <hr class="appt-rec-hr" />
+      <div class="form-check mb-2">
+        <input id="appt-rec-on" type="checkbox" class="form-check-input" formControlName="enabled" />
+        <label class="form-check-label" for="appt-rec-on">Repetir turno</label>
+      </div>
+      <ng-container *ngIf="form.get('recurrence.enabled')?.value">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="appt-rec-freq">Frecuencia</label>
+            <select id="appt-rec-freq" class="form-control" formControlName="frequency">
+              <option *ngFor="let o of recurrenceFrequencyOptions" [ngValue]="o.value">{{ o.label }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="appt-rec-int">Cada</label>
+            <input id="appt-rec-int" type="number" class="form-control" formControlName="interval" min="1" max="99" />
+            <small class="form-text text-muted">Unidades según frecuencia (ej. cada 2 semanas → 2).</small>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="form.get('recurrence.frequency')?.value === 'weekly'" formGroupName="weekdays">
+          <span class="d-block mb-1">Días de la semana</span>
+          <div class="appt-weekday-checks">
+            <div *ngFor="let d of weekdayCheckboxes" class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" [id]="'appt-dow-' + d.key" [formControlName]="d.key" />
+              <label class="form-check-label" [for]="'appt-dow-' + d.key">{{ d.label }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="form.get('recurrence.frequency')?.value === 'monthly'">
+          <label for="appt-rec-monthly">Mensual</label>
+          <select id="appt-rec-monthly" class="form-control" formControlName="monthlyMode">
+            <option [ngValue]="'dayOfMonth'">Mismo día del mes</option>
+            <option [ngValue]="'nthWeekday'">Misma posición en la semana (p. ej. 2.º martes)</option>
+          </select>
+        </div>
+        <div class="form-group mb-2">
+          <span class="d-block mb-1">Finalizar</span>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              id="appt-rec-end-until"
+              formControlName="endType"
+              value="until"
+            />
+            <label class="form-check-label" for="appt-rec-end-until">Hasta una fecha (Argentina)</label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              id="appt-rec-end-count"
+              formControlName="endType"
+              value="count"
+            />
+            <label class="form-check-label" for="appt-rec-end-count"
+              >Después de N ocurrencias (incluye la primera)</label
+            >
+          </div>
+        </div>
+        <div class="form-group" *ngIf="form.get('recurrence.endType')?.value === 'until'">
+          <label for="appt-until">Hasta</label>
+          <input id="appt-until" type="date" class="form-control" formControlName="untilDate" />
+        </div>
+        <div class="form-group" *ngIf="form.get('recurrence.endType')?.value === 'count'">
+          <label for="appt-cnt">Cantidad</label>
+          <input id="appt-cnt" type="number" class="form-control" formControlName="count" min="2" max="366" />
+        </div>
+      </ng-container>
+    </ng-container>
   </form>
 </div>
 

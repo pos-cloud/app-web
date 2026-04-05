@@ -1,17 +1,34 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { AppointmentService } from '@core/services/appointment.service';
 import { CompanyService } from '@core/services/company.service';
 import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { ApiResponse, Appointment, AppointmentStatus, Company } from '@types';
+import {
+  ApiResponse,
+  Appointment,
+  AppointmentCreatePayload,
+  AppointmentMonthlyRecurrenceMode,
+  AppointmentRecurrenceFrequency,
+  AppointmentRecurrenceRule,
+  AppointmentStatus,
+  AppointmentWeekday,
+  Company,
+} from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 import {
-  argentinaAllDayRangeFromStartInput,
+  argentinaCalendarDayKey,
+  argentinaWeekday0Sun,
   formatInstantAsArgentinaOffsetIso,
   fromArgentinaDatetimeLocal,
   toArgentinaDatetimeLocal,
@@ -41,6 +58,22 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
     { value: 'no_show', label: 'No asistió' },
   ];
 
+  public readonly recurrenceFrequencyOptions: { value: AppointmentRecurrenceFrequency; label: string }[] = [
+    { value: 'daily', label: 'Diaria' },
+    { value: 'weekly', label: 'Semanal' },
+    { value: 'monthly', label: 'Mensual' },
+  ];
+
+  public readonly weekdayCheckboxes: { key: string; label: string }[] = [
+    { key: '0', label: 'Dom' },
+    { key: '1', label: 'Lun' },
+    { key: '2', label: 'Mar' },
+    { key: '3', label: 'Mié' },
+    { key: '4', label: 'Jue' },
+    { key: '5', label: 'Vie' },
+    { key: '6', label: 'Sáb' },
+  ];
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -57,8 +90,25 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
       description: [''],
       startLocal: ['', Validators.required],
       endLocal: ['', Validators.required],
-      allDay: [false],
       status: ['scheduled' as AppointmentStatus, Validators.required],
+      recurrence: this._fb.group({
+        enabled: [false],
+        frequency: ['weekly' as AppointmentRecurrenceFrequency],
+        interval: [1, [Validators.min(1)]],
+        endType: ['until' as 'until' | 'count'],
+        untilDate: [''],
+        count: [10, [Validators.min(2), Validators.max(366)]],
+        monthlyMode: ['dayOfMonth' as AppointmentMonthlyRecurrenceMode],
+        weekdays: this._fb.group({
+          '0': [false],
+          '1': [false],
+          '2': [false],
+          '3': [false],
+          '4': [false],
+          '5': [false],
+          '6': [false],
+        }),
+      }),
     });
   }
 
@@ -110,26 +160,28 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
       this.form.patchValue({
         startLocal: toArgentinaDatetimeLocal(start),
         endLocal: toArgentinaDatetimeLocal(end),
-        allDay: false,
         status: 'scheduled',
       });
+      const untilGuess = new Date(start.getTime() + 56 * 24 * 60 * 60 * 1000);
+      this.form.get('recurrence.untilDate')?.patchValue(argentinaCalendarDayKey(untilGuess));
+      this.presetWeekdayFromStart();
     }
 
     this.form
-      .get('allDay')
+      .get('recurrence.enabled')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe((allDay: boolean) => {
-        if (allDay) {
-          const range = argentinaAllDayRangeFromStartInput(this.form.get('startLocal')?.value ?? '');
-          if (range) {
-            this.form.patchValue(
-              {
-                startLocal: toArgentinaDatetimeLocal(range.start),
-                endLocal: toArgentinaDatetimeLocal(range.end),
-              },
-              { emitEvent: false }
-            );
-          }
+      .subscribe((on: boolean) => {
+        if (on) {
+          this.presetWeekdayFromStart();
+        }
+      });
+
+    this.form
+      .get('startLocal')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.form.get('recurrence.enabled')?.value && this.form.get('recurrence.frequency')?.value === 'weekly') {
+          this.presetWeekdayFromStart();
         }
       });
   }
@@ -163,15 +215,25 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const payload: Record<string, unknown> = {
+    const base: AppointmentCreatePayload = {
       company: companyId,
       title: (v.title as string).trim(),
       description: (v.description as string)?.trim() || undefined,
       startDate: formatInstantAsArgentinaOffsetIso(start),
       endDate: formatInstantAsArgentinaOffsetIso(end),
-      allDay: !!v.allDay,
+      allDay: v._id ? !!this.appointment?.allDay : false,
       status: v.status as AppointmentStatus,
     };
+
+    let payload: AppointmentCreatePayload | (AppointmentCreatePayload & { _id: string }) = base;
+
+    if (!v._id && v.recurrence?.enabled) {
+      const rule = this.buildRecurrenceRule(v.recurrence, start);
+      if (!rule) {
+        return;
+      }
+      payload = { ...base, recurrence: rule };
+    }
 
     this.loading = true;
     const req = v._id
@@ -225,7 +287,6 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
       description: a.description ?? '',
       startLocal: toArgentinaDatetimeLocal(start),
       endLocal: toArgentinaDatetimeLocal(end),
-      allDay: !!a.allDay,
       status: a.status ?? 'scheduled',
     });
   }
@@ -252,6 +313,91 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
       return company;
     }
     return '';
+  }
+
+  private presetWeekdayFromStart(): void {
+    const startLocal = this.form.get('startLocal')?.value as string;
+    const start = fromArgentinaDatetimeLocal(startLocal);
+    if (!start) {
+      return;
+    }
+    const w = argentinaWeekday0Sun(start);
+    const wg = this.form.get('recurrence.weekdays') as UntypedFormGroup;
+    wg?.get(String(w))?.patchValue(true, { emitEvent: false });
+  }
+
+  private buildRecurrenceRule(rec: Record<string, unknown>, start: Date): AppointmentRecurrenceRule | null {
+    const frequency = rec.frequency as AppointmentRecurrenceFrequency;
+    const interval = Math.max(1, Math.min(99, Number(rec.interval) || 1));
+    const endType = rec.endType as 'until' | 'count';
+
+    if (frequency === 'weekly') {
+      const byWeekday = this.collectWeekdays(rec.weekdays as Record<string, boolean>);
+      if (byWeekday.length === 0) {
+        this._toastService.showToast({ type: 'warning', message: 'Elegí al menos un día de la semana.' });
+        return null;
+      }
+      const startDay = argentinaWeekday0Sun(start) as AppointmentWeekday;
+      if (!byWeekday.includes(startDay)) {
+        this._toastService.showToast({
+          type: 'warning',
+          message: 'El día de inicio debe estar entre los días repetidos (o cambiá el inicio).',
+        });
+        return null;
+      }
+    }
+
+    if (endType === 'until') {
+      const untilDate = (rec.untilDate as string)?.trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(untilDate)) {
+        this._toastService.showToast({ type: 'warning', message: 'Indicá una fecha “hasta” válida (AAAA-MM-DD).' });
+        return null;
+      }
+      const startKey = argentinaCalendarDayKey(start);
+      if (untilDate < startKey) {
+        this._toastService.showToast({
+          type: 'warning',
+          message: 'La fecha “hasta” no puede ser anterior al día de inicio.',
+        });
+        return null;
+      }
+      const rule: AppointmentRecurrenceRule = {
+        frequency,
+        interval,
+        untilDate,
+        ...(frequency === 'weekly'
+          ? { byWeekday: this.collectWeekdays(rec.weekdays as Record<string, boolean>) }
+          : {}),
+        ...(frequency === 'monthly' ? { monthlyMode: rec.monthlyMode as AppointmentMonthlyRecurrenceMode } : {}),
+      };
+      return rule;
+    }
+
+    const count = Math.floor(Number(rec.count));
+    if (count < 2 || count > 366) {
+      this._toastService.showToast({
+        type: 'warning',
+        message: 'La cantidad de ocurrencias debe estar entre 2 y 366.',
+      });
+      return null;
+    }
+    const rule: AppointmentRecurrenceRule = {
+      frequency,
+      interval,
+      count,
+      ...(frequency === 'weekly'
+        ? { byWeekday: this.collectWeekdays(rec.weekdays as Record<string, boolean>) }
+        : {}),
+      ...(frequency === 'monthly' ? { monthlyMode: rec.monthlyMode as AppointmentMonthlyRecurrenceMode } : {}),
+    };
+    return rule;
+  }
+
+  private collectWeekdays(wg: Record<string, boolean>): AppointmentWeekday[] {
+    return (Object.keys(wg || {}) as string[])
+      .filter((k) => wg[k])
+      .map((k) => Number(k) as AppointmentWeekday)
+      .sort((a, b) => a - b);
   }
 
 }

@@ -139,6 +139,26 @@ export function argentinaCalendarDayKey(d: Date | string): string {
   return `${y}-${mo}-${day}`;
 }
 
+/**
+ * Día de semana en Argentina para el instante: 0 = domingo … 6 = sábado (como `AppointmentWeekday`).
+ */
+export function argentinaWeekday0Sun(d: Date): number {
+  const long = new Intl.DateTimeFormat('en-US', {
+    timeZone: APPOINTMENT_BUSINESS_TIMEZONE,
+    weekday: 'long',
+  }).format(d);
+  const map: Record<string, number> = {
+    Sunday: 0,
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+  };
+  return map[long] ?? 0;
+}
+
 export function argentinaAllDayRangeFromStartInput(startLocal: string): { start: Date; end: Date } | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})T/.exec(startLocal.trim());
   if (!m) {

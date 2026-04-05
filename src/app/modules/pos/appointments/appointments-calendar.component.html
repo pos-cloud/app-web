@@ -132,7 +132,7 @@
                     [ngStyle]="weekEventStyle(layout, d.date)"
                     (click)="openEditAppointment(layout.appointment, $event)"
                   >
-                    <span class="week-view__event-title">{{ layout.appointment.title }}</span>
+                    <span class="week-view__event-title">{{ appointmentCalendarLabel(layout.appointment) }}</span>
                     <span class="week-view__event-time">{{ weekEventTimeLabel(layout.appointment) }}</span>
                   </button>
                 </div>

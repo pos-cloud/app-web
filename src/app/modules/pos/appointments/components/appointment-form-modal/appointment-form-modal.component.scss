@@ -1,3 +1,13 @@
 .modal-header .close {
   outline: none;
 }
+
+.appt-rec-hr {
+  margin-top: 0.5rem;
+}
+
+.appt-weekday-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
