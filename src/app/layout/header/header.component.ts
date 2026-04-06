@@ -731,6 +731,7 @@ export class HeaderComponent implements OnInit {
                 { label: 'Dashboard', link: 'reports/dashboard' },
                 { label: 'Dashboard Suscripciones', link: 'reports/subscription' },
                 { label: 'Kardex de método de pago', link: 'reports/payment-methods' },
+                { label: 'Historial por cliente', link: 'reports/mov-art-by-company' },
               ],
             },
           ],
