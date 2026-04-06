@@ -88,6 +88,7 @@ export class CompanyComponent implements OnInit {
   public identificationTypes: IdentificationType[];
   public type: string;
   public genders: any[] = ['', GenderType.Male, GenderType.Female];
+  database: string;
 
   constructor(
     public _companyService: CompanyService,
@@ -145,10 +146,32 @@ export class CompanyComponent implements OnInit {
         paymentMethod: [null, []],
         active: [null, []],
       }),
+      clientFile: this._fb.group({
+        skinType: ['', []],
+        phototype: ['', []],
+        currentStatus: ['', []],
+        mostAffectedZone: ['', []],
+        sensitivity: ['', []],
+        isPregnant: [false, []],
+        takeMedication: [false, []],
+        haveAllergies: [false, []],
+        useSunscreen: [false, []],
+        dermatologicalProblems: ['', []],
+        previousCosmeticTreatments: ['', []],
+        physicalActivity: ['', []],
+        dailyWaterConsumption: ['', []],
+        medicalHistory: ['', []],
+        currentMedication: ['', []],
+        previousSurgeries: ['', []],
+        allergies: ['', []],
+        treatmentGoals: ['', []],
+      }),
     });
   }
 
   ngOnInit() {
+    this.database = localStorage.getItem('company');
+    console.log(this.database);
     if (this.property) {
       this.operation = this.property.operation;
       this.companyId = this.property.companyId;
@@ -257,13 +280,14 @@ export class CompanyComponent implements OnInit {
     if (type === CompanyType.Client) {
       account = accountData
         ? accountData
-        : this.accounts.find((item) => item._id === this.config?.company?.accountClient?.default?.toString()) ?? null;
+        : (this.accounts.find((item) => item._id === this.config?.company?.accountClient?.default?.toString()) ?? null);
 
       allowCurrentAccount = this.config?.company?.allowCurrentAccountClient?.default ?? false;
     } else {
       account = accountData
         ? accountData
-        : this.accounts.find((item) => item._id === this.config?.company?.accountProvider?.default?.toString()) ?? null;
+        : (this.accounts.find((item) => item._id === this.config?.company?.accountProvider?.default?.toString()) ??
+          null);
       allowCurrentAccount = this.config?.company?.allowCurrentAccountProvider?.default ?? false;
     }
     const values = {
@@ -271,11 +295,11 @@ export class CompanyComponent implements OnInit {
       name: this.company?.name ?? '',
       code: this.company?.code ?? 0,
       fantasyName: this.company?.fantasyName ?? '',
-      type: this.property ? this.type : this.company?.type ?? type,
+      type: this.property ? this.type : (this.company?.type ?? type),
       vatCondition: vatCondition
         ? vatCondition
-        : this.vatConditions.find((item) => item._id === this.config?.company?.vatCondition?.default?.toString()) ??
-          null,
+        : (this.vatConditions.find((item) => item._id === this.config?.company?.vatCondition?.default?.toString()) ??
+          null),
       identificationType: identificationType ?? null,
       identificationValue: this.company?.identificationValue ?? '',
       grossIncome: this.company?.grossIncome ?? '',
@@ -304,6 +328,31 @@ export class CompanyComponent implements OnInit {
         article: article ?? null,
         paymentMethod: paymentMethod ?? null,
         active: this.company?.subscription?.active ?? false,
+      },
+      clientFile: {
+        //Evaluaccion de la piel
+        skinType: this.company?.clientFile?.skinType ?? '',
+        phototype: this.company?.clientFile?.phototype ?? '',
+        currentStatus: this.company?.clientFile?.currentStatus ?? '',
+        mostAffectedZone: this.company?.clientFile?.mostAffectedZone ?? '',
+        sensitivity: this.company?.clientFile?.sensitivity ?? '',
+
+        // Historial de salud
+        isPregnant: this.company?.clientFile?.isPregnant ?? false,
+        takeMedication: this.company?.clientFile?.takeMedication ?? false,
+        haveAllergies: this.company?.clientFile?.haveAllergies ?? false,
+        dermatologicalProblems: this.company?.clientFile?.dermatologicalProblems ?? '',
+        previousCosmeticTreatments: this.company?.clientFile?.previousCosmeticTreatments ?? '',
+        useSunscreen: this.company?.clientFile?.useSunscreen ?? false,
+
+        //Historia clínica estética
+        physicalActivity: this.company?.clientFile?.physicalActivity ?? '',
+        dailyWaterConsumption: this.company?.clientFile?.dailyWaterConsumption ?? '',
+        medicalHistory: this.company?.clientFile?.medicalHistory ?? '',
+        currentMedication: this.company?.clientFile?.currentMedication ?? '',
+        previousSurgeries: this.company?.clientFile?.previousSurgeries ?? '',
+        allergies: this.company?.clientFile?.allergies ?? '',
+        treatmentGoals: this.company?.clientFile?.treatmentGoals ?? '',
       },
     };
     this.companyForm.setValue(values);

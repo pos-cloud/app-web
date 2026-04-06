@@ -52,6 +52,26 @@ export interface Company extends Activity {
     paymentMethod: PaymentMethod;
     active: boolean;
   };
+  clientFile?: {
+    skinType?: string;
+    phototype?: string;
+    currentStatus?: string;
+    mostAffectedZone?: string;
+    sensitivity?: string;
+    isPregnant?: boolean;
+    takeMedication?: boolean;
+    haveAllergies?: boolean;
+    dermatologicalProblems?: string;
+    previousCosmeticTreatments?: string;
+    useSunscreen?: boolean;
+    physicalActivity?: string;
+    dailyWaterConsumption?: string;
+    medicalHistory?: string;
+    currentMedication?: string;
+    previousSurgeries?: string;
+    allergies?: string;
+    treatmentGoals?: string;
+  };
 }
 
 export enum CompanyType {

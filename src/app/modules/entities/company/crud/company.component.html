@@ -91,7 +91,8 @@
               id="identificationValue"
               [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid': companyForm.get('identificationValue')?.touched && companyForm.get('identificationValue')?.invalid,
+                'is-invalid':
+                  companyForm.get('identificationValue')?.touched && companyForm.get('identificationValue')?.invalid,
               }"
             />
             <div
@@ -177,6 +178,226 @@
             <textarea class="form-control" formControlName="observation" name="observation" id="observation"></textarea>
           </div>
         </div>
+        <div *ngIf="database === 'ikigai'" formGroupName="clientFile">
+          <hr />
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>{{ 'company.clientFile.title' | translate | capitalize }}</b>
+            </label>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-skinType">{{
+                'company.clientFile.skinType' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-skinType"
+                formControlName="skinType"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-phototype">{{
+                'company.clientFile.phototype' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-phototype"
+                formControlName="phototype"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-currentStatus">{{
+                'company.clientFile.currentStatus' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-currentStatus"
+                formControlName="currentStatus"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-mostAffectedZone">{{
+                'company.clientFile.mostAffectedZone' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-mostAffectedZone"
+                formControlName="mostAffectedZone"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <hr />
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>{{ 'Historial de salud' | translate | capitalize }}</b>
+            </label>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label class="form-check-label" for="clientFile-isPregnant">{{
+                'company.clientFile.isPregnant' | translate | capitalize
+              }}</label>
+              <select class="form-control" formControlName="isPregnant">
+                <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+                <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label class="form-check-label" for="clientFile-takeMedication">{{
+                'company.clientFile.takeMedication' | translate | capitalize
+              }}</label>
+              <select class="form-control" formControlName="takeMedication">
+                <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+                <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label class="form-check-label" for="clientFile-haveAllergies">{{
+                'company.clientFile.haveAllergies' | translate | capitalize
+              }}</label>
+              <select class="form-control" formControlName="haveAllergies">
+                <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+                <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+              </select>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label class="control-label" for="clientFile-dermatologicalProblems">{{
+                'company.clientFile.dermatologicalProblems' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-dermatologicalProblems"
+                formControlName="dermatologicalProblems"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-4">
+              <label class="control-label" for="clientFile-previousCosmeticTreatments">{{
+                'company.clientFile.previousCosmeticTreatments' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-previousCosmeticTreatments"
+                formControlName="previousCosmeticTreatments"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-4">
+              <label class="control-label" for="clientFile-useSunscreen">{{
+                'company.clientFile.useSunscreen' | translate | capitalize
+              }}</label>
+              <select class="form-control" formControlName="useSunscreen">
+                <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+                <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+              </select>
+            </div>
+          </div>
+          <hr />
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>{{ 'Historia clínica estética' | translate | capitalize }}</b>
+            </label>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-physicalActivity">{{
+                'company.clientFile.physicalActivity' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-physicalActivity"
+                formControlName="physicalActivity"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-dailyWaterConsumption">{{
+                'company.clientFile.dailyWaterConsumption' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-dailyWaterConsumption"
+                formControlName="dailyWaterConsumption"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-medicalHistory">{{
+                'company.clientFile.medicalHistory' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-medicalHistory"
+                formControlName="medicalHistory"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-currentMedication">{{
+                'company.clientFile.currentMedication' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-currentMedication"
+                formControlName="currentMedication"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-previousSurgeries">{{
+                'company.clientFile.previousSurgeries' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-previousSurgeries"
+                formControlName="previousSurgeries"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-allergies">{{
+                'company.clientFile.allergies' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-allergies"
+                formControlName="allergies"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-treatmentGoals">{{
+                'company.clientFile.treatmentGoals' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="clientFile-treatmentGoals"
+                formControlName="treatmentGoals"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+
         <hr />
         <div class="row">
           <label class="form-group col-md-12">
@@ -406,7 +627,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ company?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ company?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -420,7 +641,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ company?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ company?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
