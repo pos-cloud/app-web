@@ -827,6 +827,7 @@
   "transactionAmountLimit": "Monto Límite de Descuento",
   "transactionBalance": "Saldo Documento",
   "transactionDate": "Fecha de Transacción",
+  "transactionEndDate": "Fecha",
   "transactionDestination._id": "Identificador Transacción",
   "transactionDestination.cashBox.number": "TD Caja",
   "transactionDestination.company.name": "TD Razón Social",
