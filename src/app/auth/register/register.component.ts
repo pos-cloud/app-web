@@ -86,6 +86,16 @@ export class RegisterComponent implements OnInit {
       description: 'Negocio de bebidas y aperitivos',
     },
     {
+      key: 'estetica',
+      name: 'Estética',
+      description: 'Negocio de estética',
+    },
+    {
+      key: 'peluqueria',
+      name: 'Peluquería',
+      description: 'Negocio de peluquería',
+    },
+    {
       key: 'otros',
       name: 'Otro tipo de negocio',
       description: 'Selecciona si tu negocio no encaja en las categorías anteriores',
