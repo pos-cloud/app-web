@@ -3,6 +3,7 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
+import { BusinessModel } from '../../core/enums/business-model.enum';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../shared/components/toast/toast.service';
 import { FocusDirective } from '../../shared/directives/focus.directive';
@@ -46,57 +47,57 @@ export class RegisterComponent implements OnInit {
 
   public businessModels = [
     {
-      key: 'kiosco',
+      key: BusinessModel.Kiosco,
       name: 'Kiosco',
       description: 'Pequeño negocio de venta al por menor',
     },
     {
-      key: 'supermercado',
+      key: BusinessModel.Supermercado,
       name: 'Supermercado',
       description: 'Gran superficie de venta al público',
     },
     {
-      key: 'restaurante',
+      key: BusinessModel.Restaurante,
       name: 'Restaurante',
       description: 'Negocio de comida y bebidas',
     },
     {
-      key: 'mayorista',
+      key: BusinessModel.Mayorista,
       name: 'Mayorista',
       description: 'Venta al por mayor',
     },
     {
-      key: 'minorista',
+      key: BusinessModel.Minorista,
       name: 'Minorista',
       description: 'Tienda minorista general',
     },
     {
-      key: 'panaderia',
+      key: BusinessModel.Panaderia,
       name: 'Panadería',
       description: 'Elaboración y venta de panadería',
     },
     {
-      key: 'tiendaRopa',
+      key: BusinessModel.TiendaRopa,
       name: 'Tienda de Ropa',
       description: 'Venta de prendas y accesorios de vestir',
     },
     {
-      key: 'bar',
+      key: BusinessModel.Bar,
       name: 'Bar',
       description: 'Negocio de bebidas y aperitivos',
     },
     {
-      key: 'estetica',
+      key: BusinessModel.Estetica,
       name: 'Estética',
       description: 'Negocio de estética',
     },
     {
-      key: 'peluqueria',
+      key: BusinessModel.Peluqueria,
       name: 'Peluquería',
       description: 'Negocio de peluquería',
     },
     {
-      key: 'otros',
+      key: BusinessModel.Otros,
       name: 'Otro tipo de negocio',
       description: 'Selecciona si tu negocio no encaja en las categorías anteriores',
     },
@@ -185,7 +186,7 @@ export class RegisterComponent implements OnInit {
       email: this.registerForm.value.email,
       phone: this.registerForm.value.phone,
       country: this.registerForm.value.country,
-      businessModel: selectedBusinessModel.name,
+      businessModel: selectedBusinessModel.key,
       integrations: selectedIntegrations,
     };
 
