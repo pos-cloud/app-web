@@ -45,9 +45,27 @@
           <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-              <label for="password" class="control-label">Password:</label>
+              <label for="password" class="control-label">Contraseña:</label>
               <div class="input-group">
-                <input type="password" class="form-control" formControlName="password" name="password" id="password" />
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  formControlName="password"
+                  name="password"
+                  id="password"
+                  autocomplete="current-password"
+                />
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="showPassword = !showPassword"
+                    [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                    [attr.aria-pressed]="showPassword"
+                  >
+                    <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" aria-hidden="true"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -58,9 +76,15 @@
         <div class="center-content">
           <div class="row">
             <div class="col-md-12" align="center">
-              <button type="submit" class="btn btn-primary" [disabled]="!loginForm?.valid || loading">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!loginForm?.valid || loading"
+                [attr.aria-busy]="loading"
+              >
+                <i *ngIf="loading" class="fa fa-spinner fa-spin mr-1" aria-hidden="true"></i>
                 <span *ngIf="!loading">Iniciar sesión</span>
-                <span *ngIf="loading">Espere por favor</span>
+                <span *ngIf="loading">Iniciando sesión…</span>
               </button>
             </div>
           </div>

@@ -7,10 +7,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // SERVICES
-import { Employee } from '@types';
-import { AuthService } from 'app/core/services/auth.service';
-import { PlausibleService } from 'app/core/services/plausible.service';
-import { ToastService } from 'app/shared/components/toast/toast.service';
+import { AuthService } from '../../core/services/auth.service';
+import { PlausibleService } from '../../core/services/plausible.service';
+import { ToastService } from '../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -22,12 +21,12 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 export class LoginComponent {
   public loginForm: UntypedFormGroup;
   public loading: boolean = false;
-  public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
   public company: string;
   public user: string;
   public password: string;
   public checkLockInput: boolean = false;
+  public showPassword: boolean = false;
 
   constructor(
     private _authService: AuthService,
@@ -56,75 +55,61 @@ export class LoginComponent {
   }
 
   async login() {
-    this.company = this.loginForm.value.company.trim();
-    this.user = this.loginForm.value.user;
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    this.company = (this.loginForm.value.company ?? '').trim();
+    this.user = (this.loginForm.value.user ?? '').trim();
     this.password = this.loginForm.value.password;
 
-    if (!this.company.match(/^[a-z0-9]+$/)) {
-      this._toastService.showToast({
-        message: 'El negocio ingresado no fue encontrado.',
-        type: 'danger',
-      });
-    } else {
-      this.loading = true;
-      this._toastService.showToast({
-        message: 'Comprobando usuario...',
-        type: 'info',
-      });
+    this.loading = true;
 
-      this._authService.login(this.company, this.user, this.password).subscribe({
-        next: async (result) => {
-          this.loading = false;
-          if (!result.user) {
-            if (result.message && result.message !== '') {
-              this._toastService.showToast({
-                message: result.message,
-                type: 'info',
-              });
-            }
-          } else {
-            if (result.user.employee) {
-              this._toastService.showToast({
-                message: `¡Bienvenido ${result.user.employee.name}!`,
-                type: 'success',
-              });
-
-              this._authService.loginStorage(result.user);
-              localStorage.setItem('company', this.company);
-
-              // Actualizar información del cliente en Plausible
-              this._plausibleService.updateClient(this.company);
-
-              // Obtener la URL de retorno y navegar a ella
-              this._route.queryParams.subscribe({
-                next: (params) => {
-                  const returnUrl = params['return'] || '/';
-                  this._router.navigateByUrl(returnUrl);
-                },
-              });
-            } else {
-              this._toastService.showToast({
-                message: 'El usuario no tiene un empleado asociado.',
-                type: 'info',
-              });
-            }
-          }
-        },
-        error: (error) => {
-          this.loading = false;
-          if (error.status === 0) {
+    this._authService.login(this.company, this.user, this.password).subscribe({
+      next: async (result) => {
+        this.loading = false;
+        if (!result.user) {
+          if (result.message && result.message !== '') {
             this._toastService.showToast({
-              message: 'Error de conexión con el servidor. Comunicarse con Soporte.',
-              type: 'danger',
-            });
-          } else {
-            this._toastService.showToast({
-              message: error._body,
+              message: result.message,
               type: 'danger',
             });
           }
-        },
-      });
-    }
+        } else {
+          const u = result.user;
+          const welcomeName = u.employee?.name ?? u.name ?? u.email ?? '';
+          this._toastService.showToast({
+            message: welcomeName ? `¡Bienvenido ${welcomeName}!` : '¡Bienvenido!',
+            type: 'success',
+          });
+
+          this._authService.loginStorage(u);
+          localStorage.setItem('company', this.company);
+
+          this._plausibleService.updateClient(this.company);
+
+          this._route.queryParams.subscribe({
+            next: (params) => {
+              const returnUrl = params['return'] || '/';
+              this._router.navigateByUrl(returnUrl);
+            },
+          });
+        }
+      },
+      error: (error) => {
+        this.loading = false;
+        if (error.status === 0) {
+          this._toastService.showToast({
+            message: 'Error de conexión con el servidor. Comunicarse con Soporte.',
+            type: 'danger',
+          });
+        } else {
+          this._toastService.showToast({
+            message: error._body,
+            type: 'danger',
+          });
+        }
+      },
+    });
   }
 }

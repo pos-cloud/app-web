@@ -25,12 +25,50 @@ export class AuthService {
   }
 
   login(database: string, user: string, password: string): Observable<any> {
-    const URL = `${Config.apiURL}login`;
+    const URL = `${environment.apiv2}/auth/login?database=${encodeURIComponent(database)}`;
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-    return this._http.post(URL, { database, user, password }, { headers }).pipe(
-      map((res) => res),
-      catchError((err) => of(err))
+    const body: { password: string; platform: 'web'; name?: string; email?: string } = {
+      password,
+      platform: 'web',
+    };
+    const trimmed = user.trim();
+    if (trimmed.includes('@')) {
+      body.email = trimmed;
+    } else {
+      body.name = trimmed;
+    }
+
+    return this._http.post(URL, body, { headers }).pipe(
+      map((res: any) => {
+        const payload = res?.result ?? res;
+        if (!payload?.user) {
+          return {
+            message: res?.message ?? payload?.message ?? '',
+          };
+        }
+        const tokenPayload = payload.token;
+        const token =
+          typeof tokenPayload === 'string' ? tokenPayload : tokenPayload?.token;
+        if (!token) {
+          return { message: 'Respuesta de login inválida.' };
+        }
+        return {
+          user: { ...payload.user, token },
+        };
+      }),
+      catchError((err) => {
+        if (err?.status === 0) {
+          return of({
+            message: 'Error de conexión con el servidor. Comunicarse con Soporte.',
+          });
+        }
+        const msg =
+          err?.error?.message ??
+          err?.message ??
+          'No se pudo iniciar sesión. Verifique usuario y contraseña.';
+        return of({ message: msg });
+      })
     );
   }
 
