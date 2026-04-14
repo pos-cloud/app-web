@@ -13,11 +13,10 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { User, UserState } from '../user';
 
-import { Branch, CashBoxType, Company, Employee, Origin, Permission, Printer } from '@types';
+import { Branch, CashBoxType, Employee, Origin, Permission, Printer } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { CashBoxTypeService } from 'app/core/services/cash-box-type.service';
-import { CompanyService } from 'app/core/services/company.service';
 import { OriginService } from 'app/core/services/origin.service';
 import { PermissionService } from 'app/core/services/permission.service';
 import { PrinterService } from 'app/core/services/printer.service';
@@ -44,7 +43,6 @@ export class AddUserComponent implements OnInit {
   public loading: boolean = false;
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
   public employees: Employee[] = new Array();
-  public companies: Company[] = new Array();
   public origins: Origin[] = new Array();
   public cashBoxTypes: CashBoxType[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
@@ -83,7 +81,6 @@ export class AddUserComponent implements OnInit {
     state: '',
     origin: '',
     employee: '',
-    company: '',
     cashBoxType: '',
     level: '',
     tokenExpiration: '',
@@ -96,31 +93,14 @@ export class AddUserComponent implements OnInit {
     state: { required: 'Este campo es requerido.' },
     origin: {},
     employee: {},
-    company: {},
     cashBoxType: { validateAutocomplete: 'Debe ingresar un valor válido' },
     level: {},
     tokenExpiration: { required: 'Este campo es requerido.' },
   };
 
-  public searchCompanies = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => (this.loading = true)),
-      switchMap((term) =>
-        this.getCompanies(`where="name": { "$regex": "${term}", "$options": "i" }&limit=10`).then((companies) => {
-          return companies;
-        })
-      ),
-      tap(() => (this.loading = false))
-    );
-
-  public formatterCompanies = (x: { name: string }) => x.name;
-
   constructor(
     private _userService: UserService,
     private _employeeService: EmployeeService,
-    private _companyService: CompanyService,
     private _originService: OriginService,
     private _authService: AuthService,
     private _printerService: PrinterService,
@@ -167,7 +147,6 @@ export class AddUserComponent implements OnInit {
       state: [this.user.state, [Validators.required]],
       origin: [this.user.origin, []],
       employee: [this.user.employee, []],
-      company: [this.user.company, []],
       printers: this._fb.array([]),
       cashBoxType: [this.user.cashBoxType, [this.validateAutocomplete]],
       branch: [this.user.branch, []],
@@ -263,7 +242,6 @@ export class AddUserComponent implements OnInit {
     if (!this.user.email) this.user.email = '';
     if (!this.user.password) this.user.password = '';
     if (!this.user.state) this.user.state = UserState.Enabled;
-    if (!this.user.company) this.user.company = null;
     if (this.user.level === undefined) this.user.level = 99;
     if (this.user.tokenExpiration === undefined) this.user.tokenExpiration = 1440;
 
@@ -318,7 +296,6 @@ export class AddUserComponent implements OnInit {
       password: this.user.password,
       state: this.user.state,
       employee: employee,
-      company: this.user.company,
       origin: origin,
       cashBoxType: this.user.cashBoxType,
       branch: branch,
@@ -435,23 +412,6 @@ export class AddUserComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  private getCompanies(query): Promise<Company[]> {
-    return new Promise((resolve, reject) => {
-      this._companyService.getCompanies(query).subscribe(
-        (result) => {
-          if (!result.companies) {
-            resolve(null);
-          } else {
-            resolve(result.companies);
-          }
-        },
-        (error) => {
-          resolve(null);
-        }
-      );
-    });
   }
 
   public getOrigins(): void {

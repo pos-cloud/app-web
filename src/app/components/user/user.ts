@@ -1,4 +1,4 @@
-import { Branch, CashBoxType, Company, Employee, Permission, Printer } from '@types';
+import { Branch, CashBoxType, Employee, Permission, Printer } from '@types';
 import { Origin } from '../origin/origin';
 
 export class User {
@@ -12,7 +12,6 @@ export class User {
   public tokenExpiration: number = 9999;
   public employee: Employee = null;
   public cashBoxType: CashBoxType = null;
-  public company: Company = null;
   public origin: Origin = null;
   public branch: Branch;
   public shortcuts: [

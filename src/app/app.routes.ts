@@ -200,12 +200,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/usuarios-web',
-    component: ListUsersComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.app' },
-  },
-  {
     path: 'admin/metodos-de-pago',
     component: ListPaymentMethodsComponent,
     canActivate: [AuthGuard, LicenseGuard],

@@ -212,15 +212,6 @@
               [displayField]="'name'"
             ></app-typeahead-dropdown>
           </div>
-          <div class="form-group col-md-6">
-            <label for="company">Compañia Asociada:</label>
-            <app-typeahead-dropdown
-              [control]="userForm.get('company')"
-              [data]="companies"
-              [keyField]="'_id'"
-              [displayField]="'name'"
-            ></app-typeahead-dropdown>
-          </div>
           <div class="form-group col-md-4">
             <label for="origin" class="control-label">{{ 'origin.number' | translate | capitalize }}:</label>
             <app-typeahead-dropdown

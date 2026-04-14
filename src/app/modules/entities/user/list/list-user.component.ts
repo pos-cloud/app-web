@@ -95,15 +95,6 @@ export class ListUserComponent {
       required: false,
     },
     {
-      name: 'company.name',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      align: 'left',
-      required: false,
-    },
-    {
       name: 'origin.number',
       visible: false,
       disabled: false,

@@ -257,7 +257,6 @@ export class HeaderComponent implements OnInit {
           label: 'Gestión de Usuarios',
           children: [
             { label: 'Usuarios Sistema', link: 'entities/users' },
-            { label: 'Usuarios Web', link: 'admin/usuarios-web' },
             { label: 'Empleados', link: 'entities/employees' },
             { label: 'Tipos de Empleado', link: 'entities/employee-types' },
             { label: 'Permisos', link: '/entities/permissions' },
@@ -765,7 +764,6 @@ export class HeaderComponent implements OnInit {
               label: 'Gestión de Usuarios',
               children: [
                 { label: 'Usuarios Sistema', link: 'entities/users' },
-                { label: 'Usuarios Web', link: 'admin/usuarios-web' },
                 { label: 'Empleados', link: 'entities/employees' },
                 { label: 'Tipos de Empleado', link: 'entities/employee-types' },
                 { label: 'Permisos', link: 'entities/permissions' },

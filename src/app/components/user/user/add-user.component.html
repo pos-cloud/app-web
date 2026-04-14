@@ -187,27 +187,6 @@
                       {{ formErrors.employee }}
                     </div>
                   </div>
-                  <div class="form-group col-md-6">
-                    <ng-template #rtCompanies let-r="result" let-t="term">
-                      <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
-                    </ng-template>
-                    <label for="company">Compañia Asociada:</label>
-                    <input
-                      id="company"
-                      type="text"
-                      class="form-control"
-                      formControlName="company"
-                      name="company"
-                      [ngbTypeahead]="searchCompanies"
-                      [resultTemplate]="rtCompanies"
-                      [inputFormatter]="formatterCompanies"
-                      [readonly]="readonly"
-                    />
-                    <hr />
-                    <div *ngIf="formErrors.company" class="alert alert-danger">
-                      {{ formErrors.state }}
-                    </div>
-                  </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">

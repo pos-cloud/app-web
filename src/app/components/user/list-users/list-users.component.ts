@@ -83,17 +83,11 @@ export class ListUsersComponent implements OnInit {
   }
 
   public refresh(): void {
-    let pathLocation: string[] = this._router.url.split('/');
+    const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if (pathLocation[2] === 'usuarios') {
-      this.getUsers(
-        `where="$and":[{"employee":{ "$exists": true }},{"employee":{ "$ne": null }}]`
-      );
-    } else if (pathLocation[2] === 'usuarios-web') {
-      this.getUsers(
-        `where="$and":[{"company":{ "$exists": true }},{"company":{ "$ne": null }}]`
-      );
-    }
+    this.getUsers(
+      `where="$and":[{"employee":{ "$exists": true }},{"employee":{ "$ne": null }}]`
+    );
   }
 
   public openModal(op: string, user: User): void {

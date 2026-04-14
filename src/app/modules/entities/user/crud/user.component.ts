@@ -14,7 +14,6 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BranchService } from '@core/services/branch.service';
 import { CashBoxTypeService } from '@core/services/cash-box-type.service';
-import { CompanyService } from '@core/services/company.service';
 import { EmployeeService } from '@core/services/employee.service';
 import { MakeService } from '@core/services/make.service';
 import { OriginService } from '@core/services/origin.service';
@@ -23,7 +22,7 @@ import { PrinterService } from '@core/services/printer.service';
 import { UserService } from '@core/services/user.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
-import { Branch, CashBoxType, Company, Employee, Make, Origin, Permission, Printer, User } from '@types';
+import { Branch, CashBoxType, Employee, Make, Origin, Permission, Printer, User } from '@types';
 import { UserState } from 'app/components/user/user';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
@@ -55,7 +54,6 @@ export class UserComponent implements OnInit {
   public loading: boolean = false;
   public employees: Employee[];
   public cashBoxTypes: CashBoxType[];
-  public companies: Company[];
   public origins: Origin[];
   public branches: Branch[];
   public permissions: Permission[];
@@ -76,7 +74,6 @@ export class UserComponent implements OnInit {
     private _router: Router,
     private _toastService: ToastService,
     private _cashBoxTypeService: CashBoxTypeService,
-    private _companyService: CompanyService,
     private _originService: OriginService,
     private _branchService: BranchService,
     private _permissionService: PermissionService,
@@ -91,8 +88,7 @@ export class UserComponent implements OnInit {
       state: [UserState.Enabled, [Validators.required]],
 
       origin: [null, []],
-      employee: [null, [Validators.required]],
-      company: [null, []],
+      employee: [null, []],
       printers: this._fb.array([]),
       shortcuts: this._fb.array([]),
       cashBoxType: [null, []],
@@ -115,7 +111,6 @@ export class UserComponent implements OnInit {
     combineLatest({
       employees: this._employeeService.find({ query: { operationType: { $ne: 'D' } } }),
       cashBoxTypes: this._cashBoxTypeService.find({ query: { operationType: { $ne: 'D' } } }),
-      companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
       origins: this._originService.find({ query: { operationType: { $ne: 'D' } } }),
       branches: this._branchService.find({ query: { operationType: { $ne: 'D' } } }),
       permissions: this._permissionService.find({ query: { operationType: { $ne: 'D' } } }),
@@ -127,7 +122,7 @@ export class UserComponent implements OnInit {
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ employees, cashBoxTypes, companies, origins, branches, permissions, printers, makes }) => {
+        next: ({ employees, cashBoxTypes, origins, branches, permissions, printers, makes }) => {
           this.employees = employees ?? [];
           this.cashBoxTypes = cashBoxTypes ?? [];
           this.origins =
@@ -137,7 +132,6 @@ export class UserComponent implements OnInit {
             })) ?? [];
           this.branches = branches ?? [];
           this.permissions = permissions ?? [];
-          this.companies = companies ?? [];
           this.printers = printers ?? [];
           this.makes = (makes ?? []).sort((a, b) => (a?.description ?? '').localeCompare(b?.description ?? ''));
           this.makes.forEach((make) => {
@@ -198,7 +192,6 @@ export class UserComponent implements OnInit {
   public setValueForm() {
     const employee = this.employees.find((item) => item._id == this.user?.employee?.toString());
     const cashBoxType = this.cashBoxTypes.find((item) => item._id == this.user?.cashBoxType?.toString());
-    const company = this.companies.find((item) => item._id == this.user?.company?.toString());
     const origin = this.origins.find((item) => item._id == this.user?.origin?.toString());
     const branch = this.branches.find((item) => item._id == this.user?.branch?.toString());
     const permission = this.permissions.find((item) => item._id == this.user?.permission?.toString());
@@ -213,7 +206,6 @@ export class UserComponent implements OnInit {
       tokenExpiration: this.user?.tokenExpiration ?? 9999,
       employee: employee ?? null,
       cashBoxType: cashBoxType ?? null,
-      company: company ?? null,
       origin: origin ?? null,
       branch: branch ?? null,
       permission: permission ?? null,
@@ -469,7 +461,6 @@ export class UserComponent implements OnInit {
       tokenExpiration: v.tokenExpiration,
       employee: v.employee,
       cashBoxType: v.cashBoxType,
-      company: v.company,
       origin: v.origin,
       branch: v.branch,
       shortcuts: v.shortcuts,

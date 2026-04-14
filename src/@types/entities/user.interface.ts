@@ -1,4 +1,4 @@
-import { Activity, Branch, CashBoxType, Company, Employee, Make, Origin, Permission, Printer } from '@types';
+import { Activity, Branch, CashBoxType, Employee, Make, Origin, Permission, Printer } from '@types';
 
 export interface User extends Activity {
   _id: string;
@@ -11,7 +11,6 @@ export interface User extends Activity {
   tokenExpiration: number;
   employee: Employee | null;
   cashBoxType: CashBoxType | null;
-  company: Company | null;
   origin: Origin | null;
   branch: Branch;
   shortcuts: { name: string; url: string }[];
