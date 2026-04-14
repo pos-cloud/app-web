@@ -6,8 +6,9 @@
       </div>
     </div>
     <br />
-    <div class="row center-content">
-      <h5>Registro</h5>
+    <div class="row center-content register-header">
+      <h1 class="register-heading">Crear cuenta</h1>
+      <p class="register-subheading">Completá tus datos y empezá en minutos</p>
     </div>
     <hr />
     <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
@@ -24,7 +25,7 @@
                 id="fullName"
                 [focus]="focusEvent"
                 [ngClass]="{
-                  'is-invalid': registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid
+                  'is-invalid': registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid,
                 }"
               />
               <div
@@ -51,7 +52,7 @@
                 name="companyName"
                 id="companyName"
                 [ngClass]="{
-                  'is-invalid': registerForm.get('companyName')?.touched && registerForm.get('companyName')?.invalid
+                  'is-invalid': registerForm.get('companyName')?.touched && registerForm.get('companyName')?.invalid,
                 }"
               />
               <div
@@ -89,7 +90,7 @@
                 id="email"
                 placeholder="juan@example.com"
                 [ngClass]="{
-                  'is-invalid': registerForm.get('email')?.touched && registerForm.get('email')?.invalid
+                  'is-invalid': registerForm.get('email')?.touched && registerForm.get('email')?.invalid,
                 }"
               />
               <div
@@ -116,7 +117,7 @@
                 name="phone"
                 id="phone"
                 [ngClass]="{
-                  'is-invalid': registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid
+                  'is-invalid': registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid,
                 }"
               />
               <div
@@ -136,7 +137,7 @@
                 name="country"
                 id="country"
                 [ngClass]="{
-                  'is-invalid': registerForm.get('country')?.touched && registerForm.get('country')?.invalid
+                  'is-invalid': registerForm.get('country')?.touched && registerForm.get('country')?.invalid,
                 }"
               >
                 <option value="">Seleccione un país</option>
@@ -159,7 +160,8 @@
                 name="businessModel"
                 id="businessModel"
                 [ngClass]="{
-                  'is-invalid': registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.invalid
+                  'is-invalid':
+                    registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.invalid,
                 }"
               >
                 <option value="">Seleccione un tipo de negocio</option>
@@ -177,20 +179,13 @@
               </div>
             </div>
           </div>
-          <div class="row" *ngIf="getSelectedBusinessModel()">
-            <div class="col-md-12">
-              <small class="form-text text-muted">
-                {{ getSelectedBusinessModel()?.description }}
-              </small>
-            </div>
-          </div>
         </div>
       </div>
       <hr />
       <div class="row">
         <div class="center-content">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
               <label class="control-label section-label">Integraciones:</label>
               <small class="form-text text-muted"> Selecciona las integraciones que necesitas (opcional) </small>
               <div [formGroupName]="'integrations'" class="checkbox-group">
@@ -198,6 +193,18 @@
                   <label class="checkbox-label">
                     <input type="checkbox" [formControlName]="integration.key" class="checkbox-input" />
                     <span class="checkbox-text">{{ integration.name }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="control-label section-label">Módulos:</label>
+              <small class="form-text text-muted"> Selecciona los módulos que necesitas (opcional) </small>
+              <div [formGroupName]="'modules'" class="checkbox-group">
+                <div class="checkbox-item" *ngFor="let module of modules">
+                  <label class="checkbox-label">
+                    <input type="checkbox" [formControlName]="module.key" class="checkbox-input" />
+                    <span class="checkbox-text">{{ module.name }}</span>
                   </label>
                 </div>
               </div>
