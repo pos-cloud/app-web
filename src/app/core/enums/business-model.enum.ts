@@ -1,13 +1,16 @@
 export enum BusinessModel {
   Kiosco = 'kiosco',
   Supermercado = 'supermercado',
-  Restaurante = 'Restaurante',
+  Restaurante = 'restaurante',
   Mayorista = 'mayorista',
   Minorista = 'minorista',
   Panaderia = 'panaderia',
-  TiendaRopa = 'tiendaRopa',
+  TiendaRopa = 'tienda-ropa',
   Bar = 'bar',
   Estetica = 'estetica',
   Peluqueria = 'peluqueria',
+  SuscripcionesYMembresias = 'suscripciones-y-membresias',
+  Membresias = 'membresias',
+  Asociacion = 'asociacion',
   Otros = 'otros',
 }

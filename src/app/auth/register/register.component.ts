@@ -49,65 +49,74 @@ export class RegisterComponent implements OnInit {
     {
       key: BusinessModel.Kiosco,
       name: 'Kiosco',
-      description: 'Pequeño negocio de venta al por menor',
     },
     {
       key: BusinessModel.Supermercado,
       name: 'Supermercado',
-      description: 'Gran superficie de venta al público',
     },
     {
       key: BusinessModel.Restaurante,
       name: 'Restaurante',
-      description: 'Negocio de comida y bebidas',
     },
     {
       key: BusinessModel.Mayorista,
       name: 'Mayorista',
-      description: 'Venta al por mayor',
     },
     {
       key: BusinessModel.Minorista,
       name: 'Minorista',
-      description: 'Tienda minorista general',
     },
     {
       key: BusinessModel.Panaderia,
       name: 'Panadería',
-      description: 'Elaboración y venta de panadería',
     },
     {
       key: BusinessModel.TiendaRopa,
       name: 'Tienda de Ropa',
-      description: 'Venta de prendas y accesorios de vestir',
     },
     {
       key: BusinessModel.Bar,
       name: 'Bar',
-      description: 'Negocio de bebidas y aperitivos',
     },
     {
       key: BusinessModel.Estetica,
       name: 'Estética',
-      description: 'Negocio de estética',
     },
     {
       key: BusinessModel.Peluqueria,
       name: 'Peluquería',
-      description: 'Negocio de peluquería',
+    },
+    {
+      key: BusinessModel.SuscripcionesYMembresias,
+      name: 'Suscripciones y membresías',
+    },
+    {
+      key: BusinessModel.Membresias,
+      name: 'Membresías',
+    },
+    {
+      key: BusinessModel.Asociacion,
+      name: 'Asociación',
     },
     {
       key: BusinessModel.Otros,
       name: 'Otro tipo de negocio',
-      description: 'Selecciona si tu negocio no encaja en las categorías anteriores',
     },
   ];
 
   public integrations = [
-    { key: 'tiendaNube', name: 'Tienda Nube' },
-    { key: 'wooCommerce', name: 'WooCommerce' },
-    { key: 'facturacionElectronica', name: 'Facturación Electrónica' },
-    { key: 'mercadoLibre', name: 'Mercado Libre' },
+    { key: 'tienda-nube', name: 'Tienda Nube' },
+    { key: 'woo-commerce', name: 'WooCommerce' },
+    { key: 'facturacion-electronica', name: 'Facturación Electrónica' },
+    { key: 'mercado-libre', name: 'Mercado Libre' },
+  ];
+
+  public modules = [
+    { key: 'ventas', name: 'Ventas' },
+    { key: 'compras', name: 'Compras' },
+    { key: 'stock', name: 'Stock' },
+    { key: 'caja', name: 'Caja' },
+    { key: 'produccion', name: 'Producción' },
   ];
 
   constructor(
@@ -132,6 +141,12 @@ export class RegisterComponent implements OnInit {
       integrationControls[integration.key] = [false];
     });
 
+    // Crear FormControls para cada módulo
+    const moduleControls: any = {};
+    this.modules.forEach((module) => {
+      moduleControls[module.key] = [false];
+    });
+
     this.registerForm = this._fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       companyName: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z0-9]+$')]],
@@ -140,6 +155,7 @@ export class RegisterComponent implements OnInit {
       country: ['', [Validators.required]],
       businessModel: ['', [Validators.required]],
       integrations: this._fb.group(integrationControls),
+      modules: this._fb.group(moduleControls),
     });
 
     this.focusEvent.emit(true);
@@ -180,6 +196,11 @@ export class RegisterComponent implements OnInit {
       .filter((integration) => this.registerForm.get(`integrations.${integration.key}`)?.value)
       .map((integration) => integration.key);
 
+    // Obtener módulos seleccionados
+    const selectedModules = this.modules
+      .filter((module) => this.registerForm.get(`modules.${module.key}`)?.value)
+      .map((module) => module.key);
+
     const registerData = {
       fullName: this.registerForm.value.fullName,
       companyName: this.registerForm.value.companyName,
@@ -188,6 +209,7 @@ export class RegisterComponent implements OnInit {
       country: this.registerForm.value.country,
       businessModel: selectedBusinessModel.key,
       integrations: selectedIntegrations,
+      modules: selectedModules,
     };
 
     this._authService.register(registerData).subscribe({
