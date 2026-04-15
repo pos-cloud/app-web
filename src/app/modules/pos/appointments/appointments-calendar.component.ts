@@ -5,11 +5,10 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Appointment, Company } from '@types';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { AppointmentFormModalComponent } from './components/appointment-form-modal/appointment-form-modal.component';
 import {
   addDays,
-  argentinaCalendarDayKey,
   appointmentLocalDayKey,
+  argentinaCalendarDayKey,
   buildMonthGrid,
   buildWeekDayHeaders,
   CalendarViewMode,
@@ -24,11 +23,12 @@ import {
   MonthCell,
   startOfWeekSunday,
   stripTime,
-  WeekEventLayout,
   WEEK_VIEW_END_HOUR,
   WEEK_VIEW_START_HOUR,
   WeekDayHeader,
+  WeekEventLayout,
 } from './appointments-calendar.helpers';
+import { AppointmentFormModalComponent } from './components/appointment-form-modal/appointment-form-modal.component';
 
 @Component({
   selector: 'app-pos-appointments-calendar',
@@ -57,7 +57,10 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
   private readonly today = stripTime(new Date());
   private destroy$ = new Subject<void>();
 
-  constructor(private _appointmentService: AppointmentService, private _modal: NgbModal) {}
+  constructor(
+    private _appointmentService: AppointmentService,
+    private _modal: NgbModal
+  ) {}
 
   ngOnInit(): void {
     this.hourSlots = createHourSlots(WEEK_VIEW_START_HOUR, WEEK_VIEW_END_HOUR);
@@ -176,9 +179,6 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
 
   /** Vista semana: rango horario tipo calendario (ej. 09:00 – 10:30). */
   protected weekEventTimeLabel(apt: Appointment): string {
-    if (apt.allDay) {
-      return 'Todo el día';
-    }
     const opt: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
     const fmt = new Intl.DateTimeFormat('es-AR', opt);
     return `${fmt.format(new Date(apt.startDate))} – ${fmt.format(new Date(apt.endDate))}`;
@@ -241,15 +241,6 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
     const colW = 100 / columnCount;
     const leftPct = (column / columnCount) * 100;
 
-    if (apt.allDay) {
-      return {
-        top: '0',
-        height: '34px',
-        left: `${leftPct}%`,
-        width: `${colW}%`,
-        right: 'auto',
-      };
-    }
     const start = new Date(apt.startDate);
     const end = new Date(apt.endDate);
     const dayStart = new Date(

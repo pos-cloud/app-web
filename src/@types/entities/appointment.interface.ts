@@ -66,7 +66,6 @@ export interface AppointmentCreatePayload {
   description?: string;
   startDate: string;
   endDate: string;
-  allDay: boolean;
   status?: AppointmentStatus;
   recurrence?: AppointmentRecurrenceRule;
 }
@@ -84,7 +83,6 @@ export interface Appointment extends Activity {
   description?: string;
   startDate: string;
   endDate: string;
-  allDay: boolean;
   /** Por defecto en back: `scheduled`. */
   status?: AppointmentStatus;
   /**

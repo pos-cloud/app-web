@@ -11,3 +11,12 @@
   flex-wrap: wrap;
   gap: 0.35rem 0.75rem;
 }
+
+.appt-company-row {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  .mr-2 {
+    min-width: 0;
+  }
+}

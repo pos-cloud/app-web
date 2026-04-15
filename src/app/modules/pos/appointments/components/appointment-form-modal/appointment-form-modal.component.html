@@ -8,14 +8,27 @@
 <div class="modal-body">
   <form [formGroup]="form" (ngSubmit)="$event.preventDefault()">
     <div class="form-group">
-      <label for="appt-company">Empresa</label>
-      <app-typeahead-dropdown
-        [control]="companyControl"
-        [data]="companies"
-        [keyField]="'_id'"
-        [displayField]="'name'"
-        placeholder="Buscar empresa"
-      ></app-typeahead-dropdown>
+      <label for="appt-company">Paciente</label>
+      <div class="d-flex align-items-start appt-company-row">
+        <div class="flex-grow-1 mr-2">
+          <app-typeahead-dropdown
+            [control]="companyControl"
+            [data]="companies"
+            [keyField]="'_id'"
+            [displayField]="'name'"
+            placeholder="Buscar Paciente"
+          ></app-typeahead-dropdown>
+        </div>
+        <button
+          type="button"
+          class="btn btn-outline-primary text-nowrap"
+          [disabled]="loading"
+          (click)="openCreateClientModal()"
+          title="Crear Paciente nuevo"
+        >
+          Nuevo Paciente
+        </button>
+      </div>
     </div>
     <div class="form-group">
       <label for="appt-title">Título</label>
@@ -43,11 +56,11 @@
       </select>
     </div>
 
-    <ng-container *ngIf="!appointment?._id && false" formGroupName="recurrence">
+    <ng-container *ngIf="!appointment?._id" formGroupName="recurrence">
       <hr class="appt-rec-hr" />
       <div class="form-check mb-2">
         <input id="appt-rec-on" type="checkbox" class="form-check-input" formControlName="enabled" />
-        <label class="form-check-label" for="appt-rec-on">Repetir turno</label>
+        <label class="form-check-label" for="appt-rec-on">Repetir turno (recurrencia)</label>
       </div>
       <ng-container *ngIf="form.get('recurrence.enabled')?.value">
         <div class="form-row">
@@ -60,11 +73,16 @@
           <div class="form-group col-md-6">
             <label for="appt-rec-int">Cada</label>
             <input id="appt-rec-int" type="number" class="form-control" formControlName="interval" min="1" max="99" />
-            <small class="form-text text-muted">Unidades según frecuencia (ej. cada 2 semanas → 2).</small>
+            <small class="form-text text-muted">
+              Diaria: cada N día(s) (ej. 15 = cada 15 días). Semanal: cada N semana(s). Mensual: cada N mes(es).
+            </small>
           </div>
         </div>
         <div class="form-group" *ngIf="form.get('recurrence.frequency')?.value === 'weekly'" formGroupName="weekdays">
           <span class="d-block mb-1">Días de la semana</span>
+          <small class="form-text text-muted d-block mb-2"
+            >Marcá los días en que se repite; debe incluir el día de la fecha de inicio.</small
+          >
           <div class="appt-weekday-checks">
             <div *ngFor="let d of weekdayCheckboxes" class="form-check form-check-inline">
               <input class="form-check-input" type="checkbox" [id]="'appt-dow-' + d.key" [formControlName]="d.key" />

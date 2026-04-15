@@ -1,15 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormControl,
-  ReactiveFormsModule,
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormControl, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AppointmentService } from '@core/services/appointment.service';
 import { CompanyService } from '@core/services/company.service';
-import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   ApiResponse,
@@ -21,7 +15,9 @@ import {
   AppointmentStatus,
   AppointmentWeekday,
   Company,
+  CompanyType,
 } from '@types';
+import { CompanyComponent } from 'app/modules/entities/company/crud/company.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { Subject } from 'rxjs';
@@ -59,8 +55,8 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
   ];
 
   public readonly recurrenceFrequencyOptions: { value: AppointmentRecurrenceFrequency; label: string }[] = [
-    { value: 'daily', label: 'Diaria' },
-    { value: 'weekly', label: 'Semanal' },
+    { value: 'daily', label: 'Diaria (cada N día(s))' },
+    { value: 'weekly', label: 'Semanal (ej. todos los lunes)' },
     { value: 'monthly', label: 'Mensual' },
   ];
 
@@ -81,7 +77,8 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
     private _fb: UntypedFormBuilder,
     private _appointmentService: AppointmentService,
     private _companyService: CompanyService,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private _modalService: NgbModal
   ) {
     this.form = this._fb.group({
       _id: [''],
@@ -95,7 +92,8 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
         enabled: [false],
         frequency: ['weekly' as AppointmentRecurrenceFrequency],
         interval: [1, [Validators.min(1)]],
-        endType: ['until' as 'until' | 'count'],
+        /** Por defecto "N ocurrencias": si no, muchos usuarios dejan "Hasta fecha" (+56 días) y esperaban el número de "Cantidad". */
+        endType: ['count' as 'until' | 'count'],
         untilDate: [''],
         count: [10, [Validators.min(2), Validators.max(366)]],
         monthlyMode: ['dayOfMonth' as AppointmentMonthlyRecurrenceMode],
@@ -114,6 +112,31 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
 
   get companyControl(): FormControl {
     return this.form.get('company') as FormControl;
+  }
+
+  /** Abre el alta de cliente (mismo flujo que en POS / select-company). */
+  openCreateClientModal(): void {
+    const modalRef = this._modalService.open(CompanyComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.property = {
+      companyId: null,
+      operation: 'add',
+      type: CompanyType.Client,
+    };
+    modalRef.result.then(
+      (result: { company?: Company }) => {
+        const c = result?.company;
+        if (c?._id) {
+          if (!this.companies.some((x) => x._id === c._id)) {
+            this.companies = [...this.companies, c];
+          }
+          this.companyControl.patchValue(c);
+        }
+      },
+      () => {}
+    );
   }
 
   ngOnInit(): void {
@@ -221,7 +244,6 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
       description: (v.description as string)?.trim() || undefined,
       startDate: formatInstantAsArgentinaOffsetIso(start),
       endDate: formatInstantAsArgentinaOffsetIso(end),
-      allDay: v._id ? !!this.appointment?.allDay : false,
       status: v.status as AppointmentStatus,
     };
 
@@ -365,9 +387,7 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
         frequency,
         interval,
         untilDate,
-        ...(frequency === 'weekly'
-          ? { byWeekday: this.collectWeekdays(rec.weekdays as Record<string, boolean>) }
-          : {}),
+        ...(frequency === 'weekly' ? { byWeekday: this.collectWeekdays(rec.weekdays as Record<string, boolean>) } : {}),
         ...(frequency === 'monthly' ? { monthlyMode: rec.monthlyMode as AppointmentMonthlyRecurrenceMode } : {}),
       };
       return rule;
@@ -385,9 +405,7 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
       frequency,
       interval,
       count,
-      ...(frequency === 'weekly'
-        ? { byWeekday: this.collectWeekdays(rec.weekdays as Record<string, boolean>) }
-        : {}),
+      ...(frequency === 'weekly' ? { byWeekday: this.collectWeekdays(rec.weekdays as Record<string, boolean>) } : {}),
       ...(frequency === 'monthly' ? { monthlyMode: rec.monthlyMode as AppointmentMonthlyRecurrenceMode } : {}),
     };
     return rule;
@@ -399,5 +417,4 @@ export class AppointmentFormModalComponent implements OnInit, OnDestroy {
       .map((k) => Number(k) as AppointmentWeekday)
       .sort((a, b) => a - b);
   }
-
 }

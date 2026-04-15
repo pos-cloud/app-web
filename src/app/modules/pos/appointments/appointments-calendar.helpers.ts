@@ -48,11 +48,11 @@ export function stripTime(d: Date): Date {
  * Día civil Argentina del inicio del turno (misma TZ que el formulario y el guardado).
  * Vista mes y semana usan la misma clave para no “perder” eventos entre vistas.
  */
-export function appointmentLocalDayKey(a: { startDate: string; allDay?: boolean }): string {
+export function appointmentLocalDayKey(a: { startDate: string }): string {
   return argentinaCalendarDayKey(a.startDate);
 }
 
-export function appointmentMonthGridDayKey(a: { startDate: string; allDay?: boolean }): string {
+export function appointmentMonthGridDayKey(a: { startDate: string }): string {
   return argentinaCalendarDayKey(a.startDate);
 }
 
@@ -133,9 +133,7 @@ export function createHourSlots(startHour: number, endHour: number): HourSlot[] 
 }
 
 export function formatMonthTitle(year: number, month: number): string {
-  let label = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' }).format(
-    new Date(year, month, 1)
-  );
+  let label = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' }).format(new Date(year, month, 1));
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
@@ -175,15 +173,7 @@ export function getMonthRangeISO(viewAnchor: Date): { from: string; to: string }
 
 /** Rango para la semana de 7 días desde `weekStart` (p. ej. domingo 00:00 local). */
 export function getWeekRangeISO(weekStart: Date): { from: string; to: string } {
-  const from = new Date(
-    weekStart.getFullYear(),
-    weekStart.getMonth(),
-    weekStart.getDate(),
-    0,
-    0,
-    0,
-    0
-  );
+  const from = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate(), 0, 0, 0, 0);
   const lastMorning = addDays(from, 6);
   const lastDayEnd = new Date(
     lastMorning.getFullYear(),
@@ -228,11 +218,6 @@ function intervalsOverlap(a: { start: number; end: number }, b: { start: number;
 
 /** Rango en ms para solapes: todo el día civil local del `dayDate` o start/end reales. */
 function rangeMsForOverlap(apt: Appointment, dayDate: Date): { start: number; end: number } {
-  if (apt.allDay) {
-    const s = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 0, 0, 0, 0);
-    const e = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 23, 59, 59, 999);
-    return { start: s.getTime(), end: e.getTime() };
-  }
   return { start: new Date(apt.startDate).getTime(), end: new Date(apt.endDate).getTime() };
 }
 
