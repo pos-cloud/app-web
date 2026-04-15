@@ -1,17 +1,30 @@
 <section class="container-fluid">
-  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
-    <div class="form-group w-50 me-2">
+  <div class="d-flex align-items-end justify-content-between mb-3 flex-wrap">
+    <div class="form-group flex-grow-1 me-2" style="min-width: 420px; max-width: 760px">
       <label for="company" class="control-label">
         <b>{{ 'company' | translate | capitalize }}</b>
       </label>
-      <input
-        type="text"
-        class="form-control"
-        name="company"
-        id="company"
-        [(ngModel)]="company"
-        (keyup.enter)="getReport()"
-      />
+
+      <div class="d-flex align-items-stretch w-100">
+        <app-typeahead-dropdown
+          class="flex-grow-1"
+          style="width: 100%"
+          [control]="companyControl"
+          [data]="companies"
+          [keyField]="'_id'"
+          [displayField]="'name'"
+          placeholder="Buscar Cliente"
+        ></app-typeahead-dropdown>
+        <button
+          class="btn btn-light ms-2 px-3"
+          type="button"
+          [disabled]="!companyControl?.value?._id"
+          (click)="viewSelectedCompany()"
+          [title]="'view' | translate | capitalize"
+        >
+          <i class="fa fa-eye"></i>
+        </button>
+      </div>
     </div>
 
     <div class="form-group mr-2">

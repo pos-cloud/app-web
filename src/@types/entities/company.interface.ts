@@ -64,6 +64,14 @@ export interface Company extends Activity {
     dermatologicalProblems?: string;
     previousCosmeticTreatments?: string;
     useSunscreen?: boolean;
+    /** ¿Fuma? */
+    smokes?: boolean;
+    /** Trabajo / ocupación */
+    occupation?: string;
+    /** Nivel de estrés */
+    stressLevel?: string;
+    /** Hábitos alimenticios */
+    eatingHabits?: string;
     physicalActivity?: string;
     dailyWaterConsumption?: string;
     medicalHistory?: string;
