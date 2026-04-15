@@ -178,7 +178,7 @@
             <textarea class="form-control" formControlName="observation" name="observation" id="observation"></textarea>
           </div>
         </div>
-        <div *ngIf="database === 'ikigai'" formGroupName="clientFile">
+        <div *ngIf="showClientFile" formGroupName="clientFile">
           <hr />
           <div class="row">
             <label class="form-group col-md-12">
@@ -242,8 +242,8 @@
             </label>
           </div>
           <div class="row">
-            <div class="form-group col-md-4">
-              <label class="form-check-label" for="clientFile-isPregnant">{{
+            <div class="form-group col-md-1">
+              <label class="control-label" for="clientFile-isPregnant">{{
                 'company.clientFile.isPregnant' | translate | capitalize
               }}</label>
               <select class="form-control" formControlName="isPregnant">
@@ -251,7 +251,7 @@
                 <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
               </select>
             </div>
-            <div class="form-group col-md-4">
+            <!-- <div class="form-group col-md-4">
               <label class="form-check-label" for="clientFile-takeMedication">{{
                 'company.clientFile.takeMedication' | translate | capitalize
               }}</label>
@@ -268,33 +268,8 @@
                 <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
                 <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
               </select>
-            </div>
-
-            <div class="form-group col-md-4">
-              <label class="control-label" for="clientFile-dermatologicalProblems">{{
-                'company.clientFile.dermatologicalProblems' | translate | capitalize
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                id="clientFile-dermatologicalProblems"
-                formControlName="dermatologicalProblems"
-                autocomplete="off"
-              />
-            </div>
-            <div class="form-group col-md-4">
-              <label class="control-label" for="clientFile-previousCosmeticTreatments">{{
-                'company.clientFile.previousCosmeticTreatments' | translate | capitalize
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                id="clientFile-previousCosmeticTreatments"
-                formControlName="previousCosmeticTreatments"
-                autocomplete="off"
-              />
-            </div>
-            <div class="form-group col-md-4">
+            </div> -->
+            <div class="form-group col-md-1">
               <label class="control-label" for="clientFile-useSunscreen">{{
                 'company.clientFile.useSunscreen' | translate | capitalize
               }}</label>
@@ -302,6 +277,76 @@
                 <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
                 <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
               </select>
+            </div>
+
+            <div class="form-group col-md-5">
+              <label class="control-label" for="clientFile-dermatologicalProblems">{{
+                'company.clientFile.dermatologicalProblems' | translate | capitalize
+              }}</label>
+              <textarea
+                class="form-control"
+                formControlName="dermatologicalProblems"
+                name="dermatologicalProblems"
+                id="clientFile-dermatologicalProblems"
+              ></textarea>
+            </div>
+            <div class="form-group col-md-5">
+              <label class="control-label" for="clientFile-previousCosmeticTreatments">{{
+                'company.clientFile.previousCosmeticTreatments' | translate | capitalize
+              }}</label>
+              <textarea
+                class="form-control"
+                formControlName="previousCosmeticTreatments"
+                name="previousCosmeticTreatments"
+                id="clientFile-previousCosmeticTreatments"
+              ></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-2">
+              <label class="control-label" for="clientFile-smokes">{{
+                'company.clientFile.smokes' | translate | capitalize
+              }}</label>
+              <select class="form-control" formControlName="smokes" id="clientFile-smokes">
+                <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+                <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-occupation">{{
+                'company.clientFile.occupation' | translate | capitalize
+              }}</label>
+              <textarea
+                class="form-control"
+                formControlName="occupation"
+                name="occupation"
+                id="clientFile-occupation"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="form-group col-md-3">
+              <label class="control-label" for="clientFile-stressLevel">{{
+                'company.clientFile.stressLevel' | translate | capitalize
+              }}</label>
+              <textarea
+                class="form-control"
+                formControlName="stressLevel"
+                name="stressLevel"
+                id="clientFile-stressLevel"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="form-group col-md-4">
+              <label class="control-label" for="clientFile-eatingHabits">{{
+                'company.clientFile.eatingHabits' | translate | capitalize
+              }}</label>
+              <textarea
+                class="form-control"
+                formControlName="eatingHabits"
+                name="eatingHabits"
+                id="clientFile-eatingHabits"
+                rows="2"
+              ></textarea>
             </div>
           </div>
           <hr />
@@ -315,85 +360,80 @@
               <label class="control-label" for="clientFile-physicalActivity">{{
                 'company.clientFile.physicalActivity' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-physicalActivity"
                 formControlName="physicalActivity"
-                autocomplete="off"
-              />
+                name="physicalActivity"
+                id="clientFile-physicalActivity"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-dailyWaterConsumption">{{
                 'company.clientFile.dailyWaterConsumption' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+
+              <textarea
                 class="form-control"
-                id="clientFile-dailyWaterConsumption"
                 formControlName="dailyWaterConsumption"
-                autocomplete="off"
-              />
+                name="dailyWaterConsumption"
+                id="clientFile-dailyWaterConsumption"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-medicalHistory">{{
                 'company.clientFile.medicalHistory' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+
+              <textarea
                 class="form-control"
-                id="clientFile-medicalHistory"
                 formControlName="medicalHistory"
-                autocomplete="off"
-              />
+                name="medicalHistory"
+                id="clientFile-medicalHistory"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-currentMedication">{{
                 'company.clientFile.currentMedication' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-currentMedication"
                 formControlName="currentMedication"
-                autocomplete="off"
-              />
+                name="currentMedication"
+                id="clientFile-currentMedication"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-previousSurgeries">{{
                 'company.clientFile.previousSurgeries' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-previousSurgeries"
                 formControlName="previousSurgeries"
-                autocomplete="off"
-              />
+                name="previousSurgeries"
+                id="clientFile-previousSurgeries"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-allergies">{{
                 'company.clientFile.allergies' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-allergies"
                 formControlName="allergies"
-                autocomplete="off"
-              />
+                name="allergies"
+                id="clientFile-allergies"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-treatmentGoals">{{
                 'company.clientFile.treatmentGoals' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-treatmentGoals"
                 formControlName="treatmentGoals"
-                autocomplete="off"
-              />
+                name="treatmentGoals"
+                id="clientFile-treatmentGoals"
+              ></textarea>
             </div>
           </div>
         </div>

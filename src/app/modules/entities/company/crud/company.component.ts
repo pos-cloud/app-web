@@ -37,6 +37,7 @@ import {
   VATCondition,
 } from '@types';
 import { Config } from 'app/app.config';
+import { BusinessModel } from 'app/core/enums/business-model.enum';
 import { AccountService } from 'app/core/services/account.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
@@ -88,7 +89,7 @@ export class CompanyComponent implements OnInit {
   public identificationTypes: IdentificationType[];
   public type: string;
   public genders: any[] = ['', GenderType.Male, GenderType.Female];
-  database: string;
+  public BusinessModel = BusinessModel;
 
   constructor(
     public _companyService: CompanyService,
@@ -153,11 +154,14 @@ export class CompanyComponent implements OnInit {
         mostAffectedZone: ['', []],
         sensitivity: ['', []],
         isPregnant: [false, []],
-        takeMedication: [false, []],
-        haveAllergies: [false, []],
+
         useSunscreen: [false, []],
         dermatologicalProblems: ['', []],
         previousCosmeticTreatments: ['', []],
+        smokes: [false, []],
+        occupation: ['', []],
+        stressLevel: ['', []],
+        eatingHabits: ['', []],
         physicalActivity: ['', []],
         dailyWaterConsumption: ['', []],
         medicalHistory: ['', []],
@@ -170,8 +174,10 @@ export class CompanyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.database = localStorage.getItem('company');
-    console.log(this.database);
+    this._configService.getConfig.subscribe((config) => {
+      this.config = config;
+    });
+
     if (this.property) {
       this.operation = this.property.operation;
       this.companyId = this.property.companyId;
@@ -196,7 +202,6 @@ export class CompanyComponent implements OnInit {
       priceLists: this._priceListService.find({ query: { operationType: { $ne: 'D' } } }),
       identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       accounts: this._accountService.find({ query: { operationType: { $ne: 'D' }, mode: 'Analitico' } }),
-      config: this._configService.find({ query: { operationType: { $ne: 'D' } } }),
       article: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
       paymentMethod: this._paymentMethod.find({ query: { operationType: { $ne: 'D' } } }),
     })
@@ -213,7 +218,6 @@ export class CompanyComponent implements OnInit {
           priceLists,
           identificationTypes,
           accounts,
-          config,
           paymentMethod,
           article,
         }) => {
@@ -227,7 +231,6 @@ export class CompanyComponent implements OnInit {
           this.priceLists = priceLists ?? [];
           this.identificationTypes = identificationTypes ?? [];
           this.accounts = accounts ?? [];
-          this.config = config[0] ?? null;
           this.articles = article ?? null;
           this.paymentMethods = paymentMethod;
 
@@ -244,6 +247,15 @@ export class CompanyComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  public get showClientFile(): boolean {
+    const businessModel = this.config?.businessModel;
+    if (typeof businessModel !== 'string') {
+      return false;
+    }
+
+    return businessModel.trim().toLowerCase() === BusinessModel.Estetica;
   }
 
   ngAfterViewInit() {
@@ -339,11 +351,13 @@ export class CompanyComponent implements OnInit {
 
         // Historial de salud
         isPregnant: this.company?.clientFile?.isPregnant ?? false,
-        takeMedication: this.company?.clientFile?.takeMedication ?? false,
-        haveAllergies: this.company?.clientFile?.haveAllergies ?? false,
         dermatologicalProblems: this.company?.clientFile?.dermatologicalProblems ?? '',
         previousCosmeticTreatments: this.company?.clientFile?.previousCosmeticTreatments ?? '',
         useSunscreen: this.company?.clientFile?.useSunscreen ?? false,
+        smokes: this.company?.clientFile?.smokes ?? false,
+        occupation: this.company?.clientFile?.occupation ?? '',
+        stressLevel: this.company?.clientFile?.stressLevel ?? '',
+        eatingHabits: this.company?.clientFile?.eatingHabits ?? '',
 
         //Historia clínica estética
         physicalActivity: this.company?.clientFile?.physicalActivity ?? '',

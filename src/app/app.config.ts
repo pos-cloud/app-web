@@ -110,6 +110,7 @@ export class Config {
     // appID: string;
     // clientSecret: string;
   };
+  businessModel: any;
 
   constructor() {
     Config.updateApiURL();
