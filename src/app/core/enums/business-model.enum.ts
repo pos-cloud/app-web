@@ -10,7 +10,6 @@ export enum BusinessModel {
   Estetica = 'estetica',
   Peluqueria = 'peluqueria',
   SuscripcionesYMembresias = 'suscripciones-y-membresias',
-  Membresias = 'membresias',
   Asociacion = 'asociacion',
   Otros = 'otros',
 }

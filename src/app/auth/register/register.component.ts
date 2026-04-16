@@ -91,10 +91,6 @@ export class RegisterComponent implements OnInit {
       name: 'Suscripciones y membresías',
     },
     {
-      key: BusinessModel.Membresias,
-      name: 'Membresías',
-    },
-    {
       key: BusinessModel.Asociacion,
       name: 'Asociación',
     },
