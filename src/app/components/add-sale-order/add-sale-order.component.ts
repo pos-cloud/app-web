@@ -222,18 +222,6 @@ export class AddSaleOrderComponent {
     this._configService.getConfig.subscribe((config) => {
       this.config = config;
       this.userCountry = this.config['country'];
-      // if (this.userCountry === 'MX') {
-      //   this.getUsesOfCFDI().then((usesOfCFDI) => {
-      //     if (usesOfCFDI) {
-      //       this.usesOfCFDI = usesOfCFDI;
-      //     }
-      //   });
-      //   this.getRelationTypes().then((relationTypes) => {
-      //     if (relationTypes) {
-      //       this.relationTypes = relationTypes;
-      //     }
-      //   });
-      // }
     });
 
     this._authService.getIdentity.subscribe((identity) => {
