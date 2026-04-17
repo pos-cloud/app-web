@@ -81,7 +81,6 @@ export const _routes: Routes = [
     path: 'admin/venta/statistics',
     component: StatisticsComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'cheque',
@@ -92,61 +91,51 @@ export const _routes: Routes = [
     path: 'admin/venta/productos-mas-vendidos',
     component: ReportBestSellingArticleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'admin/venta/ventas-por-metodo-de-pago',
     component: ReportSalesByPaymentMethodComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'admin/venta/marcas-mas-vendidas',
     component: ReportSalesByMakeComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'admin/venta/ventas-por-cliente',
     component: ReportSalesByClientComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'admin/compra/statistics',
     component: StatisticsComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'admin/compra/productos-mas-comprados',
     component: ReportBestSellingArticleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'admin/compra/compras-por-metodo-de-pago',
     component: ReportSalesByPaymentMethodComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'admin/compra/marcas-mas-compradas',
     component: ReportSalesByMakeComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'admin/compra/compras-por-proveedor',
     component: ReportSalesByClientComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'admin/cajas',
     component: ListCashBoxesComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' },
   },
   {
     path: 'admin/variantes',
@@ -157,31 +146,26 @@ export const _routes: Routes = [
     path: 'admin/ventas',
     component: ListTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'admin/compras',
     component: ListTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'admin/stock',
     component: ListTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.stock' },
   },
   {
     path: 'admin/fondos',
     component: ListTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' },
   },
   {
     path: 'admin/production',
     component: ListTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    //data: { module: 'config.modules.production' }
   },
   {
     path: 'admin/variantes/:id',
@@ -213,7 +197,6 @@ export const _routes: Routes = [
     path: 'admin/cuentas-corrientes',
     component: CurrentAccountComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'report/venta/movimientos-de-cancellaciones',
@@ -229,7 +212,6 @@ export const _routes: Routes = [
     path: 'report/list-box/:cashBoxId',
     component: ListCashBoxComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' },
   },
   {
     path: 'admin/export-citi',
@@ -245,7 +227,6 @@ export const _routes: Routes = [
     path: 'admin/stock-de-productos',
     component: ListArticleStocksComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.stock' },
   },
   {
     path: 'admin/impuestos',
@@ -266,25 +247,21 @@ export const _routes: Routes = [
     path: 'report/cartera-de-cheques',
     component: ListChecksComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' },
   },
   {
     path: 'admin/venta/movimientos-de-medios',
     component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'admin/compra/movimientos-de-medios',
     component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'admin/fondos/movimientos-de-medios',
     component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' },
   },
   {
     path: 'admin/template-emails',
@@ -295,13 +272,11 @@ export const _routes: Routes = [
     path: 'pos/resto/salones/:id/mesas',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' },
   },
   {
     path: 'pos/resto/salones/:id/mesas/:id/editar-transaccion',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' },
   },
   {
     path: 'report/current-account',
@@ -317,31 +292,26 @@ export const _routes: Routes = [
     path: 'pos/mostrador/venta',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.counter' },
   },
   {
     path: 'pos/mostrador/compra',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.purchase' },
   },
   {
     path: 'pos/mostrador/fondo',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.money' },
   },
   {
     path: 'pos/mostrador/stock',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.stock' },
   },
   {
     path: 'pos/mostrador/production',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.production' },
   },
   {
     path: 'pos/mostrador/editar-transaccion',
@@ -352,49 +322,41 @@ export const _routes: Routes = [
     path: 'pos/delivery',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.delivery' },
   },
   {
     path: 'pos/retiro-de-pedidos',
     component: PosClientViewComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'pos/armado-de-pedidos',
     component: PosPackingComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'pos/delivery/editar-transaccion',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.delivery' },
   },
   {
     path: 'pos/resto',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' },
   },
   {
     path: 'pos/resto/editar-transaccion',
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale.resto' },
   },
   {
     path: 'pos/lector-de-vouchers',
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.sale' },
   },
   {
     path: 'pos/cocina',
     component: PosKitchenComponent,
     canActivate: [AuthGuard, LicenseGuard],
-    data: { module: 'config.modules.production.kitchen' },
   },
   {
     path: 'menu/:database',
