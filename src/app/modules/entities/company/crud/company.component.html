@@ -178,6 +178,88 @@
             <textarea class="form-control" formControlName="observation" name="observation" id="observation"></textarea>
           </div>
         </div>
+        <hr />
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>{{ 'location' | translate | capitalize }}</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-5">
+            <label for="address" class="control-label">{{ 'address' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="address"
+              autocomplete="nope"
+              name="address"
+              id="address"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="addressNumber" class="control-label">{{ 'addressNumber' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="addressNumber"
+              autocomplete="nope"
+              name="addressNumber"
+              id="addressNumber"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="floorNumber" class="control-label">{{ 'flat' | translate | capitalize }}:</label>
+            <input
+              type="text"
+              class="form-control"
+              autocomplete="nope"
+              formControlName="floorNumber"
+              name="floorNumber"
+              id="floorNumber"
+            />
+          </div>
+          <div class="form-group col-md-2">
+            <label for="flat" class="control-label">{{ 'floor' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" autocomplete="nope" formControlName="flat" name="flat" id="flat" />
+          </div>
+          <div class="form-group col-md-1">
+            <label for="zipCode" class="control-label">{{ 'zipCode' | translate | capitalize }}:</label>
+
+            <input
+              type="text"
+              class="form-control"
+              autocomplete="nope"
+              formControlName="zipCode"
+              name="zipCode"
+              id="zipCode"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="country" class="control-label">{{ 'company.country.name' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="companyForm.get('country')"
+              [data]="countries"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="state" class="control-label">{{ 'company.state.name' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="companyForm.get('state')"
+              [data]="states"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="city" class="control-label">{{ 'company.state' | translate | capitalize }}:</label>
+            <input type="text" class="form-control" autocomplete="nope" formControlName="city" name="city" id="city" />
+          </div>
+        </div>
         <div *ngIf="showClientFile" formGroupName="clientFile">
           <hr />
           <div class="row">
@@ -438,129 +520,48 @@
           </div>
         </div>
 
-        <hr />
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>{{ 'location' | translate | capitalize }}</b>
-          </label>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-5">
-            <label for="address" class="control-label">{{ 'address' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="address"
-              autocomplete="nope"
-              name="address"
-              id="address"
-            />
+        <ng-container *ngIf="showSubscriptionSection">
+          <hr />
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>{{ 'subscription' | translate | capitalize }}</b>
+            </label>
           </div>
-          <div class="form-group col-md-2">
-            <label for="addressNumber" class="control-label">{{ 'addressNumber' | translate | capitalize }}:</label>
 
-            <input
-              type="text"
-              class="form-control"
-              formControlName="addressNumber"
-              autocomplete="nope"
-              name="addressNumber"
-              id="addressNumber"
-            />
+          <div class="row">
+            <div class="form-group col-md-3">
+              <label for="subscription.active" class="control-label">{{
+                'subscription.active' | translate | capitalize
+              }}</label>
+              <select class="form-control" [formControl]="companyForm.get('subscription.active')">
+                <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+                <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-3">
+              <label for="subscription.article" class="control-label">{{
+                'subscription.article.description' | translate | capitalize
+              }}</label>
+              <app-typeahead-dropdown
+                [control]="companyForm.get('subscription.article')"
+                [data]="articles"
+                [keyField]="'_id'"
+                [displayField]="'description'"
+              ></app-typeahead-dropdown>
+            </div>
+            <div class="form-group col-md-3">
+              <label for="subscription.paymentMethod" class="control-label">{{
+                'subscription.paymentMethod.name' | translate | capitalize
+              }}</label>
+              <app-typeahead-dropdown
+                [control]="companyForm.get('subscription.paymentMethod')"
+                [data]="paymentMethods"
+                [keyField]="'_id'"
+                [displayField]="'name'"
+              ></app-typeahead-dropdown>
+            </div>
           </div>
-          <div class="form-group col-md-2">
-            <label for="floorNumber" class="control-label">{{ 'flat' | translate | capitalize }}:</label>
-            <input
-              type="text"
-              class="form-control"
-              autocomplete="nope"
-              formControlName="floorNumber"
-              name="floorNumber"
-              id="floorNumber"
-            />
-          </div>
-          <div class="form-group col-md-2">
-            <label for="flat" class="control-label">{{ 'floor' | translate | capitalize }}:</label>
-            <input type="text" class="form-control" autocomplete="nope" formControlName="flat" name="flat" id="flat" />
-          </div>
-          <div class="form-group col-md-1">
-            <label for="zipCode" class="control-label">{{ 'zipCode' | translate | capitalize }}:</label>
-
-            <input
-              type="text"
-              class="form-control"
-              autocomplete="nope"
-              formControlName="zipCode"
-              name="zipCode"
-              id="zipCode"
-            />
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-4">
-            <label for="country" class="control-label">{{ 'company.country.name' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
-              [control]="companyForm.get('country')"
-              [data]="countries"
-              [keyField]="'_id'"
-              [displayField]="'name'"
-            ></app-typeahead-dropdown>
-          </div>
-          <div class="form-group col-md-4">
-            <label for="state" class="control-label">{{ 'company.state.name' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
-              [control]="companyForm.get('state')"
-              [data]="states"
-              [keyField]="'_id'"
-              [displayField]="'name'"
-            ></app-typeahead-dropdown>
-          </div>
-          <div class="form-group col-md-4">
-            <label for="city" class="control-label">{{ 'company.state' | translate | capitalize }}:</label>
-            <input type="text" class="form-control" autocomplete="nope" formControlName="city" name="city" id="city" />
-          </div>
-        </div>
-
-        <hr />
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>{{ 'subscription' | translate | capitalize }}</b>
-          </label>
-        </div>
-
-        <div class="row">
-          <div class="form-group col-md-3">
-            <label for="subscription.active" class="control-label">{{
-              'subscription.active' | translate | capitalize
-            }}</label>
-            <select class="form-control" [formControl]="companyForm.get('subscription.active')">
-              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
-              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
-            </select>
-          </div>
-          <div class="form-group col-md-3">
-            <label for="subscription.article" class="control-label">{{
-              'subscription.article.description' | translate | capitalize
-            }}</label>
-            <app-typeahead-dropdown
-              [control]="companyForm.get('subscription.article')"
-              [data]="articles"
-              [keyField]="'_id'"
-              [displayField]="'description'"
-            ></app-typeahead-dropdown>
-          </div>
-          <div class="form-group col-md-3">
-            <label for="subscription.paymentMethod" class="control-label">{{
-              'subscription.paymentMethod.name' | translate | capitalize
-            }}</label>
-            <app-typeahead-dropdown
-              [control]="companyForm.get('subscription.paymentMethod')"
-              [data]="paymentMethods"
-              [keyField]="'_id'"
-              [displayField]="'name'"
-            ></app-typeahead-dropdown>
-          </div>
-        </div>
+        </ng-container>
         <hr />
         <div class="row">
           <label class="form-group col-md-12">

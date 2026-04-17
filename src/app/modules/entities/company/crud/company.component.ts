@@ -249,13 +249,24 @@ export class CompanyComponent implements OnInit {
       });
   }
 
-  public get showClientFile(): boolean {
+  private businessModelMatches(model: BusinessModel): boolean {
     const businessModel = this.config?.businessModel;
     if (typeof businessModel !== 'string') {
       return false;
     }
 
-    return businessModel.trim().toLowerCase() === BusinessModel.Estetica;
+    return businessModel.trim().toLowerCase() === model;
+  }
+
+  public get showClientFile(): boolean {
+    return this.businessModelMatches(BusinessModel.Estetica);
+  }
+
+  public get showSubscriptionSection(): boolean {
+    return (
+      this.businessModelMatches(BusinessModel.SuscripcionesYMembresias) ||
+      this.businessModelMatches(BusinessModel.Asociacion)
+    );
   }
 
   ngAfterViewInit() {
