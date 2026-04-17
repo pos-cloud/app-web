@@ -272,49 +272,49 @@
               <label class="control-label" for="clientFile-skinType">{{
                 'company.clientFile.skinType' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-skinType"
                 formControlName="skinType"
-                autocomplete="off"
-              />
+                name="skinType"
+                id="clientFile-skinType"
+                rows="2"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-phototype">{{
                 'company.clientFile.phototype' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-phototype"
                 formControlName="phototype"
-                autocomplete="off"
-              />
+                name="phototype"
+                id="clientFile-phototype"
+                rows="2"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-currentStatus">{{
                 'company.clientFile.currentStatus' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-currentStatus"
                 formControlName="currentStatus"
-                autocomplete="off"
-              />
+                name="currentStatus"
+                id="clientFile-currentStatus"
+                rows="2"
+              ></textarea>
             </div>
             <div class="form-group col-md-3">
               <label class="control-label" for="clientFile-mostAffectedZone">{{
                 'company.clientFile.mostAffectedZone' | translate | capitalize
               }}</label>
-              <input
-                type="text"
+              <textarea
                 class="form-control"
-                id="clientFile-mostAffectedZone"
                 formControlName="mostAffectedZone"
-                autocomplete="off"
-              />
+                name="mostAffectedZone"
+                id="clientFile-mostAffectedZone"
+                rows="2"
+              ></textarea>
             </div>
           </div>
           <hr />
@@ -325,7 +325,7 @@
           </div>
           <div class="row">
             <div class="form-group col-md-1">
-              <label class="control-label" for="clientFile-isPregnant">{{
+              <label class="control-label client-file-align-label" for="clientFile-isPregnant">{{
                 'company.clientFile.isPregnant' | translate | capitalize
               }}</label>
               <select class="form-control" formControlName="isPregnant">
@@ -333,36 +333,19 @@
                 <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
               </select>
             </div>
-            <!-- <div class="form-group col-md-4">
-              <label class="form-check-label" for="clientFile-takeMedication">{{
-                'company.clientFile.takeMedication' | translate | capitalize
-              }}</label>
-              <select class="form-control" formControlName="takeMedication">
-                <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
-                <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
-              </select>
-            </div>
-            <div class="form-group col-md-4">
-              <label class="form-check-label" for="clientFile-haveAllergies">{{
-                'company.clientFile.haveAllergies' | translate | capitalize
-              }}</label>
-              <select class="form-control" formControlName="haveAllergies">
-                <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
-                <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
-              </select>
-            </div> -->
+
             <div class="form-group col-md-1">
-              <label class="control-label" for="clientFile-useSunscreen">{{
-                'company.clientFile.useSunscreen' | translate | capitalize
+              <label class="control-label client-file-align-label" for="clientFile-smokes">{{
+                'company.clientFile.smokes' | translate | capitalize
               }}</label>
-              <select class="form-control" formControlName="useSunscreen">
+              <select class="form-control" formControlName="smokes" id="clientFile-smokes">
                 <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
                 <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
               </select>
             </div>
 
             <div class="form-group col-md-5">
-              <label class="control-label" for="clientFile-dermatologicalProblems">{{
+              <label class="control-label client-file-align-label" for="clientFile-dermatologicalProblems">{{
                 'company.clientFile.dermatologicalProblems' | translate | capitalize
               }}</label>
               <textarea
@@ -373,7 +356,7 @@
               ></textarea>
             </div>
             <div class="form-group col-md-5">
-              <label class="control-label" for="clientFile-previousCosmeticTreatments">{{
+              <label class="control-label client-file-align-label" for="clientFile-previousCosmeticTreatments">{{
                 'company.clientFile.previousCosmeticTreatments' | translate | capitalize
               }}</label>
               <textarea
@@ -386,10 +369,10 @@
           </div>
           <div class="row">
             <div class="form-group col-md-2">
-              <label class="control-label" for="clientFile-smokes">{{
-                'company.clientFile.smokes' | translate | capitalize
+              <label class="control-label" for="clientFile-useSunscreen">{{
+                'company.clientFile.useSunscreen' | translate | capitalize
               }}</label>
-              <select class="form-control" formControlName="smokes" id="clientFile-smokes">
+              <select class="form-control" formControlName="useSunscreen">
                 <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
                 <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
               </select>

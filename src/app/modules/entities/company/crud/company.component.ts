@@ -49,6 +49,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-companies',
   templateUrl: './company.component.html',
+  styleUrls: ['./company.component.scss'],
   standalone: true,
   imports: [
     CommonModule,

@@ -1,0 +1,6 @@
+// Keeps stacked label + control rows aligned when labels wrap to different line counts.
+.client-file-align-label {
+  display: block;
+  min-height: 2.75rem;
+  line-height: 1.35;
+}
