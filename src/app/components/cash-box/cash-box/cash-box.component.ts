@@ -190,7 +190,7 @@ export class CashBoxComponent implements OnInit {
   public buildForm(): void {
     this.cashBoxForm = this._fb.group({
       paymentMethod: [null, [Validators.required]],
-      amount: [0, []],
+      amount: [null, []],
     });
     this.formAddCurrencyValue = this._fb.group({
       currencyValue: [null, [Validators.required]],
@@ -228,7 +228,7 @@ export class CashBoxComponent implements OnInit {
 
     let values = {
       paymentMethod: paymentMethod,
-      amount: 0,
+      amount: null,
     };
 
     this.cashBoxForm.setValue(values);
@@ -529,8 +529,33 @@ export class CashBoxComponent implements OnInit {
 
   public addMovementOfCash(): void {
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
+    if (
+      this.movementOfCash.type &&
+      this.movementsOfCashes.some((m) => m.type?._id === this.movementOfCash.type._id)
+    ) {
+      this.showMessage('Ya existe un movimiento con ese medio de pago.', 'info', true);
+      return;
+    }
     if (this.movementOfCash.type.cashBoxImpact) {
-      this.movementOfCash.amountPaid = this.cashBoxForm.value.amount;
+      const useCurrencyBreakdown =
+        this.movementOfCash.type.allowCurrencyValue &&
+        this.currencyValuesForm &&
+        this.currencyValuesForm.length > 0;
+
+      if (!useCurrencyBreakdown) {
+        const raw = this.cashBoxForm.value.amount;
+        if (raw === null || raw === undefined || (typeof raw === 'string' && String(raw).trim() === '')) {
+          this.showMessage('Ingrese un monto.', 'info', true);
+          return;
+        }
+        const num = Number(raw);
+        if (Number.isNaN(num) || num < 0) {
+          this.showMessage('El monto debe ser un número mayor o igual a 0.', 'info', true);
+          return;
+        }
+        this.movementOfCash.amountPaid = num;
+      }
+
       let mov = new MovementOfCash();
       mov.date = this.movementOfCash.date;
       mov.quota = this.movementOfCash.quota;
@@ -538,11 +563,7 @@ export class CashBoxComponent implements OnInit {
       mov.discount = this.movementOfCash.discount;
       mov.surcharge = this.movementOfCash.surcharge;
 
-      if (
-        this.movementOfCash.type.allowCurrencyValue &&
-        this.currencyValuesForm &&
-        this.currencyValuesForm.length > 0
-      ) {
+      if (useCurrencyBreakdown) {
         mov.currencyValues = this.currencyValuesForm;
         mov.amountPaid = 0;
         mov.currencyValues.forEach((element) => {
@@ -563,6 +584,12 @@ export class CashBoxComponent implements OnInit {
       mov.deliveredBy = this.movementOfCash.deliveredBy;
       this.movementsOfCashes.push(mov);
       this.currencyValuesForm = null;
+      this.totalCurrencyValue = 0;
+      this.cashBoxForm.patchValue({ amount: null });
+      this.formAddCurrencyValue.patchValue({
+        currencyValue: null,
+        currencyAmount: null,
+      });
     } else {
       this.showMessage('El método de pago ' + this.movementOfCash.type.name + ' no impacta en la caja.', 'info', true);
     }
