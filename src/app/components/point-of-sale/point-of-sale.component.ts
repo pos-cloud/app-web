@@ -38,6 +38,7 @@ import {
   EmployeeType,
   Table,
   TableState,
+  User,
 } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
@@ -70,7 +71,6 @@ import { AddTransactionComponent } from '../transaction/add-transaction/add-tran
 import { Config } from './../../app.config';
 import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
 import { Origin } from './../../components/origin/origin';
-import { User } from '@types';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -179,6 +179,36 @@ export class PointOfSaleComponent implements OnInit {
         this.refresh();
       }
     }, 300000);
+  }
+
+  /**
+   * Tras el login v2, `origin.branch` puede venir solo como ObjectId/string (sin objeto `{ _id }`).
+   * Si usamos `branch._id` siendo undefined, `JSON.stringify({ $oid: undefined })` arma `{}` y el $match de Mongo no coincide con ningún documento.
+   */
+  private getOriginBranchId(): string | null {
+    const branch = this.identity?.origin?.branch as unknown;
+    if (branch == null) {
+      return null;
+    }
+    if (typeof branch === 'string') {
+      return branch;
+    }
+    if (typeof branch === 'object') {
+      const b = branch as { _id?: string | { $oid?: string; toString?: () => string }; $oid?: string };
+      if (b._id != null) {
+        if (typeof b._id === 'string') {
+          return b._id;
+        }
+        if (typeof b._id === 'object' && b._id !== null && '$oid' in b._id) {
+          return (b._id as { $oid: string }).$oid;
+        }
+        return typeof b._id.toString === 'function' ? b._id.toString() : String(b._id);
+      }
+      if (b.$oid) {
+        return b.$oid;
+      }
+    }
+    return null;
   }
 
   private processParams(): void {
@@ -632,8 +662,9 @@ export class PointOfSaleComponent implements OnInit {
           'type.transactionMovement': this.transactionMovement,
         };
 
-        if (this.identity.origin) {
-          query['branchOrigin'] = { $oid: this.identity.origin.branch._id };
+        const originBranchId = this.getOriginBranchId();
+        if (originBranchId) {
+          query['branchOrigin'] = { $oid: originBranchId };
         }
 
         query['type.level'] = { $lt: this.user.level };
@@ -683,8 +714,9 @@ export class PointOfSaleComponent implements OnInit {
         if (openPending) {
           let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne":"${TransactionState.Canceled}"}},`;
 
-          if (this.identity.origin) {
-            query += `{"branch":"${this.identity.origin.branch._id}"},`;
+          const originBranchId = this.getOriginBranchId();
+          if (originBranchId) {
+            query += `{"branch":"${originBranchId}"},`;
           }
 
           query += `{"madein":"${this.posType}"},{"type":"${transactionTypes[0]._id}"},{"$or":[{"table":{"$exists":false}},{"table":null}]}]&limit=1`;
