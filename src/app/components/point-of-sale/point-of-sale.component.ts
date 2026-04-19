@@ -211,6 +211,22 @@ export class PointOfSaleComponent implements OnInit {
     return null;
   }
 
+  /**
+   * `assignDeposit` y `assignOrigin` usan `branchOrigin._id` / `branchDestination._id`.
+   * Si el login solo trae la ref de sucursal como string, armamos `{ _id }` mínimo.
+   */
+  private getOriginBranchForTransaction(): Branch | null {
+    const branch = this.identity?.origin?.branch as unknown;
+    if (branch && typeof branch === 'object') {
+      const b = branch as { _id?: unknown };
+      if (b._id != null) {
+        return branch as Branch;
+      }
+    }
+    const id = this.getOriginBranchId();
+    return id ? ({ _id: id } as Branch) : null;
+  }
+
   private processParams(): void {
     let isLoadRefresh: boolean = false;
     this._route.queryParams.subscribe((params) => {
@@ -837,8 +853,11 @@ export class PointOfSaleComponent implements OnInit {
             }
           }
           // ASIGNAMOS A LA TRANSACCIÓN LA SUCURSAL DEL PV DEL USUARIO
-          this.transaction.branchOrigin = this.identity.origin.branch;
-          this.transaction.branchDestination = this.identity.origin.branch;
+          const originBranch = this.getOriginBranchForTransaction();
+          if (originBranch) {
+            this.transaction.branchOrigin = originBranch;
+            this.transaction.branchDestination = originBranch;
+          }
           if (
             !this.transaction.type.fixedOrigin ||
             (this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0)
