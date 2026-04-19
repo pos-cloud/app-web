@@ -34,7 +34,6 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
 import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
-import { ListUsersComponent } from './components/user/list-users/list-users.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
@@ -175,12 +174,6 @@ export const _routes: Routes = [
   {
     path: 'admin/states',
     component: ListStatesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-
-  {
-    path: 'admin/usuarios',
-    component: ListUsersComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

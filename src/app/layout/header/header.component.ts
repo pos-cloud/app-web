@@ -7,7 +7,7 @@ import { fromEvent, map, merge, Observable, of } from 'rxjs';
 import { NgbDropdown, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // MODELS
-import { User } from '../../components/user/user';
+import { User } from '@types';
 
 // SERVICES
 import { TranslateService } from '@ngx-translate/core';

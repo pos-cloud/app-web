@@ -16,7 +16,7 @@ import { SendEmailComponent } from '@shared/components/send-email/send-email.com
 import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, Branch, PrintType, Printer } from '@types';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import 'moment/locale/es';

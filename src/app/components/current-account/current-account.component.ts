@@ -26,7 +26,7 @@ import { Config } from 'app/app.config';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { ConfigService } from 'app/core/services/config.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';

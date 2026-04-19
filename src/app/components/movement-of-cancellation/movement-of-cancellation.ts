@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { User } from '../user/user';
+import { User } from '@types';
 import { Transaction } from '../transaction/transaction';
 import { CancellationType } from '../cancellation-type/cancellation-type';
 

@@ -1,7 +1,7 @@
 import { IAttribute } from '@types';
 import * as moment from 'moment';
 
-import { User } from '../user/user';
+import { User } from '@types';
 
 export class Model {
   public _id: string;

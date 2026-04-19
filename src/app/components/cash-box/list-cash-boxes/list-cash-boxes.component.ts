@@ -9,7 +9,7 @@ import { CashBox } from '../cash-box';
 import { PrintService } from '@core/services/print.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ApiResponse, Printer, PrintType } from '@types';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';

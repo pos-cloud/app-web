@@ -43,7 +43,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
 // Pipes
 import { TranslateService } from '@ngx-translate/core';
 import { Account, ApiResponse, Currency, MediaCategory } from '@types';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { CompanyService } from 'app/core/services/company.service';
 import { FileService } from 'app/core/services/file.service';

@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { User } from '../../components/user/user';
+import { User } from '@types';
 import { AuthService } from './auth.service';
 
 @Injectable({

@@ -19,7 +19,7 @@ import { CashBox } from '../cash-box/cash-box';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { Taxes } from '../tax/taxes';
 import { TransactionType } from '../transaction-type/transaction-type';
-import { User } from '../user/user';
+import { User } from '@types';
 
 export class Transaction {
   _id: string;

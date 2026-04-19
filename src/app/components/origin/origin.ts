@@ -1,5 +1,5 @@
 import { Branch } from '@types';
-import { User } from '../user/user';
+import { User } from '@types';
 
 import * as moment from 'moment';
 

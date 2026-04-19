@@ -22,7 +22,7 @@ import { ArticleService } from '../../../core/services/article.service';
 
 import { ApiResponse, Category, CompanyType, PriceList, Structure, Utilization } from '@types';
 import { Tax } from 'app/components/tax/tax';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PriceListService } from 'app/core/services/price-list.service';

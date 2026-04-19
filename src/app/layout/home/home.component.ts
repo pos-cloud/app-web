@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { UpgradeVersionComponent } from '../upgrade-version/upgrade-version.component';
 

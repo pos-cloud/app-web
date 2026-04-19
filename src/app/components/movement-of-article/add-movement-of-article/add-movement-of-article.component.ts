@@ -15,7 +15,7 @@ import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 import { VariantType, VariantValue } from '@types';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Config } from '../../../app.config';

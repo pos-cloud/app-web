@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { filter } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 

@@ -10,7 +10,7 @@ import { PrintTransactionTypeComponent } from 'app/components/print/print-transa
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { Transaction } from 'app/components/transaction/transaction';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { TransactionService } from 'app/core/services/transaction.service';

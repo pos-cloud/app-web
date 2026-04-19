@@ -1,7 +1,7 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import {
-  FormsModule,
   FormControl,
+  FormsModule,
   NgForm,
   ReactiveFormsModule,
   UntypedFormArray,
@@ -22,8 +22,8 @@ import { PrinterService } from '@core/services/printer.service';
 import { UserService } from '@core/services/user.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
-import { Branch, CashBoxType, Employee, Make, Origin, Permission, Printer, User } from '@types';
-import { UserState } from 'app/components/user/user';
+import { Branch, CashBoxType, Employee, Make, Origin, Permission, Printer, User, UserState } from '@types';
+import { AuthService } from 'app/core/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
@@ -47,11 +47,13 @@ import { takeUntil } from 'rxjs/operators';
     FormsModule,
   ],
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   public operation: string;
   public user: User;
   public userForm: UntypedFormGroup;
   public loading: boolean = false;
+  public readonly: boolean;
+  public identity: User | null = null;
   public employees: Employee[];
   public cashBoxTypes: CashBoxType[];
   public origins: Origin[];
@@ -78,7 +80,8 @@ export class UserComponent implements OnInit {
     private _branchService: BranchService,
     private _permissionService: PermissionService,
     private _printerService: PrinterService,
-    private _makeService: MakeService
+    private _makeService: MakeService,
+    private _authService: AuthService
   ) {
     this.userForm = this._fb.group({
       _id: ['', []],
@@ -104,8 +107,13 @@ export class UserComponent implements OnInit {
     const pathUrl = this._router.url.split('/');
     const userId = pathUrl[4];
     this.operation = pathUrl[3];
+    this.readonly = this.operation === 'view' || this.operation === 'delete';
     this.dominio = window.location.origin + '/';
-    if (this.operation === 'view' || this.operation === 'delete') this.userForm.disable();
+    if (this.readonly) this.userForm.disable();
+
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
+      this.identity = identity;
+    });
 
     this.loading = true;
     combineLatest({
@@ -195,7 +203,9 @@ export class UserComponent implements OnInit {
     const origin = this.origins.find((item) => item._id == this.user?.origin?.toString());
     const branch = this.branches.find((item) => item._id == this.user?.branch?.toString());
     const permission = this.permissions.find((item) => item._id == this.user?.permission?.toString());
-    const selectedMakes = ((this.user as any)?.makes ?? []).map((m: any) => (typeof m === 'string' ? m : m?._id)).filter(Boolean);
+    const selectedMakes = ((this.user as any)?.makes ?? [])
+      .map((m: any) => (typeof m === 'string' ? m : m?._id))
+      .filter(Boolean);
 
     const values = {
       _id: this.user?._id ?? '',
@@ -349,14 +359,16 @@ export class UserComponent implements OnInit {
       this.shortcut.url !== ''
     ) {
       if (!this.existsShortcut()) {
-        this.shortcuts.push(this.shortcut);
+        const entry = { name: this.shortcut.name, url: this.shortcut.url };
+        this.shortcuts.push(entry);
         const shortcutsFormArray = this.userForm.get('shortcuts') as UntypedFormArray;
         shortcutsFormArray.push(
           this._fb.group({
-            name: this.shortcut.name,
-            url: this.shortcut.url,
+            name: entry.name,
+            url: entry.url,
           })
         );
+        this.shortcut = { name: '', url: '' };
       } else {
         this._toastService.showToast({ message: 'El acceso directo ya existe.' });
       }

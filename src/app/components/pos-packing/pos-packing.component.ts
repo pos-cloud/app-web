@@ -4,7 +4,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse, Printer, PrinterPrintIn } from '@types';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TransactionService } from 'app/core/services/transaction.service';

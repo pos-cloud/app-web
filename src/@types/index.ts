@@ -71,7 +71,7 @@ export {
 export { Transport } from './entities/transport.interface';
 export { UnitOfMeasurement } from './entities/unit-of-measurement.interface';
 export { UseOfCFDI } from './entities/use-of-cfdi.interface';
-export { User } from './entities/user.interface';
+export { User, UserState } from './entities/user.interface';
 export { VariantType } from './entities/variant-type.interface';
 export { VariantValue } from './entities/variant-value.interface';
 export { Variant } from './entities/variant.interface';

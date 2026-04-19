@@ -1,4 +1,4 @@
-import { User } from '../user/user';
+import { User } from '@types';
 
 import { Account, Application, Currency } from '@types';
 import * as moment from 'moment';

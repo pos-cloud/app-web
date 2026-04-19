@@ -25,7 +25,7 @@ import { PrintService } from '@core/services/print.service';
 import { ApiResponse, CurrencyValue, Printer, PrintType } from '@types';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { ConfigService } from 'app/core/services/config.service';
 import { CurrencyValueService } from 'app/core/services/currency-value.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';

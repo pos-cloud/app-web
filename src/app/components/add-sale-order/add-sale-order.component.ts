@@ -6,7 +6,7 @@ import { CancellationType } from 'app/components/cancellation-type/cancellation-
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { SelectTableComponent } from 'app/components/table/select-table/select-table.component';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
 import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
 import { ConfigService } from 'app/core/services/config.service';

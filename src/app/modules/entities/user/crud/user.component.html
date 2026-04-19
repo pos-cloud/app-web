@@ -288,6 +288,7 @@
                     [(ngModel)]="shortcut.name"
                     name="shortcutName"
                     [ngModelOptions]="{ standalone: true }"
+                    [readonly]="readonly"
                     [focus]="focusEvent"
                   />
                 </td>
@@ -302,11 +303,18 @@
                       [(ngModel)]="shortcut.url"
                       name="shortcutUrl"
                       [ngModelOptions]="{ standalone: true }"
+                      [readonly]="readonly"
                     />
                   </div>
                 </td>
                 <td align="left">
-                  <button type="button" class="btn btn-success btn-sm" (click)="addShortcut()" title="Agregar">
+                  <button
+                    type="button"
+                    class="btn btn-success btn-sm"
+                    (click)="addShortcut()"
+                    title="Agregar"
+                    [disabled]="readonly"
+                  >
                     <i class="fa fa-plus"></i>
                   </button>
                 </td>
@@ -326,6 +334,7 @@
                     class="btn btn-danger btn-sm"
                     (click)="deleteShortcut(shortcut)"
                     title="Eliminar"
+                    [disabled]="readonly"
                   >
                     <i class="fa fa-trash-o"></i>
                   </button>

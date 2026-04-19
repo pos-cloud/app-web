@@ -70,7 +70,7 @@ import { AddTransactionComponent } from '../transaction/add-transaction/add-tran
 import { Config } from './../../app.config';
 import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
 import { Origin } from './../../components/origin/origin';
-import { User } from './../../components/user/user';
+import { User } from '@types';
 
 @Component({
   selector: 'app-point-of-sale',

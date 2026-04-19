@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { User } from 'app/components/user/user';
+import { User } from '@types';
 import * as moment from 'moment';
 import 'moment/locale/es';
 

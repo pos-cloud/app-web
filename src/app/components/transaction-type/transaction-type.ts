@@ -7,7 +7,7 @@ import { Model } from '../model/model.model';
 import { PaymentMethod } from '../payment-method/payment-method';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { TransactionState } from '../transaction/transaction';
-import { User } from '../user/user';
+import { User } from '@types';
 
 export class TransactionType extends Model {
   _id: string;

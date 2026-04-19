@@ -86,10 +86,6 @@ import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.compo
 import { TaxComponent } from './components/tax/tax/tax.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
-import { DeleteUserComponent } from './components/user/delete-user/delete-user.component';
-import { ListUsersComponent } from './components/user/list-users/list-users.component';
-import { ShortcutComponent } from './components/user/shortcut/shortcut.component';
-import { AddUserComponent } from './components/user/user/add-user.component';
 import { AddVariantComponent } from './components/variant/add-variant/add-variant.component';
 import { DeleteVariantComponent } from './components/variant/delete-variant/delete-variant.component';
 import { ListVariantsComponent } from './components/variant/list-variants/list-variants.component';
@@ -123,9 +119,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddSaleOrderComponent,
     PointOfSaleComponent,
     LoginComponent,
-    AddUserComponent,
-    ListUsersComponent,
-    DeleteUserComponent,
     ClockComponent,
     AddMovementOfCashComponent,
     ConfigComponent,
@@ -167,7 +160,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     EditCheckComponent,
     PrintVatBookComponent,
     PrintTransactionTypeComponent,
-    ShortcutComponent,
     CancellationTypeAutomaticComponent,
     ListMovementsOfArticlesComponent,
     VoucherReaderComponent,

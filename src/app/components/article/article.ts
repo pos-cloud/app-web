@@ -12,7 +12,7 @@ import {
 } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Taxes } from '../tax/taxes';
-import { User } from '../user/user';
+import { User } from '@types';
 
 import { Account, Company } from '@types';
 import * as moment from 'moment';
