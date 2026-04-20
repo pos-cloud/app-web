@@ -1082,7 +1082,23 @@ export class PointOfSaleComponent implements OnInit {
           this.transaction.type.requestArticles &&
           (this.posType === 'mostrador' || (this.posType === 'resto' && this.transaction.table))
         ) {
-          this.openModal('select-employee');
+          const employee = this.user?.employee._id ? this.user?.employee : false;
+          if (employee) {
+            this.transaction.employeeOpening = employee;
+            this.transaction.employeeClosing = employee;
+            if (this.posType === 'resto' && this.tableSelected) {
+              this.tableSelected.employee = employee;
+              const table = await this.updateTable();
+              if (table) {
+                this.tableSelected = table;
+                await this.nextStepTransaction();
+              }
+            } else {
+              await this.nextStepTransaction();
+            }
+          } else {
+            this.openModal('select-employee');
+          }
         } else if (
           !this.transaction.company &&
           (this.transaction.type.requestCompany ||

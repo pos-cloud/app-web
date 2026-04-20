@@ -1,4 +1,4 @@
-import { Activity, EmployeeType, Room, Transaction } from '@types';
+import { Activity, Employee, Room, Transaction } from '@types';
 
 export interface Table extends Activity {
   _id: string;
@@ -7,7 +7,7 @@ export interface Table extends Activity {
   chair: number;
   diners: number;
   state: TableState;
-  employee: EmployeeType;
+  employee: Employee;
   lastTransaction: Transaction | any;
 }
 
