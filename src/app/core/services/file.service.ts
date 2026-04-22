@@ -14,7 +14,7 @@ export class FileService {
     public _authService: AuthService
   ) {}
 
-  public uploadImage(origin: string, files: Array<File>) {
+  public uploadImage(path: string, files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
     xhr.open('POST', `${environment.apiStorage}/upload`, true);
@@ -29,8 +29,7 @@ export class FileService {
         }
       }
 
-      formData.append('origin', origin);
-
+      formData.append('path', path);
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
           if (xhr.status == 201) {
@@ -45,7 +44,35 @@ export class FileService {
     });
   }
 
-  public deleteImage(origin: string): Observable<any> {
+  public processInvoice(files: Array<File>) {
+    let xhr: XMLHttpRequest = new XMLHttpRequest();
+
+    xhr.open('POST', `${environment.apiStorage}/process-invoice`, true);
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
+
+    return new Promise((resolve, reject) => {
+      let formData: any = new FormData();
+
+      if (files && files.length > 0) {
+        for (let i: number = 0; i < files.length; i++) {
+          formData.append('file', files[i], files[i].name);
+        }
+      }
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 201) {
+            resolve(xhr.response);
+          } else {
+            reject(xhr.response);
+          }
+        }
+      };
+
+      xhr.send(formData);
+    });
+  }
+  public deleteImage(imageUrl: string): Observable<any> {
     const URL = `${environment.apiStorage}/upload`;
 
     const headers = new HttpHeaders()
@@ -56,7 +83,7 @@ export class FileService {
       .delete(URL, {
         headers: headers,
         body: {
-          origin: origin,
+          imageUrl: imageUrl,
         },
       })
       .pipe(

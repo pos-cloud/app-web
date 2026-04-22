@@ -15,17 +15,66 @@
   </div>
 </div> -->
 
-<div class="upload-container flex">
-  <input type="file" #fileInput id="fileInput" (change)="onFileSelected($event)" hidden />
+<div *ngIf="displayMode === 'icon'" class="upload-file-icon-trigger d-inline-flex align-items-center">
+  <input type="file" #fileInputIcon [accept]="accept" (change)="onFileSelected($event)" hidden />
+  <button
+    type="button"
+    class="btn btn-sm btn-outline-secondary p-2 d-inline-flex align-items-center justify-content-center"
+    (click)="$event.stopPropagation(); fileInputIcon.click()"
+    [disabled]="uploading"
+    title="Subir imagen o PDF"
+  >
+    <i *ngIf="uploading" class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+    <svg
+      *ngIf="!uploading"
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" />
+      <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" />
+      <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" />
+      <path d="M17.599 6.5a3 3 0 0 0 .399-1.375" />
+      <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5" />
+    </svg>
+  </button>
+</div>
+
+<div *ngIf="displayMode !== 'icon'" class="upload-container flex">
+  <input type="file" #fileInput id="fileInput" [accept]="accept" (change)="onFileSelected($event)" hidden />
 
   <div class="image-wrapper" (click)="fileInput.click()">
     <img
+      *ngIf="!previewIsPdf"
       [src]="imageUrl || './../../../assets/img/default.jpg'"
       style="height: 200px; width: 250px; display: block; margin: auto"
       alt="No hay imagen"
       class="preview-image"
     />
+    <div
+      *ngIf="previewIsPdf"
+      class="upload-pdf-placeholder d-flex align-items-center justify-content-center"
+      style="height: 200px; width: 250px; margin: auto"
+    >
+      <span class="text-muted small text-center px-2"
+        >PDF seleccionado<br /><strong>{{ selectedFileLabel }}</strong></span
+      >
+    </div>
 
-    <button type="button" class="delete-btn" *ngIf="imageUrl" (click)="onDeleteImage($event, imageUrl)">×</button>
+    <button
+      type="button"
+      class="delete-btn"
+      *ngIf="imageUrl || previewIsPdf"
+      (click)="onDeleteImage($event, imageUrl || '')"
+    >
+      ×
+    </button>
   </div>
 </div>
