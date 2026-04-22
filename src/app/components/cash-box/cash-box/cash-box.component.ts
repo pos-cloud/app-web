@@ -22,10 +22,10 @@ import { TransactionService } from '../../../core/services/transaction.service';
 
 //Componentes
 import { PrintService } from '@core/services/print.service';
-import { ApiResponse, CurrencyValue, Printer, PrintType } from '@types';
+import { ApiResponse, CurrencyValue, Employee, Printer, PrintType, User } from '@types';
+import { SelectEmployeeComponent } from 'app/shared/components/select-employee/select-employee.component';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
-import { User } from '@types';
 import { ConfigService } from 'app/core/services/config.service';
 import { CurrencyValueService } from 'app/core/services/currency-value.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
@@ -175,6 +175,21 @@ export class CashBoxComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
+  private ensureEmployee(): Promise<Employee | null> {
+    if (this.identity?.employee) {
+      return Promise.resolve(this.identity.employee);
+    }
+    return new Promise((resolve) => {
+      const modalRef = this._modalService.open(SelectEmployeeComponent);
+      modalRef.componentInstance.requireLogin = false;
+      modalRef.componentInstance.op = 'select-employee';
+      modalRef.result.then(
+        (result) => resolve(result?.employee ?? null),
+        () => resolve(null)
+      );
+    });
+  }
+
   public formErrors = {
     paymentMethod: '',
     amount: '',
@@ -276,6 +291,11 @@ export class CashBoxComponent implements OnInit {
   async openCashBox() {
     this.loading = true;
     if (!this.cashBox || !this.cashBox._id) {
+      const employee = await this.ensureEmployee();
+      if (!employee) {
+        this.loading = false;
+        return;
+      }
       await this.getCashBoxes('sort="number":-1&limit=1').then(async (cashBoxes) => {
         if (cashBoxes) {
           this.cashBox.number = cashBoxes[0].number + 1;
@@ -283,10 +303,11 @@ export class CashBoxComponent implements OnInit {
           this.cashBox.number = 1;
         }
         this._authService.getIdentity.subscribe((identity) => {
-          if (identity.cashBoxType) {
+          if (identity?.cashBoxType) {
             this.cashBox.type = identity.cashBoxType;
           }
         });
+        this.cashBox.employee = employee;
         await this.saveCashBox().then(async (cashBox) => {
           if (cashBox) {
             this.cashBox = cashBox;
@@ -327,6 +348,8 @@ export class CashBoxComponent implements OnInit {
 
   async closeCashBox() {
     if (this.cashBox && this.cashBox._id) {
+      const employee = await this.ensureEmployee();
+      if (!employee) return;
       if (this.cashBox.state === CashBoxState.Closed) {
         this.openModal('print');
       } else {
@@ -529,18 +552,13 @@ export class CashBoxComponent implements OnInit {
 
   public addMovementOfCash(): void {
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
-    if (
-      this.movementOfCash.type &&
-      this.movementsOfCashes.some((m) => m.type?._id === this.movementOfCash.type._id)
-    ) {
+    if (this.movementOfCash.type && this.movementsOfCashes.some((m) => m.type?._id === this.movementOfCash.type._id)) {
       this.showMessage('Ya existe un movimiento con ese medio de pago.', 'info', true);
       return;
     }
     if (this.movementOfCash.type.cashBoxImpact) {
       const useCurrencyBreakdown =
-        this.movementOfCash.type.allowCurrencyValue &&
-        this.currencyValuesForm &&
-        this.currencyValuesForm.length > 0;
+        this.movementOfCash.type.allowCurrencyValue && this.currencyValuesForm && this.currencyValuesForm.length > 0;
 
       if (!useCurrencyBreakdown) {
         const raw = this.cashBoxForm.value.amount;

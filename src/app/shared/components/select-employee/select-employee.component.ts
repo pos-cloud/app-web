@@ -46,6 +46,8 @@ export class SelectEmployeeComponent implements OnInit {
   ngOnInit() {
     if (this.typeEmployee) {
       this.getEmployees('where="type":"' + this.typeEmployee._id + '"');
+    } else {
+      this.getEmployees('');
     }
 
     if (this.table) {
@@ -130,7 +132,7 @@ export class SelectEmployeeComponent implements OnInit {
     if (!this.employeeSelected || !this.employeeSelected._id) {
       isValid = false;
       this._toast.showToast({
-        message: 'Debe seleccionar un ' + this.typeEmployee.description,
+        message: 'Debe seleccionar un ' + (this.typeEmployee?.description ?? 'empleado'),
       });
     }
 
