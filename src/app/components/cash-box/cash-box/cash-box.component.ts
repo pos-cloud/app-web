@@ -23,11 +23,11 @@ import { TransactionService } from '../../../core/services/transaction.service';
 //Componentes
 import { PrintService } from '@core/services/print.service';
 import { ApiResponse, CurrencyValue, Employee, Printer, PrintType, User } from '@types';
-import { SelectEmployeeComponent } from 'app/shared/components/select-employee/select-employee.component';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ConfigService } from 'app/core/services/config.service';
 import { CurrencyValueService } from 'app/core/services/currency-value.service';
+import { EmployeeService } from 'app/core/services/employee.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -61,7 +61,8 @@ export class CashBoxComponent implements OnInit {
   @Input() transactionType: TransactionType;
   private config: Config;
   private identity: User;
-  private selectedEmployee: Employee | null = null;
+  public employees: Employee[] = [];
+  public selectedEmployee: Employee | null = null;
   public selectPayment;
   public printerSelected: Printer;
   private destroy$ = new Subject<void>();
@@ -83,7 +84,8 @@ export class CashBoxComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _userService: UserService,
     public _modalService: NgbModal,
-    public _printService: PrintService
+    public _printService: PrintService,
+    private _employeeService: EmployeeService
   ) {
     this.paymentMethods = new Array();
     this.cashBox = new CashBox();
@@ -105,10 +107,13 @@ export class CashBoxComponent implements OnInit {
     await this._authService.getIdentity.subscribe((identity) => {
       this.identity = identity;
     });
-    this.selectedEmployee = await this.ensureEmployee();
-    if (!this.selectedEmployee) {
-      this.activeModal.dismiss('no_employee');
-      return;
+    console.log(this.identity);
+    if (this.identity?.employee?._id) {
+      this.selectedEmployee = this.identity.employee;
+    } else {
+      this._employeeService.getEmployees('').subscribe((result) => {
+        if (result.employees) this.employees = result.employees;
+      });
     }
     await this.getPaymentMethods('where="cashBoxImpact":true').then(async (paymentMethods) => {
       if (paymentMethods) {
@@ -118,7 +123,7 @@ export class CashBoxComponent implements OnInit {
 
         if (this.identity) {
           if (this.config.cashBox.perUser) {
-            if (this.identity.employee) {
+            if (this.identity.employee?._id) {
               query += ',"employee":"' + this.identity.employee._id + '"';
             }
           } else if (this.identity.cashBoxType) {
@@ -165,7 +170,7 @@ export class CashBoxComponent implements OnInit {
             }
           } else {
             if (this.transactionType.cashOpening) {
-              if (this.identity && this.identity.employee) {
+              if (this.identity?.employee?._id) {
                 this.cashBox.employee = this.identity.employee;
               }
             } else if (this.transactionType.cashClosing) {
@@ -179,21 +184,6 @@ export class CashBoxComponent implements OnInit {
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
-  }
-
-  private ensureEmployee(): Promise<Employee | null> {
-    if (this.identity?.employee) {
-      return Promise.resolve(this.identity.employee);
-    }
-    return new Promise((resolve) => {
-      const modalRef = this._modalService.open(SelectEmployeeComponent);
-      modalRef.componentInstance.requireLogin = false;
-      modalRef.componentInstance.op = 'select-employee';
-      modalRef.result.then(
-        (result) => resolve(result?.employee ?? null),
-        () => resolve(null)
-      );
-    });
   }
 
   public formErrors = {
