@@ -60,6 +60,11 @@ app-formal-transaction-view {
     background-color: #fff;
   }
 
+  // El uploader en modo icono no debe estirarse con el flex del header
+  .card-header app-upload-file {
+    flex: 0 0 auto;
+  }
+
   // Estilo para el logo en el header
   .card-header img {
     border-radius: 4px;

@@ -19,7 +19,17 @@
               {{ transaction.number }}
             </h3>
           </div>
-          <span class="badge" [ngClass]="getStateClass()">{{ getStateText() }}</span>
+          <div class="d-flex align-items-center">
+            <span class="badge" [ngClass]="getStateClass()">{{ getStateText() }}</span>
+            <app-upload-file
+              class="ml-2"
+              displayMode="icon"
+              [folder]="''"
+              accept=".png,.jpg,.jpeg,.gif,.webp,.bmp,.pdf,image/png,image/jpeg,image/gif,image/webp,application/pdf"
+              (uploadedUrls)="onFormalDocumentUploaded($event)"
+            >
+            </app-upload-file>
+          </div>
         </div>
       </div>
 
@@ -41,7 +51,7 @@
           <div class="col-md-3">
             <small class="text-muted d-block mb-1">Fecha</small>
             <div class="d-flex align-items-center justify-content-between">
-              <div class="fw-semibold">{{ transaction.endDate | date : 'dd/MM/yyyy' }}</div>
+              <div class="fw-semibold">{{ transaction.endDate | date: 'dd/MM/yyyy' }}</div>
               <button class="btn btn-sm btn-outline-secondary ms-2" (click)="changeDate()" ngbTooltip="Cambiar fecha">
                 <i class="fa fa-calendar"></i>
               </button>
@@ -169,11 +179,11 @@
                       <code class="text-muted">{{ movement.code }}</code>
                     </td>
                     <td class="text-end">
-                      <span class="price">{{ movement.unitPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+                      <span class="price">{{ movement.unitPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
                     </td>
                     <td class="text-end">
                       <strong class="price">{{
-                        movement.salePrice | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                        movement.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                       }}</strong>
                     </td>
                     <td class="text-center">
@@ -230,7 +240,7 @@
                       </div>
                     </td>
                     <td>
-                      <span class="text-muted">{{ movement.date | date : 'dd/MM/yyyy HH:mm' }}</span>
+                      <span class="text-muted">{{ movement.date | date: 'dd/MM/yyyy HH:mm' }}</span>
                     </td>
                     <td>
                       <code *ngIf="movement.number" class="text-muted">{{ movement.number }}</code>
@@ -238,7 +248,7 @@
                     </td>
                     <td class="text-end">
                       <strong class="price text-success">{{
-                        movement.amountPaid | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+                        movement.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                       }}</strong>
                     </td>
                     <td class="text-center">
@@ -337,24 +347,24 @@
 
           <div class="d-flex justify-content-between mb-2">
             <span>Subtotal:</span>
-            <span class="fw-bold">{{ subtotal | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+            <span class="fw-bold">{{ subtotal | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
           </div>
 
           <div class="d-flex justify-content-between mb-2" *ngIf="transaction.discountAmount > 0">
             <span>Descuento:</span>
             <span class="fw-bold text-danger"
-              >-{{ transaction.discountAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span
+              >-{{ transaction.discountAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span
             >
           </div>
 
           <div class="d-flex justify-content-between mb-2" *ngIf="totalTaxesBase > 0">
             <span>Neto Gravado:</span>
-            <span class="fw-bold">{{ totalTaxesBase | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+            <span class="fw-bold">{{ totalTaxesBase | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
           </div>
 
           <div class="d-flex justify-content-between mb-2" *ngIf="totalTaxesAmount > 0">
             <span>Impuestos:</span>
-            <span class="fw-bold">{{ totalTaxesAmount | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+            <span class="fw-bold">{{ totalTaxesAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
           </div>
 
           <hr class="my-3" />
@@ -362,7 +372,7 @@
           <div class="d-flex justify-content-between mb-3">
             <span class="h5 text-primary">TOTAL:</span>
             <span class="h5 text-primary fw-bold">{{
-              transaction.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2'
+              transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
             }}</span>
           </div>
         </div>

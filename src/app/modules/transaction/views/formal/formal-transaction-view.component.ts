@@ -15,17 +15,27 @@ import { SelectCompanyComponent } from 'app/modules/entities/company/select-comp
 import { SelectEmployeeComponent } from 'app/shared/components/select-employee/select-employee.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
+import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
 
 @Component({
   selector: 'app-formal-transaction-view',
   standalone: true,
-  imports: [CommonModule, NgbNavModule, NgbTooltipModule, ReactiveFormsModule, TypeaheadDropdownComponent],
+  imports: [
+    CommonModule,
+    NgbNavModule,
+    NgbTooltipModule,
+    ReactiveFormsModule,
+    TypeaheadDropdownComponent,
+    UploadFileComponent,
+  ],
   templateUrl: './formal-transaction-view.component.html',
   styleUrls: ['./formal-transaction-view.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class FormalTransactionViewComponent implements OnInit {
   public transaction: Transaction = new Transaction();
+  /** URL del último archivo subido desde el encabezado (imagen/PDF). */
+  public formalDocumentUrl: string | null = null;
   public transactionId: string;
   public movementsOfArticles: MovementOfArticle[] = [];
   public movementsOfCash: MovementOfCash[] = [];
@@ -348,6 +358,16 @@ export class FormalTransactionViewComponent implements OnInit {
       default:
         return 'badge-secondary';
     }
+  }
+
+  public onFormalDocumentUploaded(urls: string[]): void {
+    if (!urls?.length) {
+      this.formalDocumentUrl = null;
+      this.toastService.showToast(null, 'danger', '', 'No se pudo subir el archivo');
+      return;
+    }
+    this.formalDocumentUrl = urls[0];
+    this.toastService.showToast(null, 'success', '', 'Archivo subido correctamente');
   }
 
   public addProduct(): void {
