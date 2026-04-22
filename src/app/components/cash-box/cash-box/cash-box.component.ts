@@ -61,6 +61,7 @@ export class CashBoxComponent implements OnInit {
   @Input() transactionType: TransactionType;
   private config: Config;
   private identity: User;
+  private selectedEmployee: Employee | null = null;
   public selectPayment;
   public printerSelected: Printer;
   private destroy$ = new Subject<void>();
@@ -104,6 +105,11 @@ export class CashBoxComponent implements OnInit {
     await this._authService.getIdentity.subscribe((identity) => {
       this.identity = identity;
     });
+    this.selectedEmployee = await this.ensureEmployee();
+    if (!this.selectedEmployee) {
+      this.activeModal.dismiss('no_employee');
+      return;
+    }
     await this.getPaymentMethods('where="cashBoxImpact":true').then(async (paymentMethods) => {
       if (paymentMethods) {
         this.paymentMethods = paymentMethods;
@@ -291,11 +297,6 @@ export class CashBoxComponent implements OnInit {
   async openCashBox() {
     this.loading = true;
     if (!this.cashBox || !this.cashBox._id) {
-      const employee = await this.ensureEmployee();
-      if (!employee) {
-        this.loading = false;
-        return;
-      }
       await this.getCashBoxes('sort="number":-1&limit=1').then(async (cashBoxes) => {
         if (cashBoxes) {
           this.cashBox.number = cashBoxes[0].number + 1;
@@ -307,7 +308,7 @@ export class CashBoxComponent implements OnInit {
             this.cashBox.type = identity.cashBoxType;
           }
         });
-        this.cashBox.employee = employee;
+        this.cashBox.employee = this.selectedEmployee!;
         await this.saveCashBox().then(async (cashBox) => {
           if (cashBox) {
             this.cashBox = cashBox;
@@ -348,8 +349,6 @@ export class CashBoxComponent implements OnInit {
 
   async closeCashBox() {
     if (this.cashBox && this.cashBox._id) {
-      const employee = await this.ensureEmployee();
-      if (!employee) return;
       if (this.cashBox.state === CashBoxState.Closed) {
         this.openModal('print');
       } else {
