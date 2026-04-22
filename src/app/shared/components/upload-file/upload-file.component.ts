@@ -77,7 +77,6 @@ export class UploadFileComponent {
     try {
       for (const file of this.selectedFiles) {
         try {
-          console.log(this.displayMode);
           if (this.displayMode === 'icon') {
             const url = await this.uploadService.processInvoice([file]);
             urls.push(url.toString());
