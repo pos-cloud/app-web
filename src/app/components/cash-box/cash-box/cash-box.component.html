@@ -12,6 +12,14 @@
   </div>
   <form [formGroup]="cashBoxForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
     <div class="modal-body">
+      <div class="row form-group col-md-12" *ngIf="employees.length > 0">
+        <div class="form-group col-md-6">
+          <label class="control-label">Empleado:</label>
+          <select class="form-control" [(ngModel)]="selectedEmployee" name="selectedEmployee" [ngModelOptions]="{standalone: true}">
+            <option *ngFor="let emp of employees" [ngValue]="emp">{{ emp.name }}</option>
+          </select>
+        </div>
+      </div>
       <div class="row form-group col-md-12">
         <div class="form-group col-md-4">
           <label for="paymentMethod" class="control-label">Medio de pago:</label>

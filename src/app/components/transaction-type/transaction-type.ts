@@ -1,13 +1,12 @@
 import { Application, Branch, CashBoxType, Company, CompanyType, IAttribute, UseOfCFDI } from '@types';
 import * as moment from 'moment';
 
-import { EmployeeType, Printer } from '@types';
+import { EmployeeType, Printer, User } from '@types';
 import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
 import { PaymentMethod } from '../payment-method/payment-method';
 import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { TransactionState } from '../transaction/transaction';
-import { User } from '@types';
 
 export class TransactionType extends Model {
   _id: string;
@@ -331,7 +330,7 @@ export class TransactionType extends Model {
         align: 'left',
       },
       {
-        name: 'requestEmployee.name',
+        name: 'requestEmployee.description',
         filter: true,
         datatype: 'string',
         align: 'left',
