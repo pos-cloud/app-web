@@ -7,31 +7,22 @@ import { map, take } from 'rxjs/operators';
 
 @Injectable()
 export class LicenseGuard implements CanActivate {
-  constructor(private _configService: ConfigService, private _router: Router) {}
+  constructor(
+    private _configService: ConfigService,
+    private _router: Router
+  ) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this._configService.getConfig.pipe(
       take(1),
       map((config: Config) => {
-        if (next.data.module) {
+        this.getConfigApi().then((config) => {
           if (config) {
+            this._configService.setConfig(config);
             return this.checkLicense(config, next);
-          } else {
-            this.getConfigApi().then((config) => {
-              if (config) {
-                this._configService.setConfig(config);
-                return this.checkLicense(config, next);
-              }
-            });
           }
-        } else {
-          this.getConfigApi().then((config) => {
-            if (config) {
-              this._configService.setConfig(config);
-              return this.checkLicense(config, next);
-            }
-          });
-        }
+        });
+
         return true;
       })
     );
