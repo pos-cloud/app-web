@@ -102,6 +102,7 @@ export class ViewTransactionComponent implements OnInit {
       project: {
         transaction: 1,
         amount: 1,
+        quantityForStock: 1,
         'category.description': 1,
         'make.description': 1,
         'article.posDescription': 1,

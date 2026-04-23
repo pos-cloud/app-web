@@ -336,6 +336,7 @@
                   <th>{{ 'discount' | translate | capitalize }} ($)</th>
                   <th>{{ 'totalPrice' | translate | capitalize }}</th>
                   <th>{{ 'deposit' | translate | capitalize }}</th>
+                  <th>{{ 'quantityForStock' | translate | capitalize }}</th>
                   <th>OP</th>
                   <th>{{ 'reading' | translate | capitalize }}</th>
                   <th>_Id</th>
@@ -385,6 +386,7 @@
                     {{ movementOfArticle?.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>{{ movementOfArticle?.deposit?.name }}</td>
+                  <td>{{ movementOfArticle?.quantityForStock }}</td>
                   <td>{{ movementOfArticle?.op }}</td>
                   <td>{{ movementOfArticle?.read }}</td>
                   <td>{{ movementOfArticle?._id }}</td>
