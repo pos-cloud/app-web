@@ -539,51 +539,39 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <form #variantsForm="ngForm" (ngSubmit)="addVariant(variantsForm)">
-              <div class="row">
+            <div class="row">
                 <div class="form-group col-md-5">
-                  <label for="type" class="control-label">{{ 'type.variants' | translate | capitalize }}:</label>
-                  <select
-                    class="form-control"
-                    name="type"
-                    [(ngModel)]="variantTypeSelected"
-                    (change)="refreshValues()"
-                    required
-                  >
-                    <option value="" [disabled]="readonly">Seleccionar tipo...</option>
-                    <option *ngFor="let type of variantTypes" [disabled]="readonly" [ngValue]="type">
-                      {{ type.name }}
-                    </option>
-                  </select>
+                  <label class="control-label">{{ 'type.variants' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="variantTypeControl"
+                    [data]="variantTypes"
+                    [displayField]="'name'"
+                    [placeholder]="'Seleccionar tipo...'"
+                    [readonly]="readonly"
+                  ></app-typeahead-dropdown>
                 </div>
                 <div class="form-group col-md-5">
-                  <label for="value" class="control-label">{{ 'value' | translate | capitalize }}:</label>
-                  <select
-                    class="form-control"
-                    name="value"
-                    [(ngModel)]="variantValueSelected"
-                    id="value"
-                    required
-                    [disabled]="!variantTypeSelected || variantTypeSelected === null"
-                  >
-                    <option value="">Seleccionar valor...</option>
-                    <option *ngFor="let value of variantValues" [disabled]="readonly" [ngValue]="value">
-                      {{ value.description }}
-                    </option>
-                  </select>
+                  <label class="control-label">{{ 'value' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="variantValueControl"
+                    [data]="variantValues"
+                    [displayField]="'description'"
+                    [placeholder]="'Seleccionar valor...'"
+                    [readonly]="readonly || !variantTypeControl.value?._id"
+                  ></app-typeahead-dropdown>
                 </div>
                 <div class="form-group col-md-2">
                   <div>{{ 'action' | translate | capitalize }}:</div>
                   <button
-                    type="submit"
+                    type="button"
                     class="btn btn-success"
-                    [disabled]="!variantsForm?.valid || loading || readonly"
+                    (click)="addVariant()"
+                    [disabled]="!variantTypeControl.value?._id || !variantValueControl.value?._id || loading || readonly"
                   >
                     {{ 'add' | translate | capitalize }}
                   </button>
                 </div>
               </div>
-            </form>
             <!-- Diseño simple sin cards para variantes -->
             <div class="row" *ngIf="variantsByTypes && variantsByTypes.length > 0">
               <div class="col-12">

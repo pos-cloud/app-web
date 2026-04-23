@@ -1,8 +1,8 @@
-import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   FormArray,
+  FormControl,
   FormsModule,
-  NgForm,
   ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
@@ -59,7 +59,6 @@ import {
 } from '@shared/components/hierarchical-multi-select/hierarchical-multi-select.component';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
-import { Variant } from 'app/components/variant/variant';
 
 @Component({
   selector: 'app-article',
@@ -80,7 +79,7 @@ import { Variant } from 'app/components/variant/variant';
   ],
   providers: [DecimalPipe],
 })
-export class ArticleComponent implements OnInit {
+export class ArticleComponent implements OnInit, OnDestroy {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
 
   public operation: string;
@@ -95,25 +94,18 @@ export class ArticleComponent implements OnInit {
   private destroy$ = new Subject<void>();
   public filesToUpload: Array<File>;
   public filesToArray: Array<File>;
-  public hasChanged = false;
   public imageURL: string;
   public fileNamePrincipal: string;
   public fileNameArray: string;
   public articleTax: Taxes;
   public notes: string[];
   public tags: string[];
-  public userType: string;
-  public variant: Variant;
   public variantsByTypes: any[];
-  public typeSelect = [];
-  public filteredVariantTypes: any[] = [];
   public variantTypes: VariantType[];
-  public variantType: VariantType[];
-  public variantTypeSelected: VariantType;
-  public variantValueSelected: VariantValue;
+  public variantTypeControl = new FormControl(null);
+  public variantValueControl = new FormControl(null);
   public variantValues: VariantValue[];
-  public allVariantValues: VariantValue[]; // Almacenar todos los valores disponibles
-  public variants: Variant[] = new Array();
+  public allVariantValues: VariantValue[];
   public code: string;
   public accounts: Account[];
 
@@ -248,6 +240,15 @@ export class ArticleComponent implements OnInit {
     this.operation = pathUrl[3];
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.articleForm.disable();
+
+    this.variantTypeControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((type: VariantType) => {
+      this.variantValueControl.setValue(null, { emitEvent: false });
+      if (type?._id) {
+        this.getVariantValuesByType(type);
+      } else {
+        this.variantValues = [];
+      }
+    });
 
     this.loading = true;
 
@@ -891,16 +892,10 @@ export class ArticleComponent implements OnInit {
       if (this.tags.indexOf(tag) == -1) {
         this.tags.push(tag);
       } else {
-        this._toastService.showToast({
-          type: 'success',
-          message: 'La nota ingresada ya existe.',
-        });
+        this._toastService.showToast({ type: 'info', message: 'El tag ingresado ya existe.' });
       }
     } else {
-      this._toastService.showToast({
-        type: 'success',
-        message: 'Debe ingresar un valór válido.',
-      });
+      this._toastService.showToast({ type: 'warning', message: 'Debe ingresar un valor válido.' });
     }
   }
 
@@ -916,16 +911,10 @@ export class ArticleComponent implements OnInit {
       if (this.notes.indexOf(note) == -1) {
         this.notes.push(note);
       } else {
-        this._toastService.showToast({
-          type: 'success',
-          message: 'La nota ingresada ya existe.',
-        });
+        this._toastService.showToast({ type: 'info', message: 'La nota ingresada ya existe.' });
       }
     } else {
-      this._toastService.showToast({
-        type: 'success',
-        message: 'Debe ingresar un valór válido.',
-      });
+      this._toastService.showToast({ type: 'warning', message: 'Debe ingresar un valor válido.' });
     }
   }
 
@@ -1041,8 +1030,11 @@ export class ArticleComponent implements OnInit {
     });
   }
 
-  public addVariant(variantsForm: NgForm): void {
-    if (!variantsForm.valid || !variantsForm.value.type || !variantsForm.value.value) {
+  public addVariant(): void {
+    const type: VariantType = this.variantTypeControl.value;
+    const value: VariantValue = this.variantValueControl.value;
+
+    if (!type?._id || !value?._id) {
       this._toastService.showToast({
         type: 'warning',
         message: 'Por favor seleccione un tipo y valor de variante',
@@ -1050,10 +1042,7 @@ export class ArticleComponent implements OnInit {
       return;
     }
 
-    const newVariant = {
-      type: variantsForm.value.type,
-      value: variantsForm.value.value,
-    };
+    const newVariant = { type, value };
 
     // Verificar si la variante ya existe
     if (this.variantExists(newVariant)) {
@@ -1088,31 +1077,12 @@ export class ArticleComponent implements OnInit {
     // Actualizar la vista agrupada
     this.setVariantByType(variantsArray.value);
 
-    // Limpiar solo el valor seleccionado y mantener el tipo
-    if (variantsForm && variantsForm.controls && variantsForm.controls['value']) {
-      variantsForm.controls['value'].reset();
-    }
-
-    this.variantValueSelected = null;
-    this.getVariantValuesByType(this.variantTypeSelected);
+    this.variantValueControl.setValue(null, { emitEvent: false });
 
     this._toastService.showToast({
       type: 'success',
       message: `Variante ${newVariant.type.name} - ${newVariant.value.description} agregada correctamente`,
     });
-  }
-
-  public setValueVariants(): void {
-    if (!this.variant.type) this.variant.type = null;
-    if (!this.variant.value) this.variant.value = null;
-    const variantsArray = this.articleForm.get('variants') as FormArray;
-
-    const variantGroup = this._fb.group({
-      type: [this.variant.type, Validators.required],
-      value: [this.variant.value, Validators.required],
-    });
-
-    variantsArray.push(variantGroup);
   }
 
   public variantExists(variant: any): boolean {
@@ -1126,42 +1096,27 @@ export class ArticleComponent implements OnInit {
 
   public deleteVariant(variant: any): void {
     const variantsArray = this.articleForm.get('variants') as FormArray;
-    const variantData = {
-      ...variant,
-      type: this.variantTypes.find((type) => type._id === variant.type),
-    };
-    // Encontrar el índice de la variante en el FormArray
-    const variantIndex = variantsArray.value.findIndex(
-      (v) => v.type._id === variantData.type._id && v.value._id === variantData._id
-    );
+    const variantIndex = variantsArray.value.findIndex((v: any) => v.value._id === variant._id);
+
     if (variantIndex === -1) {
-      this._toastService.showToast({
-        type: 'error',
-        message: 'No se encontró la variante a eliminar',
-      });
+      this._toastService.showToast({ type: 'error', message: 'No se encontró la variante a eliminar' });
       return;
     }
 
-    // Verificar si es la última variante de ese tipo
+    const variantData = variantsArray.value[variantIndex];
     const sameTypeVariants = variantsArray.value.filter((v) => v.type._id === variantData.type._id);
 
     if (sameTypeVariants.length === 1) {
-      this._toastService.showToast({
-        type: 'info',
-        message: 'No se puede eliminar la única variante de este tipo',
-      });
+      this._toastService.showToast({ type: 'info', message: 'No se puede eliminar la única variante de este tipo' });
       return;
     }
 
-    // Eliminar del FormArray
     variantsArray.removeAt(variantIndex);
-
-    // Actualizar la vista agrupada
     this.setVariantByType(variantsArray.value);
 
     this._toastService.showToast({
       type: 'success',
-      message: `Variante ${variantData.type.name} - ${variantData.description} eliminada correctamente`,
+      message: `Variante ${variantData.type.name} - ${variantData.value.description} eliminada correctamente`,
     });
   }
 
@@ -1193,32 +1148,6 @@ export class ArticleComponent implements OnInit {
 
     // Convertir el mapa a un array
     this.variantsByTypes = Array.from(typeMap.values());
-  }
-
-  public refreshValues(): void {
-    if (this.variantTypeSelected) {
-      // Filtrar los valores de variantes que pertenecen al tipo seleccionado
-      // desde todos los valores disponibles
-      this.variantValues = this.allVariantValues.filter((value) => {
-        // Verificar diferentes estructuras posibles
-        let typeId = null;
-
-        if (value.type) {
-          // Si type es un objeto
-          if (typeof value.type === 'object' && value.type._id) {
-            typeId = value.type._id;
-          }
-          // Si type es un string (ID)
-          else if (typeof value.type === 'string') {
-            typeId = value.type;
-          }
-        }
-
-        return typeId === this.variantTypeSelected._id;
-      });
-    } else {
-      this.variantValues = [];
-    }
   }
 
   public getVariantValuesByType(variantType: VariantType): void {
