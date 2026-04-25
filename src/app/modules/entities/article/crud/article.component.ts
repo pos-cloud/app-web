@@ -19,6 +19,7 @@ import {
   Company,
   Config,
   Make,
+  PriceList,
   Tax,
   TaxBase,
   Taxes,
@@ -32,6 +33,8 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { ArticleService } from '@core/services/article.service';
 import { CategoryService } from '@core/services/category.service';
 import { MakeService } from '@core/services/make.service';
+import { PriceListArticleService } from '@core/services/price-list-article.service';
+import { PriceListService } from '@core/services/price-list.service';
 import { UnitOfMeasurementService } from '@core/services/unit-of-measurement.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { UploadFileComponent } from '@shared/components/upload-file/upload-file.component';
@@ -44,6 +47,7 @@ import { EditorModule } from '@tinymce/tinymce-angular';
 import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 import { AccountService } from '@core/services/account.service';
 import { ClassificationService } from '@core/services/classification.service';
@@ -131,6 +135,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
   public totalTaxes: number = 0;
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
 
+  // Precios manuales por lista (solo listas con pricingMode === 'manual')
+  public priceLists: PriceList[] = [];
+  public manualPriceRows: { priceListId: string; name: string; price: number | null }[] = [];
+
   public hierarchicalCategories;
   public categoriesDisplayText;
 
@@ -138,6 +146,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private _articleService: ArticleService,
     private _categoryService: CategoryService,
     private _makeService: MakeService,
+    private _priceListService: PriceListService,
+    private _priceListArticleService: PriceListArticleService,
     private _unitOfMeasurementService: UnitOfMeasurementService,
     private _configService: ConfigService,
     private _taxesService: TaxService,
@@ -255,6 +265,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     combineLatest({
       categories: this._categoryService.find({ query: { operationType: { $ne: 'D' } } }),
       makes: this._makeService.find({ query: { operationType: { $ne: 'D' } } }),
+      priceLists: this._priceListService.find({ query: { operationType: { $ne: 'D' } } }),
       unitOfMeasurements: this._unitOfMeasurementService.find({ query: { operationType: { $ne: 'D' } } }),
       taxes: this._taxesService.find({ query: { operationType: { $ne: 'D' } } }),
       classifications: this._classificationService.find({ query: { operationType: { $ne: 'D' } } }),
@@ -270,6 +281,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
         next: ({
           categories,
           makes,
+          priceLists,
           unitOfMeasurements,
           taxes,
           classifications,
@@ -283,6 +295,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
           this.categories = categories || [];
 
           this.makes = makes || [];
+          this.priceLists = priceLists || [];
+          this.refreshManualPriceRows();
           this.unitOfMeasurements = unitOfMeasurements || [];
           this.taxes = taxes || [];
           this.classifications = classifications || [];
@@ -319,6 +333,52 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.focusEvent.complete();
+  }
+
+  private refreshManualPriceRows(): void {
+    const manualLists = (this.priceLists || []).filter((pl) => (pl as any).pricingMode === 'manual');
+    this.manualPriceRows = manualLists.map((pl) => ({
+      priceListId: pl._id,
+      name: pl.name,
+      price: null,
+    }));
+  }
+
+  private loadManualPricesForArticle(articleId: string): void {
+    this._priceListArticleService.getByArticle(articleId).subscribe((res: any) => {
+      const items = res?.result ?? res ?? [];
+      const byPriceListId: Record<string, number> = {};
+      for (const it of items) {
+        const plId = typeof it.priceList === 'string' ? it.priceList : it.priceList?._id;
+        if (plId) byPriceListId[plId] = it.price;
+      }
+      this.manualPriceRows = this.manualPriceRows.map((row) => ({
+        ...row,
+        price: byPriceListId[row.priceListId] ?? row.price,
+      }));
+    });
+  }
+
+  private saveManualPricesForArticle(articleId: string): void {
+    if (!this.manualPriceRows?.length) return;
+    if (this.operation === 'view' || this.operation === 'delete') return;
+
+    const requests = this.manualPriceRows
+      .filter((r) => r.price != null && !isNaN(Number(r.price)))
+      .map((r) =>
+        this._priceListArticleService.upsert({
+          priceList: r.priceListId,
+          article: articleId,
+          price: Number(r.price),
+        })
+      );
+
+    if (!requests.length) return;
+
+    forkJoin(requests).subscribe({
+      next: () => {},
+      error: (err) => this._toastService.showToast(err),
+    });
   }
 
   public setValueForm(): void {
@@ -603,6 +663,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
           }
           this.setValueForm();
           this.setValueFormTax();
+          this.loadManualPricesForArticle(id);
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -699,6 +760,9 @@ export class ArticleComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          if (result.status == 200 && result.result?._id) {
+            this.saveManualPricesForArticle(result.result._id);
+          }
           if (result.status == 200) this.returnTo();
         },
         error: (error) => {
@@ -717,6 +781,9 @@ export class ArticleComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
+          if (result.status == 200 && (this.article?._id || result.result?._id)) {
+            this.saveManualPricesForArticle((result.result?._id ?? this.article._id) as string);
+          }
           if (result.status == 200) this.returnTo();
         },
         error: (error) => {

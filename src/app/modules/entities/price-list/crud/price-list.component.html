@@ -47,7 +47,7 @@
           </label>
         </div>
 
-        <!-- Primera fila: Nombre, Porcentaje, Tipo de Porcentaje y Por Defecto -->
+        <!-- Primera fila: Nombre, Modo, Porcentaje, Tipo de Porcentaje y Por Defecto -->
         <div class="row">
           <div class="form-group col-md-4">
             <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
@@ -67,6 +67,18 @@
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="pricingMode" class="control-label">Modo:</label>
+            <select
+              class="form-control"
+              formControlName="pricingMode"
+              id="pricingMode"
+              [disabled]="operation === 'view' || operation === 'delete'"
+            >
+              <option value="dynamic">Dinámica (%)</option>
+              <option value="manual">Manual (precio fijo)</option>
+            </select>
           </div>
           <div class="form-group col-md-2">
             <label for="percentage" class="control-label">{{ 'percentage' | translate | capitalize }}:</label>

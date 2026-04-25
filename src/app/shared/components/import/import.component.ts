@@ -5,9 +5,10 @@ import { BranchService } from '@core/services/branch.service';
 import { DepositService } from '@core/services/deposit.service';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch, Deposit } from '@types';
+import { Branch, Deposit, PriceList } from '@types';
 import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { PriceListService } from 'app/core/services/price-list.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -25,6 +26,7 @@ export class ImportComponent implements OnInit {
   @Input() model: string;
   @Input() title: string;
   @Input() transactionId: string;
+  @Input() priceListId: string;
   branches: Branch[];
   deposits: Deposit[];
   branchesSelected: Branch[] = new Array();
@@ -40,6 +42,8 @@ export class ImportComponent implements OnInit {
   errorMessage: string;
   transactionTypes: TransactionType[];
   transactionTypesSelect;
+  priceLists: PriceList[] = [];
+  selectedPriceListId: string | null = null;
   public importForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -65,7 +69,8 @@ export class ImportComponent implements OnInit {
     public translatePipe: TranslateMePipe,
     private _toastService: ToastService,
     private _branchService: BranchService,
-    private _depositService: DepositService
+    private _depositService: DepositService,
+    private _priceListService: PriceListService
   ) {}
 
   ngOnInit(): void {
@@ -76,6 +81,25 @@ export class ImportComponent implements OnInit {
       this.getBranches();
       this.getDeposits();
     }
+
+    if (this.model === 'price-list-articles') {
+      this.getPriceLists();
+    }
+  }
+
+  private getPriceLists(): void {
+    this._priceListService
+      .find({ query: { operationType: { $ne: 'D' } } })
+      .subscribe((lists: PriceList[]) => {
+        // Import de precios manuales: solo listas pricingMode === 'manual'
+        this.priceLists = (lists || []).filter((pl) => (pl as any).pricingMode === 'manual');
+        if (!this.selectedPriceListId && this.priceListId) {
+          this.selectedPriceListId = this.priceListId;
+        }
+        if (!this.selectedPriceListId && this.priceLists.length) {
+          this.selectedPriceListId = this.priceLists[0]._id;
+        }
+      });
   }
 
   public buildForm(): void {
@@ -176,6 +200,26 @@ export class ImportComponent implements OnInit {
             this.loading = false;
           }
         });
+      } else if (this.model === 'price-list-articles') {
+        const priceListId = this.selectedPriceListId || this.priceListId;
+        if (!priceListId) {
+          this._toastService.showToast({ message: 'Debe seleccionar una lista de precios.' });
+          this.loading = false;
+          return;
+        }
+        this._excelUpdateService.importPriceListArticles(file, priceListId).subscribe((response) => {
+          if (response.status == 200) {
+            this.countUpdate = response.result.countUpdate;
+            this.countNotUpdate = response.result.countNotFound + response.result.countInvalidPrice;
+            this.update = response.result.update;
+            this.notUpdate = [...(response.result.notFound || []), ...(response.result.invalidPrice || [])];
+            this.loading = false;
+            this._toastService.showToast(response);
+          } else {
+            this._toastService.showToast(response.error?.message || response.message || response.error);
+            this.loading = false;
+          }
+        });
       }
     }
   }
@@ -190,6 +234,8 @@ export class ImportComponent implements OnInit {
         'https://docs.google.com/spreadsheets/d/17ASWtOItH6FfFaQpgWS0MeAu1Pm6QPw8/edit?gid=1719187905#gid=1719187905',
       'movements-of-articles':
         'https://docs.google.com/spreadsheets/d/1vd4M5hfYuyar9OaZ4kcqdWryaVJH8voc1n-GENLcztQ/edit?gid=0#gid=0',
+      'price-list-articles':
+        'https://docs.google.com/spreadsheets/d/1hZPD54yW3_HaW9EBexGgqiEP0k-ujtO-AHxVqOzNu2w/edit?gid=0#gid=0',
     };
 
     const url = urls[this.model];

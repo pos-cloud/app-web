@@ -42,6 +42,18 @@
       ></ng-multiselect-dropdown>
     </div>
   </div>
+  <div class="row container-filter" *ngIf="model === 'price-list-articles'">
+    <div class="col-md-6">
+      <label for="priceList" class="control-label">
+        <b>Lista de precios (Manual)</b>
+      </label>
+      <select class="form-control" id="priceList" [(ngModel)]="selectedPriceListId">
+        <option [ngValue]="null">Seleccionar lista...</option>
+        <option *ngFor="let pl of priceLists" [ngValue]="pl._id">{{ pl.name }}</option>
+      </select>
+      <small class="text-muted">Columnas del Excel: code | price</small>
+    </div>
+  </div>
   <div class="container mb-4" *ngIf="model === 'company'">
     <ngb-alert class="alert alert-primary" [dismissible]="false">
       <strong>Importante:</strong> Al importar compañías desde Excel, solo se agregarán nuevas. No se modificarán las
