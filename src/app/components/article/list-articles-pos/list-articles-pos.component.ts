@@ -54,6 +54,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   @Input() transactionId: string;
   @Input() transaction: Transaction;
   @Input() loading: boolean = false;
+  @Input() viewMode: 'grid' | 'list' = 'grid';
   identity: User;
   articles: Article[];
   alertMessage: string = '';
@@ -69,6 +70,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   database: string;
   filterPipe: FilterPipe = new FilterPipe();
   filteredArticles: Article[];
+  private lastCategory: Category = null;
   config: Config;
   discountCompany: number = 0;
   discountCompanyGroup: number = 0;
@@ -242,6 +244,11 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
             this.articles = result.articles;
           } else {
             this.articles = new Array();
+          }
+
+          // Si ya estamos mostrando artículos, re-aplicar último contexto (categoría/filtro)
+          if (this.areArticlesVisible) {
+            this.filterItem(null, this.lastCategory);
           }
         },
         (error) => {
@@ -666,6 +673,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   }
 
   async filterItem(article?: Article, category?: Category) {
+    this.lastCategory = category ?? null;
     let isCodePrefix: boolean = false;
 
     // GUARDAMOS LE CÓDIGO ORIGINAL PARA LOS PESABLES
@@ -814,7 +822,30 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         this.beep();
         this.eventAddItem.emit(null);
       }
+    } else {
+      // Sin filtro y sin categoría: mostrar todos los artículos finales
+      this.filteredArticles = this.filterPipe.transform(this.articles, Type.Final.toString(), 'type');
+      this.eventAddItem.emit(null);
     }
+  }
+
+  public getListPrice(article: Article): number {
+    if (!this.transaction?.type?.showPrices) return null;
+
+    // Compra/Stock/etc: mostramos costPrice
+    if (this.transaction?.type?.transactionMovement?.toString() !== 'Venta') {
+      return article?.costPrice ?? null;
+    }
+
+    // Venta: precio con descuentos de compañía/grupo (mismo criterio que el grid actual)
+    const salePrice = article?.salePrice ?? null;
+    if (salePrice === null) return null;
+
+    return (
+      salePrice -
+      (salePrice * this.discountCompany) / 100 -
+      (salePrice * this.discountCompanyGroup) / 100
+    );
   }
 
   beep() {

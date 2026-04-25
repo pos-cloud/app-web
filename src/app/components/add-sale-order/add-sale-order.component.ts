@@ -105,6 +105,7 @@ export class AddSaleOrderComponent {
   transactionMovement: string;
   alertMessage: string = '';
   display = true;
+  browseViewMode: 'grid' | 'list' = 'grid';
   discountApply = 0;
   movementsOfArticles: MovementOfArticle[];
   movementsOfCashes: MovementOfCash[];
@@ -190,6 +191,7 @@ export class AddSaleOrderComponent {
   ) {
     this.initVariables();
     this.processParams();
+    this.browseViewMode = (localStorage.getItem('posBrowseViewMode') as 'grid' | 'list') || 'grid';
   }
 
   initVariables(): void {
@@ -314,7 +316,25 @@ export class AddSaleOrderComponent {
       if (this.transactionMovement && this.listCategoriesComponent) {
         this.listCategoriesComponent.loadCategories();
       }
+      // Vista inicial: en modo lista mostramos artículos directo
+      if (this.browseViewMode === 'list') {
+        this.showArticles();
+        this.listArticlesComponent?.filterItem(null, this.categorySelected);
+      }
     }, 1000);
+  }
+
+  toggleBrowseViewMode(): void {
+    this.browseViewMode = this.browseViewMode === 'grid' ? 'list' : 'grid';
+    localStorage.setItem('posBrowseViewMode', this.browseViewMode);
+
+    if (this.browseViewMode === 'list') {
+      this.showArticles();
+      this.listArticlesComponent?.filterItem(null, this.categorySelected);
+    } else {
+      // Volvemos al flujo tradicional (rubros)
+      this.showCategories();
+    }
   }
 
   getPriceList(id: string): Promise<PriceList> {
@@ -662,7 +682,12 @@ export class AddSaleOrderComponent {
       let itemData: MovementOfArticle = event['parent'];
       let child: MovementOfArticle[] = event['child'];
 
-      this.showCategories();
+      // Mantener la última vista elegida por el usuario
+      if (this.browseViewMode === 'list') {
+        this.showArticles(this.categorySelected);
+      } else {
+        this.showCategories();
+      }
 
       if (itemData && itemData.article && itemData.article._id) {
         if (
@@ -3185,7 +3210,12 @@ export class AddSaleOrderComponent {
       this.listArticlesComponent.filterItem(null, this.categorySelected);
     }
     if (!this.filterArticle || this.filterArticle === '') {
-      this.showCategories();
+      if (this.browseViewMode === 'list') {
+        this.showArticles();
+        this.listArticlesComponent.filterItem(null, this.categorySelected);
+      } else {
+        this.showCategories();
+      }
     }
   }
 
