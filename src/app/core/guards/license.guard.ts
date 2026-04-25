@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/core/services/config.service';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 
 @Injectable()
 export class LicenseGuard implements CanActivate {
@@ -14,17 +14,9 @@ export class LicenseGuard implements CanActivate {
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this._configService.getConfig.pipe(
+      filter((config): config is Config => !!config),
       take(1),
-      map((config: Config) => {
-        this.getConfigApi().then((config) => {
-          if (config) {
-            this._configService.setConfig(config);
-            return this.checkLicense(config, next);
-          }
-        });
-
-        return true;
-      })
+      map((config: Config) => this.checkLicense(config, next))
     );
   }
 
@@ -54,22 +46,5 @@ export class LicenseGuard implements CanActivate {
     } else {
       return false;
     }
-  }
-
-  public getConfigApi(): Promise<Config> {
-    return new Promise<Config>((resolve, reject) => {
-      this._configService.getConfigApi().subscribe(
-        (result) => {
-          if (!result.configs) {
-            resolve(null);
-          } else {
-            resolve(result.configs[0]);
-          }
-        },
-        (error) => {
-          resolve(null);
-        }
-      );
-    });
   }
 }
