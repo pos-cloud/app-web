@@ -116,9 +116,6 @@ export class AppComponent {
         config.companyPostalCode
       );
     }
-    if (config.showLicenseNotification !== undefined) {
-      Config.setConfigs(config.showLicenseNotification);
-    }
     if (config.modules) {
       Config.setModules(config.modules);
     }

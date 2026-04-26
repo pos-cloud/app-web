@@ -24,7 +24,6 @@ export class Config {
   static timezone: string;
   static currency: Currency;
   static licenseCost: number;
-  static showLicenseNotification: boolean = true;
   public article: {
     code: {
       validators: {
@@ -141,9 +140,5 @@ export class Config {
     Config.licenseCost = licenseCost;
     Config.currency = currency;
     Config.companyPostalCode = companyPostalCode;
-  }
-
-  public static setConfigs(showLicenseNotification: boolean): void {
-    Config.showLicenseNotification = showLicenseNotification;
   }
 }
