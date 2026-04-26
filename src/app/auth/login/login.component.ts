@@ -8,7 +8,7 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // SERVICES
 import { AuthService } from '../../core/services/auth.service';
-import { PlausibleService } from '../../core/services/plausible.service';
+import { AnalyticsService } from '../../core/services/analytics.service';
 import { ToastService } from '../../shared/components/toast/toast.service';
 
 @Component({
@@ -34,7 +34,7 @@ export class LoginComponent {
     private _router: Router,
     private _route: ActivatedRoute,
     private _toastService: ToastService,
-    private _plausibleService: PlausibleService
+    private _analyticsService: AnalyticsService
   ) {
     const savedCompany = localStorage.getItem('company');
     this.checkLockInput = !!savedCompany;
@@ -86,7 +86,7 @@ export class LoginComponent {
           this._authService.loginStorage(u);
           localStorage.setItem('company', this.company);
 
-          this._plausibleService.updateClient(this.company);
+          this._analyticsService.updateClient(this.company);
 
           this._route.queryParams.subscribe({
             next: (params) => {

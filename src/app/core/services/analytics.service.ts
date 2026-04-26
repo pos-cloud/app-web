@@ -16,7 +16,7 @@ declare global {
 @Injectable({
   providedIn: 'root',
 })
-export class PlausibleService {
+export class AnalyticsService {
   private currentUser: User | null = null;
   private currentCompany: string | null = null;
 
@@ -117,3 +117,4 @@ export class PlausibleService {
     }
   }
 }
+
