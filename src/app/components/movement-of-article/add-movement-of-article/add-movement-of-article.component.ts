@@ -177,14 +177,12 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   loadLocationAndStock(): void {
-    if (Config.modules && Config.modules.stock) {
-      this.getArticleStock(this.movementOfArticle).then((articleStock) => {
-        if (articleStock) {
-          this.stock = articleStock.realStock;
-          this.movementOfArticleForm.patchValue({ stock: this.stock });
-        }
-      });
-    }
+    this.getArticleStock(this.movementOfArticle).then((articleStock) => {
+      if (articleStock) {
+        this.stock = articleStock.realStock;
+        this.movementOfArticleForm.patchValue({ stock: this.stock });
+      }
+    });
   }
 
   loadStructure() {
@@ -1224,7 +1222,6 @@ export class AddMovementOfArticleComponent implements OnInit {
       } else if (
         verifyStock &&
         movArticle.article &&
-        Config.modules.stock &&
         this.transaction.type &&
         this.transaction.type.modifyStock &&
         this.transaction.type.stockMovement === StockMovement.Outflows &&

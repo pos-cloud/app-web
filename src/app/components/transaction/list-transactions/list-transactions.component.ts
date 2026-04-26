@@ -8,7 +8,7 @@ import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import * as moment from 'moment';
-import { Observable, Subscription, of as observableOf } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { PrintService } from '@core/services/print.service';
 import { UserService } from '@core/services/user.service';
@@ -47,7 +47,6 @@ export class ListTransactionsComponent implements OnInit {
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
   transactionMovement: TransactionMovement;
   listType: string = 'statistics';
-  modules: Observable<{}>;
   printers: Printer[];
   totalItems: number = 0;
   title: string = 'Listado de Transacciones';
@@ -129,7 +128,6 @@ export class ListTransactionsComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
 
     this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    this.modules = observableOf(Config.modules);
 
     if (this.listType === 'Compras') {
       this.transactionMovement = TransactionMovement.Purchase;
@@ -255,8 +253,6 @@ export class ListTransactionsComponent implements OnInit {
         this.origin = params['origin'];
         let pathLocation: string[] = this._router.url.split('/');
         let listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-
-        this.modules = observableOf(Config.modules);
 
         this.listType = listType.split('?')[0];
 

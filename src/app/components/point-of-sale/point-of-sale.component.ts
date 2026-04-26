@@ -779,7 +779,7 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     if (!type.cashOpening && !type.cashClosing) {
-      if (Config.modules.money && this.transaction.type.cashBoxImpact) {
+      if (this.transaction.type.cashBoxImpact) {
         let query = 'where="state":"' + CashBoxState.Open + '"';
         if (this.config.cashBox.perUser) {
           if (this.identity.employee) {

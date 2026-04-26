@@ -21,7 +21,6 @@ export class AppComponent {
   public config: Config;
   public alertMessage = '';
   public loading = true;
-  public modules: any;
   public isVerifyNotification: boolean = false;
   public readedNotification: boolean = false;
   public showHeader: boolean = true;
@@ -115,9 +114,6 @@ export class AppComponent {
         config.licenseCost,
         config.companyPostalCode
       );
-    }
-    if (config.modules) {
-      Config.setModules(config.modules);
     }
     this.config = config;
   }

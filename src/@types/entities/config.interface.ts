@@ -26,7 +26,6 @@ export interface Config extends Activity {
   companyAddress: string;
   companyPhone: string;
   companyPostalCode: string;
-  modules: JSON;
   footerInvoice: string;
   latitude: string;
   longitude: string;
