@@ -7,6 +7,9 @@ import { AuthService } from './auth.service';
 declare global {
   interface Window {
     plausible: any;
+    umami?: {
+      identify: (uniqueIdOrData: string | Record<string, any>, data?: Record<string, any>) => void | Promise<any>;
+    };
   }
 }
 
@@ -24,6 +27,7 @@ export class PlausibleService {
       // Actualizar cuando cambie el usuario
       if (identity && this.currentCompany) {
         this.sendPageviewWithCompany();
+        this.syncUmamiSessionData();
       }
     });
 
@@ -32,6 +36,22 @@ export class PlausibleService {
 
     // Automáticamente enviar la company en cada navegación
     this.setupAutomaticTracking();
+  }
+
+  /**
+   * Sincroniza datos de sesión en Umami (1 vez por sesión/actualización de identity).
+   * Esto permite segmentar "uso por company" sin instrumentar cada pantalla.
+   */
+  private syncUmamiSessionData() {
+    if (typeof window === 'undefined' || !window.umami?.identify || !this.currentCompany) {
+      return;
+    }
+
+    try {
+      window.umami.identify({ company: this.currentCompany });
+    } catch {
+      // noop: analytics nunca debe romper flujo de la app
+    }
   }
 
   /**
@@ -77,6 +97,7 @@ export class PlausibleService {
   updateClient(companyName: string) {
     this.currentCompany = companyName;
     localStorage.setItem('company', companyName);
+    this.syncUmamiSessionData();
     // Enviar inmediatamente después de login
     setTimeout(() => {
       this.sendPageviewWithCompany();
@@ -88,6 +109,7 @@ export class PlausibleService {
    */
   initializeTracking() {
     if (this.currentCompany) {
+      this.syncUmamiSessionData();
       // Delay inicial para asegurar que Plausible esté cargado
       setTimeout(() => {
         this.sendPageviewWithCompany();
