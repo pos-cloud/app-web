@@ -718,7 +718,6 @@ export class ConfigComponent implements OnInit {
   }
 
   public setConfigurationSettings(config) {
-    if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword);
     if (config.companyName) {
       Config.setConfigCompany(
         config.companyPicture,

@@ -92,9 +92,6 @@ export class AppComponent {
   }
 
   public setConfigurationSettings(config) {
-    if (config.emailAccount) {
-      Config.setConfigEmail(config.emailAccount, config.emailPassword);
-    }
     if (config.companyName) {
       Config.setConfigCompany(
         config.companyPicture,

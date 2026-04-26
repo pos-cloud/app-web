@@ -3,8 +3,6 @@ import * as moment from 'moment';
 
 export class Config {
   public _id: string;
-  static emailAccount: string;
-  static emailPassword: string;
   static companyPicture: string;
   static companyName: string;
   static companyAddress: string;
@@ -89,11 +87,6 @@ export class Config {
     authToken: string;
   };
   businessModel: any;
-
-  public static setConfigEmail(emailAccount, emailPassword): void {
-    Config.emailAccount = emailAccount;
-    Config.emailPassword = emailPassword;
-  }
 
   public static setConfigCompany(
     companyPicture,
