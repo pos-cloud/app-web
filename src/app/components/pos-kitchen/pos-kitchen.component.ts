@@ -2,7 +2,6 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
-import { Config } from 'app/app.config';
 import { MovementOfArticle, MovementOfArticleStatus } from 'app/components/movement-of-article/movement-of-article';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
@@ -24,7 +23,6 @@ export class PosKitchenComponent {
   public loading: boolean = false;
   public movementsOfArticles: MovementOfArticle[];
   public movementOfArticle: MovementOfArticle;
-  public database: string = Config.database;
   public productionStarted: boolean = false;
   public startProductionDate: string;
   public movementsOfArticlesChildren: MovementOfArticle[];

@@ -263,6 +263,8 @@ export class TransactionService extends ModelService {
 
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
 
+    const database = localStorage.getItem('company') || '';
+
     let body =
       'transaction=' +
       JSON.stringify(transaction) +
@@ -283,7 +285,7 @@ export class TransactionService extends ModelService {
       '","companyPostalCode":"' +
       Config.companyPostalCode +
       '","database":"' +
-      Config.database +
+      database +
       '"}';
 
     return this._http

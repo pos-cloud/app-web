@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Category, FormField } from '@types';
-import { Config } from 'app/app.config';
 import { Article } from 'app/components/article/article';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
@@ -51,7 +50,6 @@ export class ReportComponent implements OnInit {
   public filename: any[] = new Array();
   public typeFile: any[] = new Array();
   public oldFiles: any[];
-  public database: string = Config.database;
   public home: {
     title: string;
     view: string;

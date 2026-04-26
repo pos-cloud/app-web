@@ -510,9 +510,10 @@ export class CurrentAccountComponent implements OnInit {
           modalRef.componentInstance.emails = this.companySelected.emails;
           modalRef.componentInstance.subject = 'Cuenta Corriente';
           modalRef.componentInstance.body = ' ';
+          const db = localStorage.getItem('company') || '';
           modalRef.componentInstance.attachments = {
             filename: `current-account.pdf`,
-            path: `/home/clients/${Config.database}/others/current-account.pdf`,
+            path: `/home/clients/${db}/others/current-account.pdf`,
           };
         } else {
           this.showMessage('Debe seleccionar una empresa.', 'info', true);

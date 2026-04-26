@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, AccountPeriod, FormField } from '@types';
-import { Config } from 'app/app.config';
 import { AccountPeriodService } from 'app/core/services/account-period.service';
 import { AccountService } from 'app/core/services/account.service';
 import { ApplicationService } from 'app/core/services/application.service';
@@ -59,7 +58,6 @@ export class AccountSeatComponent implements OnInit {
   public filename: any[] = new Array();
   public typeFile: any[] = new Array();
   public oldFiles: any[];
-  public database: string = Config.database;
   public debit = 0;
   public credit = 0;
   public accounts: Account[];

@@ -170,7 +170,7 @@ export class PrintComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.database = localStorage.getItem('company');
+    this.database = localStorage.getItem('company') || '';
 
     if (!this.printer || !this.printer.printIn) {
       // this.printer = new Printer();
@@ -1066,7 +1066,7 @@ export class PrintComponent implements OnInit {
     this.getGreeting();
     this.getFooter();
 
-    if (this.transaction.type.name === 'Préstamo' && Config.database === 'borita') {
+    if (this.transaction.type.name === 'Préstamo' && this.database === 'borita') {
       this.toPrintPagare();
       this.toPrintMutuo();
     }
@@ -3953,7 +3953,7 @@ export class PrintComponent implements OnInit {
           this._printService
             .toPrintURL(
               this.printer.url,
-              '/home/clients/' + Config.database + '/' + this.typePrint + '/' + this.transactionId + '.pdf'
+              '/home/clients/' + this.database + '/' + this.typePrint + '/' + this.transactionId + '.pdf'
             )
             .subscribe();
         }

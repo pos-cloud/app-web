@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Config } from 'app/app.config';
 import { User } from '@types';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -108,19 +107,6 @@ export class AuthService {
     sessionStorage.removeItem('session_token');
     sessionStorage.removeItem('user');
     this.identity.next(null);
-    let hostname = window.location.hostname;
-    let subdominio = '';
-
-    if (hostname.includes('.poscloud.com.ar')) {
-      subdominio = hostname
-        .split('.poscloud.com.ar')[0]
-        .replace(/\//g, '')
-        .replace(/:/g, '')
-        .replace(/http/g, '')
-        .replace(/www./g, '')
-        .replace(/https/g, '');
-    }
-    Config.setDatabase(subdominio);
     this._router.navigate(['/login'], {
       queryParams: {
         return: this._router.url,

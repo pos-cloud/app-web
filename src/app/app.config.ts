@@ -3,7 +3,6 @@ import * as moment from 'moment';
 
 export class Config {
   public _id: string;
-  static database: string;
   static modules;
   static emailAccount: string;
   static emailPassword: string;
@@ -101,10 +100,6 @@ export class Config {
 
   public static setModules(modules): void {
     Config.modules = modules;
-  }
-
-  public static setDatabase(database: string): void {
-    Config.database = database;
   }
 
   public static setConfigEmail(emailAccount, emailPassword): void {

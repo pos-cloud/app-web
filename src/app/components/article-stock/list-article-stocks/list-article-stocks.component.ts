@@ -9,7 +9,6 @@ import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 
 import { Printer } from '@types';
-import { Config } from '../../../app.config';
 import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { PrinterService } from '../../../core/services/printer.service';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
@@ -63,7 +62,6 @@ export class ListArticleStocksComponent implements OnInit {
   areFiltersVisible: boolean = false;
   loading: boolean = false;
   printers: Printer[];
-  database: string;
 
   totalRealStock = 0;
   totalCost = 0;
@@ -108,8 +106,6 @@ export class ListArticleStocksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.database = Config.database;
-
     let pathLocation: string[] = this._router.url.split('/');
 
     this.userType = pathLocation[1];
