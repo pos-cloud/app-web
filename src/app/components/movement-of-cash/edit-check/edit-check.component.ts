@@ -196,24 +196,21 @@ export class EditCheckComponent implements OnInit {
     this.loading = true;
 
     this._bankService
-      .getBanks(
-        {
+      .getAll({
+        project: {
           _id: 1,
           name: 1,
           code: 1,
           operationType: 1,
-        }, // PROJECT
-        { operationType: { $ne: 'D' } }, // MATCH
-        { name: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
+        },
+        match: { operationType: { $ne: 'D' } },
+        sort: { name: 1 },
+      })
       .subscribe(
         (result) => {
           this.loading = false;
-          if (result && result.banks) {
-            this.banks = result.banks;
+          if (result && result.status === 200) {
+            this.banks = result.result ?? [];
           } else {
             this.banks = new Array();
           }

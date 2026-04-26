@@ -20,7 +20,10 @@ export class AnalyticsService {
   private currentUser: User | null = null;
   private currentCompany: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {
     // Obtener información del usuario actual
     this.authService.getIdentity.subscribe((identity) => {
       this.currentUser = identity;
@@ -117,4 +120,3 @@ export class AnalyticsService {
     }
   }
 }
-
