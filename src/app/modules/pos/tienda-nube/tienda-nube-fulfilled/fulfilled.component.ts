@@ -52,7 +52,7 @@ export class FulfilledComponent implements OnInit {
       this.loading = true;
       const formData = this.fulfilledForm.value;
       this._tiendaNubeService
-        .updateTransactionTn(this.tiendaNubeId, formData, this.state)
+        .updateTransactionTn(this.tiendaNubeId, this.state, formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {

@@ -318,14 +318,6 @@ export class ConfigComponent implements OnInit {
     //     authToken: '',
     //   };
     // }
-    if (!this.config.tiendaNube) {
-      this.config.tiendaNube = {
-        token: '',
-        userID: '',
-        // appID: '',
-        // clientSecret: '',
-      };
-    }
     this.configFormSystem = this._fb.group({
       _id: [this.config._id, [Validators.required]],
       'article.code.validators.maxLength': [this.config.article.code.validators.maxLength, []],
@@ -655,9 +647,6 @@ export class ConfigComponent implements OnInit {
     if (this.config.tradeBalance.numberOfDecimals === undefined) this.config.tradeBalance.numberOfDecimals = 2;
     if (this.config.voucher.readingLimit === undefined) this.config.voucher.readingLimit = 0;
     if (this.config.voucher.minutesOfExpiration === undefined) this.config.voucher.minutesOfExpiration = 720;
-
-    if (!this.config.tiendaNube.token) this.config.tiendaNube.token;
-    if (!this.config.tiendaNube.userID) this.config.tiendaNube.userID;
 
     let vatConfitionDefault;
     if (!this.config.company.vatCondition.default) {

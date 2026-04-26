@@ -94,12 +94,6 @@ export interface Config extends Activity {
     accountSid: string;
     authToken: string;
   };
-  tiendaNube: {
-    token: string;
-    userID: string;
-    appID: string;
-    clientSecret: string;
-  };
   ecommerceCost: number;
   ecommercePlan: {
     name: string;

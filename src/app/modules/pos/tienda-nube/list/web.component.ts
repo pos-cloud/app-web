@@ -16,12 +16,10 @@ import {
   TransactionState,
   User,
 } from '@types';
-import { Config } from 'app/app.config';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { AuthService } from 'app/core/services/auth.service';
-import { ConfigService } from 'app/core/services/config.service';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
@@ -57,7 +55,6 @@ export class WebComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   public columns: IAttribute[];
   public printers: Printer[];
-  public config: Config;
   private sort: {};
   public filters: any;
   private destroy$ = new Subject<void>();
@@ -74,7 +71,6 @@ export class WebComponent implements OnInit {
     private _movementOfCash: MovementOfCashService,
     private _toastService: ToastService,
     public _userService: UserService,
-    private _configService: ConfigService,
     private _authService: AuthService,
     public _printService: PrintService
   ) {
@@ -348,10 +344,6 @@ export class WebComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this._configService.getConfig.subscribe((config) => {
-      this.config = config;
-    });
-
     this._authService.getIdentity.subscribe(async (identity) => {
       this.user = identity;
     });
@@ -606,9 +598,9 @@ export class WebComponent implements OnInit {
 
   changeStateOfTransaction(transaction: Transaction, state: TransactionState) {
     this.loading = true;
-    if (transaction && transaction.tiendaNubeId && this.config.tiendaNube.userID) {
+    if (transaction && transaction.tiendaNubeId) {
       this._tiendaNubeService
-        .updateTransactionTn(transaction.tiendaNubeId, this.config.tiendaNube.userID, state)
+        .updateTransactionTn(transaction.tiendaNubeId, state)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {

@@ -89,12 +89,6 @@ export class Config {
     accountSid: string;
     authToken: string;
   };
-  public tiendaNube: {
-    token: string;
-    userID: string;
-    // appID: string;
-    // clientSecret: string;
-  };
   businessModel: any;
 
   public static setModules(modules): void {

@@ -59,7 +59,7 @@ export class CancelComponent implements OnInit {
       };
       formData.reason = reasonMappings[formData.reason];
       this._tiendaNubeService
-        .updateTransactionTn(this.tiendaNubeId, formData, this.state)
+        .updateTransactionTn(this.tiendaNubeId, this.state, formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {

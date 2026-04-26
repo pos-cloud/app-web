@@ -18,17 +18,27 @@ export class TiendaNubeService extends ModelService {
     );
   }
 
-  public updateTransactionTn(orderId: string, data: any, status: any) {
+  /**
+   * Cambia estado de una orden en Tienda Nube.
+   * `payload` es opcional: cancel/fulfilled envían datos del formulario; el listado puede mandar `{}`.
+   * Credenciales (user/token) las resuelve api-core desde `applications`, no desde config.
+   */
+  public updateTransactionTn(orderId: string, status: any, payload?: Record<string, unknown>) {
     const URL = `${environment.apiv2}/tienda-nube/order`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
+    const body: { orderId: string; status: any; data?: Record<string, unknown> } = { orderId, status };
+    if (payload !== undefined && payload !== null) {
+      body.data = payload;
+    }
+
     return this._http
       .put(
         URL,
-        { data, orderId, status },
+        body,
         {
           headers: headers,
         }
