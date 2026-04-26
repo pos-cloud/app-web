@@ -162,7 +162,6 @@ export class ReportMovArtByArticleComponent {
           transactionMovement: this.transactionMovement,
           operationType: { $ne: 'D' },
           requestArticles: true,
-          modifyStock: true,
         },
       })
       .pipe(takeUntil(this.destroy$))
