@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { Claim } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from '../../core/services/auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class ClaimService extends ModelService {
   }
 
   public saveClaim(claim: Claim): Observable<any> {
-    const URL = `${Config.apiURL}claim`;
+    const URL = `${environment.api}/api/claim`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -49,7 +49,7 @@ export class ClaimService extends ModelService {
 
   public makeFileRequest(files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
-    xhr.open('POST', Config.apiURL + 'upload-file-claim/', true);
+    xhr.open('POST', `${environment.api}/api/upload-file-claim/`, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {
@@ -76,7 +76,7 @@ export class ClaimService extends ModelService {
   }
 
   public deleteFile(file: String): Observable<any> {
-    const URL = `${Config.apiURL}file-claim/` + file;
+    const URL = `${environment.api}/api/file-claim/` + file;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -26,7 +26,7 @@ export class TransactionService extends ModelService {
   }
 
   public getTransaction(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}transaction`;
+    const URL = `${environment.api}/api/transaction`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -50,7 +50,7 @@ export class TransactionService extends ModelService {
   }
 
   public getTransactions(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}transactions`;
+    const URL = `${environment.api}/api/transactions`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -81,7 +81,7 @@ export class TransactionService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/transactions`;
+    const URL = `${environment.api}/api/v2/transactions`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -111,7 +111,7 @@ export class TransactionService extends ModelService {
   }
 
   public getTransactionsV3(query): Observable<any> {
-    const URL = `${Config.apiURL}v3/transactions`;
+    const URL = `${environment.api}/api/v3/transactions`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -132,7 +132,7 @@ export class TransactionService extends ModelService {
   }
 
   public getTotalTransactionsBetweenDates(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}total-transactions`;
+    const URL = `${environment.api}/api/total-transactions`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -156,7 +156,7 @@ export class TransactionService extends ModelService {
   }
 
   public getVATBook(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}get-vat-book`;
+    const URL = `${environment.api}/api/get-vat-book`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -180,7 +180,7 @@ export class TransactionService extends ModelService {
   }
 
   public exportCiti(VATPeriod: string, transactionMovement: TransactionMovement): Observable<any> {
-    const URL = `${Config.apiURL}export-citi`;
+    const URL = `${environment.api}/api/export-citi`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -206,7 +206,7 @@ export class TransactionService extends ModelService {
   }
 
   public downloadFile(fileName: string): Observable<any> {
-    const URL = `${Config.apiURL}download-file`;
+    const URL = `${environment.api}/api/download-file`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -259,7 +259,6 @@ export class TransactionService extends ModelService {
     movementsOfArticles: MovementOfArticle[],
     movementsOfCashes: MovementOfCash[]
   ): Observable<any> {
-    //const URL = `${Config.apiURL_FE_MX}`;
     const URL = `http://vps-1883265-x.dattaweb.com/libs/fe/mx/01_CFDI_fe.php`;
 
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');

@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Config } from 'app/app.config';
 import { environment } from 'environments/environment';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -23,7 +22,7 @@ export class ArticleService extends ModelService {
   }
 
   public getArticle(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}article`;
+    const URL = `${environment.api}/api/article`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -47,7 +46,7 @@ export class ArticleService extends ModelService {
   }
 
   public getArticles(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}articles`;
+    const URL = `${environment.api}/api/articles`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -99,7 +98,7 @@ export class ArticleService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/articles`;
+    const URL = `${environment.api}/api/v2/articles`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -136,7 +135,7 @@ export class ArticleService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/histories`;
+    const URL = `${environment.api}/api/v2/histories`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -265,7 +264,7 @@ export class ArticleService extends ModelService {
   public makeFileRequestArray(files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-    xhr.open('POST', Config.apiURL + 'upload-image-article/', true);
+    xhr.open('POST', `${environment.api}/api/upload-image-article/`, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {
@@ -292,7 +291,7 @@ export class ArticleService extends ModelService {
   }
 
   public deleteImage(picture: string): Observable<any> {
-    const URL = `${Config.apiURL}delete-image-article`;
+    const URL = `${environment.api}/api/delete-image-article`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -340,7 +339,7 @@ export class ArticleService extends ModelService {
   }
 
   public getPicture(picture: string): Observable<any> {
-    const URL = `${Config.apiURL}get-image-base64-article`;
+    const URL = `${environment.api}/api/get-image-base64-article`;
 
     const params = new HttpParams().set('picture', picture);
 

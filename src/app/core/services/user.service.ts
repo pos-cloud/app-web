@@ -4,9 +4,9 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { User } from '@types';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +34,7 @@ export class UserService extends ModelService {
   }
 
   public getUser(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}user`;
+    const URL = `${environment.api}/api/user`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -58,7 +58,7 @@ export class UserService extends ModelService {
   }
 
   public getUsers(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}users`;
+    const URL = `${environment.api}/api/users`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -89,7 +89,7 @@ export class UserService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/users`;
+    const URL = `${environment.api}/api/v2/users`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -119,7 +119,7 @@ export class UserService extends ModelService {
   }
 
   public saveUser(user: User): Observable<any> {
-    const URL = `${Config.apiURL}user`;
+    const URL = `${environment.api}/api/user`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -140,7 +140,7 @@ export class UserService extends ModelService {
   }
 
   public updateUser(user: User): Observable<any> {
-    const URL = `${Config.apiURL}user`;
+    const URL = `${environment.api}/api/user`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -164,7 +164,7 @@ export class UserService extends ModelService {
   }
 
   public deleteUser(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}user`;
+    const URL = `${environment.api}/api/user`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

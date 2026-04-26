@@ -15,7 +15,6 @@ import {
   FormField,
   Printer,
 } from '@types';
-import { Config } from 'app/app.config';
 import { EmailTemplate } from 'app/components/email-template/email-template';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
@@ -35,6 +34,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { environment } from 'environments/environment';
 
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
@@ -74,8 +74,7 @@ export class TransactionTypeComponent implements OnInit {
   filename: any[] = new Array();
   typeFile: any[] = new Array();
   oldFiles: any[];
-  apiURL: string = Config.apiV8URL;
-  database: string = Config.database;
+  apiURL: string = environment.apiv2;
   branches: Branch[];
   paymentMethods: PaymentMethod[];
 

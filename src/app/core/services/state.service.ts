@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { State } from '../../components/state/state';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class StateService extends ModelService {
   }
 
   public getState(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}state`;
+    const URL = `${environment.api}/api/state`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -55,7 +55,7 @@ export class StateService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}/states`;
+    const URL = `${environment.api}/api/states`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -85,7 +85,7 @@ export class StateService extends ModelService {
   }
 
   public saveState(state: State): Observable<any> {
-    const URL = `${Config.apiURL}state`;
+    const URL = `${environment.api}/api/state`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class StateService extends ModelService {
   }
 
   public updateState(state: State): Observable<any> {
-    const URL = `${Config.apiURL}state`;
+    const URL = `${environment.api}/api/state`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -130,7 +130,7 @@ export class StateService extends ModelService {
   }
 
   public deleteState(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}state`;
+    const URL = `${environment.api}/api/state`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

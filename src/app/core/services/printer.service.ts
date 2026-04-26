@@ -4,8 +4,8 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 import { Printer } from '@types';
 
@@ -22,7 +22,7 @@ export class PrinterService extends ModelService {
   }
 
   public getPrinter(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}printer`;
+    const URL = `${environment.api}/api/printer`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -46,13 +46,13 @@ export class PrinterService extends ModelService {
   }
 
   public getPrinters(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}printers`;
+    const URL = `${environment.api}/api/printers`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -77,7 +77,7 @@ export class PrinterService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/printers`;
+    const URL = `${environment.api}/api/v2/printers`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -107,7 +107,7 @@ export class PrinterService extends ModelService {
   }
 
   public savePrinter(printer: Printer): Observable<any> {
-    const URL = `${Config.apiURL}printer`;
+    const URL = `${environment.api}/api/printer`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -128,7 +128,7 @@ export class PrinterService extends ModelService {
   }
 
   public updatePrinter(printer: Printer): Observable<any> {
-    const URL = `${Config.apiURL}printer`;
+    const URL = `${environment.api}/api/printer`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -152,7 +152,7 @@ export class PrinterService extends ModelService {
   }
 
   public deletePrinter(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}printer`;
+    const URL = `${environment.api}/api/printer`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -5,7 +5,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { PrintType } from '@types';
 import { environment } from 'environments/environment';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -49,7 +48,7 @@ export class PrintService {
   }
 
   public toPrintURL(url: string, file: string): Observable<any> {
-    const URL = `${Config.apiURL}printURL`;
+    const URL = `${environment.api}/api/printURL`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -73,7 +72,7 @@ export class PrintService {
   }
 
   public getBarcode(barcode: string): Observable<any> {
-    const URL = `${Config.apiURL}barcode/${barcode}`;
+    const URL = `${environment.api}/api/barcode/${barcode}`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -98,7 +97,7 @@ export class PrintService {
       let data = new FormData();
       data.append('file', file);
       let xhr = new XMLHttpRequest();
-      xhr.open('POST', Config.apiURL + 'upload-file/' + folder + '/' + name, true);
+      xhr.open('POST', `${environment.api}/api/upload-file/` + folder + '/' + name, true);
       xhr.setRequestHeader('Authorization', this._authService.getToken());
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {

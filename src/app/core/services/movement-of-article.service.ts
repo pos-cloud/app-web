@@ -4,7 +4,6 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 
 import { environment } from 'environments/environment';
@@ -23,7 +22,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   getMovementOfArticle(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}"movement-of-field`;
+    const URL = `${environment.api}/api/movement-of-article`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -47,7 +46,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   getMovementsOfArticles(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-articles`;
+    const URL = `${environment.api}/api/movements-of-articles`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -78,7 +77,7 @@ export class MovementOfArticleService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/movements-of-articles`;
+    const URL = `${environment.api}/api/v2/movements-of-articles`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -108,7 +107,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   getMovementsOfArticlesV3(query): Observable<any> {
-    const URL = `${Config.apiURL}v3/movements-of-articles`;
+    const URL = `${environment.api}/api/v3/movements-of-articles`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -129,7 +128,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   saveMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
-    const URL = `${Config.apiURL}movement-of-article`;
+    const URL = `${environment.api}/api/movement-of-article`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -150,7 +149,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-articles`;
+    const URL = `${environment.api}/api/movements-of-articles`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -175,7 +174,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   updateMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
-    const URL = `${Config.apiURL}movement-of-article`;
+    const URL = `${environment.api}/api/movement-of-article`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -199,7 +198,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Observable<any> {
-    const URL = `${Config.apiURL}movement-of-article-by-where`;
+    const URL = `${environment.api}/api/movement-of-article-by-where`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -226,7 +225,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-articles-by-where`;
+    const URL = `${environment.api}/api/movements-of-articles-by-where`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -253,7 +252,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   deleteMovementsOfArticles(query: string): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-articles`;
+    const URL = `${environment.api}/api/movements-of-articles`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

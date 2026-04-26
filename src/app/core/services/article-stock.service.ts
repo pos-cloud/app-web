@@ -5,7 +5,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
-import { Config } from '../../app.config';
 import { Transaction } from '../../components/transaction/transaction';
 import { AuthService } from './auth.service';
 
@@ -22,7 +21,7 @@ export class ArticleStockService extends ModelService {
   }
 
   public getArticleStock(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}article-stock`;
+    const URL = `${environment.api}/api/article-stock`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -46,13 +45,13 @@ export class ArticleStockService extends ModelService {
   }
 
   public getArticleStocks(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}article-stocks`;
+    const URL = `${environment.api}/api/article-stocks`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -77,7 +76,7 @@ export class ArticleStockService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/article-stocks`;
+    const URL = `${environment.api}/api/v2/article-stocks`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

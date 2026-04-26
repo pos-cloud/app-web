@@ -9,6 +9,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 
 import { Config } from './../../app.config';
+import { environment } from 'environments/environment';
 
 import { AuthService } from 'app/core/services/auth.service';
 import { IdentificationTypeService } from 'app/core/services/identification-type.service';
@@ -110,7 +111,7 @@ export class ConfigComponent implements OnInit {
     public _modalService: NgbModal,
     public _fileService: FileService
   ) {
-    this.apiV8URL = Config.apiV8URL;
+    this.apiV8URL = environment.apiv2;
     this.getVatConditions();
     this.getCountries();
     this.getCurrencies();

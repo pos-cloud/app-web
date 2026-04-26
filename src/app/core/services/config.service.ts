@@ -52,7 +52,7 @@ export class ConfigService extends ModelService {
   }
 
   public getConfigApi(): Observable<any> {
-    const URL = `${Config.apiURL}config`;
+    const URL = `${environment.api}/api/config`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -97,7 +97,7 @@ export class ConfigService extends ModelService {
   }
 
   public generateLicensePayment(): Observable<any> {
-    const URL = `${Config.apiURL}generar-licencia-payment`;
+    const URL = `${environment.api}/api/generar-licencia-payment`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -128,7 +128,7 @@ export class ConfigService extends ModelService {
   }
 
   public saveConfig(config: Config): Observable<any> {
-    const URL = `${Config.apiURL}config`;
+    const URL = `${environment.api}/api/config`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -178,7 +178,7 @@ export class ConfigService extends ModelService {
   }
 
   public updateConfig(config: Config): Observable<any> {
-    const URL = `${Config.apiURL}config`;
+    const URL = `${environment.api}/api/config`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -203,7 +203,7 @@ export class ConfigService extends ModelService {
 
   public makeFileRequest(config, files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
-    xhr.open('POST', Config.apiURL + 'upload-image-company/' + config._id, true);
+    xhr.open('POST', `${environment.api}/api/upload-image-company/` + config._id, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {
@@ -259,7 +259,7 @@ export class ConfigService extends ModelService {
   }
 
   public deletePicture(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}delete-image-company`;
+    const URL = `${environment.api}/api/delete-image-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -283,7 +283,7 @@ export class ConfigService extends ModelService {
   }
 
   public getModel(model: string): Observable<any> {
-    const URL = `${Config.apiURL}model`;
+    const URL = `${environment.api}/api/model`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

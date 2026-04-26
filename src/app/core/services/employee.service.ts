@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { Employee } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class EmployeeService extends ModelService {
   }
 
   public getEmployee(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}employee`;
+    const URL = `${environment.api}/api/employee`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,13 +48,13 @@ export class EmployeeService extends ModelService {
   }
 
   public getEmployees(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}employees`;
+    const URL = `${environment.api}/api/employees`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -72,13 +72,13 @@ export class EmployeeService extends ModelService {
   }
 
   public getSalesByEmployee(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}sales-by-employee`;
+    const URL = `${environment.api}/api/sales-by-employee`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -103,7 +103,7 @@ export class EmployeeService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/employees`;
+    const URL = `${environment.api}/api/v2/employees`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -133,7 +133,7 @@ export class EmployeeService extends ModelService {
   }
 
   public saveEmployee(employee: Employee): Observable<any> {
-    const URL = `${Config.apiURL}employee`;
+    const URL = `${environment.api}/api/employee`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -154,7 +154,7 @@ export class EmployeeService extends ModelService {
   }
 
   public updateEmployee(employee: Employee): Observable<any> {
-    const URL = `${Config.apiURL}employee`;
+    const URL = `${environment.api}/api/employee`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -178,7 +178,7 @@ export class EmployeeService extends ModelService {
   }
 
   public deleteEmployee(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}employee`;
+    const URL = `${environment.api}/api/employee`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

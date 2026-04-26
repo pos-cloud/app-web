@@ -5,7 +5,6 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
-import { Config } from '../../app.config';
 import { DatatableHistory } from '../../components/datatable/datatable-history.interface';
 import { AuthService } from './auth.service';
 
@@ -49,7 +48,7 @@ export class CompanyService extends ModelService {
   }
 
   public getCompany(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}company`;
+    const URL = `${environment.api}/api/company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -73,7 +72,7 @@ export class CompanyService extends ModelService {
   }
 
   public getCompanies(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}companies`;
+    const URL = `${environment.api}/api/companies`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -104,7 +103,7 @@ export class CompanyService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/companies`;
+    const URL = `${environment.api}/api/v2/companies`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -134,7 +133,7 @@ export class CompanyService extends ModelService {
   }
 
   public saveCompany(company: Company): Observable<any> {
-    const URL = `${Config.apiURL}company`;
+    const URL = `${environment.api}/api/company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -155,7 +154,7 @@ export class CompanyService extends ModelService {
   }
 
   public updateCompany(company: Company): Observable<any> {
-    const URL = `${Config.apiURL}company`;
+    const URL = `${environment.api}/api/company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -179,7 +178,7 @@ export class CompanyService extends ModelService {
   }
 
   public deleteCompany(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}company`;
+    const URL = `${environment.api}/api/company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -205,7 +204,7 @@ export class CompanyService extends ModelService {
   public getQuantityOfCompaniesByType(type: string, startDate: string, endDate: string): Observable<any> {
     let query = '{"type":"' + type + '","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
 
-    const URL = `${Config.apiURL}quantity-of-companies-by-type`;
+    const URL = `${environment.api}/api/quantity-of-companies-by-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -229,7 +228,7 @@ export class CompanyService extends ModelService {
   }
 
   public getSalesByCompany(query: string): Observable<any> {
-    const URL = `${Config.apiURL}sales-by-company`;
+    const URL = `${environment.api}/api/sales-by-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -253,7 +252,7 @@ export class CompanyService extends ModelService {
   }
 
   public getSummaryOfAccountsByCompanyV1(query: string): Observable<any> {
-    const URL = `${Config.apiURL}summary-of-accounts-by-company`;
+    const URL = `${environment.api}/api/summary-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -277,7 +276,7 @@ export class CompanyService extends ModelService {
   }
 
   public getSummaryOfAccounts(query: string): Observable<any> {
-    const URL = `${Config.apiURL}summary-of-accounts`;
+    const URL = `${environment.api}/api/summary-of-accounts`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -129,7 +129,7 @@ export class AuthService {
   }
 
   isValidToken(token: string): Observable<any> {
-    const URL = `${Config.apiURL}validate_token`;
+    const URL = `${environment.api}/api/validate_token`;
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
 
@@ -151,7 +151,7 @@ export class AuthService {
   }
 
   checkPermission(employee: string): Observable<any> {
-    const URL = `${Config.apiURL}check_permission`;
+    const URL = `${environment.api}/api/check_permission`;
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
 

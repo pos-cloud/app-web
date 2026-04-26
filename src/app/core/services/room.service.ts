@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { Room } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class RoomService extends ModelService {
   }
 
   public getRoom(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}room`;
+    const URL = `${environment.api}/api/room`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,13 +48,13 @@ export class RoomService extends ModelService {
   }
 
   public getRooms(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}rooms`;
+    const URL = `${environment.api}/api/rooms`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -79,7 +79,7 @@ export class RoomService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/rooms`;
+    const URL = `${environment.api}/api/v2/rooms`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -109,7 +109,7 @@ export class RoomService extends ModelService {
   }
 
   public saveRoom(room: Room): Observable<any> {
-    const URL = `${Config.apiURL}room`;
+    const URL = `${environment.api}/api/room`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -130,7 +130,7 @@ export class RoomService extends ModelService {
   }
 
   public updateRoom(room: Room): Observable<any> {
-    const URL = `${Config.apiURL}room`;
+    const URL = `${environment.api}/api/room`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -154,7 +154,7 @@ export class RoomService extends ModelService {
   }
 
   public deleteRoom(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}room`;
+    const URL = `${environment.api}/api/room`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

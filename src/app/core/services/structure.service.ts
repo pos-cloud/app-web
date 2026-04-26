@@ -5,7 +5,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 import { Structure } from '@types';
 
@@ -22,7 +21,7 @@ export class StructureService extends ModelService {
   }
 
   public getStructure(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}structure`;
+    const URL = `${environment.api}/api/structure`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -53,7 +52,7 @@ export class StructureService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}/structures`;
+    const URL = `${environment.api}/api/structures`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -83,7 +82,7 @@ export class StructureService extends ModelService {
   }
 
   public saveStructure(structure: Structure): Observable<any> {
-    const URL = `${Config.apiURL}structure`;
+    const URL = `${environment.api}/api/structure`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -104,7 +103,7 @@ export class StructureService extends ModelService {
   }
 
   public updateStructure(structure: Structure): Observable<any> {
-    const URL = `${Config.apiURL}structure`;
+    const URL = `${environment.api}/api/structure`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -128,7 +127,7 @@ export class StructureService extends ModelService {
   }
 
   public deleteStructure(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}structure`;
+    const URL = `${environment.api}/api/structure`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

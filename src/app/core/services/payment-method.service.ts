@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { PaymentMethod } from '../../components/payment-method/payment-method';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public getPaymentMethod(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}payment-method`;
+    const URL = `${environment.api}/api/payment-method`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public getPaymentMethods(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}payment-methods`;
+    const URL = `${environment.api}/api/payment-methods`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -79,7 +79,7 @@ export class PaymentMethodService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/payment-methods`;
+    const URL = `${environment.api}/api/v2/payment-methods`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -109,7 +109,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public getSalesByPaymentMethod(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}sales-by-payment-method`;
+    const URL = `${environment.api}/api/sales-by-payment-method`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -133,7 +133,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public savePaymentMethod(paymentMethod: PaymentMethod): Observable<any> {
-    const URL = `${Config.apiURL}payment-method`;
+    const URL = `${environment.api}/api/payment-method`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -154,7 +154,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public updatePaymentMethod(paymentMethod: PaymentMethod): Observable<any> {
-    const URL = `${Config.apiURL}payment-method`;
+    const URL = `${environment.api}/api/payment-method`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -178,7 +178,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public deletePaymentMethod(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}payment-method`;
+    const URL = `${environment.api}/api/payment-method`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

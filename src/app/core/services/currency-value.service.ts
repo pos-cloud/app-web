@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { CurrencyValue } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class CurrencyValueService extends ModelService {
   }
 
   public getCurrencyValue(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}currency-value`;
+    const URL = `${environment.api}/api/currency-value`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -55,7 +55,7 @@ export class CurrencyValueService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/currency-values`;
+    const URL = `${environment.api}/api/v2/currency-values`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -85,7 +85,7 @@ export class CurrencyValueService extends ModelService {
   }
 
   public saveCurrencyValue(currencyType: CurrencyValue): Observable<any> {
-    const URL = `${Config.apiURL}currency-value`;
+    const URL = `${environment.api}/api/currency-value`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class CurrencyValueService extends ModelService {
   }
 
   public updateCurrencyValue(currencyType: CurrencyValue): Observable<any> {
-    const URL = `${Config.apiURL}currency-value`;
+    const URL = `${environment.api}/api/currency-value`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -130,7 +130,7 @@ export class CurrencyValueService extends ModelService {
   }
 
   public deleteCurrencyValue(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}currency-value`;
+    const URL = `${environment.api}/api/currency-value`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

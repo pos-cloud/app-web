@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 import { IdentificationType } from '@types';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public getIdentificationType(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}identification-type`;
+    const URL = `${environment.api}/api/identification-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,13 +45,13 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public getIdentificationTypes(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}identification-types`;
+    const URL = `${environment.api}/api/identification-types`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -76,7 +76,7 @@ export class IdentificationTypeService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/identification-types`;
+    const URL = `${environment.api}/api/v2/identification-types`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public saveIdentificationType(identificationType: IdentificationType): Observable<any> {
-    const URL = `${Config.apiURL}identification-type`;
+    const URL = `${environment.api}/api/identification-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -127,7 +127,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public updateIdentificationType(identificationType: IdentificationType): Observable<any> {
-    const URL = `${Config.apiURL}identification-type`;
+    const URL = `${environment.api}/api/identification-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -151,7 +151,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public deleteIdentificationType(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}identification-type`;
+    const URL = `${environment.api}/api/identification-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { EmailTemplate } from '../../components/email-template/email-template';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +31,7 @@ export class EmailTemplateService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}email-templates`;
+    const URL = `${environment.api}/api/email-templates`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -61,7 +61,7 @@ export class EmailTemplateService extends ModelService {
   }
 
   public saveEmailTemplate(emailTemplate: EmailTemplate): Observable<any> {
-    const URL = `${Config.apiURL}email-template`;
+    const URL = `${environment.api}/api/email-template`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -82,7 +82,7 @@ export class EmailTemplateService extends ModelService {
   }
 
   public updateEmailTemplate(emailTemplate: EmailTemplate): Observable<any> {
-    const URL = `${Config.apiURL}email-template`;
+    const URL = `${environment.api}/api/email-template`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class EmailTemplateService extends ModelService {
   }
 
   public deleteEmailTemplate(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}email-template`;
+    const URL = `${environment.api}/api/email-template`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

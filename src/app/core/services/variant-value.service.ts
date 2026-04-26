@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { VariantValue } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class VariantValueService extends ModelService {
   }
 
   public getVariantValue(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}variant-value`;
+    const URL = `${environment.api}/api/variant-value`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,7 +45,7 @@ export class VariantValueService extends ModelService {
   }
 
   public getVariantValues(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}variant-values`;
+    const URL = `${environment.api}/api/variant-values`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -76,7 +76,7 @@ export class VariantValueService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/variant-values`;
+    const URL = `${environment.api}/api/v2/variant-values`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class VariantValueService extends ModelService {
   }
 
   public saveVariantValue(variantValue: VariantValue): Observable<any> {
-    const URL = `${Config.apiURL}variant-value`;
+    const URL = `${environment.api}/api/variant-value`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -127,7 +127,7 @@ export class VariantValueService extends ModelService {
   }
 
   public updateVariantValue(variantValue: VariantValue): Observable<any> {
-    const URL = `${Config.apiURL}variant-value`;
+    const URL = `${environment.api}/api/variant-value`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -151,7 +151,7 @@ export class VariantValueService extends ModelService {
   }
 
   public deleteVariantValue(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}variant-value`;
+    const URL = `${environment.api}/api/variant-value`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

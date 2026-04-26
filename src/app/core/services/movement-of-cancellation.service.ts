@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +31,7 @@ export class MovementOfCancellationService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}/movements-of-cancellations`;
+    const URL = `${environment.api}/api/movements-of-cancellations`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -63,7 +63,7 @@ export class MovementOfCancellationService extends ModelService {
   public saveMovementOfCancellation(
     movementOfCancellation: MovementOfCancellation
   ): Observable<any> {
-    const URL = `${Config.apiURL}movement-of-cancellation`;
+    const URL = `${environment.api}/api/movement-of-cancellation`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -86,7 +86,7 @@ export class MovementOfCancellationService extends ModelService {
   public saveMovementsOfCancellations(
     movementsOfCancellations: MovementOfCancellation[]
   ): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-cancellations`;
+    const URL = `${environment.api}/api/movements-of-cancellations`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -111,7 +111,7 @@ export class MovementOfCancellationService extends ModelService {
   }
 
   public deleteMovementsOfCancellations(query: string): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-cancellations`;
+    const URL = `${environment.api}/api/movements-of-cancellations`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

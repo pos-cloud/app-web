@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { CancellationType } from '../../components/cancellation-type/cancellation-type';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class CancellationTypeService extends ModelService {
   }
 
   public getCancellationType(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}cancellation-type`;
+    const URL = `${environment.api}/api/cancellation-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -55,7 +55,7 @@ export class CancellationTypeService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}cancellation-types`;
+    const URL = `${environment.api}/api/cancellation-types`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -87,7 +87,7 @@ export class CancellationTypeService extends ModelService {
   public saveCancellationType(
     cancellationType: CancellationType
   ): Observable<any> {
-    const URL = `${Config.apiURL}cancellation-type`;
+    const URL = `${environment.api}/api/cancellation-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -110,7 +110,7 @@ export class CancellationTypeService extends ModelService {
   public updateCancellationType(
     cancellationType: CancellationType
   ): Observable<any> {
-    const URL = `${Config.apiURL}cancellation-type`;
+    const URL = `${environment.api}/api/cancellation-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -134,7 +134,7 @@ export class CancellationTypeService extends ModelService {
   }
 
   public deleteCancellationType(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}cancellation-type`;
+    const URL = `${environment.api}/api/cancellation-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

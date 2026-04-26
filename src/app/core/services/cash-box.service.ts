@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { CashBox } from '../../components/cash-box/cash-box';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class CashBoxService extends ModelService {
   }
 
   public getCashBox(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}cash-box`;
+    const URL = `${environment.api}/api/cash-box`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class CashBoxService extends ModelService {
   }
 
   public getCashBoxes(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}cash-boxes`;
+    const URL = `${environment.api}/api/cash-boxes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -79,7 +79,7 @@ export class CashBoxService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/cash-boxes`;
+    const URL = `${environment.api}/api/v2/cash-boxes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -109,7 +109,7 @@ export class CashBoxService extends ModelService {
   }
 
   public getClosingCashBox(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}get-closing-cash-box`;
+    const URL = `${environment.api}/api/get-closing-cash-box`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -133,7 +133,7 @@ export class CashBoxService extends ModelService {
   }
 
   public saveCashBox(cashBox: CashBox): Observable<any> {
-    const URL = `${Config.apiURL}cash-box`;
+    const URL = `${environment.api}/api/cash-box`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -154,7 +154,7 @@ export class CashBoxService extends ModelService {
   }
 
   public updateCashBox(cashBox: CashBox): Observable<any> {
-    const URL = `${Config.apiURL}cash-box`;
+    const URL = `${environment.api}/api/cash-box`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

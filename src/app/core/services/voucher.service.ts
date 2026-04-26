@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { Voucher } from '../../components/voucher-reader/voucher';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class VoucherService extends ModelService {
   }
 
   public getVoucher(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}voucher`;
+    const URL = `${environment.api}/api/voucher`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class VoucherService extends ModelService {
   }
 
   public getVouchers(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}vouchers`;
+    const URL = `${environment.api}/api/vouchers`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -79,7 +79,7 @@ export class VoucherService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/vouchers`;
+    const URL = `${environment.api}/api/v2/vouchers`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -109,7 +109,7 @@ export class VoucherService extends ModelService {
   }
 
   public saveVoucher(voucher: Voucher): Observable<any> {
-    const URL = `${Config.apiURL}voucher`;
+    const URL = `${environment.api}/api/voucher`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -130,7 +130,7 @@ export class VoucherService extends ModelService {
   }
 
   public updateVoucher(voucher: Voucher): Observable<any> {
-    const URL = `${Config.apiURL}voucher`;
+    const URL = `${environment.api}/api/voucher`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -154,7 +154,7 @@ export class VoucherService extends ModelService {
   }
 
   public generateVoucher(voucher: {}): Observable<any> {
-    const URL = `${Config.apiURL}generate-voucher`;
+    const URL = `${environment.api}/api/generate-voucher`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -179,7 +179,7 @@ export class VoucherService extends ModelService {
   }
 
   public verifyVoucher(voucher: string): Observable<any> {
-    const URL = `${Config.apiURL}verify-voucher`;
+    const URL = `${environment.api}/api/verify-voucher`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

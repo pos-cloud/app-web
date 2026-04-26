@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Config } from 'app/app.config';
 import { AuthService } from 'app/core/services/auth.service';
 import { ModelService } from 'app/core/services/model.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Tax } from '../../components/tax/tax';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +23,7 @@ export class TaxService extends ModelService {
   }
 
   public getTax(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}tax`;
+    const URL = `${environment.api}/api/tax`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -47,7 +47,7 @@ export class TaxService extends ModelService {
   }
 
   public getTaxes(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}taxes`;
+    const URL = `${environment.api}/api/taxes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -78,7 +78,7 @@ export class TaxService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/taxes`;
+    const URL = `${environment.api}/api/v2/taxes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -108,7 +108,7 @@ export class TaxService extends ModelService {
   }
 
   public saveTax(tax: Tax): Observable<any> {
-    const URL = `${Config.apiURL}tax`;
+    const URL = `${environment.api}/api/tax`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -129,7 +129,7 @@ export class TaxService extends ModelService {
   }
 
   public updateTax(tax: Tax): Observable<any> {
-    const URL = `${Config.apiURL}tax`;
+    const URL = `${environment.api}/api/tax`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -153,7 +153,7 @@ export class TaxService extends ModelService {
   }
 
   public deleteTax(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}tax`;
+    const URL = `${environment.api}/api/tax`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

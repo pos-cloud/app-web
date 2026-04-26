@@ -4,8 +4,8 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -20,13 +20,13 @@ export class CategoryService extends ModelService {
   }
 
   public getCategories(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}categories`;
+    const URL = `${environment.api}/api/categories`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -44,7 +44,7 @@ export class CategoryService extends ModelService {
   }
 
   public getSalesByCategory(query: string): Observable<any> {
-    const URL = `${Config.apiURL}sales-by-category`;
+    const URL = `${environment.api}/api/sales-by-category`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

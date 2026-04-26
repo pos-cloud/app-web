@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'environments/environment';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
 import { Config } from './app.config';
@@ -40,7 +39,6 @@ export class AppComponent {
   ) {
     this._translateService.setDefaultLang('es');
     this._translateService.use('es');
-    this.setApiConfigurationSettings();
     this.config$ = this._configService.getConfig;
   }
 
@@ -125,45 +123,6 @@ export class AppComponent {
       Config.setModules(config.modules);
     }
     this.config = config;
-  }
-
-  public setApiConfigurationSettings() {
-    let isLocal = false;
-    let hostname = window.location.hostname;
-    let subdominio = '';
-
-    if (hostname.includes('.poscloud.com.ar') || hostname.includes('.poscloud.ar')) {
-      if (hostname.includes('.poscloud.com.ar')) {
-        subdominio = hostname.split('.poscloud.com.ar')[0];
-      } else {
-        subdominio = hostname.split('.poscloud.ar')[0];
-      }
-      subdominio = subdominio
-        .replace(/\//g, '')
-        .replace(/:/g, '')
-        .replace(/http/g, '')
-        .replace(/www./g, '')
-        .replace(/https/g, '');
-    }
-
-    if (hostname.includes('192.168.0.88') || hostname.includes('jacksonburgs.hopto.org')) {
-      subdominio = 'jacksonburgs';
-      isLocal = true;
-    }
-
-    if (environment.production) {
-      Config.setDatabase(subdominio);
-      if (isLocal) {
-        Config.setApiHost('http://' + hostname + ':300'); // LOCAL
-        Config.setApiV8Host('http://' + hostname + ':308'); // LOCAL
-      } else {
-        Config.setApiHost(environment.api); // TEST
-        Config.setApiV8Host(environment.apiv2); // TEST
-      }
-    } else {
-      Config.setApiHost(environment.api); // TEST
-      Config.setApiV8Host(environment.apiv2); // TEST
-    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

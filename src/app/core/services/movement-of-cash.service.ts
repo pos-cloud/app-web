@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { MovementOfCash } from '../../components/movement-of-cash/movement-of-cash';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class MovementOfCashService extends ModelService {
   }
 
   public getMovementOfCash(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}movement-of-cash`;
+    const URL = `${environment.api}/api/movement-of-cash`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class MovementOfCashService extends ModelService {
   }
 
   public getMovementsOfCashes(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-cashes`;
+    const URL = `${environment.api}/api/movements-of-cashes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -79,7 +79,7 @@ export class MovementOfCashService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/movements-of-cashes`;
+    const URL = `${environment.api}/api/v2/movements-of-cashes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -109,7 +109,7 @@ export class MovementOfCashService extends ModelService {
   }
 
   public getMovementsOfCashesV3(query): Observable<any> {
-    const URL = `${Config.apiURL}v3/movements-of-cashes`;
+    const URL = `${environment.api}/api/v3/movements-of-cashes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -132,7 +132,7 @@ export class MovementOfCashService extends ModelService {
   public saveMovementsOfCashes(
     movementsOfCashes: MovementOfCash[]
   ): Observable<any> {
-    const URL = `${Config.apiURL}movements-of-cashes`;
+    const URL = `${environment.api}/api/movements-of-cashes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

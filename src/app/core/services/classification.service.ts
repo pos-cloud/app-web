@@ -5,7 +5,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -21,7 +20,7 @@ export class ClassificationService extends ModelService {
   }
 
   public getClassification(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}classification`;
+    const URL = `${environment.api}/api/classification`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

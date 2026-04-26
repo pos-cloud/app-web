@@ -6,7 +6,6 @@ import { catchError, map } from 'rxjs/operators';
 import { Currency } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -25,7 +24,7 @@ export class CurrencyService extends ModelService {
   }
 
   public getCurrency(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}currency`;
+    const URL = `${environment.api}/api/currency`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -80,7 +79,7 @@ export class CurrencyService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/currencies`;
+    const URL = `${environment.api}/api/v2/currencies`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -110,7 +109,7 @@ export class CurrencyService extends ModelService {
   }
 
   public saveCurrency(currency: Currency): Observable<any> {
-    const URL = `${Config.apiURL}currency`;
+    const URL = `${environment.api}/api/currency`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -131,7 +130,7 @@ export class CurrencyService extends ModelService {
   }
 
   public updateCurrency(currency: Currency): Observable<any> {
-    const URL = `${Config.apiURL}currency`;
+    const URL = `${environment.api}/api/currency`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -155,7 +154,7 @@ export class CurrencyService extends ModelService {
   }
 
   public deleteCurrency(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}currency`;
+    const URL = `${environment.api}/api/currency`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

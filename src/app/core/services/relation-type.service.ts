@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { RelationType } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public getRelationType(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}relation-type`;
+    const URL = `${environment.api}/api/relation-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,13 +45,13 @@ export class RelationTypeService extends ModelService {
   }
 
   public getRelationTypes(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}relation-types`;
+    const URL = `${environment.api}/api/relation-types`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -76,7 +76,7 @@ export class RelationTypeService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/relation-types`;
+    const URL = `${environment.api}/api/v2/relation-types`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public saveRelationType(relationType: RelationType): Observable<any> {
-    const URL = `${Config.apiURL}relation-type`;
+    const URL = `${environment.api}/api/relation-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -127,7 +127,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public updateRelationType(relationType: RelationType): Observable<any> {
-    const URL = `${Config.apiURL}relation-type`;
+    const URL = `${environment.api}/api/relation-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -151,7 +151,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public deleteRelationType(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}relation-type`;
+    const URL = `${environment.api}/api/relation-type`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

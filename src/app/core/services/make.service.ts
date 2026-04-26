@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Make } from '@types';
-import { Config } from 'app/app.config';
 import { AuthService } from 'app/core/services/auth.service';
 import { environment } from 'environments/environment';
 import { Observable, of } from 'rxjs';
@@ -25,7 +24,7 @@ export class MakeService extends ModelService {
   }
 
   public getMake(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}make`;
+    const URL = `${environment.api}/api/make`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -49,13 +48,13 @@ export class MakeService extends ModelService {
   }
 
   public getMakes(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}makes`;
+    const URL = `${environment.api}/api/makes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -80,7 +79,7 @@ export class MakeService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/makes`;
+    const URL = `${environment.api}/api/v2/makes`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -110,13 +109,13 @@ export class MakeService extends ModelService {
   }
 
   public getSalesByMake(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}sales-by-make`;
+    const URL = `${environment.api}/api/sales-by-make`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -176,7 +175,7 @@ export class MakeService extends ModelService {
   }
 
   public deleteMake(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}make`;
+    const URL = `${environment.api}/api/make`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -201,7 +200,7 @@ export class MakeService extends ModelService {
 
   public makeFileRequest(idMake: String, files: Array<File>) {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
-    xhr.open('POST', Config.apiURL + 'upload-image-make/' + idMake, true);
+    xhr.open('POST', `${environment.api}/api/upload-image-make/` + idMake, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {

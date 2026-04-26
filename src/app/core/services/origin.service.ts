@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { Origin } from '../../components/origin/origin';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class OriginService extends ModelService {
   }
 
   public getOrigin(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}origin`;
+    const URL = `${environment.api}/api/origin`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -55,7 +55,7 @@ export class OriginService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}origins`;
+    const URL = `${environment.api}/api/origins`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -85,7 +85,7 @@ export class OriginService extends ModelService {
   }
 
   public saveOrigin(origin: Origin): Observable<any> {
-    const URL = `${Config.apiURL}origin`;
+    const URL = `${environment.api}/api/origin`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class OriginService extends ModelService {
   }
 
   public updateOrigin(origin: Origin): Observable<any> {
-    const URL = `${Config.apiURL}origin`;
+    const URL = `${environment.api}/api/origin`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -130,7 +130,7 @@ export class OriginService extends ModelService {
   }
 
   public deleteOrigin(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}origin`;
+    const URL = `${environment.api}/api/origin`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

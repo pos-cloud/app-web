@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { Deposit } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class DepositService extends ModelService {
   }
 
   public getDeposit(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}deposit`;
+    const URL = `${environment.api}/api/deposit`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,13 +45,13 @@ export class DepositService extends ModelService {
   }
 
   public getDeposits(query?: string): Observable<any> {
-    const URL = `${Config.apiURL}deposits`;
+    const URL = `${environment.api}/api/deposits`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams().set('query', query ?? '');
 
     return this._http
       .get(URL, {
@@ -76,7 +76,7 @@ export class DepositService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${Config.apiURL}v2/deposits`;
+    const URL = `${environment.api}/api/v2/deposits`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class DepositService extends ModelService {
   }
 
   public saveDeposit(deposit: Deposit): Observable<any> {
-    const URL = `${Config.apiURL}deposit`;
+    const URL = `${environment.api}/api/deposit`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -127,7 +127,7 @@ export class DepositService extends ModelService {
   }
 
   public updateDeposit(deposit: Deposit): Observable<any> {
-    const URL = `${Config.apiURL}deposit`;
+    const URL = `${environment.api}/api/deposit`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -151,7 +151,7 @@ export class DepositService extends ModelService {
   }
 
   public deleteDeposit(_id: string): Observable<any> {
-    const URL = `${Config.apiURL}deposit`;
+    const URL = `${environment.api}/api/deposit`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
