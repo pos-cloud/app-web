@@ -42,12 +42,14 @@ import { CurrencyService } from '../../../core/services/currency.service';
 
 // Pipes
 import { TranslateService } from '@ngx-translate/core';
-import { Account, ApiResponse, Currency, MediaCategory } from '@types';
+import { Account, ApiResponse, Currency, MediaCategory, PriceList } from '@types';
 import { User } from '@types';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { CompanyService } from 'app/core/services/company.service';
 import { FileService } from 'app/core/services/file.service';
 import { MakeService } from 'app/core/services/make.service';
+import { PriceListArticleService } from 'app/core/services/price-list-article.service';
+import { PriceListService } from 'app/core/services/price-list.service';
 import { TaxService } from 'app/core/services/tax.service';
 import { UserService } from 'app/core/services/user.service';
 import { VariantTypeService } from 'app/core/services/variant-type.service';
@@ -59,6 +61,7 @@ import { filter } from 'rxjs/operators';
 import { UnitOfMeasurementService } from '../../../core/services/unit-of-measurement.service';
 import { Tax, TaxClassification } from '../../tax/tax';
 import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-article',
@@ -127,6 +130,10 @@ export class ArticleComponent implements OnInit {
   typeSelect = [];
   filteredVariantTypes: any[] = [];
   tax: Tax[];
+
+  // Precios manuales por lista (solo listas con pricingMode === 'manual')
+  public priceLists: PriceList[] = [];
+  public manualPriceRows: { priceListId: string; name: string; price: number | null }[] = [];
 
   public variantTypes: VariantType[];
   public variantType: VariantType[];
@@ -316,6 +323,8 @@ export class ArticleComponent implements OnInit {
     private _currencyService: CurrencyService,
     private _configService: ConfigService,
     private _toastService: ToastService,
+    private _priceListService: PriceListService,
+    private _priceListArticleService: PriceListArticleService,
     public _fb: UntypedFormBuilder,
     public _router: Router,
     private _route: ActivatedRoute,
@@ -390,9 +399,71 @@ export class ArticleComponent implements OnInit {
     } else {
       this.imageURL = './../../../assets/img/default.jpg';
     }
+
+    this.loadPriceLists();
+
     if (this.operation === 'add' || this.operation === 'copy') {
       this.getLastArticle();
     }
+  }
+
+  private loadPriceLists(): void {
+    this._priceListService
+      .find({ query: { operationType: { $ne: 'D' } } })
+      .subscribe((priceLists: PriceList[]) => {
+        this.priceLists = priceLists || [];
+        this.refreshManualPriceRows();
+        if (this.articleId) {
+          this.loadManualPricesForArticle(this.articleId);
+        }
+      });
+  }
+
+  private refreshManualPriceRows(): void {
+    const manualLists = (this.priceLists || []).filter((pl) => (pl as any).pricingMode === 'manual');
+    this.manualPriceRows = manualLists.map((pl) => ({
+      priceListId: pl._id,
+      name: pl.name,
+      price: null,
+    }));
+  }
+
+  private loadManualPricesForArticle(articleId: string): void {
+    this._priceListArticleService.getByArticle(articleId).subscribe((res: any) => {
+      // api-core devuelve Responser(200, items) => {status,result,...} o directamente items si algo viejo.
+      const items = res?.result ?? res ?? [];
+      const byPriceListId: Record<string, number> = {};
+      for (const it of items) {
+        const plId = typeof it.priceList === 'string' ? it.priceList : it.priceList?._id;
+        if (plId) byPriceListId[plId] = it.price;
+      }
+      this.manualPriceRows = this.manualPriceRows.map((row) => ({
+        ...row,
+        price: byPriceListId[row.priceListId] ?? row.price,
+      }));
+    });
+  }
+
+  private saveManualPricesForArticle(articleId: string): void {
+    if (!this.manualPriceRows?.length) return;
+    if (this.operation === 'view' || this.operation === 'delete') return;
+
+    const requests = this.manualPriceRows
+      .filter((r) => r.price != null && !isNaN(Number(r.price)))
+      .map((r) =>
+        this._priceListArticleService.upsert({
+          priceList: r.priceListId,
+          article: articleId,
+          price: Number(r.price),
+        })
+      );
+
+    if (!requests.length) return;
+
+    forkJoin(requests).subscribe({
+      next: () => {},
+      error: (err) => this._toastService.showToast(err),
+    });
   }
 
   getArticleTypes() {
@@ -1491,6 +1562,7 @@ export class ArticleComponent implements OnInit {
           } else {
             this.hasChanged = true;
             this.article = result.result;
+            this.saveManualPricesForArticle(this.article._id);
             this._toastService.showToast(result);
 
             this.returnTo();
@@ -1521,6 +1593,7 @@ export class ArticleComponent implements OnInit {
           } else {
             this.hasChanged = true;
             this.article = result.result;
+            this.saveManualPricesForArticle(this.article._id);
             this.articleForm.patchValue({ meliId: this.article.meliId });
             this.articleForm.patchValue({ wooId: this.article.wooId });
             this._articleService.setItems(null);

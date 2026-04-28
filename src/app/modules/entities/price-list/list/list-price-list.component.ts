@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { IAttribute, IButton } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PriceListService } from 'app/core/services/price-list.service';
+import { ImportComponent } from '@shared/components/import/import.component';
 
 @Component({
   selector: 'app-list-price-list',
@@ -17,6 +19,7 @@ export class ListPriceListComponent {
   public title: string = 'price-list';
   public loading: boolean = false;
   public sort = { name: 1 };
+
   public columns: IAttribute[] = [
     {
       name: 'name',
@@ -156,6 +159,12 @@ export class ListPriceListComponent {
       click: `this.emitEvent('add', null)`,
     },
     {
+      title: 'import',
+      class: 'btn btn-light',
+      icon: 'fa fa-upload',
+      click: `this.emitEvent('uploadFile', null)`,
+    },
+    {
       title: 'refresh',
       class: 'btn btn-light',
       icon: 'fa fa-refresh',
@@ -163,9 +172,23 @@ export class ListPriceListComponent {
     },
   ];
 
-  constructor(public _service: PriceListService, private _router: Router) {}
+  constructor(
+    public _service: PriceListService,
+    private _router: Router,
+    private _modalService: NgbModal
+  ) {}
+
+  public openImportManualPrices(): void {
+    const modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.model = 'price-list-articles';
+    modalRef.componentInstance.title = 'Importar precios manuales (Excel)';
+  }
 
   public async emitEvent(event) {
+    if (event?.op === 'uploadFile') {
+      this.openImportManualPrices();
+      return;
+    }
     this.openModal(event.op, event.obj);
   }
 

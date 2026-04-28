@@ -528,6 +528,16 @@
             />
             <button
               type="button"
+              class="btn btn-outline-secondary"
+              (click)="toggleBrowseViewMode()"
+              [disabled]="loading"
+              ngbTooltip="Cambiar vista (Grid / Lista)"
+              placement="left"
+            >
+              <i class="fa text-dark" [ngClass]="browseViewMode === 'list' ? 'fa-th' : 'fa-list'"></i>
+            </button>
+            <button
+              type="button"
               class="btn btn-outline-light mr-2"
               placement="left"
               popoverClass="popover-class"
@@ -547,6 +557,7 @@
               [ngClass]="{ active: 'areCategoriesVisible' }"
               (click)="showCategories()"
               style="padding: 10px"
+              *ngIf="browseViewMode !== 'list'"
               >Rubros</span
             >
             <span
@@ -593,6 +604,7 @@
             [transaction]="transaction"
             [transactionId]="transactionId"
             [loading]="loading"
+            [viewMode]="browseViewMode"
           ></app-list-articles-pos>
         </div>
       </div>

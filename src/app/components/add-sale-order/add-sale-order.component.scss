@@ -103,6 +103,14 @@ app-add-sale-order {
     margin-right: 10px;
   }
 
+  .filterArticle {
+    .input-group {
+      .btn {
+        min-width: 44px;
+      }
+    }
+  }
+
   .number-amount {
     height: 20px;
     position: absolute;

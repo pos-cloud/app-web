@@ -104,4 +104,22 @@ export class ImportService {
         })
       );
   }
+
+  public importPriceListArticles(file: File, priceListId: string) {
+    const URL = `${environment.apiv2}/price-list-articles/import-excel/${priceListId}`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, formData, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => res),
+        catchError((err) => of(err))
+      );
+  }
 }

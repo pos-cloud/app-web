@@ -8,6 +8,11 @@ app-list-articles-pos {
     overflow: scroll;
   }
 
+  .pos-list-table {
+    max-height: 70vh;
+    overflow: auto;
+  }
+
   .iarticle {
     width: 120px;
     height: 160px;

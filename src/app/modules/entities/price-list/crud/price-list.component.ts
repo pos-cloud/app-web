@@ -58,6 +58,7 @@ export class PriceListComponent implements OnInit {
     this.priceListForm = this._fb.group({
       _id: ['', []],
       name: ['', [Validators.required]],
+      pricingMode: ['dynamic', [Validators.required]],
       percentage: ['', [Validators.required]],
       percentageType: ['final', [Validators.required]], // Nuevo campo
       allowSpecialRules: [false, []],
@@ -235,6 +236,7 @@ export class PriceListComponent implements OnInit {
       this.priceListForm.patchValue({
         _id: this.priceList._id || '',
         name: this.priceList.name || '',
+        pricingMode: (this.priceList as any).pricingMode || 'dynamic',
         percentage: this.priceList.percentage || 0,
         percentageType: this.priceList.percentageType || 'base', // Nuevo campo
         allowSpecialRules: this.priceList.allowSpecialRules || false,
@@ -245,6 +247,7 @@ export class PriceListComponent implements OnInit {
       this.priceListForm.patchValue({
         _id: '',
         name: '',
+        pricingMode: 'dynamic',
         percentage: 0,
         percentageType: 'base', // Nuevo campo
         allowSpecialRules: false,
@@ -269,6 +272,7 @@ export class PriceListComponent implements OnInit {
       ...this.priceList, // Mantener todos los campos existentes
       _id: this.priceList?._id || formValue._id,
       name: formValue.name,
+      pricingMode: formValue.pricingMode,
       percentage: formValue.percentage,
       percentageType: formValue.percentageType, // Nuevo campo
       allowSpecialRules: formValue.allowSpecialRules,
@@ -327,10 +331,10 @@ export class PriceListComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: ApiResponse) => {
+          this._toastService.showToast(response);
           if (response.status === 200) {
             this.returnTo();
           }
-          this._toastService.showToast(response.message);
         },
         error: (error) => {
           this._toastService.showToast(error);

@@ -3,6 +3,7 @@ import { Activity, Article, Category, Make } from '@types';
 export interface PriceList extends Activity {
   _id: string;
   name: string;
+  pricingMode?: 'dynamic' | 'manual';
   percentage: number;
   percentageType: 'final' | 'margin'; // Nuevo campo
   allowSpecialRules: boolean;
