@@ -15,7 +15,8 @@ app-list-articles-pos {
 
   .iarticle {
     width: 120px;
-    height: 160px;
+    min-height: 160px;
+    height: auto;
     margin: 4px;
     float: left;
     text-align: center;
@@ -31,6 +32,9 @@ app-list-articles-pos {
     color: black;
     font-size: 17px;
     width: 100%;
+    white-space: normal;
+    overflow: visible;
+    word-break: break-word;
   }
 
   .number-price {

@@ -20,7 +20,7 @@
             >
               <td class="text-nowrap">{{ article.code }}</td>
               <td class="text-nowrap">{{ article.barcode || '-' }}</td>
-              <td>{{ article.posDescription || article.description }}</td>
+              <td>{{ article.description }}</td>
               <td class="text-end text-nowrap" *ngIf="transaction?.type?.showPrices">
                 {{ getListPrice(article) | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
@@ -76,7 +76,7 @@
             src="./../../../assets/img/default.jpg"
             height="120"
             width="120"
-            alt="{{ article.posDescription || article.description }}"
+            alt="{{ article.description }}"
           />
           <img
             *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined"
@@ -84,10 +84,9 @@
             (error)="onImageError($event)"
             height="120"
             width="120"
-            alt="{{ article.posDescription || article.description }}"
+            alt="{{ article.description }}"
           />
-          <div *ngIf="article.posDescription" class="image-title">{{ article.posDescription }}</div>
-          <div *ngIf="!article.posDescription" class="image-title">{{ article.description | slice : 0 : 19 }}</div>
+          <div class="image-title">{{ article.description }}</div>
           <div id="make" *ngIf="article.make && article.make.visibleSale" class="image-title">
             {{ article.make.description }}
           </div>

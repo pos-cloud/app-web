@@ -537,6 +537,17 @@
               <i class="fa text-dark" [ngClass]="browseViewMode === 'list' ? 'fa-th' : 'fa-list'"></i>
             </button>
             <button
+              *ngIf="transaction?.type?.allowTransactionClose"
+              type="button"
+              class="btn btn-outline-primary pos-pending-btn"
+              (click)="!loading ? close() : $event.stopPropagation()"
+              [disabled]="loading"
+              ngbTooltip="Dejar la operación pendiente"
+              placement="left"
+            >
+              Pendiente
+            </button>
+            <button
               type="button"
               class="btn btn-outline-light mr-2"
               placement="left"
@@ -563,13 +574,13 @@
             <span
               class="breadcrumb-item active"
               style="padding: 10px"
-              *ngIf="categorySelected && categorySelected.description"
+              *ngIf="browseViewMode !== 'list' && categorySelected && categorySelected.description"
               >{{ categorySelected.description }}</span
             >
             <span
               class="breadcrumb-item active"
               style="padding: 10px"
-              *ngIf="filterArticle && filterArticle !== '' && !categorySelected"
+              *ngIf="browseViewMode !== 'list' && filterArticle && filterArticle !== '' && !categorySelected"
               >{{ filterArticle }}</span
             >
           </nav>
@@ -590,12 +601,8 @@
         </div>
         <div
           *ngIf="transaction.type.allowTransactionClose"
-          class="col-lg-2 col-md-2 btn-action btn-large center-content"
-          (click)="!loading ? close() : $event.stopPropagation()"
-          [ngClass]="{ disabled: loading, enabled: !loading }"
-        >
-          Pendiente
-        </div>
+          class="col-lg-2 col-md-2"
+        ></div>
       </div>
       <div class="row" *ngIf="display">
         <div class="col-md-12">
