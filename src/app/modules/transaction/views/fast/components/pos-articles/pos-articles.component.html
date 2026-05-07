@@ -1,0 +1,91 @@
+<!-- Misma estructura de toolbar que `add-sale-order` (.filterArticle) y tabla que `list-articles-pos` (modo lista). -->
+<section class="container-fluid pos-articles-root" *ngIf="transactionId">
+  <div class="row pos-articles-toolbar filterArticle">
+    <div class="col-12">
+      <div class="input-group">
+        <div class="input-group-append w-100 justify-content-end">
+          <button
+            type="button"
+            class="btn btn-outline-secondary pos-toolbar-icon-btn"
+            (click)="toggleArticlesViewMode($event)"
+            title="Rubros en grilla / Artículos en lista"
+          >
+            <i class="fa fa-fw" [ngClass]="viewMode === 'grid' ? 'fa-list' : 'fa-th'" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-warning pos-pending-btn text-nowrap"
+            [disabled]="loading"
+            (click)="emitPending($event)"
+          >
+            Pendiente
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="loading">
+    <div class="col-12">
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p>Cargando…</p>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Vista grilla: rubros (.icategory como list-categories-pos / add-sale-order) -->
+    <div class="row categories-list" *ngIf="viewMode === 'grid'">
+      <div *ngFor="let category of categories | orderBy: 'order'">
+        <div class="icategory">
+          <img
+            *ngIf="category.picture == 'default.jpg' || category.picture == undefined"
+            src="./../../../assets/img/default.jpg"
+            height="120"
+            width="120"
+            alt="{{ category.description }}"
+          />
+          <img
+            *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined"
+            [src]="category.picture"
+            height="120"
+            width="120"
+            alt="{{ category.description }}"
+            (error)="imageError($event)"
+          />
+          <div class="image-title image-title--category">{{ category.description | slice: 0 : 24 }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista lista: misma tabla que `app-list-articles-pos` -->
+    <div class="row articles-list" *ngIf="viewMode === 'list'">
+      <div class="col-12">
+        <div class="table-responsive pos-list-table">
+          <table class="table table-sm table-hover mb-0 pos-catalog-table">
+            <thead>
+              <tr>
+                <th style="width: 120px">Código</th>
+                <th style="width: 160px">Barcode</th>
+                <th>Descripción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let article of articles" class="pointer">
+                <td class="text-nowrap">{{ article.code }}</td>
+                <td class="text-nowrap">{{ article.barcode || '-' }}</td>
+                <td>{{ article.description }}</td>
+              </tr>
+              <tr *ngIf="articles.length === 0 && !loading">
+                <td [attr.colspan]="3" class="text-center text-muted py-4">
+                  No hay productos disponibles
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</section>

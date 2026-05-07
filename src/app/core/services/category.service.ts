@@ -66,4 +66,19 @@ export class CategoryService extends ModelService {
         })
       );
   }
+
+  public getCategoriesByTransaction(transactionId: string): Observable<any> {
+    const URL = `${environment.apiv2}/categories/by-transaction/${transactionId}`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .get(URL, { headers })
+      .pipe(
+        map((res) => res),
+        catchError((err) => of(err))
+      );
+  }
 }

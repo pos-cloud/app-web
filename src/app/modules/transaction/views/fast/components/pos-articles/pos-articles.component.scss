@@ -1,0 +1,93 @@
+app-pos-articles {
+  /* El padre app-add-sale-order fuerza width ~33% en todas las tablas; acá necesitamos 100%. */
+  table.pos-catalog-table,
+  table.pos-categories-table {
+    width: 100% !important;
+    max-width: 100%;
+    table-layout: auto !important;
+  }
+
+  /* Misma idea que app-add-sale-order .filterArticle + list-articles-pos */
+  .pos-articles-toolbar.filterArticle {
+    margin-bottom: 10px;
+
+    /* Ícono vista: ancho táctil; Pendiente va aparte (como en add-sale-order / toolbar POS). */
+    .input-group .btn:not(.pos-pending-btn) {
+      min-width: 44px;
+    }
+
+    .pos-pending-btn {
+      min-width: auto;
+      padding: 0.375rem 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .pos-toolbar-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-group-text {
+      background-color: #e9ecef;
+      border-color: #ced4da;
+      color: #495057;
+    }
+  }
+
+  img {
+    image-rendering: auto;
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+
+    p {
+      margin-top: 1rem;
+      color: #666;
+      font-size: 16px;
+    }
+  }
+
+  .categories-list {
+    height: 70vh;
+    overflow: scroll;
+  }
+
+  .icategory {
+    color: white;
+    width: 120px;
+    height: 160px;
+    margin: 4px;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .icategory:hover {
+    opacity: 0.5;
+  }
+
+  .image-title--category {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .articles-list {
+    height: 70vh;
+    overflow: scroll;
+  }
+
+  .pos-list-table {
+    max-height: 70vh;
+    overflow: auto;
+  }
+}
