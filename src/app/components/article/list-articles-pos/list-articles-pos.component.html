@@ -86,7 +86,7 @@
             width="120"
             alt="{{ article.description }}"
           />
-          <div class="image-title">{{ article.description }}</div>
+          <div class="image-title">{{ article.posDescription || (article.description | slice: 0 : 20) }}</div>
           <div id="make" *ngIf="article.make && article.make.visibleSale" class="image-title">
             {{ article.make.description }}
           </div>
