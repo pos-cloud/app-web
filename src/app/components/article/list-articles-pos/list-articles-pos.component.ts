@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -26,6 +27,7 @@ import { User } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PriceListService } from 'app/core/services/price-list.service';
+import { PriceListArticleService } from 'app/core/services/price-list-article.service';
 import { StructureService } from 'app/core/services/structure.service';
 import { TaxService } from 'app/core/services/tax.service';
 import { TransactionService } from 'app/core/services/transaction.service';
@@ -74,6 +76,8 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   config: Config;
   discountCompany: number = 0;
   discountCompanyGroup: number = 0;
+  /** Precios fijos por artículo para lista manual (clave: articleId). */
+  private manualPricesByArticleMap: Record<string, number> = {};
 
   constructor(
     private _articleService: ArticleService,
@@ -84,10 +88,12 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     private _taxService: TaxService,
     private _configService: ConfigService,
     private _priceListService: PriceListService,
+    private _priceListArticleService: PriceListArticleService,
     private _transactionService: TransactionService,
     public _structureService: StructureService,
     private _toastService: ToastService,
-    public translatePipe: TranslateMePipe
+    public translatePipe: TranslateMePipe,
+    private _cdr: ChangeDetectorRef
   ) {
     this.articles = new Array();
     this.filteredArticles = new Array();
@@ -137,16 +143,109 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   }
 
   private async updatePriceList(): Promise<void> {
+    this.manualPricesByArticleMap = {};
+    let listId: string | null = null;
+
     if (
       this.transaction &&
       this.transaction.company &&
       this.transaction.company.priceList &&
       this.transaction.company.type === CompanyType.Client
     ) {
-      this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
-    } else if (this.transaction.priceList) {
-      this.priceList = this.transaction.priceList;
+      listId = this.transaction.company.priceList._id;
+    } else if (this.transaction?.priceList?._id) {
+      listId = this.transaction.priceList._id;
     }
+
+    if (!listId) {
+      this.priceList = null;
+      return;
+    }
+
+    this.priceList = (await this.getPriceList(listId)) ?? null;
+
+    if (this.priceList && (this.priceList as any).pricingMode === 'manual') {
+      await this.refreshManualPricesMap(this.priceList._id);
+    }
+  }
+
+  /**
+   * Una sola consulta por lista: arma mapa artículo → precio manual.
+   */
+  private refreshManualPricesMap(priceListId: string): Promise<void> {
+    return new Promise((resolve) => {
+      this._priceListArticleService.getByPriceList(priceListId).subscribe({
+        next: (res: any) => {
+          const itemsCandidate =
+            (Array.isArray(res?.result) && res.result) ||
+            (Array.isArray(res) && res) ||
+            (Array.isArray(res?.result?.result) && res.result.result) ||
+            (Array.isArray(res?.priceListArticles) && res.priceListArticles) ||
+            [];
+
+          const map: Record<string, number> = {};
+          if (Array.isArray(itemsCandidate)) {
+            for (const it of itemsCandidate) {
+              const artId =
+                (typeof it.article === 'string' ? it.article : it.article?._id) ||
+                it.articleId ||
+                it.article_id;
+              if (artId != null && it?.price != null && !isNaN(Number(it.price))) {
+                map[String(artId)] = Number(it.price);
+              }
+            }
+          }
+          this.manualPricesByArticleMap = map;
+          this._cdr.markForCheck();
+          resolve();
+        },
+        error: () => resolve(),
+      });
+    });
+  }
+
+  private mergeManualPriceFromArticleResponse(priceListId: string, res: any): void {
+    const itemsCandidate =
+      (Array.isArray(res?.result) && res.result) ||
+      (Array.isArray(res) && res) ||
+      (Array.isArray(res?.result?.result) && res.result.result) ||
+      (Array.isArray(res?.priceListArticles) && res.priceListArticles) ||
+      [];
+
+    if (!Array.isArray(itemsCandidate)) return;
+
+    for (const it of itemsCandidate) {
+      const plId =
+        (typeof it.priceList === 'string' ? it.priceList : it.priceList?._id) ||
+        it.priceListId ||
+        it.price_list ||
+        it.price_list_id;
+      if (String(plId || '') !== String(priceListId)) continue;
+
+      const artId =
+        (typeof it.article === 'string' ? it.article : it.article?._id) || it.articleId || it.article_id;
+      if (artId != null && it?.price != null && !isNaN(Number(it.price))) {
+        this.manualPricesByArticleMap[String(artId)] = Number(it.price);
+      }
+    }
+  }
+
+  /**
+   * Si el mapa masivo aún no tiene el artículo (race o ítem nuevo), consulta by-article.
+   */
+  private ensureManualPriceForArticle(priceListId: string, articleId: string): Promise<void> {
+    if (this.manualPricesByArticleMap[articleId] != null) return Promise.resolve();
+
+    return new Promise((resolve) => {
+      this._priceListArticleService.getByArticle(articleId).subscribe({
+        next: (res: any) => {
+          this.mergeManualPriceFromArticleResponse(priceListId, res);
+          this._cdr.markForCheck();
+          resolve();
+        },
+        error: () => resolve(),
+      });
+    });
   }
 
   public getTransaction(): Promise<Transaction> {
@@ -258,10 +357,25 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
       );
   }
 
-  public getRealPrice(article: Article): void {
+  public getRealPrice(article: Article): number {
+    const quotation = this.transaction?.quotation ?? 1;
+
+    if (this.priceList && (this.priceList as any).pricingMode === 'manual') {
+      let price =
+        this.manualPricesByArticleMap[article._id] != null &&
+        !isNaN(Number(this.manualPricesByArticleMap[article._id]))
+          ? Number(this.manualPricesByArticleMap[article._id])
+          : article.salePrice ?? 0;
+
+      if (article.currency && Config.currency && Config.currency._id !== article.currency._id) {
+        return this.roundNumber.transform(price * quotation);
+      }
+      return this.roundNumber.transform(price);
+    }
+
     let increasePrice: number = 0;
     if (this.priceList) {
-      if (this.priceList.rules.length > 0) {
+      if (this.priceList.rules?.length > 0) {
         this.priceList.rules.forEach((rule) => {
           if (rule) {
             if (
@@ -354,6 +468,10 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
               priceList = await this.getPriceList(this.transaction.company.priceList._id);
             }
             if (priceList) {
+              if ((priceList as any).pricingMode === 'manual') {
+                await this.ensureManualPriceForArticle(priceList._id, article._id);
+              }
+
               if (priceList?.rules?.length > 0) {
                 priceList.rules.forEach((rule) => {
                   if (rule) {
@@ -439,16 +557,32 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
             movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
             movementOfArticle.markupPercentage = article.markupPercentage;
             movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
-            if (salePrice) article.salePrice = salePrice;
-            movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice / movementOfArticle.amount);
-            movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
+
+            let baseSalePrice = article.salePrice ?? 0;
+            if (priceList && (priceList as any).pricingMode === 'manual') {
+              const mp = this.manualPricesByArticleMap[article._id];
+              if (mp != null && !isNaN(Number(mp))) {
+                baseSalePrice = Number(mp);
+              }
+            }
+            if (salePrice) {
+              baseSalePrice = salePrice;
+            }
+
+            movementOfArticle.unitPrice = this.roundNumber.transform(baseSalePrice / movementOfArticle.amount);
+            movementOfArticle.salePrice = this.roundNumber.transform(baseSalePrice);
 
             if (article.currency && Config.currency && Config.currency._id !== article.currency._id) {
               movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
               movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
             }
 
-            if (increasePrice != 0 && priceList.percentageType === 'final') {
+            if (
+              priceList &&
+              increasePrice != 0 &&
+              priceList.percentageType === 'final' &&
+              (priceList as any)?.pricingMode !== 'manual'
+            ) {
               movementOfArticle.markupPrice = this.roundNumber.transform(
                 movementOfArticle.markupPrice + (movementOfArticle.markupPrice * increasePrice) / 100
               );
@@ -460,7 +594,12 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
               );
             }
 
-            if (increasePrice != 0 && priceList?.percentageType === 'margin') {
+            if (
+              priceList &&
+              increasePrice != 0 &&
+              priceList?.percentageType === 'margin' &&
+              (priceList as any)?.pricingMode !== 'manual'
+            ) {
               movementOfArticle.markupPrice = this.roundNumber.transform(increasePrice);
               let aux = (movementOfArticle.costPrice * increasePrice) / 100;
               movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + aux);

@@ -16,7 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class SelectPriceListComponent implements OnInit, OnDestroy {
   public priceListForm: UntypedFormGroup;
   public priceLists: PriceList[] = [];
-  public priceListSelected: PriceList;
+  public priceListSelected: PriceList | null = null;
   public alertMessage = '';
   public loading = false;
   private destroy$ = new Subject<void>();
@@ -78,12 +78,18 @@ export class SelectPriceListComponent implements OnInit, OnDestroy {
     this.priceListSelected = this.priceLists.find((p) => p._id === priceListId);
   }
 
+  public clearPriceList(): void {
+    this.priceListSelected = null;
+    this.priceListForm.patchValue({ priceList: null });
+    this.hideMessage();
+  }
+
   public selectPriceList(): void {
-    if (this.priceListForm.valid && this.priceListSelected) {
+    if (this.priceListForm.valid) {
       this.activeModal.close({ priceList: this.priceListSelected });
-    } else {
-      this.showMessage('Por favor seleccione una lista de precios.', 'info', true);
+      return;
     }
+    this.showMessage('Por favor seleccione una lista de precios.', 'info', true);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

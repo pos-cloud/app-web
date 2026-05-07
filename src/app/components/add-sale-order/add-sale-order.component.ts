@@ -12,6 +12,7 @@ import { CancellationTypeService } from 'app/core/services/cancellation-type.ser
 import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { PriceListService } from 'app/core/services/price-list.service';
+import { PriceListArticleService } from 'app/core/services/price-list-article.service';
 import { RelationTypeService } from 'app/core/services/relation-type.service';
 import { StructureService } from 'app/core/services/structure.service';
 import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
@@ -155,6 +156,10 @@ export class AddSaleOrderComponent {
   companyOld: boolean = false;
   quantity = 0;
 
+  private manualPricesByArticleId: Record<string, Record<string, number>> = {};
+  private manualPricesInflightByArticleId: Record<string, Promise<Record<string, number>>> = {};
+  private explicitNoPriceList = false;
+
   movementsOfCancellations: MovementOfCancellation[] = new Array();
   email: EmailProps;
   m3: number = 0;
@@ -180,6 +185,7 @@ export class AddSaleOrderComponent {
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,
     private _priceListService: PriceListService,
+    private _priceListArticleService: PriceListArticleService,
     private _configService: ConfigService,
     private _structureService: StructureService,
     private _jsonDiffPipe: JsonDiffPipe,
@@ -192,6 +198,64 @@ export class AddSaleOrderComponent {
     this.initVariables();
     this.processParams();
     this.browseViewMode = (localStorage.getItem('posBrowseViewMode') as 'grid' | 'list') || 'grid';
+  }
+
+  private async getManualPricesMapForArticle(articleId: string): Promise<Record<string, number>> {
+    if (!articleId) return {};
+    if (this.manualPricesByArticleId[articleId]) return this.manualPricesByArticleId[articleId];
+    if (this.manualPricesInflightByArticleId[articleId]) return this.manualPricesInflightByArticleId[articleId];
+
+    this.manualPricesInflightByArticleId[articleId] = new Promise<Record<string, number>>((resolve) => {
+      this._priceListArticleService.getByArticle(articleId).subscribe({
+        next: (res: any) => {
+          // Ojo: este service hace catchError(of(err)), así que errores llegan por "next".
+          // Solo cacheamos si efectivamente encontramos un array con items.
+          const itemsCandidate =
+            (Array.isArray(res?.result) && res.result) ||
+            (Array.isArray(res) && res) ||
+            (Array.isArray(res?.result?.result) && res.result.result) ||
+            (Array.isArray(res?.priceListArticles) && res.priceListArticles) ||
+            [];
+
+          if (!Array.isArray(itemsCandidate)) {
+            delete this.manualPricesInflightByArticleId[articleId];
+            resolve({});
+            return;
+          }
+
+          const items = itemsCandidate;
+          const byPriceListId: Record<string, number> = {};
+          for (const it of items) {
+            const plId =
+              (typeof it.priceList === 'string' ? it.priceList : it.priceList?._id) ||
+              it.priceListId ||
+              it.price_list ||
+              it.price_list_id;
+            if (plId && it?.price != null && !isNaN(Number(it.price))) {
+              byPriceListId[plId] = Number(it.price);
+            }
+          }
+
+          // Cacheamos aunque venga vacío, pero solo si la forma de respuesta fue válida (array).
+          this.manualPricesByArticleId[articleId] = byPriceListId;
+          delete this.manualPricesInflightByArticleId[articleId];
+          resolve(byPriceListId);
+        },
+        error: () => {
+          delete this.manualPricesInflightByArticleId[articleId];
+          resolve({});
+        },
+      });
+    });
+
+    return this.manualPricesInflightByArticleId[articleId];
+  }
+
+  private async getManualPriceForArticle(priceListId: string, articleId: string): Promise<number | null> {
+    if (!priceListId || !articleId) return null;
+    const map = await this.getManualPricesMapForArticle(articleId);
+    const price = map?.[priceListId];
+    return price != null && !isNaN(Number(price)) ? Number(price) : null;
   }
 
   initVariables(): void {
@@ -1309,7 +1373,46 @@ export class AddSaleOrderComponent {
         );
       }
 
-      if (movementOfArticle.article && this.priceList && this.priceList?.percentageType === 'final') {
+      const activePriceList: PriceList | undefined = (this.newPriceList ??
+        this.priceList ??
+        this.transaction?.priceList) as PriceList | undefined;
+      const isManualPriceList = !!activePriceList && (activePriceList as any)?.pricingMode === 'manual';
+
+      // Si el usuario eligió explícitamente "Sin lista", volvemos al precio base del artículo.
+      // Esto evita que se aplique la lista por defecto del cliente y asegura que los movimientos
+      // ya cargados vuelvan a su precio original.
+      if (movementOfArticle.article && this.explicitNoPriceList) {
+        let unitPrice = movementOfArticle.article.salePrice ?? 0;
+        if (
+          movementOfArticle.article.currency &&
+          this.config['currency'] &&
+          this.config['currency']._id !== movementOfArticle.article.currency._id
+        ) {
+          unitPrice = this.roundNumber.transform(unitPrice * quotation);
+        } else {
+          unitPrice = this.roundNumber.transform(unitPrice);
+        }
+        movementOfArticle.unitPrice = unitPrice;
+      }
+
+      if (movementOfArticle.article && isManualPriceList) {
+        const manualPrice = await this.getManualPriceForArticle(activePriceList._id, movementOfArticle.article._id);
+        let unitPrice = manualPrice ?? movementOfArticle.article.salePrice ?? 0;
+
+        if (
+          movementOfArticle.article.currency &&
+          this.config['currency'] &&
+          this.config['currency']._id !== movementOfArticle.article.currency._id
+        ) {
+          unitPrice = this.roundNumber.transform(unitPrice * quotation);
+        } else {
+          unitPrice = this.roundNumber.transform(unitPrice);
+        }
+
+        movementOfArticle.unitPrice = unitPrice;
+      }
+
+      if (!isManualPriceList && movementOfArticle.article && this.priceList && this.priceList?.percentageType === 'final') {
         let increasePrice = 0;
 
         if (this.priceList?.rules && this.priceList?.rules?.length > 0) {
@@ -1367,7 +1470,7 @@ export class AddSaleOrderComponent {
         }
       }
 
-      if (movementOfArticle.article && this.newPriceList && this.newPriceList?.percentageType === 'final') {
+      if (!isManualPriceList && movementOfArticle.article && this.newPriceList && this.newPriceList?.percentageType === 'final') {
         let increasePrice = 0;
 
         if (this.newPriceList.rules && this.newPriceList.rules.length > 0) {
@@ -1433,7 +1536,7 @@ export class AddSaleOrderComponent {
       movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.discountAmount);
 
       //logic for sangenemi quiere que se updatee por lista de precios esto lo vamos a mejorar y agregar una funcion en apiv2
-      if (this.priceList?.percentageType === 'margin' || this.newPriceList?.percentageType === 'margin') {
+      if (!isManualPriceList && (this.priceList?.percentageType === 'margin' || this.newPriceList?.percentageType === 'margin')) {
         const priceListToUse = this.newPriceList ?? this.priceList;
         let markupPrice = this.getIncreasePercentage(priceListToUse, movementOfArticle);
         if (markupPrice) {
@@ -1493,7 +1596,14 @@ export class AddSaleOrderComponent {
       this.loading = false;
       //guardamos la lista con la que se calculo el precio
 
-      if (this.transaction.company && this.transaction.company.priceList) {
+      // Si el cliente tiene lista por defecto y aún no se seleccionó una lista para la transacción,
+      // tomamos esa. Si ya hay una lista seleccionada (p.ej. manual), no la pisamos.
+      if (
+        !this.explicitNoPriceList &&
+        !this.transaction.priceList &&
+        this.transaction.company &&
+        this.transaction.company.priceList
+      ) {
         this.transaction.priceList = this.transaction.company.priceList;
       }
 
@@ -3389,17 +3499,26 @@ export class AddSaleOrderComponent {
   changePriceList() {
     const modalRef = this._modalService.open(SelectPriceListComponent);
     modalRef.result.then(async (result) => {
-      if (result && result.priceList) {
+      if (result && 'priceList' in result) {
         if (this.transaction) {
-          if (!this.transaction.priceList) {
-            this.transaction.priceList = result.priceList;
-            this.newPriceList = result.priceList;
+          if (!result.priceList) {
+            this.explicitNoPriceList = true;
+            this.transaction.priceList = null;
+            this.newPriceList = null;
           } else {
-            if (!this.priceList) {
-              this.priceList = this.transaction.priceList;
+            this.explicitNoPriceList = false;
+            const fullPriceList = await this.getPriceList(result.priceList._id);
+            const selectedPriceList = fullPriceList ?? result.priceList;
+            if (!this.transaction.priceList) {
+              this.transaction.priceList = selectedPriceList;
+              this.newPriceList = selectedPriceList;
+            } else {
+              if (!this.priceList) {
+                this.priceList = this.transaction.priceList;
+              }
+              this.transaction.priceList = selectedPriceList;
+              this.newPriceList = selectedPriceList;
             }
-            this.transaction.priceList = result.priceList;
-            this.newPriceList = result.priceList;
           }
           await this.updateTransaction().then(async (transaction) => {
             if (transaction) {

@@ -18,6 +18,17 @@
             <div class="btn-group-vertical">
               <button
                 type="button"
+                class="btn btn-priceList mb-2"
+                style="min-width: 200px; text-align: left"
+                [ngClass]="{ 'btn-primary': !priceListSelected, 'btn-outline-primary': !!priceListSelected }"
+                (click)="clearPriceList()"
+              >
+                <div class="text-left">
+                  <strong>Sin lista</strong>
+                </div>
+              </button>
+              <button
+                type="button"
                 *ngFor="let priceList of priceLists"
                 class="btn btn-priceList mb-2"
                 style="min-width: 200px; text-align: left"
@@ -38,7 +49,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!priceListSelected || loading">
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
         <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
         <span *ngIf="!loading">Cambiar</span>
         <span *ngIf="loading">Espere por favor</span>
