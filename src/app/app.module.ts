@@ -19,8 +19,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { EditorModule } from '@tinymce/tinymce-angular';
-import { TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
@@ -31,12 +30,10 @@ import { ApplyDiscountComponent } from './components/apply-discount/apply-discou
 import { AddArticleStockComponent } from './components/article-stock/article-stock/add-article-stock.component';
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
-import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type/cancellation-type.component';
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { CashBoxComponent } from './components/cash-box/cash-box/cash-box.component';
-import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
@@ -77,6 +74,7 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StateComponent } from './components/state/state/state.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
+import { PosArticlesComponent } from './modules/transaction/views/fast/components/pos-articles/pos-articles.component';
 
 import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
@@ -114,6 +112,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListTablesComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
+    PosArticlesComponent,
     PointOfSaleComponent,
     LoginComponent,
     ClockComponent,
@@ -152,7 +151,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     OriginComponent,
     SelectOriginComponent,
     CurrentAccountDetailsComponent,
-    ListArticlesPosComponent,
     EditCheckComponent,
     PrintVatBookComponent,
     PrintTransactionTypeComponent,
@@ -167,7 +165,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     EmailTemplateComponent,
     ListEmailTemplatesComponent,
     SelectChecksComponent,
-    ListCategoriesPosComponent,
     ListMovementsOfCancellationsComponent,
     SelectMovementsOfCashesComponent,
     KardexCheckComponent,

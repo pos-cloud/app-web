@@ -514,7 +514,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-7">
+    <!-- <div class="col-md-7">
       <div class="row filterArticle">
         <div class="col-md-12">
           <div class="input-group">
@@ -622,6 +622,18 @@
             [transactionMovement]="transaction.type.transactionMovement"
             [loading]="loading"
           ></app-list-categories-pos>
+        </div>
+      </div>
+    </div> -->
+
+    <div class="col-md-7">
+      <!-- POS mínimo: solo la operación; el resto lo definimos después -->
+      <div class="row" *ngIf="display">
+        <div class="col-md-12">
+          <app-pos-articles
+            [transactionId]="transactionId"
+            (pendingClick)="close()"
+          ></app-pos-articles>
         </div>
       </div>
     </div>
