@@ -93,6 +93,7 @@ export interface Transaction extends Activity {
   tiendaNubeObj: any;
   wooObj: any;
   branch: Branch;
+  subTotal: number;
 }
 
 export enum TransactionState {

@@ -38,7 +38,8 @@ export { Holiday } from './entities/holiday.interface';
 export { IdentificationType } from './entities/identification-type.interface';
 export { Location } from './entities/location.interface';
 export { Make } from './entities/make.interface';
-export { MovementOfCash } from './entities/movement-of-cash.interface';
+export { MovementOfArticle, MovementOfArticleStatus } from './entities/movement-of-article.interface';
+export { MovementOfCash, StatusCheck } from './entities/movement-of-cash.interface';
 export { Origin } from './entities/origin.interface';
 export { PaymentMethod } from './entities/payment-method.interface';
 export { Permission } from './entities/permission.interface';
@@ -60,6 +61,7 @@ export {
   PriceType,
   StockMovement,
   TransactionType,
+  View,
 } from './entities/transaction-type.interface';
 export {
   Transaction,

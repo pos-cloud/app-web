@@ -94,8 +94,13 @@ export interface TransactionType extends Activity {
   cashBoxType: CashBoxType;
   printBalanceAccount: boolean; // default false
   isSubscription: boolean; // default false
+  view: View; // default View.Formal
 }
 
+export enum View {
+  Formal = 'formal',
+  Fast = 'fast',
+}
 export enum Movements {
   Inflows = 'Entrada',
   Outflows = 'Salida',
