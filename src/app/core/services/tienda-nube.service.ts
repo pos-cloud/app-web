@@ -10,7 +10,10 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class TiendaNubeService extends ModelService {
-  constructor(public _http: HttpClient, public _authService: AuthService) {
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
     super(
       `tiendaNube`, // PATH
       _http,
@@ -36,13 +39,9 @@ export class TiendaNubeService extends ModelService {
     }
 
     return this._http
-      .put(
-        URL,
-        body,
-        {
-          headers: headers,
-        }
-      )
+      .put(URL, body, {
+        headers: headers,
+      })
       .pipe(
         map((res) => {
           return res;
@@ -61,6 +60,23 @@ export class TiendaNubeService extends ModelService {
       .set('Authorization', this._authService.getToken());
 
     return this._http.post(URL, { date: value }, { headers: headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
+  public createWebhookTn(): Observable<any> {
+    const URL = `${environment.apiv2}/tienda-nube/webhook`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, {}, { headers: headers }).pipe(
       map((res) => {
         return res;
       }),

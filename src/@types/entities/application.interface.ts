@@ -57,4 +57,8 @@ export interface Application extends Activity {
     accountSid: string;
     authToken: string;
   };
+  arca?: {
+    companyName: string;
+    identificationValue: string;
+  };
 }
