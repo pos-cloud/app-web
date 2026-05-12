@@ -14,6 +14,7 @@ import {
   EmployeeType,
   FormField,
   Printer,
+  View,
 } from '@types';
 import { EmailTemplate } from 'app/components/email-template/email-template';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
@@ -621,7 +622,8 @@ export class TransactionTypeComponent implements OnInit {
       name: 'view',
       tag: 'select',
       tagType: 'text',
-      values: ['formal', 'fast'],
+      values: [View.Formal, View.Fast],
+      default: View.Fast,
       class: 'form-group col-md-2',
     },
     {

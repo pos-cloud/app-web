@@ -412,6 +412,7 @@
   "false": "No",
   "fantasyName": "Nombre de Fantasía",
   "fastPayment": "Atajo Método de pago",
+  "fast": "Rápido",
   "fastPayment.name": "Atajo Método de pago",
   "favourite": "Destacado",
   "female": "Femenino",
@@ -435,6 +436,8 @@
   "fontType": "Tipo de fuente",
   "footer": "Pie de página",
   "forShipping": "¿Se usa para envío?",
+  "formal": "Formal",
+
   "friday": "Viernes",
   "Friday": "Viernes",
   "funds": "Fondos",
