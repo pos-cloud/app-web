@@ -30,11 +30,11 @@ import { PrinterService } from 'app/core/services/printer.service';
 import { ShipmentMethodService } from 'app/core/services/shipment-method.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
+import { environment } from 'environments/environment';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { Observable, Subject, Subscription, merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { environment } from 'environments/environment';
 
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
@@ -618,6 +618,13 @@ export class TransactionTypeComponent implements OnInit {
       class: 'form-group col-md-2',
     },
     {
+      name: 'view',
+      tag: 'select',
+      tagType: 'text',
+      values: ['formal', 'fast'],
+      class: 'form-group col-md-2',
+    },
+    {
       name: 'Producto',
       tag: 'separator',
       tagType: null,
@@ -1055,6 +1062,7 @@ export class TransactionTypeComponent implements OnInit {
         numberPrint: 1,
         codes: 1,
         isSubscription: 1,
+        view: 1,
         'branch._id': 1,
         'branch.name': 1,
         'company._id': 1,

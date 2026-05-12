@@ -39,6 +39,7 @@ import {
   Table,
   TableState,
   User,
+  View,
 } from '@types';
 import { ClaimService } from 'app/core/services/claim.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
@@ -120,6 +121,7 @@ export class PointOfSaleComponent implements OnInit {
   public user: User;
   public movementsOfCashes: MovementOfCash[];
   private database: string;
+  public movementType: string;
 
   // CAMPOS TRAIDOS DE LA CUENTA CTE.
   @Input() company: Company;
@@ -159,6 +161,7 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1].split('?')[0];
     this.posType = pathLocation[2].split('?')[0];
+    this.movementType = pathLocation[3].split('?')[0];
 
     this._configService.getConfig.subscribe((config) => {
       this.config = config;
@@ -460,6 +463,7 @@ export class PointOfSaleComponent implements OnInit {
         defectOrders: 1,
         operationType: 1,
         finishCharge: 1,
+        view: 1,
       };
 
       match['operationType'] = { $ne: 'D' };
@@ -1117,23 +1121,27 @@ export class PointOfSaleComponent implements OnInit {
             this.nextStepTransaction();
           }
         } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
-          let route = '/pos/' + this.posType + '/editar-transaccion';
-          if (this.posType === 'cuentas-corrientes') {
-            route = '/pos/mostrador/editar-transaccion';
+          if (this.transaction.type.view === View.Formal && this.movementType === 'compra') {
+            this._router.navigateByUrl('/transaction/view/formal/' + this.transaction._id);
+          } else {
+            let route = '/pos/' + this.posType + '/editar-transaccion';
+            if (this.posType === 'cuentas-corrientes') {
+              route = '/pos/mostrador/editar-transaccion';
+            }
+
+            let queryParams = {
+              transactionId: this.transaction._id,
+              returnURL: this.removeParam(this._router.url, 'automaticCreation'),
+            };
+
+            if (this.transaction.type.automaticCreation && this.posType !== 'resto') {
+              queryParams['automaticCreation'] = this.transaction.type._id;
+            }
+
+            this._router.navigate([route], {
+              queryParams,
+            });
           }
-
-          let queryParams = {
-            transactionId: this.transaction._id,
-            returnURL: this.removeParam(this._router.url, 'automaticCreation'),
-          };
-
-          if (this.transaction.type.automaticCreation && this.posType !== 'resto') {
-            queryParams['automaticCreation'] = this.transaction.type._id;
-          }
-
-          this._router.navigate([route], {
-            queryParams,
-          });
         } else {
           this.openModal('transaction');
         }
@@ -1241,13 +1249,17 @@ export class PointOfSaleComponent implements OnInit {
               this.movementsOfCashes = result.movementsOfCashes;
               if (this.transaction) {
                 if (this.transaction.type && this.transaction.type.requestArticles) {
-                  let route = '/pos/mostrador/editar-transaccion';
-                  this._router.navigate([route], {
-                    queryParams: {
-                      transactionId: this.transaction._id,
-                      returnURL: this._router.url,
-                    },
-                  });
+                  if (this.transaction.type.view === View.Formal && this.movementType === 'compra') {
+                    this._router.navigateByUrl('/transaction/view/formal/' + this.transaction._id);
+                  } else {
+                    let route = '/pos/mostrador/editar-transaccion';
+                    this._router.navigate([route], {
+                      queryParams: {
+                        transactionId: this.transaction._id,
+                        returnURL: this._router.url,
+                      },
+                    });
+                  }
                 } else if (this.transaction.type.requestPaymentMethods) {
                   this.openModal('charge');
                 } else {

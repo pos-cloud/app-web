@@ -1,7 +1,7 @@
 import { Application, Branch, CashBoxType, Company, CompanyType, IAttribute, UseOfCFDI } from '@types';
 import * as moment from 'moment';
 
-import { EmployeeType, Printer, User } from '@types';
+import { EmployeeType, Printer, User, View } from '@types';
 import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
 import { PaymentMethod } from '../payment-method/payment-method';
@@ -91,6 +91,7 @@ export class TransactionType extends Model {
   updateUser: User;
   updateDate: string;
   isSubscription: boolean = false;
+  view: View = View.Fast;
 
   constructor() {
     super();
