@@ -44,11 +44,12 @@ export class FileService {
     });
   }
 
-  public processInvoice(files: Array<File>) {
+  public processInvoice(files: Array<File>): Promise<unknown> {
     let xhr: XMLHttpRequest = new XMLHttpRequest();
 
     xhr.open('POST', `${environment.apiStorage}/process-invoice`, true);
     xhr.setRequestHeader('Authorization', this._authService.getToken());
+    xhr.responseType = 'json';
 
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
@@ -62,7 +63,16 @@ export class FileService {
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
           if (xhr.status == 201) {
-            resolve(xhr.response);
+            const raw = xhr.response;
+            if (typeof raw === 'string') {
+              try {
+                resolve(JSON.parse(raw));
+              } catch {
+                resolve(raw);
+              }
+            } else {
+              resolve(raw);
+            }
           } else {
             reject(xhr.response);
           }

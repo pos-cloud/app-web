@@ -19,6 +19,8 @@ export class UploadFileComponent {
   selectedFileLabel = '';
 
   @Output() uploadedUrls = new EventEmitter<string[]>();
+  /** Modo icon: `{ urls, invoice }` una sola vez. Preview sigue usando solo `uploadedUrls`. */
+  @Output() invoiceUpload = new EventEmitter<{ urls: string[]; invoice: unknown | null }>();
   @Input() folder = '';
   @Input() displayMode: 'preview' | 'icon' = 'preview';
   @Input() accept = 'image/*';
@@ -74,21 +76,35 @@ export class UploadFileComponent {
 
     this.uploading = true;
     let database = localStorage.getItem('company');
+    let invoice: unknown | null = null;
     try {
       for (const file of this.selectedFiles) {
         try {
           if (this.displayMode === 'icon') {
-            const url = await this.uploadService.processInvoice([file]);
-            urls.push(url.toString());
+            const result = await this.uploadService.processInvoice([file]);
+            if (result !== null && typeof result === 'object') {
+              invoice = result;
+              const maybeUrl = (result as Record<string, unknown>).url ?? (result as Record<string, unknown>).fileUrl;
+              if (typeof maybeUrl === 'string') {
+                urls.push(maybeUrl);
+              }
+            } else if (result != null && result !== '') {
+              urls.push(String(result));
+            }
           } else {
             const url = await this.uploadService.uploadImage(`${database}/${this.folder}`, [file]);
             urls.push(url.toString());
           }
         } catch (error) {
           console.error('Error uploading file:', error);
+          invoice = null;
         }
       }
-      this.uploadedUrls.emit(urls);
+      if (this.displayMode === 'icon') {
+        this.invoiceUpload.emit({ urls, invoice });
+      } else {
+        this.uploadedUrls.emit(urls);
+      }
     } finally {
       this.uploading = false;
     }
