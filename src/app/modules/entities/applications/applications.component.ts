@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ApplicationService } from '@core/services/application.service';
+import { ArcaService } from '@core/services/arca.service';
+import { AuthService } from '@core/services/auth.service';
+import { ConfigService } from '@core/services/config.service';
 import { PrintService } from '@core/services/print.service';
+import { TiendaNubeService } from '@core/services/tienda-nube.service';
 import { NgbAccordionModule, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
@@ -23,7 +28,6 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import * as printJS from 'print-js';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ApplicationService } from '../../../core/services/application.service';
 import { ArticleService } from '../../../core/services/article.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
 import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
@@ -63,10 +67,14 @@ export class ListApplicationsComponent implements OnInit {
   public articles: Article[];
   public focusEvent = new EventEmitter<boolean>();
 
+  public filesToUpload: Array<File>;
+  public imageURL: string;
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
+    public _tiendaNubeService: TiendaNubeService,
     public _applicationService: ApplicationService,
     private _toastService: ToastService,
     public translatePipe: TranslateMePipe,
@@ -75,7 +83,10 @@ export class ListApplicationsComponent implements OnInit {
     public _paymentMethodService: PaymentMethodService,
     public _companyService: CompanyService,
     private _articleService: ArticleService,
-    public _printService: PrintService
+    public _configService: ConfigService,
+    public _printService: PrintService,
+    public _authService: AuthService,
+    public _arcaService: ArcaService
   ) {
     this.integracionesForm = this.fb.group({
       _id: ['', []],
@@ -133,12 +144,15 @@ export class ListApplicationsComponent implements OnInit {
           weight: [''],
         }),
       }),
+      arca: this.fb.group({
+        companyName: [''],
+        identificationValue: [''],
+      }),
     });
   }
 
   async ngOnInit() {
     this.loading = true;
-
     combineLatest({
       transactionTypes: this._transactionTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       shipmentMethods: this._shipmentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
@@ -269,6 +283,11 @@ export class ListApplicationsComponent implements OnInit {
           weight: this.application?.menu?.observation?.weight ?? '',
         },
       },
+
+      arca: {
+        companyName: this.application?.arca?.companyName ?? '',
+        identificationValue: this.application?.arca?.identificationValue ?? '',
+      },
     };
 
     this.integracionesForm.patchValue(values);
@@ -308,7 +327,7 @@ export class ListApplicationsComponent implements OnInit {
 
   public generateWebhook() {
     this.loading = true;
-    this._applicationService
+    this._tiendaNubeService
       .createWebhookTn()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -322,6 +341,74 @@ export class ListApplicationsComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  public generateCRS() {
+    const arca = this.integracionesForm.get('arca');
+    const companyName = (arca?.get('companyName')?.value ?? '').toString().trim();
+    const identificationValue = (arca?.get('identificationValue')?.value ?? '').toString().trim();
+    if (!companyName || !identificationValue) {
+      this._toastService.showToast(null, 'warning', '', 'Ingrese nombre de empresa y valor de identificación.');
+      return;
+    }
+
+    this.loading = true;
+    this._arcaService
+      .generateCRS(companyName, identificationValue)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: Blob | unknown) => {
+          if (result instanceof Blob) {
+            const url = window.URL.createObjectURL(result);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'poscloud.csr';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+          } else {
+            this._toastService.showToast(null, 'danger', '', 'No se pudo generar el certificado.');
+          }
+          this.loading = false;
+        },
+        error: () => {
+          this._toastService.showToast(null, 'danger', '', 'Error al generar el certificado.');
+          this.loading = false;
+        },
+      });
+  }
+
+  public upload() {
+    const arca = this.integracionesForm.get('arca');
+    const companyCUIT = (arca?.get('companyIdentificationValue')?.value ?? '').toString().trim();
+
+    this._arcaService.uploadCRT(this.filesToUpload, companyCUIT).then(
+      (result) => {
+        if (result) {
+          this._toastService.showToast({
+            message: result.message,
+            type: 'success',
+          });
+        }
+      },
+      (error) => {
+        this._toastService.showToast({ message: error, type: 'warning' });
+      }
+    );
+  }
+
+  public fileChangeEvent(event: any) {
+    this.filesToUpload = <Array<File>>event.target.files;
+
+    if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imageURL = e.target.result;
+      };
+      // Coloca la siguiente línea fuera del evento onload
+      reader.readAsDataURL(event.target.files[0]);
+    }
   }
 
   public handleApplicationOperation() {
