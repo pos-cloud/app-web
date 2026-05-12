@@ -17,7 +17,10 @@ import { Transaction } from '../../components/transaction/transaction';
   providedIn: 'root',
 })
 export class TransactionService extends ModelService {
-  constructor(public _http: HttpClient, public _authService: AuthService) {
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
     super(
       `transactions`, // PATH
       _http,
@@ -354,6 +357,23 @@ export class TransactionService extends ModelService {
       .set('Authorization', this._authService.getToken());
 
     return this._http.post(URL, { vatPeriod }, { headers: headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
+
+  public transactionByTextract(textract: unknown, transactionId: string): Observable<any> {
+    const URL = `${environment.apiv2}/transactions/by-textract/${transactionId}`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, { textract }, { headers: headers }).pipe(
       map((res) => {
         return res;
       }),
