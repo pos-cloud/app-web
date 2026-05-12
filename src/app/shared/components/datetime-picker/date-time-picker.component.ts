@@ -47,7 +47,15 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
   @Input()
   disabled = false;
 
+  /**
+   * Si es true, no notifica al formulario (ngModel) hasta que el usuario cierra el calendario.
+   * Así puede elegir fecha, pasar al reloj, ajustar hora y recién ahí se dispara un solo cambio.
+   */
+  @Input()
+  deferEmitUntilClose = false;
+
   private showTimePickerToggle = false;
+  private pendingDirty = false;
 
   private datetime: DateTimeModel = new DateTimeModel();
   private firstTimeAssign = true;
@@ -66,7 +74,10 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
 
   private ngControl: NgControl;
 
-  constructor(private config: NgbPopoverConfig, private inj: Injector) {
+  constructor(
+    private config: NgbPopoverConfig,
+    private inj: Injector
+  ) {
     config.autoClose = 'outside';
     config.placement = 'auto';
   }
@@ -76,16 +87,21 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
   }
 
   ngAfterViewInit(): void {
-    this.popover.hidden.subscribe(($event) => {
+    this.popover?.hidden?.subscribe(() => {
       this.showTimePickerToggle = false;
+      if (this.deferEmitUntilClose && this.pendingDirty) {
+        this.pendingDirty = false;
+        this.onChange(this.dateString);
+      }
     });
   }
 
   writeValue(newModel: string) {
+    this.pendingDirty = false;
     if (newModel) {
       this.datetime = Object.assign(this.datetime, DateTimeModel.fromLocalString(newModel));
       this.dateString = newModel;
-      this.setDateStringModel();
+      this.setDateStringModel(true);
     } else {
       this.datetime = new DateTimeModel();
     }
@@ -147,9 +163,9 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
 
     this.setDateStringModel();
 
-    // Auto-cerrar el popover después de seleccionar fecha
-    // Si no hay time picker activo, cerrar inmediatamente
-    if (!this.showTimePickerToggle) {
+    // Con deferEmitUntilClose el popover queda abierto para poder pasar al reloj sin disparar el guardado aún.
+    const autoCloseAfterDate = !this.showTimePickerToggle && !this.deferEmitUntilClose;
+    if (autoCloseAfterDate) {
       setTimeout(() => {
         this.closePopover();
       }, 100);
@@ -178,11 +194,16 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
     }
   }
 
-  setDateStringModel() {
+  /** @param fromWriteValue evita marcar pendiente / notificar cuando el valor viene del padre (CVA). */
+  setDateStringModel(fromWriteValue = false) {
     this.dateString = this.datetime.toString();
 
     if (!this.firstTimeAssign) {
-      this.onChange(this.dateString);
+      if (this.deferEmitUntilClose && !fromWriteValue) {
+        this.pendingDirty = true;
+      } else {
+        this.onChange(this.dateString);
+      }
     } else {
       // Skip very first assignment to null done by Angular
       if (this.dateString !== null) {
