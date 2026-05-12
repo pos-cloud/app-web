@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h4 class="modal-title mb-0">Seleccionar moneda</h4>
+  <button type="button" class="close" aria-label="Cerrar" (click)="activeModal.dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body p-0">
+  <div class="list-group list-group-flush" *ngIf="currencies.length > 0">
+    <button
+      type="button"
+      class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+      *ngFor="let c of currencies"
+      [class.active]="currentCurrencyId === c._id"
+      (click)="selectCurrency(c)"
+    >
+      <span><strong>{{ c.sign || c['symbol'] }}</strong> {{ c.name }}</span>
+    </button>
+  </div>
+  <div *ngIf="currencies.length === 0" class="p-3 text-muted text-center small">No hay monedas disponibles</div>
+</div>
