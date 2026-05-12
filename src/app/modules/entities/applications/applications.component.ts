@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationService } from '@core/services/application.service';
 import { ArcaService } from '@core/services/arca.service';
 import { AuthService } from '@core/services/auth.service';
@@ -16,6 +16,7 @@ import { PipesModule } from '@shared/pipes/pipes.module';
 import {
   ApiResponse,
   Application,
+  ArcaIntegrationEntry,
   Article,
   Company,
   PaymentMethod,
@@ -67,8 +68,8 @@ export class ListApplicationsComponent implements OnInit {
   public articles: Article[];
   public focusEvent = new EventEmitter<boolean>();
 
-  public filesToUpload: Array<File>;
-  public imageURL: string;
+  /** Archivos .crt pendientes por fila ARCA (índice del FormArray). */
+  public arcaPendingCrtFiles: File[][] = [];
 
   private destroy$ = new Subject<void>();
 
@@ -144,11 +145,57 @@ export class ListApplicationsComponent implements OnInit {
           weight: [''],
         }),
       }),
-      arca: this.fb.group({
-        companyName: [''],
-        identificationValue: [''],
-      }),
+      arca: this.fb.array([
+        this.fb.group({
+          companyName: [''],
+          identificationValue: [''],
+        }),
+      ]),
     });
+  }
+
+  get arcaEntries(): FormArray {
+    return this.integracionesForm.get('arca') as FormArray;
+  }
+
+  private createArcaEntryGroup(initial?: Partial<ArcaIntegrationEntry>): FormGroup {
+    return this.fb.group({
+      companyName: [initial?.companyName ?? ''],
+      identificationValue: [initial?.identificationValue ?? ''],
+    });
+  }
+
+  private normalizeArcaFromApplication(): ArcaIntegrationEntry[] {
+    const raw = this.application?.arca as unknown;
+    if (!raw) {
+      return [];
+    }
+    if (Array.isArray(raw)) {
+      return (raw as ArcaIntegrationEntry[]).map((e) => ({
+        companyName: (e?.companyName ?? '').toString(),
+        identificationValue: (e?.identificationValue ?? '').toString(),
+      }));
+    }
+    const legacy = raw as { companyName?: string; identificationValue?: string };
+    if (legacy.companyName || legacy.identificationValue) {
+      return [
+        {
+          companyName: legacy.companyName ?? '',
+          identificationValue: legacy.identificationValue ?? '',
+        },
+      ];
+    }
+    return [];
+  }
+
+  public addArcaEntry(): void {
+    this.arcaEntries.push(this.createArcaEntryGroup());
+    this.arcaPendingCrtFiles.push([]);
+  }
+
+  public removeArcaEntry(index: number): void {
+    this.arcaEntries.removeAt(index);
+    this.arcaPendingCrtFiles.splice(index, 1);
   }
 
   async ngOnInit() {
@@ -283,14 +330,19 @@ export class ListApplicationsComponent implements OnInit {
           weight: this.application?.menu?.observation?.weight ?? '',
         },
       },
-
-      arca: {
-        companyName: this.application?.arca?.companyName ?? '',
-        identificationValue: this.application?.arca?.identificationValue ?? '',
-      },
     };
 
     this.integracionesForm.patchValue(values);
+
+    const arcaArray = this.arcaEntries;
+    arcaArray.clear();
+    const arcaItems = this.normalizeArcaFromApplication();
+    if (arcaItems.length === 0) {
+      arcaArray.push(this.createArcaEntryGroup());
+    } else {
+      arcaItems.forEach((item) => arcaArray.push(this.createArcaEntryGroup(item)));
+    }
+    this.arcaPendingCrtFiles = arcaArray.controls.map(() => []);
   }
 
   public printQr() {
@@ -343,10 +395,10 @@ export class ListApplicationsComponent implements OnInit {
       });
   }
 
-  public generateCRS() {
-    const arca = this.integracionesForm.get('arca');
-    const companyName = (arca?.get('companyName')?.value ?? '').toString().trim();
-    const identificationValue = (arca?.get('identificationValue')?.value ?? '').toString().trim();
+  public generateCRS(index: number) {
+    const group = this.arcaEntries.at(index) as FormGroup;
+    const companyName = (group.get('companyName')?.value ?? '').toString().trim();
+    const identificationValue = (group.get('identificationValue')?.value ?? '').toString().trim();
     if (!companyName || !identificationValue) {
       this._toastService.showToast(null, 'warning', '', 'Ingrese nombre de empresa y valor de identificación.');
       return;
@@ -362,7 +414,8 @@ export class ListApplicationsComponent implements OnInit {
             const url = window.URL.createObjectURL(result);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'poscloud.csr';
+            const safeId = identificationValue.replace(/[^\dA-Za-z_-]/g, '') || 'solicitud';
+            a.download = `poscloud-${safeId}.csr`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
@@ -379,11 +432,20 @@ export class ListApplicationsComponent implements OnInit {
       });
   }
 
-  public upload() {
-    const arca = this.integracionesForm.get('arca');
-    const companyCUIT = (arca?.get('companyIdentificationValue')?.value ?? '').toString().trim();
+  public uploadArcaCrt(index: number) {
+    const files = this.arcaPendingCrtFiles[index];
+    const group = this.arcaEntries.at(index) as FormGroup;
+    const companyCUIT = (group.get('identificationValue')?.value ?? '').toString().trim();
+    if (!companyCUIT) {
+      this._toastService.showToast(null, 'warning', '', 'Ingrese el CUIT para subir el certificado.');
+      return;
+    }
+    if (!files?.length) {
+      this._toastService.showToast(null, 'warning', '', 'Seleccione un archivo .crt.');
+      return;
+    }
 
-    this._arcaService.uploadCRT(this.filesToUpload, companyCUIT).then(
+    this._arcaService.uploadCRT(files, companyCUIT).then(
       (result) => {
         if (result) {
           this._toastService.showToast({
@@ -398,16 +460,13 @@ export class ListApplicationsComponent implements OnInit {
     );
   }
 
-  public fileChangeEvent(event: any) {
-    this.filesToUpload = <Array<File>>event.target.files;
-
-    if (event.target.files && event.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imageURL = e.target.result;
-      };
-      // Coloca la siguiente línea fuera del evento onload
-      reader.readAsDataURL(event.target.files[0]);
+  public arcaCrtFileChange(event: Event, index: number) {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      while (this.arcaPendingCrtFiles.length <= index) {
+        this.arcaPendingCrtFiles.push([]);
+      }
+      this.arcaPendingCrtFiles[index] = Array.from(input.files);
     }
   }
 

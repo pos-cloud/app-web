@@ -495,77 +495,105 @@
               </div>
             </ng-template>
             <ng-template ngbPanelContent>
-              <div formGroupName="arca" class="row arca-panel-content">
-                <div class="col-12 mb-3">
-                  <div class="row">
-                    <div class="form-group col-md-6 mb-md-0">
-                      <label for="arcaCompanyName" class="control-label">Nombre de empresa:</label>
-                      <input
-                        formControlName="companyName"
-                        type="text"
-                        class="form-control"
-                        id="arcaCompanyName"
-                        autocomplete="organization"
-                      />
-                    </div>
-                    <div class="form-group col-md-6 mb-0">
-                      <label for="arcaIdentificationValue" class="control-label">Valor de identificación (CUIT):</label>
-                      <input
-                        formControlName="identificationValue"
-                        type="text"
-                        class="form-control"
-                        id="arcaIdentificationValue"
-                        autocomplete="off"
-                      />
-                    </div>
-                  </div>
+              <div class="arca-panel-content">
+                <div class="mb-2">
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="addArcaEntry()">
+                    <i class="fa fa-plus mr-1" aria-hidden="true"></i>
+                    Agregar fila
+                  </button>
                 </div>
-                <div class="col-12 col-lg-6 mb-3 mb-lg-0">
-                  <div class="arca-panel-card h-100">
-                    <h6 class="arca-panel-card-title mb-1">Certificado de solicitud (CSR)</h6>
-                    <p class="text-muted small mb-3">Generá el archivo para completar el alta en ARCA.</p>
-                    <button
-                      type="button"
-                      class="btn btn-primary btn-block d-flex align-items-center justify-content-center"
-                      [disabled]="loading"
-                      (click)="generateCRS()"
-                    >
-                      <i
-                        class="fa mr-2"
-                        [ngClass]="{ 'fa-key': !loading, 'fa-spinner fa-spin': loading }"
-                        aria-hidden="true"
-                      ></i>
-                      <span *ngIf="!loading">Generar certificado (CSR)</span>
-                      <span *ngIf="loading">Espere por favor</span>
-                    </button>
-                  </div>
-                </div>
-                <div class="col-12 col-lg-6">
-                  <div class="arca-panel-card h-100">
-                    <h6 class="arca-panel-card-title mb-1">Certificado (CRT)</h6>
-                    <p class="text-muted small mb-3">Subí el archivo .crt que te devolvió ARCA.</p>
-                    <div class="form-group mb-0">
-                      <label class="control-label sr-only" for="crtFile">Subir certificado (CRT)</label>
-                      <div class="input-group">
-                        <div class="custom-file">
+                <div class="table-responsive arca-table-wrap">
+                  <table class="table table-sm table-bordered align-middle mb-0 arca-entries-table">
+                    <thead class="thead-light">
+                      <tr>
+                        <th scope="col" class="arca-col-nombre">Nombre</th>
+                        <th scope="col" class="arca-col-cuit">CUIT</th>
+                        <th scope="col" class="arca-col-csr text-center">Generar CSR</th>
+                        <th scope="col" class="arca-col-crt">Subir CRT</th>
+                        <th scope="col" class="arca-col-del text-center">Eliminar</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let ctrl of arcaEntries.controls; let i = index" [formGroup]="$any(ctrl)">
+                        <td>
+                          <label [attr.for]="'arcaCompanyName-' + i" class="sr-only">Nombre de fantasía</label>
                           <input
-                            type="file"
-                            accept=".crt"
-                            class="custom-file-input"
-                            (change)="fileChangeEvent($event)"
-                            id="crtFile"
+                            formControlName="companyName"
+                            type="text"
+                            class="form-control form-control-sm"
+                            [id]="'arcaCompanyName-' + i"
+                            autocomplete="organization"
+                            placeholder="Nombre"
                           />
-                          <label class="custom-file-label" for="crtFile">Elegir archivo .crt</label>
-                        </div>
-                        <div class="input-group-append">
-                          <button type="button" class="btn btn-primary px-3" [disabled]="loading" (click)="upload()">
-                            <i class="fa fa-upload mr-1" aria-hidden="true"></i>
-                            Subir
+                        </td>
+                        <td>
+                          <label [attr.for]="'arcaIdentificationValue-' + i" class="sr-only">CUIT</label>
+                          <input
+                            formControlName="identificationValue"
+                            type="text"
+                            class="form-control form-control-sm"
+                            [id]="'arcaIdentificationValue-' + i"
+                            autocomplete="off"
+                            placeholder="CUIT"
+                          />
+                        </td>
+                        <td class="text-center text-nowrap">
+                          <button
+                            type="button"
+                            class="btn btn-primary btn-sm"
+                            [disabled]="loading"
+                            (click)="generateCRS(i)"
+                            title="Generar certificado CSR"
+                          >
+                            <i
+                              class="fa mr-1"
+                              [ngClass]="{ 'fa-key': !loading, 'fa-spinner fa-spin': loading }"
+                              aria-hidden="true"
+                            ></i>
+                            <span *ngIf="!loading">Generar CSR</span>
+                            <span *ngIf="loading">…</span>
                           </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                        </td>
+                        <td>
+                          <label class="sr-only" [attr.for]="'crtFile-' + i">Archivo CRT</label>
+                          <div class="input-group input-group-sm arca-crt-input-group">
+                            <div class="custom-file">
+                              <input
+                                type="file"
+                                accept=".crt"
+                                class="custom-file-input"
+                                (change)="arcaCrtFileChange($event, i)"
+                                [id]="'crtFile-' + i"
+                              />
+                              <label class="custom-file-label text-truncate" [attr.for]="'crtFile-' + i">.crt</label>
+                            </div>
+                            <div class="input-group-append">
+                              <button
+                                type="button"
+                                class="btn btn-primary btn-sm"
+                                [disabled]="loading"
+                                (click)="uploadArcaCrt(i)"
+                                title="Subir certificado CRT"
+                              >
+                                <i class="fa fa-upload" aria-hidden="true"></i>
+                                <span class="d-none d-xl-inline ml-1">Subir</span>
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-center">
+                          <button
+                            type="button"
+                            class="btn btn-outline-danger btn-sm"
+                            (click)="removeArcaEntry(i)"
+                            title="Eliminar fila"
+                          >
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </ng-template>

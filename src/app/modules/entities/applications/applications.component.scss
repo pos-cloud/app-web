@@ -7,19 +7,44 @@ app-applications {
   }
 
   .arca-panel-content {
-    max-width: 960px;
+    max-width: 100%;
   }
 
-  .arca-panel-card {
-    padding: 1rem 1.25rem;
-    background-color: #f8f9fa;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 0.35rem;
+  .arca-table-wrap {
+    min-width: 520px;
   }
 
-  .arca-panel-card-title {
-    font-weight: 600;
-    color: #212529;
-    letter-spacing: 0.01em;
+  .arca-entries-table {
+    th,
+    td {
+      vertical-align: middle;
+    }
+
+    .arca-col-nombre {
+      min-width: 140px;
+    }
+
+    .arca-col-cuit {
+      min-width: 120px;
+      max-width: 160px;
+    }
+
+    .arca-col-csr {
+      width: 1%;
+      white-space: nowrap;
+    }
+
+    .arca-col-crt {
+      min-width: 200px;
+    }
+
+    .arca-col-del {
+      width: 1%;
+      white-space: nowrap;
+    }
+
+    .arca-crt-input-group {
+      min-width: 0;
+    }
   }
 }

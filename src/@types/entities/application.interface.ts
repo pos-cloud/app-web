@@ -1,5 +1,10 @@
 import { Activity, Article, Company, PaymentMethod, ShipmentMethod, TransactionType } from '@types';
 
+export interface ArcaIntegrationEntry {
+  companyName: string;
+  identificationValue: string;
+}
+
 export interface Application extends Activity {
   tiendaNube: {
     userId: number;
@@ -57,8 +62,6 @@ export interface Application extends Activity {
     accountSid: string;
     authToken: string;
   };
-  arca?: {
-    companyName: string;
-    identificationValue: string;
-  };
+  /** Certificados ARCA por empresa (CUIT). Formato legacy `{ companyName, identificationValue }` se migra al cargar. */
+  arca?: ArcaIntegrationEntry[];
 }
