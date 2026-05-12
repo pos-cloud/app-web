@@ -23,6 +23,8 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   /** Si true, solo muestra borde rojo cuando formSubmitted es true (no al salir del campo) */
   @Input() showInvalidOnlyAfterSubmit: boolean = false;
   @Input() formSubmitted: boolean = false;
+  /** Si false, solo acepta ítems elegidos del popup (evita que el modelo quede como texto libre). */
+  @Input() editable: boolean = true;
 
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;
 
