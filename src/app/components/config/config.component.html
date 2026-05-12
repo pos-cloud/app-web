@@ -83,7 +83,7 @@
 
       <hr />
 
-      <div class="row">
+      <!-- <div class="row">
         <label class="form-group col-md-12">
           <b>ARCA</b>
         </label>
@@ -106,7 +106,7 @@
             </div>
           </div>
         </div>
-      </form>
+      </form> -->
 
       <hr />
 
@@ -468,10 +468,7 @@
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Moneda:</span>
               <select class="form-control" formControlName="currency" name="currency" id="currency">
-                <option
-                  *ngFor="let currency of currencies"
-                  [value]="currency._id"
-                >
+                <option *ngFor="let currency of currencies" [value]="currency._id">
                   {{ currency.name }}
                 </option>
               </select>

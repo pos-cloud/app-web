@@ -8,8 +8,8 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Router } from '@angular/router';
 
-import { Config } from './../../app.config';
 import { environment } from 'environments/environment';
+import { Config } from './../../app.config';
 
 import { AuthService } from 'app/core/services/auth.service';
 import { IdentificationTypeService } from 'app/core/services/identification-type.service';
@@ -200,36 +200,36 @@ export class ConfigComponent implements OnInit {
     });
   }
 
-  public upload() {
-    const companyCUIT = this.config['companyIdentificationValue'];
+  // public upload() {
+  //   const companyCUIT = this.config['companyIdentificationValue'];
 
-    this._configService.uploadCRT(this.filesToUpload, companyCUIT).then(
-      (result) => {
-        if (result) {
-          this._toastService.showToast({
-            message: result.message,
-            type: 'success',
-          });
-        }
-      },
-      (error) => {
-        this._toastService.showToast({ message: error, type: 'warning' });
-      }
-    );
-  }
+  //   this._configService.uploadCRT(this.filesToUpload, companyCUIT).then(
+  //     (result) => {
+  //       if (result) {
+  //         this._toastService.showToast({
+  //           message: result.message,
+  //           type: 'success',
+  //         });
+  //       }
+  //     },
+  //     (error) => {
+  //       this._toastService.showToast({ message: error, type: 'warning' });
+  //     }
+  //   );
+  // }
 
-  public fileChangeEvent(event: any) {
-    this.filesToUpload = <Array<File>>event.target.files;
+  // public fileChangeEvent(event: any) {
+  //   this.filesToUpload = <Array<File>>event.target.files;
 
-    if (event.target.files && event.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imageURL = e.target.result;
-      };
-      // Coloca la siguiente línea fuera del evento onload
-      reader.readAsDataURL(event.target.files[0]);
-    }
-  }
+  //   if (event.target.files && event.target.files[0]) {
+  //     const reader = new FileReader();
+  //     reader.onload = (e: any) => {
+  //       this.imageURL = e.target.result;
+  //     };
+  //     // Coloca la siguiente línea fuera del evento onload
+  //     reader.readAsDataURL(event.target.files[0]);
+  //   }
+  // }
 
   public buildFormCompany() {
     this.configFormCompany = this._fb.group({
@@ -460,31 +460,31 @@ export class ConfigComponent implements OnInit {
     );
   }
 
-  public generateCRS() {
-    this.loading = true;
+  // public generateCRS() {
+  //   this.loading = true;
 
-    this._configService.generateCRS(this.config['companyName'], this.config['companyIdentificationValue']).subscribe(
-      (blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'poscloud.csr';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+  //   this._configService.generateCRS(this.config['companyName'], this.config['companyIdentificationValue']).subscribe(
+  //     (blob: Blob) => {
+  //       const url = window.URL.createObjectURL(blob);
+  //       const a = document.createElement('a');
+  //       a.href = url;
+  //       a.download = 'poscloud.csr';
+  //       document.body.appendChild(a);
+  //       a.click();
+  //       window.URL.revokeObjectURL(url);
+  //       document.body.removeChild(a);
 
-        this.loading = false;
-      },
-      (error) => {
-        this._toastService.showToast({
-          message: error._body,
-          type: 'danger',
-        });
-        this.loading = false;
-      }
-    );
-  }
+  //       this.loading = false;
+  //     },
+  //     (error) => {
+  //       this._toastService.showToast({
+  //         message: error._body,
+  //         type: 'danger',
+  //       });
+  //       this.loading = false;
+  //     }
+  //   );
+  // }
 
   async addConfigCompany() {
     this.loadingCompany = true;
