@@ -4,7 +4,6 @@
     [formControl]="control"
     class="form-control custom-typeahead"
     [ngbTypeahead]="searchFn"
-    [editable]="editable"
     autocomplete="nope"
     [resultFormatter]="resultFormatter"
     [inputFormatter]="resultFormatter"
@@ -14,7 +13,7 @@
     [readonly]="readonly"
     [placeholder]="placeholder || ''"
     [ngClass]="{
-      'is-invalid': control?.invalid && (showInvalidOnlyAfterSubmit ? formSubmitted : control?.touched)
+      'is-invalid': control?.invalid && (showInvalidOnlyAfterSubmit ? formSubmitted : control?.touched),
     }"
   />
 </div>
