@@ -22,16 +22,26 @@
             </h3>
           </div>
           <div class="d-flex align-items-center flex-wrap justify-content-end">
-            <button
-              *ngIf="canFinalizeTransaction"
-              type="button"
-              class="btn btn-sm btn-success ml-2 mt-1 mt-sm-0"
-              (click)="finalizeOpenTransaction()"
-              ngbTooltip="Marcar la transacción como cerrada"
+            <span
+              *ngIf="canShowFinalizeTransactionButton"
+              class="d-inline-block"
+              [ngbTooltip]="
+                paymentsCoverTransactionTotal
+                  ? 'Marcar la transacción como cerrada'
+                  : 'La suma de los pagos debe alcanzar el total de la transacción'
+              "
+              placement="bottom"
             >
-              <i class="fa fa-check mr-1" aria-hidden="true"></i>
-              Finalizar
-            </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-success ml-2 mt-1 mt-sm-0"
+                (click)="finalizeOpenTransaction()"
+                [disabled]="!paymentsCoverTransactionTotal"
+              >
+                <i class="fa fa-check mr-1" aria-hidden="true"></i>
+                Cerrar
+              </button>
+            </span>
             <button
               type="button"
               class="btn btn-sm btn-outline-secondary ml-2 mt-1 mt-sm-0"
@@ -61,13 +71,17 @@
             </div>
           </div>
           <div class="col-md-2">
-            <small class="text-muted d-block mb-1">Moneda</small>
-            <app-typeahead-dropdown
-              [control]="currencyControl"
-              [data]="currencies"
-              [keyField]="'_id'"
-              [displayField]="'name'"
-              placeholder="Seleccionar moneda..."
+            <small class="text-muted d-block mb-1">Período IVA</small>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="vatPeriodDraft"
+              name="vatPeriodDraft"
+              maxlength="6"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="AAAAMM"
+              (blur)="onVatPeriodBlur()"
             />
           </div>
           <div class="col-md-2">
@@ -607,15 +621,20 @@
                       </div>
                     </div>
 
-                    <div *ngIf="paymentRequiresCheck" class="row mt-3 pt-3 border-top">
-                      <div class="col-12 mb-2"><strong>Datos del cheque</strong></div>
-                      <div class="col-md-6 mb-2">
-                        <label class="font-weight-bold">Comprobante</label>
-                        <input type="text" class="form-control" formControlName="comprobante" />
-                      </div>
-                      <div class="col-md-6 mb-2">
-                        <label class="font-weight-bold">Fecha de vencimiento</label>
-                        <input type="date" class="form-control" formControlName="expirationDate" min="2000-01-01" />
+                    <div *ngIf="paymentRequiresCheck || paymentRequiresBank" class="row mt-3 pt-3 border-top">
+                      <ng-container *ngIf="paymentRequiresCheck">
+                        <div class="col-12 mb-2"><strong>Datos del cheque</strong></div>
+                        <div class="col-md-6 mb-2">
+                          <label class="font-weight-bold">Comprobante</label>
+                          <input type="text" class="form-control" formControlName="comprobante" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                          <label class="font-weight-bold">Fecha de vencimiento</label>
+                          <input type="date" class="form-control" formControlName="expirationDate" min="2000-01-01" />
+                        </div>
+                      </ng-container>
+                      <div *ngIf="paymentRequiresBank && !paymentRequiresCheck" class="col-12 mb-2">
+                        <strong>Datos del pago</strong>
                       </div>
                       <div class="col-md-12 mb-2">
                         <label class="font-weight-bold">Banco</label>
@@ -627,21 +646,23 @@
                           placeholder="Buscar banco..."
                         />
                       </div>
-                      <div class="col-md-6 mb-2">
-                        <label class="font-weight-bold">Titular</label>
-                        <input type="text" class="form-control" formControlName="titular" />
-                      </div>
-                      <div class="col-md-6 mb-2">
-                        <label class="font-weight-bold">CUIT</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="cuit"
-                          maxlength="11"
-                          inputmode="numeric"
-                          placeholder="11 dígitos"
-                        />
-                      </div>
+                      <ng-container *ngIf="paymentRequiresCheck">
+                        <div class="col-md-6 mb-2">
+                          <label class="font-weight-bold">Titular</label>
+                          <input type="text" class="form-control" formControlName="titular" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                          <label class="font-weight-bold">CUIT</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="cuit"
+                            maxlength="11"
+                            inputmode="numeric"
+                            placeholder="11 dígitos"
+                          />
+                        </div>
+                      </ng-container>
                     </div>
                   </form>
                 </div>

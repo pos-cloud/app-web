@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
@@ -8,7 +8,6 @@ import {
   Article,
   Bank,
   CompanyType,
-  Currency,
   MovementOfArticle,
   MovementOfCash,
   PaymentMethod,
@@ -19,7 +18,6 @@ import {
 } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
 import { BankService } from 'app/core/services/bank.service';
-import { CurrencyService } from 'app/core/services/currency.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { PaymentMethodService } from 'app/core/services/payment-method.service';
@@ -75,8 +73,7 @@ export class FormalTransactionViewComponent implements OnInit {
   public banks: Bank[] = [];
   public selectedPaymentMethod: PaymentMethod | null = null;
   public editingPaymentId: string | null = null;
-  public currencies: Currency[] = [];
-  public currencyControl: FormControl = new FormControl(null);
+  public vatPeriodDraft = '';
   public isEditingObservation: boolean = false;
   public observationDraft: string = '';
   public isEditingTotal: boolean = false;
@@ -113,7 +110,6 @@ export class FormalTransactionViewComponent implements OnInit {
     private movementOfArticleService: MovementOfArticleService,
     private movementOfCashService: MovementOfCashService,
     private paymentMethodService: PaymentMethodService,
-    private currencyService: CurrencyService,
     private modal: NgbModal,
     private toastService: ToastService,
     private fb: FormBuilder,
@@ -128,20 +124,14 @@ export class FormalTransactionViewComponent implements OnInit {
   ngOnInit(): void {
     this.transactionId = this.route.snapshot.paramMap.get('id');
 
-    this.currencyControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
-      this.onCurrencyControlChange(value);
-    });
-
     combineLatest({
-      currencies: this.currencyService.find({ query: { operationType: { $ne: 'D' } } }),
       articles: this.articleService.find({ query: { operationType: { $ne: 'D' } } }),
       paymentMethods: this.paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
       banks: this.bankService.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ currencies, articles, paymentMethods, banks }) => {
-          this.currencies = currencies || [];
+        next: ({ articles, paymentMethods, banks }) => {
           this.articles = articles || [];
           this.articlesWithCompleteProviderData = articles.filter((article) => article.codeProvider) || [];
           this.paymentMethods = paymentMethods || [];
@@ -193,6 +183,7 @@ export class FormalTransactionViewComponent implements OnInit {
       bank: [null],
       titular: [''],
       cuit: [''],
+      quota: [1],
     });
     this.addPaymentForm
       .get('paymentMethod')
@@ -224,6 +215,7 @@ export class FormalTransactionViewComponent implements OnInit {
 
   private syncPaymentCheckValidators(): void {
     const check = this.paymentRequiresCheck;
+    const bankRequired = this.paymentRequiresBank;
 
     for (const name of ['comprobante', 'expirationDate', 'bank', 'titular', 'cuit'] as const) {
       const c = this.addPaymentForm.get(name);
@@ -233,6 +225,9 @@ export class FormalTransactionViewComponent implements OnInit {
 
       const validators: any[] = [];
       if (check && name === 'comprobante') {
+        validators.push(Validators.required);
+      }
+      if (bankRequired && name === 'bank') {
         validators.push(Validators.required);
       }
 
@@ -299,7 +294,7 @@ export class FormalTransactionViewComponent implements OnInit {
             this.transaction = result.result;
             this.transactionEndDateDraft =
               this.transaction?.endDate || this.transaction?.startDate || this.transactionEndDateDraft;
-            this.syncCurrencyControlFromTransaction();
+            this.vatPeriodDraft = this.transaction?.VATPeriod || '';
             this.getMovementsOfArticlesByTransaction();
             this.getMovementsOfCashesByTransaction();
           } else {
@@ -387,50 +382,37 @@ export class FormalTransactionViewComponent implements OnInit {
       });
   }
 
-  /** El typeahead guarda el objeto elegido; al cargar la transacción usamos el mismo formato para el texto visible. */
-  private syncCurrencyControlFromTransaction(): void {
-    const raw = this.transaction?.currency as Currency | string | undefined;
-    if (raw == null) {
-      this.currencyControl.setValue(null, { emitEvent: false });
+  public onVatPeriodBlur(): void {
+    if (!this.transaction) {
       return;
     }
-    const id = typeof raw === 'string' ? raw : raw._id;
-    if (!id) {
-      this.currencyControl.setValue(null, { emitEvent: false });
+    const raw = (this.vatPeriodDraft || '').replace(/\D/g, '').slice(0, 6);
+    const current = String(this.transaction.VATPeriod || '')
+      .replace(/\D/g, '')
+      .slice(0, 6);
+    if (raw === current) {
+      this.vatPeriodDraft = current || '';
       return;
     }
-    const fromList = this.currencies.find((c) => String(c._id) === String(id));
-    const embedded = typeof raw === 'object' ? raw : null;
-    this.currencyControl.setValue(fromList ?? embedded, { emitEvent: false });
-  }
-
-  private currencyIdFromControlValue(value: unknown): string | null {
-    if (value == null || value === '') {
-      return null;
-    }
-    if (typeof value === 'object' && '_id' in (value as object)) {
-      const id = (value as Currency)._id;
-      return id != null ? String(id) : null;
-    }
-    return String(value);
-  }
-
-  private onCurrencyControlChange(value: unknown): void {
-    const valueId = this.currencyIdFromControlValue(value);
-    const currency = (valueId ? this.currencies.find((c) => String(c._id) === valueId) : null) || null;
-    if (!currency?._id) {
+    if (raw.length !== 6) {
+      this.toastService.showToast({
+        message: 'El período IVA debe tener 6 dígitos (AAAAMM).',
+        type: 'info',
+      });
+      this.vatPeriodDraft = this.transaction.VATPeriod || '';
       return;
     }
-    const currentId = this.currencyIdFromControlValue(this.transaction.currency);
-    if (String(currency._id) === currentId) {
+    const month = parseInt(raw.slice(4, 6), 10);
+    if (month < 1 || month > 12) {
+      this.toastService.showToast({
+        message: 'Mes inválido en el período IVA.',
+        type: 'info',
+      });
+      this.vatPeriodDraft = this.transaction.VATPeriod || '';
       return;
     }
-    this.transaction.currency = { _id: currency._id } as Currency;
-    const quotation = currency?.quotation;
-    if (quotation != null && !isNaN(Number(quotation))) {
-      this.transaction.quotation = Number(quotation);
-    }
-    this.updateTransaction('Moneda actualizada correctamente', 'Error al actualizar la moneda');
+    this.transaction.VATPeriod = raw;
+    this.updateTransaction('Período IVA actualizado correctamente', 'Error al actualizar el período IVA');
   }
 
   public onTransactionDatePickerChange(value: string): void {
@@ -691,11 +673,7 @@ export class FormalTransactionViewComponent implements OnInit {
     this.isEditingTotal = false;
   }
 
-  private updateTransaction(
-    successMessage: string,
-    errorMessage: string,
-    onSuccess?: () => void
-  ): void {
+  private updateTransaction(successMessage: string, errorMessage: string, onSuccess?: () => void): void {
     this.transactionService.update(this.transaction).subscribe({
       next: (response) => {
         if (response.status === 200) {
@@ -777,17 +755,53 @@ export class FormalTransactionViewComponent implements OnInit {
     return this.transaction?.totalPrice - this.totalPaid;
   }
 
-  /** Transacción en estado abierto y el tipo permite cerrarla desde la vista formal. */
-  public get canFinalizeTransaction(): boolean {
+  /**
+   * Monto sugerido al agregar un pago nuevo: saldo pendiente (total − pagos), redondeado como el resto de la vista.
+   * `null` si no hay saldo pendiente (≥ 0,01); el usuario puede editar el valor en el formulario.
+   */
+  public get suggestedNewPaymentAmount(): number | null {
+    if (!this.transaction) {
+      return null;
+    }
+    const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
+    const paid = this.roundNumber.transform(this.totalPaid) as number;
+    const remaining = this.roundNumber.transform(Math.max(0, total - paid)) as number;
+    return remaining >= 0.01 ? remaining : null;
+  }
+
+  /** Transacción abierta y el tipo permite ver / usar el cierre desde la vista formal. */
+  public get canShowFinalizeTransactionButton(): boolean {
     if (!this.transaction?.type || this.transaction.type.allowTransactionClose === false) {
       return false;
     }
     return this.transaction.state === TransactionState.Open;
   }
 
+  /** Suma de `movementsOfCash` alcanza el total de la transacción (mismos redondeos que el resto de la vista). */
+  public get paymentsCoverTransactionTotal(): boolean {
+    if (!this.transaction) {
+      return false;
+    }
+    const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
+    const paid = this.roundNumber.transform(this.totalPaid) as number;
+    return paid >= total;
+  }
+
+  /** Se puede finalizar: estado/tipo OK y pagos cubren el total. */
+  public get canFinalizeTransaction(): boolean {
+    return this.canShowFinalizeTransactionButton && this.paymentsCoverTransactionTotal;
+  }
+
   /** Pasa de Abierto a Cerrado (o al `finishState` del tipo de comprobante). */
   public finalizeOpenTransaction(): void {
-    if (!this.canFinalizeTransaction) {
+    if (!this.canShowFinalizeTransactionButton) {
+      return;
+    }
+    if (!this.paymentsCoverTransactionTotal) {
+      this.toastService.showToast({
+        message: 'La suma de los métodos de pago debe ser igual o mayor al total de la transacción para finalizarla.',
+        type: 'info',
+      });
       return;
     }
 
@@ -797,8 +811,7 @@ export class FormalTransactionViewComponent implements OnInit {
       centered: true,
     });
     modalRef.componentInstance.title = 'Finalizar transacción';
-    modalRef.componentInstance.subtitle =
-      '¿Deseás cerrar esta transacción? Quedará registrada como finalizada.';
+    modalRef.componentInstance.subtitle = '¿Deseás cerrar esta transacción? Quedará registrada como finalizada.';
 
     modalRef.result
       .then((confirmed: boolean) => {
@@ -807,10 +820,8 @@ export class FormalTransactionViewComponent implements OnInit {
         }
         const nextState = this.transaction.type?.finishState ?? TransactionState.Closed;
         this.transaction.state = nextState;
-        this.updateTransaction(
-          'Transacción finalizada correctamente',
-          'No se pudo finalizar la transacción',
-          () => this.router.navigateByUrl('/pos/mostrador/compra')
+        this.updateTransaction('Transacción finalizada correctamente', 'No se pudo finalizar la transacción', () =>
+          this.router.navigateByUrl('/pos/mostrador/compra')
         );
       })
       .catch(() => {});
@@ -961,12 +972,13 @@ export class FormalTransactionViewComponent implements OnInit {
     this.showAddPaymentForm = true;
     this.addPaymentForm.reset({
       paymentMethod: null,
-      amount: null,
+      amount: this.suggestedNewPaymentAmount,
       comprobante: '',
       expirationDate: '',
       bank: null,
       titular: '',
       cuit: '',
+      quota: 1,
     });
     this.selectedPaymentMethod = null;
     this.syncPaymentCheckValidators();
@@ -1021,11 +1033,20 @@ export class FormalTransactionViewComponent implements OnInit {
         return;
       }
 
+      const quotaFromForm = Number(this.addPaymentForm.get('quota')?.value);
       const movementToSave = {
         ...movementToUpdate,
         transaction: this.transaction,
         type: movementToUpdate.type,
         amountPaid: amount,
+        quota:
+          movementToUpdate.quota != null && !isNaN(Number(movementToUpdate.quota))
+            ? Number(movementToUpdate.quota)
+            : !isNaN(quotaFromForm) && quotaFromForm > 0
+              ? quotaFromForm
+              : 1,
+        amountDiscount: movementToUpdate.amountDiscount ?? 0,
+        balanceCanceled: movementToUpdate.balanceCanceled ?? 0,
       } as MovementOfCash;
 
       if (this.paymentRequiresCheck || this.paymentRequiresBank) {
@@ -1076,9 +1097,11 @@ export class FormalTransactionViewComponent implements OnInit {
     }
 
     const baseDate = this.transaction.endDate || this.transaction.startDate || new Date().toISOString();
-    let movement: MovementOfCash;
-    movement = {
-      ...movement,
+    const quotaRaw = this.addPaymentForm.get('quota')?.value;
+    const quotaNum = Number(quotaRaw);
+    const quota = quotaRaw != null && quotaRaw !== '' && !isNaN(quotaNum) && quotaNum > 0 ? quotaNum : 1;
+
+    const movement = {
       transaction: this.transaction,
       type: this.selectedPaymentMethod,
       amountPaid: amount,
@@ -1086,7 +1109,10 @@ export class FormalTransactionViewComponent implements OnInit {
       expirationDate: baseDate,
       paymentChange: 0,
       statusCheck: StatusCheck.Closed,
-    };
+      quota,
+      amountDiscount: 0,
+      balanceCanceled: 0,
+    } as MovementOfCash;
     if (this.paymentRequiresCheck || this.paymentRequiresBank) {
       this.applyPaymentMethodDetailsToMovement(movement);
     }
@@ -1217,6 +1243,7 @@ export class FormalTransactionViewComponent implements OnInit {
       bank: null,
       titular: '',
       cuit: '',
+      quota: 1,
     });
     this.selectedPaymentMethod = null;
     this.editingPaymentId = null;
@@ -1358,6 +1385,7 @@ export class FormalTransactionViewComponent implements OnInit {
       })
       .catch(() => {});
   }
+
   public goBack(): void {
     this.router.navigateByUrl('/pos/mostrador/compra');
   }
