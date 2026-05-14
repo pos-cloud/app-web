@@ -3,7 +3,7 @@ export { AccountPeriod } from './entities/account-period.interface';
 export { AccountSeat, TypeAccountSeat } from './entities/account-seat.interface';
 export { Account, Modes, Types } from './entities/account.interface';
 export { Address } from './entities/address.interface';
-export { Application, ArcaIntegrationEntry } from './entities/application.interface';
+export { Application, FeArIntegrationEntry } from './entities/application.interface';
 export {
   Appointment,
   AppointmentCreatePayload,

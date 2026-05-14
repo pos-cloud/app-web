@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root',
 })
-export class ArcaService {
+export class FeArService {
   constructor(
     public _http: HttpClient,
     public _authService: AuthService

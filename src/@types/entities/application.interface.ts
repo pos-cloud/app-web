@@ -1,6 +1,6 @@
 import { Activity, Article, Company, PaymentMethod, ShipmentMethod, TransactionType } from '@types';
 
-export interface ArcaIntegrationEntry {
+export interface FeArIntegrationEntry {
   companyName: string;
   identificationValue: string;
 }
@@ -62,6 +62,5 @@ export interface Application extends Activity {
     accountSid: string;
     authToken: string;
   };
-  /** Certificados ARCA por empresa (CUIT). Formato legacy `{ companyName, identificationValue }` se migra al cargar. */
-  arca?: ArcaIntegrationEntry[];
+  feAr?: FeArIntegrationEntry[];
 }

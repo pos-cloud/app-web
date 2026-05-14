@@ -200,37 +200,6 @@ export class ConfigComponent implements OnInit {
     });
   }
 
-  // public upload() {
-  //   const companyCUIT = this.config['companyIdentificationValue'];
-
-  //   this._configService.uploadCRT(this.filesToUpload, companyCUIT).then(
-  //     (result) => {
-  //       if (result) {
-  //         this._toastService.showToast({
-  //           message: result.message,
-  //           type: 'success',
-  //         });
-  //       }
-  //     },
-  //     (error) => {
-  //       this._toastService.showToast({ message: error, type: 'warning' });
-  //     }
-  //   );
-  // }
-
-  // public fileChangeEvent(event: any) {
-  //   this.filesToUpload = <Array<File>>event.target.files;
-
-  //   if (event.target.files && event.target.files[0]) {
-  //     const reader = new FileReader();
-  //     reader.onload = (e: any) => {
-  //       this.imageURL = e.target.result;
-  //     };
-  //     // Coloca la siguiente línea fuera del evento onload
-  //     reader.readAsDataURL(event.target.files[0]);
-  //   }
-  // }
-
   public buildFormCompany() {
     this.configFormCompany = this._fb.group({
       _id: [this.config._id, [Validators.required]],

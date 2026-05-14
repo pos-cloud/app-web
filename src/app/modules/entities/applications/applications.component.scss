@@ -3,7 +3,9 @@ app-applications {
     min-height: unset !important;
     max-height: calc(100vh - 120px);
     border: 0px !important;
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    box-shadow:
+      0 2px 5px 0 rgba(0, 0, 0, 0.16),
+      0 2px 10px 0 rgba(0, 0, 0, 0.12);
   }
 
   .arca-panel-content {
@@ -38,9 +40,13 @@ app-applications {
       min-width: 200px;
     }
 
-    .arca-col-del {
+    .arca-col-actions {
       width: 1%;
       white-space: nowrap;
+    }
+
+    .arca-col-actions-cell {
+      min-width: 5.5rem;
     }
 
     .arca-crt-input-group {

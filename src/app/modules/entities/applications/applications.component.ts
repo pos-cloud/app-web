@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationService } from '@core/services/application.service';
-import { ArcaService } from '@core/services/arca.service';
 import { AuthService } from '@core/services/auth.service';
 import { ConfigService } from '@core/services/config.service';
+import { FeArService } from '@core/services/fe-ar.service';
 import { PrintService } from '@core/services/print.service';
 import { TiendaNubeService } from '@core/services/tienda-nube.service';
 import { NgbAccordionModule, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -16,9 +16,9 @@ import { PipesModule } from '@shared/pipes/pipes.module';
 import {
   ApiResponse,
   Application,
-  ArcaIntegrationEntry,
   Article,
   Company,
+  FeArIntegrationEntry,
   PaymentMethod,
   PrintType,
   ShipmentMethod,
@@ -67,9 +67,7 @@ export class ListApplicationsComponent implements OnInit {
   public companies: Company[];
   public articles: Article[];
   public focusEvent = new EventEmitter<boolean>();
-
-  /** Archivos .crt pendientes por fila ARCA (índice del FormArray). */
-  public arcaPendingCrtFiles: File[][] = [];
+  public feArPendingCrtFiles: File[][] = [];
 
   private destroy$ = new Subject<void>();
 
@@ -87,7 +85,7 @@ export class ListApplicationsComponent implements OnInit {
     public _configService: ConfigService,
     public _printService: PrintService,
     public _authService: AuthService,
-    public _arcaService: ArcaService
+    public _feArService: FeArService
   ) {
     this.integracionesForm = this.fb.group({
       _id: ['', []],
@@ -145,7 +143,7 @@ export class ListApplicationsComponent implements OnInit {
           weight: [''],
         }),
       }),
-      arca: this.fb.array([
+      feAr: this.fb.array([
         this.fb.group({
           companyName: [''],
           identificationValue: [''],
@@ -154,24 +152,24 @@ export class ListApplicationsComponent implements OnInit {
     });
   }
 
-  get arcaEntries(): FormArray {
-    return this.integracionesForm.get('arca') as FormArray;
+  get feArEntries(): FormArray {
+    return this.integracionesForm.get('feAr') as FormArray;
   }
 
-  private createArcaEntryGroup(initial?: Partial<ArcaIntegrationEntry>): FormGroup {
+  private createFeArEntryGroup(initial?: Partial<FeArIntegrationEntry>): FormGroup {
     return this.fb.group({
       companyName: [initial?.companyName ?? ''],
       identificationValue: [initial?.identificationValue ?? ''],
     });
   }
 
-  private normalizeArcaFromApplication(): ArcaIntegrationEntry[] {
-    const raw = this.application?.arca as unknown;
+  private normalizeFeArFromApplication(): FeArIntegrationEntry[] {
+    const raw = this.application?.feAr as unknown;
     if (!raw) {
       return [];
     }
     if (Array.isArray(raw)) {
-      return (raw as ArcaIntegrationEntry[]).map((e) => ({
+      return (raw as FeArIntegrationEntry[]).map((e) => ({
         companyName: (e?.companyName ?? '').toString(),
         identificationValue: (e?.identificationValue ?? '').toString(),
       }));
@@ -188,14 +186,14 @@ export class ListApplicationsComponent implements OnInit {
     return [];
   }
 
-  public addArcaEntry(): void {
-    this.arcaEntries.push(this.createArcaEntryGroup());
-    this.arcaPendingCrtFiles.push([]);
+  public addFeArEntry(): void {
+    this.feArEntries.push(this.createFeArEntryGroup());
+    this.feArPendingCrtFiles.push([]);
   }
 
-  public removeArcaEntry(index: number): void {
-    this.arcaEntries.removeAt(index);
-    this.arcaPendingCrtFiles.splice(index, 1);
+  public removeFeArEntry(index: number): void {
+    this.feArEntries.removeAt(index);
+    this.feArPendingCrtFiles.splice(index, 1);
   }
 
   async ngOnInit() {
@@ -334,15 +332,15 @@ export class ListApplicationsComponent implements OnInit {
 
     this.integracionesForm.patchValue(values);
 
-    const arcaArray = this.arcaEntries;
-    arcaArray.clear();
-    const arcaItems = this.normalizeArcaFromApplication();
-    if (arcaItems.length === 0) {
-      arcaArray.push(this.createArcaEntryGroup());
+    const feArArray = this.feArEntries;
+    feArArray.clear();
+    const feArItems = this.normalizeFeArFromApplication();
+    if (feArItems.length === 0) {
+      feArArray.push(this.createFeArEntryGroup());
     } else {
-      arcaItems.forEach((item) => arcaArray.push(this.createArcaEntryGroup(item)));
+      feArItems.forEach((item) => feArArray.push(this.createFeArEntryGroup(item)));
     }
-    this.arcaPendingCrtFiles = arcaArray.controls.map(() => []);
+    this.feArPendingCrtFiles = feArArray.controls.map(() => []);
   }
 
   public printQr() {
@@ -396,7 +394,7 @@ export class ListApplicationsComponent implements OnInit {
   }
 
   public generateCRS(index: number) {
-    const group = this.arcaEntries.at(index) as FormGroup;
+    const group = this.feArEntries.at(index) as FormGroup;
     const companyName = (group.get('companyName')?.value ?? '').toString().trim();
     const identificationValue = (group.get('identificationValue')?.value ?? '').toString().trim();
     if (!companyName || !identificationValue) {
@@ -405,7 +403,7 @@ export class ListApplicationsComponent implements OnInit {
     }
 
     this.loading = true;
-    this._arcaService
+    this._feArService
       .generateCRS(companyName, identificationValue)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -432,9 +430,9 @@ export class ListApplicationsComponent implements OnInit {
       });
   }
 
-  public uploadArcaCrt(index: number) {
-    const files = this.arcaPendingCrtFiles[index];
-    const group = this.arcaEntries.at(index) as FormGroup;
+  public uploadFeArCrt(index: number) {
+    const files = this.feArPendingCrtFiles[index];
+    const group = this.feArEntries.at(index) as FormGroup;
     const companyCUIT = (group.get('identificationValue')?.value ?? '').toString().trim();
     if (!companyCUIT) {
       this._toastService.showToast(null, 'warning', '', 'Ingrese el CUIT para subir el certificado.');
@@ -445,7 +443,7 @@ export class ListApplicationsComponent implements OnInit {
       return;
     }
 
-    this._arcaService.uploadCRT(files, companyCUIT).then(
+    this._feArService.uploadCRT(files, companyCUIT).then(
       (result) => {
         if (result) {
           this._toastService.showToast({
@@ -460,13 +458,13 @@ export class ListApplicationsComponent implements OnInit {
     );
   }
 
-  public arcaCrtFileChange(event: Event, index: number) {
+  public feArCrtFileChange(event: Event, index: number) {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      while (this.arcaPendingCrtFiles.length <= index) {
-        this.arcaPendingCrtFiles.push([]);
+      while (this.feArPendingCrtFiles.length <= index) {
+        this.feArPendingCrtFiles.push([]);
       }
-      this.arcaPendingCrtFiles[index] = Array.from(input.files);
+      this.feArPendingCrtFiles[index] = Array.from(input.files);
     }
   }
 

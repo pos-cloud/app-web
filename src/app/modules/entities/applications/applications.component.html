@@ -482,8 +482,7 @@
             </ng-template>
           </ngb-panel>
 
-          <!-- Panel ARCA -->
-          <ngb-panel id="ARCA">
+          <ngb-panel id="FeAr">
             <ng-template ngbPanelTitle>
               <div class="row align-items-center">
                 <div class="col-auto pr-0">
@@ -508,13 +507,13 @@
                       <tr>
                         <th scope="col" class="arca-col-nombre">Nombre</th>
                         <th scope="col" class="arca-col-cuit">CUIT</th>
-                        <th scope="col" class="arca-col-csr text-center">Generar CSR</th>
+                        <th scope="col" class="arca-col-csr text-center">Descargar CSR</th>
                         <th scope="col" class="arca-col-crt">Subir CRT</th>
-                        <th scope="col" class="arca-col-del text-center">Eliminar</th>
+                        <th scope="col" class="arca-col-actions text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let ctrl of arcaEntries.controls; let i = index" [formGroup]="$any(ctrl)">
+                      <tr *ngFor="let ctrl of feArEntries.controls; let i = index" [formGroup]="$any(ctrl)">
                         <td>
                           <label [attr.for]="'arcaCompanyName-' + i" class="sr-only">Nombre de fantasía</label>
                           <input
@@ -550,7 +549,7 @@
                               [ngClass]="{ 'fa-key': !loading, 'fa-spinner fa-spin': loading }"
                               aria-hidden="true"
                             ></i>
-                            <span *ngIf="!loading">Generar CSR</span>
+                            <span *ngIf="!loading">Descargar CSR</span>
                             <span *ngIf="loading">…</span>
                           </button>
                         </td>
@@ -581,10 +580,24 @@
                             </div>
                           </div>
                         </td>
-                        <td class="text-center">
+                        <td class="text-center text-nowrap arca-col-actions-cell">
+                          <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm mr-1"
+                            [disabled]="loading"
+                            (click)="handleApplicationOperation()"
+                            title="{{ 'save' | translate | capitalize }}"
+                          >
+                            <i
+                              class="fa"
+                              [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
+                              aria-hidden="true"
+                            ></i>
+                          </button>
                           <button
                             type="button"
                             class="btn btn-outline-danger btn-sm"
+                            [disabled]="loading"
                             (click)="removeArcaEntry(i)"
                             title="Eliminar fila"
                           >
