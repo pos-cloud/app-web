@@ -161,7 +161,6 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1].split('?')[0];
     this.posType = pathLocation[2].split('?')[0];
-    this.movementType = pathLocation[3].split('?')[0];
 
     this._configService.getConfig.subscribe((config) => {
       this.config = config;
@@ -1121,7 +1120,7 @@ export class PointOfSaleComponent implements OnInit {
             this.nextStepTransaction();
           }
         } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
-          if (this.transaction.type.view === View.Formal && this.movementType === 'compra') {
+          if (this.transaction.type.view === View.Formal) {
             this._router.navigateByUrl('/transaction/view/formal/' + this.transaction._id);
           } else {
             let route = '/pos/' + this.posType + '/editar-transaccion';
@@ -1249,7 +1248,7 @@ export class PointOfSaleComponent implements OnInit {
               this.movementsOfCashes = result.movementsOfCashes;
               if (this.transaction) {
                 if (this.transaction.type && this.transaction.type.requestArticles) {
-                  if (this.transaction.type.view === View.Formal && this.movementType === 'compra') {
+                  if (this.transaction.type.view === View.Formal) {
                     this._router.navigateByUrl('/transaction/view/formal/' + this.transaction._id);
                   } else {
                     let route = '/pos/mostrador/editar-transaccion';
