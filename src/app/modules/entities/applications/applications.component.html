@@ -496,7 +496,7 @@
             <ng-template ngbPanelContent>
               <div class="arca-panel-content">
                 <div class="mb-2">
-                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="addArcaEntry()">
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="addFeArEntry()">
                     <i class="fa fa-plus mr-1" aria-hidden="true"></i>
                     Agregar fila
                   </button>
@@ -561,7 +561,7 @@
                                 type="file"
                                 accept=".crt"
                                 class="custom-file-input"
-                                (change)="arcaCrtFileChange($event, i)"
+                                (change)="feArCrtFileChange($event, i)"
                                 [id]="'crtFile-' + i"
                               />
                               <label class="custom-file-label text-truncate" [attr.for]="'crtFile-' + i">.crt</label>
@@ -571,7 +571,7 @@
                                 type="button"
                                 class="btn btn-primary btn-sm"
                                 [disabled]="loading"
-                                (click)="uploadArcaCrt(i)"
+                                (click)="uploadFeArCrt(i)"
                                 title="Subir certificado CRT"
                               >
                                 <i class="fa fa-upload" aria-hidden="true"></i>

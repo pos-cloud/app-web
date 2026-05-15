@@ -152,6 +152,34 @@ export class ListApplicationsComponent implements OnInit {
     });
   }
 
+  async ngOnInit() {
+    this.loading = true;
+    combineLatest({
+      transactionTypes: this._transactionTypeService.find({ query: { operationType: { $ne: 'D' } } }),
+      shipmentMethods: this._shipmentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
+      paymentMethods: this._paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
+      companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
+      articles: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ transactionTypes, shipmentMethods, paymentMethods, companies, articles }) => {
+          this.transactionTypes = transactionTypes ?? [];
+          this.shipmentMethods = shipmentMethods ?? [];
+          this.paymentMethods = paymentMethods ?? [];
+          this.companies = companies ?? [];
+          this.articles = articles ?? [];
+          this.getAllApplication();
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
+  }
+
   get feArEntries(): FormArray {
     return this.integracionesForm.get('feAr') as FormArray;
   }
@@ -194,34 +222,8 @@ export class ListApplicationsComponent implements OnInit {
   public removeFeArEntry(index: number): void {
     this.feArEntries.removeAt(index);
     this.feArPendingCrtFiles.splice(index, 1);
-  }
-
-  async ngOnInit() {
-    this.loading = true;
-    combineLatest({
-      transactionTypes: this._transactionTypeService.find({ query: { operationType: { $ne: 'D' } } }),
-      shipmentMethods: this._shipmentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
-      paymentMethods: this._paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
-      companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
-      articles: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: ({ transactionTypes, shipmentMethods, paymentMethods, companies, articles }) => {
-          this.transactionTypes = transactionTypes ?? [];
-          this.shipmentMethods = shipmentMethods ?? [];
-          this.paymentMethods = paymentMethods ?? [];
-          this.companies = companies ?? [];
-          this.articles = articles ?? [];
-          this.getAllApplication();
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    this.application.feAr = this.feArEntries.value;
+    this.updateApplication();
   }
 
   ngAfterViewInit() {
