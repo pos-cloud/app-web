@@ -37,7 +37,7 @@ app-applications {
     }
 
     .arca-col-crt {
-      min-width: 5.5rem;
+      min-width: 11rem;
     }
 
     .arca-col-actions {
@@ -50,12 +50,75 @@ app-applications {
     }
 
     .arca-upload-cell {
-      padding: 0.35rem 0.5rem;
+      padding: 0.4rem 0.65rem;
+    }
+
+    .arca-upload-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      width: 100%;
+      min-width: 0;
+
+      &--has-file {
+        justify-content: space-between;
+      }
+    }
+
+    .arca-file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      min-width: 0;
+      max-width: calc(100% - 4.75rem);
+      padding: 0.3rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      line-height: 1.2;
+      color: #3d4f5f;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
+      border: 1px solid #d8e0e8;
+      border-radius: 2rem;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+
+      .fa {
+        flex-shrink: 0;
+        font-size: 0.8rem;
+        color: #5b8def;
+      }
+
+      &__name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+      }
     }
 
     .arca-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
       cursor: pointer;
       margin: 0;
+      padding: 0.3rem 0.7rem;
+      border-radius: 0.35rem;
+      box-shadow: 0 1px 2px rgba(13, 110, 253, 0.25);
+      transition:
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
+
+      &:hover:not(.disabled) {
+        box-shadow: 0 2px 6px rgba(13, 110, 253, 0.35);
+        transform: translateY(-1px);
+      }
+
+      &__label {
+        font-weight: 500;
+      }
 
       input[type='file'] {
         display: none !important;
@@ -69,6 +132,8 @@ app-applications {
       &.disabled {
         opacity: 0.65;
         pointer-events: none;
+        box-shadow: none;
+        transform: none;
       }
     }
   }

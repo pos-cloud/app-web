@@ -498,7 +498,7 @@
                 <div class="mb-2">
                   <button type="button" class="btn btn-outline-primary btn-sm" (click)="addFeArEntry()">
                     <i class="fa fa-plus mr-1" aria-hidden="true"></i>
-                    Agregar fila
+                    Agregar Certificado
                   </button>
                 </div>
                 <div class="table-responsive arca-table-wrap">
@@ -553,25 +553,35 @@
                             <span *ngIf="loading">…</span>
                           </button>
                         </td>
-                        <td class="text-center text-nowrap arca-upload-cell">
-                          <label
-                            class="btn btn-primary btn-sm mb-0 arca-upload-btn"
-                            [class.disabled]="loading"
-                            title="Subir certificado"
-                          >
-                            <input
-                              type="file"
-                              accept=".crt,.csr"
-                              [disabled]="loading"
-                              (change)="feArCrtFileChange($event, i)"
-                            />
-                            <i
-                              class="fa mr-1"
-                              [ngClass]="{ 'fa-upload': !loading, 'fa-spinner fa-spin': loading }"
-                              aria-hidden="true"
-                            ></i>
-                            Subir
-                          </label>
+                        <td class="arca-upload-cell">
+                          <div class="arca-upload-row" [class.arca-upload-row--has-file]="!!ctrl.get('file')?.value">
+                            <span
+                              *ngIf="ctrl.get('file')?.value"
+                              class="arca-file-chip"
+                              [attr.title]="ctrl.get('file')?.value"
+                            >
+                              <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                              <span class="arca-file-chip__name">{{ ctrl.get('file')?.value }}</span>
+                            </span>
+                            <label
+                              class="btn btn-primary btn-sm mb-0 arca-upload-btn"
+                              [class.disabled]="loading"
+                              title="Subir certificado"
+                            >
+                              <input
+                                type="file"
+                                accept=".crt,.csr"
+                                [disabled]="loading"
+                                (change)="feArCrtFileChange($event, i)"
+                              />
+                              <i
+                                class="fa"
+                                [ngClass]="{ 'fa-upload': !loading, 'fa-spinner fa-spin': loading }"
+                                aria-hidden="true"
+                              ></i>
+                              <span class="arca-upload-btn__label">Subir</span>
+                            </label>
+                          </div>
                         </td>
                         <td class="text-center text-nowrap arca-col-actions-cell">
                           <button

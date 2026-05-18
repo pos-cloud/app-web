@@ -147,7 +147,7 @@ export class ListApplicationsComponent implements OnInit {
         this.fb.group({
           companyName: [''],
           identificationValue: [''],
-          nameCSR: [''],
+          file: [''],
         }),
       ]),
     });
@@ -189,7 +189,7 @@ export class ListApplicationsComponent implements OnInit {
     return this.fb.group({
       companyName: [initial?.companyName ?? ''],
       identificationValue: [initial?.identificationValue ?? ''],
-      nameCSR: [initial?.nameCSR ?? ''],
+      file: [initial?.file ?? ''],
     });
   }
 
@@ -202,7 +202,7 @@ export class ListApplicationsComponent implements OnInit {
       return (raw as FeArIntegrationEntry[]).map((e) => ({
         companyName: (e?.companyName ?? '').toString(),
         identificationValue: (e?.identificationValue ?? '').toString(),
-        nameCSR: (e?.nameCSR ?? '').toString(),
+        file: (e?.file ?? '').toString(),
       }));
     }
     const legacy = raw as { companyName?: string; identificationValue?: string };
@@ -211,7 +211,7 @@ export class ListApplicationsComponent implements OnInit {
         {
           companyName: legacy.companyName ?? '',
           identificationValue: legacy.identificationValue ?? '',
-          nameCSR: '',
+          file: '',
         },
       ];
     }
@@ -418,7 +418,7 @@ export class ListApplicationsComponent implements OnInit {
             const url = window.URL.createObjectURL(result);
             const a = document.createElement('a');
             a.href = url;
-            const savedName = (group.get('nameCSR')?.value ?? '').toString().trim();
+            const savedName = (group.get('file')?.value ?? '').toString().trim();
             const safeId = identificationValue.replace(/[^\dA-Za-z_-]/g, '') || 'solicitud';
             a.download = savedName || `${safeId}.csr`;
             document.body.appendChild(a);
@@ -482,7 +482,7 @@ export class ListApplicationsComponent implements OnInit {
       this.feArPendingCrtFiles.push([]);
     }
     this.feArPendingCrtFiles[index] = Array.from(input.files);
-    group.patchValue({ nameCSR: input.files[0].name });
+    group.patchValue({ file: input.files[0].name });
     this.uploadFeArCrt(index);
     input.value = '';
   }
