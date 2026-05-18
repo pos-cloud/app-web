@@ -540,17 +540,17 @@
                           <button
                             type="button"
                             class="btn btn-primary btn-sm"
-                            [disabled]="loading"
+                            [disabled]="isFeArRowBusy(i)"
                             (click)="generateCRS(i)"
                             title="Generar certificado CSR"
                           >
                             <i
                               class="fa mr-1"
-                              [ngClass]="{ 'fa-key': !loading, 'fa-spinner fa-spin': loading }"
+                              [ngClass]="{ 'fa-key': !isFeArCsrLoading(i), 'fa-spinner fa-spin': isFeArCsrLoading(i) }"
                               aria-hidden="true"
                             ></i>
-                            <span *ngIf="!loading">Descargar CSR</span>
-                            <span *ngIf="loading">…</span>
+                            <span *ngIf="!isFeArCsrLoading(i)">Descargar CSR</span>
+                            <span *ngIf="isFeArCsrLoading(i)">…</span>
                           </button>
                         </td>
                         <td class="arca-upload-cell">
@@ -565,18 +565,21 @@
                             </span>
                             <label
                               class="btn btn-primary btn-sm mb-0 arca-upload-btn"
-                              [class.disabled]="loading"
+                              [class.disabled]="isFeArRowBusy(i)"
                               title="Subir certificado"
                             >
                               <input
                                 type="file"
                                 accept=".crt,.csr"
-                                [disabled]="loading"
+                                [disabled]="isFeArRowBusy(i)"
                                 (change)="feArCrtFileChange($event, i)"
                               />
                               <i
                                 class="fa"
-                                [ngClass]="{ 'fa-upload': !loading, 'fa-spinner fa-spin': loading }"
+                                [ngClass]="{
+                                  'fa-upload': !isFeArCrtLoading(i),
+                                  'fa-spinner fa-spin': isFeArCrtLoading(i)
+                                }"
                                 aria-hidden="true"
                               ></i>
                               <span class="arca-upload-btn__label">Subir</span>
@@ -587,20 +590,23 @@
                           <button
                             type="button"
                             class="btn btn-outline-primary btn-sm mr-1"
-                            [disabled]="loading"
-                            (click)="handleApplicationOperation()"
+                            [disabled]="isFeArRowBusy(i)"
+                            (click)="handleApplicationOperation(i)"
                             title="{{ 'save' | translate | capitalize }}"
                           >
                             <i
                               class="fa"
-                              [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"
+                              [ngClass]="{
+                                'fa-save': !isFeArSaveLoading(i),
+                                'fa-spinner fa-spin': isFeArSaveLoading(i)
+                              }"
                               aria-hidden="true"
                             ></i>
                           </button>
                           <button
                             type="button"
                             class="btn btn-outline-danger btn-sm"
-                            [disabled]="loading"
+                            [disabled]="isFeArRowBusy(i)"
                             (click)="removeFeArEntry(i)"
                             title="Eliminar fila"
                           >

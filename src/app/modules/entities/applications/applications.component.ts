@@ -61,6 +61,9 @@ export class ListApplicationsComponent implements OnInit {
   public application: Application;
   public integracionesForm: FormGroup;
   public loading: boolean = false;
+  public feArCsrLoadingIndex: number | null = null;
+  public feArCrtLoadingIndex: number | null = null;
+  public feArSaveLoadingIndex: number | null = null;
   public transactionTypes: TransactionType[];
   public shipmentMethods: ShipmentMethod[];
   public paymentMethods: PaymentMethod[];
@@ -226,8 +229,41 @@ export class ListApplicationsComponent implements OnInit {
   public removeFeArEntry(index: number): void {
     this.feArEntries.removeAt(index);
     this.feArPendingCrtFiles.splice(index, 1);
+    this.clearFeArRowLoading(index);
     this.application.feAr = this.feArEntries.value;
     this.updateApplication();
+  }
+
+  public isFeArCsrLoading(index: number): boolean {
+    return this.feArCsrLoadingIndex === index;
+  }
+
+  public isFeArCrtLoading(index: number): boolean {
+    return this.feArCrtLoadingIndex === index;
+  }
+
+  public isFeArSaveLoading(index: number): boolean {
+    return this.feArSaveLoadingIndex === index;
+  }
+
+  public isFeArRowBusy(index: number): boolean {
+    return (
+      this.feArCsrLoadingIndex === index ||
+      this.feArCrtLoadingIndex === index ||
+      this.feArSaveLoadingIndex === index
+    );
+  }
+
+  private clearFeArRowLoading(index: number): void {
+    if (this.feArCsrLoadingIndex === index) {
+      this.feArCsrLoadingIndex = null;
+    }
+    if (this.feArCrtLoadingIndex === index) {
+      this.feArCrtLoadingIndex = null;
+    }
+    if (this.feArSaveLoadingIndex === index) {
+      this.feArSaveLoadingIndex = null;
+    }
   }
 
   ngAfterViewInit() {
@@ -408,7 +444,7 @@ export class ListApplicationsComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.feArCsrLoadingIndex = index;
     this._feArService
       .generateCRS(companyName, identificationValue)
       .pipe(takeUntil(this.destroy$))
@@ -428,11 +464,13 @@ export class ListApplicationsComponent implements OnInit {
           } else {
             this._toastService.showToast(null, 'danger', '', 'No se pudo generar el certificado.');
           }
-          this.loading = false;
         },
         error: () => {
           this._toastService.showToast(null, 'danger', '', 'Error al generar el certificado.');
-          this.loading = false;
+          this.feArCsrLoadingIndex = null;
+        },
+        complete: () => {
+          this.feArCsrLoadingIndex = null;
         },
       });
   }
@@ -449,18 +487,22 @@ export class ListApplicationsComponent implements OnInit {
       this._toastService.showToast(null, 'warning', '', 'Seleccione un archivo .crt o .csr.');
       return;
     }
+    this.feArCrtLoadingIndex = index;
     this._feArService.uploadCRT(files, companyCUIT).then(
       (result) => {
         if (result) {
           this.application.feAr = this.feArEntries.value;
-          this.updateApplication();
+          this.updateApplication(index);
           this._toastService.showToast({
             message: result.message,
             type: 'success',
           });
+        } else {
+          this.feArCrtLoadingIndex = null;
         }
       },
       (error) => {
+        this.feArCrtLoadingIndex = null;
         this._toastService.showToast({ message: error, type: 'warning' });
       }
     );
@@ -487,18 +529,22 @@ export class ListApplicationsComponent implements OnInit {
     input.value = '';
   }
 
-  public handleApplicationOperation() {
-    this.loading = true;
+  public handleApplicationOperation(feArRowIndex?: number) {
+    if (feArRowIndex != null) {
+      this.feArSaveLoadingIndex = feArRowIndex;
+    } else {
+      this.loading = true;
+    }
 
     this.application = this.integracionesForm.value;
 
     if (!this.application._id) {
-      return this.saveApplication();
+      return this.saveApplication(feArRowIndex);
     }
-    this.updateApplication();
+    this.updateApplication(feArRowIndex);
   }
 
-  saveApplication() {
+  saveApplication(feArRowIndex?: number) {
     this._applicationService
       .save(this.application)
       .pipe(takeUntil(this.destroy$))
@@ -508,14 +554,15 @@ export class ListApplicationsComponent implements OnInit {
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.clearApplicationLoading(feArRowIndex);
         },
         complete: () => {
-          this.loading = false;
+          this.clearApplicationLoading(feArRowIndex);
         },
       });
   }
 
-  updateApplication() {
+  updateApplication(feArRowIndex?: number) {
     this.application = this.integracionesForm.value;
 
     this._applicationService
@@ -527,10 +574,24 @@ export class ListApplicationsComponent implements OnInit {
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.clearApplicationLoading(feArRowIndex);
         },
         complete: () => {
-          this.loading = false;
+          this.clearApplicationLoading(feArRowIndex);
         },
       });
+  }
+
+  private clearApplicationLoading(feArRowIndex?: number): void {
+    if (feArRowIndex != null) {
+      if (this.feArSaveLoadingIndex === feArRowIndex) {
+        this.feArSaveLoadingIndex = null;
+      }
+      if (this.feArCrtLoadingIndex === feArRowIndex) {
+        this.feArCrtLoadingIndex = null;
+      }
+    } else {
+      this.loading = false;
+    }
   }
 }
