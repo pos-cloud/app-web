@@ -82,6 +82,7 @@ export class FileService {
       xhr.send(formData);
     });
   }
+
   public deleteImage(imageUrl: string): Observable<any> {
     const URL = `${environment.apiStorage}/upload`;
 

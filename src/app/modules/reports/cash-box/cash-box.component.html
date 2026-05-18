@@ -1,7 +1,11 @@
 <section class="container-fluid">
   <div class="card">
-    <div class="card-header">Detalle de Caja
+    <div class="card-header">
+      Detalle de Caja
       <div class="pull-right">
+        <button type="button" class="btn" (click)="goBackToList()">
+          <i class="fa fa-arrow-left"></i><span> Volver</span>
+        </button>
       <!--  <button class= "btn" (click)="openModal('print')" ><i class="fa fa-print"></i><span>Imprimir</span></button>-->
       </div>
     </div>
@@ -12,34 +16,28 @@
         </ngb-alert>
       </div>
       <div class="row">
-        <div class="form-group col-md-1" *ngIf="cashBoxSelected">
-          <label for="number" class="control-label">Número:</label>
-          <input type="text" class="form-control" [value]="cashBoxSelected.number" readonly/>
-        </div>
-        <div class="form-group col-md-3" *ngIf="cashBoxSelected">
-          <label for="openingDate" class="control-label">Apertura:</label>
-          <input type="text" class="form-control" [value]="cashBoxSelected.openingDate" readonly/>
-        </div>
-        <div class="form-group col-md-3" *ngIf="cashBoxSelected ">
-          <label for="closingDate" class="control-label">Cierre:</label>
-          <input type="text" class="form-control" [value]="cashBoxSelected.closingDate" readonly/>
-        </div>
-        <div class="form-group col-md-2" *ngIf="cashBoxSelected && cashBoxSelected.employee">
-          <label for="employee" class="control-label">Empleado:</label>
-          <input type="text" class="form-control" [value]="cashBoxSelected.employee.name" readonly/>
-        </div>
         <div class="form-group col-md-2" *ngIf="cashBoxSelected">
           <label for="state" class="control-label">Estado:</label>
           <input type="text" class="form-control" [value]="cashBoxSelected.state" readonly/>
         </div>
+        <div class="form-group col-md-1" *ngIf="cashBoxSelected">
+          <label for="number" class="control-label">Número:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.number" readonly/>
+        </div>
+        <div class="form-group col-md-2" *ngIf="cashBoxSelected">
+          <label for="openingDate" class="control-label">Apertura:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.openingDate" readonly/>
+        </div>
+        <div class="form-group col-md-2" *ngIf="cashBoxSelected">
+          <label for="closingDate" class="control-label">Cierre:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.closingDate" readonly/>
+        </div>
+        <div class="form-group col-md-2" *ngIf="cashBoxSelected && cashBoxSelected.creationUser">
+          <label for="creationUser" class="control-label">Usuario:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.creationUser.name" readonly/>
+        </div>
         <div class="form-group col-md-10" *ngIf="!cashBoxSelected">
           <input type="text" class="form-control" value="Seleccione una caja" readonly/>
-        </div>
-        <div class="col-md-1">
-          <label for="btn" class="control-label" *ngIf="cashBoxSelected">Acción:</label>
-          <span class="form-control cursor-pointer center-content" (click)="openModal('cashBox')">
-            Cambiar
-          </span>
         </div>
       </div>
       <div class="row center-content">

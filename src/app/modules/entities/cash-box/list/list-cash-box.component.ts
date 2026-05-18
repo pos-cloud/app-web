@@ -102,7 +102,17 @@ export class ListCashBoxComponent {
       required: true,
     },
     {
-      name: 'employee.name',
+      name: 'creationUser._id',
+      visible: false,
+      disabled: false,
+      filter: false,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'creationUser.name',
       visible: true,
       disabled: false,
       filter: true,
@@ -195,7 +205,7 @@ export class ListCashBoxComponent {
   public async openModal(op: string, obj: any) {
     switch (op) {
       case 'view':
-        this._router.navigateByUrl('report/list-box/' + obj._id);
+        this._router.navigateByUrl('reports/cash-box/' + obj._id);
         break;
       case 'print-box':
         const dataLabels = {

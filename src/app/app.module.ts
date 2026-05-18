@@ -36,8 +36,6 @@ import { CancellationTypeComponent } from './components/cancellation-type/cancel
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { CashBoxComponent } from './components/cash-box/cash-box/cash-box.component';
-import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-cash-box.component';
-import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { ComponentsModule } from './components/components.module';
@@ -114,7 +112,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     HeaderComponent,
     FooterComponent,
     ListTablesComponent,
-    ListCashBoxesComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
     PointOfSaleComponent,
@@ -154,7 +151,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListOriginsComponent,
     OriginComponent,
     SelectOriginComponent,
-    ListCashBoxComponent,
     CurrentAccountDetailsComponent,
     ListArticlesPosComponent,
     EditCheckComponent,

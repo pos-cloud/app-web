@@ -6,7 +6,7 @@ export interface CashBox extends Activity {
   openingDate: string;
   closingDate: string;
   state: CashBoxState;
-  employee: Employee;
+  employee?: Employee;
   type: CashBoxType;
 }
 

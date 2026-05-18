@@ -53,7 +53,7 @@ export class HeaderComponent implements OnInit {
       icon: 'fa fa-money',
       children: [
         { label: 'Movimientos', link: 'pos/mostrador/fondo' },
-        { label: 'Cajas', link: 'admin/cajas' },
+        { label: 'Cajas', link: 'entities/cash-boxes' },
       ],
     },
     {
@@ -237,19 +237,19 @@ export class HeaderComponent implements OnInit {
         {
           label: 'General',
           children: [
-            { label: 'Mi negocio', link: 'admin/configuraciones' },
-            { label: 'Aplicaciones', link: 'entities/applications' },
             { label: 'Tipos de Transacciones', link: 'transaction-types' },
             { label: 'Tipos de Cancelaciones', link: 'entities/cancellation-types' },
             { label: 'Promociones', link: 'entities/business-rules' },
             { label: 'Tipos de Relaciones', link: 'entities/relation-type' },
             { label: 'Tipos de Identificación', link: 'entities/identification-type' },
-            { label: 'Condiciones de IVA', link: 'entities/vat-condition' },
             { label: 'Métodos de pago', link: 'entities/payment-methods' },
-            { label: 'Métodos de entrega', link: 'entities/shipment-methods' },
             { label: 'Lista de Precios', link: 'entities/price-list' },
+            { label: 'Aplicaciones', link: 'entities/applications' },
+            { label: 'Métodos de entrega', link: 'entities/shipment-methods' },
             { label: 'Feriados', link: 'entities/holidays' },
+            { label: 'Condiciones de IVA', link: 'entities/vat-condition' },
             { label: 'Reports', link: 'reports' },
+            { label: 'Sistema', link: 'admin/configuraciones' },
             { label: 'Historial', link: 'histories' },
           ],
         },

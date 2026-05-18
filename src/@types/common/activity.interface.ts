@@ -5,7 +5,7 @@ export interface Activity {
     {
       date: string;
       user: User;
-    }
+    },
   ];
   creationDate: string;
   updateDate: string;

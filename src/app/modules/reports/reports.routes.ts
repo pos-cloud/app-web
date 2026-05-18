@@ -111,4 +111,8 @@ export const REPORTS_ROUTES: Routes = [
     loadComponent: () =>
       import('./payment-method/payment-method.component').then((m) => m.ReportPaymentMethodComponent),
   },
+  {
+    path: 'cash-box/:cashBoxId',
+    loadComponent: () => import('./cash-box/cash-box.component').then((m) => m.ReportCashBoxComponent),
+  },
 ];

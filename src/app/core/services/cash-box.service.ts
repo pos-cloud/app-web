@@ -23,30 +23,6 @@ export class CashBoxService extends ModelService {
     );
   }
 
-  public getCashBox(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/cash-box`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public getCashBoxes(query?: string): Observable<any> {
     const URL = `${environment.api}/api/cash-boxes`;
 

@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgxPaginationModule } from 'ngx-pagination';
+import * as printJS from 'print-js';
+import { Subject, takeUntil } from 'rxjs';
 
-import { ActivatedRoute } from '@angular/router';
 import { PrintService } from '@core/services/print.service';
-import { ApiResponse, PrintType } from '@types';
-import { CashBox } from 'app/components/cash-box/cash-box';
+import { ApiResponse, CashBox, PrintType } from '@types';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { Movements } from 'app/components/transaction-type/transaction-type';
 import { TransactionState } from 'app/components/transaction/transaction';
@@ -13,18 +17,18 @@ import { CashBoxService } from 'app/core/services/cash-box.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { FilterPipe } from 'app/shared/pipes/filter.pipe';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import * as printJS from 'print-js';
-import { Subject, takeUntil } from 'rxjs';
-import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';
-import { ListCashBoxesComponent } from '../list-cash-boxes/list-cash-boxes.component';
+
+import { ViewTransactionComponent } from '../../transaction/components/view-transaction/view-transaction.component';
 
 @Component({
-  selector: 'app-list-cash-box',
-  templateUrl: './list-cash-box.component.html',
-  styleUrls: ['./list-cash-box.component.scss'],
+  standalone: true,
+  selector: 'app-report-cash-box',
+  templateUrl: './cash-box.component.html',
+  imports: [CommonModule, FormsModule, NgbAlertModule, NgxPaginationModule, PipesModule],
 })
-export class ListCashBoxComponent implements OnInit {
+export class ReportCashBoxComponent implements OnInit, OnDestroy {
   public cashBoxSelected: CashBox;
   public movementsOfCashes: MovementOfCash[] = new Array();
   public alertMessage: string = '';
@@ -68,10 +72,10 @@ export class ListCashBoxComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private _router: Router,
     public _movementOfCashService: MovementOfCashService,
     public _cashBoxService: CashBoxService,
     public _modalService: NgbModal,
-    public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     private _toastService: ToastService,
     public _printService: PrintService
@@ -85,15 +89,23 @@ export class ListCashBoxComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
-      let cashBoxId = params['cashBoxId']; // 'cashBoxId' debe coincidir con el nombre del parámetro en la ruta
+      let cashBoxId = params['cashBoxId'];
       this.getCashBox(cashBoxId);
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  public goBackToList(): void {
+    this._router.navigateByUrl('/entities/cash-boxes');
   }
 
   public getCashBox(cashBoxId: string) {
     this.loading = true;
 
-    // ORDENAMOS LA CONSULTA
     let sortAux;
     if (this.orderTerm[0].charAt(0) === '-') {
       sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
@@ -102,18 +114,14 @@ export class ListCashBoxComponent implements OnInit {
     }
     sortAux = JSON.parse(sortAux);
 
-    // FILTRAMOS LA CONSULTA
     let match = `{`;
-
     match += `"operationType": { "$ne": "D" },
               "_id" : { "$oid" : "${cashBoxId}"}}`;
-
     match = JSON.parse(match);
 
-    // CAMPOS A TRAER
     let project = {
       _id: 1,
-      'employee.name': 1,
+      'creationUser.name': 1,
       state: 1,
       number: 1,
       openingDate: {
@@ -133,42 +141,31 @@ export class ListCashBoxComponent implements OnInit {
       operationType: 1,
     };
 
-    // AGRUPAMOS EL RESULTADO
     let group = {
       _id: null,
       count: { $sum: 1 },
       cashBoxes: { $push: '$$ROOT' },
     };
 
-    this._cashBoxService
-      .getCashBoxesV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group // GROUP
-        //limit, // LIMIT
-        //skip // SKIP
-      )
-      .subscribe(
-        (result) => {
-          this.loading = false;
-          if (result) {
-            this.cashBoxSelected = result[0].cashBoxes[0];
-            this.getMovementOfCashes();
-          }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-          this.totalItems = 0;
+    this._cashBoxService.getCashBoxesV2(project, match, sortAux, group).subscribe(
+      (result) => {
+        this.loading = false;
+        if (result) {
+          this.cashBoxSelected = result[0].cashBoxes[0];
+          this.getMovementOfCashes();
         }
-      );
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.totalItems = 0;
+      }
+    );
   }
 
   public getMovementOfCashes(): void {
     this.loading = true;
 
-    // ORDENAMOS LA CONSULTA
     let sortAux;
     if (this.orderTerm[0].charAt(0) === '-') {
       sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
@@ -177,7 +174,6 @@ export class ListCashBoxComponent implements OnInit {
     }
     sortAux = JSON.parse(sortAux);
 
-    // FILTRAMOS LA CONSULTA
     let match = `{`;
     for (let i = 0; i < this.displayedColumns.length; i++) {
       let value = this.filters[this.displayedColumns[i]];
@@ -195,7 +191,6 @@ export class ListCashBoxComponent implements OnInit {
 
     if (this.cashBoxSelected) match['transaction.cashBox._id'] = { $oid: this.cashBoxSelected._id };
 
-    // CAMPOS A TRAER
     let project = {
       _id: 1,
       'transaction.endDate': 1,
@@ -234,7 +229,6 @@ export class ListCashBoxComponent implements OnInit {
       'transaction.operationType': 1,
     };
 
-    // AGRUPAMOS EL RESULTADO
     let group = {
       _id: null,
       count: { $sum: 1 },
@@ -246,46 +240,37 @@ export class ListCashBoxComponent implements OnInit {
     if (this.currentPage != 0) {
       page = this.currentPage - 1;
     }
-    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
+    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0;
 
     if (this.userType === 'pos') {
       limit = 0;
       skip = 0;
     }
 
-    this._movementOfCashService
-      .getMovementsOfCashesV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group // GROUP
-        //limit, // LIMIT
-        //skip // SKIP
-      )
-      .subscribe(
-        (result) => {
-          if (result && result[0] && result[0].movementsOfCashes) {
-            this.loading = false;
-            this.items = result[0].movementsOfCashes;
-            this.totalItems = result[0].count;
-            this.areMovementOfCashesEmpty = false;
-            this.currentPage = parseFloat(
-              this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0)
-            );
-          } else {
-            this.items = new Array();
-            this.loading = false;
-            this.totalItems = 0;
-            this.areMovementOfCashesEmpty = true;
-          }
-          this.getBalance();
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
+    this._movementOfCashService.getMovementsOfCashesV2(project, match, sortAux, group).subscribe(
+      (result) => {
+        if (result && result[0] && result[0].movementsOfCashes) {
+          this.loading = false;
+          this.items = result[0].movementsOfCashes;
+          this.totalItems = result[0].count;
+          this.areMovementOfCashesEmpty = false;
+          this.currentPage = parseFloat(
+            this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0)
+          );
+        } else {
+          this.items = new Array();
           this.loading = false;
           this.totalItems = 0;
+          this.areMovementOfCashesEmpty = true;
         }
-      );
+        this.getBalance();
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.totalItems = 0;
+      }
+    );
   }
 
   public getBalance(): void {
@@ -313,20 +298,6 @@ export class ListCashBoxComponent implements OnInit {
           backdrop: 'static',
         });
         modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
-        break;
-      case 'cashBox':
-        modalRef = this._modalService.open(ListCashBoxesComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.result.then(
-          (result) => {
-            if (result.cashBoxId) {
-              this.getCashBox(result.cashBoxId);
-            }
-          },
-          (reason) => {}
-        );
         break;
       case 'print':
         const dataLabels = {

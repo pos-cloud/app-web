@@ -22,12 +22,11 @@ import { TransactionService } from '../../../core/services/transaction.service';
 
 //Componentes
 import { PrintService } from '@core/services/print.service';
-import { ApiResponse, CurrencyValue, Employee, Printer, PrintType, User } from '@types';
+import { ApiResponse, CurrencyValue, Printer, PrintType, User } from '@types';
 import { Config } from 'app/app.config';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { ConfigService } from 'app/core/services/config.service';
 import { CurrencyValueService } from 'app/core/services/currency-value.service';
-import { EmployeeService } from 'app/core/services/employee.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -61,8 +60,6 @@ export class CashBoxComponent implements OnInit {
   @Input() transactionType: TransactionType;
   private config: Config;
   private identity: User;
-  public employees: Employee[] = [];
-  public selectedEmployee: Employee | null = null;
   public selectPayment;
   public printerSelected: Printer;
   private destroy$ = new Subject<void>();
@@ -84,8 +81,7 @@ export class CashBoxComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _userService: UserService,
     public _modalService: NgbModal,
-    public _printService: PrintService,
-    private _employeeService: EmployeeService
+    public _printService: PrintService
   ) {
     this.paymentMethods = new Array();
     this.cashBox = new CashBox();
@@ -107,14 +103,6 @@ export class CashBoxComponent implements OnInit {
     await this._authService.getIdentity.subscribe((identity) => {
       this.identity = identity;
     });
-    console.log(this.identity);
-    if (this.identity?.employee?._id) {
-      this.selectedEmployee = this.identity.employee;
-    } else {
-      this._employeeService.getEmployees('').subscribe((result) => {
-        if (result.employees) this.employees = result.employees;
-      });
-    }
     await this.getPaymentMethods('where="cashBoxImpact":true').then(async (paymentMethods) => {
       if (paymentMethods) {
         this.paymentMethods = paymentMethods;
@@ -123,9 +111,7 @@ export class CashBoxComponent implements OnInit {
 
         if (this.identity) {
           if (this.config.cashBox.perUser) {
-            if (this.identity.employee?._id) {
-              query += ',"employee":"' + this.identity.employee._id + '"';
-            }
+            query += ',"creationUser":"' + this.identity._id + '"';
           } else if (this.identity.cashBoxType) {
             query += ',"type":"' + this.identity.cashBoxType._id + '"';
           } else {
@@ -168,14 +154,8 @@ export class CashBoxComponent implements OnInit {
                 }
               });
             }
-          } else {
-            if (this.transactionType.cashOpening) {
-              if (this.identity?.employee?._id) {
-                this.cashBox.employee = this.identity.employee;
-              }
-            } else if (this.transactionType.cashClosing) {
-              this.showMessage('No se encuentran cajas abiertas.', 'info', true);
-            }
+          } else if (this.transactionType.cashClosing) {
+            this.showMessage('No se encuentran cajas abiertas.', 'info', true);
           }
         });
       }
@@ -298,7 +278,6 @@ export class CashBoxComponent implements OnInit {
             this.cashBox.type = identity.cashBoxType;
           }
         });
-        this.cashBox.employee = this.selectedEmployee!;
         await this.saveCashBox().then(async (cashBox) => {
           if (cashBox) {
             this.cashBox = cashBox;

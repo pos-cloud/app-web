@@ -5,8 +5,6 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
-import { ListCashBoxComponent } from './components/cash-box/list-cash-box/list-cash-box.component';
-import { ListCashBoxesComponent } from './components/cash-box/list-cash-boxes/list-cash-boxes.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
@@ -132,11 +130,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/cajas',
-    component: ListCashBoxesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'admin/variantes',
     component: ListArticlesComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -199,11 +192,6 @@ export const _routes: Routes = [
   {
     path: 'report/compra/movimientos-de-cancellaciones',
     component: ListMovementsOfCancellationsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'report/list-box/:cashBoxId',
-    component: ListCashBoxComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

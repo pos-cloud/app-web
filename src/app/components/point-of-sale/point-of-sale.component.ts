@@ -785,9 +785,7 @@ export class PointOfSaleComponent implements OnInit {
       if (this.transaction.type.cashBoxImpact) {
         let query = 'where="state":"' + CashBoxState.Open + '"';
         if (this.config.cashBox.perUser) {
-          if (this.identity.employee) {
-            query += ',"employee":"' + this.identity.employee._id + '"';
-          }
+          query += ',"creationUser":"' + this.identity._id + '"';
         } else if (this.identity.cashBoxType) {
           query += ',"type":"' + this.identity.cashBoxType._id + '"';
         } else {
