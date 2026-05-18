@@ -3,6 +3,7 @@ import { Activity, Article, Company, PaymentMethod, ShipmentMethod, TransactionT
 export interface FeArIntegrationEntry {
   companyName: string;
   identificationValue: string;
+  nameCSR: string;
 }
 
 export interface Application extends Activity {

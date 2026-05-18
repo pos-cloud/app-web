@@ -147,6 +147,7 @@ export class ListApplicationsComponent implements OnInit {
         this.fb.group({
           companyName: [''],
           identificationValue: [''],
+          nameCSR: [''],
         }),
       ]),
     });
@@ -188,6 +189,7 @@ export class ListApplicationsComponent implements OnInit {
     return this.fb.group({
       companyName: [initial?.companyName ?? ''],
       identificationValue: [initial?.identificationValue ?? ''],
+      nameCSR: [initial?.nameCSR ?? ''],
     });
   }
 
@@ -200,6 +202,7 @@ export class ListApplicationsComponent implements OnInit {
       return (raw as FeArIntegrationEntry[]).map((e) => ({
         companyName: (e?.companyName ?? '').toString(),
         identificationValue: (e?.identificationValue ?? '').toString(),
+        nameCSR: (e?.nameCSR ?? '').toString(),
       }));
     }
     const legacy = raw as { companyName?: string; identificationValue?: string };
@@ -208,6 +211,7 @@ export class ListApplicationsComponent implements OnInit {
         {
           companyName: legacy.companyName ?? '',
           identificationValue: legacy.identificationValue ?? '',
+          nameCSR: '',
         },
       ];
     }
@@ -414,8 +418,9 @@ export class ListApplicationsComponent implements OnInit {
             const url = window.URL.createObjectURL(result);
             const a = document.createElement('a');
             a.href = url;
+            const savedName = (group.get('nameCSR')?.value ?? '').toString().trim();
             const safeId = identificationValue.replace(/[^\dA-Za-z_-]/g, '') || 'solicitud';
-            a.download = `poscloud-${safeId}.csr`;
+            a.download = savedName || `${safeId}.csr`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
@@ -441,13 +446,14 @@ export class ListApplicationsComponent implements OnInit {
       return;
     }
     if (!files?.length) {
-      this._toastService.showToast(null, 'warning', '', 'Seleccione un archivo .crt.');
+      this._toastService.showToast(null, 'warning', '', 'Seleccione un archivo .crt o .csr.');
       return;
     }
-
     this._feArService.uploadCRT(files, companyCUIT).then(
       (result) => {
         if (result) {
+          this.application.feAr = this.feArEntries.value;
+          this.updateApplication();
           this._toastService.showToast({
             message: result.message,
             type: 'success',
@@ -462,12 +468,23 @@ export class ListApplicationsComponent implements OnInit {
 
   public feArCrtFileChange(event: Event, index: number) {
     const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      while (this.feArPendingCrtFiles.length <= index) {
-        this.feArPendingCrtFiles.push([]);
-      }
-      this.feArPendingCrtFiles[index] = Array.from(input.files);
+    if (!input.files?.length) {
+      return;
     }
+    const group = this.feArEntries.at(index) as FormGroup;
+    const companyCUIT = (group.get('identificationValue')?.value ?? '').toString().trim();
+    if (!companyCUIT) {
+      this._toastService.showToast(null, 'warning', '', 'Ingrese el CUIT para subir el certificado.');
+      input.value = '';
+      return;
+    }
+    while (this.feArPendingCrtFiles.length <= index) {
+      this.feArPendingCrtFiles.push([]);
+    }
+    this.feArPendingCrtFiles[index] = Array.from(input.files);
+    group.patchValue({ nameCSR: input.files[0].name });
+    this.uploadFeArCrt(index);
+    input.value = '';
   }
 
   public handleApplicationOperation() {
