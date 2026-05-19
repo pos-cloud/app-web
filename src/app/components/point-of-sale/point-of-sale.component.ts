@@ -121,7 +121,6 @@ export class PointOfSaleComponent implements OnInit {
   public user: User;
   public movementsOfCashes: MovementOfCash[];
   private database: string;
-  public movementType: string;
 
   // CAMPOS TRAIDOS DE LA CUENTA CTE.
   @Input() company: Company;
