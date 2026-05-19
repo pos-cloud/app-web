@@ -28,9 +28,8 @@ import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/d
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
-import { ProcessInvoiceUploadComponent } from './component/process-invoice-upload/process-invoice-upload.component';
-import * as moment from 'moment';
 import { combineLatest, finalize, Subject, takeUntil } from 'rxjs';
+import { ProcessInvoiceUploadComponent } from './component/process-invoice-upload/process-invoice-upload.component';
 
 @Component({
   selector: 'app-formal-transaction-view',
@@ -238,22 +237,33 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   private defaultCheckExpirationDateInput(): string {
-    const src = this.transaction?.endDate || this.transaction?.startDate;
-    return src ? moment(src).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+    const sourceDate = this.transaction?.endDate ?? this.transaction?.startDate;
+
+    return this.formatDateForInput(sourceDate ?? new Date());
   }
 
-  private parseCheckExpirationForInput(iso: string | undefined | null): string {
-    if (!iso) {
+  private parseCheckExpirationForInput(value?: string | null): string {
+    return value ? this.formatDateForInput(value) : '';
+  }
+
+  private serializeCheckExpirationDate(dateInput?: string): string {
+    const date = dateInput ? new Date(`${dateInput}T00:00:00`) : new Date();
+
+    return date.toISOString();
+  }
+
+  private formatDateForInput(value: string | Date): string {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
       return '';
     }
-    return moment(iso).format('YYYY-MM-DD');
-  }
 
-  private serializeCheckExpirationDate(dateInput: string): string {
-    if (!dateInput) {
-      return moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    }
-    return moment(dateInput, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 
   /** Datos extra del método de pago: cheque (`checkDetail`) y/o banco (`allowBank`), como en add-movement-of-cash. */
