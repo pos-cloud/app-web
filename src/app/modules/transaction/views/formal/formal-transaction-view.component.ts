@@ -27,8 +27,8 @@ import { ConfirmationQuestionComponent } from 'app/shared/components/confirm/con
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
-import { UploadFileComponent } from 'app/shared/components/upload-file/upload-file.component';
 import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
+import { ProcessInvoiceUploadComponent } from './component/process-invoice-upload/process-invoice-upload.component';
 import * as moment from 'moment';
 import { combineLatest, finalize, Subject, takeUntil } from 'rxjs';
 
@@ -42,7 +42,7 @@ import { combineLatest, finalize, Subject, takeUntil } from 'rxjs';
     FormsModule,
     ReactiveFormsModule,
     TypeaheadDropdownComponent,
-    UploadFileComponent,
+    ProcessInvoiceUploadComponent,
     DateTimePickerComponent,
     NumericTextDirective,
   ],
@@ -162,11 +162,12 @@ export class FormalTransactionViewComponent implements OnInit {
           this.articles.find((article) => article._id.toString() === articleValue?._id?.toString()) || null;
 
         if (this.selectedArticle) {
-          // Normaliza el control al registro de `articles` (ngbTypeahead guarda el objeto elegido, no el _id).
           this.addProductForm.patchValue(
             {
               article: this.selectedArticle,
-              unitPrice: this.selectedArticle.basePrice ?? null,
+              unitPrice: this.transaction.type.requestTaxes
+                ? this.selectedArticle.salePrice
+                : this.selectedArticle.basePrice,
             },
             { emitEvent: false }
           );
@@ -866,59 +867,6 @@ export class FormalTransactionViewComponent implements OnInit {
     return this.roundNumber.transform(gross - discountAmount) as number;
   }
 
-  private computeProductLineFromForm(): {
-    quantity: number;
-    unitPrice: number;
-    discountAmount: number;
-    discountRate: number;
-    salePrice: number;
-    taxes: Taxes[];
-  } {
-    const article = this.addProductForm.get('article')?.value as Article;
-
-    const quantity = Number(this.addProductForm.get('quantity')?.value) || 0;
-    const formUnitPrice = Number(this.addProductForm.get('unitPrice')?.value) || 0;
-
-    let discountRate = Number(this.addProductForm.get('discountRate')?.value) || 0;
-    discountRate = Math.min(100, Math.max(0, discountRate));
-
-    const requestTaxes = this.transaction.type.requestTaxes;
-    // Precio unitario final
-    const unitPrice = this.roundNumber.transform(
-      requestTaxes ? (formUnitPrice === article.basePrice ? article.salePrice : formUnitPrice) : formUnitPrice
-    );
-    // Subtotal antes del descuento
-    const subtotal = this.roundNumber.transform(unitPrice * quantity);
-    // Descuento total
-    const discountAmount = this.roundNumber.transform(subtotal * (discountRate / 100));
-
-    // Total final
-    const salePrice = this.roundNumber.transform(subtotal - discountAmount);
-
-    const taxes: Taxes[] = [];
-    if (requestTaxes) {
-      for (const tax of article.taxes) {
-        const taxAux: Taxes = {
-          _id: tax._id,
-          percentage: tax.percentage,
-          tax: tax.tax,
-          taxBase: this.roundNumber.transform(salePrice / (1 + tax.percentage / 100), 2),
-          taxAmount: this.roundNumber.transform(salePrice - salePrice / (1 + tax.percentage / 100), 2),
-        };
-        taxes.push(taxAux);
-      }
-    }
-
-    return {
-      quantity,
-      unitPrice,
-      discountAmount,
-      discountRate,
-      salePrice,
-      taxes,
-    };
-  }
-
   public onInvoiceUpload(e: { urls: string[]; invoice: unknown | null }): void {
     const inv = e.invoice as Record<string, unknown> | null;
     const firstUrl = e.urls?.[0];
@@ -1150,7 +1098,9 @@ export class FormalTransactionViewComponent implements OnInit {
     this.selectedArticle = this.articles.find((article) => article._id.toString() === articleId?.toString()) || null;
 
     if (this.addProductForm.valid && this.selectedArticle) {
-      const line = this.computeProductLineFromForm();
+      let unitPrice = Number(this.addProductForm.get('unitPrice')?.value);
+      let quantity = Number(this.addProductForm.get('quantity')?.value);
+      let discountRate = Number(this.addProductForm.get('discountRate')?.value);
 
       if (this.editingProductId) {
         const movementToUpdate = this.movementsOfArticles.find((movement) => movement._id === this.editingProductId);
@@ -1162,16 +1112,13 @@ export class FormalTransactionViewComponent implements OnInit {
           return;
         }
 
-        const updatedMovement: MovementOfArticle = {
-          ...movementToUpdate,
-          transaction: this.transaction,
-          article: this.selectedArticle as any,
-          amount: line.quantity,
-          unitPrice: line.unitPrice,
-          salePrice: line.salePrice,
-          discountAmount: line.discountAmount,
-          discountRate: line.discountRate,
-          taxes: line.taxes,
+        const updatedMovement = {
+          _id: movementToUpdate._id,
+          transactionId: this.transaction._id,
+          articleId: this.selectedArticle._id,
+          quantity: quantity ?? movementToUpdate.amount,
+          unitPrice: unitPrice ?? movementToUpdate.unitPrice,
+          discountRate: discountRate ?? movementToUpdate.discountRate,
         };
 
         this.movementOfArticleService.update(updatedMovement).subscribe({
@@ -1199,9 +1146,8 @@ export class FormalTransactionViewComponent implements OnInit {
       const movementData: Record<string, unknown> = {
         transactionId: this.transaction?._id,
         articleId: this.selectedArticle._id,
-        quantity: line.quantity,
-        unitPrice: line.unitPrice,
-        salePrice: line.salePrice,
+        quantity: quantity,
+        salePrice: unitPrice,
         recalculateParent: false,
       };
 

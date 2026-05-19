@@ -352,20 +352,10 @@
                         <td class="text-center">
                           <div class="btn-group" role="group">
                             <ng-container *ngIf="editingProductId === movement._id; else productActionsViewTpl">
-                              <button
-                                type="button"
-                                class="btn btn-sm btn-success"
-                                (click)="saveProduct()"
-                                ngbTooltip="Guardar cambios"
-                              >
+                              <button type="button" class="btn btn-sm btn-success" (click)="saveProduct()">
                                 <i class="fa fa-save"></i>
                               </button>
-                              <button
-                                type="button"
-                                class="btn btn-sm btn-secondary"
-                                (click)="cancelAddProduct()"
-                                ngbTooltip="Cancelar edición"
-                              >
+                              <button type="button" class="btn btn-sm btn-secondary" (click)="cancelAddProduct()">
                                 <i class="fa fa-times"></i>
                               </button>
                             </ng-container>
@@ -374,7 +364,6 @@
                                 type="button"
                                 class="btn btn-sm btn-outline-secondary"
                                 (click)="editProduct(movement)"
-                                ngbTooltip="Editar producto"
                               >
                                 <i class="fa fa-pencil"></i>
                               </button>
@@ -382,7 +371,6 @@
                                 type="button"
                                 class="btn btn-sm btn-outline-danger"
                                 (click)="deleteProduct(movement)"
-                                ngbTooltip="Eliminar producto"
                               >
                                 <i class="fa fa-trash"></i>
                               </button>
@@ -406,7 +394,7 @@
                       <div>
                         <h6 class="formal-add-product-card__title mb-1">Agregar producto</h6>
                         <p class="formal-add-product-card__subtitle mb-0 text-muted small">
-                          Busque por código, proveedor o descripción e indique cantidad y precio base sin impuestos.
+                          Busque por código, proveedor o descripción e indique cantidad .
                         </p>
                       </div>
                     </div>
@@ -458,7 +446,7 @@
                         />
                       </div>
                       <div class="col-6 col-sm-4 col-md-3 col-lg-2 formal-add-product-field">
-                        <label class="formal-add-product-label" for="add-product-price">Precio base</label>
+                        <label class="formal-add-product-label" for="add-product-price">Precio Unitario</label>
                         <input
                           id="add-product-price"
                           type="text"
@@ -670,14 +658,10 @@
             </ng-template>
           </li>
         </ul>
-        <app-upload-file
+        <app-process-invoice-upload
           class="formal-tabs-card__upload pr-3 pb-2 ml-auto"
-          displayMode="icon"
-          [folder]="''"
-          accept=".png,.jpg,.jpeg,.gif,.webp,.bmp,.pdf,image/png,image/jpeg,image/gif,image/webp,application/pdf"
           (invoiceUpload)="onInvoiceUpload($event)"
-        >
-        </app-upload-file>
+        />
       </div>
 
       <div class="card-body formal-tabs-card-body pt-3">

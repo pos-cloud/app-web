@@ -115,8 +115,7 @@ app-formal-transaction-view {
     background-color: #fff;
   }
 
-  // El uploader en modo icono no debe estirarse con el flex del header
-  .card-header app-upload-file {
+  .card-header app-process-invoice-upload {
     flex: 0 0 auto;
   }
 
