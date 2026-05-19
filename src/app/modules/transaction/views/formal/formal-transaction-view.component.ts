@@ -162,16 +162,13 @@ export class FormalTransactionViewComponent implements OnInit {
 
         if (this.selectedArticle) {
           let basePrice: number;
-          if (this.selectedArticle.taxes.length > 0) {
-            let taxAmount = this.selectedArticle.taxes.reduce((acc, tax) => acc + tax.taxAmount, 0);
-            basePrice = this.selectedArticle.salePrice - taxAmount;
-          } else {
-            basePrice = this.selectedArticle.salePrice;
-          }
+
           this.addProductForm.patchValue(
             {
               article: this.selectedArticle,
-              unitPrice: this.transaction.type.requestTaxes ? this.selectedArticle.salePrice : basePrice,
+              unitPrice: this.transaction.type.requestTaxes
+                ? this.selectedArticle.costPrice
+                : this.selectedArticle.basePrice,
             },
             { emitEvent: false }
           );
