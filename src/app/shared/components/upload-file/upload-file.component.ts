@@ -13,57 +13,26 @@ import { FileService } from 'app/core/services/file.service';
 export class UploadFileComponent {
   selectedFiles: File[] = [];
   imageUrl: string | undefined;
-  uploading = false;
-  /** En modo preview: el archivo local es PDF (no se usa `<img>` con data URL, el navegador lo expande mal). */
-  previewIsPdf = false;
-  selectedFileLabel = '';
 
   @Output() uploadedUrls = new EventEmitter<string[]>();
-  /** Modo icon: `{ urls, invoice }` una sola vez. Preview sigue usando solo `uploadedUrls`. */
-  @Output() invoiceUpload = new EventEmitter<{ urls: string[]; invoice: unknown | null }>();
   @Input() folder = '';
-  @Input() displayMode: 'preview' | 'icon' = 'preview';
-  @Input() accept = 'image/*';
   @Input() set existingImageUrl(url: string | undefined) {
     if (url && url.includes('https') && url !== this.imageUrl) {
       this.imageUrl = url;
-      this.previewIsPdf = /\.pdf(\?|$)/i.test(url);
-    } else if (!url) {
-      this.previewIsPdf = false;
     }
   }
   constructor(private uploadService: FileService) {}
 
   onFileSelected(event: any): void {
-    const file = event.target.files[0] as File | undefined;
-    const input = event.target as HTMLInputElement;
-    if (!file) {
-      return;
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFiles = [file];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imageUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
-    this.selectedFiles = [file];
-
-    if (this.displayMode === 'icon') {
-      this.previewIsPdf = false;
-      this.selectedFileLabel = file.name;
-      void this.uploadImages();
-      input.value = '';
-      return;
-    }
-
-    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
-    this.selectedFileLabel = file.name;
-    if (isPdf) {
-      this.previewIsPdf = true;
-      this.imageUrl = undefined;
-      return;
-    }
-
-    this.previewIsPdf = false;
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.imageUrl = e.target.result;
-    };
-    reader.readAsDataURL(file);
   }
 
   async uploadImages() {
@@ -74,61 +43,20 @@ export class UploadFileComponent {
       return;
     }
 
-    this.uploading = true;
-    let database = localStorage.getItem('company');
-    let invoice: unknown | null = null;
-    try {
-      for (const file of this.selectedFiles) {
-        try {
-          if (this.displayMode === 'icon') {
-            const result = await this.uploadService.processInvoice([file]);
-            if (result !== null && typeof result === 'object') {
-              invoice = result;
-              const maybeUrl = (result as Record<string, unknown>).url ?? (result as Record<string, unknown>).fileUrl;
-              if (typeof maybeUrl === 'string') {
-                urls.push(maybeUrl);
-              }
-            } else if (result != null && result !== '') {
-              urls.push(String(result));
-            }
-          } else {
-            const url = await this.uploadService.uploadImage(`${database}/${this.folder}`, [file]);
-            urls.push(url.toString());
-          }
-        } catch (error) {
-          console.error('Error uploading file:', error);
-          invoice = null;
-        }
+    for (const file of this.selectedFiles) {
+      try {
+        const url = await this.uploadService.uploadImage(this.folder, [file]);
+        urls.push(url.toString());
+      } catch (error) {
+        console.error('Error uploading file:', error);
       }
-      if (this.displayMode === 'icon') {
-        this.invoiceUpload.emit({ urls, invoice });
-      } else {
-        this.uploadedUrls.emit(urls);
-      }
-    } finally {
-      this.uploading = false;
     }
+    this.uploadedUrls.emit(urls);
   }
 
   // UploadFileComponent
   async onDeleteImage(event: Event, pictureDelete: string): Promise<void> {
     event.stopPropagation(); // Evita que se abra el selector de archivos
-
-    if (this.previewIsPdf) {
-      try {
-        if (this.imageUrl) {
-          await this.uploadService.deleteImage(this.imageUrl).toPromise();
-        }
-      } catch (error) {
-        console.error('Error deleting image:', error);
-      }
-      this.previewIsPdf = false;
-      this.selectedFileLabel = '';
-      this.imageUrl = undefined;
-      this.selectedFiles = [];
-      this.uploadedUrls.emit([]);
-      return;
-    }
 
     if (!this.imageUrl) return;
     try {
