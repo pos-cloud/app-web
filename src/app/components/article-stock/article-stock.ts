@@ -56,6 +56,16 @@ export let attributes = [
     required: false,
   },
   {
+    name: 'article.order',
+    visible: false,
+    disabled: false,
+    filter: true,
+    datatype: 'number',
+    project: null,
+    align: 'left',
+    required: false,
+  },
+  {
     name: 'article.code',
     visible: true,
     disabled: false,
