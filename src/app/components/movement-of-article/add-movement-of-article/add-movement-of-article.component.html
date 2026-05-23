@@ -94,7 +94,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="!movementOfArticle.article || !movementOfArticle.article.allowMeasure">
+      <div class="row" *ngIf="(!movementOfArticle.article || !movementOfArticle.article.allowMeasure) && !isStockVariantMatrixMode()">
         <div class="form-group col-md-4" *ngIf="transaction?.type?.showPrices">
           <label for="auxPrice" class="control-label">Precio Unitario:</label>
           <div class="input-group">
@@ -200,7 +200,60 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
+      <div class="row" *ngIf="isStockVariantMatrixMode() && variantMatrixRows.length > 0">
+        <div class="form-group col-md-12">
+          <label class="control-label"><b>Cantidades por variante:</b></label>
+          <div class="table-responsive variant-matrix-wrapper">
+            <table class="table table-bordered table-sm variant-matrix">
+              <thead>
+                <tr *ngIf="variantMatrixColumns.length > 0">
+                  <th>{{ variantTypes[0]?.name }}</th>
+                  <th *ngFor="let col of variantMatrixColumns">{{ col.description }}</th>
+                </tr>
+                <tr *ngIf="variantMatrixColumns.length === 0">
+                  <th>{{ variantTypes[0]?.name }}</th>
+                  <th>Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="variantMatrixColumns.length > 0">
+                  <tr *ngFor="let row of variantMatrixRows">
+                    <td class="variant-matrix-label">{{ row.description }}</td>
+                    <td *ngFor="let col of variantMatrixColumns">
+                      <input
+                        type="number"
+                        class="form-control form-control-sm variant-matrix-input"
+                        min="0"
+                        step="1"
+                        [ngModel]="getVariantMatrixAmount(row.description, col.description)"
+                        (ngModelChange)="setVariantMatrixAmount(row.description, col.description, $event)"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-container *ngIf="variantMatrixColumns.length === 0">
+                  <tr *ngFor="let row of variantMatrixRows">
+                    <td class="variant-matrix-label">{{ row.description }}</td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm variant-matrix-input"
+                        min="0"
+                        step="1"
+                        [ngModel]="getVariantMatrixAmount(row.description)"
+                        (ngModelChange)="setVariantMatrixAmount(row.description, undefined, $event)"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="variantTypes && variantTypes.length > 0 && !isStockVariantMatrixMode()">
         <div class="form-group col-md-12">
           <label for="variants" class="control-label"><b>Seleccione las variantes:</b></label>
         </div>
@@ -208,7 +261,7 @@
       <div *ngIf="errVariant" class="alert alert-danger">
         {{ errVariant }}
       </div>
-      <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
+      <div class="row" *ngIf="variantTypes && variantTypes.length > 0 && !isStockVariantMatrixMode()">
         <div class="form-group col-md-12">
           <span *ngFor="let variantType of variantTypes">
             {{ variantType.name }}:

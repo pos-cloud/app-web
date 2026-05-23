@@ -34,4 +34,55 @@ app-add-movement-of-article {
             font-size: 15px;
             min-width: 50px;
       }
+
+      .variant-matrix-wrapper {
+            margin-top: 10px;
+      }
+
+      .variant-matrix {
+            margin-bottom: 0;
+            table-layout: fixed;
+            width: auto;
+            max-width: 100%;
+      }
+
+      .variant-matrix th,
+      .variant-matrix td {
+            padding: 4px 6px;
+            font-size: 12px;
+            text-align: center;
+            vertical-align: middle;
+      }
+
+      .variant-matrix th:first-child,
+      .variant-matrix td.variant-matrix-label {
+            width: 72px;
+            max-width: 90px;
+            text-align: left;
+            padding-left: 8px;
+      }
+
+      .variant-matrix th:not(:first-child),
+      .variant-matrix td:not(.variant-matrix-label) {
+            width: 64px;
+            min-width: 64px;
+            max-width: 64px;
+      }
+
+      .variant-matrix-label {
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+      }
+
+      .variant-matrix-input {
+            width: 100%;
+            min-width: 0;
+            max-width: none;
+            margin: 0 auto;
+            padding: 3px 2px;
+            font-size: 13px;
+            text-align: center;
+      }
 }

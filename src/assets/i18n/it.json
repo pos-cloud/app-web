@@ -108,5 +108,8 @@
   "balance": "Saldo",
   "transactionBalance": "Saldo Documento",
   "complementary information": "Informazioni complementari",
-  "measurements and dimensions": "Misure e dimensioni"
+  "measurements and dimensions": "Misure e dimensioni",
+  "article.code": "Codice",
+  "article.order": "Ordine",
+  "article.tiendaNubeId": "Tienda Nube ID"
 }
