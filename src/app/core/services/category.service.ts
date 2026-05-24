@@ -81,4 +81,26 @@ export class CategoryService extends ModelService {
         catchError((err) => of(err))
       );
   }
+
+  public browseByTransaction(
+    transactionId: string,
+    params?: { parentId?: string; limit?: number }
+  ): Observable<any> {
+    const URL = `${environment.apiv2}/categories/by-transaction/${transactionId}/browse`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    let httpParams = new HttpParams();
+    if (params?.parentId) httpParams = httpParams.set('parentId', params.parentId);
+    if (params?.limit != null) httpParams = httpParams.set('limit', String(params.limit));
+
+    return this._http
+      .get(URL, { headers, params: httpParams })
+      .pipe(
+        map((res) => res),
+        catchError((err) => of(err))
+      );
+  }
 }

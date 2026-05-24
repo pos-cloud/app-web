@@ -74,6 +74,8 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StateComponent } from './components/state/state/state.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
+import { PosArticleMeasureModalComponent } from './modules/transaction/views/fast/components/pos-article-measure-modal/pos-article-measure-modal.component';
+import { PosArticleVariantsModalComponent } from './modules/transaction/views/fast/components/pos-article-variants-modal/pos-article-variants-modal.component';
 import { PosArticlesComponent } from './modules/transaction/views/fast/components/pos-articles/pos-articles.component';
 
 import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
@@ -113,6 +115,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListTransactionsComponent,
     AddSaleOrderComponent,
     PosArticlesComponent,
+    PosArticleMeasureModalComponent,
+    PosArticleVariantsModalComponent,
     PointOfSaleComponent,
     LoginComponent,
     ClockComponent,
