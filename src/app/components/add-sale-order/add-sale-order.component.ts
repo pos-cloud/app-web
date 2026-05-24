@@ -49,6 +49,7 @@ import { ArticleStock } from '../article-stock/article-stock';
 import { Article, ArticlePrintIn } from '../article/article';
 import { ArticleComponent } from '../article/crud/article.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
+import { PosArticlesComponent } from '../../modules/transaction/views/fast/components/pos-articles/pos-articles.component';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
 import { AddMovementOfArticleComponent } from '../movement-of-article/add-movement-of-article/add-movement-of-article.component';
@@ -99,6 +100,7 @@ export class AddSaleOrderComponent {
   @ViewChild('containerTaxes', { static: true }) containerTaxes: ElementRef;
   @ViewChild(ListArticlesPosComponent) listArticlesComponent: ListArticlesPosComponent;
   @ViewChild(ListCategoriesPosComponent) listCategoriesComponent: ListCategoriesPosComponent;
+  @ViewChild(PosArticlesComponent) posArticlesComponent: PosArticlesComponent;
   optional: string = '';
   transaction: Transaction;
   transactionId: string;
@@ -741,16 +743,24 @@ export class AddSaleOrderComponent {
     }
   }
 
+  onPosLineAdded(): void {
+    this.getMovementsOfTransaction();
+    this.posArticlesComponent?.focusSearchInput();
+  }
+
   async addItem(event) {
     if (event && event['parent']) {
       let itemData: MovementOfArticle = event['parent'];
       let child: MovementOfArticle[] = event['child'];
 
-      // Mantener la última vista elegida por el usuario
-      if (this.browseViewMode === 'list') {
-        this.showArticles(this.categorySelected);
+      if (this.listCategoriesComponent) {
+        if (this.browseViewMode === 'list') {
+          this.showArticles(this.categorySelected);
+        } else {
+          this.showCategories();
+        }
       } else {
-        this.showCategories();
+        this.posArticlesComponent?.focusSearchInput();
       }
 
       if (itemData && itemData.article && itemData.article._id) {
@@ -875,8 +885,10 @@ export class AddSaleOrderComponent {
           message: 'Error al agregar el artículo, por favor inténtelo de nuevo.',
         });
       }
-    } else {
+    } else if (this.listCategoriesComponent) {
       this.showArticles();
+    } else {
+      this.posArticlesComponent?.focusSearchInput();
     }
   }
 

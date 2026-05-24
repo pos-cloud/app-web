@@ -389,7 +389,12 @@ export class ArticleService extends ModelService {
     q?: string;
     limit?: number;
     skip?: number;
-  }): Observable<{ articles: Article[]; hasMore: boolean }> {
+  }): Observable<{
+    articles: Article[];
+    hasMore: boolean;
+    showPrices: boolean;
+    transactionMovement: string;
+  }> {
     const URL = `${environment.apiv2}/articles/by-transaction/${payload?.transactionId ?? ''}`;
 
     const headers = new HttpHeaders()
@@ -411,9 +416,18 @@ export class ArticleService extends ModelService {
           return {
             articles: (r.articles ?? []) as Article[],
             hasMore: !!r.hasMore,
+            showPrices: !!r.showPrices,
+            transactionMovement: String(r.transactionMovement ?? ''),
           };
         }),
-        catchError((err) => of(err))
+        catchError(() =>
+          of({
+            articles: [] as Article[],
+            hasMore: false,
+            showPrices: false,
+            transactionMovement: '',
+          })
+        )
       );
   }
 }

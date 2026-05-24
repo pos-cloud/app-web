@@ -51,6 +51,8 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     child: MovementOfArticle[];
   }>();
   @Input() areArticlesVisible: boolean = false;
+  /** Sin catálogo visual: solo arma movimientos para `app-pos-articles` u otro catálogo. */
+  @Input() bridgeMode = false;
   @Input() filterArticle: string = '';
   @Input() movementOfArticleOrigin: MovementOfArticle;
   @Input() transactionId: string;
@@ -123,17 +125,25 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
       await this.updatePriceList();
     }
 
-    if (this.transaction.company && this.transaction.company.discount > 0 && this.transaction.type.allowCompanyDiscount)
-      this.discountCompany = this.transaction.company.discount;
     if (
-      this.transaction.company &&
+      this.transaction?.company &&
+      this.transaction.company.discount > 0 &&
+      this.transaction.type.allowCompanyDiscount
+    ) {
+      this.discountCompany = this.transaction.company.discount;
+    }
+    if (
+      this.transaction?.company &&
       this.transaction.company.group &&
       this.transaction.company.group.discount > 0 &&
       this.transaction.type.allowCompanyDiscount
-    )
+    ) {
       this.discountCompanyGroup = this.transaction.company.group.discount;
+    }
 
-    this.getArticles();
+    if (!this.bridgeMode) {
+      this.getArticles();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

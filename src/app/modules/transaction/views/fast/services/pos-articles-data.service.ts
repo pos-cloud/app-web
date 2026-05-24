@@ -6,6 +6,13 @@ import { CategoryService } from 'app/core/services/category.service';
 import { Article } from 'app/components/article/article';
 import { Category } from '@types';
 
+export interface PosBrowseResult {
+  categories: Category[];
+  articles: Article[];
+  showPrices: boolean;
+  transactionMovement: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -15,29 +22,45 @@ export class PosArticlesDataService {
     private readonly _categoryService: CategoryService
   ) {}
 
-  getCategoriesByTransaction(transactionId: string): Observable<Category[]> {
-    return this._categoryService.getCategoriesByTransaction(transactionId).pipe(
-      map((res: any) => {
-        const rows = (res?.result ?? res ?? []) as Category[];
-        return Array.isArray(rows) ? rows : [];
+  browse(input: {
+    transactionId: string;
+    parentId?: string;
+    limit?: number;
+  }): Observable<PosBrowseResult> {
+    return this._categoryService
+      .browseByTransaction(input.transactionId, {
+        parentId: input.parentId,
+        limit: input.limit,
       })
-    );
+      .pipe(
+        map((res: any) => {
+          const r = res?.result ?? res ?? {};
+          return {
+            categories: (r.categories ?? []) as Category[],
+            articles: (r.articles ?? []) as Article[],
+            showPrices: !!r.showPrices,
+            transactionMovement: String(r.transactionMovement ?? ''),
+          };
+        })
+      );
   }
 
   getArticles(input: {
     transactionId: string;
-    categoryId?: string;
     q?: string;
     limit?: number;
     skip?: number;
-  }): Observable<{ articles: Article[]; hasMore: boolean }> {
+  }): Observable<{
+    articles: Article[];
+    hasMore: boolean;
+    showPrices: boolean;
+    transactionMovement: string;
+  }> {
     return this._articleService.getArticlesByTransaction({
       transactionId: input.transactionId,
-      categoryId: input.categoryId,
       q: input.q,
       limit: input.limit,
       skip: input.skip,
     });
   }
 }
-

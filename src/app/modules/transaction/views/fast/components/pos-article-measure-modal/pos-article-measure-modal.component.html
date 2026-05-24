@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <h5 class="modal-title">Cantidad</h5>
+  <button type="button" class="close" aria-label="Cerrar" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <p class="mb-2 text-muted">{{ articleLabel }}</p>
+  <div class="form-group mb-0">
+    <label for="posMeasureAmount">Cantidad{{ unitLabel ? ' (' + unitLabel + ')' : '' }}</label>
+    <input
+      id="posMeasureAmount"
+      type="number"
+      class="form-control"
+      [(ngModel)]="amount"
+      min="0.001"
+      step="any"
+      (keydown.enter)="confirm()"
+      autofocus
+    />
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="dismiss()">Cancelar</button>
+  <button type="button" class="btn btn-primary" (click)="confirm()">Agregar</button>
+</div>

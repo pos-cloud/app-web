@@ -627,11 +627,11 @@
     </div> -->
 
     <div class="col-md-7">
-      <!-- POS mínimo: solo la operación; el resto lo definimos después -->
       <div class="row" *ngIf="display">
         <div class="col-md-12">
           <app-pos-articles
             [transactionId]="transactionId"
+            (lineAdded)="onPosLineAdded()"
             (pendingClick)="close()"
           ></app-pos-articles>
         </div>
