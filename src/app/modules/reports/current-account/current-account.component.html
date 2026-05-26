@@ -131,7 +131,7 @@
               <td class="align-center" *ngIf="item?.transaction?.endDate">
                 {{ item?.transaction?.endDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
-              <td class="align-center" *ngIf="!item?.transaction?.startDate">
+              <td class="align-center" *ngIf="!item?.transaction?.endDate">
                 {{ item?.transaction?.startDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
               <td *ngIf="item.transaction?.type?.name" class="align-center">
