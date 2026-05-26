@@ -1,12 +1,10 @@
 import * as moment from 'moment';
 
-import { Account, Category, Deposit, Make } from '@types';
-import { ArticleFields } from '../article-field/article-fields';
+import { Account, Category, Deposit, Make, User } from '@types';
 import { Article, ArticlePrintIn } from '../article/article';
 import { Taxes } from '../tax/taxes';
 import { StockMovement } from '../transaction-type/transaction-type';
 import { Transaction } from '../transaction/transaction';
-import { User } from '@types';
 
 export class MovementOfArticle {
   _id: string;
@@ -15,7 +13,7 @@ export class MovementOfArticle {
   description: string = '';
   observation: string;
   basePrice: number = 0.0;
-  otherFields: ArticleFields[];
+  otherFields: any[];
   taxes: Taxes[];
   costPrice: number = 0.0;
   unitPrice: number = 0.0;

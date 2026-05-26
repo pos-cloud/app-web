@@ -1,22 +1,8 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ArticlePrintIn, MovementOfArticle, Transaction, Voucher } from '@types';
 import { Config } from 'app/app.config';
-import { ArticlePrintIn } from 'app/components/article/article';
-import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
-import { Transaction } from 'app/components/transaction/transaction';
-import { Voucher } from 'app/components/voucher-reader/voucher';
 import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { TransactionService } from 'app/core/services/transaction.service';
@@ -100,18 +86,10 @@ export class VoucherReaderComponent implements OnInit {
       await this.getVouchers({ token: this.text }).then(async (vouchers) => {
         if (vouchers && vouchers.length > 0) {
           this.voucher = vouchers[0];
-          if (
-            this.config.voucher.readingLimit === 0 ||
-            vouchers[0].readings < this.config.voucher.readingLimit
-          ) {
+          if (this.config.voucher.readingLimit === 0 || vouchers[0].readings < this.config.voucher.readingLimit) {
             await this.getTransactions({
               _id: { $oid: this.voucher.token },
-              $or: [
-                { state: 'Cerrado' },
-                { state: 'Armando' },
-                { state: 'Entregado' },
-                { state: 'Preparando' },
-              ],
+              $or: [{ state: 'Cerrado' }, { state: 'Armando' }, { state: 'Entregado' }, { state: 'Preparando' }],
               operationType: { $ne: 'D' },
             }).then(async (transactions) => {
               if (transactions && transactions.length > 0) {
@@ -131,40 +109,24 @@ export class VoucherReaderComponent implements OnInit {
                   }
                 });
               } else {
-                this.showMessage(
-                  'La transacción ya no se encuentra disponible',
-                  'info',
-                  true
-                );
+                this.showMessage('La transacción ya no se encuentra disponible', 'info', true);
               }
             });
           } else {
             this.available = true;
             this.focusEvent.emit(true);
-            this.showMessage(
-              'El voucher superó la cantidad de lecturas disponibles.',
-              'info',
-              true
-            );
+            this.showMessage('El voucher superó la cantidad de lecturas disponibles.', 'info', true);
           }
         } else {
           this.available = true;
           this.focusEvent.emit(true);
-          this.showMessage(
-            'El voucher no se encuentra generado en el sistema.',
-            'info',
-            true
-          );
+          this.showMessage('El voucher no se encuentra generado en el sistema.', 'info', true);
         }
       });
     } else {
       this.available = true;
       this.focusEvent.emit(true);
-      this.showMessage(
-        'Debe ingresar un código de voucher válido.',
-        'info',
-        true
-      );
+      this.showMessage('Debe ingresar un código de voucher válido.', 'info', true);
     }
   }
 
@@ -280,8 +242,7 @@ export class VoucherReaderComponent implements OnInit {
         (result) => {
           this.loading = false;
           if (!result.voucher) {
-            if (result.message && result.message !== '')
-              this.showMessage(result.message, 'info', true);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.voucher);
@@ -331,11 +292,7 @@ export class VoucherReaderComponent implements OnInit {
     }
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

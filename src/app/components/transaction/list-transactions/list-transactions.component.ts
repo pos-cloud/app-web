@@ -15,8 +15,16 @@ import { UserService } from '@core/services/user.service';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, Branch, PrintType, Printer } from '@types';
-import { User } from '@types';
+import {
+  ApiResponse,
+  Branch,
+  PrintType,
+  Printer,
+  Transaction,
+  TransactionMovement,
+  TransactionType,
+  User,
+} from '@types';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import 'moment/locale/es';
@@ -29,9 +37,8 @@ import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
-import { TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
-import { Transaction, attributes } from '../transaction';
+import { attributes } from '../transaction';
 
 @Component({
   selector: 'app-list-transactions',

@@ -15,7 +15,21 @@ import { Config } from 'app/app.config';
 
 // COMPONENTS
 
-import { ApiResponse, Bank, Currency, Holiday } from '@types';
+import {
+  ApiResponse,
+  Bank,
+  Currency,
+  Holiday,
+  MovementOfArticle,
+  MovementOfCash,
+  Movements,
+  PaymentMethod,
+  StatusCheck,
+  Tax,
+  Taxes,
+  Transaction,
+  TransactionState,
+} from '@types';
 import { BankService } from 'app/core/services/bank.service';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { HolidayService } from 'app/core/services/holiday.service';
@@ -32,14 +46,8 @@ import { PaymentMethodService } from '../../../core/services/payment-method.serv
 import { TaxService } from '../../../core/services/tax.service';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
-import { PaymentMethod } from '../../payment-method/payment-method';
-import { Tax } from '../../tax/tax';
-import { Taxes } from '../../tax/taxes';
-import { Movements } from '../../transaction-type/transaction-type';
-import { Transaction, TransactionState } from '../../transaction/transaction';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
-import { MovementOfCash, StatusCheck } from '../movement-of-cash';
+
 import { SelectChecksComponent } from '../select-checks/select-checks.component';
 
 @Component({
@@ -141,7 +149,7 @@ export class AddMovementOfCashComponent implements OnInit {
     public _modalService: NgbModal,
     public translatePipe: TranslateMePipe
   ) {
-    this.movementOfCash = new MovementOfCash();
+    this.movementOfCash;
     this.paymentMethods = new Array();
     this.banks = new Array();
     this.movementOfCash.type = new PaymentMethod();
@@ -1817,7 +1825,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
   async addMovementOfArticle() {
     try {
-      let movementOfArticle = new MovementOfArticle();
+      let movementOfArticle;
 
       if (this.paymentMethodSelected.surcharge && this.paymentMethodSelected.surcharge > 0) {
         movementOfArticle.description = 'Pago con ' + this.paymentMethodSelected.name;
@@ -1838,7 +1846,7 @@ export class AddMovementOfCashComponent implements OnInit {
         movementOfArticle.article = this.paymentMethodSelected.surchargeArticle;
       }
       let taxes: Taxes[] = new Array();
-      let tax: Taxes = new Taxes();
+      let tax: Taxes;
 
       if (Config.country === 'MX') {
         tax.percentage = 16;
@@ -1884,10 +1892,10 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   async cleanForm() {
-    let oldMovementOfCash: MovementOfCash = new MovementOfCash();
+    let oldMovementOfCash: MovementOfCash;
 
     oldMovementOfCash = Object.assign(oldMovementOfCash, this.movementOfCash);
-    this.movementOfCash = new MovementOfCash();
+    this.movementOfCash;
     this.movementOfCash.type = this.paymentMethodSelected;
     this.paymentChange = '0.00';
     this.amountToPay = 0;

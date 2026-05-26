@@ -3,10 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { PaymentMethod } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { PaymentMethod } from '../../components/payment-method/payment-method';
-import { AuthService } from './auth.service';
 import { environment } from 'environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',

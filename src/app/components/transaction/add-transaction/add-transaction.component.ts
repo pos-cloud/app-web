@@ -9,9 +9,16 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import { Taxes } from '../../tax/taxes';
-import { Movements, TransactionMovement } from '../../transaction-type/transaction-type';
-import { Transaction, TransactionState } from '../transaction';
+import {
+  MovementOfCash,
+  Movements,
+  TaxBase,
+  TaxClassification,
+  Taxes,
+  Transaction,
+  TransactionMovement,
+  TransactionState,
+} from '@types';
 
 //Services
 import { CompanyService } from '../../../core/services/company.service';
@@ -34,10 +41,9 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 import { MovementOfCancellationComponent } from '../../movement-of-cancellation/movement-of-cancellation.component';
-import { TaxBase, TaxClassification } from '../../tax/tax';
+import {} from '../../tax/tax';
 import { Config } from './../../../app.config';
 import { MovementOfCancellation } from './../../../components/movement-of-cancellation/movement-of-cancellation';
-import { MovementOfCash } from './../../../components/movement-of-cash/movement-of-cash';
 
 @Component({
   selector: 'app-add-transaction',
@@ -155,7 +161,6 @@ export class AddTransactionComponent implements OnInit {
     public translatePipe: TranslateMePipe,
     private _toast: ToastService
   ) {
-    this.transaction = new Transaction();
     this.transactionDate = this.transaction.startDate;
     this.movementsOfCancellations = new Array();
   }
@@ -674,7 +679,7 @@ export class AddTransactionComponent implements OnInit {
 
       if (this.taxes && this.taxes.length > 0) {
         for (let taxesAux of this.taxes) {
-          let transactionTax: Taxes = new Taxes();
+          let transactionTax: Taxes;
           transactionTax.tax = taxesAux.tax;
           transactionTax.taxBase = 0;
           transactionTax.percentage = 0;

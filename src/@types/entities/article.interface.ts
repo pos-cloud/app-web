@@ -121,3 +121,10 @@ export enum Type {
   SemiFinished = 'Semielaborado',
   Service = 'Servicio',
 }
+
+export enum ArticlePrintIn {
+  Bar = <any>'Bar',
+  Kitchen = <any>'Cocina',
+  Counter = <any>'Mostrador',
+  Voucher = <any>'Voucher',
+}

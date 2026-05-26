@@ -6,8 +6,8 @@ import { catchError, map } from 'rxjs/operators';
 import { ModelService } from 'app/core/services/model.service';
 import { AuthService } from './auth.service';
 
+import { MovementOfArticle } from '@types';
 import { environment } from 'environments/environment';
-import { MovementOfArticle } from '../../components/movement-of-article/movement-of-article';
 
 @Injectable({
   providedIn: 'root',

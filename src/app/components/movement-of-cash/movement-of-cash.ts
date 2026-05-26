@@ -1,7 +1,5 @@
-import { Bank, Company, Movements } from '@types';
+import { Bank, Company, Movements, PaymentMethod, Transaction } from '@types';
 import * as moment from 'moment';
-import { PaymentMethod } from '../payment-method/payment-method';
-import { Transaction } from '../transaction/transaction';
 
 export interface currencyValue {
   value: number;

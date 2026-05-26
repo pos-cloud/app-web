@@ -16,8 +16,6 @@ import { MenuComponent } from './components/menu/menu.component';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
 import { ListMovementOfCashesComponent } from './components/movement-of-cash/list-movements-of-cashes/list-movements-of-cashes.component';
-import { ListOriginsComponent } from './components/origin/list-origins/list-origins.component';
-import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
@@ -170,11 +168,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/metodos-de-pago',
-    component: ListPaymentMethodsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'admin/configuraciones',
     component: ConfigComponent,
     canActivate: [AuthGuard],
@@ -212,11 +205,6 @@ export const _routes: Routes = [
   {
     path: 'admin/impuestos',
     component: ListTaxesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/puntos-de-venta',
-    component: ListOriginsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

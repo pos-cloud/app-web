@@ -1,9 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse } from '@types';
-import { MovementOfArticle, MovementOfArticleStatus } from 'app/components/movement-of-article/movement-of-article';
-import { Transaction, TransactionState } from 'app/components/transaction/transaction';
+import { ApiResponse, MovementOfArticle, MovementOfArticleStatus, Transaction, TransactionState } from '@types';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';

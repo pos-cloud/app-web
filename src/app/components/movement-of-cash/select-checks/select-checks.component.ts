@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PaymentMethod } from '@types';
 import { MovementOfCash, StatusCheck } from 'app/components/movement-of-cash/movement-of-cash';
-import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { TransactionType } from 'app/components/transaction-type/transaction-type';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';

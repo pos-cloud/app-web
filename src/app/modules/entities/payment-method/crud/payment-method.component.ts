@@ -6,14 +6,13 @@ import { CommonModule } from '@angular/common';
 import { AccountService } from '@core/services/account.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
-import { Account, ApiResponse, Article } from '@types';
+import { Account, ApiResponse, Article, PaymentMethod } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { PaymentMethod } from '../../../../components/payment-method/payment-method';
 import { ArticleService } from '../../../../core/services/article.service';
 import { PaymentMethodService } from '../../../../core/services/payment-method.service';
 

@@ -1,13 +1,9 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 
-import {
-  NgbActiveModal,
-  NgbAlertConfig,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Origin } from '@types';
 
-import { Origin } from 'app/components/origin/origin';
 import { AuthService } from 'app/core/services/auth.service';
 import { OriginService } from 'app/core/services/origin.service';
 
@@ -18,7 +14,7 @@ import { OriginService } from 'app/core/services/origin.service';
 })
 export class SelectOriginComponent implements OnInit {
   @Input() branchId: string;
-  public origins: Origin[] = new Array();
+  public origins: Origin[];
   public originSelected: Origin;
   public alertMessage: string = '';
   public loading: boolean = false;
@@ -34,7 +30,7 @@ export class SelectOriginComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.originSelected = new Origin();
+    this.originSelected;
     await this.getOrigins({
       branch: { $oid: this.branchId },
       operationType: { $ne: 'D' },
@@ -81,11 +77,7 @@ export class SelectOriginComponent implements OnInit {
     this.activeModal.close({ origin: this.originSelected });
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

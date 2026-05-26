@@ -5,8 +5,7 @@ import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-boots
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
-import { Branch } from '@types';
-import { PaymentMethod } from 'app/components/payment-method/payment-method';
+import { Branch, MovementOfCash, PaymentMethod } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
@@ -15,8 +14,6 @@ import { MovementOfCashService } from '../../../core/services/movement-of-cash.s
 import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';
 import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
-import { MovementOfCash } from '../movement-of-cash';
-
 @Component({
   selector: 'app-list-checks',
   templateUrl: './list-checks.component.html',

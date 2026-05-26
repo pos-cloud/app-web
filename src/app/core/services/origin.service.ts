@@ -3,10 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { Origin } from '@types';
 import { ModelService } from 'app/core/services/model.service';
-import { Origin } from '../../components/origin/origin';
-import { AuthService } from './auth.service';
 import { environment } from 'environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -47,14 +47,7 @@ export class OriginService extends ModelService {
       );
   }
 
-  public getOrigins(
-    project: {},
-    match: {},
-    sort: {},
-    group: {},
-    limit: number = 0,
-    skip: number = 0
-  ): Observable<any> {
+  public getOrigins(project: {}, match: {}, sort: {}, group: {}, limit: number = 0, skip: number = 0): Observable<any> {
     const URL = `${environment.api}/api/origins`;
 
     const headers = new HttpHeaders()

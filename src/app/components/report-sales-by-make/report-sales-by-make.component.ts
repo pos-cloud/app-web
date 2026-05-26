@@ -73,7 +73,7 @@ export class ReportSalesByMakeComponent implements OnInit {
           this.branchSelectedId = identity.origin.branch._id;
         } else {
           this.allowChangeBranch = true;
-          this.branchSelectedId = null;
+          this.branchSelectedId = '';
         }
       });
     }

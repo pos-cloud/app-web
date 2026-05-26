@@ -14,33 +14,36 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Branch, Currency, Deposit, Printer, PrinterPrintIn, Room } from '@types';
-import {
-  CurrentAccount,
-  StockMovement,
-  TransactionMovement,
-  TransactionType,
-} from '../transaction-type/transaction-type';
-import { Transaction, TransactionState } from '../transaction/transaction';
-
-import { PrinterService } from '../../core/services/printer.service';
-import { RoomService } from '../../core/services/room.service';
-import { TransactionTypeService } from '../../core/services/transaction-type.service';
-import { TransactionService } from '../../core/services/transaction.service';
-
 import {
   ApiResponse,
+  Branch,
+  CashBox,
+  CashBoxState,
   Claim,
   ClaimPriority,
   ClaimType,
   Company,
   CompanyType,
+  Currency,
+  CurrentAccount,
+  Deposit,
   EmployeeType,
+  MovementOfCash,
+  Origin,
+  Printer,
+  PrinterPrintIn,
+  Room,
+  StockMovement,
   Table,
   TableState,
+  Transaction,
+  TransactionMovement,
+  TransactionState,
+  TransactionType,
   User,
   View,
 } from '@types';
+
 import { ClaimService } from 'app/core/services/claim.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
@@ -56,7 +59,11 @@ import { DepositService } from '../../core/services/deposit.service';
 import { MovementOfCancellationService } from '../../core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from '../../core/services/movement-of-cash.service';
 import { OriginService } from '../../core/services/origin.service';
+import { PrinterService } from '../../core/services/printer.service';
+import { RoomService } from '../../core/services/room.service';
 import { TableService } from '../../core/services/table.service';
+import { TransactionTypeService } from '../../core/services/transaction-type.service';
+import { TransactionService } from '../../core/services/transaction.service';
 import { UserService } from '../../core/services/user.service';
 import { ViewTransactionComponent } from '../../modules/transaction/components/view-transaction/view-transaction.component';
 import { SelectBranchComponent } from '../../shared/components/select-branch/select-branch.component';
@@ -66,12 +73,9 @@ import { TranslateMePipe } from '../../shared/pipes/translate-me';
 import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
-import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { SelectOriginComponent } from '../origin/select-origin/select-origin.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { Config } from './../../app.config';
-import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
-import { Origin } from './../../components/origin/origin';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -757,7 +761,6 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   async addTransaction(type: TransactionType) {
-    this.transaction = new Transaction();
     this.transaction.type = type;
     if (this.transaction.type.defectShipmentMethod) {
       this.transaction.shipmentMethod = this.transaction.type.defectShipmentMethod;

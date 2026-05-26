@@ -1,11 +1,9 @@
 import { Application, Branch, CashBoxType, Company, CompanyType, IAttribute, UseOfCFDI } from '@types';
 import * as moment from 'moment';
 
-import { EmployeeType, Printer, User, View } from '@types';
+import { EmployeeType, PaymentMethod, Printer, ShipmentMethod, User, View } from '@types';
 import { EmailTemplate } from '../email-template/email-template';
 import { Model } from '../model/model.model';
-import { PaymentMethod } from '../payment-method/payment-method';
-import { ShipmentMethod } from '../shipment-method/shipment-method.model';
 import { TransactionState } from '../transaction/transaction';
 
 export class TransactionType extends Model {

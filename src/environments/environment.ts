@@ -3,6 +3,6 @@ export const environment = {
   api: 'http://localhost:300',
   apiv2: 'http://localhost:308',
   apiStorage: 'http://localhost:303',
-  feAr: 'http://localhost:307',
+  feAr: 'https://d-fe-ar.poscloud.ar',
   apiLicense: 'http://localhost:311',
 };

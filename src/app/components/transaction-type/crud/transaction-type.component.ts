@@ -13,12 +13,12 @@ import {
   CompanyType,
   EmployeeType,
   FormField,
+  PaymentMethod,
   Printer,
+  ShipmentMethod,
   View,
 } from '@types';
 import { EmailTemplate } from 'app/components/email-template/email-template';
-import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { ApplicationService } from 'app/core/services/application.service';
 import { BranchService } from 'app/core/services/branch.service';

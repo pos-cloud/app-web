@@ -13,13 +13,13 @@ export {
   AppointmentStatus,
   AppointmentWeekday,
 } from './entities/appointment.interface';
-export { Article, Type } from './entities/article.interface';
+export { Article, ArticlePrintIn, Type } from './entities/article.interface';
 export { Bank } from './entities/bank.interface';
 export { Branch } from './entities/branch.interface';
 export { BusinessRule, BusinessRuleArticleGroup, Day, DiscountType } from './entities/business-rule.interface';
 export { CancellationType } from './entities/cancellation-type.interface';
 export { CashBoxType } from './entities/cash-box-type.interface';
-export { CashBox } from './entities/cash-box.interface';
+export { CashBox, CashBoxState } from './entities/cash-box.interface';
 export { Category } from './entities/category.interface';
 export { Claim, ClaimPriority, ClaimType } from './entities/claim.interface';
 export { Classification } from './entities/classification.interface';
@@ -78,7 +78,7 @@ export { VariantType } from './entities/variant-type.interface';
 export { VariantValue } from './entities/variant-value.interface';
 export { Variant } from './entities/variant.interface';
 export { VATCondition } from './entities/vat-condition.interface';
-
+export { Voucher } from './entities/voucher.interface';
 // common
 export { Activity } from './common/activity.interface';
 export { ApiResponse } from './common/api-response.interface';
