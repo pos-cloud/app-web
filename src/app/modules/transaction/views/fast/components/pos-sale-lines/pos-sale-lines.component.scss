@@ -1,0 +1,155 @@
+app-pos-sale-lines {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  flex: 1;
+  overflow: hidden;
+  padding: 0 0 0 12px;
+  box-sizing: border-box;
+
+  .totals {
+    font-size: 14px;
+  }
+
+  .pos-sale-lines-root.table-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    .articles-container {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    .pos-lines-table {
+      border-collapse: separate;
+      border-spacing: 0;
+
+      .col-qty {
+        width: 48px;
+        min-width: 48px;
+      }
+
+      .col-unit {
+        width: 108px;
+        min-width: 108px;
+      }
+
+      .col-total {
+        width: 96px;
+        min-width: 96px;
+      }
+
+      .col-desc {
+        width: auto;
+        min-width: 0;
+      }
+
+      .col-unit,
+      .col-total {
+        white-space: nowrap;
+      }
+
+      .pos-line-desc {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        line-height: 1.3;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      thead.pos-lines-table__head th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: #fff;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 8px 6px;
+        vertical-align: middle;
+        box-shadow: inset 0 -1px 0 #dee2e6;
+
+        &.col-unit,
+        &.col-total {
+          white-space: nowrap;
+        }
+      }
+
+      tbody td {
+        padding: 6px;
+        vertical-align: top;
+      }
+
+      .col-qty .badge {
+        font-size: 0.85rem;
+      }
+
+      .pos-line-make {
+        font-size: 12px;
+        color: #6c757d;
+      }
+
+      .pos-line-price-old {
+        font-size: 12px;
+        color: #6c757d;
+        text-decoration: line-through;
+      }
+
+      .pos-lines-empty td {
+        text-align: center;
+        color: #6c757d;
+        padding: 1rem;
+      }
+    }
+
+    .table-totals {
+      flex-shrink: 0;
+    }
+
+    > .row {
+      flex-shrink: 0;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  table {
+    table-layout: fixed;
+    width: 100% !important;
+    margin-bottom: 0;
+  }
+
+  th,
+  td {
+    word-wrap: break-word !important;
+    white-space: normal;
+  }
+
+  .btn-large {
+    height: 52px;
+    font-size: 17px;
+    font-weight: 400;
+  }
+
+
+  @media (max-width: 767px) {
+    .btn-large {
+      height: 44px;
+      font-size: 15px;
+    }
+  }
+}

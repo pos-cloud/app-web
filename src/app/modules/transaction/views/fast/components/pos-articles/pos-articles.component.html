@@ -1,0 +1,158 @@
+<section class="container-fluid pos-articles-root" *ngIf="transactionId">
+  <div class="row pos-articles-toolbar filterArticle">
+    <div class="col-12">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" aria-hidden="true"><i class="fa fa-search"></i></span>
+        </div>
+        <input
+          #searchInputRef
+          type="text"
+          class="form-control"
+          [ngModel]="searchInput"
+          (ngModelChange)="onSearchInputChange($event)"
+          (keydown.enter)="onSearchSubmit($event)"
+          [placeholder]="searchPlaceholder"
+          autocomplete="off"
+        />
+        <div class="input-group-append">
+          <button
+            type="button"
+            class="btn btn-outline-secondary pos-toolbar-icon-btn"
+            (mousedown)="$event.preventDefault()"
+            (click)="toggleArticlesViewMode($event)"
+            title="Ver productos en grilla o en lista"
+          >
+            <i class="fa fa-fw" [ngClass]="viewMode === 'grid' ? 'fa-list' : 'fa-th'" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-warning pos-pending-btn text-nowrap"
+            [disabled]="loading"
+            (mousedown)="$event.preventDefault()"
+            (click)="emitPending($event)"
+          >
+            Pendiente
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="pos-breadcrumb" *ngIf="viewMode === 'grid' && categoryPath.length > 0 && !loading && !isArticleSearchActive">
+    <button type="button" class="btn btn-link btn-sm px-0" (mousedown)="$event.preventDefault()" (click)="goBack()">← Volver</button>
+    <button type="button" class="btn btn-link btn-sm" (mousedown)="$event.preventDefault()" (click)="goToRoot()">Rubros</button>
+    <span class="pos-breadcrumb__path text-muted">{{ breadcrumbLabel }}</span>
+  </nav>
+
+  <div class="row" *ngIf="loading">
+    <div class="col-12">
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p>Cargando…</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pos-catalog-body" *ngIf="!loading">
+    <div class="pos-browse-panel" *ngIf="viewMode === 'grid'">
+      <div class="pos-browse-grid" *ngIf="hasBrowseContent">
+        <ng-container *ngIf="showCategoriesInGrid">
+          <article
+            class="pos-category-card"
+            *ngFor="let category of categories | orderBy: 'order'"
+            (click)="selectCategory(category)"
+          >
+            <div class="pos-category-card__media">
+              <img
+                *ngIf="category.picture == 'default.jpg' || category.picture == undefined"
+                src="./../../../assets/img/default.jpg"
+                alt="{{ category.description }}"
+              />
+              <img
+                *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined"
+                [src]="category.picture"
+                alt="{{ category.description }}"
+                (error)="imageError($event)"
+              />
+            </div>
+            <p class="pos-category-card__title" [title]="category.description">
+              {{ getCategoryLabel(category) }}
+            </p>
+          </article>
+        </ng-container>
+
+        <article
+          class="pos-article-card"
+          *ngFor="let article of articles | orderBy: 'order'"
+          (mousedown)="$event.preventDefault()"
+          (click)="onArticleClick(article, $event)"
+        >
+          <div class="pos-article-card__price" *ngIf="showPrices && getArticlePrice(article) != null">
+            <span class="badge badge-info">
+              {{ getArticlePrice(article) | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+            </span>
+          </div>
+          <div class="pos-article-card__media">
+            <img
+              *ngIf="article.picture == 'default.jpg' || article.picture == undefined"
+              src="./../../../assets/img/default.jpg"
+              [alt]="getArticleLabel(article)"
+            />
+            <img
+              *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined"
+              [src]="article.picture"
+              [alt]="getArticleLabel(article)"
+              (error)="imageError($event)"
+            />
+          </div>
+          <p class="pos-article-card__title" [title]="article.posDescription || article.description">
+            {{ getArticleLabel(article) }}
+          </p>
+        </article>
+      </div>
+      <p class="pos-empty-message" *ngIf="!hasBrowseContent">
+        <ng-container *ngIf="isArticleSearchActive">No hay productos para la búsqueda</ng-container>
+        <ng-container *ngIf="!isArticleSearchActive">No hay rubros ni productos en este nivel</ng-container>
+      </p>
+    </div>
+
+    <div class="pos-articles-panel" *ngIf="viewMode === 'list'">
+      <div class="table-responsive pos-list-table">
+        <table class="table table-sm table-hover mb-0 pos-catalog-table">
+          <thead>
+            <tr>
+              <th style="width: 120px">Código</th>
+              <th style="width: 160px">Barcode</th>
+              <th>Descripción</th>
+              <th style="width: 140px" class="text-end" *ngIf="showPrices">Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let article of articles"
+              class="pointer"
+              (mousedown)="$event.preventDefault()"
+              (click)="onArticleClick(article, $event)"
+            >
+              <td class="text-nowrap">{{ article.code }}</td>
+              <td class="text-nowrap">{{ article.barcode || '-' }}</td>
+              <td [title]="article.posDescription || article.description">
+                {{ getArticleLabel(article) }}
+              </td>
+              <td class="text-end text-nowrap" *ngIf="showPrices">
+                {{ getArticlePrice(article) | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+              </td>
+            </tr>
+            <tr *ngIf="articles.length === 0">
+              <td [attr.colspan]="showPrices ? 4 : 3" class="text-center text-muted py-4">
+                <ng-container *ngIf="isArticleSearchActive">No hay productos para la búsqueda</ng-container>
+                <ng-container *ngIf="!isArticleSearchActive">No hay productos para mostrar</ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

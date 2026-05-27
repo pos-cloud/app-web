@@ -382,4 +382,52 @@ export class ArticleService extends ModelService {
         })
       );
   }
+
+  public getArticlesByTransaction(payload: {
+    transactionId: string;
+    categoryId?: string;
+    q?: string;
+    limit?: number;
+    skip?: number;
+  }): Observable<{
+    articles: Article[];
+    hasMore: boolean;
+    showPrices: boolean;
+    transactionMovement: string;
+  }> {
+    const URL = `${environment.apiv2}/articles/by-transaction/${payload?.transactionId ?? ''}`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    let params = new HttpParams();
+
+    if (payload?.categoryId) params = params.set('categoryId', payload.categoryId);
+    if (payload?.q) params = params.set('q', payload.q);
+    if (payload?.limit != null) params = params.set('limit', String(payload.limit));
+    if (payload?.skip != null) params = params.set('skip', String(payload.skip));
+
+    return this._http
+      .get(URL, { headers, params })
+      .pipe(
+        map((res: any) => {
+          const r = res?.result ?? res ?? {};
+          return {
+            articles: (r.articles ?? []) as Article[],
+            hasMore: !!r.hasMore,
+            showPrices: !!r.showPrices,
+            transactionMovement: String(r.transactionMovement ?? ''),
+          };
+        }),
+        catchError(() =>
+          of({
+            articles: [] as Article[],
+            hasMore: false,
+            showPrices: false,
+            transactionMovement: '',
+          })
+        )
+      );
+  }
 }
