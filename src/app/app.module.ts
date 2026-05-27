@@ -77,6 +77,7 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
 import { PosArticleMeasureModalComponent } from './modules/transaction/views/fast/components/pos-article-measure-modal/pos-article-measure-modal.component';
 import { PosArticleVariantsModalComponent } from './modules/transaction/views/fast/components/pos-article-variants-modal/pos-article-variants-modal.component';
 import { PosArticlesComponent } from './modules/transaction/views/fast/components/pos-articles/pos-articles.component';
+import { PosSaleLinesComponent } from './modules/transaction/views/fast/components/pos-sale-lines/pos-sale-lines.component';
 
 import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
@@ -115,6 +116,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListTransactionsComponent,
     AddSaleOrderComponent,
     PosArticlesComponent,
+    PosSaleLinesComponent,
     PosArticleMeasureModalComponent,
     PosArticleVariantsModalComponent,
     PointOfSaleComponent,

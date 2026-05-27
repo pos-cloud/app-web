@@ -1,4 +1,13 @@
-import { Component, ElementRef, EventEmitter, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
@@ -48,6 +57,7 @@ import { ArticleFields } from '../article-field/article-fields';
 import { ArticleStock } from '../article-stock/article-stock';
 import { Article, ArticlePrintIn } from '../article/article';
 import { ArticleComponent } from '../article/crud/article.component';
+import { PosSaleLinesComponent } from '../../modules/transaction/views/fast/components/pos-sale-lines/pos-sale-lines.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
 import { PosArticlesComponent } from '../../modules/transaction/views/fast/components/pos-articles/pos-articles.component';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
@@ -92,11 +102,12 @@ import { Config } from './../../app.config';
   providers: [NgbAlertConfig, DateFormatPipe, RoundNumberPipe, TranslateMePipe],
   encapsulation: ViewEncapsulation.None,
 })
-export class AddSaleOrderComponent {
+export class AddSaleOrderComponent implements OnInit, OnDestroy {
   @ViewChild('contentPrinters', { static: true }) contentPrinters: ElementRef;
   @ViewChild('contentOptionalAFIP', { static: true }) contentChangeOptionalAFIP: ElementRef;
   @ViewChild('contentChangeQuotation', { static: true }) contentChangeQuotation: ElementRef;
-  @ViewChild('containerMovementsOfArticles', { static: true }) containerMovementsOfArticles: ElementRef;
+  @ViewChild('containerMovementsOfArticles', { static: false }) containerMovementsOfArticles?: ElementRef;
+  @ViewChild(PosSaleLinesComponent) posSaleLines?: PosSaleLinesComponent;
   @ViewChild('containerTaxes', { static: true }) containerTaxes: ElementRef;
   @ViewChild(ListArticlesPosComponent) listArticlesComponent: ListArticlesPosComponent;
   @ViewChild(ListCategoriesPosComponent) listCategoriesComponent: ListCategoriesPosComponent;
@@ -136,8 +147,8 @@ export class AddSaleOrderComponent {
   printSelected: Print;
   filterArticle: string = '';
   focusEvent = new EventEmitter<boolean>();
-  roundNumber = new RoundNumberPipe();
   areMovementsOfArticlesEmpty: boolean = true;
+  roundNumber = new RoundNumberPipe();
   userCountry: string = 'AR';
   lastQuotation: number = 1;
   categorySelected: Category;
@@ -285,6 +296,8 @@ export class AddSaleOrderComponent {
   }
 
   async ngOnInit() {
+    document.body.classList.add('pos-sale-order-active');
+
     this.database = localStorage.getItem('company');
 
     this._configService.getConfig.subscribe((config) => {
@@ -302,6 +315,10 @@ export class AddSaleOrderComponent {
     this.posType = pathLocation[2];
 
     this.initComponent();
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('pos-sale-order-active');
   }
 
   async initComponent() {
@@ -689,8 +706,7 @@ export class AddSaleOrderComponent {
           this.areMovementsOfArticlesEmpty = false;
           this.movementsOfArticles = result.movementsOfArticles;
           this.lastMovementOfArticle = this.movementsOfArticles[this.movementsOfArticles.length - 1];
-          this.containerMovementsOfArticles.nativeElement.scrollTop =
-            this.containerMovementsOfArticles.nativeElement.scrollHeight;
+          this.scrollSaleLinesToEnd();
           this.updateQuantity();
           if (this.discountApply > 0) {
             // esto es solo para borlaschic e insumosmaxs
@@ -746,6 +762,18 @@ export class AddSaleOrderComponent {
   onPosLineAdded(): void {
     this.getMovementsOfTransaction();
     this.posArticlesComponent?.focusSearchInput();
+  }
+
+  /** Scroll del carrito: usa app-pos-sale-lines o el inline LEGACY (#containerMovementsOfArticles). */
+  private scrollSaleLinesToEnd(): void {
+    if (this.posSaleLines) {
+      this.posSaleLines.scrollToEnd();
+      return;
+    }
+    const el = this.containerMovementsOfArticles?.nativeElement;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
   }
 
   async addItem(event) {
@@ -1655,8 +1683,7 @@ export class AddSaleOrderComponent {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             reject(result.message);
           } else {
-            this.containerMovementsOfArticles.nativeElement.scrollTop =
-              this.containerMovementsOfArticles.nativeElement.scrollHeight;
+            this.scrollSaleLinesToEnd();
             resolve(result.movementOfArticle);
           }
         },
