@@ -1,6 +1,40 @@
 app-add-sale-order {
+  display: flex;
+  flex-direction: column;
+  /* Sin margen fijo: el respiro para la navbar solo si app-header está en el DOM */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  box-sizing: border-box;
+  background-color: #fff;
+
+  > section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
   .container-message {
     background-color: white;
+    flex-shrink: 0;
+    margin: 0;
+    min-height: 0;
+
+    > .col-md-12 {
+      margin: 0;
+      padding: 0;
+      min-height: 0;
+    }
   }
 
   .item-header {
@@ -35,11 +69,66 @@ app-add-sale-order {
     z-index: 99;
     min-width: 100%;
     top: 0px;
+    flex-shrink: 0;
   }
 
   .container-transaction {
     margin-right: 0px;
     background-color: white;
+  }
+
+  .container-transaction.pos-transaction-body {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    align-content: stretch;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 !important;
+    padding: 0;
+    gap: 0;
+
+    > app-pos-sale-lines.pos-sale-lines-host {
+      flex: 0 0 40%;
+      max-width: 40%;
+      width: 40%;
+      padding: 0;
+      margin: 0;
+      border-right: 1px solid #dee2e6;
+      box-sizing: border-box;
+    }
+
+    > app-pos-sale-lines.pos-sale-lines-host,
+    > .pos-catalog-column {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+      align-self: stretch;
+      overflow: hidden;
+    }
+
+    > .pos-catalog-column {
+      flex: 0 0 60%;
+      max-width: 60%;
+      width: 60%;
+      min-width: 0;
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+
+      app-pos-articles {
+        flex: 1;
+        min-height: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+    }
   }
 
   .container-fluid {
@@ -156,4 +245,18 @@ app-add-sale-order {
       }
     }
   }
+}
+
+body.pos-sale-order-active {
+  background-color: #fff;
+}
+
+/* Navbar visible: en editar-transaccion el header existe pero hideMenu oculta el <nav> */
+app-root:has(> app-header nav.navbar) app-add-sale-order {
+  padding-top: 60px;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
 }

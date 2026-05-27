@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <ng-container *ngIf="!loading">
+  <div class="pos-catalog-body" *ngIf="!loading">
     <div class="pos-browse-panel" *ngIf="viewMode === 'grid'">
       <div class="pos-browse-grid" *ngIf="hasBrowseContent">
         <ng-container *ngIf="showCategoriesInGrid">
@@ -154,5 +154,5 @@
         </table>
       </div>
     </div>
-  </ng-container>
+  </div>
 </section>
