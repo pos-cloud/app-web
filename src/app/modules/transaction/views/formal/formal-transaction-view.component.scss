@@ -76,6 +76,29 @@ app-formal-transaction-view {
     margin-bottom: 0;
   }
 
+  // Pestaña / sección no requerida por el tipo de comprobante
+  .formal-nav-tab--inactive {
+    color: #adb5bd !important;
+    background-color: #f1f3f5 !important;
+    border-color: #e9ecef !important;
+    cursor: default;
+
+    .badge {
+      opacity: 0.65;
+    }
+  }
+
+  .formal-section--inactive {
+    opacity: 0.55;
+    filter: grayscale(0.35);
+    pointer-events: none;
+    user-select: none;
+
+    .btn:disabled {
+      opacity: 0.5;
+    }
+  }
+
   // Mejorar el diseño de los tabs
   .nav-tabs {
     border-bottom: 1px solid #dee2e6;

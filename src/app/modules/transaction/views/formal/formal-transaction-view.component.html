@@ -26,7 +26,7 @@
               *ngIf="canShowFinalizeTransactionButton"
               class="d-inline-block"
               [ngbTooltip]="
-                paymentsCoverTransactionTotal
+                !requestPaymentMethods || paymentsCoverTransactionTotal
                   ? 'Marcar la transacción como cerrada'
                   : 'La suma de los pagos debe alcanzar el total de la transacción'
               "
@@ -36,7 +36,7 @@
                 type="button"
                 class="btn btn-sm btn-success ml-2 mt-1 mt-sm-0"
                 (click)="finalizeOpenTransaction()"
-                [disabled]="!paymentsCoverTransactionTotal"
+                [disabled]="requestPaymentMethods && !paymentsCoverTransactionTotal"
               >
                 <i class="fa fa-check mr-1" aria-hidden="true"></i>
                 Cerrar
@@ -219,11 +219,18 @@
           class="nav nav-tabs card-header-tabs px-3 pt-3 mb-0 border-bottom-0 flex-shrink-0"
         >
           <li [ngbNavItem]="'products'" class="nav-item">
-            <a ngbNavLink class="nav-link">
+            <a
+              ngbNavLink
+              class="nav-link"
+              [class.formal-nav-tab--inactive]="!requestArticles"
+              [ngbTooltip]="!requestArticles ? 'Este tipo de comprobante no requiere productos' : null"
+              placement="top"
+            >
               Productos
               <span class="badge badge-primary ml-2">{{ totalQuantity }}</span>
             </a>
             <ng-template ngbNavContent>
+              <div [class.formal-section--inactive]="!requestArticles">
               <form [formGroup]="addProductForm" (ngSubmit)="saveProduct()">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <h5 class="mb-0">Lista de Productos</h5>
@@ -232,6 +239,7 @@
                     class="btn btn-outline-primary"
                     (click)="addProduct()"
                     *ngIf="!showAddProductForm"
+                    [disabled]="!requestArticles"
                   >
                     <i class="fa fa-plus"></i> Agregar Producto
                   </button>
@@ -259,7 +267,9 @@
                           <code class="text-muted">{{ movement.code }}</code>
                         </td>
                         <td>
-                          <ng-container *ngIf="editingProductId === movement._id; else amountViewTpl">
+                          <ng-container
+                            *ngIf="editingProductId === movement._id && requestArticles; else amountViewTpl"
+                          >
                             <input
                               type="text"
                               class="form-control form-control-sm"
@@ -288,7 +298,9 @@
                           </div>
                         </td>
                         <td class="text-right">
-                          <ng-container *ngIf="editingProductId === movement._id; else priceViewTpl">
+                          <ng-container
+                            *ngIf="editingProductId === movement._id && requestArticles; else priceViewTpl"
+                          >
                             <input
                               type="text"
                               class="form-control form-control-sm text-right"
@@ -305,7 +317,9 @@
                           </ng-template>
                         </td>
                         <td class="text-right">
-                          <ng-container *ngIf="editingProductId === movement._id; else discountViewTpl">
+                          <ng-container
+                            *ngIf="editingProductId === movement._id && requestArticles; else discountViewTpl"
+                          >
                             <div class="input-group input-group-sm" style="min-width: 7rem">
                               <input
                                 type="text"
@@ -338,7 +352,9 @@
                           </ng-template>
                         </td>
                         <td class="text-right">
-                          <ng-container *ngIf="editingProductId === movement._id; else subtotalViewTpl">
+                          <ng-container
+                            *ngIf="editingProductId === movement._id && requestArticles; else subtotalViewTpl"
+                          >
                             <strong class="price">
                               {{ addProductLineSalePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                             </strong>
@@ -351,7 +367,9 @@
                         </td>
                         <td class="text-center">
                           <div class="btn-group" role="group">
-                            <ng-container *ngIf="editingProductId === movement._id; else productActionsViewTpl">
+                            <ng-container
+                              *ngIf="editingProductId === movement._id && requestArticles; else productActionsViewTpl"
+                            >
                               <button type="button" class="btn btn-sm btn-success" (click)="saveProduct()">
                                 <i class="fa fa-save"></i>
                               </button>
@@ -360,27 +378,31 @@
                               </button>
                             </ng-container>
                             <ng-template #productActionsViewTpl>
-                              <button
-                                type="button"
-                                class="btn btn-sm btn-outline-secondary"
-                                (click)="editProduct(movement)"
-                              >
-                                <i class="fa fa-pencil"></i>
-                              </button>
-                              <button
-                                type="button"
-                                class="btn btn-sm btn-outline-danger"
-                                (click)="deleteProduct(movement)"
-                              >
-                                <i class="fa fa-trash"></i>
-                              </button>
+                              <ng-container *ngIf="requestArticles">
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-secondary"
+                                  (click)="editProduct(movement)"
+                                >
+                                  <i class="fa fa-pencil"></i>
+                                </button>
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-danger"
+                                  (click)="deleteProduct(movement)"
+                                >
+                                  <i class="fa fa-trash"></i>
+                                </button>
+                              </ng-container>
+                              <span *ngIf="!requestArticles" class="text-muted small">—</span>
                             </ng-template>
                           </div>
                         </td>
                       </tr>
                       <tr *ngIf="movementsOfArticles.length === 0">
                         <td [attr.colspan]="requestTaxes ? 8 : 7" class="text-center text-muted py-4">
-                          <div>No hay productos cargados</div>
+                          <div *ngIf="!requestArticles">Este tipo de comprobante no requiere productos</div>
+                          <div *ngIf="requestArticles">No hay productos cargados</div>
                         </td>
                       </tr>
                     </tbody>
@@ -388,7 +410,10 @@
                 </div>
 
                 <!-- Formulario inline para agregar producto -->
-                <div *ngIf="showAddProductForm && !editingProductId" class="card mt-3 formal-add-product-card">
+                <div
+                  *ngIf="showAddProductForm && !editingProductId && requestArticles"
+                  class="card mt-3 formal-add-product-card"
+                >
                   <div class="card-body formal-add-product-card__body">
                     <div class="formal-add-product-card__head">
                       <div>
@@ -481,17 +506,31 @@
                   </div>
                 </div>
               </form>
+              </div>
             </ng-template>
           </li>
           <li [ngbNavItem]="'payments'" class="nav-item">
-            <a ngbNavLink class="nav-link">
+            <a
+              ngbNavLink
+              class="nav-link"
+              [class.formal-nav-tab--inactive]="!requestPaymentMethods"
+              [ngbTooltip]="!requestPaymentMethods ? 'Este tipo de comprobante no requiere métodos de pago' : null"
+              placement="top"
+            >
               Métodos de Pago
               <span class="badge badge-success ml-2">{{ movementsOfCash.length }}</span>
             </a>
             <ng-template ngbNavContent>
+              <div [class.formal-section--inactive]="!requestPaymentMethods">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0">Métodos de Pago</h5>
-                <button class="btn btn-outline-success" (click)="addPayment()">Agregar Pago</button>
+                <button
+                  class="btn btn-outline-success"
+                  (click)="addPayment()"
+                  [disabled]="!requestPaymentMethods"
+                >
+                  Agregar Pago
+                </button>
               </div>
 
               <div class="table-responsive">
@@ -515,7 +554,9 @@
                         </div>
                       </td>
                       <td class="text-right">
-                        <ng-container *ngIf="editingPaymentId === movement._id; else amountPaidViewTpl">
+                        <ng-container
+                          *ngIf="editingPaymentId === movement._id && requestPaymentMethods; else amountPaidViewTpl"
+                        >
                           <input
                             type="text"
                             class="form-control form-control-sm text-right"
@@ -533,7 +574,9 @@
                       </td>
                       <td class="text-center">
                         <div class="btn-group" role="group">
-                          <ng-container *ngIf="editingPaymentId === movement._id; else paymentActionsViewTpl">
+                          <ng-container
+                            *ngIf="editingPaymentId === movement._id && requestPaymentMethods; else paymentActionsViewTpl"
+                          >
                             <button class="btn btn-sm btn-success" (click)="savePayment()" ngbTooltip="Guardar cambios">
                               <i class="fa fa-save"></i>
                             </button>
@@ -542,27 +585,31 @@
                             </button>
                           </ng-container>
                           <ng-template #paymentActionsViewTpl>
-                            <button
-                              class="btn btn-sm btn-outline-secondary"
-                              (click)="editPayment(movement)"
-                              ngbTooltip="Editar pago"
-                            >
-                              <i class="fa fa-pencil"></i>
-                            </button>
-                            <button
-                              class="btn btn-sm btn-outline-danger"
-                              (click)="deletePayment(movement)"
-                              ngbTooltip="Eliminar pago"
-                            >
-                              <i class="fa fa-trash"></i>
-                            </button>
+                            <ng-container *ngIf="requestPaymentMethods">
+                              <button
+                                class="btn btn-sm btn-outline-secondary"
+                                (click)="editPayment(movement)"
+                                ngbTooltip="Editar pago"
+                              >
+                                <i class="fa fa-pencil"></i>
+                              </button>
+                              <button
+                                class="btn btn-sm btn-outline-danger"
+                                (click)="deletePayment(movement)"
+                                ngbTooltip="Eliminar pago"
+                              >
+                                <i class="fa fa-trash"></i>
+                              </button>
+                            </ng-container>
+                            <span *ngIf="!requestPaymentMethods" class="text-muted small">—</span>
                           </ng-template>
                         </div>
                       </td>
                     </tr>
                     <tr *ngIf="movementsOfCash.length === 0">
                       <td colspan="3" class="text-center text-muted py-4">
-                        <div>No hay pagos registrados</div>
+                        <div *ngIf="!requestPaymentMethods">Este tipo de comprobante no requiere métodos de pago</div>
+                        <div *ngIf="requestPaymentMethods">No hay pagos registrados</div>
                       </td>
                     </tr>
                   </tbody>
@@ -570,7 +617,7 @@
               </div>
 
               <!-- Formulario inline para agregar pago -->
-              <div *ngIf="showAddPaymentForm" class="card mt-3">
+              <div *ngIf="showAddPaymentForm && requestPaymentMethods" class="card mt-3">
                 <div class="card-body">
                   <form [formGroup]="addPaymentForm" (ngSubmit)="savePayment()">
                     <h6 class="mb-3">{{ editingPaymentId ? 'Editar pago' : 'Agregar pago' }}</h6>
@@ -654,6 +701,7 @@
                     </div>
                   </form>
                 </div>
+              </div>
               </div>
             </ng-template>
           </li>

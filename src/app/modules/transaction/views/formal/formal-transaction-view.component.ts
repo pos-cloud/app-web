@@ -103,6 +103,16 @@ export class FormalTransactionViewComponent implements OnInit {
     return !!this.transaction?.type?.electronics;
   }
 
+  /** El tipo de comprobante exige líneas de artículos (`requestArticles`). */
+  public get requestArticles(): boolean {
+    return !!this.transaction?.type?.requestArticles;
+  }
+
+  /** El tipo de comprobante exige métodos de pago (`requestPaymentMethods`, default true). */
+  public get requestPaymentMethods(): boolean {
+    return this.transaction?.type?.requestPaymentMethods !== false;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -797,6 +807,9 @@ export class FormalTransactionViewComponent implements OnInit {
     if (!this.transaction) {
       return false;
     }
+    if (!this.requestPaymentMethods) {
+      return true;
+    }
     const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
     const paid = this.roundNumber.transform(this.totalPaid) as number;
     return paid >= total;
@@ -812,7 +825,7 @@ export class FormalTransactionViewComponent implements OnInit {
     if (!this.canShowFinalizeTransactionButton) {
       return;
     }
-    if (!this.paymentsCoverTransactionTotal) {
+    if (this.requestPaymentMethods && !this.paymentsCoverTransactionTotal) {
       this.toastService.showToast({
         message: 'La suma de los métodos de pago debe ser igual o mayor al total de la transacción para finalizarla.',
         type: 'info',
@@ -948,6 +961,9 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public addPayment(): void {
+    if (!this.requestPaymentMethods) {
+      return;
+    }
     this.editingPaymentId = null;
     this.showAddPaymentForm = true;
     this.addPaymentForm.reset({
@@ -965,6 +981,9 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public addProduct(): void {
+    if (!this.requestArticles) {
+      return;
+    }
     this.editingProductId = null;
     this.showAddProductForm = true;
     this.addProductForm.reset();
@@ -976,6 +995,9 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public savePayment(): void {
+    if (!this.requestPaymentMethods) {
+      return;
+    }
     const rawAmount = this.addPaymentForm.get('amount')?.value;
     const amount = Number(rawAmount);
     if (rawAmount == null || rawAmount === '' || isNaN(amount) || amount < 0.01) {
@@ -1126,6 +1148,9 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public saveProduct(): void {
+    if (!this.requestArticles) {
+      return;
+    }
     let articleId = String(this.addProductForm.get('article')?.value?._id ?? '');
     this.selectedArticle = this.articles.find((article) => article._id.toString() === articleId?.toString()) || null;
 
@@ -1234,6 +1259,9 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public editProduct(movement: MovementOfArticle): void {
+    if (!this.requestArticles) {
+      return;
+    }
     this.editingProductId = movement._id;
     this.showAddProductForm = false;
 
@@ -1250,6 +1278,9 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public editPayment(movement: MovementOfCash): void {
+    if (!this.requestPaymentMethods) {
+      return;
+    }
     this.editingPaymentId = movement._id;
     this.showAddPaymentForm = true;
     this.selectedPaymentMethod =
@@ -1275,7 +1306,7 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public deleteProduct(movement: MovementOfArticle): void {
-    if (!movement?._id) {
+    if (!movement?._id || !this.requestArticles) {
       return;
     }
 
@@ -1320,7 +1351,7 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public deletePayment(movement: MovementOfCash): void {
-    if (!movement?._id) {
+    if (!movement?._id || !this.requestPaymentMethods) {
       return;
     }
 
