@@ -177,6 +177,7 @@ export class ListCashBoxComponent {
       class: 'btn btn-light btn-sm',
       icon: 'fa fa-print',
       click: `this.emitEvent('print-box', item, null)`,
+      show: `item.state !== 'Abierta'`,
     },
   ];
   public headerButtons: IButton[] = [
