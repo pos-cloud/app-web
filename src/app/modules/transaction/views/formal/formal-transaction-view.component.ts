@@ -17,6 +17,7 @@ import {
   TransactionState,
 } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
+import { ArticleStockService } from 'app/core/services/article-stock.service';
 import { BankService } from 'app/core/services/bank.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
@@ -113,6 +114,7 @@ export class FormalTransactionViewComponent implements OnInit {
     private toastService: ToastService,
     private fb: FormBuilder,
     private articleService: ArticleService,
+    private articleStockService: ArticleStockService,
     private bankService: BankService,
     private _toastService: ToastService
   ) {
@@ -833,11 +835,29 @@ export class FormalTransactionViewComponent implements OnInit {
         }
         const nextState = this.transaction.type?.finishState ?? TransactionState.Closed;
         this.transaction.state = nextState;
-        this.updateTransaction('Transacción finalizada correctamente', 'No se pudo finalizar la transacción', () =>
-          this.router.navigateByUrl('/pos/mostrador/compra')
-        );
+        this.updateTransaction('Transacción finalizada correctamente', 'No se pudo finalizar la transacción', () => {
+          this.updateStockByTransaction();
+        });
       })
       .catch(() => {});
+  }
+
+  public updateStockByTransaction(): void {
+    this.loading = true;
+    this.articleStockService.updateStockByTransaction(this.transaction).subscribe({
+      next: (result) => {
+        this.loading = false;
+        this._toastService.showToast(result);
+      },
+      error: (error) => {
+        this.loading = false;
+        this._toastService.showToast(error);
+        this.router.navigateByUrl('/pos/mostrador/compra');
+      },
+      complete: () => {
+        this.router.navigateByUrl('/pos/mostrador/compra');
+      },
+    });
   }
 
   public getStateText(): string {

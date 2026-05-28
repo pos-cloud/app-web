@@ -12,7 +12,10 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class ArticleStockService extends ModelService {
-  constructor(public _http: HttpClient, public _authService: AuthService) {
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
     super(
       `article-stocks`, // PATH
       _http,
@@ -105,7 +108,7 @@ export class ArticleStockService extends ModelService {
       );
   }
 
-  public updateStockByTransaction(transaction: Transaction): Observable<any> {
+  public updateStockByTransaction(transaction: Transaction | any): Observable<any> {
     const URL = `${environment.apiv2}/stock/by-transaction`;
 
     const headers = new HttpHeaders()
