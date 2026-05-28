@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 
-import { AccountSeatModule } from './account-seat/account-seat.module';
 import { ArticleModule } from './article/article.module';
 import { DatatableModule } from './datatable/datatable.module';
 import { ExportersModule } from './export/exporters.module';
@@ -16,7 +15,6 @@ import { TransactionTypeModule } from './transaction-type/transaction-type.modul
     HistoryModule,
     ShipmentMethodModule,
     TransactionTypeModule,
-    AccountSeatModule,
     ReportModule,
     ArticleModule,
   ],

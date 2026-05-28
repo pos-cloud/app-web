@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { NotificationGuard } from '@core/guards/notification.guard';
 import { LoginComponent } from './auth/login/login.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
-import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { ConfigComponent } from './components/config/config.component';
@@ -202,11 +201,6 @@ export const _routes: Routes = [
   {
     path: 'admin/export-iva',
     component: ExportIvaComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/stock-de-productos',
-    component: ListArticleStocksComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

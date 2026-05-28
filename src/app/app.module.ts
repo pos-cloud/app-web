@@ -19,8 +19,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { EditorModule } from '@tinymce/tinymce-angular';
-import { TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
@@ -29,7 +28,6 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { AddressModule } from './components/address/address.module';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
 import { AddArticleStockComponent } from './components/article-stock/article-stock/add-article-stock.component';
-import { ListArticleStocksComponent } from './components/article-stock/list-article-stocks/list-article-stocks.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type/cancellation-type.component';
@@ -124,7 +122,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintComponent,
     AddArticleStockComponent,
     UpdateArticleStockComponent,
-    ListArticleStocksComponent,
     AddVariantComponent,
     DeleteVariantComponent,
     ListVariantsComponent,
