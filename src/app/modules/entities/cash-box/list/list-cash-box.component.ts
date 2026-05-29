@@ -171,6 +171,7 @@ export class ListCashBoxComponent {
       class: 'btn btn-success btn-sm',
       icon: 'fa fa-eye',
       click: `this.emitEvent('view', item)`,
+      show: `item.state !== 'Abierta'`,
     },
     {
       title: 'Imprimir',
