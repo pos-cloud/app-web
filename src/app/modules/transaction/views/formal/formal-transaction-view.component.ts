@@ -16,8 +16,8 @@ import {
   Transaction,
   TransactionState,
 } from '@types';
-import { ArticleService } from 'app/core/services/article.service';
 import { ArticleStockService } from 'app/core/services/article-stock.service';
+import { ArticleService } from 'app/core/services/article.service';
 import { BankService } from 'app/core/services/bank.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
@@ -812,6 +812,9 @@ export class FormalTransactionViewComponent implements OnInit {
     }
     const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
     const paid = this.roundNumber.transform(this.totalPaid) as number;
+    if (total === 0 && this.requestPaymentMethods === true) {
+      return false;
+    }
     return paid >= total;
   }
 
@@ -848,8 +851,11 @@ export class FormalTransactionViewComponent implements OnInit {
         }
         const nextState = this.transaction.type?.finishState ?? TransactionState.Closed;
         this.transaction.state = nextState;
+        this.transaction.endDate = new Date().toISOString();
         this.updateTransaction('Transacción finalizada correctamente', 'No se pudo finalizar la transacción', () => {
-          this.updateStockByTransaction();
+          if (this.transaction.type.modifyStock === true && this.transaction.type.requestArticles === true) {
+            this.updateStockByTransaction();
+          }
         });
       })
       .catch(() => {});
