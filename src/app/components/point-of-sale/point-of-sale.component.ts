@@ -1139,7 +1139,11 @@ export class PointOfSaleComponent implements OnInit {
             });
           }
         } else {
-          this.openModal('transaction');
+          if (this.transaction.type.view === View.Formal) {
+            this._router.navigateByUrl('/transaction/view/formal/' + this.transaction._id);
+          } else {
+            this.openModal('transaction');
+          }
         }
       }
     } catch (error) {
