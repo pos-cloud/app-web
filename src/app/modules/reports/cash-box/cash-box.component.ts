@@ -9,7 +9,7 @@ import * as printJS from 'print-js';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PrintService } from '@core/services/print.service';
-import { ApiResponse, CashBox, PrintType } from '@types';
+import { ApiResponse, CashBox, CashBoxState, PrintType } from '@types';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { Movements } from 'app/components/transaction-type/transaction-type';
 import { TransactionState } from 'app/components/transaction/transaction';
@@ -152,6 +152,14 @@ export class ReportCashBoxComponent implements OnInit, OnDestroy {
         this.loading = false;
         if (result) {
           this.cashBoxSelected = result[0].cashBoxes[0];
+          if (this.cashBoxSelected?.state === CashBoxState.Open) {
+            this._toastService.showToast({
+              message: 'No se puede ver el detalle de cierre mientras la caja está abierta.',
+              type: 'warning',
+            });
+            this.goBackToList();
+            return;
+          }
           this.getMovementOfCashes();
         }
       },
@@ -334,7 +342,10 @@ export class ReportCashBoxComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          this._toastService.showToast({ message: 'Error al generar el PDF' });
+          this._toastService.showToast({
+            message: error?.message || 'Error al generar el PDF',
+            type: 'warning',
+          });
         },
         complete: () => {
           this.loading = false;

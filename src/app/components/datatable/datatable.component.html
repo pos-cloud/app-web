@@ -124,18 +124,16 @@
           </tr>
           <tr *ngFor="let item of items" style="cursor: pointer">
             <td align="left">
-              <ng-container *ngFor="let button of rowButtons">
-                <button
-                  *ngIf="isRowButtonVisible(button, item)"
-                  [type]="'button'"
-                  [class]="button.class"
-                  (click)="runEvent(button.click, item, items)"
-                  [disabled]="loading"
-                  [title]="button.title | translate | capitalize"
-                >
-                  <i [class]="button.icon"></i>
-                </button>
-              </ng-container>
+              <button
+                *ngFor="let button of rowButtons"
+                [type]="'button'"
+                [class]="button.class"
+                (click)="runEvent(button.click, item, items)"
+                [disabled]="loading"
+                [title]="button.title | translate | capitalize"
+              >
+                <i [class]="button.icon"></i>
+              </button>
             </td>
             <ng-container *ngFor="let column of columns">
               <td

@@ -171,14 +171,12 @@ export class ListCashBoxComponent {
       class: 'btn btn-success btn-sm',
       icon: 'fa fa-eye',
       click: `this.emitEvent('view', item)`,
-      show: `item.state !== 'Abierta'`,
     },
     {
       title: 'Imprimir',
       class: 'btn btn-light btn-sm',
       icon: 'fa fa-print',
       click: `this.emitEvent('print-box', item, null)`,
-      show: `item.state !== 'Abierta'`,
     },
   ];
   public headerButtons: IButton[] = [
@@ -243,7 +241,10 @@ export class ListCashBoxComponent {
           }
         },
         error: (error) => {
-          this._toastService.showToast({ message: 'Error al generar el PDF' });
+          this._toastService.showToast({
+            message: error?.message || 'Error al generar el PDF',
+            type: 'warning',
+          });
         },
         complete: () => {
           this.loading = false;
