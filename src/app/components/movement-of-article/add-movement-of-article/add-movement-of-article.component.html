@@ -207,22 +207,23 @@
             <table class="table table-bordered table-sm variant-matrix">
               <thead>
                 <tr *ngIf="variantMatrixColumns.length > 0">
-                  <th>{{ variantTypes[0]?.name }}</th>
-                  <th *ngFor="let col of variantMatrixColumns">{{ col.description }}</th>
+                  <th class="variant-matrix-sticky-col" [title]="variantTypes[0]?.name">{{ variantTypes[0]?.name }}</th>
+                  <th *ngFor="let col of variantMatrixColumns" [title]="col.description">{{ col.description }}</th>
                 </tr>
                 <tr *ngIf="variantMatrixColumns.length === 0">
-                  <th>{{ variantTypes[0]?.name }}</th>
+                  <th class="variant-matrix-sticky-col" [title]="variantTypes[0]?.name">{{ variantTypes[0]?.name }}</th>
                   <th>Cantidad</th>
                 </tr>
               </thead>
               <tbody>
                 <ng-container *ngIf="variantMatrixColumns.length > 0">
                   <tr *ngFor="let row of variantMatrixRows">
-                    <td class="variant-matrix-label">{{ row.description }}</td>
+                    <td class="variant-matrix-label variant-matrix-sticky-col" [title]="row.description">{{ row.description }}</td>
                     <td *ngFor="let col of variantMatrixColumns">
                       <input
                         type="number"
                         class="form-control form-control-sm variant-matrix-input"
+                        [ngClass]="getVariantMatrixAmountClass(row.description, col.description)"
                         min="0"
                         step="1"
                         [ngModel]="getVariantMatrixAmount(row.description, col.description)"
@@ -234,11 +235,12 @@
                 </ng-container>
                 <ng-container *ngIf="variantMatrixColumns.length === 0">
                   <tr *ngFor="let row of variantMatrixRows">
-                    <td class="variant-matrix-label">{{ row.description }}</td>
+                    <td class="variant-matrix-label variant-matrix-sticky-col" [title]="row.description">{{ row.description }}</td>
                     <td>
                       <input
                         type="number"
                         class="form-control form-control-sm variant-matrix-input"
+                        [ngClass]="getVariantMatrixAmountClass(row.description)"
                         min="0"
                         step="1"
                         [ngModel]="getVariantMatrixAmount(row.description)"

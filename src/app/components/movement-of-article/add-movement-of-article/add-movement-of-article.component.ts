@@ -203,6 +203,17 @@ export class AddMovementOfArticleComponent implements OnInit {
     return this.variantMatrixAmounts[this.getVariantMatrixKey(rowValue, colValue)] || 0;
   }
 
+  getVariantMatrixAmountClass(rowValue: string, colValue?: string): string {
+    const amount = this.getVariantMatrixAmount(rowValue, colValue);
+    if (amount > 0) {
+      return 'variant-matrix-input--positive';
+    }
+    if (amount < 0) {
+      return 'variant-matrix-input--negative';
+    }
+    return '';
+  }
+
   setVariantMatrixAmount(rowValue: string, colValue: string | undefined, amount: number): void {
     const parsedAmount = amount >= 0 ? amount : 0;
     this.variantMatrixAmounts[this.getVariantMatrixKey(rowValue, colValue)] = parsedAmount;
