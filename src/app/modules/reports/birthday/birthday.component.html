@@ -13,6 +13,32 @@
       <app-multi-select-dropdown [data]="months" [(ngModel)]="monthsSelect" placeholder="Mes">
       </app-multi-select-dropdown>
     </div>
+    <div class="form-group mr-2 flex-grow-1" style="min-width: 280px">
+      <label for="whatsappMessage" class="control-label">
+        <b>Mensaje predeterminado</b>
+      </label>
+      <div class="input-group">
+        <input
+          id="whatsappMessage"
+          type="text"
+          class="form-control"
+          [(ngModel)]="whatsappMessage"
+        />
+        <div class="input-group-append">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            [ngbTooltip]="whatsappMessageHelp"
+            container="body"
+            triggers="click hover focus"
+            tabindex="0"
+            aria-label="Ayuda sobre el mensaje predeterminado"
+          >
+            <i class="fa fa-question-circle"></i>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Botón de Actualizar -->
     <div class="form-group ml-auto">

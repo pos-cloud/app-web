@@ -103,6 +103,9 @@ export class ReportBirthdayComponent implements OnInit {
 
   public monthsSelect: string[] = [];
   public day: number;
+  public whatsappMessage = '¡Hola {nombre}! 🎉 ¡Feliz cumpleaños!';
+  public readonly whatsappMessageHelp =
+    'Escribí el mensaje que se enviará por WhatsApp. Al tocar el ícono verde en cada fila, se abre el envío con ese texto. Usá {nombre} para que se reemplace automáticamente por el nombre del cliente.';
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
   // sort
@@ -188,7 +191,7 @@ export class ReportBirthdayComponent implements OnInit {
       modalRef.componentInstance.phone = company.phones;
     }
 
-    modalRef.componentInstance.message = `¡Hola ${company?.name || ''}! 🎉 ¡Feliz cumpleaños!`;
+    modalRef.componentInstance.message = this.buildWhatsappMessage(company);
 
     modalRef.result.then(
       (result) => {
@@ -204,6 +207,10 @@ export class ReportBirthdayComponent implements OnInit {
     if (event.op === 'send-wpp') {
       this.openSendWppModal(event.obj);
     }
+  }
+
+  private buildWhatsappMessage(company: any): string {
+    return this.whatsappMessage.replace(/\{nombre\}/gi, company?.name || '');
   }
 
   public onExportExcel(event): void {
