@@ -97,6 +97,18 @@ export class LicenseComponent implements OnInit {
         return `${day}/${month}/${year}`;
     }
 
+    public get showAutomaticDebitButton(): boolean {
+        return !!this._licenseService.getSubscriptionCheckoutUrl(this.licenseType);
+    }
+
+    public openAutomaticDebit(): void {
+        const url = this._licenseService.getSubscriptionCheckoutUrl(this.licenseType);
+
+        if (url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+    }
+
     private loadPaymentBrick() {
         if (!this.containerRef?.nativeElement) return;
     

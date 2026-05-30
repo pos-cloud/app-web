@@ -84,6 +84,16 @@ export class LicenseService {
     }
   }
 
+  getSubscriptionCheckoutUrl(licenseType: number): string | null {
+    const urls: Record<number, string> = {
+      1: 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=0d03af033ddc4646b36b55dc2e5f5820',
+      2: 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2c9380847af0a720017b36fda57736a4',
+      3: 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=767b1ae7823f49338981a6a761556a50',
+    };
+
+    return urls[licenseType] ?? null;
+  }
+
   async initializeMercadoPago(): Promise<void> {
     await loadMercadoPago();
     const publicKey = await this.getPublicKey();

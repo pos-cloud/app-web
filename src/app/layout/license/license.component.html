@@ -3,33 +3,76 @@
     <div class="card-header">
       <span>Licencia</span>
     </div>
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <div class="container mt-5 mb-5">
-          <p><strong>Próximo pago:</strong> {{ formatUTCDate(licensePaymentDueDate) }}</p>
-          <p><strong>Fin de licencia:</strong> {{ formatUTCDate(expirationLicenseDate) }}</p>
-          <p><strong>Tipo de Plan:</strong>{{ licenseTypeLabel }}</p>
 
-          <ngb-alert [type]="licenseAlertType" [dismissible]="false">
-            Estado de licencia: <strong>{{ licenseStatus }}</strong>
-          </ngb-alert>
-          <ngb-alert [type]="'info'" [dismissible]="false">
-            Una vez recibido el pago, tu licencia se actualizará automáticamente.
-          </ngb-alert>
-          <ngb-alert [type]="'info'" [dismissible]="false">
-            <strong>Importante:</strong> Las licencias deben abonarse entre el <strong>1 y el 10</strong> de cada mes.
-            Luego hay una tolerancia de <strong>5 días</strong>. A partir del <strong>día 15</strong>, el servicio se
-            suspenderá temporalmente. Para reactivarlo, será necesario regularizar el pago.
-          </ngb-alert>
+    <div class="license-info-section">
+      <div class="license-info-grid">
+        <div class="license-info-item" [ngClass]="'license-info-item--' + licenseAlertType">
+          <span class="license-info-label">Estado de licencia</span>
+          <strong>{{ licenseStatus }}</strong>
+        </div>
+        <div class="license-info-item">
+          <span class="license-info-label">Próximo pago</span>
+          <strong>{{ formatUTCDate(licensePaymentDueDate) }}</strong>
+        </div>
+        <div class="license-info-item">
+          <span class="license-info-label">Fin de licencia</span>
+          <strong>{{ formatUTCDate(expirationLicenseDate) }}</strong>
+        </div>
+        <div class="license-info-item">
+          <span class="license-info-label">Tipo de plan</span>
+          <strong>{{ licenseTypeLabel }}</strong>
         </div>
       </div>
-      <div class="col-12 col-md-6">
-        <div class="brick-container">
-          <div *ngIf="loading" class="spinner-overlay">
-            <div class="spinner"></div>
-          </div>
-          <div #mercadoPagoContainer id="mercado-pago-container" [class.hidden]="loading"></div>
+
+      <ngb-alert [type]="'info'" [dismissible]="false">
+        <strong>Importante:</strong> Las licencias deben abonarse entre el <strong>1 y el 10</strong> de cada mes.
+        Luego hay una tolerancia de <strong>5 días</strong>. A partir del <strong>día 15</strong>, el servicio se
+        suspenderá temporalmente. Para reactivarlo, será necesario regularizar el pago.
+      </ngb-alert>
+    </div>
+
+    <div class="payment-options-section">
+      <div class="payment-options-grid">
+      <div *ngIf="showAutomaticDebitButton" class="payment-options-grid-item">
+        <div class="payment-option-card payment-option-card--recommended">
+          <div class="payment-option-badge payment-option-badge--recommended">Recomendado</div>
+          <h5 class="payment-option-title">Adherite al débito automático</h5>
+          <p class="payment-option-subtitle">
+            Mantené tu plan <strong>{{ licenseTypeLabel }}</strong> activo sin preocuparte por fechas de vencimiento.
+          </p>
+          <ul class="payment-option-benefits">
+            <li>Cobro mensual automático con Mercado Pago</li>
+            <li>Sin pagos manuales ni olvidos</li>
+            <li>Renovación simple y segura</li>
+          </ul>
+          <button type="button" class="btn btn-success btn-payment-option" (click)="openAutomaticDebit()">
+            Quiero adherirme ahora
+          </button>
+          <small class="payment-option-note">Se abrirá Mercado Pago para completar la suscripción.</small>
         </div>
+      </div>
+
+      <div class="payment-options-grid-item">
+        <div class="payment-option-card payment-option-card--single">
+          <div class="payment-option-badge payment-option-badge--single">Un solo mes</div>
+          <h5 class="payment-option-title">Pagá tu licencia por un mes</h5>
+          <p class="payment-option-subtitle">
+            Aboná el plan <strong>{{ licenseTypeLabel }}</strong> de este mes con el medio de pago que prefieras.
+          </p>
+          <ul class="payment-option-benefits">
+            <li>Pago único del mes en curso</li>
+            <li>Tarjeta, dinero en cuenta u otros medios de Mercado Pago</li>
+            <li>Tu licencia se actualiza al confirmarse el pago</li>
+          </ul>
+
+          <div class="brick-container">
+            <div *ngIf="loading" class="spinner-overlay">
+              <div class="spinner"></div>
+            </div>
+            <div #mercadoPagoContainer id="mercado-pago-container" [class.hidden]="loading"></div>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   </div>

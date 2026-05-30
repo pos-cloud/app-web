@@ -4,47 +4,132 @@
   color: #495057;
 }
 
+.license-info-section {
+  padding: 1.25rem 1.5rem 0.5rem;
+}
+
+.license-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.license-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.license-info-label {
+  color: #6c757d;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.license-info-item--success {
+  border-color: #c3e6cb;
+  background: #f4fff7;
+
+  strong {
+    color: #155724;
+  }
+}
+
+.license-info-item--warning {
+  border-color: #ffeeba;
+  background: #fffbf0;
+
+  strong {
+    color: #856404;
+  }
+}
+
+.license-info-item--danger {
+  border-color: #f5c6cb;
+  background: #fff5f5;
+
+  strong {
+    color: #721c24;
+  }
+}
+
+.payment-options-section {
+  display: flex;
+  justify-content: center;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.payment-options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.payment-options-grid-item {
+  flex: 1 1 320px;
+  max-width: 480px;
+  min-width: 0;
+}
+
 .brick-container {
   position: relative;
   width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  margin-top: 0.5rem;
 
   .spinner-overlay {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255, 255, 255, 0.8);
     z-index: 10;
   }
+
   .spinner {
-    border: 4px solid rgba(0,0,0,0.1);
+    border: 4px solid rgba(0, 0, 0, 0.1);
     border-top-color: #007bff;
     border-radius: 50%;
     width: 48px;
     height: 48px;
     animation: spin 1s linear infinite;
   }
+
   #mercado-pago-container.hidden {
     visibility: hidden;
   }
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 #mercado-pago-container {
   width: 100%;
   display: flex;
-  min-height: calc(93vh - 120px);
-  max-height: calc(93vh - 120px);
+  min-height: 420px;
+  max-height: 55vh;
   overflow-y: auto;
 }
-
 
 .card-header {
   span {
@@ -70,43 +155,140 @@
   }
 }
 
+.payment-option-card {
+  height: 100%;
+  margin-bottom: 0;
+  padding: 1.25rem 1.25rem 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+
+  &--recommended {
+    border: 1px solid #b8e6c5;
+    background: linear-gradient(180deg, #f4fff7 0%, #ffffff 100%);
+    box-shadow: 0 4px 14px rgba(40, 167, 69, 0.12);
+  }
+
+  &--single {
+    border: 1px solid #b8daff;
+    background: linear-gradient(180deg, #f5f9ff 0%, #ffffff 100%);
+    box-shadow: 0 4px 14px rgba(0, 123, 255, 0.1);
+  }
+}
+
+.payment-option-badge {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+
+  &--recommended {
+    background-color: #28a745;
+  }
+
+  &--single {
+    background-color: #007bff;
+  }
+}
+
+.payment-option-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.payment-option-card--recommended .payment-option-title {
+  color: #1e5631;
+}
+
+.payment-option-card--single .payment-option-title {
+  color: #004085;
+}
+
+.payment-option-subtitle {
+  margin: 0 0 0.85rem;
+  color: #495057;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.payment-option-benefits {
+  margin: 0 0 1rem;
+  padding-left: 1.15rem;
+  color: #343a40;
+  font-size: 0.92rem;
+
+  li + li {
+    margin-top: 0.35rem;
+  }
+}
+
+.btn-payment-option {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.payment-option-note {
+  display: block;
+  margin-top: 0.75rem;
+  color: #6c757d;
+  text-align: center;
+}
+
 .card-large {
-  // Estilos base para desktop
   min-height: calc(100vh - 120px);
   max-height: calc(100vh - 120px);
+  overflow-y: auto;
 
-  // Media query para móvil
+  @media (max-width: 1199px) {
+    .license-info-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 991px) {
+    .payment-options-grid-item {
+      flex: 1 1 100%;
+      max-width: 560px;
+    }
+  }
+
   @media (max-width: 767px) {
     min-height: auto !important;
     max-height: none !important;
     height: auto;
     overflow: visible;
 
-    .row {
-      flex-direction: column;
-      margin: 0;
+    .license-info-section {
+      padding: 1rem 1rem 0;
+    }
 
-      >[class*="col-"] {
-        padding: 0;
-        max-width: 100%;
-      }
+    .license-info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .payment-options-section {
+      padding: 0 1rem 1rem;
+    }
+
+    .payment-option-card {
+      margin-bottom: 1rem;
     }
 
     .brick-container {
-      min-height: 400px; 
-      max-height: 70vh;
-      padding: 15px;
-
-      #mercado-pago-container {
-        min-height: 380px; 
-        max-height: 68vh;
-      }
+      min-height: 360px;
+      max-height: none;
     }
 
-    .container.mt-5.mb-5 {
-      padding: 1rem;
-      margin-top: 0.5rem !important;
-      margin-bottom: 0.5rem !important;
+    #mercado-pago-container {
+      min-height: 340px;
+      max-height: 68vh;
     }
   }
 }
