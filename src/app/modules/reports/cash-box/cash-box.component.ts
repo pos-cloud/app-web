@@ -152,14 +152,6 @@ export class ReportCashBoxComponent implements OnInit, OnDestroy {
         this.loading = false;
         if (result) {
           this.cashBoxSelected = result[0].cashBoxes[0];
-          if (this.cashBoxSelected?.state === CashBoxState.Open) {
-            this._toastService.showToast({
-              message: 'No se puede ver el detalle de cierre mientras la caja está abierta.',
-              type: 'warning',
-            });
-            this.goBackToList();
-            return;
-          }
           this.getMovementOfCashes();
         }
       },
