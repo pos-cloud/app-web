@@ -12,11 +12,11 @@ import {
   MovementOfCash,
   PaymentMethod,
   StatusCheck,
+  TaxClassification,
   Taxes,
   Transaction,
   TransactionState,
 } from '@types';
-import { ArticleStockService } from 'app/core/services/article-stock.service';
 import { ArticleService } from 'app/core/services/article.service';
 import { BankService } from 'app/core/services/bank.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
@@ -30,6 +30,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
 import { combineLatest, finalize, Subject, takeUntil } from 'rxjs';
+import { ApplyTaxesTransactionsComponent } from '../../components/apply-taxes-transactions/apply-taxes-transactions.components';
 import { ProcessInvoiceUploadComponent } from './component/process-invoice-upload/process-invoice-upload.component';
 
 @Component({
@@ -90,6 +91,7 @@ export class FormalTransactionViewComponent implements OnInit {
   public letterOptions: string[] = ['A', 'B', 'C', 'M', 'R', 'E', 'X', 'Z', 'T', 'D'];
   public transactionEndDateDraft: string = new Date().toISOString();
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
+  public filtersTaxClassification: TaxClassification[] = [TaxClassification.Withholding, TaxClassification.Perception];
 
   private destroy$ = new Subject<void>();
 
@@ -124,7 +126,6 @@ export class FormalTransactionViewComponent implements OnInit {
     private toastService: ToastService,
     private fb: FormBuilder,
     private articleService: ArticleService,
-    private articleStockService: ArticleStockService,
     private bankService: BankService,
     private _toastService: ToastService
   ) {
@@ -303,6 +304,7 @@ export class FormalTransactionViewComponent implements OnInit {
       movement.bank = (this.addPaymentForm.get('bank')?.value as Bank) ?? undefined;
     }
   }
+
   private refresh(): void {
     this.loadTransaction();
   }
@@ -437,13 +439,13 @@ export class FormalTransactionViewComponent implements OnInit {
       return;
     }
     this.transaction.VATPeriod = raw;
-    this.updateTransaction('Período IVA actualizado correctamente', 'Error al actualizar el período IVA');
+    this.updateTransaction();
   }
 
   public onTransactionDatePickerChange(value: string): void {
     this.transaction.endDate = value;
     this.transaction.expirationDate = this.transaction.endDate;
-    this.updateTransaction('Fecha actualizada correctamente', 'Error al actualizar la fecha');
+    this.updateTransaction();
   }
 
   public onLetterBlur(): void {
@@ -466,7 +468,7 @@ export class FormalTransactionViewComponent implements OnInit {
       return;
     }
     this.transaction.letter = normalized;
-    this.updateTransaction('Letra actualizada correctamente', 'Error al actualizar la letra');
+    this.updateTransaction();
   }
 
   public startEditLetter(): void {
@@ -486,7 +488,7 @@ export class FormalTransactionViewComponent implements OnInit {
 
   public onOriginBlur(): void {
     this.transaction.origin = Math.max(0, Math.floor(Number(this.originDraft)));
-    this.updateTransaction('Punto de venta actualizado correctamente', 'Error al actualizar el punto de venta');
+    this.updateTransaction();
   }
 
   public startEditOrigin(): void {
@@ -515,7 +517,7 @@ export class FormalTransactionViewComponent implements OnInit {
       return;
     }
     this.transaction.number = n;
-    this.updateTransaction('Número de factura actualizado correctamente', 'Error al actualizar el número de factura');
+    this.updateTransaction();
   }
 
   public startEditInvoiceNumber(): void {
@@ -599,7 +601,7 @@ export class FormalTransactionViewComponent implements OnInit {
 
   public saveObservation(): void {
     this.transaction.observation = (this.observationDraft || '').trim();
-    this.updateTransaction('Observación actualizada correctamente', 'Error al actualizar la observación');
+    this.updateTransaction();
     this.isEditingObservation = false;
   }
 
@@ -643,6 +645,24 @@ export class FormalTransactionViewComponent implements OnInit {
     this.discountPercentDraft = base > 0 ? (this.roundNumber.transform((amt / base) * 100) as number) : 0;
   }
 
+  public openTaxesModal(): void {
+    const modalRef = this.modal.open(ApplyTaxesTransactionsComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.transaction = this.transaction;
+    modalRef.componentInstance.transactionTaxes = [...(this.transaction?.taxes || [])];
+    modalRef.componentInstance.filtersTaxClassification = this.filtersTaxClassification;
+
+    modalRef.result.then(
+      (taxes: Taxes[]) => {
+        this.transaction.taxes = taxes || [];
+        this.loadTransaction();
+      },
+      () => {}
+    );
+  }
+
   public saveDiscount(): void {
     const base = this.discountBaseBeforeHeader;
     const pctDraft = Number(this.discountPercentDraft);
@@ -668,7 +688,7 @@ export class FormalTransactionViewComponent implements OnInit {
     this.transaction.discountAmount = amt;
     /** Total neto coherente con el subtotal: base (líneas + desc. cabecera anterior) − nuevo descuento. */
     this.transaction.totalPrice = this.roundNumber.transform(Math.max(0, base - amt));
-    this.updateTransaction('Descuento actualizado correctamente', 'Error al actualizar el descuento');
+    this.updateTransaction();
     this.isEditingDiscount = false;
   }
 
@@ -694,39 +714,42 @@ export class FormalTransactionViewComponent implements OnInit {
     this.transaction.discountAmount = discountAmount;
     this.transaction.discountPercent = discountPercent;
     this.transaction.totalPrice = this.roundNumber.transform(total) as number;
-    this.updateTransaction('Total actualizado correctamente', 'Error al actualizar el total');
+    this.updateTransaction();
     this.isEditingTotal = false;
   }
 
-  private updateTransaction(successMessage: string, errorMessage: string, onSuccess?: () => void): void {
-    this.transactionService.update(this.transaction).subscribe({
-      next: (response) => {
-        if (response.status === 200) {
-          this.toastService.showToast({
-            message: successMessage,
-            type: 'success',
-          });
-          if (onSuccess) {
-            onSuccess();
+  private async updateTransaction(): Promise<void> {
+    this.loading = true;
+    this.transactionService
+      .update(this.transaction)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.status === 200) {
+            this.toastService.showToast({
+              message: response.message || 'Transacción actualizada correctamente',
+              type: 'success',
+            });
           } else {
+            this.toastService.showToast({
+              message: response.message || 'Error al actualizar la transacción',
+              type: 'error',
+            });
             this.loadTransaction();
           }
-        } else {
+        },
+        error: (error) => {
           this.toastService.showToast({
-            message: response.message || errorMessage,
+            message: error || 'Error al actualizar la transacción',
             type: 'error',
           });
           this.loadTransaction();
-        }
-      },
-      error: () => {
-        this.toastService.showToast({
-          message: errorMessage,
-          type: 'error',
-        });
-        this.loadTransaction();
-      },
-    });
+        },
+        complete: () => {
+          this.loading = false;
+          this.loadTransaction();
+        },
+      });
   }
 
   public get subtotal(): number {
@@ -758,14 +781,6 @@ export class FormalTransactionViewComponent implements OnInit {
       return taxes.reduce((sum, row) => sum + Number(row?.taxAmount ?? 0), 0);
     }
     return this.totalTaxesAmount;
-  }
-
-  public get footerTaxBase(): number {
-    const taxes = this.transaction?.taxes;
-    if (taxes?.length) {
-      return taxes?.reduce((sum, row) => sum + Number(row?.taxBase ?? 0), 0);
-    }
-    return this.totalTaxesBase;
   }
 
   public get totalQuantity(): number {
@@ -844,38 +859,26 @@ export class FormalTransactionViewComponent implements OnInit {
     modalRef.componentInstance.title = 'Finalizar transacción';
     modalRef.componentInstance.subtitle = '¿Deseás cerrar esta transacción? Quedará registrada como finalizada.';
 
-    modalRef.result
-      .then((confirmed: boolean) => {
-        if (!confirmed) {
-          return;
-        }
+    modalRef.result.then(async (confirmed: boolean) => {
+      if (!confirmed) {
+        return;
+      }
+
+      this.loading = true;
+
+      try {
         const nextState = this.transaction.type?.finishState ?? TransactionState.Closed;
+
         this.transaction.state = nextState;
         this.transaction.endDate = new Date().toISOString();
-        this.updateTransaction('Transacción finalizada correctamente', 'No se pudo finalizar la transacción', () => {
-          if (this.transaction.type.modifyStock === true && this.transaction.type.requestArticles === true) {
-            this.updateStockByTransaction();
-          }
-        });
-      })
-      .catch(() => {});
-  }
 
-  public updateStockByTransaction(): void {
-    this.loading = true;
-    this.articleStockService.updateStockByTransaction(this.transaction).subscribe({
-      next: (result) => {
+        await this.updateTransaction();
+
+        this.goBack();
+      } catch (error) {
+      } finally {
         this.loading = false;
-        this._toastService.showToast(result);
-      },
-      error: (error) => {
-        this.loading = false;
-        this._toastService.showToast(error);
-        this.router.navigateByUrl('/pos/mostrador/compra');
-      },
-      complete: () => {
-        this.router.navigateByUrl('/pos/mostrador/compra');
-      },
+      }
     });
   }
 

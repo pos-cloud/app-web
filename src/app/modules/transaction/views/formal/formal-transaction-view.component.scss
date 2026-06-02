@@ -25,6 +25,14 @@ app-formal-transaction-view {
     .formal-totals-row > .formal-totals-col {
       min-width: 0;
     }
+
+    .formal-taxes-row {
+      cursor: pointer;
+
+      &:hover {
+        color: var(--primary, #007bff);
+      }
+    }
   }
 
   // Texto largo / sin espacios en observaciones (no rompe la card)

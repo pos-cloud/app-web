@@ -857,12 +857,22 @@
           <ng-container *ngIf="requestTaxes">
             <div class="d-flex justify-content-between mb-2">
               <span>Neto gravado:</span>
-              <span class="font-weight-bold">{{ footerTaxBase | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+              <span class="font-weight-bold">{{
+                transaction?.basePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+              }}</span>
             </div>
 
-            <div class="d-flex justify-content-between mb-2">
+            <div
+              class="d-flex justify-content-between align-items-center mb-2 formal-taxes-row"
+              role="button"
+              (click)="openTaxesModal()"
+              ngbTooltip="Editar impuestos"
+            >
               <span>Impuestos:</span>
-              <span class="font-weight-bold">{{ footerTaxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+              <span class="font-weight-bold d-flex align-items-center">
+                {{ footerTaxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                <i class="fa fa-pencil ml-2 text-muted small"></i>
+              </span>
             </div>
 
             <ng-container *ngIf="transaction?.taxes?.length">
