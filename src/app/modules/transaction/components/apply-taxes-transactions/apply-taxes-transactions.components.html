@@ -1,0 +1,106 @@
+<div class="modal-header">
+  <h4 class="modal-title">Impuestos</h4>
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body container-fluid">
+  <form [formGroup]="taxesForm" (ngSubmit)="recalculateTaxes()" autocomplete="off">
+    <div>
+      <div class="row">
+        <div class="form-group col-md-4">
+          <label for="tax" class="control-label">Impuesto:</label>
+          <select class="form-control" formControlName="tax" (change)="changeTax('tax')">
+            <option *ngFor="let tax of taxes" [ngValue]="tax" [disabled]="readonly">{{ tax.name }}</option>
+          </select>
+          <div *ngIf="formErrors.tax" class="alert alert-danger">{{ formErrors.tax }}</div>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="percentage" class="control-label">Porcentaje:</label>
+          <div class="input-group">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="percentage"
+              name="percentage"
+              id="percentage"
+              step="1"
+              (blur)="changeTax('percentage')"
+            />
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">%</span>
+            </div>
+          </div>
+          <div *ngIf="formErrors.percentage" class="alert alert-danger">{{ formErrors.percentage }}</div>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="taxAmount" class="control-label">Monto:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">$</span>
+            </div>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="taxAmount"
+              name="taxAmount"
+              id="taxAmount"
+              step="1"
+              (blur)="changeTax('taxAmount')"
+            />
+          </div>
+          <div *ngIf="formErrors.taxAmount" class="alert alert-danger">{{ formErrors.taxAmount }}</div>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="value" class="control-label">Acción:</label>
+          <div class="input-group">
+            <button type="submit" class="btn btn-success" [disabled]="!taxesForm?.valid || loading">Agregar</button>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th width="130">Acción</th>
+              <th>Impuesto</th>
+              <th>Base Imponible</th>
+              <th>Porcentaje</th>
+              <th>Monto del Impuesto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transactionTaxAux of transactionTaxes; let i = index">
+              <td align="left" width="130">
+                <button
+                  *ngIf="
+                    !transaction ||
+                    (transaction &&
+                      transactionTaxAux?.tax?.classification?.toString() !== 'Impuesto')
+                  "
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  title="Eliminar"
+                  (click)="deleteTransactionTax(transactionTaxAux, i)"
+                >
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+              <td class="flat">{{ transactionTaxAux.tax.name }}</td>
+              <td class="flat">{{ transactionTaxAux.taxBase | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+              <td class="flat">{{ transactionTaxAux.percentage }} %</td>
+              <td class="flat">{{ transactionTaxAux.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="dismiss()">Cancelar</button>
+  <button type="button" class="btn btn-primary" (click)="accept()">
+    <span>Aceptar</span>
+  </button>
+</div>
