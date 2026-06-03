@@ -91,7 +91,6 @@ export class FormalTransactionViewComponent implements OnInit {
   public letterOptions: string[] = ['A', 'B', 'C', 'M', 'R', 'E', 'X', 'Z', 'T', 'D'];
   public transactionEndDateDraft: string = new Date().toISOString();
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
-  public filtersTaxClassification: TaxClassification[] = [TaxClassification.Withholding, TaxClassification.Perception];
 
   private destroy$ = new Subject<void>();
 
@@ -646,17 +645,20 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public openTaxesModal(): void {
+    let filtersTaxClassification: TaxClassification[] = [TaxClassification.Withholding, TaxClassification.Perception];
+
     const modalRef = this.modal.open(ApplyTaxesTransactionsComponent, {
       size: 'lg',
       backdrop: 'static',
     });
     modalRef.componentInstance.transaction = this.transaction;
     modalRef.componentInstance.transactionTaxes = [...(this.transaction?.taxes || [])];
-    modalRef.componentInstance.filtersTaxClassification = this.filtersTaxClassification;
+    modalRef.componentInstance.filtersTaxClassification = filtersTaxClassification;
 
     modalRef.result.then(
       (taxes: Taxes[]) => {
         this.transaction.taxes = taxes || [];
+
         this.loadTransaction();
       },
       () => {}

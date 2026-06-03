@@ -7,7 +7,7 @@ import { TaxService } from 'app/core/services/tax.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, switchMap, takeUntil } from 'rxjs';
 import { TransactionService } from '../../../../core/services/transaction.service';
 
 @Component({
@@ -99,7 +99,10 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
     return new Promise<Tax[]>((resolve) => {
       this._taxService
         .getAll({
-          match: { classification: { $in: this.filtersTaxClassification }, operationType: { $ne: 'D' } },
+          match: {
+            classification: { $in: this.filtersTaxClassification },
+            operationType: { $ne: 'D' },
+          },
         })
         .subscribe({
           next: (result) => {
@@ -167,28 +170,54 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
     }
   }
 
-  public recalculateTaxes(): void {
-    this.loading = true;
-    if (!this.taxExists()) {
-      this.transactionTaxes = [...this.transactionTaxes, { ...this.transactionTax }];
-      this.transaction.taxes = [...this.transactionTaxes];
+  private updateTransaction() {
+    return this._transactionService.update(this.transaction);
+  }
 
-      this._transactionService
-        .recalculateTaxes(this.transaction)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {},
-          error: (error) => {
-            console.log('error:', error);
-            this._toastService.showToast(error);
-          },
-          complete: () => {
-            this.loading = false;
-            this.transactionTax = this.createEmptyTax();
-            this.setValueForm();
-          },
-        });
+  public recalculateTaxes(): void {
+    if (this.taxExists()) {
+      return;
     }
+
+    this.loading = true;
+
+    this.transactionTaxes = [...this.transactionTaxes, { ...this.transactionTax }];
+
+    this.transaction.taxes = [...this.transactionTaxes];
+
+    this.updateTransaction()
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((response) => {
+          if (response.status !== 200) {
+            throw new Error(response.message || 'Error al actualizar la transacción');
+          }
+
+          return this._transactionService.recalculateTaxes(this.transaction);
+        })
+      )
+      .subscribe({
+        next: () => {},
+        error: (error) => {
+          this.loading = false;
+
+          this._toastService.showToast({
+            type: 'error',
+            message: error?.message || 'Error al actualizar o recalcular la transacción',
+          });
+        },
+        complete: () => {
+          this.loading = false;
+
+          this.transactionTax = this.createEmptyTax();
+          this.setValueForm();
+
+          this._toastService.showToast({
+            type: 'success',
+            message: 'Impuestos recalculados correctamente',
+          });
+        },
+      });
   }
 
   public deleteTransactionTax(_transactionTax: Taxes, index: number): void {
@@ -197,12 +226,26 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
     this.transactionTaxes.splice(index, 1);
     this.transaction.taxes = [...this.transactionTaxes];
 
-    this._transactionService
-      .recalculateTaxes(this.transaction)
-      .pipe(takeUntil(this.destroy$))
+    this.updateTransaction()
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((response) => {
+          if (response.status !== 200) {
+            throw new Error(response.message || 'Error al actualizar la transacción');
+          }
+
+          return this._transactionService.recalculateTaxes(this.transaction);
+        })
+      )
       .subscribe({
+        next: () => {},
         error: (error) => {
-          this._toastService.showToast(error);
+          this.loading = false;
+
+          this._toastService.showToast({
+            type: 'error',
+            message: error?.message || 'Error al actualizar o recalcular la transacción',
+          });
         },
         complete: () => {
           this.loading = false;

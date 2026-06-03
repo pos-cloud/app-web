@@ -75,10 +75,11 @@
               <td align="left" width="130">
                 <button
                   *ngIf="
-                    !transaction ||
-                    (transaction &&
-                      transactionTaxAux?.tax?.classification?.toString() !== 'Impuesto')
-                  "
+                !transaction ||
+                (transaction &&
+                  transactionTaxAux.tax.classification.toString() !==
+                    'Impuesto')
+              "
                   type="button"
                   class="btn btn-danger btn-sm"
                   title="Eliminar"
