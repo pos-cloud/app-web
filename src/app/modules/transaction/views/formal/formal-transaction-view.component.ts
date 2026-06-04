@@ -12,7 +12,6 @@ import {
   MovementOfCash,
   PaymentMethod,
   StatusCheck,
-  TaxClassification,
   Taxes,
   Transaction,
   TransactionState,
@@ -29,7 +28,7 @@ import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/d
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
-import { combineLatest, finalize, Subject, takeUntil } from 'rxjs';
+import { combineLatest, finalize, Subject, switchMap, takeUntil } from 'rxjs';
 import { ApplyTaxesTransactionsComponent } from '../../components/apply-taxes-transactions/apply-taxes-transactions.components';
 import { ProcessInvoiceUploadComponent } from './component/process-invoice-upload/process-invoice-upload.component';
 
@@ -112,6 +111,130 @@ export class FormalTransactionViewComponent implements OnInit {
   /** El tipo de comprobante exige métodos de pago (`requestPaymentMethods`, default true). */
   public get requestPaymentMethods(): boolean {
     return this.transaction?.type?.requestPaymentMethods !== false;
+  }
+
+  /** Base sobre la que aplica el descuento de cabecera (= subtotal antes del descuento). */
+  public get discountBaseBeforeHeader(): number {
+    return this.linesSubtotal;
+  }
+
+  /** Subtotal real de líneas (sin descuento de cabecera). */
+  private get linesSubtotal(): number {
+    return (
+      ((this.roundNumber.transform(
+        this.movementsOfArticles.reduce((sum, movement) => sum + Number(movement.salePrice || 0), 0)
+      ) as number) ||
+        this.transaction?.subTotal) ??
+      0
+    );
+  }
+
+  public get paymentRequiresCheck(): boolean {
+    return this.selectedPaymentMethod?.checkDetail === true;
+  }
+
+  /** Si el método de pago exige banco (configuración `allowBank`). */
+  public get paymentRequiresBank(): boolean {
+    return this.selectedPaymentMethod?.allowBank === true;
+  }
+
+  public get subtotal(): number {
+    return this.linesSubtotal;
+  }
+
+  public get totalTaxesAmount(): number {
+    return this.movementsOfArticles.reduce((total, movement) => {
+      if (movement.taxes && movement.taxes.length > 0) {
+        return total + movement.taxes.reduce((taxTotal, tax) => taxTotal + (tax.taxAmount || 0), 0);
+      }
+      return total;
+    }, 0);
+  }
+
+  public get totalTaxesBase(): number {
+    return this.movementsOfArticles.reduce((total, movement) => {
+      if (movement.taxes && movement.taxes.length > 0) {
+        return total + movement.taxes.reduce((taxTotal, tax) => taxTotal + (tax.taxBase || 0), 0);
+      }
+      return total;
+    }, 0);
+  }
+
+  /** Impuestos / base para el pie: totales de cabecera si vienen en la transacción, si no desde líneas. */
+  public get footerTaxAmount(): number {
+    const taxes = this.transaction?.taxes;
+    if (taxes?.length) {
+      return taxes.reduce((sum, row) => sum + Number(row?.taxAmount ?? 0), 0);
+    }
+    return this.totalTaxesAmount;
+  }
+
+  public get totalQuantity(): number {
+    return this.movementsOfArticles.reduce((total, movement) => total + movement?.amount, 0);
+  }
+
+  public get totalPaid(): number {
+    return this.movementsOfCash.reduce((total, movement) => total + movement?.amountPaid, 0);
+  }
+
+  public get balance(): number {
+    return this.transaction?.totalPrice - this.totalPaid;
+  }
+
+  /**
+   * Monto sugerido al agregar un pago nuevo: saldo pendiente (total − pagos), redondeado como el resto de la vista.
+   * `null` si no hay saldo pendiente (≥ 0,01); el usuario puede editar el valor en el formulario.
+   */
+  public get suggestedNewPaymentAmount(): number | null {
+    if (!this.transaction) {
+      return null;
+    }
+    const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
+    const paid = this.roundNumber.transform(this.totalPaid) as number;
+    const remaining = this.roundNumber.transform(Math.max(0, total - paid)) as number;
+    return remaining >= 0.01 ? remaining : null;
+  }
+
+  /** Transacción abierta y el tipo permite ver / usar el cierre desde la vista formal. */
+  public get canShowFinalizeTransactionButton(): boolean {
+    if (!this.transaction?.type || this.transaction.type.allowTransactionClose === false) {
+      return false;
+    }
+    return this.transaction.state === TransactionState.Open;
+  }
+
+  /** Suma de `movementsOfCash` alcanza el total de la transacción (mismos redondeos que el resto de la vista). */
+  public get paymentsCoverTransactionTotal(): boolean {
+    if (!this.transaction) {
+      return false;
+    }
+    if (!this.requestPaymentMethods) {
+      return true;
+    }
+    const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
+    const paid = this.roundNumber.transform(this.totalPaid) as number;
+    if (total === 0 && this.requestPaymentMethods === true) {
+      return false;
+    }
+    return paid >= total;
+  }
+
+  /** Se puede finalizar: estado/tipo OK y pagos cubren el total. */
+  public get canFinalizeTransaction(): boolean {
+    return this.canShowFinalizeTransactionButton && this.paymentsCoverTransactionTotal;
+  }
+
+  /** Importe final de línea tras aplicar descuento %. */
+  public get addProductLineSalePrice(): number {
+    if (!this.addProductForm) {
+      return 0;
+    }
+    const quantity = Number(this.addProductForm.get('quantity')?.value) || 0;
+    const unitPrice = Number(this.addProductForm.get('unitPrice')?.value) || 0;
+    const rate = Math.min(100, Math.max(0, Number(this.addProductForm.get('discountRate')?.value) || 0));
+    const gross = this.roundNumber.transform(quantity * unitPrice) as number;
+    const discountAmount = this.roundNumber.transform(gross * (rate / 100)) as number;
+    return this.roundNumber.transform(gross - discountAmount) as number;
   }
 
   constructor(
@@ -216,15 +339,6 @@ export class FormalTransactionViewComponent implements OnInit {
       });
 
     this.syncPaymentCheckValidators();
-  }
-
-  public get paymentRequiresCheck(): boolean {
-    return this.selectedPaymentMethod?.checkDetail === true;
-  }
-
-  /** Si el método de pago exige banco (configuración `allowBank`). */
-  public get paymentRequiresBank(): boolean {
-    return this.selectedPaymentMethod?.allowBank === true;
   }
 
   private syncPaymentCheckValidators(): void {
@@ -367,6 +481,32 @@ export class FormalTransactionViewComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  /**
+   * Comprobantes sin artículos: si el total es 0, subtotal y total pasan a la suma de los pagos cargados.
+   */
+  private syncTotalsFromPaymentsIfNeeded(): boolean {
+    if (!this.transaction || this.requestArticles || !this.requestPaymentMethods) {
+      return false;
+    }
+
+    const currentTotal = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
+
+    const paidSum = this.roundNumber.transform(this.totalPaid) as number;
+    if (paidSum <= 0) {
+      return false;
+    }
+
+    const currentSubTotal = this.roundNumber.transform(Number(this.transaction.subTotal ?? 0)) as number;
+    if (currentSubTotal === paidSum && currentTotal === paidSum) {
+      return false;
+    }
+
+    this.transaction.subTotal = paidSum;
+    this.transaction.totalPrice = paidSum;
+    if (this.requestTaxes) this.transaction.basePrice = paidSum;
+    return true;
   }
 
   private getMovementsOfCashesByTransaction(): void {
@@ -611,20 +751,6 @@ export class FormalTransactionViewComponent implements OnInit {
     this.isEditingDiscount = true;
   }
 
-  /** Base sobre la que aplica el descuento de cabecera (= subtotal antes del descuento). */
-  public get discountBaseBeforeHeader(): number {
-    return this.linesSubtotal;
-  }
-
-  /** Subtotal real de líneas (sin descuento de cabecera). */
-  private get linesSubtotal(): number {
-    return (
-      (this.roundNumber.transform(
-        this.movementsOfArticles.reduce((sum, movement) => sum + Number(movement.salePrice || 0), 0)
-      ) as number) || 0
-    );
-  }
-
   /** Al cambiar el %, calcula el monto sobre el subtotal. */
   public onDiscountPercentDraftChange(value: number | string | null): void {
     const base = this.discountBaseBeforeHeader;
@@ -645,21 +771,53 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public openTaxesModal(): void {
-    let filtersTaxClassification: TaxClassification[] = [TaxClassification.Withholding, TaxClassification.Perception];
-
     const modalRef = this.modal.open(ApplyTaxesTransactionsComponent, {
       size: 'lg',
       backdrop: 'static',
     });
     modalRef.componentInstance.transaction = this.transaction;
     modalRef.componentInstance.transactionTaxes = [...(this.transaction?.taxes || [])];
-    modalRef.componentInstance.filtersTaxClassification = filtersTaxClassification;
 
     modalRef.result.then(
       (taxes: Taxes[]) => {
         this.transaction.taxes = taxes || [];
+        this.loading = true;
 
-        this.loadTransaction();
+        this.transactionService
+          .update(this.transaction)
+          .pipe(
+            takeUntil(this.destroy$),
+            switchMap((response) => {
+              if (response.status !== 200) {
+                throw new Error(response.message || 'Error al actualizar la transacción');
+              }
+
+              return this.transactionService.recalculateTaxes(this.transaction);
+            })
+          )
+          .subscribe({
+            next: () => {},
+            error: (error) => {
+              this.loading = false;
+
+              this.toastService.showToast({
+                type: 'error',
+                message: error?.message || 'Error al actualizar o recalcular la transacción',
+              });
+
+              this.loadTransaction();
+            },
+            complete: () => {
+              this.loading = false;
+
+              this.toastService.showToast({
+                type: 'success',
+                message: 'Impuestos recalculados correctamente',
+              });
+
+              this.loadTransaction();
+            },
+          });
       },
       () => {}
     );
@@ -754,92 +912,6 @@ export class FormalTransactionViewComponent implements OnInit {
       });
   }
 
-  public get subtotal(): number {
-    return this.linesSubtotal;
-  }
-
-  public get totalTaxesAmount(): number {
-    return this.movementsOfArticles.reduce((total, movement) => {
-      if (movement.taxes && movement.taxes.length > 0) {
-        return total + movement.taxes.reduce((taxTotal, tax) => taxTotal + (tax.taxAmount || 0), 0);
-      }
-      return total;
-    }, 0);
-  }
-
-  public get totalTaxesBase(): number {
-    return this.movementsOfArticles.reduce((total, movement) => {
-      if (movement.taxes && movement.taxes.length > 0) {
-        return total + movement.taxes.reduce((taxTotal, tax) => taxTotal + (tax.taxBase || 0), 0);
-      }
-      return total;
-    }, 0);
-  }
-
-  /** Impuestos / base para el pie: totales de cabecera si vienen en la transacción, si no desde líneas. */
-  public get footerTaxAmount(): number {
-    const taxes = this.transaction?.taxes;
-    if (taxes?.length) {
-      return taxes.reduce((sum, row) => sum + Number(row?.taxAmount ?? 0), 0);
-    }
-    return this.totalTaxesAmount;
-  }
-
-  public get totalQuantity(): number {
-    return this.movementsOfArticles.reduce((total, movement) => total + movement?.amount, 0);
-  }
-
-  public get totalPaid(): number {
-    return this.movementsOfCash.reduce((total, movement) => total + movement?.amountPaid, 0);
-  }
-
-  public get balance(): number {
-    return this.transaction?.totalPrice - this.totalPaid;
-  }
-
-  /**
-   * Monto sugerido al agregar un pago nuevo: saldo pendiente (total − pagos), redondeado como el resto de la vista.
-   * `null` si no hay saldo pendiente (≥ 0,01); el usuario puede editar el valor en el formulario.
-   */
-  public get suggestedNewPaymentAmount(): number | null {
-    if (!this.transaction) {
-      return null;
-    }
-    const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
-    const paid = this.roundNumber.transform(this.totalPaid) as number;
-    const remaining = this.roundNumber.transform(Math.max(0, total - paid)) as number;
-    return remaining >= 0.01 ? remaining : null;
-  }
-
-  /** Transacción abierta y el tipo permite ver / usar el cierre desde la vista formal. */
-  public get canShowFinalizeTransactionButton(): boolean {
-    if (!this.transaction?.type || this.transaction.type.allowTransactionClose === false) {
-      return false;
-    }
-    return this.transaction.state === TransactionState.Open;
-  }
-
-  /** Suma de `movementsOfCash` alcanza el total de la transacción (mismos redondeos que el resto de la vista). */
-  public get paymentsCoverTransactionTotal(): boolean {
-    if (!this.transaction) {
-      return false;
-    }
-    if (!this.requestPaymentMethods) {
-      return true;
-    }
-    const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
-    const paid = this.roundNumber.transform(this.totalPaid) as number;
-    if (total === 0 && this.requestPaymentMethods === true) {
-      return false;
-    }
-    return paid >= total;
-  }
-
-  /** Se puede finalizar: estado/tipo OK y pagos cubren el total. */
-  public get canFinalizeTransaction(): boolean {
-    return this.canShowFinalizeTransactionButton && this.paymentsCoverTransactionTotal;
-  }
-
   /** Pasa de Abierto a Cerrado (o al `finishState` del tipo de comprobante). */
   public finalizeOpenTransaction(): void {
     if (!this.canShowFinalizeTransactionButton) {
@@ -908,19 +980,6 @@ export class FormalTransactionViewComponent implements OnInit {
       default:
         return 'badge-secondary';
     }
-  }
-
-  /** Importe final de línea tras aplicar descuento %. */
-  public get addProductLineSalePrice(): number {
-    if (!this.addProductForm) {
-      return 0;
-    }
-    const quantity = Number(this.addProductForm.get('quantity')?.value) || 0;
-    const unitPrice = Number(this.addProductForm.get('unitPrice')?.value) || 0;
-    const rate = Math.min(100, Math.max(0, Number(this.addProductForm.get('discountRate')?.value) || 0));
-    const gross = this.roundNumber.transform(quantity * unitPrice) as number;
-    const discountAmount = this.roundNumber.transform(gross * (rate / 100)) as number;
-    return this.roundNumber.transform(gross - discountAmount) as number;
   }
 
   public onInvoiceUpload(e: { urls: string[]; invoice: unknown | null }): void {

@@ -886,6 +886,12 @@
                 <span class="text-nowrap">{{ row?.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
               </div>
             </ng-container>
+            <div *ngIf="transaction?.exempt > 0" class="d-flex justify-content-between mb-2">
+              <span>Exento:</span>
+              <span class="font-weight-bold">{{
+                transaction?.exempt | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+              }}</span>
+            </div>
           </ng-container>
 
           <hr class="my-3" />

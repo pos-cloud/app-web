@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Tax, TaxBase, TaxClassification, Taxes, Transaction } from '@types';
 import { TaxService } from 'app/core/services/tax.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { Subject, switchMap, takeUntil } from 'rxjs';
-import { TransactionService } from '../../../../core/services/transaction.service';
+import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-apply-taxes-transactions',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NumericTextDirective],
   templateUrl: './apply-taxes-transactions.components.html',
   providers: [NgbAlertConfig, TranslateMePipe],
 })
@@ -22,36 +22,23 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
   public transactionTaxes: Taxes[] = [];
   public taxes: Tax[] = [];
   public taxesForm: UntypedFormGroup;
-  public alertMessage: string = '';
-  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
+  public editingTaxIndex: number | null = null;
+  private editingTaxSnapshot: Taxes | null = null;
   private destroy$ = new Subject<void>();
 
   @Input() transaction: Transaction;
   @Input() filtersTaxClassification: TaxClassification[];
 
-  public formErrors = {
-    tax: '',
-    percentage: '',
-    taxAmount: '',
-  };
-
-  public validationMessages = {
-    tax: { required: 'Este campo es requerido.' },
-    percentage: {},
-    taxAmount: {},
-  };
-
   constructor(
     public _taxService: TaxService,
-    public _transactionService: TransactionService,
     public _fb: UntypedFormBuilder,
     public activeModal: NgbActiveModal,
     private _toastService: ToastService
   ) {
     this.transactionTax = this.createEmptyTax();
-
     this.taxesForm = this._fb.group({
       tax: [this.transactionTax.tax, [Validators.required]],
       percentage: [this.transactionTax.percentage, []],
@@ -61,18 +48,56 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     if (!this.transactionTaxes?.length && this.transaction?.taxes?.length) {
-      this.transactionTaxes = [...this.transaction.taxes];
+      this.transactionTaxes = this.transaction.taxes.map((tax) => ({ ...tax }));
     }
 
-    await this.getTaxes().then((taxes) => {
-      if (taxes) {
-        this.taxes = taxes;
-      }
-    });
+    combineLatest({
+      taxes: this._taxService.find({ query: { operationType: { $ne: 'D' } } }),
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ taxes }) => {
+          this.taxes = taxes ?? [];
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.syncTaxReferences();
+        },
+      });
+  }
+
+  public compareTax(a: Tax | null, b: Tax | null): boolean {
+    if (a === b) {
+      return true;
+    }
+    if (!a || !b) {
+      return false;
+    }
+    return String(a._id) === String(b._id);
+  }
+
+  private resolveTaxFromCatalog(tax: Tax | null | undefined): Tax | null {
+    if (!tax) {
+      return null;
+    }
+    return this.taxes.find((item) => String(item._id) === String(tax._id)) ?? tax;
+  }
+
+  private syncTaxReferences(): void {
+    this.transactionTaxes = this.transactionTaxes.map((row) => ({
+      ...row,
+      tax: this.resolveTaxFromCatalog(row.tax),
+    }));
   }
 
   ngAfterViewInit(): void {
     this.focusEvent.emit(true);
+  }
+
+  public trackByIndex(index: number): number {
+    return index;
   }
 
   private createEmptyTax(): Taxes {
@@ -91,174 +116,162 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
       percentage: this.transactionTax?.percentage ?? 0,
       taxAmount: this.transactionTax?.taxAmount ?? 0,
     };
-
     this.taxesForm.setValue(values);
   }
 
-  public getTaxes(): Promise<Tax[]> {
-    return new Promise<Tax[]>((resolve) => {
-      this._taxService
-        .getAll({
-          match: {
-            classification: { $in: this.filtersTaxClassification },
-            operationType: { $ne: 'D' },
-          },
-        })
-        .subscribe({
-          next: (result) => {
-            resolve(result.result ?? []);
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-            resolve([]);
-          },
-        });
-    });
+  private getTaxedAmount(): number {
+    if (!this.transaction) {
+      return 0;
+    }
+    return Number(this.roundNumber.transform(this.transaction.basePrice));
   }
 
-  public changeTax(op: string): void {
-    if (this.taxesForm.value.tax) {
-      let taxedAmount = 0;
-      if (this.transaction) {
-        taxedAmount = Number(this.roundNumber.transform(this.transaction.basePrice));
-      }
+  private applyTaxCalculation(target: Taxes, op: string): void {
+    if (!target?.tax) {
+      return;
+    }
 
-      switch (op) {
-        case 'tax':
-          this.transactionTax.tax = this.taxesForm.value.tax;
-          this.transactionTax.percentage = this.transactionTax.tax.percentage;
-          this.transactionTax.taxAmount = this.transactionTax.tax.amount;
-          if (this.transactionTax.percentage && this.transactionTax.percentage !== 0) {
-            if (this.transactionTax.tax.taxBase === TaxBase.Neto) {
-              this.transactionTax.taxBase = this.roundNumber.transform(taxedAmount);
-              this.transactionTax.taxAmount = this.roundNumber.transform(
-                (this.transactionTax.taxBase * this.transactionTax.percentage) / 100
-              );
-            }
-          }
-          break;
-        case 'percentage':
-          this.transactionTax.tax = this.taxesForm.value.tax;
-          this.transactionTax.percentage = this.taxesForm.value.percentage;
-          this.transactionTax.taxAmount = this.transactionTax.tax.amount;
-          if (this.transactionTax.percentage && this.transactionTax.percentage !== 0) {
-            if (this.transactionTax.tax.taxBase === TaxBase.Neto) {
-              this.transactionTax.taxBase = this.roundNumber.transform(taxedAmount);
-              this.transactionTax.taxAmount = this.roundNumber.transform(
-                (this.transactionTax.taxBase * this.transactionTax.percentage) / 100
-              );
-            }
-          }
-          break;
-        case 'taxAmount':
-          this.transactionTax.tax = this.taxesForm.value.tax;
-          this.transactionTax.taxAmount = this.taxesForm.value.taxAmount;
-          if (this.transactionTax.percentage && this.transactionTax.percentage !== 0) {
-            if (this.transactionTax.tax.taxBase === TaxBase.Neto) {
-              this.transactionTax.taxBase = this.roundNumber.transform(taxedAmount);
-              this.taxesForm.value.percentage = this.roundNumber.transform(
-                (this.transactionTax.taxAmount * 100) / this.transactionTax.taxBase
-              );
-              this.transactionTax.percentage = this.taxesForm.value.percentage;
-            }
-          }
-          break;
-        default:
-          break;
+    const taxedAmount = this.getTaxedAmount();
+    switch (op) {
+      case 'tax':
+        target.percentage = target.tax.percentage;
+        target.taxAmount = target.tax.amount;
+        if (target.percentage && target.percentage !== 0 && target.tax.taxBase === TaxBase.Neto) {
+          target.taxBase = this.roundNumber.transform(taxedAmount);
+          target.taxAmount = this.roundNumber.transform((target.taxBase * target.percentage) / 100);
+        }
+        break;
+      case 'percentage':
+        target.taxAmount = target.tax.amount;
+        if (target.percentage && target.percentage !== 0 && target.tax.taxBase === TaxBase.Neto) {
+          target.taxBase = this.roundNumber.transform(taxedAmount);
+          target.taxAmount = this.roundNumber.transform((target.taxBase * target.percentage) / 100);
+        }
+        break;
+      case 'taxAmount':
+        if (target.tax.taxBase === TaxBase.Neto && target.taxBase) {
+          target.percentage = this.roundNumber.transform((target.taxAmount * 100) / target.taxBase);
+        } else if (target.percentage && target.percentage !== 0 && target.tax.taxBase === TaxBase.Neto) {
+          target.taxBase = this.roundNumber.transform(taxedAmount);
+          target.percentage = this.roundNumber.transform((target.taxAmount * 100) / target.taxBase);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  private syncTargetFromForm(target: Taxes, op: string): void {
+    target.tax = this.taxesForm.value.tax;
+
+    if (op === 'percentage') {
+      target.percentage = this.taxesForm.value.percentage;
+    }
+
+    if (op === 'taxAmount') {
+      target.taxAmount = this.taxesForm.value.taxAmount;
+    }
+  }
+
+  public changeTax(op: string, index?: number): void {
+    const isRow = index !== undefined;
+    const target = isRow ? this.transactionTaxes[index] : this.transactionTax;
+
+    if (!isRow) {
+      if (!this.taxesForm.value.tax) {
+        return;
       }
+      this.syncTargetFromForm(target, op);
+    } else if (!target?.tax) {
+      return;
+    }
+    this.applyTaxCalculation(target, op);
+    if (!isRow) {
       this.setValueForm();
     }
   }
 
-  private updateTransaction() {
-    return this._transactionService.update(this.transaction);
+  public onRowPercentageChange(index: number, value: number): void {
+    this.transactionTaxes[index].percentage = Number(value) || 0;
+  }
+
+  public onRowTaxAmountChange(index: number, value: number): void {
+    this.transactionTaxes[index].taxAmount = Number(value) || 0;
   }
 
   public recalculateTaxes(): void {
     if (this.taxExists()) {
       return;
     }
-
-    this.loading = true;
-
     this.transactionTaxes = [...this.transactionTaxes, { ...this.transactionTax }];
+    this.transactionTax = this.createEmptyTax();
 
-    this.transaction.taxes = [...this.transactionTaxes];
+    this.setValueForm();
+  }
 
-    this.updateTransaction()
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap((response) => {
-          if (response.status !== 200) {
-            throw new Error(response.message || 'Error al actualizar la transacción');
-          }
+  public isEditingTax(index: number): boolean {
+    return this.editingTaxIndex === index;
+  }
 
-          return this._transactionService.recalculateTaxes(this.transaction);
-        })
-      )
-      .subscribe({
-        next: () => {},
-        error: (error) => {
-          this.loading = false;
+  public startEditTax(index: number): void {
+    if (this.editingTaxIndex !== null && this.editingTaxIndex !== index) {
+      this.cancelEditTax();
+    }
+    const row = this.transactionTaxes[index];
+    if (row.tax) {
+      row.tax = this.resolveTaxFromCatalog(row.tax);
+    }
 
-          this._toastService.showToast({
-            type: 'error',
-            message: error?.message || 'Error al actualizar o recalcular la transacción',
-          });
-        },
-        complete: () => {
-          this.loading = false;
+    this.editingTaxIndex = index;
+    this.editingTaxSnapshot = this.cloneTaxRow(row);
+  }
 
-          this.transactionTax = this.createEmptyTax();
-          this.setValueForm();
+  public cancelEditTax(): void {
+    if (this.editingTaxIndex !== null && this.editingTaxSnapshot) {
+      this.transactionTaxes[this.editingTaxIndex] = this.cloneTaxRow(this.editingTaxSnapshot);
+      this.transactionTaxes = [...this.transactionTaxes];
+    }
+    this.editingTaxIndex = null;
+    this.editingTaxSnapshot = null;
+  }
 
-          this._toastService.showToast({
-            type: 'success',
-            message: 'Impuestos recalculados correctamente',
-          });
-        },
+  public saveEditTax(index: number): void {
+    if (!this.transactionTaxes[index]?.tax) {
+      this._toastService.showToast({
+        type: 'info',
+        message: 'Seleccioná un impuesto',
       });
+      return;
+    }
+
+    this.changeTax('percentage', index);
+    this.editingTaxIndex = null;
+    this.editingTaxSnapshot = null;
+  }
+
+  private cloneTaxRow(row: Taxes): Taxes {
+    return {
+      ...row,
+      tax: row.tax ? ({ ...row.tax } as Tax) : null,
+    };
   }
 
   public deleteTransactionTax(_transactionTax: Taxes, index: number): void {
-    this.loading = true;
-
+    if (this.editingTaxIndex === index) {
+      this.editingTaxIndex = null;
+      this.editingTaxSnapshot = null;
+    } else if (this.editingTaxIndex !== null && index < this.editingTaxIndex) {
+      this.editingTaxIndex--;
+    }
     this.transactionTaxes.splice(index, 1);
-    this.transaction.taxes = [...this.transactionTaxes];
-
-    this.updateTransaction()
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap((response) => {
-          if (response.status !== 200) {
-            throw new Error(response.message || 'Error al actualizar la transacción');
-          }
-
-          return this._transactionService.recalculateTaxes(this.transaction);
-        })
-      )
-      .subscribe({
-        next: () => {},
-        error: (error) => {
-          this.loading = false;
-
-          this._toastService.showToast({
-            type: 'error',
-            message: error?.message || 'Error al actualizar o recalcular la transacción',
-          });
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    this.transactionTaxes = [...this.transactionTaxes];
   }
 
   public taxExists(): boolean {
     let exists: boolean = false;
-
-    if (this.transactionTaxes && this.transactionTaxes.length > 0) {
-      for (let taxTransactionAux of this.transactionTaxes) {
-        if (taxTransactionAux.tax._id === this.transactionTax.tax._id) {
+    if (this.transactionTaxes && this.transactionTaxes.length > 0 && this.transactionTax?.tax) {
+      for (const taxTransactionAux of this.transactionTaxes) {
+        if (taxTransactionAux.tax?._id === this.transactionTax.tax._id) {
           exists = true;
           this._toastService.showToast({
             type: 'info',
@@ -272,15 +285,6 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
         }
       }
     }
-
     return exists;
-  }
-
-  public accept(): void {
-    this.activeModal.close(this.transactionTaxes);
-  }
-
-  public dismiss(): void {
-    this.activeModal.dismiss();
   }
 }
