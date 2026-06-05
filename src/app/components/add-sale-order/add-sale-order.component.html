@@ -195,7 +195,7 @@
   </div>
   <div class="row container-transaction pos-transaction-body">
     <!-- POS FAST: carrito (app-pos-sale-lines). Comentar este bloque y descomentar LEGACY para volver al inline. -->
-    <app-pos-sale-lines
+    <!-- <app-pos-sale-lines
       class="pos-sale-lines-host"
       [transaction]="transaction"
       [movementsOfArticles]="movementsOfArticles"
@@ -214,9 +214,9 @@
       (applyDiscountClick)="openModal('apply_discount')"
       (cancelClick)="openModal('cancel')"
       (finishClick)="finish()"
-    ></app-pos-sale-lines>
+    ></app-pos-sale-lines> -->
 
-    <!-- LEGACY: carrito inline original (comentado). Descomentar y comentar POS FAST arriba para usarlo.
+    <!-- LEGACY: carrito inline original (comentado). Descomentar y comentar POS FAST arriba para usarlo.  -->
     <div class="col-md-5 table-container">
       <div #containerMovementsOfArticles class="articles-container table-responsive">
         <table class="table table-striped">
@@ -533,7 +533,6 @@
         </div>
       </div>
     </div>
-    -->
 
     <div class="pos-catalog-column" *ngIf="display">
       <app-pos-articles
