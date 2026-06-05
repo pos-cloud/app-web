@@ -42,28 +42,4 @@ export class CategoryService extends ModelService {
         })
       );
   }
-
-  public getSalesByCategory(query: string): Observable<any> {
-    const URL = `${environment.api}/api/sales-by-category`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('query', query);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
 }

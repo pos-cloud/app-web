@@ -201,32 +201,6 @@ export class CompanyService extends ModelService {
       );
   }
 
-  public getQuantityOfCompaniesByType(type: string, startDate: string, endDate: string): Observable<any> {
-    let query = '{"type":"' + type + '","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
-
-    const URL = `${environment.api}/api/quantity-of-companies-by-type`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('query', query);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public getSalesByCompany(query: string): Observable<any> {
     const URL = `${environment.api}/api/sales-by-company`;
 
@@ -253,30 +227,6 @@ export class CompanyService extends ModelService {
 
   public getSummaryOfAccountsByCompanyV1(query: string): Observable<any> {
     const URL = `${environment.api}/api/summary-of-accounts-by-company`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('query', query);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getSummaryOfAccounts(query: string): Observable<any> {
-    const URL = `${environment.api}/api/summary-of-accounts`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

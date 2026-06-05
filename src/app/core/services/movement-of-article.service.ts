@@ -106,27 +106,6 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  getMovementsOfArticlesV3(query): Observable<any> {
-    const URL = `${environment.api}/api/v3/movements-of-articles`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, query, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   saveMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
     const URL = `${environment.api}/api/movement-of-article`;
 
@@ -199,33 +178,6 @@ export class MovementOfArticleService extends ModelService {
 
   updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Observable<any> {
     const URL = `${environment.api}/api/movement-of-article-by-where`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('where', JSON.stringify(where))
-      .set('set', JSON.stringify(set))
-      .set('sort', JSON.stringify(sort));
-
-    return this._http
-      .put(URL, null, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  updateMovementsOfArticlesByWhere(where: {}, set: {}, sort: {}): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-articles-by-where`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

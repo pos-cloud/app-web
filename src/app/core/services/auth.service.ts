@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '@types';
@@ -123,50 +123,6 @@ export class AuthService {
         return: this._router.url,
       },
     });
-  }
-
-  isValidToken(token: string): Observable<any> {
-    const URL = `${environment.api}/api/validate_token`;
-
-    const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
-
-    const params = new HttpParams().set('token', token.replace(/"/gi, ''));
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  checkPermission(employee: string): Observable<any> {
-    const URL = `${environment.api}/api/check_permission`;
-
-    const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
-
-    const params = new HttpParams().set('employee', employee);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
   }
 
   getToken(): string {

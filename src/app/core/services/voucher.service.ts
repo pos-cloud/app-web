@@ -23,30 +23,6 @@ export class VoucherService extends ModelService {
     );
   }
 
-  public getVoucher(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/voucher`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public getVouchers(query?: string): Observable<any> {
     const URL = `${environment.api}/api/vouchers`;
 
@@ -153,53 +129,4 @@ export class VoucherService extends ModelService {
       );
   }
 
-  public generateVoucher(voucher: {}): Observable<any> {
-    const URL = `${environment.api}/api/generate-voucher`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(
-        URL,
-        { voucher: voucher },
-        {
-          headers: headers,
-        }
-      )
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public verifyVoucher(voucher: string): Observable<any> {
-    const URL = `${environment.api}/api/verify-voucher`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(
-        URL,
-        { voucher: voucher },
-        {
-          headers: headers,
-        }
-      )
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
 }

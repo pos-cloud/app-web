@@ -99,27 +99,6 @@ export class ConfigService extends ModelService {
       );
   }
 
-  public generateLicensePayment(): Observable<any> {
-    const URL = `${environment.api}/api/generar-licencia-payment`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public getCountry() {
     return this._http.get(
       'https://restcountries.com/v2/all?fields=name,alpha2Code,alpha3Code,callingCodes,timezones,flag'
@@ -128,27 +107,6 @@ export class ConfigService extends ModelService {
 
   public getTimeZone(country: string) {
     return this._http.get('https://restcountries.com/v3.1/name/' + country);
-  }
-
-  public saveConfig(config: Config): Observable<any> {
-    const URL = `${environment.api}/api/config`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, config, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
   }
 
   public updateConfig(config: Config): Observable<any> {
@@ -175,79 +133,4 @@ export class ConfigService extends ModelService {
       );
   }
 
-  public makeFileRequest(config, files: Array<File>) {
-    let xhr: XMLHttpRequest = new XMLHttpRequest();
-    xhr.open('POST', `${environment.api}/api/upload-image-company/` + config._id, true);
-    xhr.setRequestHeader('Authorization', this._authService.getToken());
-
-    return new Promise((resolve, reject) => {
-      let formData: any = new FormData();
-
-      if (files && files.length > 0) {
-        for (let i: number = 0; i < files.length; i++) {
-          formData.append('image', files[i], files[i].name);
-        }
-      }
-
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4) {
-          if (xhr.status == 200) {
-            resolve(JSON.parse(xhr.response));
-          } else {
-            reject(xhr.response);
-          }
-        }
-      };
-
-      xhr.send(formData);
-    });
-  }
-
-  public deletePicture(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/delete-image-company`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .delete(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getModel(model: string): Observable<any> {
-    const URL = `${environment.api}/api/model`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('model', model);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
 }
