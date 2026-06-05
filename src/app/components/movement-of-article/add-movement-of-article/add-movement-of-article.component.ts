@@ -1271,12 +1271,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
       let movement = this.buildMovementFromArticle(article, amount);
       movement = this.recalculateCostPrice(movement);
-
-      if (!(await this.isValidMovementOfArticle(movement))) {
-        this.loading = false;
-        return;
-      }
-
       movementsToSave.push(movement);
     }
 
