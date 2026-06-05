@@ -91,9 +91,20 @@ export class AuthService {
   }
 
   loginStorage(user: User): void {
+    this.clearDatatableSessionPreferences();
     sessionStorage.setItem('user', JSON.stringify(user));
     sessionStorage.setItem('session_token', user.token);
     this.identity.next(user);
+  }
+
+  private clearDatatableSessionPreferences(): void {
+    const suffixes = ['_itemsPerPage', '_datatableFilters', '_currentPage'];
+
+    Object.keys(localStorage).forEach((key) => {
+      if (suffixes.some((suffix) => key.endsWith(suffix))) {
+        localStorage.removeItem(key);
+      }
+    });
   }
 
   logoutStorage(): void {
