@@ -7,32 +7,8 @@
       </ngb-alert>
     </div>
   </div>
-  <div class="row center-content">
-    <div class="btn-group btn-lg" role="group" aria-label="Basic example">
-      <button
-        type="button"
-        [ngClass]="{
-          'btn btn-primary': roomSelected._id === room._id,
-          'btn btn-light': roomSelected._id !== room._id,
-        }"
-        *ngFor="let room of rooms"
-        (click)="changeRoom(room)"
-        title="Cambiar de Salón"
-        style="padding: 5px"
-      >
-        {{ room.description }}
-      </button>
-    </div>
-  </div>
   <div class="row tables-container table-responsive">
-    <div *ngIf="roomSelected">
-      <app-list-tables
-        (eventBackToRoom)="changeRoom($room)"
-        (eventTableSelected)="selectTable($event)"
-        [filterRoom]="roomSelected.description"
-        [loading]="loading"
-      ></app-list-tables>
-    </div>
+    <app-resto-tables (eventTableSelected)="selectTable($event)" [loading]="loading"></app-resto-tables>
   </div>
   <div class="row header-bottom">
     <div class="quick-btn" (click)="initTransactionByType('defectOrders', true)">

@@ -1,0 +1,24 @@
+.close-table-modal {
+  &__icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    color: #f59e0b;
+    font-size: 2rem;
+  }
+
+  &__message {
+    margin: 0 0 0.35rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  &__hint {
+    margin: 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+}

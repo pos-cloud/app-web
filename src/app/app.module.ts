@@ -71,7 +71,7 @@ import { ReportSalesByMakeComponent } from './components/report-sales-by-make/re
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 
-import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
+import { RestoTablesComponent } from './modules/pos/resto/resto-tables/resto-tables.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
@@ -102,7 +102,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     HomeComponent,
     HeaderComponent,
     FooterComponent,
-    ListTablesComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
     PointOfSaleComponent,
@@ -181,6 +180,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ExportExcelModule,
     NgMultiSelectDropDownModule.forRoot(),
     AddressModule,
+    RestoTablesComponent,
     FocusDirective,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: true,

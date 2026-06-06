@@ -14,7 +14,7 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Branch, Currency, Deposit, Printer, PrinterPrintIn, Room } from '@types';
+import { Branch, Currency, Deposit, Printer, PrinterPrintIn } from '@types';
 import {
   CurrentAccount,
   StockMovement,
@@ -24,7 +24,6 @@ import {
 import { Transaction, TransactionState } from '../transaction/transaction';
 
 import { PrinterService } from '../../core/services/printer.service';
-import { RoomService } from '../../core/services/room.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { TransactionService } from '../../core/services/transaction.service';
 
@@ -81,8 +80,6 @@ import { Origin } from './../../components/origin/origin';
   encapsulation: ViewEncapsulation.None,
 })
 export class PointOfSaleComponent implements OnInit {
-  public rooms: Room[] = new Array();
-  public roomSelected: Room;
   public transactions: Transaction[] = new Array();
   public transactionStates: string[];
   public validTransactionStates: string[] = [
@@ -129,7 +126,6 @@ export class PointOfSaleComponent implements OnInit {
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    private _roomService: RoomService,
     private _transactionService: TransactionService,
     private _transactionTypeService: TransactionTypeService,
     private _printerService: PrinterService,
@@ -506,39 +502,6 @@ export class PointOfSaleComponent implements OnInit {
     });
   }
 
-  public getRooms(): void {
-    this.loading = true;
-
-    this.subscription.add(
-      this._roomService.getRooms().subscribe(
-        (result) => {
-          if (!result.rooms) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            this.loading = false;
-          } else {
-            this.hideMessage();
-            this.loading = false;
-            this.rooms = result.rooms;
-
-            if (this.roomSelected?._id === undefined) {
-              this.roomSelected = this.rooms[0];
-            } else {
-              for (let room of this.rooms) {
-                if (this.roomSelected._id === room._id) {
-                  this.roomSelected = room;
-                }
-              }
-            }
-          }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
-      )
-    );
-  }
-
   async refresh() {
     let pathLocation: string[] = this._router.url.split('/');
 
@@ -575,10 +538,7 @@ export class PointOfSaleComponent implements OnInit {
         }
       });
     } else {
-      if (this.posType === 'resto') {
-        if (pathLocation?.[4] && this.roomSelected) this.roomSelected._id = pathLocation[4];
-        this.getRooms();
-      } else if (this.posType === 'delivery') {
+      if (this.posType === 'delivery') {
         let match = {
           $or: [{ cashOpening: true }, { cashClosing: true }],
         };
@@ -2194,10 +2154,6 @@ export class PointOfSaleComponent implements OnInit {
         });
       }
     }
-  }
-
-  public changeRoom(room: Room): void {
-    this.roomSelected = room;
   }
 
   public orderBy(term: string, property?: string): void {

@@ -1,0 +1,66 @@
+<section class="resto-tables">
+  <div class="resto-tables__alert" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
+      {{ alertMessage }}
+    </ngb-alert>
+  </div>
+
+  <div class="resto-tables__header" *ngIf="rooms.length > 0">
+    <div class="resto-tables__rooms" role="tablist" aria-label="Seleccionar salón">
+      <button
+        type="button"
+        class="resto-tables__room"
+        role="tab"
+        *ngFor="let room of rooms"
+        [class.resto-tables__room--active]="isRoomSelected(room)"
+        [attr.aria-selected]="isRoomSelected(room)"
+        (click)="changeRoom(room)"
+      >
+        {{ room.description }}
+      </button>
+    </div>
+    <p class="resto-tables__diners-summary" *ngIf="roomSelected">
+      Comensales: <strong>{{ amountOfDinersNow }}/{{ amountOfDiners }}</strong>
+    </p>
+  </div>
+
+  <div class="resto-tables__empty" *ngIf="!roomSelected && !loading">
+    <i class="fa fa-building-o" aria-hidden="true"></i>
+    <p>No hay salones configurados.</p>
+  </div>
+
+  <div class="resto-tables__grid" *ngIf="roomSelected" [class.resto-tables__grid--loading]="loading">
+    <button
+      type="button"
+      class="resto-tables__card"
+      *ngFor="let table of filteredTables"
+      [ngClass]="'resto-tables__card--' + getVisualState(table)"
+      [disabled]="loading"
+      (click)="selectTable(table)"
+    >
+      <div class="resto-tables__card-top">
+        <span class="resto-tables__diners" *ngIf="showDiners(table)">
+          <i class="fa fa-user" aria-hidden="true"></i>
+          {{ table.diners }}
+        </span>
+      </div>
+
+      <div class="resto-tables__number">{{ table.description }}</div>
+
+      <div class="resto-tables__meta">
+        <span class="resto-tables__employee" *ngIf="showEmployee(table)">{{ table.employee.name }}</span>
+        <span class="resto-tables__employee" *ngIf="table.state === 'Reservada'">Reservada</span>
+        <span class="resto-tables__employee" *ngIf="table.state === 'No Habilitada'">No habilitada</span>
+        <span class="resto-tables__time" *ngIf="showElapsedTime(table)">
+          <i class="fa fa-clock-o" aria-hidden="true"></i>
+          {{ getElapsedTime(table.lastTransaction.startDate) }}
+        </span>
+      </div>
+    </button>
+  </div>
+
+  <div class="resto-tables__empty" *ngIf="roomSelected && areTablesEmpty && !loading">
+    <i class="fa fa-cutlery" aria-hidden="true"></i>
+    <p>No hay mesas configuradas para este salón.</p>
+  </div>
+</section>

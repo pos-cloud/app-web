@@ -1,0 +1,21 @@
+<div class="close-table-modal">
+  <div class="modal-header">
+    <h4 class="modal-title">Mesa {{ table?.description }}</h4>
+    <button type="button" class="close" aria-label="Cerrar" (click)="cancel()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="close-table-modal__icon">
+      <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+    </div>
+    <p class="close-table-modal__message">¿Está seguro que quiere cerrar la mesa?</p>
+    <p class="close-table-modal__hint">La mesa quedará disponible y se liberará la transacción asociada.</p>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="cancel()">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="confirm()">Cerrar mesa</button>
+  </div>
+</div>
