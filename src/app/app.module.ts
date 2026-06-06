@@ -77,8 +77,6 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
 
 import { ListTablesComponent } from './components/table/list-tables/list-tables.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
-import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
-import { TaxComponent } from './components/tax/tax/tax.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { AddVariantComponent } from './components/variant/add-variant/add-variant.component';
@@ -125,8 +123,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     DeleteVariantComponent,
     ListVariantsComponent,
     AddMovementOfArticleComponent,
-    TaxComponent,
-    ListTaxesComponent,
     ApplyDiscountComponent,
     PaymentMethodComponent,
     ListPaymentMethodsComponent,

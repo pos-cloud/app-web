@@ -27,7 +27,6 @@ import { ReportSalesByMakeComponent } from './components/report-sales-by-make/re
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
-import { ListTaxesComponent } from './components/tax/list-taxes/list-taxes.component';
 
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { AuthGuard } from './core/guards/auth.guard';
@@ -200,11 +199,6 @@ export const _routes: Routes = [
   {
     path: 'admin/export-iva',
     component: ExportIvaComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/impuestos',
-    component: ListTaxesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
