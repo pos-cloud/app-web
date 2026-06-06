@@ -18,7 +18,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Subscription } from 'rxjs';
-import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 
 @Component({
   selector: 'app-datatable',

@@ -8,8 +8,8 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { IAttribute } from '@types';
 import { Config } from 'app/app.config';
-import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
-import { ExportersModule } from 'app/components/export/exporters.module';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
+import { ExportExcelModule } from 'app/shared/components/export-excel/export-excel.module';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { ColumnsConfigComponent } from 'app/shared/components/columns-config/columns-config.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
@@ -29,7 +29,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
     NgbModule,
     ProgressbarModule,
     TranslateModule,
-    ExportersModule,
+    ExportExcelModule,
     DateTimePickerComponent,
     ColumnsConfigComponent,
   ],

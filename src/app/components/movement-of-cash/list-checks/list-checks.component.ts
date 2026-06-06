@@ -13,7 +13,7 @@ import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
 import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';
-import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { EditCheckComponent } from '../edit-check/edit-check.component';
 import { MovementOfCash } from '../movement-of-cash';
 

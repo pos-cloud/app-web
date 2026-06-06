@@ -4,7 +4,7 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account } from '@types';
 import { Config } from 'app/app.config';
-import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';

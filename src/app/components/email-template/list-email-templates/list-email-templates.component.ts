@@ -13,7 +13,7 @@ import { EmailTemplateService } from 'app/core/services/email-template.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
-import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { EmailTemplate, attributes } from '../email-template';
 import { EmailTemplateComponent } from '../email-template/email-template.component';
 

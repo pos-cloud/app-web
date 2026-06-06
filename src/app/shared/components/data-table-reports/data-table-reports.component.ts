@@ -3,8 +3,8 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsul
 import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { IButton } from '@types';
-import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
-import { ExportersModule } from 'app/components/export/exporters.module';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
+import { ExportExcelModule } from 'app/shared/components/export-excel/export-excel.module';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { ProgressbarModule } from '../progressbar/progressbar.module';
 
@@ -14,7 +14,7 @@ import { ProgressbarModule } from '../progressbar/progressbar.module';
   styleUrls: ['./data-table-reports.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, ExportersModule, TranslateModule, PipesModule, ProgressbarModule],
+  imports: [CommonModule, ExportExcelModule, TranslateModule, PipesModule, ProgressbarModule],
 })
 export class DataTableReportsComponent implements OnInit {
   @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;

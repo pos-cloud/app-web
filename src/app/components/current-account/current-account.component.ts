@@ -37,7 +37,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';
 import { ViewTransactionComponent } from '../../modules/transaction/components/view-transaction/view-transaction.component';
 import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
-import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 
 @Component({

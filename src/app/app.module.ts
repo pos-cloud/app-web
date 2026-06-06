@@ -42,6 +42,7 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportersModule } from './components/export/exporters.module';
+import { ExportExcelModule } from './shared/components/export-excel/export-excel.module';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
@@ -193,6 +194,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     PipesModule,
     ComponentsModule,
     ExportersModule,
+    ExportExcelModule,
     NgMultiSelectDropDownModule.forRoot(),
     AddressModule,
     FocusDirective,

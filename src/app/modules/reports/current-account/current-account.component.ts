@@ -12,7 +12,6 @@ import { PrintService } from '@core/services/print.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { ApiResponse, Company, PrintType } from '@types';
-import { ExportersModule } from 'app/components/export/exporters.module';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
@@ -31,7 +30,7 @@ import { ViewTransactionComponent } from '../../transaction/components/view-tran
   templateUrl: './current-account.component.html',
   styleUrls: ['./current-account.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ProgressbarModule, TranslateModule, PipesModule, NgbModule, ExportersModule],
+  imports: [CommonModule, FormsModule, ProgressbarModule, TranslateModule, PipesModule, NgbModule],
 })
 export class CurrentAccountComponent implements OnInit, OnDestroy {
   public companySelected: Company;

@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { IAttribute } from '@types';
-import { ExportExcelComponent } from 'app/components/export/export-excel/export-excel.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { Subscription } from 'rxjs';
 import { ArticleService } from '../../../../core/services/article.service';
 import { RoundNumberPipe } from '../../../../shared/pipes/round-number.pipe';

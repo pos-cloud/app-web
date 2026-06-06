@@ -21,7 +21,7 @@ import { ArticleService } from '../../core/services/article.service';
 import { CategoryService } from '../../core/services/category.service';
 import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
-import { ExportExcelComponent } from '../export/export-excel/export-excel.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 
 @Component({
   selector: 'app-report-best-selling-article',

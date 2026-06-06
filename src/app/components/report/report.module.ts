@@ -12,7 +12,7 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 import { ReportService } from '../../core/services/report.service';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { ExportersModule } from '../export/exporters.module';
+import { ExportExcelModule } from 'app/shared/components/export-excel/export-excel.module';
 import { ReportComponent } from './crud/report.component';
 import { ListReportsComponent } from './list-reports/list-reports.component';
 import { ParamsReportComponent } from './params-report/params-report.component';
@@ -66,7 +66,7 @@ const routes: Routes = [
     NgbDropdownModule,
     NgbModule,
     DatatableModule,
-    ExportersModule,
+    ExportExcelModule,
   ],
   declarations: [
     ListReportsComponent,

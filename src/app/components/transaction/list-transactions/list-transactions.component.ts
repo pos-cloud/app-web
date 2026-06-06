@@ -27,7 +27,7 @@ import { Config } from '../../../app.config';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
-import { ExportExcelComponent } from '../../export/export-excel/export-excel.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
 import { TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';

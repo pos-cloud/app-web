@@ -6,8 +6,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { ColumnsConfigComponent } from '../../shared/components/columns-config/columns-config.component';
+import { ExportExcelModule } from '../../shared/components/export-excel/export-excel.module';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
-import { ExportersModule } from '../export/exporters.module';
 import { DatatableComponent } from './datatable.component';
 
 @NgModule({
@@ -15,7 +15,7 @@ import { DatatableComponent } from './datatable.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ExportersModule,
+    ExportExcelModule,
     DragDropModule,
     TranslateModule,
     ProgressbarModule,
