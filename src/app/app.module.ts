@@ -57,8 +57,6 @@ import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/
 import { ListOriginsComponent } from './components/origin/list-origins/list-origins.component';
 import { OriginComponent } from './components/origin/origin/origin.component';
 import { SelectOriginComponent } from './components/origin/select-origin/select-origin.component';
-import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
-import { PaymentMethodComponent } from './components/payment-method/payment-method/payment-method.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
@@ -122,8 +120,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListVariantsComponent,
     AddMovementOfArticleComponent,
     ApplyDiscountComponent,
-    PaymentMethodComponent,
-    ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
     StatisticsComponent,
     ReportBestSellingArticleComponent,
