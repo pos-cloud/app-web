@@ -249,8 +249,8 @@ export class HeaderComponent implements OnInit {
             { label: 'Feriados', link: 'entities/holidays' },
             { label: 'Condiciones de IVA', link: 'entities/vat-condition' },
             { label: 'Reports', link: 'reports' },
-            { label: 'Sistema', link: 'admin/configuraciones' },
             { label: 'Historial', link: 'histories' },
+            { label: 'Sistema', link: 'admin/configuraciones' },
           ],
         },
         {
@@ -745,7 +745,6 @@ export class HeaderComponent implements OnInit {
             {
               label: 'General',
               children: [
-                { label: 'Mi empresa', link: 'admin/configuraciones' },
                 { label: 'Aplicaciones', link: 'entities/applications' },
                 { label: 'Tipos de Transacciones', link: 'transaction-types' },
                 { label: 'Tipos de Cancelaciones', link: 'entities/cancellation-types' },
@@ -758,6 +757,7 @@ export class HeaderComponent implements OnInit {
                 { label: 'Lista de Precios', link: 'entities/price-list' },
                 { label: 'Reports', link: 'reports' },
                 { label: 'Historial', link: 'histories' },
+                { label: 'Sistema', link: 'admin/configuraciones' },
               ],
             },
             {
