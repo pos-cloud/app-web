@@ -14,7 +14,6 @@ import { KardexCheckComponent } from './components/kardex-check/kardex-check.com
 import { MenuComponent } from './components/menu/menu.component';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
-import { ListMovementOfCashesComponent } from './components/movement-of-cash/list-movements-of-cashes/list-movements-of-cashes.component';
 import { ListOriginsComponent } from './components/origin/list-origins/list-origins.component';
 import { ListPaymentMethodsComponent } from './components/payment-method/list-payment-methods/list-payment-methods.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
@@ -221,21 +220,6 @@ export const _routes: Routes = [
   {
     path: 'report/cartera-de-cheques',
     component: ListChecksComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/venta/movimientos-de-medios',
-    component: ListMovementOfCashesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/compra/movimientos-de-medios',
-    component: ListMovementOfCashesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/fondos/movimientos-de-medios',
-    component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

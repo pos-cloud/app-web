@@ -46,14 +46,12 @@ import { ExportExcelModule } from './shared/components/export-excel/export-excel
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
-import { ListMovementsOfArticlesComponent } from './components/movement-of-article/list-movements-of-articles/list-movements-of-articles.component';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { MovementOfCancellationComponent } from './components/movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from './components/movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { DeleteMovementOfCashComponent } from './components/movement-of-cash/delete-movement-of-cash/delete-movement-of-cash.component';
 import { EditCheckComponent } from './components/movement-of-cash/edit-check/edit-check.component';
 import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
-import { ListMovementOfCashesComponent } from './components/movement-of-cash/list-movements-of-cashes/list-movements-of-cashes.component';
 import { SelectChecksComponent } from './components/movement-of-cash/select-checks/select-checks.component';
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
 import { ListOriginsComponent } from './components/origin/list-origins/list-origins.component';
@@ -139,7 +137,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
     CashBoxComponent,
-    ListMovementOfCashesComponent,
     PushNotificationComponent,
     CancellationTypeComponent,
     ListCancellationTypeComponent,
@@ -155,7 +152,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintVatBookComponent,
     PrintTransactionTypeComponent,
     CancellationTypeAutomaticComponent,
-    ListMovementsOfArticlesComponent,
     VoucherReaderComponent,
     PosKitchenComponent,
     PosClientViewComponent,
