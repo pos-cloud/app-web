@@ -25,7 +25,6 @@ import { ReportBestSellingArticleComponent } from './components/report-best-sell
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
-import { ListStatesComponent } from './components/state/list-states/list-states.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
@@ -159,11 +158,6 @@ export const _routes: Routes = [
   {
     path: 'admin/variantes/:id',
     component: ListArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/states',
-    component: ListStatesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
