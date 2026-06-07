@@ -319,6 +319,11 @@ export const _routes: Routes = [
     loadChildren: () => import('./modules/transaction/transaction.routes').then((m) => m.TRANSACTION_ROUTES),
   },
   {
+    path: 'notifications',
+    canActivate: [AuthGuard, LicenseGuard],
+    loadChildren: () => import('./modules/notifications/notifications.routes').then((m) => m.NOTIFICATIONS_ROUTES),
+  },
+  {
     path: 'license',
     canActivate: [AuthGuard],
     loadComponent: () => import('./layout/license/license.component').then((m) => m.LicenseComponent),

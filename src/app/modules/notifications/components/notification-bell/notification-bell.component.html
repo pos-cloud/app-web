@@ -1,0 +1,47 @@
+<li
+  class="nav-item notification-bell"
+  ngbDropdown
+  (openChange)="onDropdownOpen($event)"
+  display="dynamic"
+  placement="bottom-right"
+>
+  <button type="button" class="nav-link btn notification-bell__trigger" ngbDropdownToggle aria-label="Notificaciones">
+    <i class="fa fa-bell"></i>
+    <span class="notification-bell__badge" *ngIf="unreadCount > 0">
+      {{ unreadCount > 99 ? '99+' : unreadCount }}
+    </span>
+  </button>
+
+  <div class="dropdown-menu dropdown-menu-right notification-bell__menu" ngbDropdownMenu>
+    <div class="notification-bell__header">
+      <strong>Notificaciones</strong>
+      <button type="button" class="btn btn-link btn-sm p-0 notification-bell__mark-all" *ngIf="unreadCount > 0" (click)="markAllAsRead()">
+        Marcar leídas
+      </button>
+    </div>
+
+    <div class="notification-bell__loading" *ngIf="loading">
+      <i class="fa fa-spinner fa-spin"></i>
+    </div>
+
+    <div class="notification-bell__empty" *ngIf="!loading && notifications.length === 0">No hay notificaciones</div>
+
+    <button
+      type="button"
+      class="dropdown-item notification-bell__item"
+      *ngFor="let notification of notifications; trackBy: trackById"
+      [class.notification-bell__item--unread]="isUnread(notification)"
+      (click)="markAsRead(notification, $event)"
+    >
+      <span class="notification-bell__title">{{ notification.title }}</span>
+      <span class="notification-bell__message">{{ notification.message }}</span>
+      <span class="notification-bell__date" *ngIf="notification.creationDate">
+        {{ notification.creationDate | date: 'dd/MM/yyyy HH:mm' }}
+      </span>
+    </button>
+
+    <div class="notification-bell__footer">
+      <a routerLink="/notifications" class="notification-bell__view-all">Ver todas</a>
+    </div>
+  </div>
+</li>

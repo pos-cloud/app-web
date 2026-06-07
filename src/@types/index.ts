@@ -40,6 +40,7 @@ export { Location } from './entities/location.interface';
 export { Make } from './entities/make.interface';
 export { MovementOfArticle, MovementOfArticleStatus } from './entities/movement-of-article.interface';
 export { MovementOfCash, StatusCheck } from './entities/movement-of-cash.interface';
+export { Notification, NotificationType } from './entities/notification.interface';
 export { Origin } from './entities/origin.interface';
 export { PaymentMethod } from './entities/payment-method.interface';
 export { Permission } from './entities/permission.interface';
