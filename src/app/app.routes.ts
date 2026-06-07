@@ -14,7 +14,6 @@ import { KardexCheckComponent } from './components/kardex-check/kardex-check.com
 import { MenuComponent } from './components/menu/menu.component';
 import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
-import { ListOriginsComponent } from './components/origin/list-origins/list-origins.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
@@ -187,11 +186,6 @@ export const _routes: Routes = [
   {
     path: 'admin/export-iva',
     component: ExportIvaComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/puntos-de-venta',
-    component: ListOriginsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
