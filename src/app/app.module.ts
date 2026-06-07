@@ -54,7 +54,6 @@ import { EditCheckComponent } from './components/movement-of-cash/edit-check/edi
 import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
 import { SelectChecksComponent } from './components/movement-of-cash/select-checks/select-checks.component';
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
-import { SelectOriginComponent } from './components/origin/select-origin/select-origin.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
@@ -128,7 +127,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     CancellationTypeComponent,
     ListCancellationTypeComponent,
     MovementOfCancellationComponent,
-    SelectOriginComponent,
     CurrentAccountDetailsComponent,
     ListArticlesPosComponent,
     EditCheckComponent,

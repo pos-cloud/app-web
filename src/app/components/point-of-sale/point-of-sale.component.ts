@@ -66,7 +66,7 @@ import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
-import { SelectOriginComponent } from '../origin/select-origin/select-origin.component';
+import { SelectOriginComponent } from '../../modules/transaction/components/select-origin/select-origin.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { Config } from './../../app.config';
 import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
