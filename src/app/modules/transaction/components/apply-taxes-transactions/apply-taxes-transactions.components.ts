@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Tax, TaxBase, TaxClassification, Taxes, Transaction } from '@types';
+import { Tax, TaxBase, TaxClassification, Taxes, TaxSource, Transaction } from '@types';
 import { TaxService } from 'app/core/services/tax.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -43,6 +43,7 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
       tax: [this.transactionTax.tax, [Validators.required]],
       percentage: [this.transactionTax.percentage, []],
       taxAmount: [this.transactionTax.taxAmount, []],
+      source: [this.transactionTax.source, []],
     });
   }
 
@@ -107,6 +108,7 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
       percentage: 0,
       taxBase: 0,
       taxAmount: 0,
+      source: TaxSource.Manual,
     };
   }
 
@@ -115,6 +117,7 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
       tax: this.transactionTax?.tax ?? null,
       percentage: this.transactionTax?.percentage ?? 0,
       taxAmount: this.transactionTax?.taxAmount ?? 0,
+      source: this.transactionTax?.source ?? TaxSource.Manual,
     };
     this.taxesForm.setValue(values);
   }

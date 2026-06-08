@@ -53,7 +53,7 @@ export { ShipmentMethod } from './entities/shipment-method.interface';
 export { State } from './entities/state.interface';
 export { Structure, Utilization } from './entities/structure.interface';
 export { Table, TableState } from './entities/table.interface';
-export { Tax, TaxBase, TaxClassification, Taxes, TaxType } from './entities/tax.interface';
+export { Tax, TaxBase, TaxClassification, Taxes, TaxSource, TaxType } from './entities/tax.interface';
 export {
   CurrentAccount,
   DescriptionType,

@@ -21,6 +21,12 @@ export interface Taxes {
   percentage: number;
   taxBase: number;
   taxAmount: number;
+  source?: TaxSource;
+}
+
+export enum TaxSource {
+  Article = 'article',
+  Manual = 'manual',
 }
 
 export enum TaxBase {
