@@ -98,12 +98,12 @@
           <div class="col-md-1">
             <small class="text-muted d-block mb-1">Letra</small>
             <div class="d-flex align-items-center justify-content-between">
-              <ng-container *ngIf="!isEditingLetter; else letterEditTpl">
+              <ng-container *ngIf="editingField !== 'letter'; else letterEditTpl">
                 <strong class="font-weight-bold text-uppercase">{{ transaction?.letter || '—' }}</strong>
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-secondary ml-2"
-                  (click)="startEditLetter()"
+                  (click)="startEdit('letter')"
                   [ngbTooltip]="'Letras: ' + letterOptions.join(', ')"
                 >
                   <i class="fa fa-pencil"></i>
@@ -118,10 +118,10 @@
                     maxlength="1"
                     placeholder="—"
                   />
-                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveLetter()">
+                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveEdit('letter')">
                     <i class="fa fa-save"></i>
                   </button>
-                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEditLetter()">
+                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEdit()">
                     <i class="fa fa-times"></i>
                   </button>
                 </div>
@@ -132,14 +132,14 @@
           <div class="col-md-2">
             <small class="text-muted d-block mb-1">Punto de venta</small>
             <div class="d-flex align-items-center justify-content-between">
-              <ng-container *ngIf="!isEditingOrigin; else originEditTpl">
+              <ng-container *ngIf="editingField !== 'origin'; else originEditTpl">
                 <strong class="font-weight-bold" style="font-family: monospace">{{
                   (transaction?.origin ?? 0).toString().padStart(4, '0')
                 }}</strong>
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-secondary ml-2"
-                  (click)="startEditOrigin()"
+                  (click)="startEdit('origin')"
                   ngbTooltip="Editar punto de venta"
                 >
                   <i class="fa fa-pencil"></i>
@@ -156,10 +156,10 @@
                     numericText="integer"
                     [(ngModel)]="originDraft"
                   />
-                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveOrigin()">
+                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveEdit('origin')">
                     <i class="fa fa-save"></i>
                   </button>
-                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEditOrigin()">
+                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEdit()">
                     <i class="fa fa-times"></i>
                   </button>
                 </div>
@@ -169,14 +169,14 @@
           <div class="col-md-2">
             <small class="text-muted d-block mb-1">Número de factura</small>
             <div class="d-flex align-items-center justify-content-between">
-              <ng-container *ngIf="!isEditingInvoiceNumber; else invoiceNumberEditTpl">
+              <ng-container *ngIf="editingField !== 'number'; else invoiceNumberEditTpl">
                 <strong class="font-weight-bold" style="font-family: monospace">{{
                   (transaction?.number ?? 1).toString().padStart(8, '0')
                 }}</strong>
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-secondary ml-2"
-                  (click)="startEditInvoiceNumber()"
+                  (click)="startEdit('number')"
                   ngbTooltip="Editar número de factura"
                 >
                   <i class="fa fa-pencil"></i>
@@ -193,10 +193,10 @@
                     numericText="integer"
                     [(ngModel)]="numberDraft"
                   />
-                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveInvoiceNumber()">
+                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveEdit('number')">
                     <i class="fa fa-save"></i>
                   </button>
-                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEditInvoiceNumber()">
+                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEdit()">
                     <i class="fa fa-times"></i>
                   </button>
                 </div>
@@ -251,10 +251,10 @@
                           <th style="width: 120px">Código</th>
                           <th style="width: 120px">Cantidad</th>
                           <th>Descripción</th>
-                          <th style="width: 130px" class="text-right">Precio Unitario</th>
+                          <th style="width: 130px" class="text-right">Precio Base</th>
                           <th style="width: 140px; min-width: 8rem" class="text-right">Desc. %</th>
                           <th *ngIf="requestTaxes" style="width: 160px" class="text-right">Impuestos</th>
-                          <th style="width: 130px" class="text-right">Subtotal</th>
+                          <th style="width: 130px" class="text-right">Total</th>
                           <th style="width: 80px" class="text-center">Acciones</th>
                         </tr>
                       </thead>
@@ -307,12 +307,12 @@
                                 inputmode="decimal"
                                 autocomplete="off"
                                 numericText="decimal"
-                                formControlName="unitPrice"
+                                formControlName="basePrice"
                               />
                             </ng-container>
                             <ng-template #priceViewTpl>
                               <span class="price">{{
-                                movement.unitPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                                movement.basePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                               }}</span>
                             </ng-template>
                           </td>
@@ -339,14 +339,31 @@
                             </ng-template>
                           </td>
                           <td *ngIf="requestTaxes" class="text-right small text-nowrap">
-                            <ng-container *ngIf="movement.taxes?.length; else noTaxesCell">
-                              <div *ngFor="let t of movement.taxes" class="mb-1">
-                                <span>{{ formatMovementTaxLabel(t) }}</span>
-                                <span *ngIf="t.taxAmount != null" class="text-muted d-block">
-                                  {{ t.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                            <ng-container *ngIf="editingProductId === movement._id && requestArticles; else viewTaxes">
+                              <div *ngFor="let tax of selectedArticle?.taxes" class="mb-1">
+                                <span>Impuesto {{ tax.percentage }}%</span>
+                                <span class="text-muted d-block">
+                                  {{
+                                    (addProductForm.get('basePrice')?.value || 0) *
+                                      (1 - (addProductForm.get('discountRate')?.value || 0) / 100) *
+                                      (addProductForm.get('quantity')?.value || 0) *
+                                      (tax.percentage / 100) | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                                  }}
                                 </span>
                               </div>
                             </ng-container>
+
+                            <ng-template #viewTaxes>
+                              <ng-container *ngIf="movement.taxes?.length; else noTaxesCell">
+                                <div *ngFor="let t of movement.taxes" class="mb-1">
+                                  <span>{{ formatMovementTaxLabel(t) }}</span>
+                                  <span *ngIf="t.taxAmount != null" class="text-muted d-block">
+                                    {{ t.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                                  </span>
+                                </div>
+                              </ng-container>
+                            </ng-template>
+
                             <ng-template #noTaxesCell>
                               <span class="text-muted">—</span>
                             </ng-template>
@@ -817,7 +834,7 @@
                     class="form-control form-control-sm text-right"
                     name="discountPercentDraft"
                     [ngModel]="discountPercentDraft"
-                    (ngModelChange)="onDiscountPercentDraftChange($event)"
+                    (ngModelChange)="onDiscountDraftChange('percent', $event)"
                     inputmode="decimal"
                     autocomplete="off"
                     numericText="decimal"
@@ -833,7 +850,7 @@
                     class="form-control form-control-sm text-right"
                     name="discountAmountDraft"
                     [ngModel]="discountAmountDraft"
-                    (ngModelChange)="onDiscountAmountDraftChange($event)"
+                    (ngModelChange)="onDiscountDraftChange('amount', $event)"
                     inputmode="decimal"
                     autocomplete="off"
                     numericText="decimal"
@@ -855,13 +872,6 @@
           </div>
 
           <ng-container *ngIf="requestTaxes">
-            <div class="d-flex justify-content-between mb-2">
-              <span>Neto gravado:</span>
-              <span class="font-weight-bold">{{
-                transaction?.basePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-              }}</span>
-            </div>
-
             <div
               class="d-flex justify-content-between align-items-center mb-2 formal-taxes-row"
               role="button"
@@ -870,7 +880,7 @@
             >
               <span>Impuestos:</span>
               <span class="font-weight-bold d-flex align-items-center">
-                {{ footerTaxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ taxesAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                 <i class="fa fa-pencil ml-2 text-muted small"></i>
               </span>
             </div>

@@ -90,17 +90,13 @@ export class FormalTransactionViewComponent implements OnInit {
   public letterOptions: string[] = ['A', 'B', 'C', 'M', 'R', 'E', 'X', 'Z', 'T', 'D'];
   public transactionEndDateDraft: string = new Date().toISOString();
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
+  public editingField: string | null = null;
 
   private destroy$ = new Subject<void>();
 
   /** Tipo de transacción configurado para llevar impuestos por línea (maestro tipo comprobante). */
   public get requestTaxes(): boolean {
     return !!this.transaction?.type?.requestTaxes;
-  }
-
-  /** Si el comprobante es electrónico. */
-  public get isElectronicTransaction(): boolean {
-    return !!this.transaction?.type?.electronics;
   }
 
   /** El tipo de comprobante exige líneas de artículos (`requestArticles`). */
@@ -113,22 +109,6 @@ export class FormalTransactionViewComponent implements OnInit {
     return this.transaction?.type?.requestPaymentMethods !== false;
   }
 
-  /** Base sobre la que aplica el descuento de cabecera (= subtotal antes del descuento). */
-  public get discountBaseBeforeHeader(): number {
-    return this.linesSubtotal;
-  }
-
-  /** Subtotal real de líneas (sin descuento de cabecera). */
-  private get linesSubtotal(): number {
-    return (
-      ((this.roundNumber.transform(
-        this.movementsOfArticles.reduce((sum, movement) => sum + Number(movement.salePrice || 0), 0)
-      ) as number) ||
-        this.transaction?.subTotal) ??
-      0
-    );
-  }
-
   public get paymentRequiresCheck(): boolean {
     return this.selectedPaymentMethod?.checkDetail === true;
   }
@@ -136,37 +116,6 @@ export class FormalTransactionViewComponent implements OnInit {
   /** Si el método de pago exige banco (configuración `allowBank`). */
   public get paymentRequiresBank(): boolean {
     return this.selectedPaymentMethod?.allowBank === true;
-  }
-
-  public get subtotal(): number {
-    return this.linesSubtotal;
-  }
-
-  public get totalTaxesAmount(): number {
-    return this.movementsOfArticles.reduce((total, movement) => {
-      if (movement.taxes && movement.taxes.length > 0) {
-        return total + movement.taxes.reduce((taxTotal, tax) => taxTotal + (tax.taxAmount || 0), 0);
-      }
-      return total;
-    }, 0);
-  }
-
-  public get totalTaxesBase(): number {
-    return this.movementsOfArticles.reduce((total, movement) => {
-      if (movement.taxes && movement.taxes.length > 0) {
-        return total + movement.taxes.reduce((taxTotal, tax) => taxTotal + (tax.taxBase || 0), 0);
-      }
-      return total;
-    }, 0);
-  }
-
-  /** Impuestos / base para el pie: totales de cabecera si vienen en la transacción, si no desde líneas. */
-  public get footerTaxAmount(): number {
-    const taxes = this.transaction?.taxes;
-    if (taxes?.length) {
-      return taxes.reduce((sum, row) => sum + Number(row?.taxAmount ?? 0), 0);
-    }
-    return this.totalTaxesAmount;
   }
 
   public get totalQuantity(): number {
@@ -177,10 +126,6 @@ export class FormalTransactionViewComponent implements OnInit {
     return this.movementsOfCash.reduce((total, movement) => total + movement?.amountPaid, 0);
   }
 
-  public get balance(): number {
-    return this.transaction?.totalPrice - this.totalPaid;
-  }
-
   /**
    * Monto sugerido al agregar un pago nuevo: saldo pendiente (total − pagos), redondeado como el resto de la vista.
    * `null` si no hay saldo pendiente (≥ 0,01); el usuario puede editar el valor en el formulario.
@@ -189,9 +134,9 @@ export class FormalTransactionViewComponent implements OnInit {
     if (!this.transaction) {
       return null;
     }
-    const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
+    const due = this.roundNumber.transform(this.transaction.totalPrice) as number;
     const paid = this.roundNumber.transform(this.totalPaid) as number;
-    const remaining = this.roundNumber.transform(Math.max(0, total - paid)) as number;
+    const remaining = this.roundNumber.transform(Math.max(0, due - paid)) as number;
     return remaining >= 0.01 ? remaining : null;
   }
 
@@ -211,30 +156,49 @@ export class FormalTransactionViewComponent implements OnInit {
     if (!this.requestPaymentMethods) {
       return true;
     }
-    const total = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
+    const due = this.roundNumber.transform(this.transaction.totalPrice) as number;
     const paid = this.roundNumber.transform(this.totalPaid) as number;
-    if (total === 0 && this.requestPaymentMethods === true) {
+    if (due === 0 && this.requestPaymentMethods === true) {
       return false;
     }
-    return paid >= total;
+    return paid >= due;
   }
 
-  /** Se puede finalizar: estado/tipo OK y pagos cubren el total. */
-  public get canFinalizeTransaction(): boolean {
-    return this.canShowFinalizeTransactionButton && this.paymentsCoverTransactionTotal;
-  }
-
-  /** Importe final de línea tras aplicar descuento %. */
   public get addProductLineSalePrice(): number {
     if (!this.addProductForm) {
       return 0;
     }
     const quantity = Number(this.addProductForm.get('quantity')?.value) || 0;
-    const unitPrice = Number(this.addProductForm.get('unitPrice')?.value) || 0;
+    const basePrice = Number(this.addProductForm.get('basePrice')?.value) || 0;
+
     const rate = Math.min(100, Math.max(0, Number(this.addProductForm.get('discountRate')?.value) || 0));
-    const gross = this.roundNumber.transform(quantity * unitPrice) as number;
+    const gross = this.roundNumber.transform(quantity * basePrice) as number;
     const discountAmount = this.roundNumber.transform(gross * (rate / 100)) as number;
-    return this.roundNumber.transform(gross - discountAmount) as number;
+
+    return this.roundNumber.transform(gross + this.addProductLineTaxesTotal - discountAmount) as number;
+  }
+
+  public get addProductLineTaxesTotal(): number {
+    const quantity = Number(this.addProductForm.get('quantity')?.value) || 0;
+    const basePrice = Number(this.addProductForm.get('basePrice')?.value) || 0;
+    const discountRate = Number(this.addProductForm.get('discountRate')?.value) || 0;
+
+    const taxes = this.selectedArticle?.taxes || [];
+
+    const gross = basePrice * quantity;
+    const net = gross - (gross * discountRate) / 100;
+
+    return taxes.reduce((total, tax) => {
+      return total + ((this.roundNumber.transform(net * (tax.percentage / 100)) as number) || 0);
+    }, 0);
+  }
+
+  public get taxesAmount(): number {
+    const taxes = this.transaction?.taxes;
+    if (taxes?.length) {
+      return taxes.reduce((sum, row) => sum + Number(row?.taxAmount ?? 0), 0);
+    }
+    return 0;
   }
 
   constructor(
@@ -285,6 +249,7 @@ export class FormalTransactionViewComponent implements OnInit {
       article: [null, [Validators.required]],
       quantity: [1, [Validators.required, Validators.min(0.01)]],
       unitPrice: [null, [Validators.required, Validators.min(0)]],
+      basePrice: [null, [Validators.required, Validators.min(0)]],
       discountRate: [null, [Validators.min(0), Validators.max(100)]],
     });
 
@@ -296,11 +261,10 @@ export class FormalTransactionViewComponent implements OnInit {
           this.articles.find((article) => article._id.toString() === articleValue?._id?.toString()) || null;
 
         if (this.selectedArticle) {
-          let basePrice: number;
-
           this.addProductForm.patchValue(
             {
               article: this.selectedArticle,
+              basePrice: this.selectedArticle.basePrice,
               unitPrice: this.transaction.type.requestTaxes
                 ? this.selectedArticle.costPrice
                 : this.selectedArticle.basePrice,
@@ -465,10 +429,6 @@ export class FormalTransactionViewComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this.movementsOfArticles = result?.result || [];
-          // const totalsChanged = this.applyTransactionTotalsFromLines();
-          // if (totalsChanged) {
-          //   this.syncTransactionTotalsSilently();
-          // }
         },
         error: () => {
           this.loading = false;
@@ -481,32 +441,6 @@ export class FormalTransactionViewComponent implements OnInit {
           this.loading = false;
         },
       });
-  }
-
-  /**
-   * Comprobantes sin artículos: si el total es 0, subtotal y total pasan a la suma de los pagos cargados.
-   */
-  private syncTotalsFromPaymentsIfNeeded(): boolean {
-    if (!this.transaction || this.requestArticles || !this.requestPaymentMethods) {
-      return false;
-    }
-
-    const currentTotal = this.roundNumber.transform(Number(this.transaction.totalPrice ?? 0)) as number;
-
-    const paidSum = this.roundNumber.transform(this.totalPaid) as number;
-    if (paidSum <= 0) {
-      return false;
-    }
-
-    const currentSubTotal = this.roundNumber.transform(Number(this.transaction.subTotal ?? 0)) as number;
-    if (currentSubTotal === paidSum && currentTotal === paidSum) {
-      return false;
-    }
-
-    this.transaction.subTotal = paidSum;
-    this.transaction.totalPrice = paidSum;
-    if (this.requestTaxes) this.transaction.basePrice = paidSum;
-    return true;
   }
 
   private getMovementsOfCashesByTransaction(): void {
@@ -587,6 +521,33 @@ export class FormalTransactionViewComponent implements OnInit {
     this.updateTransaction();
   }
 
+  public startEdit(field: string): void {
+    this.editingField = field;
+  }
+
+  public cancelEdit(): void {
+    this.editingField = null;
+    this.isEditingDiscount = false;
+    this.isEditingTotal = false;
+    this.isEditingObservation = false;
+  }
+
+  public saveEdit(field: string): void {
+    switch (field) {
+      case 'letter':
+        this.onLetterBlur();
+        break;
+      case 'origin':
+        this.onOriginBlur();
+        break;
+      case 'number':
+        this.onInvoiceNumberBlur();
+        break;
+    }
+
+    this.editingField = null;
+  }
+
   public onLetterBlur(): void {
     const normalized = (this.letterDraft || '').trim().toUpperCase();
     const current = (this.transaction?.letter || '').trim().toUpperCase();
@@ -610,39 +571,9 @@ export class FormalTransactionViewComponent implements OnInit {
     this.updateTransaction();
   }
 
-  public startEditLetter(): void {
-    this.isEditingLetter = true;
-    this.letterDraft = (this.transaction?.letter || '').trim().toUpperCase();
-  }
-
-  public cancelEditLetter(): void {
-    this.isEditingLetter = false;
-    this.letterDraft = (this.transaction?.letter || '').trim().toUpperCase();
-  }
-
-  public saveLetter(): void {
-    this.onLetterBlur();
-    this.isEditingLetter = false;
-  }
-
   public onOriginBlur(): void {
     this.transaction.origin = Math.max(0, Math.floor(Number(this.originDraft)));
     this.updateTransaction();
-  }
-
-  public startEditOrigin(): void {
-    this.isEditingOrigin = true;
-    this.originDraft = this.transaction?.origin ?? 0;
-  }
-
-  public cancelEditOrigin(): void {
-    this.isEditingOrigin = false;
-    this.originDraft = this.transaction?.origin ?? 0;
-  }
-
-  public saveOrigin(): void {
-    this.onOriginBlur();
-    this.isEditingOrigin = false;
   }
 
   public onInvoiceNumberBlur(): void {
@@ -657,21 +588,6 @@ export class FormalTransactionViewComponent implements OnInit {
     }
     this.transaction.number = n;
     this.updateTransaction();
-  }
-
-  public startEditInvoiceNumber(): void {
-    this.isEditingInvoiceNumber = true;
-    this.numberDraft = this.transaction?.number ?? 1;
-  }
-
-  public cancelEditInvoiceNumber(): void {
-    this.isEditingInvoiceNumber = false;
-    this.numberDraft = this.transaction?.number ?? 1;
-  }
-
-  public saveInvoiceNumber(): void {
-    this.onInvoiceNumberBlur();
-    this.isEditingInvoiceNumber = false;
   }
 
   public changeCompany(): void {
@@ -726,18 +642,6 @@ export class FormalTransactionViewComponent implements OnInit {
     this.isEditingObservation = true;
   }
 
-  public cancelEdit(): void {
-    this.isEditingObservation = false;
-    this.observationDraft = '';
-
-    this.isEditingTotal = false;
-    this.totalDraft = 0;
-
-    this.isEditingDiscount = false;
-    this.discountPercentDraft = 0;
-    this.discountAmountDraft = 0;
-  }
-
   public saveObservation(): void {
     this.transaction.observation = (this.observationDraft || '').trim();
     this.updateTransaction();
@@ -751,23 +655,19 @@ export class FormalTransactionViewComponent implements OnInit {
     this.isEditingDiscount = true;
   }
 
-  /** Al cambiar el %, calcula el monto sobre el subtotal. */
-  public onDiscountPercentDraftChange(value: number | string | null): void {
-    const base = this.discountBaseBeforeHeader;
-    const pct = Math.min(100, Math.max(0, Number(value) || 0));
-    this.discountPercentDraft = this.roundNumber.transform(pct) as number;
-    this.discountAmountDraft = base > 0 ? (this.roundNumber.transform((base * pct) / 100) as number) : 0;
-  }
-
-  /** Al cambiar el monto, calcula el % sobre el subtotal. */
-  public onDiscountAmountDraftChange(value: number | string | null): void {
-    const base = this.discountBaseBeforeHeader;
-    let amt = Math.max(0, Number(value) || 0);
-    if (base > 0 && amt > base) {
-      amt = base;
+  public onDiscountDraftChange(type: 'percent' | 'amount', value: number | string | null): void {
+    let percent = 0;
+    let amount = 0;
+    if (type === 'percent') {
+      percent = Number(value) || 0;
+      amount = this.transaction.subTotal * (percent / 100);
+    } else {
+      amount = Number(value) || 0;
+      percent = (amount / this.transaction.subTotal) * 100;
     }
-    this.discountAmountDraft = this.roundNumber.transform(amt) as number;
-    this.discountPercentDraft = base > 0 ? (this.roundNumber.transform((amt / base) * 100) as number) : 0;
+
+    this.discountPercentDraft = percent;
+    this.discountAmountDraft = amount;
   }
 
   public openTaxesModal(): void {
@@ -824,43 +724,34 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public saveDiscount(): void {
-    const base = this.discountBaseBeforeHeader;
-    const pctDraft = Number(this.discountPercentDraft);
-    const amtDraft = Number(this.discountAmountDraft);
-    const amt = this.roundNumber.transform(Math.min(base, Math.max(0, amtDraft || 0))) as number;
-    const pct = base > 0 ? (this.roundNumber.transform((amt / base) * 100) as number) || 0 : 0;
-    if (isNaN(pctDraft) || pctDraft < 0 || pctDraft > 100) {
-      this.toastService.showToast({
+    const discountPercent = Number(this.discountPercentDraft);
+    const discountAmount = Number(this.discountAmountDraft);
+
+    if (discountPercent < 0 || discountPercent > 100 || isNaN(discountPercent)) {
+      return this.toastService.showToast({
         message: 'Ingresá un porcentaje entre 0 y 100',
         type: 'info',
       });
-      return;
     }
-    if (isNaN(amtDraft) || amtDraft < 0) {
-      this.toastService.showToast({
+
+    if (discountAmount < 0 || isNaN(discountAmount)) {
+      return this.toastService.showToast({
         message: 'Ingresá un monto de descuento válido',
         type: 'info',
       });
-      return;
     }
+    Object.assign(this.transaction, {
+      discountPercent,
+      discountAmount,
+      totalPrice: this.transaction.subTotal + this.taxesAmount - discountAmount,
+    });
 
-    this.transaction.discountPercent = pct;
-    this.transaction.discountAmount = amt;
-    /** Total neto coherente con el subtotal: base (líneas + desc. cabecera anterior) − nuevo descuento. */
-    this.transaction.totalPrice = this.roundNumber.transform(Math.max(0, base - amt));
     this.updateTransaction();
     this.isEditingDiscount = false;
   }
 
-  public startEditTotal(): void {
-    this.isEditingDiscount = false;
-    this.totalDraft = Number(this.transaction?.totalPrice || 0);
-    this.isEditingTotal = true;
-  }
-
   public saveTotal(): void {
     const total = Number(this.totalDraft);
-    const base = this.linesSubtotal;
     if (isNaN(total) || total < 0) {
       this.toastService.showToast({
         message: 'Ingresá un total válido',
@@ -868,14 +759,16 @@ export class FormalTransactionViewComponent implements OnInit {
       });
       return;
     }
+    this.transaction.totalPrice = total;
 
-    const discountAmount = this.roundNumber.transform(Math.max(0, base - total)) as number;
-    const discountPercent = base > 0 ? (this.roundNumber.transform((discountAmount / base) * 100) as number) || 0 : 0;
-    this.transaction.discountAmount = discountAmount;
-    this.transaction.discountPercent = discountPercent;
-    this.transaction.totalPrice = this.roundNumber.transform(total) as number;
     this.updateTransaction();
     this.isEditingTotal = false;
+  }
+
+  public startEditTotal(): void {
+    this.isEditingDiscount = false;
+    this.totalDraft = this.transaction.totalPrice;
+    this.isEditingTotal = true;
   }
 
   private async updateTransaction(): Promise<void> {
@@ -1060,6 +953,7 @@ export class FormalTransactionViewComponent implements OnInit {
     this.addProductForm.patchValue({
       quantity: 1,
       unitPrice: null,
+      basePrice: null,
       discountRate: null,
     });
   }
@@ -1226,6 +1120,7 @@ export class FormalTransactionViewComponent implements OnInit {
 
     if (this.addProductForm.valid && this.selectedArticle) {
       let unitPrice = Number(this.addProductForm.get('unitPrice')?.value);
+      let basePrice = Number(this.addProductForm.get('basePrice')?.value);
       let quantity = Number(this.addProductForm.get('quantity')?.value);
       let discountRate = Number(this.addProductForm.get('discountRate')?.value);
 
@@ -1244,7 +1139,7 @@ export class FormalTransactionViewComponent implements OnInit {
           transactionId: this.transaction._id,
           articleId: this.selectedArticle._id,
           quantity: quantity ?? movementToUpdate.amount,
-          unitPrice: unitPrice ?? movementToUpdate.unitPrice,
+          basePrice: basePrice ?? movementToUpdate.basePrice,
           discountRate: discountRate ?? movementToUpdate.discountRate,
         };
 
@@ -1323,11 +1218,6 @@ export class FormalTransactionViewComponent implements OnInit {
     this.syncPaymentCheckValidators();
   }
 
-  public cancelTransaction(): void {
-    // TODO: Implementar cancelación de transacción
-    this.toastService.showToast('Función de cancelar transacción en desarrollo');
-  }
-
   public editProduct(movement: MovementOfArticle): void {
     if (!this.requestArticles) {
       return;
@@ -1343,6 +1233,7 @@ export class FormalTransactionViewComponent implements OnInit {
       article: this.selectedArticle || movement.article || null,
       quantity: movement.amount || 1,
       unitPrice: this.roundNumber.transform(movement.unitPrice) as number,
+      basePrice: this.roundNumber.transform(movement.basePrice) as number,
       discountRate: movement.discountRate ?? 0,
     });
   }
@@ -1472,7 +1363,7 @@ export class FormalTransactionViewComponent implements OnInit {
   public formatMovementTaxLabel(t: Taxes): string {
     const name = t?.tax?.name || t?.tax?.code || 'Impuesto';
     if (t?.percentage) {
-      return `${name} ${t.percentage}%`;
+      return `Impuesto ${t.percentage}%`;
     }
     return name;
   }
