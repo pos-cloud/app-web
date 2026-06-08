@@ -38,16 +38,15 @@ import { PriceListService } from '@core/services/price-list.service';
 import { UnitOfMeasurementService } from '@core/services/unit-of-measurement.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { UploadFileComponent } from '@shared/components/upload-file/upload-file.component';
+import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
+import { EditorModule } from '@tinymce/tinymce-angular';
 import { ArticlePrintIn } from 'app/components/article/article';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { EditorModule } from '@tinymce/tinymce-angular';
-import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest, forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
 
 import { AccountService } from '@core/services/account.service';
 import { ClassificationService } from '@core/services/classification.service';
@@ -235,6 +234,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       visibleTN: [true, []],
       brandTN: ['', []],
       promotionalPriceTN: [0, []],
+      descriptionTN: ['', []],
     });
 
     this.taxForm = this._fb.group({
@@ -475,6 +475,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       purchaseAccount: purchaseAccounts ?? null,
       brandTN: this.article?.brandTN ?? '',
       promotionalPriceTN: this.article?.promotionalPriceTN ?? 0,
+      descriptionTN: this.article?.descriptionTN ?? '',
     };
 
     this.articleForm.patchValue(values);

@@ -584,38 +584,38 @@
         <div class="row">
           <div class="col-md-12">
             <div class="row">
-                <div class="form-group col-md-5">
-                  <label class="control-label">{{ 'type.variants' | translate | capitalize }}:</label>
-                  <app-typeahead-dropdown
-                    [control]="variantTypeControl"
-                    [data]="variantTypes"
-                    [displayField]="'name'"
-                    [placeholder]="'Seleccionar tipo...'"
-                    [readonly]="readonly"
-                  ></app-typeahead-dropdown>
-                </div>
-                <div class="form-group col-md-5">
-                  <label class="control-label">{{ 'value' | translate | capitalize }}:</label>
-                  <app-typeahead-dropdown
-                    [control]="variantValueControl"
-                    [data]="variantValues"
-                    [displayField]="'description'"
-                    [placeholder]="'Seleccionar valor...'"
-                    [readonly]="readonly || !variantTypeControl.value?._id"
-                  ></app-typeahead-dropdown>
-                </div>
-                <div class="form-group col-md-2">
-                  <div>{{ 'action' | translate | capitalize }}:</div>
-                  <button
-                    type="button"
-                    class="btn btn-success"
-                    (click)="addVariant()"
-                    [disabled]="!variantTypeControl.value?._id || !variantValueControl.value?._id || loading || readonly"
-                  >
-                    {{ 'add' | translate | capitalize }}
-                  </button>
-                </div>
+              <div class="form-group col-md-5">
+                <label class="control-label">{{ 'type.variants' | translate | capitalize }}:</label>
+                <app-typeahead-dropdown
+                  [control]="variantTypeControl"
+                  [data]="variantTypes"
+                  [displayField]="'name'"
+                  [placeholder]="'Seleccionar tipo...'"
+                  [readonly]="readonly"
+                ></app-typeahead-dropdown>
               </div>
+              <div class="form-group col-md-5">
+                <label class="control-label">{{ 'value' | translate | capitalize }}:</label>
+                <app-typeahead-dropdown
+                  [control]="variantValueControl"
+                  [data]="variantValues"
+                  [displayField]="'description'"
+                  [placeholder]="'Seleccionar valor...'"
+                  [readonly]="readonly || !variantTypeControl.value?._id"
+                ></app-typeahead-dropdown>
+              </div>
+              <div class="form-group col-md-2">
+                <div>{{ 'action' | translate | capitalize }}:</div>
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  (click)="addVariant()"
+                  [disabled]="!variantTypeControl.value?._id || !variantValueControl.value?._id || loading || readonly"
+                >
+                  {{ 'add' | translate | capitalize }}
+                </button>
+              </div>
+            </div>
             <!-- Diseño simple sin cards para variantes -->
             <div class="row" *ngIf="variantsByTypes && variantsByTypes.length > 0">
               <div class="col-12">
@@ -746,8 +746,19 @@
                 [readonly]="operation === 'view'"
               />
             </div>
-
             <div class="form-group col-md-3">
+              <label for="descriptionTN" class="control-label">{{ 'descriptionTN' | translate | capitalize }}:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="descriptionTN"
+                name="descriptionTN"
+                id="descriptionTN"
+                [readonly]="operation === 'view'"
+              />
+            </div>
+
+            <div class="form-group col-md-2">
               <label for="seoTitleTN" class="control-label">{{ 'seoTitle' | translate | capitalize }}:</label>
               <input
                 type="text"
@@ -773,7 +784,7 @@
               />
             </div>
 
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
               <label for="videoUrlTN" class="control-label">{{ 'video_url' | translate | capitalize }}:</label>
               <input
                 type="text"
@@ -784,7 +795,7 @@
                 [readonly]="operation === 'view'"
               />
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
               <label for="visibleTN" class="control-label">Visible en la tienda online</label>
               <select class="form-control" formControlName="visibleTN">
                 <option [ngValue]="true" [disabled]="readonly">

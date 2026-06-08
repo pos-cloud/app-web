@@ -202,6 +202,16 @@ export class ListArticlesComponent implements OnInit {
       required: false,
     },
     {
+      name: 'descriptionTN',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'brandTN',
       visible: false,
       disabled: false,

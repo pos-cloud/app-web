@@ -112,6 +112,7 @@ export interface Article extends Activity {
   visibleTN: boolean;
   brandTN: string;
   promotionalPriceTN: number;
+  descriptionTN: string;
 }
 
 export enum Type {
