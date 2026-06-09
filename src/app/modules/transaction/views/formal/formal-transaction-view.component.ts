@@ -28,7 +28,7 @@ import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/d
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
-import { combineLatest, finalize, Subject, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, finalize, Subject, takeUntil } from 'rxjs';
 import { ApplyTaxesTransactionsComponent } from '../../components/apply-taxes-transactions/apply-taxes-transactions.components';
 import { ProcessInvoiceUploadComponent } from './component/process-invoice-upload/process-invoice-upload.component';
 
@@ -683,44 +683,31 @@ export class FormalTransactionViewComponent implements OnInit {
         this.transaction.taxes = taxes || [];
         this.loading = true;
 
-        this.transactionService
-          .update(this.transaction)
-          .pipe(
-            takeUntil(this.destroy$),
-            switchMap((response) => {
-              if (response.status !== 200) {
-                throw new Error(response.message || 'Error al actualizar la transacción');
-              }
-
-              return this.transactionService.recalculateTaxes(this.transaction);
-            })
-          )
-          .subscribe({
-            next: () => {},
-            error: (error) => {
-              this.loading = false;
-
-              this.toastService.showToast({
-                type: 'error',
-                message: error?.message || 'Error al actualizar o recalcular la transacción',
-              });
-
-              this.loadTransaction();
-            },
-            complete: () => {
-              this.loading = false;
-
-              this.toastService.showToast({
-                type: 'success',
-                message: 'Impuestos recalculados correctamente',
-              });
-
-              this.loadTransaction();
-            },
-          });
+        this.updateTransaction();
       },
       () => {}
     );
+  }
+
+  public recalculateTaxes(): void {
+    this.transaction.taxes = [...(this.transaction?.taxes || [])];
+    this.transactionService.recalculateTaxes(this.transaction).subscribe({
+      next: (response) => {
+        this.toastService.showToast({
+          message: response.message || 'Impuestos recalculados correctamente',
+          type: 'success',
+        });
+      },
+      error: (error) => {
+        this.toastService.showToast({
+          message: error?.message || 'Error al recalcular los impuestos',
+          type: 'error',
+        });
+      },
+      complete: () => {
+        this.loadTransaction();
+      },
+    });
   }
 
   public saveDiscount(): void {
@@ -779,6 +766,9 @@ export class FormalTransactionViewComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.status === 200) {
+            if (this.transaction.type.requestTaxes && this.transaction.taxes && this.transaction.taxes.length > 0) {
+              this.recalculateTaxes();
+            }
             this.toastService.showToast({
               message: response.message || 'Transacción actualizada correctamente',
               type: 'success',
