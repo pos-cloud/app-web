@@ -216,11 +216,19 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
     return this.editingTaxIndex === index;
   }
 
+  public isArticleSourceTax(transactionTax: Taxes): boolean {
+    return transactionTax?.source === TaxSource.Article;
+  }
+
   public startEditTax(index: number): void {
+    const row = this.transactionTaxes[index];
+    if (this.isArticleSourceTax(row)) {
+      return;
+    }
+
     if (this.editingTaxIndex !== null && this.editingTaxIndex !== index) {
       this.cancelEditTax();
     }
-    const row = this.transactionTaxes[index];
     if (row.tax) {
       row.tax = this.resolveTaxFromCatalog(row.tax);
     }

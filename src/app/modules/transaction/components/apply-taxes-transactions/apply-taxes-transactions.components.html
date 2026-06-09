@@ -106,6 +106,7 @@
                   </ng-container>
                   <ng-template #taxRowActionsView>
                     <button
+                      *ngIf="!isArticleSourceTax(transactionTaxAux)"
                       type="button"
                       class="btn btn-sm btn-outline-secondary"
                       title="Editar"
@@ -114,6 +115,7 @@
                       <i class="fa fa-pencil"></i>
                     </button>
                     <button
+                      *ngIf="!isArticleSourceTax(transactionTaxAux)"
                       type="button"
                       class="btn btn-sm btn-outline-danger"
                       title="Eliminar"
