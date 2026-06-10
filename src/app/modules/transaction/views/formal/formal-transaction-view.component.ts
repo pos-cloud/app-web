@@ -737,7 +737,7 @@ export class FormalTransactionViewComponent implements OnInit {
     this.isEditingDiscount = false;
   }
 
-  public saveTotal(): void {
+  public async saveTotal(): Promise<void> {
     const total = Number(this.totalDraft);
     if (isNaN(total) || total < 0) {
       this.toastService.showToast({
@@ -747,8 +747,7 @@ export class FormalTransactionViewComponent implements OnInit {
       return;
     }
     this.transaction.totalPrice = total;
-
-    this.updateTransaction();
+    await this.updateTransaction();
     this.isEditingTotal = false;
   }
 
@@ -760,13 +759,19 @@ export class FormalTransactionViewComponent implements OnInit {
 
   private async updateTransaction(): Promise<void> {
     this.loading = true;
+    let isEditingTotal = this.isEditingTotal;
     this.transactionService
       .update(this.transaction)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response.status === 200) {
-            if (this.transaction.type.requestTaxes && this.transaction.taxes && this.transaction.taxes.length > 0) {
+            if (
+              this.transaction.type.requestTaxes &&
+              this.transaction.taxes &&
+              this.transaction.taxes.length > 0 &&
+              !isEditingTotal
+            ) {
               this.recalculateTaxes();
             }
             this.toastService.showToast({
@@ -829,8 +834,7 @@ export class FormalTransactionViewComponent implements OnInit {
         this.transaction.state = nextState;
         this.transaction.endDate = new Date().toISOString();
 
-        await this.updateTransaction();
-
+        this.updateTransaction();
         this.goBack();
       } catch (error) {
       } finally {

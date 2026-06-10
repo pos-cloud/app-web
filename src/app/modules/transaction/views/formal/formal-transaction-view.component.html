@@ -907,23 +907,19 @@
           <hr class="my-3" />
 
           <div class="mb-3">
-            <div class="d-flex justify-content-between align-items-center">
+            <div *ngIf="!isEditingTotal" class="d-flex justify-content-between align-items-center">
               <span class="h5 text-primary mb-0">TOTAL:</span>
-            </div>
-
-            <div
-              *ngIf="!isEditingTotal"
-              class="h5 text-primary font-weight-bold text-right d-flex justify-content-end align-items-center"
-            >
-              <span>{{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
-              <button
-                type="button"
-                class="btn btn-link text-primary p-0 ml-2"
-                (click)="startEditTotal()"
-                ngbTooltip="Editar total"
-              >
-                <i class="fa fa-pencil"></i>
-              </button>
+              <span class="h5 text-primary font-weight-bold d-flex align-items-center">
+                {{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                <button
+                  type="button"
+                  class="btn btn-link text-primary p-0 ml-2"
+                  (click)="startEditTotal()"
+                  ngbTooltip="Editar total"
+                >
+                  <i class="fa fa-pencil"></i>
+                </button>
+              </span>
             </div>
 
             <div *ngIf="isEditingTotal" class="mt-2">
