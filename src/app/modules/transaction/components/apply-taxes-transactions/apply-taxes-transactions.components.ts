@@ -152,11 +152,13 @@ export class ApplyTaxesTransactionsComponent implements OnInit {
         }
         break;
       case 'taxAmount':
-        if (target.tax.taxBase === TaxBase.Neto && target.taxBase) {
-          target.percentage = this.roundNumber.transform((target.taxAmount * 100) / target.taxBase);
-        } else if (target.percentage && target.percentage !== 0 && target.tax.taxBase === TaxBase.Neto) {
-          target.taxBase = this.roundNumber.transform(taxedAmount);
-          target.percentage = this.roundNumber.transform((target.taxAmount * 100) / target.taxBase);
+        if (target.tax.taxBase === TaxBase.Neto) {
+          if (!target.taxBase) {
+            target.taxBase = this.roundNumber.transform(taxedAmount);
+          }
+          if (target.taxBase) {
+            target.percentage = this.roundNumber.transform((target.taxAmount * 100) / target.taxBase);
+          }
         }
         break;
       default:
