@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { NotificationGuard } from '@core/guards/notification.guard';
 import { LoginComponent } from './auth/login/login.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
-import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
 import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
@@ -123,11 +122,7 @@ export const _routes: Routes = [
     component: ReportSalesByClientComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  {
-    path: 'admin/variantes',
-    component: ListArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
+
   {
     path: 'admin/ventas',
     component: ListTransactionsComponent,
@@ -153,11 +148,7 @@ export const _routes: Routes = [
     component: ListTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  {
-    path: 'admin/variantes/:id',
-    component: ListArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
+
   {
     path: 'admin/configuraciones',
     component: ConfigComponent,

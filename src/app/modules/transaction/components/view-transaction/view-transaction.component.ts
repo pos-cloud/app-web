@@ -15,12 +15,12 @@ import { SelectPrinterComponent } from '@shared/components/select-printer/select
 import { FocusDirective } from '@shared/directives/focus.directive';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
-import { ArticleComponent } from 'app/components/article/crud/article.component';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { CompanyComponent } from 'app/modules/entities/company/crud/company.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import * as printJS from 'print-js';
 import { takeUntil } from 'rxjs/operators';
+import { ArticleComponent } from '../../../entities/article/crud/article.component';
 
 @Component({
   selector: 'app-view-transaction',

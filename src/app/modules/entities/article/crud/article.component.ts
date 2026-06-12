@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Optional, ViewChild } from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -8,7 +8,8 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import {
   Account,
@@ -84,7 +85,8 @@ import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
 })
 export class ArticleComponent implements OnInit, OnDestroy {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
-
+  @Input() property?: { articleId: string | null; operation: string };
+  public articleId: string;
   public operation: string;
   public readonly: boolean;
   public article: Article;
@@ -111,6 +113,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   public allVariantValues: VariantValue[];
   public code: string;
   public accounts: Account[];
+  public articleType: string;
 
   public categories: Category[] = [];
   public categoriesTN: Category[] = [];
@@ -151,6 +154,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private _configService: ConfigService,
     private _taxesService: TaxService,
     private _router: Router,
+    private _route: ActivatedRoute,
     private _fb: UntypedFormBuilder,
     private _toastService: ToastService,
     public _fileService: FileService,
@@ -158,7 +162,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private _companyService: CompanyService,
     private _variantTypeService: VariantTypeService,
     private _variantValueService: VariantValueService, //  private roundNumber: DecimalPipe
-    private _accountService: AccountService
+    private _accountService: AccountService,
+    @Optional() private activeModal?: NgbActiveModal
   ) {
     this.articleForm = this._fb.group({
       _id: ['', []],
@@ -245,11 +250,28 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const pathUrl = this._router.url.split('/');
-    const articleId = pathUrl[4];
-    this.operation = pathUrl[3];
+    const URL = this._router.url.split('/');
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.articleForm.disable();
+    if (this.property) {
+      this.operation = this.property.operation;
+      this.articleId = this.property.articleId;
+    } else {
+      this.operation = URL[3]?.split('?')[0];
+      this.articleId = URL[4];
+    }
+
+    if (URL[2] === 'articles') {
+      this.articleType = 'Producto';
+      this.readonly = false;
+      if (this.operation === 'view' || this.operation === 'delete') this.readonly = true;
+    } else if (URL[2] === 'variants') {
+      this.readonly = true;
+      this.articleType = 'Variante';
+    }
+
+    if (this.operation === 'view' || this.operation === 'delete') {
+      this.articleForm.disable();
+    }
 
     this.variantTypeControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((type: VariantType) => {
       this.variantValueControl.setValue(null, { emitEvent: false });
@@ -308,9 +330,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
           this.code = code.code;
           this.accounts = accounts;
 
-          if (articleId) {
-            this.getArticle(articleId);
+          if (this.articleId) {
+            this.getArticle(this.articleId);
           } else {
+            this.article = this.article ?? ({} as Article);
             this.setValueForm();
             this.setValueFormTax();
           }
@@ -640,8 +663,20 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.setVariantByType(variantsArray.value);
   }
 
-  returnTo() {
-    return this._router.navigate(['/entities/articles']);
+  returnTo(): void {
+    const returnUrl = this._route.snapshot.queryParams['returnURL']
+      ? decodeURIComponent(this._route.snapshot.queryParams['returnURL'])
+      : null;
+
+    if (this.property) {
+      this.activeModal?.close();
+    } else if (returnUrl) {
+      this._router.navigateByUrl(returnUrl);
+    } else if (this.article?.type === Type.Variant) {
+      this._router.navigate(['/entities/articles/variants']);
+    } else {
+      this._router.navigate(['/entities/articles']);
+    }
   }
 
   public getArticle(id: string) {
@@ -661,6 +696,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
             this.article.creationUser = null;
             this.article.updateDate = '';
             this.article.updateUser = null;
+          }
+          if (this.article?.type === Type.Variant) {
+            this.articleType = 'Variante';
+            this.readonly = true;
           }
           this.setValueForm();
           this.setValueFormTax();
@@ -685,9 +724,24 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
     await this.uploadFileComponent.uploadImages();
 
-    this.article = { ...this.article, ...this.articleForm.value };
+    this.article = { ...(this.article ?? ({} as Article)), ...this.articleForm.value };
     this.article.salePriceTN = Number(this.article.salePriceTN) || 0;
     this.article.promotionalPriceTN = Number(this.article.promotionalPriceTN) || 0;
+    this.article.notes = this.notes;
+    this.article.tags = this.tags;
+    this.article.variants = this.articleForm.get('variants')?.value ?? [];
+    this.article.containsVariants = this.article.variants.length > 0;
+
+    const pathLocation = this._router.url.split('/');
+    if (this.articleType === 'Variante' || this.article.type === Type.Variant) {
+      this.article.type = Type.Variant;
+    } else if (pathLocation[2] === 'articles') {
+      this.article.type = Type.Final;
+    } else if (pathLocation[2] === 'variants') {
+      this.article.type = Type.Variant;
+    } else {
+      this.article.type = Type.Final;
+    }
 
     switch (this.operation) {
       case 'add':

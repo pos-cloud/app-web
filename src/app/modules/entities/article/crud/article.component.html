@@ -5,10 +5,11 @@
         'add-article' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ article?.description ?? '' }}</span
+        >{{ 'edit' | translate | capitalize }} {{ articleType }} {{ article?.code }} -
+        {{ article?.description ?? '' }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
-        {{ article?.description ?? '' }}</span
+        {{ articleType }} {{ article?.code }} - {{ article?.description ?? '' }}</span
       >
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
@@ -56,7 +57,14 @@
             <div class="row">
               <div class="col-md-2">
                 <label for="order">{{ 'order' | translate | capitalize }}:</label>
-                <input type="number" class="form-control" formControlName="order" name="order" id="order" />
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="order"
+                  name="order"
+                  id="order"
+                  [readonly]="readonly"
+                />
               </div>
               <div class="col-md-5">
                 <label for="code">{{ 'code' | translate | capitalize }}:</label>
@@ -67,6 +75,7 @@
                   name="code"
                   id="code"
                   [focus]="focusEvent"
+                  [readonly]="readonly"
                   [ngClass]="{
                     'is-invalid': articleForm.get('code')?.touched && articleForm.get('code')?.invalid,
                   }"
@@ -80,7 +89,14 @@
               </div>
               <div class="col-md-5">
                 <label for="barcode">{{ 'barcode' | translate | capitalize }}:</label>
-                <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" />
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="barcode"
+                  name="barcode"
+                  id="barcode"
+                  [readonly]="operation === 'view'"
+                />
               </div>
             </div>
             <div class="row">
@@ -118,6 +134,7 @@
                   name="description"
                   id="description"
                   (blur)="loadPosDescription()"
+                  [readonly]="readonly"
                   [ngClass]="{
                     'is-invalid': articleForm.get('description')?.touched && articleForm.get('description')?.invalid,
                   }"
@@ -139,6 +156,7 @@
                   formControlName="posDescription"
                   name="posDescription"
                   id="posDescription"
+                  [readonly]="readonly"
                   [ngClass]="{
                     'is-invalid':
                       articleForm.get('posDescription')?.touched && articleForm.get('posDescription')?.invalid,
@@ -262,6 +280,7 @@
                 formControlName="basePrice"
                 name="basePrice"
                 (blur)="updatePrices('basePrice')"
+                [readonly]="operation === 'view'"
                 [ngClass]="{
                   'is-invalid': articleForm.get('basePrice')?.touched && articleForm.get('basePrice')?.invalid,
                 }"
@@ -274,7 +293,7 @@
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4" *ngIf="!article?.containsVariants">
             <label class="control-label">{{ 'lastPurchasePrice' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
@@ -283,7 +302,7 @@
               <input type="number" class="form-control" formControlName="purchasePrice" readonly />
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4" *ngIf="!article?.containsVariants">
             <label class="control-label">{{ 'priceCostStructure' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
@@ -298,7 +317,12 @@
           <div class="row">
             <div class="col-md-3">
               <label for="tax" class="control-label">{{ 'totalTaxAmount' | translate | capitalize }}:</label>
-              <select class="form-control" formControlName="tax" [disabled]="readonly" (change)="changeTax('tax')">
+              <select
+                class="form-control"
+                formControlName="tax"
+                [disabled]="operation === 'view'"
+                (change)="changeTax('tax')"
+              >
                 <option [ngValue]="null">Seleccionar impuesto...</option>
                 <option *ngFor="let tax of taxes" [ngValue]="tax">
                   {{ tax.name }}
@@ -315,6 +339,7 @@
                   step="0.01"
                   min="0"
                   max="100"
+                  [readonly]="operation === 'view'"
                   (blur)="changeTax('percentage')"
                 />
                 <div class="input-group-prepend">
@@ -334,6 +359,7 @@
                   formControlName="taxAmount"
                   step="0.01"
                   min="0"
+                  [readonly]="operation === 'view'"
                   (blur)="changeTax('taxAmount')"
                 />
               </div>
@@ -345,7 +371,7 @@
                   type="button"
                   class="btn btn-success"
                   (click)="addArticleTax()"
-                  [disabled]="readonly || !taxForm.valid"
+                  [disabled]="operation === 'view' || !taxForm.valid"
                 >
                   {{ 'add' | translate | capitalize }}
                 </button>
@@ -370,7 +396,13 @@
                 *ngFor="let articleTaxAux of this.articleForm.get('taxes')?.controls; let i = index"
               >
                 <td align="left" width="130">
-                  <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteArticleTax(i)">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    title="Eliminar"
+                    (click)="deleteArticleTax(i)"
+                    [disabled]="operation === 'view'"
+                  >
                     <i class="fa fa-trash-o"></i>
                   </button>
                 </td>
@@ -387,7 +419,7 @@
           </table>
         </div>
         <hr />
-        <div class="row">
+        <div class="row"> 
           <div class="col-md-5">
             <label for="costPrice">{{ 'costPrice' | translate | capitalize }}:</label>
             <div class="input-group">
@@ -428,6 +460,7 @@
                 formControlName="markupPercentage"
                 name="markupPercentage"
                 id="markupPercentage"
+                [readonly]="operation === 'view'"
                 (blur)="updatePrices('markupPercentage')"
                 [ngClass]="{
                   'is-invalid':
@@ -473,6 +506,7 @@
                 formControlName="markupPrice"
                 name="markupPrice"
                 id="markupPrice"
+                [readonly]="operation === 'view'"
                 (blur)="updatePrices('markupPrice')"
                 [ngClass]="{
                   'is-invalid': articleForm.get('markupPrice')?.touched && articleForm.get('markupPrice')?.invalid,
@@ -517,6 +551,7 @@
                 formControlName="salePrice"
                 name="salePrice"
                 id="salePrice"
+                [readonly]="operation === 'view'"
                 (blur)="updatePrices('salePrice')"
                 [ngClass]="{
                   'is-invalid': articleForm.get('salePrice')?.touched && articleForm.get('salePrice')?.invalid,
@@ -560,7 +595,7 @@
                           class="form-control"
                           [(ngModel)]="manualPriceRows[i].price"
                           [ngModelOptions]="{ standalone: true }"
-                          [readonly]="readonly"
+                          [readonly]="operation === 'view'"
                           step="1"
                           min="0"
                         />
@@ -575,88 +610,90 @@
             </small>
           </div>
         </div>
-        <hr />
-        <div class="row">
-          <label class="form-group col-md-5">
-            <b>{{ 'variant' | translate | capitalize }}</b>
-          </label>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="form-group col-md-5">
-                <label class="control-label">{{ 'type.variants' | translate | capitalize }}:</label>
-                <app-typeahead-dropdown
-                  [control]="variantTypeControl"
-                  [data]="variantTypes"
-                  [displayField]="'name'"
-                  [placeholder]="'Seleccionar tipo...'"
-                  [readonly]="readonly"
-                ></app-typeahead-dropdown>
+        <ng-container *ngIf="articleType === 'Producto'">
+          <hr />
+          <div class="row">
+            <label class="form-group col-md-5">
+              <b>{{ 'variant' | translate | capitalize }}</b>
+            </label>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="form-group col-md-5">
+                  <label class="control-label">{{ 'type.variants' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="variantTypeControl"
+                    [data]="variantTypes"
+                    [displayField]="'name'"
+                    [placeholder]="'Seleccionar tipo...'"
+                    [readonly]="readonly"
+                  ></app-typeahead-dropdown>
+                </div>
+                <div class="form-group col-md-5">
+                  <label class="control-label">{{ 'value' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="variantValueControl"
+                    [data]="variantValues"
+                    [displayField]="'description'"
+                    [placeholder]="'Seleccionar valor...'"
+                    [readonly]="readonly || !variantTypeControl.value?._id"
+                  ></app-typeahead-dropdown>
+                </div>
+                <div class="form-group col-md-2">
+                  <div>{{ 'action' | translate | capitalize }}:</div>
+                  <button
+                    type="button"
+                    class="btn btn-success"
+                    (click)="addVariant()"
+                    [disabled]="
+                      !variantTypeControl.value?._id || !variantValueControl.value?._id || loading || readonly
+                    "
+                  >
+                    {{ 'add' | translate | capitalize }}
+                  </button>
+                </div>
               </div>
-              <div class="form-group col-md-5">
-                <label class="control-label">{{ 'value' | translate | capitalize }}:</label>
-                <app-typeahead-dropdown
-                  [control]="variantValueControl"
-                  [data]="variantValues"
-                  [displayField]="'description'"
-                  [placeholder]="'Seleccionar valor...'"
-                  [readonly]="readonly || !variantTypeControl.value?._id"
-                ></app-typeahead-dropdown>
-              </div>
-              <div class="form-group col-md-2">
-                <div>{{ 'action' | translate | capitalize }}:</div>
-                <button
-                  type="button"
-                  class="btn btn-success"
-                  (click)="addVariant()"
-                  [disabled]="!variantTypeControl.value?._id || !variantValueControl.value?._id || loading || readonly"
-                >
-                  {{ 'add' | translate | capitalize }}
-                </button>
-              </div>
-            </div>
-            <!-- Diseño simple sin cards para variantes -->
-            <div class="row" *ngIf="variantsByTypes && variantsByTypes.length > 0">
-              <div class="col-12">
-                <div *ngFor="let vt of variantsByTypes" class="mb-3">
-                  <h5 class="text-primary mb-3 fw-bold">
-                    <i class="fa fa-tag me-2"></i>{{ vt.type.name }} Disponibles
-                  </h5>
-                  <div class="row">
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2" *ngFor="let v of vt.value">
-                      <div class="d-flex align-items-center justify-content-between bg-light p-2 rounded border">
-                        <span class="text-truncate me-2" [title]="v.description">
-                          {{ v.description }}
-                        </span>
-                        <button
-                          type="button"
-                          class="btn btn-sm btn-outline-danger"
-                          (click)="deleteVariant(v)"
-                          [disabled]="readonly"
-                          title="Eliminar {{ v.description }}"
-                        >
-                          <i class="fa fa-trash-o"></i>
-                        </button>
+              <div class="row" *ngIf="variantsByTypes && variantsByTypes.length > 0">
+                <div class="col-12">
+                  <div *ngFor="let vt of variantsByTypes" class="mb-3">
+                    <h5 class="text-primary mb-3 fw-bold">
+                      <i class="fa fa-tag me-2"></i>{{ vt.type.name }} Disponibles
+                    </h5>
+                    <div class="row">
+                      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2" *ngFor="let v of vt.value">
+                        <div class="d-flex align-items-center justify-content-between bg-light p-2 rounded border">
+                          <span class="text-truncate me-2" [title]="v.description">
+                            {{ v.description }}
+                          </span>
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            (click)="deleteVariant(v)"
+                            [disabled]="readonly"
+                            title="Eliminar {{ v.description }}"
+                          >
+                            <i class="fa fa-trash-o"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Mensaje cuando no hay variantes -->
-            <div class="row" *ngIf="!variantsByTypes || variantsByTypes.length === 0">
-              <div class="col-12">
-                <div class="alert alert-info text-center">
-                  <i class="fa fa-info-circle me-2"></i>
-                  {{ 'variant-menssage' | translate | capitalize }}
+              <div class="row" *ngIf="!variantsByTypes || variantsByTypes.length === 0">
+                <div class="col-12">
+                  <div class="alert alert-info text-center">
+                    <i class="fa fa-info-circle me-2"></i>
+                    {{ 'variant-menssage' | translate | capitalize }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <hr />
+          <hr />
+        </ng-container>
         <div class="row">
           <label class="form-group col-md-5">
             <b>{{ 'applications' | translate | capitalize }}</b>
