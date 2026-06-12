@@ -76,8 +76,8 @@ export class FormalTransactionViewComponent implements OnInit {
   public vatPeriodDraft = '';
   public isEditingObservation: boolean = false;
   public observationDraft: string = '';
-  public isEditingTotal: boolean = false;
-  public totalDraft: number = 0;
+  public isEditingSubtotal: boolean = false;
+  public subtotalDraft: number = 0;
   public isEditingDiscount: boolean = false;
   public discountPercentDraft: number = 0;
   public discountAmountDraft: number = 0;
@@ -528,7 +528,7 @@ export class FormalTransactionViewComponent implements OnInit {
   public cancelEdit(): void {
     this.editingField = null;
     this.isEditingDiscount = false;
-    this.isEditingTotal = false;
+    this.isEditingSubtotal = false;
     this.isEditingObservation = false;
   }
 
@@ -649,7 +649,7 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public startEditDiscount(): void {
-    this.isEditingTotal = false;
+    this.isEditingSubtotal = false;
     this.discountPercentDraft = Number(this.transaction?.discountPercent ?? 0);
     this.discountAmountDraft = Number(this.transaction?.discountAmount ?? 0);
     this.isEditingDiscount = true;
@@ -727,9 +727,13 @@ export class FormalTransactionViewComponent implements OnInit {
         type: 'info',
       });
     }
+
     Object.assign(this.transaction, {
       discountPercent,
       discountAmount,
+      basePrice: !this.transaction.type.requestArticles
+        ? this.transaction.subTotal - discountAmount
+        : this.transaction.basePrice,
       totalPrice: this.transaction.subTotal + this.taxesAmount - discountAmount,
     });
 
@@ -737,41 +741,49 @@ export class FormalTransactionViewComponent implements OnInit {
     this.isEditingDiscount = false;
   }
 
-  public async saveTotal(): Promise<void> {
-    const total = Number(this.totalDraft);
-    if (isNaN(total) || total < 0) {
+  public saveSubtotal(): void {
+    const subtotal = Number(this.subtotalDraft);
+    if (isNaN(subtotal) || subtotal < 0) {
       this.toastService.showToast({
-        message: 'Ingresá un total válido',
+        message: 'Ingresá un subtotal válido',
         type: 'info',
       });
       return;
     }
-    this.transaction.totalPrice = total;
-    await this.updateTransaction();
-    this.isEditingTotal = false;
+
+    let discountAmount = Number(this.transaction.discountAmount ?? 0);
+    const discountPercent = Number(this.transaction.discountPercent ?? 0);
+
+    if (discountPercent > 0) {
+      discountAmount = subtotal * (discountPercent / 100);
+    }
+
+    Object.assign(this.transaction, {
+      subTotal: subtotal,
+      basePrice: subtotal - discountAmount,
+      discountAmount,
+      totalPrice: subtotal + this.taxesAmount - discountAmount,
+    });
+
+    this.updateTransaction();
+    this.isEditingSubtotal = false;
   }
 
-  public startEditTotal(): void {
+  public startEditSubtotal(): void {
     this.isEditingDiscount = false;
-    this.totalDraft = this.transaction.totalPrice;
-    this.isEditingTotal = true;
+    this.subtotalDraft = this.transaction.subTotal;
+    this.isEditingSubtotal = true;
   }
 
   private async updateTransaction(): Promise<void> {
     this.loading = true;
-    let isEditingTotal = this.isEditingTotal;
     this.transactionService
       .update(this.transaction)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response.status === 200) {
-            if (
-              this.transaction.type.requestTaxes &&
-              this.transaction.taxes &&
-              this.transaction.taxes.length > 0 &&
-              !isEditingTotal
-            ) {
+            if (this.transaction.type.requestTaxes && this.transaction.taxes && this.transaction.taxes.length > 0) {
               this.recalculateTaxes();
             }
             this.toastService.showToast({
