@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '@core/services/auth.service';
 import { NotificationsService } from '@core/services/notifications.service';
-import { RealtimeService } from '@core/services/realtime.service';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Notification } from '@types';
 import { Subject, takeUntil } from 'rxjs';
@@ -22,23 +20,10 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private _notificationsService: NotificationsService,
-    private _realtimeService: RealtimeService,
-    private _authService: AuthService
-  ) {}
+  constructor(private _notificationsService: NotificationsService) {}
 
   ngOnInit(): void {
-    // Notificaciones desactivadas temporalmente por performance
-    return;
-
-    // this._realtimeService.connect();
-    // this._realtimeService
-    //   .onNotificationRefresh()
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe(() => this.refresh());
-    //
-    // this.refresh();
+    this.loadUnreadCount();
   }
 
   ngOnDestroy(): void {

@@ -69,7 +69,7 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
 import { StatisticsComponent } from './components/statistics/statistics.component';
 
 import { RestoTablesComponent } from './modules/pos/resto/resto-tables/resto-tables.component';
-// import { NotificationBellComponent } from './modules/notifications/components/notification-bell/notification-bell.component';
+import { NotificationBellComponent } from './modules/notifications/components/notification-bell/notification-bell.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
@@ -176,7 +176,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     NgMultiSelectDropDownModule.forRoot(),
     AddressModule,
     RestoTablesComponent,
-    // NotificationBellComponent,
+    NotificationBellComponent,
     FocusDirective,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: true,

@@ -318,12 +318,11 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
     loadChildren: () => import('./modules/transaction/transaction.routes').then((m) => m.TRANSACTION_ROUTES),
   },
-  // Notificaciones desactivadas temporalmente por performance
-  // {
-  //   path: 'notifications',
-  //   canActivate: [AuthGuard, LicenseGuard],
-  //   loadChildren: () => import('./modules/notifications/notifications.routes').then((m) => m.NOTIFICATIONS_ROUTES),
-  // },
+  {
+    path: 'notifications',
+    canActivate: [AuthGuard, LicenseGuard],
+    loadChildren: () => import('./modules/notifications/notifications.routes').then((m) => m.NOTIFICATIONS_ROUTES),
+  },
   {
     path: 'license',
     canActivate: [AuthGuard],
