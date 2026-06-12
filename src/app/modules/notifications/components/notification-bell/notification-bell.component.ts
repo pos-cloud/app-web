@@ -29,13 +29,16 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this._realtimeService.connect();
-    this._realtimeService
-      .onNotificationRefresh()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.refresh());
+    // Notificaciones desactivadas temporalmente por performance
+    return;
 
-    this.refresh();
+    // this._realtimeService.connect();
+    // this._realtimeService
+    //   .onNotificationRefresh()
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(() => this.refresh());
+    //
+    // this.refresh();
   }
 
   ngOnDestroy(): void {

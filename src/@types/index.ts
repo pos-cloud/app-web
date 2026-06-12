@@ -82,7 +82,7 @@ export { VATCondition } from './entities/vat-condition.interface';
 
 // common
 export { Activity } from './common/activity.interface';
-export { ApiResponse } from './common/api-response.interface';
+export { ApiEnvelope, ApiResponse, NormalizedApiResponse } from './common/api-response.interface';
 export { IAttribute } from './common/attribute.interface';
 export { IButton } from './common/buttons.interface';
 export { EmailProps } from './common/email-props.type';
