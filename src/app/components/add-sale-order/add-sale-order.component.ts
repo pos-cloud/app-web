@@ -696,14 +696,6 @@ export class AddSaleOrderComponent {
           } else {
             this.updatePrices();
           }
-          // esto para bardo solamente por que necesita que se haga la lectura de uno y se vuelva a crear automaticamente.
-          if (
-            result.movementsOfArticles.length == 1 &&
-            this.transaction.type.name == 'Cierre de producción' &&
-            this.transaction.type.transactionMovement === TransactionMovement.Production
-          ) {
-            this.finish();
-          }
         }
         this.loading = false;
       },
