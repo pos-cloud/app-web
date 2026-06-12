@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '@core/services/auth.service';
 import { NotificationsService } from '@core/services/notifications.service';
 import { RealtimeService } from '@core/services/realtime.service';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -23,7 +24,8 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
 
   constructor(
     private _notificationsService: NotificationsService,
-    private _realtimeService: RealtimeService
+    private _realtimeService: RealtimeService,
+    private _authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -49,12 +51,11 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
 
   public markAsRead(notification: Notification, event: Event): void {
     event.stopPropagation();
-    if (this.isUnread(notification)) {
-      this._notificationsService
-        .markAsRead(notification._id)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => this.refresh());
-    }
+
+    this._notificationsService
+      .markAsRead(notification._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.refresh());
   }
 
   public markAllAsRead(): void {
@@ -62,10 +63,6 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
       .markAllAsRead()
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.refresh());
-  }
-
-  public isUnread(notification: Notification): boolean {
-    return !notification.read;
   }
 
   public trackById(_index: number, notification: Notification): string {

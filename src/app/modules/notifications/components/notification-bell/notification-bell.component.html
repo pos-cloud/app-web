@@ -35,7 +35,6 @@
       type="button"
       class="dropdown-item notification-bell__item"
       *ngFor="let notification of notifications; trackBy: trackById"
-      [class.notification-bell__item--unread]="isUnread(notification)"
       (click)="markAsRead(notification, $event)"
     >
       <span class="notification-bell__title">{{ notification.title }}</span>
