@@ -7,9 +7,6 @@ export interface Notification extends Activity {
   type: string;
   payload?: Record<string, unknown>;
   branch?: string;
-  recipientUser?: string;
-  read: boolean;
-  readAt?: string;
   readByUsers?: string[];
 }
 

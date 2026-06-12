@@ -50,17 +50,6 @@ export class ListNotificationsComponent {
       required: false,
     },
     {
-      name: 'read',
-      visible: true,
-      disabled: false,
-      filter: true,
-      defaultFilter: null,
-      datatype: 'boolean',
-      project: null,
-      align: 'center',
-      required: false,
-    },
-    {
       name: 'creationDate',
       visible: true,
       disabled: false,
@@ -94,22 +83,9 @@ export class ListNotificationsComponent {
     },
   ];
 
-  public rowButtons: IButton[] = [
-    {
-      title: 'Marcar leída',
-      icon: 'fa fa-check',
-      class: 'btn btn-outline-secondary btn-sm',
-      click: `this.emitEvent('mark-read', item)`,
-    },
-  ];
+  public rowButtons: IButton[] = [];
 
   public headerButtons: IButton[] = [
-    {
-      title: 'Marcar todas leídas',
-      icon: 'fa fa-check-double',
-      class: 'btn btn-light',
-      click: `this.emitEvent('mark-all-read', null)`,
-    },
     {
       title: 'refresh',
       icon: 'fa fa-refresh',
@@ -121,21 +97,6 @@ export class ListNotificationsComponent {
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
   constructor(public _service: NotificationsService) {}
-
-  public emitEvent(event: { op: string; obj: any }): void {
-    switch (event.op) {
-      case 'mark-read':
-        if (event.obj && !event.obj.read) {
-          this._service.markAsRead(event.obj._id).subscribe(() => this.refresh());
-        }
-        break;
-      case 'mark-all-read':
-        this._service.markAllAsRead().subscribe(() => this.refresh());
-        break;
-      default:
-        break;
-    }
-  }
 
   public refresh(): void {
     this.datatableComponent.refresh();

@@ -15,7 +15,12 @@
   <div class="dropdown-menu dropdown-menu-right notification-bell__menu" ngbDropdownMenu>
     <div class="notification-bell__header">
       <strong>Notificaciones</strong>
-      <button type="button" class="btn btn-link btn-sm p-0 notification-bell__mark-all" *ngIf="unreadCount > 0" (click)="markAllAsRead()">
+      <button
+        type="button"
+        class="btn btn-link btn-sm p-0 notification-bell__mark-all"
+        *ngIf="unreadCount > 0"
+        (click)="markAllAsRead()"
+      >
         Marcar leídas
       </button>
     </div>
