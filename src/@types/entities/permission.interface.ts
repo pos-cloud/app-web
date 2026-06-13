@@ -53,6 +53,7 @@ export interface Permission extends Activity {
       voucherReader: boolean;
       resto: boolean;
       subscription: boolean;
+      app: boolean;
     };
     money: boolean;
     production: boolean;

@@ -474,6 +474,10 @@ export class HeaderComponent implements OnInit {
           child.push({ label: 'Woo Commerce', link: 'pos/woo-commerce' });
         }
 
+        if (user?.permission?.menu?.sales?.app) {
+          child.push({ label: 'App', link: 'pos/app' });
+        }
+
         if (user?.permission?.menu?.sales?.subscription) {
           child.push({ label: 'Suscripciones', link: 'pos/subscription' });
         }
