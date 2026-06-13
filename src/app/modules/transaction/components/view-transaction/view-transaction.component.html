@@ -62,7 +62,21 @@
                 />
               </div>
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3" *ngIf="transaction?.type?.requestEmployee">
+              <label for="employeeClosing" class="control-label">{{
+                transaction?.type?.requestEmployee?.description | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                name="employeeClosing"
+                *ngIf="transaction?.employeeClosing"
+                value="{{ transaction?.employeeClosing?.name }}"
+                readonly
+              />
+              <input type="text" class="form-control" name="employeeClosing" *ngIf="!transaction?.employeeClosing" value="" readonly />
+            </div>
+            <div class="form-group" [ngClass]="transaction?.type?.requestEmployee ? 'col-md-3' : 'col-md-6'">
               <label for="balanceAccount" class="control-label">{{ 'balanceAccount' | translate | capitalize }}:</label>
               <div class="input-group">
                 <div class="input-group-prepend">
@@ -83,44 +97,25 @@
               <label for="state" class="control-label">{{ 'state' | translate | capitalize }}</label>
               <input type="text" class="form-control" name="state" value="{{ transaction?.state }}" readonly />
             </div>
-            <div class="form-group col-md-2">
-              <label for="cashBox" class="control-label">{{
-                'transaction.cashBox.number' | translate | capitalize
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                name="cashBox"
-                value="{{ transaction?.cashBox?.number }}"
-                readonly
-              />
-            </div>
           </div>
-          <div class="row" *ngIf="transaction?.type?.requestEmployee">
-            <div class="form-group col-md-12">
-              <label for="employeeOpening" class="control-label">{{
+          <div class="row" *ngIf="transaction?.type?.requestEmployee && transaction?.type?.transactionMovement?.toString() === 'Stock'">
+            <div class="form-group col-md-3">
+              <label for="employeeClosing" class="control-label">{{
                 transaction?.type?.requestEmployee?.description | translate | capitalize
               }}</label>
               <input
                 type="text"
                 class="form-control"
-                name="date"
+                name="employeeClosing"
                 *ngIf="transaction?.employeeClosing"
                 value="{{ transaction?.employeeClosing?.name }}"
                 readonly
               />
-              <input
-                type="text"
-                class="form-control"
-                name="date"
-                *ngIf="!transaction?.employeeClosing"
-                value=""
-                readonly
-              />
+              <input type="text" class="form-control" name="employeeClosing" *ngIf="!transaction?.employeeClosing" value="" readonly />
             </div>
           </div>
           <div class="row">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
               <label for="date" class="control-label">{{ 'date' | translate | capitalize }}:</label>
               <input
                 type="text"
@@ -139,7 +134,7 @@
                 *ngIf="!transaction?.endDate"
               />
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
               <label for="origin" class="control-label">{{ 'fixedOrigin' | translate | capitalize }}:</label>
               <input
                 type="origin"
@@ -150,11 +145,11 @@
                 readonly
               />
             </div>
-            <div class="form-group col-md-2">
-              <label for="letter" class="control-label">{{ 'type' | translate | capitalize }}:</label>
+            <div class="form-group col-md-1">
+              <label for="letter" class="control-label">{{ 'letter' | translate | capitalize }}:</label>
               <input type="text" class="form-control" name="letter" value="{{ transaction?.letter }}" readonly />
             </div>
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-3">
               <label for="number" class="control-label">{{ 'number' | translate | capitalize }}:</label>
               <input
                 type="number"
@@ -162,6 +157,18 @@
                 name="number"
                 min="0"
                 value="{{ transaction?.number }}"
+                readonly
+              />
+            </div>
+            <div class="form-group col-md-2">
+              <label for="cashBox" class="control-label">{{
+                'transaction.cashBox.number' | translate | capitalize
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                name="cashBox"
+                value="{{ transaction?.cashBox?.number }}"
                 readonly
               />
             </div>
@@ -309,10 +316,9 @@
           <div class="row">
             <div class="form-group col-md-12">
               <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}:</label>
-              <textarea type="text" class="form-control" name="observation" id="observation" rows="2" readonly>
-                    {{ transaction?.observation }}
-                  </textarea
-              >
+              <textarea type="text" class="form-control" name="observation" id="observation" rows="2" readonly>{{
+                transaction?.observation
+              }}</textarea>
             </div>
           </div>
         </ng-template>
