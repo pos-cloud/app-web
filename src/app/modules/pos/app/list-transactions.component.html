@@ -69,15 +69,13 @@
                 <b>{{ transaction?.number }}</b>
               </td>
               <td>{{ transaction?.startDate }}</td>
-              <td *ngIf="transaction.company">
-                {{ transaction?.company?.name }}
-              </td>
+              <td>{{ transaction?.company?.name }}</td>
               <td>{{ transaction?.state }}</td>
               <td>{{ transaction?.employeeClosing?.name }}</td>
-              <td>
+              <td align="right">
                 {{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
-              <td>
+              <td align="right">
                 {{ transaction?.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </ng-container>
