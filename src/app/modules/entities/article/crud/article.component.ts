@@ -761,8 +761,9 @@ export class ArticleComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200 && result.result?._id) {
-            this.saveManualPricesForArticle(result.result._id);
+          if (result.status == 200 && result.result?.result?._id) {
+            this.loadManualPricesForArticle(result.result.result._id);
+            this.saveManualPricesForArticle(result.result.result._id);
           }
           if (result.status == 200) this.returnTo();
         },
