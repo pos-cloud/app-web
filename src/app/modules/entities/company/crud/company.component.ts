@@ -43,7 +43,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest, of, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -203,7 +203,11 @@ export class CompanyComponent implements OnInit {
       priceLists: this._priceListService.find({ query: { operationType: { $ne: 'D' } } }),
       identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       accounts: this._accountService.find({ query: { operationType: { $ne: 'D' }, mode: 'Analitico' } }),
-      article: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
+      // Los artículos solo se usan en el dropdown de suscripción. Evitamos descargar
+      // todo el catálogo (puede ser de millones) cuando la sección no aplica al negocio.
+      article: this.showSubscriptionSection
+        ? this._articleService.find({ query: { operationType: { $ne: 'D' } } })
+        : of([]),
       paymentMethod: this._paymentMethod.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
