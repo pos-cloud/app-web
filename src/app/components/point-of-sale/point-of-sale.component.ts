@@ -27,6 +27,7 @@ import { PrinterService } from '../../core/services/printer.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { TransactionService } from '../../core/services/transaction.service';
 
+import { ImportComponent } from '@shared/components/import/import.component';
 import {
   ApiResponse,
   Claim,
@@ -57,6 +58,7 @@ import { MovementOfCashService } from '../../core/services/movement-of-cash.serv
 import { OriginService } from '../../core/services/origin.service';
 import { TableService } from '../../core/services/table.service';
 import { UserService } from '../../core/services/user.service';
+import { SelectOriginComponent } from '../../modules/transaction/components/select-origin/select-origin.component';
 import { ViewTransactionComponent } from '../../modules/transaction/components/view-transaction/view-transaction.component';
 import { SelectBranchComponent } from '../../shared/components/select-branch/select-branch.component';
 import { SelectDepositComponent } from '../../shared/components/select-deposit/select-deposit.component';
@@ -66,7 +68,6 @@ import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
-import { SelectOriginComponent } from '../../modules/transaction/components/select-origin/select-origin.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { Config } from './../../app.config';
 import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
@@ -1542,6 +1543,24 @@ export class PointOfSaleComponent implements OnInit {
             this.refresh();
           }
         );
+        break;
+      case 'uploadFile':
+        console.log('uploadFile');
+        modalRef = this._modalService.open(ImportComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.model = 'purchase';
+        modalRef.componentInstance.title = 'Importar compras';
+        modalRef.result.then(
+          (result) => {
+            if (result === 'save_close') {
+              this.refresh();
+            }
+          },
+          (reason) => {}
+        );
+
         break;
       default:
     }

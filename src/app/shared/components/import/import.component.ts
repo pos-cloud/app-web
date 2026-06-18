@@ -7,8 +7,9 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Deposit, PriceList } from '@types';
 import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
-import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { TransactionState } from 'app/components/transaction/transaction';
 import { PriceListService } from 'app/core/services/price-list.service';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -27,6 +28,8 @@ export class ImportComponent implements OnInit {
   @Input() title: string;
   @Input() transactionId: string;
   @Input() priceListId: string;
+  @Input() defaultTransactionTypeId: string;
+  @Input() defaultTransactionState: TransactionState;
   branches: Branch[];
   deposits: Deposit[];
   branchesSelected: Branch[] = new Array();
@@ -42,6 +45,8 @@ export class ImportComponent implements OnInit {
   errorMessage: string;
   transactionTypes: TransactionType[];
   transactionTypesSelect;
+  transactionStates: TransactionState[] = [TransactionState.Open, TransactionState.Closed];
+  selectedTransactionState: TransactionState = TransactionState.Open;
   priceLists: PriceList[] = [];
   selectedPriceListId: string | null = null;
   public importForm: UntypedFormGroup;
@@ -77,7 +82,7 @@ export class ImportComponent implements OnInit {
     this.buildForm();
 
     if (this.model === 'articles-stock') {
-      this.getTransactionTypes();
+      this.getTransactionTypes(TransactionMovement.Stock);
       this.getBranches();
       this.getDeposits();
     }
@@ -85,21 +90,22 @@ export class ImportComponent implements OnInit {
     if (this.model === 'price-list-articles') {
       this.getPriceLists();
     }
+    if (this.model === 'purchase') {
+      this.getTransactionTypes(TransactionMovement.Purchase);
+    }
   }
 
   private getPriceLists(): void {
-    this._priceListService
-      .find({ query: { operationType: { $ne: 'D' } } })
-      .subscribe((lists: PriceList[]) => {
-        // Import de precios manuales: solo listas pricingMode === 'manual'
-        this.priceLists = (lists || []).filter((pl) => (pl as any).pricingMode === 'manual');
-        if (!this.selectedPriceListId && this.priceListId) {
-          this.selectedPriceListId = this.priceListId;
-        }
-        if (!this.selectedPriceListId && this.priceLists.length) {
-          this.selectedPriceListId = this.priceLists[0]._id;
-        }
-      });
+    this._priceListService.find({ query: { operationType: { $ne: 'D' } } }).subscribe((lists: PriceList[]) => {
+      // Import de precios manuales: solo listas pricingMode === 'manual'
+      this.priceLists = (lists || []).filter((pl) => (pl as any).pricingMode === 'manual');
+      if (!this.selectedPriceListId && this.priceListId) {
+        this.selectedPriceListId = this.priceListId;
+      }
+      if (!this.selectedPriceListId && this.priceLists.length) {
+        this.selectedPriceListId = this.priceLists[0]._id;
+      }
+    });
   }
 
   public buildForm(): void {
@@ -200,6 +206,33 @@ export class ImportComponent implements OnInit {
             this.loading = false;
           }
         });
+      } else if (this.model === 'purchase') {
+        if (!this.transactionTypesSelect?.length) {
+          this._toastService.showToast({ message: 'Debe seleccionar un tipo de transacción.' });
+          this.loading = false;
+          return;
+        }
+        if (!this.selectedTransactionState) {
+          this._toastService.showToast({ message: 'Debe seleccionar un estado de transacción.' });
+          this.loading = false;
+          return;
+        }
+        this._excelUpdateService
+          .importPurchase(file, this.transactionTypesSelect[0]._id, this.selectedTransactionState.toString())
+          .subscribe((response) => {
+            if (response.status == 200) {
+              this.countNotUpdate = response.result.countNotUpdate;
+              this.countUpdate = response.result.countUpdate;
+              this.notUpdate = response.result.notUpdateTransaction;
+              this.update = response.result.updateTransaction;
+              this.messageImport = response.result.message;
+              this.loading = false;
+              this._toastService.showToast(response);
+            } else {
+              this._toastService.showToast(response.error?.message || response.message || response.error);
+              this.loading = false;
+            }
+          });
       } else if (this.model === 'price-list-articles') {
         const priceListId = this.selectedPriceListId || this.priceListId;
         if (!priceListId) {
@@ -236,6 +269,7 @@ export class ImportComponent implements OnInit {
         'https://docs.google.com/spreadsheets/d/1vd4M5hfYuyar9OaZ4kcqdWryaVJH8voc1n-GENLcztQ/edit?gid=0#gid=0',
       'price-list-articles':
         'https://docs.google.com/spreadsheets/d/1hZPD54yW3_HaW9EBexGgqiEP0k-ujtO-AHxVqOzNu2w/edit?gid=0#gid=0',
+      purchase: '',
     };
 
     const url = urls[this.model];
@@ -247,12 +281,11 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  public getTransactionTypes() {
-    let match = {};
-
-    match = {
-      transactionMovement: TransactionMovement.Stock,
+  public getTransactionTypes(transactionMovement: TransactionMovement = TransactionMovement.Stock) {
+    const match = {
+      transactionMovement,
       operationType: { $ne: 'D' },
+      currentAccount: { $ne: 'Cobra' },
     };
 
     this._transactionTypeService
@@ -264,6 +297,7 @@ export class ImportComponent implements OnInit {
           operationType: 1,
           name: 1,
           branch: 1,
+          currentAccount: 1,
         },
         match: match,
       })
@@ -271,11 +305,24 @@ export class ImportComponent implements OnInit {
         (result) => {
           if (result) {
             this.transactionTypes = result.result;
+            this.preselectTransactionDefaults();
           } else {
           }
         },
         (error) => {}
       );
+  }
+
+  private preselectTransactionDefaults(): void {
+    if (this.defaultTransactionTypeId && this.transactionTypes?.length) {
+      const selectedType = this.transactionTypes.find((type) => type._id === this.defaultTransactionTypeId);
+      if (selectedType) {
+        this.transactionTypesSelect = [selectedType];
+      }
+    }
+    if (this.defaultTransactionState) {
+      this.selectedTransactionState = this.defaultTransactionState;
+    }
   }
 
   getBranches(): void {

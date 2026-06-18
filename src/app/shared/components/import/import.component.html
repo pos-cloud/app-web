@@ -60,6 +60,27 @@
       que ya existen.
     </ngb-alert>
   </div>
+  <div class="row container-filter" *ngIf="model === 'purchase'">
+    <div class="col-md-3">
+      <label for="transactionType" class="control-label">
+        <b>Tipo de transaccion</b>
+      </label>
+      <ng-multiselect-dropdown
+        [placeholder]="'transaction-type' | translate"
+        [settings]="dropdownSettings"
+        [data]="transactionTypes"
+        [(ngModel)]="transactionTypesSelect"
+      ></ng-multiselect-dropdown>
+    </div>
+    <div class="col-md-3">
+      <label for="transactionState" class="control-label">
+        <b>Estado de transaccion</b>
+      </label>
+      <select class="form-control" id="transactionState" [(ngModel)]="selectedTransactionState">
+        <option *ngFor="let state of transactionStates" [ngValue]="state">{{ state }}</option>
+      </select>
+    </div>
+  </div>
 
   <form [formGroup]="importForm" (ngSubmit)="import()" autocomplete="off" class="d-inline">
     <div class="modal-body" class="d-inline">

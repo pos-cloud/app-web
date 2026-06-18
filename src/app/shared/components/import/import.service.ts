@@ -105,6 +105,26 @@ export class ImportService {
       );
   }
 
+  public importPurchase(file: File, transactionTypeId: string, transactionState: string): Observable<any> {
+    const URL = `${environment.apiv2}/transactions/import-excel`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('transactionTypeId', transactionTypeId);
+    formData.append('transactionState', transactionState);
+
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(URL, formData, {
+        headers: headers,
+      })
+      .pipe(
+        map((res) => res),
+        catchError((err) => of(err))
+      );
+  }
+
   public importPriceListArticles(file: File, priceListId: string) {
     const URL = `${environment.apiv2}/price-list-articles/import-excel/${priceListId}`;
 

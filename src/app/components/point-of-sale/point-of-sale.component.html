@@ -115,14 +115,14 @@
           <tr
             *ngFor="
               let transaction of transactions
-                | filter : filterDeliveredNumber : 'number'
-                | filter : filterDeliveredEndDate : 'endDate'
-                | filter : filterDeliveredCompany : 'name' : 'company'
-                | filter : filterDeliveredAddress : 'address' : 'company'
-                | filter : filterDeliveredPhones : 'phones' : 'company'
-                | filter : filterDeliveredTotalPrice : 'totalPrice'
-                | filter : state : 'state'
-                | orderBy : orderTerm : propertyTerm
+                | filter: filterDeliveredNumber : 'number'
+                | filter: filterDeliveredEndDate : 'endDate'
+                | filter: filterDeliveredCompany : 'name' : 'company'
+                | filter: filterDeliveredAddress : 'address' : 'company'
+                | filter: filterDeliveredPhones : 'phones' : 'company'
+                | filter: filterDeliveredTotalPrice : 'totalPrice'
+                | filter: state : 'state'
+                | orderBy: orderTerm : propertyTerm
             "
           >
             <td (click)="openTransaction(transaction)">
@@ -149,7 +149,7 @@
             </td>
             <td (click)="openTransaction(transaction)" *ngIf="!transaction.company"></td>
             <td>
-              {{ transaction.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+              {{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
             </td>
             <td *ngIf="state === 'Abierto'">
               <button
@@ -228,6 +228,9 @@
               {{ transactionType.name }}
             </button>
           </div>
+          <button class="btn" *ngIf="transactionMovement.toString() === 'Compra'" (click)="openModal('uploadFile')">
+            <i class="fa fa-upload"></i><span>Importar</span>
+          </button>
         </div>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i><span>Actualizar</span>
@@ -321,12 +324,12 @@
               {{ transaction.type.name }}
             </td>
             <td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
-              {{ transaction.endDate | dateFormat : 'DD/MM/YYYY' }}
-              <b>{{ transaction.endDate | dateFormat : 'HH:mm:ss' }}</b>
+              {{ transaction.endDate | dateFormat: 'DD/MM/YYYY' }}
+              <b>{{ transaction.endDate | dateFormat: 'HH:mm:ss' }}</b>
             </td>
             <td (click)="openTransaction(transaction)" *ngIf="!transaction.endDate">
-              {{ transaction.startDate | dateFormat : 'DD/MM/YYYY' }}
-              <b>{{ transaction.startDate | dateFormat : 'HH:mm:ss' }}</b>
+              {{ transaction.startDate | dateFormat: 'DD/MM/YYYY' }}
+              <b>{{ transaction.startDate | dateFormat: 'HH:mm:ss' }}</b>
             </td>
             <td (click)="openTransaction(transaction)">
               <b>{{ transaction.number }}</b>
@@ -362,7 +365,7 @@
             ></td>
             <td style="white-space: normal">{{ transaction.observation }}</td>
             <td *ngIf="transactionMovement.toString() !== 'Stock'">
-              {{ transaction.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+              {{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
             </td>
             <td
               *ngIf="
@@ -552,12 +555,12 @@
               </button>
             </td>
             <td (click)="openTransaction(transaction)" *ngIf="transaction.endDate">
-              {{ transaction.endDate | dateFormat : 'DD/MM/YYYY' }}
-              <b>{{ transaction.endDate | dateFormat : 'HH:mm:ss' }}</b>
+              {{ transaction.endDate | dateFormat: 'DD/MM/YYYY' }}
+              <b>{{ transaction.endDate | dateFormat: 'HH:mm:ss' }}</b>
             </td>
             <td (click)="openTransaction(transaction)" *ngIf="!transaction.endDate">
-              {{ transaction.startDate | dateFormat : 'DD/MM/YYYY' }}
-              <b>{{ transaction.startDate | dateFormat : 'HH:mm:ss' }}</b>
+              {{ transaction.startDate | dateFormat: 'DD/MM/YYYY' }}
+              <b>{{ transaction.startDate | dateFormat: 'HH:mm:ss' }}</b>
             </td>
             <td>{{ transaction.type.name }}</td>
             <td>
@@ -582,8 +585,7 @@
                       transaction?.state?.toString() === 'Anulado' ||
                       transaction?.state?.toString() === 'Pago Rechazado',
                     'btn-state-sent':
-                      transaction?.state?.toString() === 'Entregado' ||
-                      transaction?.state?.toString() === 'Enviado',
+                      transaction?.state?.toString() === 'Entregado' || transaction?.state?.toString() === 'Enviado',
                   }"
                 >
                   {{ transaction.state }}
@@ -609,8 +611,7 @@
                         transaction?.state?.toString() === 'Anulado' ||
                         transaction?.state?.toString() === 'Pago Rechazado',
                       'btn-state-sent':
-                        transaction?.state?.toString() === 'Entregado' ||
-                        transaction?.state?.toString() === 'Enviado',
+                        transaction?.state?.toString() === 'Entregado' || transaction?.state?.toString() === 'Enviado',
                     }"
                   ></button>
                   <div class="dropdown-menu" ngbDropdownMenu>
@@ -695,12 +696,9 @@
                   type="button"
                   class="btn"
                   [ngClass]="{
-                    'btn-state-close':
-                      transaction?.state?.toString() === 'Cerrado',
-                    'btn-state-open':
-                      transaction?.state?.toString() === 'Abierto',
-                    'btn-state-canceled':
-                      transaction?.state?.toString() === 'Anulado',
+                    'btn-state-close': transaction?.state?.toString() === 'Cerrado',
+                    'btn-state-open': transaction?.state?.toString() === 'Abierto',
+                    'btn-state-canceled': transaction?.state?.toString() === 'Anulado',
                   }"
                 >
                   {{ transaction.state }}
@@ -711,12 +709,9 @@
                     class="btn dropdown-toggle-split"
                     ngbDropdownToggle
                     [ngClass]="{
-                      'btn-state-close':
-                        transaction?.state?.toString() === 'Cerrado',
-                      'btn-state-open':
-                        transaction?.state?.toString() === 'Abierto',
-                      'btn-state-canceled':
-                        transaction?.state?.toString() === 'Anulado',
+                      'btn-state-close': transaction?.state?.toString() === 'Cerrado',
+                      'btn-state-open': transaction?.state?.toString() === 'Abierto',
+                      'btn-state-canceled': transaction?.state?.toString() === 'Anulado',
                     }"
                   ></button>
                   <div class="dropdown-menu" ngbDropdownMenu>
@@ -776,7 +771,7 @@
             </td>
             <td style="white-space: normal">{{ transaction.observation }}</td>
             <td>
-              {{ transaction.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+              {{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
             </td>
           </tr>
           <tr align="center" *ngIf="!transactions || transactions.length === 0">
