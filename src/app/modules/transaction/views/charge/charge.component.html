@@ -1,0 +1,22 @@
+<section class="container-fluid charge-view">
+  <div class="card">
+    <div class="card-header">
+      <span>Cobro</span>
+      <button class="btn pull-right" (click)="back()">
+        <i class="fa fa-arrow-left"></i><span>Volver</span>
+      </button>
+    </div>
+    <div class="card-block">
+      <app-progressbar [loading]="loading"></app-progressbar>
+
+      <div *ngIf="transaction" class="charge-summary">
+        <p><strong>Comprobante:</strong> {{ transaction.type?.name }} {{ transaction.letter }} {{ transaction.number }}</p>
+        <p><strong>Cliente:</strong> {{ transaction.company?.name || 'Consumidor Final' }}</p>
+        <p><strong>Total:</strong> {{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</p>
+        <p><strong>Saldo:</strong> {{ transaction.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</p>
+      </div>
+
+      <p *ngIf="!transaction && !loading" class="text-muted">No se encontró la transacción a cobrar.</p>
+    </div>
+  </div>
+</section>

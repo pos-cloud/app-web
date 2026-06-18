@@ -1,0 +1,97 @@
+<section class="container-fluid pos-list">
+  <div class="card card-large">
+    <div class="card-header">
+      <span>Movimientos de Stock Pendientes</span>
+      <div class="pull-right">
+        <div class="btn-group" ngbDropdown *ngIf="transactionTypes && transactionTypes.length > 0">
+          <button class="btn" ngbDropdownToggle title="Crear nuevo comprobante" [disabled]="loading">
+            <i class="fa fa-plus"></i><span>Nuevo</span>
+          </button>
+          <div class="dropdown-menu" ngbDropdownMenu>
+            <button class="dropdown-item" *ngFor="let type of transactionTypes" (click)="onNew(type)">
+              {{ type.name }}
+            </button>
+          </div>
+        </div>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
+          <i [ngClass]="{ 'fa-spin': loading }"></i><span>Actualizar</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th [width]="80"></th>
+            <th (click)="orderBy('type.name')">Tipo</th>
+            <th (click)="orderBy('startDate')">Fecha</th>
+            <th (click)="orderBy('number')">Número</th>
+            <th (click)="orderBy('depositOrigin.name')">Depósito Origen</th>
+            <th (click)="orderBy('depositDestination.name')">Depósito Destino</th>
+            <th (click)="orderBy('observation')">Observación</th>
+          </tr>
+          <tr class="filters">
+            <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterType" (keydown.enter)="addFilters()" placeholder="Tipo..." /></th>
+            <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterNumber" (keydown.enter)="addFilters()" placeholder="Número..." /></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDepositOrigin" (keydown.enter)="addFilters()" placeholder="Origen..." /></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDepositDestination" (keydown.enter)="addFilters()" placeholder="Destino..." /></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" (keydown.enter)="addFilters()" placeholder="Observación..." /></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
+          <tr *ngFor="let transaction of transactions">
+            <td align="left" width="80">
+              <button type="button" class="btn btn-success" (click)="openView(transaction)" title="Ver">
+                <i class="fa fa-eye"></i>
+              </button>
+            </td>
+            <td>{{ transaction.type?.name }}</td>
+            <td>{{ transaction.startDate | dateFormat: 'DD/MM/YYYY HH:mm' }}</td>
+            <td>
+              <b>{{ transaction.number }}</b>
+            </td>
+            <td>{{ transaction.depositOrigin?.name }}</td>
+            <td>{{ transaction.depositDestination?.name }}</td>
+            <td style="white-space: normal">{{ transaction.observation }}</td>
+          </tr>
+          <tr align="center" *ngIf="(!transactions || transactions.length === 0) && loading === false">
+            <td colspan="99">No se encontraron transacciones</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-md-10">
+          <ngb-pagination
+            *ngIf="itemsPerPage < totalItems"
+            [collectionSize]="totalItems"
+            [(page)]="currentPage"
+            [maxSize]="5"
+            [boundaryLinks]="true"
+            [pageSize]="itemsPerPage"
+            (pageChange)="pageChange($event)"
+          ></ngb-pagination>
+        </div>
+        <div class="form-group col-md-2">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
+            <option [value]="5">Mostrar 5 Registros</option>
+            <option [value]="10">Mostrar 10 Registros</option>
+            <option [value]="20">Mostrar 20 Registros</option>
+            <option [value]="50">Mostrar 50 Registros</option>
+            <option [value]="100">Mostrar 100 Registros</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

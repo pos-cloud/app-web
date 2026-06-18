@@ -1,0 +1,13 @@
+.charge-view {
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .charge-summary {
+    p {
+      margin-bottom: 0.5rem;
+    }
+  }
+}

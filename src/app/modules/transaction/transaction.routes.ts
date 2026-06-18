@@ -6,4 +6,8 @@ export const TRANSACTION_ROUTES: Routes = [
     loadComponent: () =>
       import('./views/formal/formal-transaction-view.component').then((m) => m.FormalTransactionViewComponent),
   },
+  {
+    path: 'charge/:id',
+    loadComponent: () => import('./views/charge/charge.component').then((m) => m.ChargeComponent),
+  },
 ];
