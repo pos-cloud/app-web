@@ -62,6 +62,18 @@
   </div>
   <div class="row container-filter" *ngIf="model === 'purchase'">
     <div class="col-md-3">
+      <label for="branch" class="control-label">
+        <b>{{ 'branch' | translate | capitalize }}</b>
+      </label>
+      <ng-multiselect-dropdown
+        [placeholder]="'branch' | translate"
+        [settings]="dropdownSettings"
+        [data]="branches"
+        [(ngModel)]="branchesSelected"
+        (onSelect)="onBranchSelect($event)"
+      ></ng-multiselect-dropdown>
+    </div>
+    <div class="col-md-3">
       <label for="transactionType" class="control-label">
         <b>Tipo de transaccion</b>
       </label>

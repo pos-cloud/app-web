@@ -91,6 +91,7 @@ export class ImportComponent implements OnInit {
       this.getPriceLists();
     }
     if (this.model === 'purchase') {
+      this.getBranches();
       this.getTransactionTypes(TransactionMovement.Purchase);
     }
   }
@@ -218,7 +219,12 @@ export class ImportComponent implements OnInit {
           return;
         }
         this._excelUpdateService
-          .importPurchase(file, this.transactionTypesSelect[0]._id, this.selectedTransactionState.toString())
+          .importPurchase(
+            file,
+            this.transactionTypesSelect[0]._id,
+            this.selectedTransactionState.toString(),
+            this.branchesSelected[0]._id
+          )
           .subscribe((response) => {
             if (response.status == 200) {
               this.countNotUpdate = response.result.countNotUpdate;

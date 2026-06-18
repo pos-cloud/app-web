@@ -105,13 +105,19 @@ export class ImportService {
       );
   }
 
-  public importPurchase(file: File, transactionTypeId: string, transactionState: string): Observable<any> {
+  public importPurchase(
+    file: File,
+    transactionTypeId: string,
+    transactionState: string,
+    branchId: string
+  ): Observable<any> {
     const URL = `${environment.apiv2}/transactions/import-excel`;
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('transactionTypeId', transactionTypeId);
     formData.append('transactionState', transactionState);
+    formData.append('branchId', branchId);
 
     const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
 
