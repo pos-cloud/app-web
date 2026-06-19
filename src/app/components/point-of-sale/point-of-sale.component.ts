@@ -1551,7 +1551,7 @@ export class PointOfSaleComponent implements OnInit {
           backdrop: 'static',
         });
         modalRef.componentInstance.model = 'purchase';
-        modalRef.componentInstance.title = 'Importar compras';
+        modalRef.componentInstance.title = 'Importar ARCA';
         modalRef.result.then(
           (result) => {
             if (result === 'save_close') {

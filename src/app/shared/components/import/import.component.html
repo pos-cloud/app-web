@@ -5,7 +5,9 @@
   </button>
 </div>
 <section class="container-fluid">
-  <button type="button" class="btn btn-secondary pull-right" (click)="downloadModel()">Descargar Modelo</button>
+  <button type="button" *ngIf="model !== 'purchase'" class="btn btn-secondary pull-right" (click)="downloadModel()">
+    Descargar Modelo
+  </button>
   <div class="row container-filter" *ngIf="model === 'articles-stock'">
     <div class="col-md-3">
       <label for="branch" class="control-label">
@@ -61,7 +63,13 @@
     </ngb-alert>
   </div>
   <div class="row container-filter" *ngIf="model === 'purchase'">
-    <div class="col-md-3">
+    <div class="col-md-12">
+      <ngb-alert class="alert alert-primary" [dismissible]="false">
+        <strong>Importante:</strong> Para importar una compra, extraé previamente el archivo Excel desde ARCA y luego
+        cargalo en el sistema.
+      </ngb-alert>
+    </div>
+    <div class="col-md-3 mt-3">
       <label for="branch" class="control-label">
         <b>{{ 'branch' | translate | capitalize }}</b>
       </label>
@@ -73,7 +81,7 @@
         (onSelect)="onBranchSelect($event)"
       ></ng-multiselect-dropdown>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 mt-3">
       <label for="transactionType" class="control-label">
         <b>Tipo de transaccion</b>
       </label>
@@ -84,7 +92,7 @@
         [(ngModel)]="transactionTypesSelect"
       ></ng-multiselect-dropdown>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 mt-3">
       <label for="transactionState" class="control-label">
         <b>Estado de transaccion</b>
       </label>

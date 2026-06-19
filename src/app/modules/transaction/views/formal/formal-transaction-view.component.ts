@@ -731,9 +731,7 @@ export class FormalTransactionViewComponent implements OnInit {
     Object.assign(this.transaction, {
       discountPercent,
       discountAmount,
-      basePrice: !this.transaction.type.requestArticles
-        ? this.transaction.subTotal - discountAmount
-        : this.transaction.basePrice,
+      basePrice: this.transaction.subTotal - discountAmount,
       totalPrice: this.transaction.subTotal + this.taxesAmount - discountAmount,
     });
 
@@ -783,7 +781,7 @@ export class FormalTransactionViewComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.status === 200) {
-            if (this.transaction.type.requestTaxes && this.transaction.taxes && this.transaction.taxes.length > 0) {
+            if (this.transaction.type.requestTaxes) {
               this.recalculateTaxes();
             }
             this.toastService.showToast({
