@@ -26,31 +26,106 @@
   </div>
 
   <ng-container *ngIf="data">
+    <div class="row mb-2" *ngIf="data.period?.label">
+      <div class="col-12">
+        <h5 class="period-title mb-0">Reporte de socios — {{ data.period.label }}</h5>
+      </div>
+    </div>
+
     <div class="row">
-      <div class="col-md-4">
-        <div class="chart kpi">
-          <div class="kpi-value">{{ data.totalIncome }}</div>
-          <div class="kpi-title">Ingresos totales (período)</div>
+      <div class="col-md-3">
+        <div class="chart kpi kpi-highlight">
+          <div class="kpi-value">${{ data.totalIncome }}</div>
+          <div class="kpi-title">Ingresos cobrados (período)</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.subscriptionData?.closeSubscription?.clients ?? 0 }}</div>
+          <div class="kpi-value">
+            ${{ data.activeMembers?.totalProjectedFormatted ?? formatMoney(data.activeMembers?.totalProjected) }}
+          </div>
+          <div class="kpi-title">Ingreso proyectado (socios activos)</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="chart kpi">
+          <div class="kpi-value">{{ data.activeMembers?.total ?? 0 }}</div>
+          <div class="kpi-title">Socios con cuota en el período</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="chart kpi">
+          <div class="kpi-value">${{ data.debt?.totalBalanceFormatted ?? formatMoney(data.debt?.totalBalance) }}</div>
+          <div class="kpi-title">Deuda del período ({{ data.debt?.count ?? 0 }} socios)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3">
+        <div class="chart kpi">
+          <div class="kpi-value">{{ transactionSummary?.closeSubscription?.clients ?? 0 }}</div>
           <div class="kpi-title">Suscripciones cerradas (clientes)</div>
         </div>
+      </div>
+      <div class="col-md-3">
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.subscriptionData?.closeSubscription?.estimatedMoney ?? 0 | number }}</div>
-          <div class="kpi-title">Dinero estimado (cerradas)</div>
+          <div class="kpi-value">${{ formatMoney(transactionSummary?.closeSubscription?.estimatedMoney) }}</div>
+          <div class="kpi-title">Monto cerrado</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.subscriptionData?.openTransactions?.clients ?? 0 }}</div>
-          <div class="kpi-title">Suscripciones Abiertas (clientes)</div>
+          <div class="kpi-value">{{ transactionSummary?.openTransactions?.clients ?? 0 }}</div>
+          <div class="kpi-title">Suscripciones abiertas (clientes)</div>
         </div>
+      </div>
+      <div class="col-md-3">
         <div class="chart kpi">
-          <div class="kpi-value">{{ data.subscriptionData?.openTransactions?.estimatedMoney ?? 0 | number }}</div>
-          <div class="kpi-title">Dinero estimado (abiertas)</div>
+          <div class="kpi-value">${{ formatMoney(transactionSummary?.openTransactions?.estimatedMoney) }}</div>
+          <div class="kpi-title">Monto pendiente</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="data.activeMembers?.byArticle?.length">
+      <div class="col-12">
+        <div class="chart table-chart">
+          <span class="chart-title">Socios con cuota en el período por categoría</span>
+          <table class="table table-striped table-sm mt-2">
+            <thead>
+              <tr>
+                <th>Categoría</th>
+                <th class="text-end">Tarifa</th>
+                <th class="text-end">Cantidad</th>
+                <th class="text-end">Proyectado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of data.activeMembers.byArticle">
+                <td>{{ item.description }}</td>
+                <td class="text-end">${{ formatMoney(item.rate) }}</td>
+                <td class="text-end">{{ item.count }}</td>
+                <td class="text-end">${{ formatMoney(item.projected) }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="table-total-row">
+                <td><strong>Total</strong></td>
+                <td></td>
+                <td class="text-end">
+                  <strong>{{ data.activeMembers.total }}</strong>
+                </td>
+                <td class="text-end">
+                  <strong
+                    >${{
+                      data.activeMembers.totalProjectedFormatted ?? formatMoney(data.activeMembers.totalProjected)
+                    }}</strong
+                  >
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
     </div>
@@ -58,7 +133,7 @@
     <div class="row" *ngIf="byTypeChartOptions">
       <div class="col-12">
         <div class="chart">
-          <span class="chart-title">Ingresos por tipo / métodos de pago</span>
+          <span class="chart-title">Cobranzas por medio de pago</span>
           <apx-chart
             [series]="byTypeChartOptions.series"
             [chart]="byTypeChartOptions.chart"
@@ -73,25 +148,52 @@
       </div>
     </div>
 
-    <div class="row" *ngIf="data.byType?.length">
+    <div class="row" *ngIf="paymentMethods.length">
       <div class="col-12">
         <div class="chart table-chart">
-          <span>Detalle por tipo</span>
+          <span class="chart-title">Detalle de cobranzas</span>
           <table class="table table-striped table-sm mt-2">
             <thead>
               <tr>
-                <th>Tipo</th>
-                <th class="text-end">Total</th>
-                <th class="text-end">Cantidad</th>
+                <th>Medio de pago</th>
+                <th class="text-end">Cobrado</th>
+                <th class="text-end">Pendiente</th>
+                <th class="text-end">Operaciones</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of data.byType">
-                <td>{{ item.type }}</td>
-                <td class="text-end">{{ item.total }}</td>
+              <tr *ngFor="let item of paymentMethods">
+                <td>{{ item.name }}</td>
+                <td class="text-end">${{ formatMoney(item.collected) }}</td>
+                <td class="text-end">${{ formatMoney(item.pending) }}</td>
                 <td class="text-end">{{ item.count }}</td>
               </tr>
             </tbody>
+            <tfoot>
+              <tr class="table-total-row">
+                <td><strong>Total</strong></td>
+                <td class="text-end">
+                  <strong
+                    >${{
+                      data.collections?.totalCollectedFormatted ?? formatMoney(data.collections?.totalCollected)
+                    }}</strong
+                  >
+                </td>
+                <td class="text-end">
+                  <strong
+                    >${{
+                      data.collections?.totalPendingFormatted ?? formatMoney(data.collections?.totalPending)
+                    }}</strong
+                  >
+                </td>
+                <td class="text-end">
+                  <strong
+                    >${{ data.collections?.totalFeesFormatted ?? formatMoney(data.collections?.totalFees) }}</strong
+                  >
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>

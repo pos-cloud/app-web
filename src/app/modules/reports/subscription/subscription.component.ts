@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -33,20 +33,58 @@ interface SubscriptionGroup {
   estimatedMoney: number;
 }
 
-interface ActiveSubscriptionData {
-  activeSubscription: SubscriptionGroup;
-  inactiveSubscription: SubscriptionGroup;
+interface ActiveMemberByArticle {
+  articleId: unknown;
+  description: string;
+  rate: number;
+  count: number;
+  projected: number;
+}
+
+interface CollectionByPaymentMethod {
+  paymentMethodId: unknown;
+  name: string;
+  collected: number;
+  pending: number;
+  count: number;
 }
 
 interface IncomeByType {
   typeId: unknown;
   type: string;
-  total: string;
+  total: number | string;
   count: number;
 }
 
 interface SubscriptionChartResponse {
-  activeSubscription: ActiveSubscriptionData;
+  period?: { VATPeriod: string; label: string };
+  activeMembers?: {
+    byArticle: ActiveMemberByArticle[];
+    total: number;
+    totalProjected: number;
+    totalProjectedFormatted: string;
+  };
+  collections?: {
+    byPaymentMethod: CollectionByPaymentMethod[];
+    totalCollected: number;
+    totalCollectedFormatted: string;
+
+    totalPending: number;
+    totalPendingFormatted: string;
+  };
+  debt?: {
+    count: number;
+    totalBalance: number;
+    totalBalanceFormatted: string;
+  };
+  subscriptionData?: {
+    closeSubscription: SubscriptionGroup;
+    openTransactions: SubscriptionGroup;
+  };
+  transactions?: {
+    closeSubscription: SubscriptionGroup;
+    openTransactions: SubscriptionGroup;
+  };
   totalIncome: string;
   byType: IncomeByType[];
 }
@@ -59,7 +97,7 @@ interface SubscriptionChartResponse {
   standalone: true,
   imports: [CommonModule, NgbModule, FormsModule, NgApexchartsModule],
 })
-export class SubscriptionComponent {
+export class SubscriptionComponent implements OnInit, OnDestroy {
   loading = false;
   data: SubscriptionChartResponse | null = null;
   byTypeChartOptions: Partial<ByTypeChartOptions> | null = null;
@@ -113,30 +151,66 @@ export class SubscriptionComponent {
     return `${this.selectedYear}${month}`;
   }
 
-  private parseCurrencyToNumber(value: string): number {
+  get transactionSummary(): SubscriptionChartResponse['subscriptionData'] | undefined {
+    return this.data?.transactions ?? this.data?.subscriptionData;
+  }
+
+  get paymentMethods(): CollectionByPaymentMethod[] {
+    if (this.data?.collections?.byPaymentMethod?.length) {
+      return this.data.collections.byPaymentMethod;
+    }
+
+    return (this.data?.byType ?? []).map((item) => ({
+      paymentMethodId: item.typeId,
+      name: item.type,
+      collected: this.toNumber(item.total),
+      pending: 0,
+      count: item.count,
+    }));
+  }
+
+  toNumber(value: number | string | null | undefined): number {
     if (value == null || value === '') return 0;
+    if (typeof value === 'number') return value;
+
     const cleaned = String(value)
       .replace(/[^\d,.-]/g, '')
+      .replace(/\./g, '')
       .replace(',', '.');
     const n = parseFloat(cleaned);
     return isNaN(n) ? 0 : n;
   }
 
+  formatMoney(value: number | string | null | undefined): string {
+    return this.toNumber(value).toLocaleString('es-AR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  }
+
   private buildByTypeChart(): void {
-    if (!this.data?.byType?.length) {
+    const paymentMethods = this.paymentMethods;
+
+    if (!paymentMethods.length) {
       this.byTypeChartOptions = null;
       return;
     }
-    const categories = this.data.byType.map((t) => t.type);
-    const totals = this.data.byType.map((t) => this.parseCurrencyToNumber(t.total));
+
+    const categories = paymentMethods.map((item) => item.name);
+    const collected = paymentMethods.map((item) => item.collected);
+    const pending = paymentMethods.map((item) => item.pending);
 
     this.byTypeChartOptions = {
-      series: [{ name: 'Total', data: totals }],
+      series: [
+        { name: 'Cobrado', data: collected },
+        { name: 'Pendiente', data: pending },
+      ],
       chart: {
         type: 'bar',
         height: 350,
         toolbar: { show: false },
         zoom: { enabled: false },
+        stacked: false,
       },
       plotOptions: {
         bar: {
@@ -147,9 +221,7 @@ export class SubscriptionComponent {
         },
       },
       dataLabels: {
-        enabled: true,
-        offsetY: -20,
-        style: { fontSize: '12px' },
+        enabled: false,
       },
       xaxis: {
         categories,
@@ -158,24 +230,26 @@ export class SubscriptionComponent {
       yaxis: {
         title: { text: 'Monto' },
         axisTicks: { show: true },
+        labels: {
+          formatter: (val: number) => this.formatMoney(val),
+        },
       },
       tooltip: {
-        y: { formatter: (val: number) => (val != null ? val.toLocaleString('es-AR') : '') },
+        y: { formatter: (val: number) => `$ ${this.formatMoney(val)}` },
       },
-      colors: ['#546E7A'],
+      colors: ['#2E7D32', '#F9A825'],
     };
   }
 
   actualizar(): void {
     this.loading = true;
-    const requestPayload = {
-      type: 'subscription',
-      VATPeriod: this.VATPeriod,
-    };
 
     this.subscription.add(
       this._service
-        .getChart(requestPayload)
+        .getChart({
+          type: 'subscription',
+          VATPeriod: this.VATPeriod,
+        })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
