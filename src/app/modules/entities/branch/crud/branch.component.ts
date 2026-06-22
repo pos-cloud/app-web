@@ -8,6 +8,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CommonModule } from '@angular/common';
 import { BranchService } from '@core/services/branch.service';
 import { ConfigService } from '@core/services/config.service';
+import { CountryService } from '@core/services/country.service';
 import { IdentificationTypeService } from '@core/services/identification-type.service';
 import { VATConditionService } from '@core/services/vat-condition.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -52,6 +53,7 @@ export class BranchComponent implements OnInit, OnDestroy {
     public _configService: ConfigService,
     public _vatCondition: VATConditionService,
     public _identificationTypeService: IdentificationTypeService,
+    public _countryService: CountryService,
     private _fb: UntypedFormBuilder,
     private _router: Router,
 
@@ -86,7 +88,7 @@ export class BranchComponent implements OnInit, OnDestroy {
     const branchId = pathUrl[4];
 
     combineLatest({
-      countries: this._configService.getCountry(),
+      countries: this._countryService.find({ query: { operationType: { $ne: 'D' } } }),
       vatConditions: this._vatCondition.find({ query: { operationType: { $ne: 'D' } } }),
       identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
     })
@@ -128,7 +130,6 @@ export class BranchComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result: ApiResponse) => {
           this.branch = result.result;
-          this.getTimeZone(this.branch.country);
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -140,22 +141,12 @@ export class BranchComponent implements OnInit, OnDestroy {
       });
   }
 
-  public getTimeZone(countryCode: string) {
-    const selectedCountry = this.countries?.find((item) => item.alpha2Code === countryCode);
-    this.timezones = selectedCountry?.timezones ?? [];
-
-    const timezoneControl = this.branchForm.get('timezone');
-    const currentTimezone = timezoneControl?.value;
-    if (timezoneControl && currentTimezone && !this.timezones.includes(currentTimezone)) {
-      timezoneControl.setValue(this.timezones[0] ?? '');
-    }
-  }
-
   setValueForm(): void {
     const identificationType = this.identificationTypes.find(
       (item) => item._id === this.branch?.identificationType?.toString()
     );
     const vatCondition = this.vatConditions.find((item) => item._id === this.branch?.vatCondition?.toString());
+    const country = this.countries.find((item) => item._id === this.branch?.country?.toString());
     this.branchForm.patchValue({
       _id: this.branch?._id ?? '',
       number: this.branch?.number ?? 0,
@@ -174,10 +165,9 @@ export class BranchComponent implements OnInit, OnDestroy {
       address: this.branch?.address ?? '',
       phone: this.branch?.phone ?? '',
       postalCode: this.branch?.postalCode ?? '',
-      country: this.branch?.country ?? '',
+      country: country ?? null,
       latitude: this.branch?.latitude ?? '',
       longitude: this.branch?.longitude ?? '',
-      timezone: this.branch?.timezone ?? '',
     });
   }
 

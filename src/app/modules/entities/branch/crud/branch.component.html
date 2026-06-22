@@ -205,20 +205,19 @@
               </label>
               <input type="text" class="form-control" formControlName="postalCode" id="postalCode" />
             </div>
-            <div class="col-md-3">
+
+            <div class="col-md-6">
               <label for="country" class="form-label">
                 {{ 'country' | translate | capitalize }}
               </label>
-              <select
-                class="form-control"
-                formControlName="country"
-                id="country"
-                (change)="getTimeZone(branchForm.get('country')?.value)"
-              >
-                <option *ngFor="let country of countries" [value]="country.alpha2Code">
-                  {{ country.name }}
-                </option>
-              </select>
+              <app-typeahead-dropdown
+                class="w-100"
+                placeholder="{{ 'country' | translate | capitalize }}"
+                [control]="branchForm.get('country')"
+                [data]="countries"
+                [keyField]="'_id'"
+                [displayField]="'name'"
+              ></app-typeahead-dropdown>
             </div>
             <div class="col-md-3">
               <label for="latitude" class="form-label">
@@ -231,16 +230,6 @@
                 {{ 'longitude' | translate | capitalize }}
               </label>
               <input type="text" class="form-control" formControlName="longitude" id="longitude" />
-            </div>
-            <div class="col-md-3">
-              <label for="timezone" class="form-label">
-                {{ 'timezone' | translate | capitalize }}
-              </label>
-              <select class="form-control" formControlName="timezone" id="timezone">
-                <option *ngFor="let timezone of timezones" [ngValue]="timezone">
-                  {{ timezone }}
-                </option>
-              </select>
             </div>
           </div>
         </div>

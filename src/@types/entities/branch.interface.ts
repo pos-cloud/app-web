@@ -19,5 +19,4 @@ export interface Branch extends Activity {
   country: string;
   latitude: string;
   longitude: string;
-  timezone: string;
 }
