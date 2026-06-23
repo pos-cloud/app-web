@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
 import { Observable, of, Subject, Subscription } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, finalize, map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-searchable-dropdown',
@@ -23,6 +23,8 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
   @Input() maxHeight: string = '300px';
   @Input() searchPlaceholder: string = 'Buscar...';
   @Input() service?: { getAll: (params: any) => Observable<any> };
+  @Input() searchFields?: string[];
+  @Input() match: Record<string, unknown> = { operationType: { $ne: 'D' } };
   @Input() minSearchLength: number = 2;
   @Input() initialLimit: number = 10;
   @Input() resultLimit: number = 20;
@@ -53,12 +55,18 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
     this.searchSubscription = this.searchTerm$
       .pipe(
         debounceTime(300),
-        distinctUntilChanged(),
-        switchMap((term) => this.runSearch(term))
+        switchMap((term) =>
+          this.runSearch(term).pipe(finalize(() => (this.searching = false)))
+        )
       )
-      .subscribe((items) => {
-        this.filteredItems = items;
-        this.searching = false;
+      .subscribe({
+        next: (items) => {
+          this.filteredItems = items;
+        },
+        error: () => {
+          this.filteredItems = [];
+          this.searching = false;
+        },
       });
   }
 
@@ -113,6 +121,7 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
   closeDropdown(): void {
     this.isOpen = false;
     this.searchTerm = '';
+    this.searching = false;
   }
 
   onSearchChange(): void {
@@ -178,34 +187,34 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
     }
 
     this.emptyMessage = 'No se encontraron resultados';
-    const match: Record<string, unknown> = { operationType: { $ne: 'D' } };
+    const fields = this.searchFields?.length ? this.searchFields : [this.displayField];
+    const match: Record<string, unknown> = { ...this.match };
 
     if (trimmed.length >= this.minSearchLength) {
-      match.$or = [
-        { [this.displayField]: { $regex: trimmed, $options: 'i' } },
-        { code: { $regex: trimmed, $options: 'i' } },
-        { barcode: { $regex: trimmed, $options: 'i' } },
-      ];
+      match.$or = fields.map((field) => ({
+        [field]: { $regex: trimmed, $options: 'i' },
+      }));
     }
 
-    return this.service!
-      .getAll({
-        project: {
-          [this.displayField]: 1,
-          [this.keyField]: 1,
-          code: 1,
-          barcode: 1,
-          operationType: 1,
-        },
-        match,
-        sort: { [this.displayField]: 1 },
-        limit: trimmed.length >= this.minSearchLength ? this.resultLimit : this.initialLimit,
-      })
-      .pipe(
-        map((result) => (result?.status === 200 ? (result.result ?? []) : [])),
-        catchError(() => of([])),
-        switchMap((items) => of(this.ensureSelectedItemIncluded(items)))
-      );
+    const project: Record<string, 1> = {
+      [this.keyField]: 1,
+      [this.displayField]: 1,
+      operationType: 1,
+    };
+    fields.forEach((field) => {
+      project[field] = 1;
+    });
+
+    return this.service!.getAll({
+      project,
+      match,
+      sort: { [this.displayField]: 1 },
+      limit: trimmed.length >= this.minSearchLength ? this.resultLimit : this.initialLimit,
+    }).pipe(
+      map((result) => (result?.status === 200 ? (result.result ?? []) : [])),
+      catchError(() => of([])),
+      switchMap((items) => of(this.ensureSelectedItemIncluded(items)))
+    );
   }
 
   private refreshLocalItems(): void {

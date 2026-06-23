@@ -19,31 +19,15 @@ import { VATConditionService } from '@core/services/vat-condition.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
-import {
-  Account,
-  Address,
-  ApiResponse,
-  Company,
-  CompanyGroup,
-  CompanyType,
-  Employee,
-  GenderType,
-  IdentificationType,
-  PaymentMethod,
-  PriceList,
-  State,
-  Transport,
-  VATCondition,
-} from '@types';
+import { ApiResponse, Company, CompanyType, GenderType } from '@types';
 import { Config } from 'app/app.config';
 import { BusinessModel } from 'app/core/enums/business-model.enum';
 import { AccountService } from 'app/core/services/account.service';
 import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { combineLatest, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -57,7 +41,6 @@ import { takeUntil } from 'rxjs/operators';
     FocusDirective,
     PipesModule,
     TranslateModule,
-    TypeaheadDropdownComponent,
     SearchableDropdownComponent,
     ProgressbarModule,
   ],
@@ -70,24 +53,13 @@ export class CompanyComponent implements OnInit {
   };
   public companyId: string;
   public operation: string;
-
   public company: Company;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public companyForm: UntypedFormGroup;
-  public accounts: Account[];
   private destroy$ = new Subject<void>();
   public config: Config;
-  public vatConditions: VATCondition[];
-  public companiesGroups: CompanyGroup[];
-  public employees: Employee[];
-  public states: State[];
-  public address: Address[];
-  public countries: any;
-  public transports: Transport[];
-  public priceLists: PriceList[];
-  public paymentMethods: PaymentMethod[];
-  public identificationTypes: IdentificationType[];
+
   public type: string;
   public genders: any[] = ['', GenderType.Male, GenderType.Female];
   public BusinessModel = BusinessModel;
@@ -192,59 +164,11 @@ export class CompanyComponent implements OnInit {
     if (this.operation === 'view' || this.operation === 'delete') this.companyForm.disable();
     this.loading = true;
 
-    combineLatest({
-      vatConditions: this._vatConditionService.find({ query: { operationType: { $ne: 'D' } } }),
-      companiesGroups: this._companyGroupService.find({ query: { operationType: { $ne: 'D' } } }),
-      address: this._addressService.find({ query: { operationType: { $ne: 'D' } } }),
-      employees: this._employeeService.find({ query: { operationType: { $ne: 'D' } } }),
-      states: this._stateService.find({ query: { operationType: { $ne: 'D' } } }),
-      countries: this._countryService.find({ query: { operationType: { $ne: 'D' } } }),
-      transports: this._transportService.find({ query: { operationType: { $ne: 'D' } } }),
-      priceLists: this._priceListService.find({ query: { operationType: { $ne: 'D' } } }),
-      identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
-      accounts: this._accountService.find({ query: { operationType: { $ne: 'D' }, mode: 'Analitico' } }),
-      paymentMethod: this._paymentMethod.find({ query: { operationType: { $ne: 'D' } } }),
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: ({
-          vatConditions,
-          companiesGroups,
-          address,
-          employees,
-          states,
-          countries,
-          transports,
-          priceLists,
-          identificationTypes,
-          accounts,
-          paymentMethod,
-        }) => {
-          this.vatConditions = vatConditions ?? [];
-          this.companiesGroups = companiesGroups ?? [];
-          this.address = address ?? [];
-          this.employees = employees ?? [];
-          this.states = states ?? [];
-          this.countries = countries ?? [];
-          this.transports = transports ?? [];
-          this.priceLists = priceLists ?? [];
-          this.identificationTypes = identificationTypes ?? [];
-          this.accounts = accounts ?? [];
-          this.paymentMethods = paymentMethod;
-
-          if (this.companyId) {
-            if (this.companyId) this.getCompany(this.companyId);
-          } else {
-            this.setValueForm();
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    if (this.companyId) {
+      if (this.companyId) this.getCompany(this.companyId);
+    } else {
+      this.setValueForm();
+    }
   }
 
   private businessModelMatches(model: BusinessModel): boolean {
@@ -261,10 +185,7 @@ export class CompanyComponent implements OnInit {
   }
 
   public get showSubscriptionSection(): boolean {
-    return (
-      this.businessModelMatches(BusinessModel.SuscripcionesYMembresias) ||
-      this.businessModelMatches(BusinessModel.Asociacion)
-    );
+    return true;
   }
 
   ngAfterViewInit() {
@@ -281,35 +202,10 @@ export class CompanyComponent implements OnInit {
     const pathUrl = this._router.url.split('/');
     let type = pathUrl[4] === 'client' ? CompanyType.Client : CompanyType.Provider;
 
-    const vatCondition = this.vatConditions?.find((item) => item._id === this.company?.vatCondition?.toString());
-    const identificationType = this.identificationTypes?.find(
-      (item) => item._id === this.company?.identificationType?.toString()
-    );
-    const country = this.countries?.find((item) => item._id === this.company?.country?.toString());
-    const group = this.companiesGroups?.find((item) => item._id === this.company?.group?.toString());
-    const employee = this.employees?.find((item) => item._id === this.company?.employee?.toString());
-    const transport = this.transports?.find((item) => item._id === this.company?.transport?.toString());
-    const priceList = this.priceLists?.find((item) => item._id === this.company?.priceList?.toString());
-    const state = this.states?.find((item) => item._id === this.company?.state?.toString());
-    const accountData = this.accounts?.find((item) => item._id === this.company?.account?.toString());
-    const paymentMethod = this.paymentMethods?.find(
-      (item) => item._id === this.company?.subscription?.paymentMethod?.toString()
-    );
-    let account;
-    let allowCurrentAccount;
-    if (type === CompanyType.Client) {
-      account = accountData
-        ? accountData
-        : (this.accounts.find((item) => item._id === this.config?.company?.accountClient?.default?.toString()) ?? null);
-
-      allowCurrentAccount = this.config?.company?.allowCurrentAccountClient?.default ?? false;
-    } else {
-      account = accountData
-        ? accountData
-        : (this.accounts.find((item) => item._id === this.config?.company?.accountProvider?.default?.toString()) ??
-          null);
-      allowCurrentAccount = this.config?.company?.allowCurrentAccountProvider?.default ?? false;
-    }
+    const allowCurrentAccount =
+      type === CompanyType.Client
+        ? (this.config?.company?.allowCurrentAccountClient?.default ?? false)
+        : (this.config?.company?.allowCurrentAccountProvider?.default ?? false);
     const values = {
       _id: this.company?._id ?? '',
       name: this.company?.name ?? '',
@@ -394,7 +290,6 @@ export class CompanyComponent implements OnInit {
       .subscribe({
         next: (result: ApiResponse) => {
           this.company = result.result[0];
-          console.log(this.company);
           if (result.status == 200) this.setValueForm();
         },
         error: (error) => {

@@ -71,12 +71,12 @@
             <label for="identificationType" class="control-label">{{
               'identificationType.name' | translate | capitalize
             }}</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               [control]="companyForm.get('identificationType')"
-              [data]="identificationTypes"
+              [service]="_identificationTypeService"
               [keyField]="'_id'"
               [displayField]="'name'"
-            ></app-typeahead-dropdown>
+            ></app-searchable-dropdown>
           </div>
           <div class="form-group col-md-4">
             <label for="identificationValue" class="control-label">{{
@@ -111,13 +111,12 @@
             <label for="vatCondition" class="control-label"
               >{{ 'vatCondition.description' | translate | capitalize }}:</label
             >
-
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               [control]="companyForm.get('vatCondition')"
-              [data]="vatConditions"
+              [service]="_vatConditionService"
               [keyField]="'_id'"
               [displayField]="'description'"
-            ></app-typeahead-dropdown>
+            ></app-searchable-dropdown>
           </div>
           <div class="form-group col-md-3">
             <label for="fantasyName" class="control-label">{{ 'fantasyName' | translate | capitalize }}:</label>
@@ -239,21 +238,21 @@
         <div class="row">
           <div class="form-group col-md-4">
             <label for="country" class="control-label">{{ 'company.country.name' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               [control]="companyForm.get('country')"
-              [data]="countries"
+              [service]="_countryService"
               [keyField]="'_id'"
               [displayField]="'name'"
-            ></app-typeahead-dropdown>
+            ></app-searchable-dropdown>
           </div>
           <div class="form-group col-md-4">
             <label for="state" class="control-label">{{ 'company.state.name' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               [control]="companyForm.get('state')"
-              [data]="states"
+              [service]="_stateService"
               [keyField]="'_id'"
               [displayField]="'name'"
-            ></app-typeahead-dropdown>
+            ></app-searchable-dropdown>
           </div>
           <div class="form-group col-md-4">
             <label for="city" class="control-label">{{ 'company.state' | translate | capitalize }}:</label>
@@ -530,18 +529,19 @@
                 [service]="_articleService"
                 [keyField]="'_id'"
                 [displayField]="'description'"
+                [searchFields]="['description', 'code', 'barcode']"
               ></app-searchable-dropdown>
             </div>
             <div class="form-group col-md-3">
               <label for="subscription.paymentMethod" class="control-label">{{
                 'subscription.paymentMethod.name' | translate | capitalize
               }}</label>
-              <app-typeahead-dropdown
+              <app-searchable-dropdown
                 [control]="companyForm.get('subscription.paymentMethod')"
-                [data]="paymentMethods"
+                [service]="_paymentMethod"
                 [keyField]="'_id'"
                 [displayField]="'name'"
-              ></app-typeahead-dropdown>
+              ></app-searchable-dropdown>
             </div>
           </div>
         </ng-container>
@@ -565,32 +565,33 @@
               </div>
               <div class="form-group col-md-6">
                 <label for="account">{{ 'account' | translate | capitalize }}:</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   [control]="companyForm.get('account')"
-                  [data]="accounts"
+                  [service]="_accountService"
                   [keyField]="'_id'"
                   [displayField]="'description'"
-                ></app-typeahead-dropdown>
+                  [match]="{ operationType: { $ne: 'D' }, mode: 'Analitico' }"
+                ></app-searchable-dropdown>
               </div>
             </div>
             <div class="row">
               <div class="form-group col-md-6">
                 <label for="group" class="control-label">{{ 'assigned group' | translate | capitalize }}</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   [control]="companyForm.get('group')"
-                  [data]="companiesGroups"
+                  [service]="_companyGroupService"
                   [keyField]="'_id'"
                   [displayField]="'description'"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
               <div class="form-group col-md-6">
                 <label for="employee" class="control-label"> {{ 'assigned employee' | translate | capitalize }}</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   [control]="companyForm.get('employee')"
-                  [data]="employees"
+                  [service]="_employeeService"
                   [keyField]="'_id'"
                   [displayField]="'name'"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
             </div>
             <div class="row">
@@ -598,21 +599,21 @@
                 <label for="transport" class="control-label">{{
                   'assigned transportation' | translate | capitalize
                 }}</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   [control]="companyForm.get('transport')"
-                  [data]="transports"
+                  [service]="_transportService"
                   [keyField]="'_id'"
                   [displayField]="'name'"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
               <div class="form-group col-md-6">
                 <label for="priceList" class="control-label">{{ 'assigned list' | translate | capitalize }}</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   [control]="companyForm.get('priceList')"
-                  [data]="priceLists"
+                  [service]="_priceListService"
                   [keyField]="'_id'"
                   [displayField]="'name'"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
             </div>
             <div class="row">
