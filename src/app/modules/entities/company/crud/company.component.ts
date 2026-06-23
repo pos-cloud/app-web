@@ -23,7 +23,6 @@ import {
   Account,
   Address,
   ApiResponse,
-  Article,
   Company,
   CompanyGroup,
   CompanyType,
@@ -39,11 +38,12 @@ import {
 import { Config } from 'app/app.config';
 import { BusinessModel } from 'app/core/enums/business-model.enum';
 import { AccountService } from 'app/core/services/account.service';
+import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { combineLatest, of, Subject } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -58,6 +58,7 @@ import { takeUntil } from 'rxjs/operators';
     PipesModule,
     TranslateModule,
     TypeaheadDropdownComponent,
+    SearchableDropdownComponent,
     ProgressbarModule,
   ],
 })
@@ -85,7 +86,6 @@ export class CompanyComponent implements OnInit {
   public countries: any;
   public transports: Transport[];
   public priceLists: PriceList[];
-  public articles: Article[];
   public paymentMethods: PaymentMethod[];
   public identificationTypes: IdentificationType[];
   public type: string;
@@ -144,7 +144,7 @@ export class CompanyComponent implements OnInit {
       creditLimit: ['', []],
       zipCode: ['', []],
       subscription: this._fb.group({
-        article: [false, []],
+        article: [null, []],
         paymentMethod: [null, []],
         active: [null, []],
       }),
@@ -203,11 +203,6 @@ export class CompanyComponent implements OnInit {
       priceLists: this._priceListService.find({ query: { operationType: { $ne: 'D' } } }),
       identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       accounts: this._accountService.find({ query: { operationType: { $ne: 'D' }, mode: 'Analitico' } }),
-      // Los artículos solo se usan en el dropdown de suscripción. Evitamos descargar
-      // todo el catálogo (puede ser de millones) cuando la sección no aplica al negocio.
-      article: this.showSubscriptionSection
-        ? this._articleService.find({ query: { operationType: { $ne: 'D' } } })
-        : of([]),
       paymentMethod: this._paymentMethod.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
@@ -224,7 +219,6 @@ export class CompanyComponent implements OnInit {
           identificationTypes,
           accounts,
           paymentMethod,
-          article,
         }) => {
           this.vatConditions = vatConditions ?? [];
           this.companiesGroups = companiesGroups ?? [];
@@ -236,7 +230,6 @@ export class CompanyComponent implements OnInit {
           this.priceLists = priceLists ?? [];
           this.identificationTypes = identificationTypes ?? [];
           this.accounts = accounts ?? [];
-          this.articles = article ?? null;
           this.paymentMethods = paymentMethod;
 
           if (this.companyId) {
@@ -299,7 +292,6 @@ export class CompanyComponent implements OnInit {
     const priceList = this.priceLists?.find((item) => item._id === this.company?.priceList?.toString());
     const state = this.states?.find((item) => item._id === this.company?.state?.toString());
     const accountData = this.accounts?.find((item) => item._id === this.company?.account?.toString());
-    const article = this.articles?.find((item) => item._id === this.company?.subscription?.article?.toString());
     const paymentMethod = this.paymentMethods?.find(
       (item) => item._id === this.company?.subscription?.paymentMethod?.toString()
     );
@@ -324,11 +316,8 @@ export class CompanyComponent implements OnInit {
       code: this.company?.code ?? 0,
       fantasyName: this.company?.fantasyName ?? '',
       type: this.property ? this.type : (this.company?.type ?? type),
-      vatCondition: vatCondition
-        ? vatCondition
-        : (this.vatConditions.find((item) => item._id === this.config?.company?.vatCondition?.default?.toString()) ??
-          null),
-      identificationType: identificationType ?? null,
+      vatCondition: this.company?.vatCondition ?? null,
+      identificationType: this.company?.identificationType ?? null,
       identificationValue: this.company?.identificationValue ?? '',
       grossIncome: this.company?.grossIncome ?? '',
       address: this.company?.address ?? '',
@@ -339,22 +328,22 @@ export class CompanyComponent implements OnInit {
       birthday: this.company?.birthday ? new Date(this.company.birthday).toISOString().substring(0, 10) : '',
       observation: this.company?.observation ?? '',
       allowCurrentAccount: this.company?.allowCurrentAccount ?? allowCurrentAccount,
-      country: country ?? null,
+      country: this.company?.country ?? '',
       addressNumber: this.company?.addressNumber ?? '',
-      state: state ?? null,
+      state: this.company?.state ?? '',
       floorNumber: this.company?.floorNumber ?? '',
       flat: this.company?.flat ?? '',
-      group: group ?? null,
-      employee: employee ?? null,
-      transport: transport ?? null,
-      priceList: priceList ?? null,
+      group: this.company?.group ?? null,
+      employee: this.company?.employee ?? null,
+      transport: this.company?.transport ?? null,
+      priceList: this.company?.priceList ?? null,
       discount: this.company?.discount ?? 0,
-      account: account,
+      account: this.company?.account ?? null,
       creditLimit: this.company?.creditLimit ?? '',
       zipCode: this.company?.zipCode ?? '',
       subscription: {
-        article: article ?? null,
-        paymentMethod: paymentMethod ?? null,
+        article: this.company?.subscription?.article ?? null,
+        paymentMethod: this.company?.subscription?.paymentMethod ?? null,
         active: this.company?.subscription?.active ?? false,
       },
       clientFile: {
@@ -400,11 +389,12 @@ export class CompanyComponent implements OnInit {
     this.loading = true;
 
     this._companyService
-      .getById(id)
+      .getCompanyObjById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this.company = result.result;
+          this.company = result.result[0];
+          console.log(this.company);
           if (result.status == 200) this.setValueForm();
         },
         error: (error) => {

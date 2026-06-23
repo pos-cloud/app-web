@@ -525,12 +525,12 @@
               <label for="subscription.article" class="control-label">{{
                 'subscription.article.description' | translate | capitalize
               }}</label>
-              <app-typeahead-dropdown
+              <app-searchable-dropdown
                 [control]="companyForm.get('subscription.article')"
-                [data]="articles"
+                [service]="_articleService"
                 [keyField]="'_id'"
                 [displayField]="'description'"
-              ></app-typeahead-dropdown>
+              ></app-searchable-dropdown>
             </div>
             <div class="form-group col-md-3">
               <label for="subscription.paymentMethod" class="control-label">{{

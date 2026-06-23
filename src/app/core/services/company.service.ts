@@ -22,7 +22,10 @@ export class CompanyService extends ModelService {
   private providers: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
   private provider: BehaviorSubject<DatatableHistory> = new BehaviorSubject<DatatableHistory>(null);
 
-  constructor(public _http: HttpClient, public _authService: AuthService) {
+  constructor(
+    public _http: HttpClient,
+    public _authService: AuthService
+  ) {
     super(
       `companies`, // PATH
       _http,
@@ -323,5 +326,22 @@ export class CompanyService extends ModelService {
           return of(err);
         })
       );
+  }
+
+  getCompanyObjById(id: string): Observable<any> {
+    const URL = `${environment.apiv2}/companies/object/${id}`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.get(URL, { headers: headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
   }
 }
