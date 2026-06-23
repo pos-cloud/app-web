@@ -39,6 +39,7 @@
     >
       <span class="notification-bell__title">{{ notification.title }}</span>
       <span class="notification-bell__message">{{ notification.message }}</span>
+      <span class="notification-bell__link" *ngIf="getLink(notification)">Ver más →</span>
       <span class="notification-bell__date" *ngIf="notification.creationDate">
         {{ notification.creationDate | date: 'dd/MM/yyyy HH:mm' }}
       </span>

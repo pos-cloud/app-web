@@ -44,6 +44,20 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
       .markAsRead(notification._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.refresh());
+
+    this.openLink(notification);
+  }
+
+  public getLink(notification: Notification): string | null {
+    const url = notification?.payload?.['url'];
+    return typeof url === 'string' && url.trim() ? url.trim() : null;
+  }
+
+  private openLink(notification: Notification): void {
+    const url = this.getLink(notification);
+    if (!url) return;
+
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   public markAllAsRead(): void {
