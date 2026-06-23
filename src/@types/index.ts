@@ -39,6 +39,7 @@ export { IdentificationType } from './entities/identification-type.interface';
 export { Location } from './entities/location.interface';
 export { Make } from './entities/make.interface';
 export { MovementOfArticle, MovementOfArticleStatus } from './entities/movement-of-article.interface';
+export { MovementOfCancellation } from './entities/movement-of-cancellation.interface';
 export { MovementOfCash, StatusCheck } from './entities/movement-of-cash.interface';
 export { Notification, NotificationType } from './entities/notification.interface';
 export { Origin } from './entities/origin.interface';
@@ -79,7 +80,6 @@ export { VariantType } from './entities/variant-type.interface';
 export { VariantValue } from './entities/variant-value.interface';
 export { Variant } from './entities/variant.interface';
 export { VATCondition } from './entities/vat-condition.interface';
-
 // common
 export { Activity } from './common/activity.interface';
 export { ApiEnvelope, ApiResponse, NormalizedApiResponse } from './common/api-response.interface';

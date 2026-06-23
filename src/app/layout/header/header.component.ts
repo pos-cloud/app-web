@@ -125,7 +125,7 @@ export class HeaderComponent implements OnInit {
                 { label: 'Transacciones', link: 'admin/ventas' },
                 { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/venta' },
                 { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/venta' },
-                { label: 'Cancelaciones', link: 'admin/venta/movimientos-de-cancellaciones' },
+                { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/venta' },
               ],
             },
             {
@@ -152,7 +152,7 @@ export class HeaderComponent implements OnInit {
                 { label: 'Transacciones', link: 'admin/compra' },
                 { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/compra' },
                 { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/compra' },
-                { label: 'Cancelaciones', link: 'admin/compra/movimientos-de-cancellaciones' },
+                { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/venta' },
               ],
             },
             {
@@ -195,6 +195,7 @@ export class HeaderComponent implements OnInit {
                 { label: 'Transacciones', link: 'admin/production' },
                 { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/prodution' },
                 { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/prodution' },
+                { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/production' },
               ],
             },
             {
@@ -612,7 +613,7 @@ export class HeaderComponent implements OnInit {
                     { label: 'Transacciones', link: 'admin/ventas' },
                     { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/venta' },
                     { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/venta' },
-                    { label: 'Cancelaciones', link: 'admin/venta/movimientos-de-cancellaciones' },
+                    { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/venta' },
                   ],
                 },
                 {
@@ -642,7 +643,7 @@ export class HeaderComponent implements OnInit {
                     { label: 'Transacciones', link: 'admin/compras' },
                     { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/compra' },
                     { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/compra' },
-                    { label: 'Cancelaciones', link: 'report/compra/movimientos-de-cancellaciones' },
+                    { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/compra' },
                   ],
                 },
                 {
@@ -692,6 +693,7 @@ export class HeaderComponent implements OnInit {
                   children: [
                     { label: 'Transacciones', link: 'admin/production' },
                     { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/production' },
+                    { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/production' },
                   ],
                 },
                 {

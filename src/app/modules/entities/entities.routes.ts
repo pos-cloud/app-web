@@ -208,4 +208,11 @@ export const ENTITIES_ROUTES: Routes = [
     path: 'cash-boxes',
     loadChildren: () => import('./cash-box/cash-box.component').then((m) => m.CASH_BOX_ROUTES),
   },
+  {
+    path: 'movements-of-cancellation',
+    loadChildren: () =>
+      import('./movement-of-cancellation/movements-of-cancellation.routes').then(
+        (m) => m.MOVEMENT_OF_CANCELLATION_ROUTES
+      ),
+  },
 ];
