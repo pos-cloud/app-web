@@ -8,7 +8,6 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { CommonModule } from '@angular/common';
 import { BranchService } from '@core/services/branch.service';
 import { ConfigService } from '@core/services/config.service';
-import { CountryService } from '@core/services/country.service';
 import { IdentificationTypeService } from '@core/services/identification-type.service';
 import { VATConditionService } from '@core/services/vat-condition.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,6 +17,7 @@ import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
 @Component({
   selector: 'app-branch',
   templateUrl: './branch.component.html',
@@ -42,7 +42,6 @@ export class BranchComponent implements OnInit, OnDestroy {
   public vatConditions: VATCondition[];
   public currencies: Currency[];
   public accounts: Account[];
-  public countries: any;
   public focusEvent = new EventEmitter<boolean>();
   public branch: Branch;
   public timezones: string[] = [];
@@ -53,7 +52,6 @@ export class BranchComponent implements OnInit, OnDestroy {
     public _configService: ConfigService,
     public _vatCondition: VATConditionService,
     public _identificationTypeService: IdentificationTypeService,
-    public _countryService: CountryService,
     private _fb: UntypedFormBuilder,
     private _router: Router,
 
@@ -88,14 +86,12 @@ export class BranchComponent implements OnInit, OnDestroy {
     const branchId = pathUrl[4];
 
     combineLatest({
-      countries: this._countryService.find({ query: { operationType: { $ne: 'D' } } }),
       vatConditions: this._vatCondition.find({ query: { operationType: { $ne: 'D' } } }),
       identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ countries, vatConditions, identificationTypes }) => {
-          this.countries = countries ?? [];
+        next: ({ vatConditions, identificationTypes }) => {
           this.vatConditions = vatConditions ?? [];
           this.identificationTypes = identificationTypes ?? [];
           if (branchId) {
@@ -146,7 +142,6 @@ export class BranchComponent implements OnInit, OnDestroy {
       (item) => item._id === this.branch?.identificationType?.toString()
     );
     const vatCondition = this.vatConditions.find((item) => item._id === this.branch?.vatCondition?.toString());
-    const country = this.countries.find((item) => item._id === this.branch?.country?.toString());
     this.branchForm.patchValue({
       _id: this.branch?._id ?? '',
       number: this.branch?.number ?? 0,
@@ -165,7 +160,6 @@ export class BranchComponent implements OnInit, OnDestroy {
       address: this.branch?.address ?? '',
       phone: this.branch?.phone ?? '',
       postalCode: this.branch?.postalCode ?? '',
-      country: country ?? null,
       latitude: this.branch?.latitude ?? '',
       longitude: this.branch?.longitude ?? '',
     });

@@ -16,7 +16,6 @@ export interface Branch extends Activity {
   address: string;
   phone: string;
   postalCode: string;
-  country: string;
   latitude: string;
   longitude: string;
 }

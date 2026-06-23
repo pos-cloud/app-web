@@ -149,17 +149,6 @@ export class ListBranchComponent {
         align: 'left',
         required: false,
       },
-
-      {
-        name: 'country',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
       {
         name: 'latitude',
         visible: false,
@@ -172,16 +161,6 @@ export class ListBranchComponent {
       },
       {
         name: 'longitude',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'timezone',
         visible: false,
         disabled: false,
         filter: true,
