@@ -40,12 +40,12 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
   public markAsRead(notification: Notification, event: Event): void {
     event.stopPropagation();
 
+    this.openLink(notification);
+
     this._notificationsService
       .markAsRead(notification._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.refresh());
-
-    this.openLink(notification);
   }
 
   public getLink(notification: Notification): string | null {
