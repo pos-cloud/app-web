@@ -162,7 +162,6 @@ export class CompanyComponent implements OnInit {
       this.type = URL[4];
     }
     if (this.operation === 'view' || this.operation === 'delete') this.companyForm.disable();
-    this.loading = true;
 
     if (this.companyId) {
       if (this.companyId) this.getCompany(this.companyId);
