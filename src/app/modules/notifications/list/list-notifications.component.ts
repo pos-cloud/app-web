@@ -71,6 +71,16 @@ export class ListNotificationsComponent {
       required: false,
     },
     {
+      name: 'link',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      project: `{ "$ifNull": ["$payload.url", ""] }`,
+      align: 'left',
+      required: true,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,
@@ -83,7 +93,14 @@ export class ListNotificationsComponent {
     },
   ];
 
-  public rowButtons: IButton[] = [];
+  public rowButtons: IButton[] = [
+    {
+      title: 'Abrir link',
+      icon: 'fa fa-external-link',
+      class: 'btn btn-light',
+      click: `if (item.link) { window.open(item.link, '_blank', 'noopener,noreferrer'); }`,
+    },
+  ];
 
   public headerButtons: IButton[] = [
     {
