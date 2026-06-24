@@ -185,7 +185,10 @@ export class CompanyComponent implements OnInit {
   }
 
   public get showSubscriptionSection(): boolean {
-    return true;
+    return (
+      this.businessModelMatches(BusinessModel.SuscripcionesYMembresias) ||
+      this.businessModelMatches(BusinessModel.Asociacion)
+    );
   }
 
   ngAfterViewInit() {
