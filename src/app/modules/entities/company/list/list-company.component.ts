@@ -107,16 +107,7 @@ export class ListCompanyComponent implements OnInit {
       align: 'left',
       required: false,
     },
-    {
-      name: 'employee.name',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'left',
-      required: false,
-    },
+
     {
       name: 'country.name',
       visible: false,
@@ -339,6 +330,27 @@ export class ListCompanyComponent implements OnInit {
       required: false,
     },
     {
+      name: 'employee._id',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: null,
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'employee.name',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,
@@ -384,7 +396,7 @@ export class ListCompanyComponent implements OnInit {
     });
   }
 
-  async ngOnInit() {
+  ngOnInit(): void {
     this.getPermissions();
   }
 
@@ -446,10 +458,12 @@ export class ListCompanyComponent implements OnInit {
 
   private getPermissions(): void {
     this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
-      if (identity) {
-        this.user = identity;
-        this.configureButtons();
+      if (!identity) {
+        return;
       }
+      this.user = identity;
+      this.configureButtons();
+      this.configureEmployeeFilter();
     });
   }
 
@@ -522,5 +536,14 @@ export class ListCompanyComponent implements OnInit {
         click: `this.emitEvent('uploadFile', null)`,
       }
     );
+  }
+  private configureEmployeeFilter(): void {
+    if (this.user.permission?.filterCompany && this.user.employee?._id) {
+      const employeeColumn = this.columns.find((column) => column.name === 'employee._id');
+      if (employeeColumn) {
+        employeeColumn.defaultFilter = `{ "$oid": "${this.user.employee._id}" }`;
+        employeeColumn.required = true;
+      }
+    }
   }
 }
