@@ -1,8 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsService } from '@core/services/notifications.service';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
+import { ViewNotificationComponent } from '../components/view-notification/view-notification.component';
 
 @Component({
   selector: 'app-list-notifications',
@@ -81,6 +83,16 @@ export class ListNotificationsComponent {
       required: true,
     },
     {
+      name: 'payload',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      project: `"$payload"`,
+      align: 'left',
+      required: true,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,
@@ -95,9 +107,15 @@ export class ListNotificationsComponent {
 
   public rowButtons: IButton[] = [
     {
+      title: 'view',
+      icon: 'fa fa-eye',
+      class: 'btn btn-success btn-sm',
+      click: `this.emitEvent('view', item)`,
+    },
+    {
       title: 'Abrir link',
       icon: 'fa fa-external-link',
-      class: 'btn btn-light',
+      class: 'btn btn-light btn-sm',
       click: `if (item.link) { window.open(item.link, '_blank', 'noopener,noreferrer'); }`,
     },
   ];
@@ -113,7 +131,26 @@ export class ListNotificationsComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: NotificationsService) {}
+  constructor(
+    public _service: NotificationsService,
+    private _modalService: NgbModal
+  ) {}
+
+  public emitEvent(event: { op: string; obj: any }): void {
+    if (event.op === 'view' || event.op === 'on-click') {
+      this.openView(event.obj);
+    }
+  }
+
+  private openView(notification: any): void {
+    if (!notification) return;
+
+    const modalRef = this._modalService.open(ViewNotificationComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.notification = notification;
+  }
 
   public refresh(): void {
     this.datatableComponent.refresh();
