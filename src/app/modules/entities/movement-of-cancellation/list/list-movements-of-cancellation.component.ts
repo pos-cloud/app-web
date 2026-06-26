@@ -71,6 +71,26 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
       required: true,
     },
     {
+      name: 'transactionOrigin.creationDate2',
+      visible: false,
+      disabled: false,
+      filter: false,
+      datatype: 'date',
+      project: `"$transactionOrigin.creationDate"`,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'transactionOrigin.updateDate2',
+      visible: false,
+      disabled: false,
+      filter: false,
+      datatype: 'date',
+      project: `"$transactionOrigin.updateDate"`,
+      align: 'left',
+      required: true,
+    },
+    {
       name: 'transactionOrigin.employeeClosing.name',
       visible: false,
       disabled: false,
@@ -194,6 +214,26 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
       required: true,
     },
     {
+      name: 'transactionDestination.creationDate2',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'date',
+      project: `"$transactionDestination.creationDate"`,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'transactionDestination.updateDate2',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'date',
+      project: `"$transactionDestination.updateDate"`,
+      align: 'left',
+      required: true,
+    },
+    {
       name: 'transactionDestination.type.name',
       visible: true,
       disabled: false,
@@ -286,7 +326,7 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
   // Filtros de fecha por defecto
   public startDate: string;
   public endDate: string;
-  public dateSelect: string = 'transactionOrigin.endDate';
+  public dateSelect: string = 'transactionOrigin.endDate2';
   public stateSelectOrigin: string = 'Cerrado';
   public stateSelectDestination: string = 'Cerrado';
   public transactionMovement: string;
