@@ -133,6 +133,8 @@
   "article.unitOfMeasurement.abbreviation": "Un. de Medida",
   "article.variantType1.name": "Tipo de variante",
   "article.variantValue1.description": "Valor variante",
+  "article.variantType2.name": "Tipo de variante 2",
+  "article.variantValue2.description": "Valor variante 2",
   "articleDiscount": "Artículo para descuento",
   "articles": "Productos",
   "assigned employee": "Empleado asignado",
