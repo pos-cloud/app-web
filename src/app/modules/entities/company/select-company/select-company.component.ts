@@ -1,9 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AuthService } from '@core/services/auth.service';
 import { CompanyService } from '@core/services/company.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ToastService } from '@shared/components/toast/toast.service';
-import { Company, CompanyType, IAttribute, IButton } from '@types';
+import { Company, CompanyType, IAttribute, IButton, User } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { Subject } from 'rxjs';
@@ -16,11 +17,12 @@ import { CompanyComponent } from '../crud/company.component';
   standalone: true,
   imports: [DatatableModule],
 })
-export class SelectCompanyComponent implements OnInit {
+export class SelectCompanyComponent implements OnInit, OnDestroy {
   @Input() type: CompanyType;
   public title: CompanyType;
   public loading: boolean = false;
   public sort = { name: 1 };
+  public user: User;
   private destroy$ = new Subject<void>();
   public columns: IAttribute[] = [
     {
@@ -148,6 +150,17 @@ export class SelectCompanyComponent implements OnInit {
       required: false,
     },
     {
+      name: 'employee._id',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: null,
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,
@@ -188,12 +201,36 @@ export class SelectCompanyComponent implements OnInit {
     public _service: CompanyService,
     private _modalService: NgbModal,
     public activeModal: NgbActiveModal,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private _authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.setColumn();
+    this.configureEmployeeFilter();
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private configureEmployeeFilter(): void {
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
+      if (!identity) {
+        return;
+      }
+      this.user = identity;
+      if (this.user.permission?.filterCompany && this.user.employee?._id) {
+        const employeeColumn = this.columns.find((column) => column.name === 'employee._id');
+        if (employeeColumn) {
+          employeeColumn.defaultFilter = `{ "$oid": "${this.user.employee._id}" }`;
+          employeeColumn.required = true;
+        }
+      }
+    });
+  }
+
   setColumn() {
     this.title = this.type;
     this.columns.push({
