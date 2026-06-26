@@ -442,6 +442,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th *ngIf="!readonly"></th>
                   <th>{{ 'method' | translate | capitalize }}</th>
                   <th>Comprobante</th>
                   <th>{{ 'quota' | translate | capitalize }}</th>
@@ -459,8 +460,51 @@
               </thead>
               <tbody>
                 <tr *ngFor="let movementOfCash of movementsOfCashes">
-                  <td>
-                    {{ movementOfCash?.type?.name }}
+                  <td align="left" width="90" *ngIf="!readonly">
+                    <ng-container *ngIf="editingPaymentId !== movementOfCash._id">
+                      <button
+                        type="button"
+                        class="btn btn-primary btn-sm"
+                        (click)="startEditPayment(movementOfCash)"
+                        title="Cambiar medio de pago"
+                      >
+                        <i class="fa fa-pencil"></i>
+                      </button>
+                    </ng-container>
+                    <ng-container *ngIf="editingPaymentId === movementOfCash._id">
+                      <button
+                        type="button"
+                        class="btn btn-success btn-sm"
+                        (click)="savePaymentMethod(movementOfCash)"
+                        [disabled]="savingPayment"
+                        title="Guardar"
+                      >
+                        <i class="fa" [ngClass]="savingPayment ? 'fa-refresh fa-spin' : 'fa-check'"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-light btn-sm"
+                        (click)="cancelEditPayment()"
+                        [disabled]="savingPayment"
+                        title="Cancelar"
+                      >
+                        <i class="fa fa-times"></i>
+                      </button>
+                    </ng-container>
+                  </td>
+                  <td [style.min-width.px]="editingPaymentId === movementOfCash._id ? 200 : null">
+                    <span *ngIf="editingPaymentId !== movementOfCash._id">{{ movementOfCash?.type?.name }}</span>
+                    <select
+                      *ngIf="editingPaymentId === movementOfCash._id"
+                      class="form-control form-control-sm"
+                      style="min-width: 180px"
+                      [(ngModel)]="selectedPaymentMethodId"
+                      [disabled]="savingPayment"
+                    >
+                      <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod._id">
+                        {{ paymentMethod.name }}
+                      </option>
+                    </select>
                   </td>
                   <td>{{ movementOfCash?.number }}</td>
                   <td>{{ movementOfCash?.quota }}</td>
@@ -494,7 +538,7 @@
                 </tr>
 
                 <tr align="center " *ngIf="movementsOfCashes?.length === 0">
-                  <td colspan="10">No existen método de pagos en la transacción</td>
+                  <td [attr.colspan]="readonly ? 12 : 13">No existen método de pagos en la transacción</td>
                 </tr>
               </tbody>
             </table>
