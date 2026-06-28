@@ -2,17 +2,17 @@ import { Component, ElementRef, EventEmitter, HostListener, ViewChild, ViewEncap
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
+import { User } from '@types';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { SelectTableComponent } from 'app/components/table/select-table/select-table.component';
-import { User } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
 import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
-import { PriceListService } from 'app/core/services/price-list.service';
 import { PriceListArticleService } from 'app/core/services/price-list-article.service';
+import { PriceListService } from 'app/core/services/price-list.service';
 import { RelationTypeService } from 'app/core/services/relation-type.service';
 import { StructureService } from 'app/core/services/structure.service';
 import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
@@ -38,6 +38,7 @@ import { PrinterService } from '../../core/services/printer.service';
 import { TableService } from '../../core/services/table.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { UserService } from '../../core/services/user.service';
+import { ArticleComponent } from '../../modules/entities/article/crud/article.component';
 import { SelectTransportComponent } from '../../modules/transaction/components/select-transport/select-transport.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
@@ -47,7 +48,6 @@ import { ArticleFieldType } from '../article-field/article-field';
 import { ArticleFields } from '../article-field/article-fields';
 import { ArticleStock } from '../article-stock/article-stock';
 import { Article, ArticlePrintIn } from '../article/article';
-import { ArticleComponent } from '../article/crud/article.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
@@ -1404,7 +1404,12 @@ export class AddSaleOrderComponent {
         movementOfArticle.unitPrice = unitPrice;
       }
 
-      if (!isManualPriceList && movementOfArticle.article && this.priceList && this.priceList?.percentageType === 'final') {
+      if (
+        !isManualPriceList &&
+        movementOfArticle.article &&
+        this.priceList &&
+        this.priceList?.percentageType === 'final'
+      ) {
         let increasePrice = 0;
 
         if (this.priceList?.rules && this.priceList?.rules?.length > 0) {
@@ -1462,7 +1467,12 @@ export class AddSaleOrderComponent {
         }
       }
 
-      if (!isManualPriceList && movementOfArticle.article && this.newPriceList && this.newPriceList?.percentageType === 'final') {
+      if (
+        !isManualPriceList &&
+        movementOfArticle.article &&
+        this.newPriceList &&
+        this.newPriceList?.percentageType === 'final'
+      ) {
         let increasePrice = 0;
 
         if (this.newPriceList.rules && this.newPriceList.rules.length > 0) {
@@ -1528,7 +1538,10 @@ export class AddSaleOrderComponent {
       movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.discountAmount);
 
       //logic for sangenemi quiere que se updatee por lista de precios esto lo vamos a mejorar y agregar una funcion en apiv2
-      if (!isManualPriceList && (this.priceList?.percentageType === 'margin' || this.newPriceList?.percentageType === 'margin')) {
+      if (
+        !isManualPriceList &&
+        (this.priceList?.percentageType === 'margin' || this.newPriceList?.percentageType === 'margin')
+      ) {
         const priceListToUse = this.newPriceList ?? this.priceList;
         let markupPrice = this.getIncreasePercentage(priceListToUse, movementOfArticle);
         if (markupPrice) {
