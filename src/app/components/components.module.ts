@@ -6,18 +6,9 @@ import { ExportersModule } from './export/exporters.module';
 import { HistoryModule } from './history/history.module';
 import { ReportModule } from './report/report.module';
 import { ShipmentMethodModule } from './shipment-method/shipment-method.module';
-import { TransactionTypeModule } from './transaction-type/transaction-type.module';
 
 @NgModule({
-  imports: [
-    DatatableModule,
-    ExportersModule,
-    HistoryModule,
-    ShipmentMethodModule,
-    TransactionTypeModule,
-    ReportModule,
-    ArticleModule,
-  ],
+  imports: [DatatableModule, ExportersModule, HistoryModule, ShipmentMethodModule, ReportModule, ArticleModule],
   exports: [ArticleModule],
   declarations: [],
 })

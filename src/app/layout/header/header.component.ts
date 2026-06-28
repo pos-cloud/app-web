@@ -237,7 +237,7 @@ export class HeaderComponent implements OnInit {
         {
           label: 'General',
           children: [
-            { label: 'Tipos de Transacciones', link: 'transaction-types' },
+            { label: 'Tipos de Transacciones', link: 'entities/transaction-types' },
             { label: 'Tipos de Cancelaciones', link: 'entities/cancellation-types' },
             { label: 'Promociones', link: 'entities/business-rules' },
             { label: 'Tipos de Relaciones', link: 'entities/relation-type' },
@@ -751,7 +751,7 @@ export class HeaderComponent implements OnInit {
               label: 'General',
               children: [
                 { label: 'Aplicaciones', link: 'entities/applications' },
-                { label: 'Tipos de Transacciones', link: 'transaction-types' },
+                { label: 'Tipos de Transacciones', link: 'entities/transaction-types' },
                 { label: 'Tipos de Cancelaciones', link: 'entities/cancellation-types' },
                 { label: 'Promociones', link: 'entities/business-rules' },
                 { label: 'Tipos de Relaciones', link: 'entities/relation-type' },

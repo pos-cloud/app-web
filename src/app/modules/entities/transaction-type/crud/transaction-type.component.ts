@@ -1,45 +1,55 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
+import { ApplicationService } from '@core/services/application.service';
 import { BranchService } from '@core/services/branch.service';
 import { CashBoxTypeService } from '@core/services/cash-box-type.service';
 import { CompanyService } from '@core/services/company.service';
-import { CountryService } from '@core/services/country.service';
+import { EmailTemplateService } from '@core/services/email-template.service';
 import { EmployeeTypeService } from '@core/services/employee-type.service';
-import { IdentificationTypeService } from '@core/services/identification-type.service';
-import { StateService } from '@core/services/state.service';
+import { PaymentMethodService } from '@core/services/payment-method.service';
+import { PrinterService } from '@core/services/printer.service';
+import { ShipmentMethodService } from '@core/services/shipment-method.service';
 import { TransactionTypeService } from '@core/services/transaction-type.service';
-import { VATConditionService } from '@core/services/vat-condition.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import {
   ApiResponse,
+  Application,
   Branch,
   CashBoxType,
   Company,
-  Country,
+  CompanyType,
   CurrentAccount,
   DescriptionType,
+  EmailTemplate,
   EmployeeType,
   EntryAmount,
-  IdentificationType,
   Movements,
+  PaymentMethod,
+  Printer,
   PriceType,
-  State,
+  ShipmentMethod,
   StockMovement,
+  TransactionMovement,
   TransactionState,
   TransactionType,
-  VATCondition,
+  View,
 } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { combineLatest, Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
+interface OptionalAFIP {
+  id: string;
+  name: string;
+  value?: string;
+}
 
 @Component({
   selector: 'app-transaction-type',
@@ -55,183 +65,120 @@ import { takeUntil } from 'rxjs/operators';
     ProgressbarModule,
   ],
 })
-export class TransactionTypeComponent implements OnInit {
-  public transactionTypeId: string;
+export class TransactionTypeComponent implements OnInit, OnDestroy {
   public operation: string;
-
+  public transactionTypeId: string;
   public transactionType: TransactionType;
+  public transactionTypeForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public transactionTypeForm: UntypedFormGroup;
   private destroy$ = new Subject<void>();
-  public vatConditions: VATCondition[];
-  public states: State[];
-  public countries: Country[];
-  public identificationTypes: IdentificationType[];
-  public branches: Branch[];
-  public cashBoxTypes: CashBoxType[];
-  public companies: Company[]; // Reemplazar 'any' con el tipo correcto de Company
-  public employeeTypes: EmployeeType[];
-  public transactionState = Object.values(TransactionState);
-  public priceTypes = Object.values(PriceType);
-  public entryAmounts = Object.values(EntryAmount);
-  public descriptionTypes = Object.values(DescriptionType);
+
+  // Relational data for typeahead dropdowns
+  public branches: Branch[] = [];
+  public cashBoxTypes: CashBoxType[] = [];
+  public companies: Company[] = [];
+  public employeeTypes: EmployeeType[] = [];
+  public applications: Application[] = [];
+  public emailTemplates: EmailTemplate[] = [];
+  public shipmentMethods: ShipmentMethod[] = [];
+  public printers: Printer[] = [];
+  public paymentMethods: PaymentMethod[] = [];
+  public optionalAFIPList: OptionalAFIP[] = [];
+
+  // Enum options for selects.
+  // TransactionMovement and CompanyType are declared with `<any>` casts in their
+  // enums, which makes them generate reverse mappings. Listing the members
+  // explicitly avoids duplicated entries in the dropdowns.
+  public transactionMovements = [
+    TransactionMovement.Sale,
+    TransactionMovement.Purchase,
+    TransactionMovement.Stock,
+    TransactionMovement.Money,
+    TransactionMovement.Production,
+  ];
+  public companyTypes = [CompanyType.Client, CompanyType.Provider];
+  public transactionStates = Object.values(TransactionState);
   public currentAccounts = Object.values(CurrentAccount);
   public movements = Object.values(Movements);
   public stockMovements = Object.values(StockMovement);
+  public entryAmounts = Object.values(EntryAmount);
+  public priceTypes = Object.values(PriceType);
+  public descriptionTypes = Object.values(DescriptionType);
+  public views = Object.values(View);
+
+  // Static options
+  public readonly fixedLetters = ['X', 'A', 'B', 'C', 'D', 'E', 'M', 'R', 'T', 'Z'];
+  public readonly resetOrderNumbers = ['Caja', 'Cantidad', 'Tiempo'];
+  public readonly codeLetters = ['A', 'B', 'C', 'D', 'E', 'M', 'R', 'T', 'Z'];
 
   constructor(
-    public _transactionTypeService: TransactionTypeService,
-    public _vatConditionService: VATConditionService,
-    public _stateService: StateService,
-    public _identificationTypeService: IdentificationTypeService,
-    public _countryService: CountryService,
-    public _fb: UntypedFormBuilder,
-    public activeModal: NgbActiveModal,
-    public _router: Router,
-    public _branchService: BranchService,
-    private _toastService: ToastService,
+    private _transactionTypeService: TransactionTypeService,
+    private _branchService: BranchService,
     private _cashBoxTypeService: CashBoxTypeService,
-    public _employeeTypeService: EmployeeTypeService,
-    private _companyService: CompanyService
+    private _companyService: CompanyService,
+    private _employeeTypeService: EmployeeTypeService,
+    private _applicationService: ApplicationService,
+    private _emailTemplateService: EmailTemplateService,
+    private _shipmentMethodService: ShipmentMethodService,
+    private _printerService: PrinterService,
+    private _paymentMethodService: PaymentMethodService,
+    private _fb: UntypedFormBuilder,
+    private _router: Router,
+    private _toastService: ToastService
   ) {
-    this.transactionTypeForm = this._fb.group({
-      _id: ['', []],
-      order: [1, []],
-      transactionMovement: ['', [Validators.required]],
-      abbreviation: ['', []],
-      name: ['', [Validators.required]],
-      labelPrint: ['', []],
-      currentAccount: ['', []],
-      movement: ['', []],
-      modifyStock: [false, []],
-      stockMovement: ['', []],
-      requestArticles: [false, []],
-      modifyArticle: [false, []],
-      entryAmount: [EntryAmount.SaleWithVAT, []],
-      requestTaxes: [false, []],
-      requestPaymentMethods: [true, []],
-      paymentMethods: ['', []],
-      showKeyboard: [false, []],
-      defectOrders: [false, []],
-      electronics: [false, []],
-      codes: ['', []], // AR
-      fiscalCode: ['', []],
-      fixedOrigin: [0, []],
-      fixedLetter: ['', []],
-      maxOrderNumber: [0, []],
-      showPrices: [true, []],
-      printable: [false, []],
-      defectPrinter: ['', []],
-      defectUseOfCFDI: ['', []],
-      tax: [false, []],
-      cashBoxImpact: [true, []],
-      cashOpening: [false, []],
-      cashClosing: [false, []],
-      allowAPP: [false, []],
-      allowTransactionClose: [true, []],
-      allowEdit: [false, []],
-      allowDelete: [false, []],
-      allowZero: [false, []],
-      allowCompanyDiscount: [true, []],
-      allowPriceList: [true, []],
-      requestCurrency: [false, []],
-      requestEmployee: ['', []],
-      requestTransport: [false, []],
-      fastPayment: ['', []],
-      requestCompany: ['', []],
-      isPreprinted: [false, []],
-      automaticNumbering: [true, []],
-      automaticCreation: [false, []],
-      showPriceType: [PriceType.Final, []],
-      showDescriptionType: [DescriptionType.Description, []],
-      printDescriptionType: [DescriptionType.Description, []],
-      printSign: [false, []],
-      printBalanceAccount: [false, []],
-      posKitchen: [false, []],
-      readLayout: [false, []],
-      updatePrice: [null, []],
-      resetNumber: [false, []],
-      updateArticle: [false, []],
-      finishCharge: [true, []],
-      requestEmailTemplate: [false, []],
-      defectEmailTemplate: ['', []],
-      requestShipmentMethod: [false, []],
-      defectShipmentMethod: ['', []],
-      application: ['', []],
-      company: ['', []],
-      branch: [null, []],
-      level: [0, []],
-      groupsArticles: [false, []],
-      printOrigin: [false, []],
-      printBalanceOnCanceled: [false, []],
-      expirationDate: ['', []],
-      numberPrint: [0, []],
-      orderNumber: [0, []],
-      resetOrderNumber: ['', []],
-      allowAccounting: [false, []],
-      finishState: ['', []],
-      optionalAFIP: ['', []],
-      cashBoxType: ['', []],
-      creationUser: ['', []],
-      creationDate: ['', []],
-      updateUser: ['', []],
-      updateDate: ['', []],
-      isSubscription: [false, []],
-      codeA: [''],
-      codeB: [''],
-      codeC: [''],
-      codeD: [''],
-      codeE: [''],
-      codeM: [''],
-      codeR: [''],
-      codeT: [''],
-      codeZ: [''],
-    });
+    this.buildForm();
   }
 
-  ngOnInit() {
-    console.log(this.transactionState);
+  ngOnInit(): void {
     const pathUrl = this._router.url.split('/');
-    this.transactionTypeId = pathUrl[4];
     this.operation = pathUrl[3];
+    this.transactionTypeId = pathUrl[4];
 
     if (this.operation === 'view' || this.operation === 'delete') this.transactionTypeForm.disable();
 
     this.loading = true;
-
     combineLatest({
-      branch: this._branchService.find({ query: { operationType: { $ne: 'D' } } }),
+      branches: this._branchService.find({ query: { operationType: { $ne: 'D' } } }),
       cashBoxTypes: this._cashBoxTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
-      identificationTypes: this._identificationTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       employeeTypes: this._employeeTypeService.find({ query: { operationType: { $ne: 'D' } } }),
+      applications: this._applicationService.find({ query: { operationType: { $ne: 'D' } } }),
+      emailTemplates: this._emailTemplateService.find({ query: { operationType: { $ne: 'D' } } }),
+      shipmentMethods: this._shipmentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
+      printers: this._printerService.find({ query: { operationType: { $ne: 'D' } } }),
+      paymentMethods: this._paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
+      optionalAFIPList: this._transactionTypeService.getJSON(),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ branch, cashBoxTypes, companies, identificationTypes, employeeTypes }) => {
-          this.branches = branch ?? [];
-          this.cashBoxTypes = cashBoxTypes ?? [];
-          this.companies = companies ?? [];
-          this.identificationTypes = identificationTypes ?? [];
-          this.employeeTypes = employeeTypes ?? [];
+        next: (data) => {
+          this.branches = data.branches ?? [];
+          this.cashBoxTypes = data.cashBoxTypes ?? [];
+          this.companies = data.companies ?? [];
+          this.employeeTypes = data.employeeTypes ?? [];
+          this.applications = data.applications ?? [];
+          this.emailTemplates = data.emailTemplates ?? [];
+          this.shipmentMethods = data.shipmentMethods ?? [];
+          this.printers = data.printers ?? [];
+          this.paymentMethods = data.paymentMethods ?? [];
+          this.optionalAFIPList = data.optionalAFIPList ?? [];
 
           if (this.transactionTypeId) {
-            this.getTransactionTypes(this.transactionTypeId);
+            this.getTransactionType(this.transactionTypeId);
           } else {
             this.setValueForm();
+            this.loading = false;
           }
         },
         error: (error) => {
           this._toastService.showToast(error);
-        },
-        complete: () => {
           this.loading = false;
         },
       });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.focusEvent.emit(true);
   }
 
@@ -241,115 +188,270 @@ export class TransactionTypeComponent implements OnInit {
     this.focusEvent.complete();
   }
 
+  private buildForm(): void {
+    this.transactionTypeForm = this._fb.group({
+      _id: ['', []],
+      // Datos principales
+      order: [1, []],
+      branch: [null, []],
+      name: ['', [Validators.required]],
+      abbreviation: ['', []],
+      transactionMovement: [null, [Validators.required]],
+      currentAccount: [CurrentAccount.No, []],
+      movement: [Movements.Inflows, []],
+      // Permisos
+      level: [0, []],
+      allowEdit: [false, []],
+      allowDelete: [false, []],
+      allowAPP: [false, []],
+      allowTransactionClose: [true, []],
+      application: [null, []],
+      // Numeración
+      electronics: [false, []],
+      tax: [false, []],
+      requestTaxes: [false, []],
+      automaticNumbering: [true, []],
+      fiscalCode: ['', []],
+      defectUseOfCFDI: ['', []],
+      fixedOrigin: [0, []],
+      fixedLetter: ['X', []],
+      expirationDate: ['', []],
+      automaticCreation: [false, []],
+      resetOrderNumber: [null, []],
+      maxOrderNumber: [0, []],
+      orderNumber: [0, []],
+      cashBoxType: [null, []],
+      optionalAFIP: [null, []],
+      optionalAFIPValue: ['', []],
+      codeA: ['', []],
+      codeB: ['', []],
+      codeC: ['', []],
+      codeD: ['', []],
+      codeE: ['', []],
+      codeM: ['', []],
+      codeR: ['', []],
+      codeT: ['', []],
+      codeZ: ['', []],
+      // Personalizado
+      requestCompany: [null, []],
+      company: [null, []],
+      allowCompanyDiscount: [true, []],
+      allowPriceList: [true, []],
+      requestEmployee: [null, []],
+      requestCurrency: [false, []],
+      defectOrders: [false, []],
+      requestTransport: [false, []],
+      finishState: [null, []],
+      isSubscription: [false, []],
+      view: [View.Fast, []],
+      // Producto
+      requestArticles: [false, []],
+      modifyArticle: [false, []],
+      showPrices: [true, []],
+      showPriceType: [PriceType.Final, []],
+      entryAmount: [EntryAmount.SaleWithVAT, []],
+      showDescriptionType: [DescriptionType.Description, []],
+      updatePrice: [null, []],
+      updateArticle: [false, []],
+      groupsArticles: [false, []],
+      // Stock
+      modifyStock: [false, []],
+      stockMovement: [null, []],
+      // Contabilidad
+      allowAccounting: [false, []],
+      // Fondos
+      cashBoxImpact: [true, []],
+      cashOpening: [false, []],
+      cashClosing: [false, []],
+      // Correo
+      requestEmailTemplate: [false, []],
+      defectEmailTemplate: [null, []],
+      // Método de entrega
+      requestShipmentMethod: [false, []],
+      defectShipmentMethod: [null, []],
+      // Impresión
+      labelPrint: ['', []],
+      defectPrinter: [null, []],
+      isPreprinted: [false, []],
+      printable: [false, []],
+      readLayout: [false, []],
+      printBalanceAccount: [false, []],
+      printSign: [false, []],
+      printOrigin: [false, []],
+      printBalanceOnCanceled: [false, []],
+      posKitchen: [false, []],
+      printDescriptionType: [DescriptionType.Description, []],
+      numberPrint: [0, []],
+      // Método de pago
+      requestPaymentMethods: [true, []],
+      allowZero: [false, []],
+      fastPayment: [null, []],
+      finishCharge: [true, []],
+      showKeyboard: [false, []],
+      paymentMethods: [[], []],
+    });
+  }
+
+  private findById<T extends { _id?: string }>(list: T[], value: any): T | null {
+    if (!value) return null;
+    const id = typeof value === 'object' ? value._id : value;
+    return list.find((item) => item._id === id?.toString()) ?? null;
+  }
+
   public setValueForm(): void {
-    // const vatCondition = this.vatConditions?.find((item) => item._id === this.transport?.vatCondition?.toString());
-    // const identificationType = this.identificationTypes?.find(
-    //   (item) => item._id === this.transport?.identificationType?.toString()
-    // );
-    // const country = this.countries?.find((item) => item._id === this.transport?.country?.toString());
-    const branch = this.branches?.find((item) => item._id === this.transactionType?.branch?.toString());
+    const tt = this.transactionType;
 
-    const values = {
-      _id: this.transactionType?._id ?? '',
-      order: this.transactionType?.order ?? 1,
-      branch: branch,
-      transactionMovement: this.transactionType?.transactionMovement ?? '',
-      abbreviation: this.transactionType?.abbreviation ?? '',
-      name: this.transactionType?.name ?? '',
-      labelPrint: this.transactionType?.labelPrint ?? '',
-      currentAccount: this.transactionType?.currentAccount ?? CurrentAccount.No,
-      movement: this.transactionType?.movement ?? Movements.Inflows,
-      modifyStock: this.transactionType?.modifyStock ?? false,
-      stockMovement: this.transactionType?.stockMovement ?? '',
-      requestArticles: this.transactionType?.requestArticles ?? false,
-      modifyArticle: this.transactionType?.modifyArticle ?? false,
-      entryAmount: this.transactionType?.entryAmount ?? EntryAmount.SaleWithVAT,
-      requestTaxes: this.transactionType?.requestTaxes ?? false,
-      requestPaymentMethods: this.transactionType?.requestPaymentMethods ?? true,
-      paymentMethods: this.transactionType?.paymentMethods ?? '',
-      showKeyboard: this.transactionType?.showKeyboard ?? false,
-      defectOrders: this.transactionType?.defectOrders ?? false,
-      electronics: this.transactionType?.electronics ?? false,
-      codes: this.transactionType?.codes ?? 1, // AR
-      fiscalCode: this.transactionType?.fiscalCode ?? '',
-      fixedOrigin: this.transactionType?.fixedOrigin ?? 0,
-      fixedLetter: this.transactionType?.fixedLetter ?? '',
-      maxOrderNumber: this.transactionType?.maxOrderNumber ?? 0,
-      showPrices: this.transactionType?.showPrices ?? true,
-      printable: this.transactionType?.printable ?? false,
-      defectPrinter: this.transactionType?.defectPrinter ?? '',
-      defectUseOfCFDI: this.transactionType?.defectUseOfCFDI ?? '',
-      tax: this.transactionType?.tax ?? false,
-      cashBoxImpact: this.transactionType?.cashBoxImpact ?? true,
-      cashOpening: this.transactionType?.cashOpening ?? false,
-      cashClosing: this.transactionType?.cashClosing ?? false,
-      allowAPP: this.transactionType?.allowAPP ?? false,
-      allowTransactionClose: this.transactionType?.allowTransactionClose ?? true,
-      allowEdit: this.transactionType?.allowEdit ?? false,
-      allowDelete: this.transactionType?.allowDelete ?? false,
-      allowZero: this.transactionType?.allowZero ?? false,
-      allowCompanyDiscount: this.transactionType?.allowCompanyDiscount ?? true,
-      allowPriceList: this.transactionType?.allowPriceList ?? true,
-      requestCurrency: this.transactionType?.requestCurrency ?? false,
-      requestEmployee: this.transactionType?.requestEmployee ?? '',
-      requestTransport: this.transactionType?.requestTransport ?? false,
-      fastPayment: this.transactionType?.fastPayment ?? '',
-      requestCompany: this.transactionType?.requestCompany ?? '',
-      isPreprinted: this.transactionType?.isPreprinted ?? false,
-      automaticNumbering: this.transactionType?.automaticNumbering ?? true,
-      automaticCreation: this.transactionType?.automaticCreation ?? false,
-      showPriceType: this.transactionType?.showPriceType ?? PriceType.Final,
-      showDescriptionType: this.transactionType?.showDescriptionType ?? DescriptionType.Description,
-      printDescriptionType: this.transactionType?.printDescriptionType ?? DescriptionType.Description,
-      printSign: this.transactionType?.printSign ?? false,
-      printBalanceAccount: this.transactionType?.printBalanceAccount ?? false,
-      posKitchen: this.transactionType?.posKitchen ?? false,
-      readLayout: this.transactionType?.readLayout ?? false,
-      updatePrice: this.transactionType?.updatePrice ?? null,
-      resetNumber: this.transactionType?.resetNumber ?? false,
-      updateArticle: this.transactionType?.updateArticle ?? false,
-      finishCharge: this.transactionType?.finishCharge ?? true,
-      requestEmailTemplate: this.transactionType?.requestEmailTemplate ?? false,
-      defectEmailTemplate: this.transactionType?.defectEmailTemplate ?? '',
-      requestShipmentMethod: this.transactionType?.requestShipmentMethod ?? false,
-      defectShipmentMethod: this.transactionType?.defectShipmentMethod ?? '',
-      application: this.transactionType?.application ?? '',
-      company: this.transactionType?.company ?? '',
-      level: this.transactionType?.level ?? 0,
-      groupsArticles: this.transactionType?.groupsArticles ?? false,
-      printOrigin: this.transactionType?.printOrigin ?? false,
-      printBalanceOnCanceled: this.transactionType?.printBalanceOnCanceled ?? false,
-      expirationDate: this.transactionType?.expirationDate ?? '',
-      numberPrint: this.transactionType?.numberPrint ?? 0,
-      orderNumber: this.transactionType?.orderNumber ?? 0,
-      resetOrderNumber: this.transactionType?.resetOrderNumber ?? '',
-      allowAccounting: this.transactionType?.allowAccounting ?? false,
-      finishState: this.transactionType?.finishState ?? '',
-      optionalAFIP: this.transactionType?.optionalAFIP ?? '',
-      cashBoxType: this.transactionType?.cashBoxType ?? '',
-      creationUser: this.transactionType?.creationUser ?? '',
-      creationDate: this.transactionType?.creationDate ?? '',
-      updateUser: this.transactionType?.updateUser ?? '',
-      updateDate: this.transactionType?.updateDate ?? '',
-      isSubscription: this.transactionType?.isSubscription ?? false,
+    const selectedPaymentMethods = (tt?.paymentMethods ?? [])
+      .map((pm: any) => this.findById(this.paymentMethods, pm))
+      .filter((pm): pm is PaymentMethod => pm !== null);
+
+    const selectedOptionalAFIP = tt?.optionalAFIP?.id
+      ? this.optionalAFIPList.find((item) => item.id === tt.optionalAFIP.id) ?? null
+      : null;
+
+    this.transactionTypeForm.patchValue({
+      _id: tt?._id ?? '',
+      order: tt?.order ?? 1,
+      branch: this.findById(this.branches, tt?.branch),
+      name: tt?.name ?? '',
+      abbreviation: tt?.abbreviation ?? '',
+      transactionMovement: tt?.transactionMovement ?? null,
+      currentAccount: tt?.currentAccount ?? CurrentAccount.No,
+      movement: tt?.movement ?? Movements.Inflows,
+      level: tt?.level ?? 0,
+      allowEdit: tt?.allowEdit ?? false,
+      allowDelete: tt?.allowDelete ?? false,
+      allowAPP: tt?.allowAPP ?? false,
+      allowTransactionClose: tt?.allowTransactionClose ?? true,
+      application: this.findById(this.applications, tt?.application),
+      electronics: tt?.electronics ?? false,
+      tax: tt?.tax ?? false,
+      requestTaxes: tt?.requestTaxes ?? false,
+      automaticNumbering: tt?.automaticNumbering ?? true,
+      fiscalCode: tt?.fiscalCode ?? '',
+      defectUseOfCFDI: tt?.defectUseOfCFDI ?? '',
+      fixedOrigin: tt?.fixedOrigin ?? 0,
+      fixedLetter: tt?.fixedLetter ?? 'X',
+      expirationDate: tt?.expirationDate ? tt.expirationDate.substring(0, 10) : '',
+      automaticCreation: tt?.automaticCreation ?? false,
+      resetOrderNumber: tt?.resetOrderNumber ?? null,
+      maxOrderNumber: tt?.maxOrderNumber ?? 0,
+      orderNumber: tt?.orderNumber ?? 0,
+      cashBoxType: this.findById(this.cashBoxTypes, tt?.cashBoxType),
+      optionalAFIP: selectedOptionalAFIP,
+      optionalAFIPValue: tt?.optionalAFIP?.value ?? '',
+      requestCompany: tt?.requestCompany ?? null,
+      company: this.findById(this.companies, tt?.company),
+      allowCompanyDiscount: tt?.allowCompanyDiscount ?? true,
+      allowPriceList: tt?.allowPriceList ?? true,
+      requestEmployee: this.findById(this.employeeTypes, tt?.requestEmployee),
+      requestCurrency: tt?.requestCurrency ?? false,
+      defectOrders: tt?.defectOrders ?? false,
+      requestTransport: tt?.requestTransport ?? false,
+      finishState: tt?.finishState ?? null,
+      isSubscription: tt?.isSubscription ?? false,
+      view: tt?.view ?? View.Fast,
+      requestArticles: tt?.requestArticles ?? false,
+      modifyArticle: tt?.modifyArticle ?? false,
+      showPrices: tt?.showPrices ?? true,
+      showPriceType: tt?.showPriceType ?? PriceType.Final,
+      entryAmount: tt?.entryAmount ?? EntryAmount.SaleWithVAT,
+      showDescriptionType: tt?.showDescriptionType ?? DescriptionType.Description,
+      updatePrice: tt?.updatePrice ?? null,
+      updateArticle: tt?.updateArticle ?? false,
+      groupsArticles: tt?.groupsArticles ?? false,
+      modifyStock: tt?.modifyStock ?? false,
+      stockMovement: tt?.stockMovement ?? null,
+      allowAccounting: tt?.allowAccounting ?? false,
+      cashBoxImpact: tt?.cashBoxImpact ?? true,
+      cashOpening: tt?.cashOpening ?? false,
+      cashClosing: tt?.cashClosing ?? false,
+      requestEmailTemplate: tt?.requestEmailTemplate ?? false,
+      defectEmailTemplate: this.findById(this.emailTemplates, tt?.defectEmailTemplate),
+      requestShipmentMethod: tt?.requestShipmentMethod ?? false,
+      defectShipmentMethod: this.findById(this.shipmentMethods, tt?.defectShipmentMethod),
+      labelPrint: tt?.labelPrint ?? '',
+      defectPrinter: this.findById(this.printers, tt?.defectPrinter),
+      isPreprinted: tt?.isPreprinted ?? false,
+      printable: tt?.printable ?? false,
+      readLayout: tt?.readLayout ?? false,
+      printBalanceAccount: tt?.printBalanceAccount ?? false,
+      printSign: tt?.printSign ?? false,
+      printOrigin: tt?.printOrigin ?? false,
+      printBalanceOnCanceled: tt?.printBalanceOnCanceled ?? false,
+      posKitchen: tt?.posKitchen ?? false,
+      printDescriptionType: tt?.printDescriptionType ?? DescriptionType.Description,
+      numberPrint: tt?.numberPrint ?? 0,
+      requestPaymentMethods: tt?.requestPaymentMethods ?? true,
+      allowZero: tt?.allowZero ?? false,
+      fastPayment: this.findById(this.paymentMethods, tt?.fastPayment),
+      finishCharge: tt?.finishCharge ?? true,
+      showKeyboard: tt?.showKeyboard ?? false,
+      paymentMethods: selectedPaymentMethods,
+    });
+
+    this.setCodesForm(tt?.codes ?? []);
+  }
+
+  private setCodesForm(codes: { letter: string; code: number }[]): void {
+    codes.forEach((code) => {
+      const control = `code${code.letter}`;
+      if (this.transactionTypeForm.get(control)) {
+        this.transactionTypeForm.get(control).setValue(code.code);
+      }
+    });
+  }
+
+  public isPaymentMethodSelected(paymentMethod: PaymentMethod): boolean {
+    const selected: PaymentMethod[] = this.transactionTypeForm.get('paymentMethods').value ?? [];
+    return selected.some((pm) => pm._id === paymentMethod._id);
+  }
+
+  public togglePaymentMethod(paymentMethod: PaymentMethod, checked: boolean): void {
+    const control = this.transactionTypeForm.get('paymentMethods');
+    const selected: PaymentMethod[] = control.value ?? [];
+    if (checked) {
+      control.setValue([...selected, paymentMethod]);
+    } else {
+      control.setValue(selected.filter((pm) => pm._id !== paymentMethod._id));
+    }
+  }
+
+  private buildPayload(): TransactionType {
+    const value = { ...this.transactionTypeForm.value };
+
+    // Build AFIP codes array from the per-letter controls
+    value.codes = this.codeLetters
+      .map((letter) => ({ letter, code: value[`code${letter}`] }))
+      .filter((entry) => entry.code !== null && entry.code !== '' && entry.code !== undefined);
+    this.codeLetters.forEach((letter) => delete value[`code${letter}`]);
+
+    // Build optionalAFIP object from selection + value
+    const selectedOptionalAFIP: OptionalAFIP = value.optionalAFIP;
+    value.optionalAFIP = {
+      id: selectedOptionalAFIP?.id ?? null,
+      name: selectedOptionalAFIP?.name ?? null,
+      value: value.optionalAFIPValue || null,
     };
-    this.transactionTypeForm.patchValue(values);
+    delete value.optionalAFIPValue;
+
+    // Coerce numeric fields
+    ['order', 'level', 'fixedOrigin', 'maxOrderNumber', 'orderNumber', 'numberPrint'].forEach((field) => {
+      value[field] = value[field] !== null && value[field] !== '' ? Number(value[field]) : 0;
+    });
+
+    return value as TransactionType;
   }
 
-  returnTo() {
-    this._router.navigate(['/entities/transaction-types']);
-  }
-
-  public getTransactionTypes(id: string) {
+  public getTransactionType(id: string): void {
     this.loading = true;
-
     this._transactionTypeService
       .getById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this.transactionType = result.result;
-          if (result.status == 200) this.setValueForm();
+          if (result.status === 200) this.setValueForm();
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -360,60 +462,40 @@ export class TransactionTypeComponent implements OnInit {
       });
   }
 
-  public handleTransactionTypes() {
-    this.loading = true;
+  public handleTransactionType(): void {
     this.transactionTypeForm.markAllAsTouched();
-    if (this.transactionTypeForm.invalid) {
-      this.loading = false;
+    if (this.operation !== 'delete' && this.transactionTypeForm.invalid) {
+      this._toastService.showToast({ type: 'info', message: 'Revise los errores marcados en el formulario' });
       return;
     }
-    this.transactionType = this.transactionTypeForm.value;
+
+    this.loading = true;
+    this.transactionType = this.buildPayload();
+
     switch (this.operation) {
       case 'add':
-        this.saveTransactionTypes();
+        this.saveTransactionType();
         break;
       case 'update':
-        this.updateTransactionTypes();
+        this.updateTransactionType();
         break;
       case 'delete':
-        this.deleteTransactionTypes();
+        this.deleteTransactionType();
+        break;
       default:
+        this.loading = false;
         break;
     }
   }
 
-  public updateTransactionTypes() {
-    this._transactionTypeService
-      .update(this.transactionType)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: ApiResponse) => {
-          this._toastService.showToast(result);
-          if (result.status == 200) {
-            this.transactionType = result.result;
-            this.returnTo();
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
-  }
-
-  public saveTransactionTypes() {
+  public saveTransactionType(): void {
     this._transactionTypeService
       .save(this.transactionType)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) {
-            this.transactionType = result.result;
-            this.returnTo();
-          }
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -424,14 +506,14 @@ export class TransactionTypeComponent implements OnInit {
       });
   }
 
-  public deleteTransactionTypes() {
+  public updateTransactionType(): void {
     this._transactionTypeService
-      .delete(this.transactionType._id)
+      .update(this.transactionType)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200) this.returnTo();
+          if (result.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -440,5 +522,27 @@ export class TransactionTypeComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  public deleteTransactionType(): void {
+    this._transactionTypeService
+      .delete(this.transactionType._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this._toastService.showToast(result);
+          if (result.status === 200) this.returnTo();
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
+  }
+
+  public returnTo(): void {
+    this._router.navigate(['/entities/transaction-types']);
   }
 }
