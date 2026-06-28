@@ -1,0 +1,50 @@
+<!--
+  ============================================================================
+  FAST TRANSACTION VIEW - layout (migración de add-sale-order.component.html)
+  ============================================================================
+  Este HTML solo arma el tablero y conecta los 4 componentes tontos.
+  Estructura objetivo (descomentar a medida que cada componente se migra):
+
+  <section>
+    <app-header-transaction
+      [transaction]="transaction"
+      [transactionMovement]="transactionMovement"
+      (openModal)="openModal($event)"
+      ...>
+    </app-header-transaction>
+
+    <div class="row container-transaction">
+      <div class="col-md-5">
+        <app-list-movement-of-transaction
+          [movementsOfArticles]="movementsOfArticles"
+          [transaction]="transaction"
+          [loading]="loading"
+          (openMovement)="openModal('movement_of_article', $event)">
+        </app-list-movement-of-transaction>
+
+        <app-buttons-transaction
+          [transaction]="transaction"
+          [transactionMovement]="transactionMovement"
+          [loading]="loading"
+          (charge)="openModal('charge', null, $event)"
+          (addClient)="openModal('add_client')"
+          (applyDiscount)="openModal('apply_discount')"
+          (cancel)="openModal('cancel')"
+          (finish)="finish()">
+        </app-buttons-transaction>
+      </div>
+
+      <div class="col-md-7">
+        <app-list-catalog
+          [transaction]="transaction"
+          [transactionId]="transactionId"
+          [loading]="loading"
+          (addItem)="addItem($event)">
+        </app-list-catalog>
+      </div>
+    </div>
+  </section>
+
+  TODO: traer los <ng-template> de modales reales (add-sale-order.html 630-742):
+    contentPrinters, contentOptionalAFIP, contentChangeQuotation, containerTaxes
+-->
