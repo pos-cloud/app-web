@@ -30,7 +30,7 @@ import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropd
 import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
 import { combineLatest, finalize, Subject, takeUntil } from 'rxjs';
 import { ApplyTaxesTransactionsComponent } from '../../components/apply-taxes-transactions/apply-taxes-transactions.components';
-import { ProcessInvoiceUploadComponent } from './component/process-invoice-upload/process-invoice-upload.component';
+import { ProcessInvoiceUploadComponent } from './components/process-invoice-upload/process-invoice-upload.component';
 
 @Component({
   selector: 'app-formal-transaction-view',
