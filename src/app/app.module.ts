@@ -84,6 +84,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { FooterComponent } from './layout/footer/footer.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { HomeComponent } from './layout/home/home.component';
+import { HeaderTransactionComponent } from './modules/transaction/views/fast/components/header-transaction/header-transaction.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
 import { PipesModule } from './shared/pipes/pipes.module';
@@ -178,6 +179,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     RestoTablesComponent,
     NotificationBellComponent,
     FocusDirective,
+    HeaderTransactionComponent,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: true,
       registrationStrategy: 'registerWhenStable:30000',

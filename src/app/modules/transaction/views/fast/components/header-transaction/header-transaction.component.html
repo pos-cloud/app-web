@@ -1,7 +1,146 @@
-<!--
-  HEADER TRANSACTION (tonto)
-  TODO: migrar add-sale-order.component.html líneas 1-186
-  (div.row.header-transaction con todos los .item-header).
-  Reemplazar (click)="openModal('x')" por (click)="openModal.emit('x')"
-  y las llamadas a métodos por sus @Output correspondientes.
--->
+<header class="txn-header">
+  <!-- IZQUIERDA: identidad / contexto de la operación -->
+  <div class="txn-header__group txn-header__group--identity">
+    <button type="button" class="chip chip--primary" *ngIf="transaction?.type" (click)="editObservation.emit()">
+      <span class="chip__value">{{ transaction.type.name }} {{ transaction.number }}</span>
+    </button>
+
+    <button type="button" class="chip" *ngIf="transaction?.table" (click)="openModal.emit('change-table')">
+      <span class="chip__label">Mesa</span>
+      <span class="chip__value">{{ transaction.table.description }}</span>
+      <i class="chip__icon fa fa-exchange"></i>
+    </button>
+
+    <button
+      type="button"
+      class="chip"
+      *ngIf="(transactionMovement && transactionMovement !== 'Stock') || transactionMovement !== 'Producción'"
+      (click)="openModal.emit('current-account')"
+    >
+      <span class="chip__label" *ngIf="transactionMovement === 'Venta'">Cliente</span>
+      <span class="chip__label" *ngIf="transactionMovement === 'Compra'">Proveedor</span>
+      <span class="chip__value" *ngIf="!transaction.company && transactionMovement === 'Venta'">Consumidor final</span>
+      <span class="chip__value" *ngIf="transaction.company">{{ transaction.company.name }}</span>
+    </button>
+
+    <span class="chip chip--static" *ngIf="transaction?.madein === 'resto' && transaction.diners > 0">
+      <span class="chip__label">Comensales</span>
+      <span class="chip__value">{{ transaction.diners }}</span>
+    </span>
+
+    <button
+      type="button"
+      class="chip"
+      *ngIf="transaction.type && transaction.type.requestEmployee && transaction.employeeClosing"
+      (click)="openModal.emit('change-employee')"
+    >
+      <span class="chip__label">{{ transaction.type.requestEmployee.description }}</span>
+      <span class="chip__value">{{ transaction.employeeClosing.name }}</span>
+      <i class="chip__icon fa fa-exchange"></i>
+    </button>
+
+    <button type="button" class="chip" *ngIf="!transaction?.endDate" (click)="changeDate.emit()">
+      <span class="chip__label">Inicio</span>
+      <span class="chip__value">{{ transaction.startDate | dateFormat: 'DD/MM/YYYY HH:mm' }}</span>
+      <i class="chip__icon fa fa-exchange"></i>
+    </button>
+
+    <button type="button" class="chip" *ngIf="transaction?.endDate" (click)="changeDate.emit()">
+      <span class="chip__label">Fecha</span>
+      <span class="chip__value">{{ transaction.endDate | dateFormat: 'DD/MM/YYYY' }}</span>
+      <i class="chip__icon fa fa-exchange"></i>
+    </button>
+  </div>
+
+  <!-- DERECHA: acciones / configuración del comprobante -->
+  <div class="txn-header__group txn-header__group--actions">
+    <button type="button" class="chip chip--accent" (click)="applyBusinessRule.emit()">
+      <span class="chip__value">Promoción</span>
+    </button>
+
+    <span
+      class="chip chip--static"
+      *ngIf="transaction && transaction.company && transaction.company.priceList && transaction.type.allowPriceList"
+    >
+      <span class="chip__label">Lista de Precio</span>
+      <span class="chip__value" *ngIf="transaction.company.priceList.name">{{
+        transaction.company.priceList.name
+      }}</span>
+    </span>
+
+    <button
+      type="button"
+      class="chip"
+      *ngIf="!transaction?.company?.priceList && transaction?.type?.allowPriceList"
+      (click)="changePriceList.emit()"
+    >
+      <span class="chip__label">Lista de Precio</span>
+      <span class="chip__value">{{ transaction?.priceList?.name }}</span>
+      <i class="chip__icon fa fa-pencil"></i>
+    </button>
+
+    <button
+      type="button"
+      class="chip"
+      *ngIf="transaction?.type?.requestCurrency"
+      (click)="openModal.emit('change-quotation')"
+    >
+      <span class="chip__label">Cotización</span>
+      <span class="chip__value">{{ transaction.quotation | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span>
+      <i class="chip__icon fa fa-pencil"></i>
+    </button>
+
+    <button
+      type="button"
+      class="chip"
+      *ngIf="transaction?.type?.optionalAFIP?.id"
+      (click)="openModal.emit('change-optional-afip')"
+    >
+      <span class="chip__label">Opcional AFIP</span>
+      <span class="chip__value">{{ transaction?.optionalAFIP?.value }}</span>
+      <i class="chip__icon fa fa-pencil"></i>
+    </button>
+
+    <button
+      type="button"
+      class="chip"
+      *ngIf="transaction?.type?.requestShipmentMethod"
+      (click)="openModal.emit('change-shipment-method')"
+    >
+      <span class="chip__label">Método de Envío</span>
+      <span class="chip__value">{{ transaction?.shipmentMethod?.name }}</span>
+      <i class="chip__icon fa fa-exchange"></i>
+    </button>
+
+    <button
+      type="button"
+      class="chip"
+      *ngIf="transaction?.company && transaction?.type?.requestTransport"
+      (click)="changeTransport.emit()"
+    >
+      <span class="chip__label">Transporte</span>
+      <span class="chip__value">{{ transaction?.transport?.name }}</span>
+      <i class="chip__icon fa fa-exchange"></i>
+    </button>
+
+    <button
+      type="button"
+      class="chip"
+      *ngIf="showButtonCancelation && transaction && transaction.totalPrice === 0"
+      (click)="openModal.emit('list-cancellations')"
+    >
+      <span class="chip__value">Buscar Transacciones a Cancelar</span>
+      <i class="chip__icon fa fa-exchange"></i>
+    </button>
+
+    <button type="button" class="chip" *ngIf="showButtonInformCancellation" (click)="cancelledTransactions.emit()">
+      <span class="chip__value">Informar comprobante cancelado</span>
+      <i class="chip__icon fa fa-info"></i>
+    </button>
+
+    <button type="button" class="chip" *ngIf="transactionMovement === 'Compra'" (click)="openModal.emit('uploadFile')">
+      <i class="chip__icon fa fa-upload"></i>
+      <span class="chip__value">Importar artículos</span>
+    </button>
+  </div>
+</header>
