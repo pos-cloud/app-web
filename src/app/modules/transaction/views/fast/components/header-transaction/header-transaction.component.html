@@ -14,12 +14,14 @@
     <button
       type="button"
       class="chip"
-      *ngIf="(transactionMovement && transactionMovement !== 'Stock') || transactionMovement !== 'Producción'"
+      *ngIf="transaction?.type?.requestCompany"
       (click)="openModal.emit('current-account')"
     >
-      <span class="chip__label" *ngIf="transactionMovement === 'Venta'">Cliente</span>
-      <span class="chip__label" *ngIf="transactionMovement === 'Compra'">Proveedor</span>
-      <span class="chip__value" *ngIf="!transaction.company && transactionMovement === 'Venta'">Consumidor final</span>
+      <span class="chip__label" *ngIf="transaction.type.requestCompany === 'Cliente'">Cliente</span>
+      <span class="chip__label" *ngIf="transaction.type.requestCompany === 'Proveedor'">Proveedor</span>
+      <span class="chip__value" *ngIf="!transaction.company && transaction.type.requestCompany === 'Cliente'"
+        >Consumidor final</span
+      >
       <span class="chip__value" *ngIf="transaction.company">{{ transaction.company.name }}</span>
     </button>
 
@@ -31,7 +33,7 @@
     <button
       type="button"
       class="chip"
-      *ngIf="transaction.type && transaction.type.requestEmployee && transaction.employeeClosing"
+      *ngIf="transaction.type && transaction.type.requestEmployee"
       (click)="openModal.emit('change-employee')"
     >
       <span class="chip__label">{{ transaction.type.requestEmployee.description }}</span>
@@ -54,7 +56,12 @@
 
   <!-- DERECHA: acciones / configuración del comprobante -->
   <div class="txn-header__group txn-header__group--actions">
-    <button type="button" class="chip chip--accent" (click)="applyBusinessRule.emit()">
+    <button
+      type="button"
+      class="chip chip--accent"
+      *ngIf="transactionMovement === 'Venta'"
+      (click)="applyBusinessRule.emit()"
+    >
       <span class="chip__value">Promoción</span>
     </button>
 
