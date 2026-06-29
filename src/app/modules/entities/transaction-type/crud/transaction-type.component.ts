@@ -30,8 +30,8 @@ import {
   Movements,
   OPTIONAL_AFIP,
   PaymentMethod,
-  Printer,
   PriceType,
+  Printer,
   ShipmentMethod,
   StockMovement,
   TransactionMovement,
@@ -305,7 +305,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       .filter((pm): pm is PaymentMethod => pm !== null);
 
     const selectedOptionalAFIP = tt?.optionalAFIP?.id
-      ? this.optionalAFIPList.find((item) => item.id === tt.optionalAFIP.id) ?? null
+      ? (this.optionalAFIPList.find((item) => item.id === tt.optionalAFIP.id) ?? null)
       : null;
 
     this.transactionTypeForm.patchValue({
@@ -328,7 +328,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       requestTaxes: tt?.requestTaxes ?? false,
       automaticNumbering: tt?.automaticNumbering ?? true,
       fiscalCode: tt?.fiscalCode ?? '',
-      defectUseOfCFDI: tt?.defectUseOfCFDI ?? '',
+      defectUseOfCFDI: tt?.defectUseOfCFDI ?? null,
       fixedOrigin: tt?.fixedOrigin ?? 0,
       fixedLetter: tt?.fixedLetter ?? 'X',
       expirationDate: tt?.expirationDate ? tt.expirationDate.substring(0, 10) : '',
