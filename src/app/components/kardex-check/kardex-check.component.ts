@@ -14,7 +14,7 @@ import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { TransactionService } from '../../core/services/transaction.service';
 import { ViewTransactionComponent } from '../../modules/transaction/components/view-transaction/view-transaction.component';
 import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
-import { TransactionMovement } from '../transaction-type/transaction-type';
+import { TransactionMovement } from '@types';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction/transaction';
 

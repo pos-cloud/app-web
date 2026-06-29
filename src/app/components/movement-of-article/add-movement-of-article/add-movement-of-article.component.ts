@@ -28,7 +28,7 @@ import { Article } from '../../article/article';
 import { ArticleComponent } from '../../article/crud/article.component';
 import { TaxBase } from '../../tax/tax';
 import { Taxes } from '../../tax/taxes';
-import { EntryAmount, StockMovement, TransactionMovement } from '../../transaction-type/transaction-type';
+import { EntryAmount, StockMovement, TransactionMovement } from '@types';
 import { Variant } from '../../variant/variant';
 import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article';
 

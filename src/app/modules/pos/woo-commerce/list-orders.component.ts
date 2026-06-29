@@ -8,7 +8,7 @@ import { ApiResponse, IAttribute, Printer, PrinterPrintIn, PrintType } from '@ty
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from 'app/components/print/print/print.component';
-import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { User } from '@types';
 import { AuthService } from 'app/core/services/auth.service';

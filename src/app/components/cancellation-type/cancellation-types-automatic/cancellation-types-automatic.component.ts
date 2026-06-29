@@ -15,7 +15,7 @@ import { MovementOfCancellation } from 'app/components/movement-of-cancellation/
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { TaxBase } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
-import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from '@types';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';

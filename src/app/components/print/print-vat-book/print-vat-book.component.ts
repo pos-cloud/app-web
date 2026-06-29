@@ -15,7 +15,7 @@ import { Config } from 'app/app.config';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { TaxClassification } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
-import { Movements, TransactionMovement } from 'app/components/transaction-type/transaction-type';
+import { Movements, TransactionMovement } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { ClassificationService } from 'app/core/services/classification.service';
 import { ConfigService } from 'app/core/services/config.service';

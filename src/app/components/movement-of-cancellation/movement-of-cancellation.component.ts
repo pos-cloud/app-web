@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Movements, TransactionMovement } from '../transaction-type/transaction-type';
+import { Movements, TransactionMovement } from '@types';
 import { Transaction, TransactionState } from '../transaction/transaction';
 
 //service

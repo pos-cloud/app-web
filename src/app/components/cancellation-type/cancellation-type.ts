@@ -1,6 +1,6 @@
 import { IAttribute } from '@types';
 import { Model } from '../model/model.model';
-import { TransactionType } from '../transaction-type/transaction-type';
+import { TransactionType } from '@types';
 import { TransactionState } from '../transaction/transaction';
 
 export class CancellationType extends Model {

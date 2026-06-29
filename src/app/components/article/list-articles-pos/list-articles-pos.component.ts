@@ -34,7 +34,7 @@ import { TransactionService } from 'app/core/services/transaction.service';
 import { FilterPipe } from 'app/shared/pipes/filter.pipe';
 import { first } from 'rxjs/operators';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { StockMovement, TransactionMovement } from '../../transaction-type/transaction-type';
+import { StockMovement, TransactionMovement } from '@types';
 
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';

@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
 import { CompanyService } from '../../core/services/company.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { TransactionService } from '../../core/services/transaction.service';
-import { TransactionType } from '../transaction-type/transaction-type';
+import { TransactionType } from '@types';
 
 @Component({
   selector: 'app-report-sales-by-client',

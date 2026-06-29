@@ -5,7 +5,7 @@ import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-boots
 import { PrintVatBookComponent } from 'app/components/print/print-vat-book/print-vat-book.component';
 import { Tax, TaxClassification } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
-import { Movements, TransactionMovement } from 'app/components/transaction-type/transaction-type';
+import { Movements, TransactionMovement } from '@types';
 import { BranchService } from 'app/core/services/branch.service';
 import { ClassificationService } from 'app/core/services/classification.service';
 import { StateService } from 'app/core/services/state.service';

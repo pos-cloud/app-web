@@ -11,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { PrintService } from '@core/services/print.service';
 import { ApiResponse, CashBox, CashBoxState, PrintType } from '@types';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { Movements } from 'app/components/transaction-type/transaction-type';
+import { Movements } from '@types';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { CashBoxService } from 'app/core/services/cash-box.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';

@@ -6,7 +6,7 @@ import { DepositService } from '@core/services/deposit.service';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Deposit, PriceList } from '@types';
-import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from '@types';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';

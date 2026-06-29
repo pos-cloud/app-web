@@ -36,7 +36,7 @@ import { MovementOfArticle } from '../../movement-of-article/movement-of-article
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { Tax } from '../../tax/tax';
 import { Taxes } from '../../tax/taxes';
-import { Movements } from '../../transaction-type/transaction-type';
+import { Movements } from '@types';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
 import { MovementOfCash, StatusCheck } from '../movement-of-cash';
@@ -999,7 +999,7 @@ export class AddMovementOfCashComponent implements OnInit {
         );
 
         if (this.transaction.type.finishState) {
-          this.transaction.state = this.transaction.type.finishState;
+          this.transaction.state = this.transaction.type.finishState as any;
         } else {
           this.transaction.state = TransactionState.Closed;
         }

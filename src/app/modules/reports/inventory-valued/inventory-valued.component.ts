@@ -4,7 +4,7 @@ import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from 
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionType } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';

@@ -12,7 +12,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
 import { Branch, Category } from '@types';
 import { Config } from 'app/app.config';
-import { Movements, TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { Movements, TransactionMovement, TransactionType } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';

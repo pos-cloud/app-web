@@ -10,7 +10,7 @@ import { TransactionService } from '../../../core/services/transaction.service';
 import { UserService } from '../../../core/services/user.service';
 
 import { environment } from 'environments/environment';
-import { TransactionMovement } from '../../transaction-type/transaction-type';
+import { TransactionMovement } from '@types';
 
 @Component({
   selector: 'app-export-citi',

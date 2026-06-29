@@ -29,7 +29,7 @@ import { Article } from '../../article/article';
 import { CashBox } from '../../cash-box/cash-box';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
-import { DescriptionType, TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
+import { DescriptionType, TransactionMovement, TransactionType } from '@types';
 
 //Paquetes de terceros
 

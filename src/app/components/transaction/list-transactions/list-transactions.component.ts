@@ -29,7 +29,7 @@ import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
 import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
-import { TransactionMovement, TransactionType } from '../../transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from '@types';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction';
 

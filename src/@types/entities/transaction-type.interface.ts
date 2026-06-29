@@ -157,3 +157,41 @@ export interface optionalAFIP {
   name: string;
   value: string;
 }
+
+// Opciones de datos opcionales de AFIP (RG). Antes se servían como JSON estático
+// desde assets/datos/optionalAFIP.json; se mantienen acá para evitar un request HTTP.
+export const OPTIONAL_AFIP: Pick<optionalAFIP, 'id' | 'name'>[] = [
+  { id: '2', name: 'RG Empresas Promovidas - Indentificador de proyecto vinculado a Régimen de Promoción Industrial' },
+  { id: '91', name: 'RG Bienes Usados 3411 - Nombre y Apellido o Denominación del vendedor del bien usado.' },
+  { id: '92', name: 'RG Bienes Usados 3411 - Nacionalidad del vendedor del bien usado.' },
+  { id: '93', name: 'RG Bienes Usados 3411 - Domicilio del vendedor del bien usado.' },
+  { id: '5', name: 'Excepcion computo IVA Credito Fiscal' },
+  { id: '61', name: 'RG 3668 Impuesto al Valor Agregado - Art.12 IVA Firmante Doc Tipo' },
+  { id: '62', name: 'RG 3668 Impuesto al Valor Agregado - Art.12 IVA Firmante Doc Nro' },
+  { id: '7', name: 'RG 3668 Impuesto al Valor Agregado - Art.12 IVA Carácter del Firmante' },
+  { id: '10', name: 'RG 3.368 Establecimientos de educación pública de gestión privada - Actividad Comprendida' },
+  { id: '1011', name: 'RG 3.368 Establecimientos de educación pública de gestión privada - Tipo de Documento' },
+  { id: '1012', name: 'RG 3.368 Establecimientos de educación pública de gestión privada - Número de Documento' },
+  { id: '11', name: 'RG 2.820 Operaciones económicas vinculadas con bienes inmuebles - Actividad Comprendida' },
+  { id: '12', name: 'RG 3.687 Locación temporaria de inmuebles con fines turísticos - Actividad Comprendida' },
+  { id: '13', name: 'RG 2.863 Representantes de Modelos' },
+  { id: '14', name: 'RG 2.863 Agencias de publicidad' },
+  { id: '15', name: 'RG 2.863 Personas físicas que desarrollen actividad de modelaje' },
+  {
+    id: '17',
+    name: "RG 4004-E Locación de inmuebles destino 'casa-habitación'. Dato 2 (dos) = facturación directa / Dato 1 (uno) = facturación a través de intermediario",
+  },
+  {
+    id: '1801',
+    name: "RG 4004-E Locación de inmuebles destino 'casa-habitación'. Clave Única de Identificación Tributaria (CUIT).",
+  },
+  {
+    id: '1802',
+    name: "RG 4004-E Locación de inmuebles destino 'casa-habitación'. Apellido y nombres, denominación y/o razón social.",
+  },
+  { id: '2101', name: 'Factura de Crédito Electrónica MiPyMEs (FCE) - CBU del Emisor' },
+  { id: '2102', name: 'Factura de Crédito Electrónica MiPyMEs (FCE) - Alias del Emisor' },
+  { id: '22', name: 'Factura de Crédito Electrónica MiPyMEs (FCE) - Anulación' },
+  { id: '23', name: 'Factura de Crédito Electrónica MiPyMEs (FCE) - Referencia Comercial' },
+  { id: '27', name: 'Factura de Credito Electronica MiPyMEs (FCE) - Transferencia' },
+];

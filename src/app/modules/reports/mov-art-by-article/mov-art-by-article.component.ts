@@ -8,7 +8,7 @@ import { CategoryService } from '@core/services/category.service';
 import { MakeService } from '@core/services/make.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Category, Make } from '@types';
-import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionType } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';

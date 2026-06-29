@@ -20,7 +20,7 @@ import {
   StockMovement,
   TransactionMovement,
   TransactionType,
-} from '../transaction-type/transaction-type';
+} from '@types';
 import { Transaction, TransactionState } from '../transaction/transaction';
 
 import { PrinterService } from '../../core/services/printer.service';
@@ -721,7 +721,7 @@ export class PointOfSaleComponent implements OnInit {
     this.transaction = new Transaction();
     this.transaction.type = type;
     if (this.transaction.type.defectShipmentMethod) {
-      this.transaction.shipmentMethod = this.transaction.type.defectShipmentMethod;
+      this.transaction.shipmentMethod = this.transaction.type.defectShipmentMethod as any;
     }
     this.transaction.table = this.tableSelected;
 

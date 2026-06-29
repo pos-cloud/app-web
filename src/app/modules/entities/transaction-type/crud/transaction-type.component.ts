@@ -28,6 +28,7 @@ import {
   EmployeeType,
   EntryAmount,
   Movements,
+  OPTIONAL_AFIP,
   PaymentMethod,
   Printer,
   PriceType,
@@ -84,7 +85,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
   public shipmentMethods: ShipmentMethod[] = [];
   public printers: Printer[] = [];
   public paymentMethods: PaymentMethod[] = [];
-  public optionalAFIPList: OptionalAFIP[] = [];
+  public optionalAFIPList: OptionalAFIP[] = OPTIONAL_AFIP;
 
   // Enum options for selects.
   // TransactionMovement and CompanyType are declared with `<any>` casts in their
@@ -148,7 +149,6 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       shipmentMethods: this._shipmentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
       printers: this._printerService.find({ query: { operationType: { $ne: 'D' } } }),
       paymentMethods: this._paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
-      optionalAFIPList: this._transactionTypeService.getJSON(),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -162,7 +162,6 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
           this.shipmentMethods = data.shipmentMethods ?? [];
           this.printers = data.printers ?? [];
           this.paymentMethods = data.paymentMethods ?? [];
-          this.optionalAFIPList = data.optionalAFIPList ?? [];
 
           if (this.transactionTypeId) {
             this.getTransactionType(this.transactionTypeId);

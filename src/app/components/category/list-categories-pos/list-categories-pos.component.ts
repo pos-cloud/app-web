@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
-import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement } from '@types';
 
 import { Category } from '@types';
 import { CategoryService } from '../../../core/services/category.service';

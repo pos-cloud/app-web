@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { ApiResponse, Company, PrintType } from '@types';
 import { CompanyType } from 'app/components/payment-method/payment-method';
-import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement } from '@types';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
 import { CompanyService } from 'app/core/services/company.service';

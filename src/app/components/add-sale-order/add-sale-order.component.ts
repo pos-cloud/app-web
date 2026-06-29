@@ -66,7 +66,7 @@ import {
   StockMovement,
   TransactionMovement,
   TransactionType,
-} from '../transaction-type/transaction-type';
+} from '@types';
 import { Transaction, TransactionState } from '../transaction/transaction';
 
 import { ApiResponse, Currency, EmailProps } from '@types';
@@ -260,7 +260,7 @@ export class AddSaleOrderComponent {
 
   initVariables(): void {
     this.transaction = new Transaction();
-    this.transaction.type = new TransactionType();
+    this.transaction.type = {} as TransactionType;
     this.movementsOfArticles = new Array();
     this.printers = new Array();
     this.printersAux = new Array();
@@ -1956,7 +1956,7 @@ export class AddSaleOrderComponent {
             };
           } else {
             if (this.transaction.type.finishState) {
-              this.transaction.state = this.transaction.type.finishState;
+              this.transaction.state = this.transaction.type.finishState as any;
             } else {
               this.transaction.state = TransactionState.Closed;
             }
@@ -2677,7 +2677,7 @@ export class AddSaleOrderComponent {
       }
       this.transaction.expirationDate = this.transaction.endDate;
       if (this.transaction.type.finishState) {
-        this.transaction.state = this.transaction.type.finishState;
+        this.transaction.state = this.transaction.type.finishState as any;
       } else {
         this.transaction.state = TransactionState.Closed;
       }
@@ -3603,7 +3603,7 @@ export class AddSaleOrderComponent {
       this.transactionMovement !== 'Stock' &&
       this.transactionMovement !== 'Producción'
     ) {
-      this.openModal('charge', null, this.transaction.type.fastPayment);
+      this.openModal('charge', null, this.transaction.type.fastPayment as any);
     }
   }
 

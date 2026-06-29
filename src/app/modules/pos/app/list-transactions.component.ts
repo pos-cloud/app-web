@@ -5,7 +5,7 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IAttribute } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { TransactionMovement } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { TransactionService } from 'app/core/services/transaction.service';

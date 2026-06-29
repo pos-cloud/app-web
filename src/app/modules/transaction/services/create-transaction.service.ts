@@ -12,7 +12,7 @@ import {
   StockMovement,
   TransactionMovement,
   TransactionType,
-} from 'app/components/transaction-type/transaction-type';
+} from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 
 import { BranchService } from 'app/core/services/branch.service';
@@ -105,7 +105,7 @@ export class CreateTransactionService {
   private applyTypeDefaults(tx: Transaction, type: TransactionType, ctx: PosContext): Transaction {
     tx.type = type;
     if (type.defectShipmentMethod) {
-      tx.shipmentMethod = type.defectShipmentMethod;
+      tx.shipmentMethod = type.defectShipmentMethod as any;
     }
     if (type.fixedLetter && type.fixedLetter !== '') {
       tx.letter = type.fixedLetter.toUpperCase();

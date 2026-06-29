@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { CancellationTypeService } from '../../../core/services/cancellation-type.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 
-import { TransactionType } from '../../transaction-type/transaction-type';
+import { TransactionType } from '@types';
 import { CancellationType } from '../cancellation-type';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';

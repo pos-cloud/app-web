@@ -4,7 +4,7 @@ import { Account, Category, Deposit, Make } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Article, ArticlePrintIn } from '../article/article';
 import { Taxes } from '../tax/taxes';
-import { StockMovement } from '../transaction-type/transaction-type';
+import { StockMovement } from '@types';
 import { Transaction } from '../transaction/transaction';
 import { User } from '@types';
 

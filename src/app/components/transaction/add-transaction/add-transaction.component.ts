@@ -10,7 +10,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { Taxes } from '../../tax/taxes';
-import { Movements, TransactionMovement } from '../../transaction-type/transaction-type';
+import { Movements, TransactionMovement } from '@types';
 import { Transaction, TransactionState } from '../transaction';
 
 //Services

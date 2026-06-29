@@ -7,7 +7,7 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { TransactionMovement } from '../../components/transaction-type/transaction-type';
+import { TransactionMovement } from '@types';
 import { AuthService } from './auth.service';
 
 import { environment } from 'environments/environment';

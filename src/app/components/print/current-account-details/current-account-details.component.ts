@@ -13,7 +13,7 @@ import { Config } from './../../../app.config';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Employee } from '@types';
-import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionType } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { CompanyGroupService } from 'app/core/services/company-group.service';
 import { CompanyService } from 'app/core/services/company.service';

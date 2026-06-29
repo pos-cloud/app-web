@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MovementOfCash, StatusCheck } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionType } from '@types';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';

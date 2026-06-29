@@ -7,7 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { User } from '@types';
-import { TransactionMovement, TransactionType } from 'app/components/transaction-type/transaction-type';
+import { TransactionMovement, TransactionType } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';

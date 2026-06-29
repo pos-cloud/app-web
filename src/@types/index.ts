@@ -56,10 +56,13 @@ export { Structure, Utilization } from './entities/structure.interface';
 export { Table, TableState } from './entities/table.interface';
 export { Tax, TaxBase, TaxClassification, Taxes, TaxSource, TaxType } from './entities/tax.interface';
 export {
+  CodeAFIP,
   CurrentAccount,
   DescriptionType,
   EntryAmount,
   Movements,
+  OPTIONAL_AFIP,
+  optionalAFIP,
   PriceType,
   StockMovement,
   TransactionType,
