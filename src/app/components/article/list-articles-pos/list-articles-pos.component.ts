@@ -327,6 +327,14 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
       project['codeProvider'] = 1;
     }
 
+    const userMakeIds = ((this.identity?.makes ?? []) as any[])
+      .map((m) => (typeof m === 'string' ? m : m?._id))
+      .filter(Boolean);
+
+    if (userMakeIds.length > 0) {
+      match['make._id'] = { $in: userMakeIds.map((id) => ({ $oid: id })) };
+    }
+
     this._articleService
       .getArticlesV2(
         project, // PROJECT
