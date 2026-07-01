@@ -174,8 +174,10 @@ export class FormalTransactionViewComponent implements OnInit {
     const rate = Math.min(100, Math.max(0, Number(this.addProductForm.get('discountRate')?.value) || 0));
     const gross = this.roundNumber.transform(quantity * basePrice) as number;
     const discountAmount = this.roundNumber.transform(gross * (rate / 100)) as number;
-
-    return this.roundNumber.transform(gross + this.addProductLineTaxesTotal - discountAmount) as number;
+    let price = this.roundNumber.transform(
+      gross + (this.requestTaxes ? this.roundNumber.transform(this.addProductLineTaxesTotal) : 0)
+    ) as number;
+    return this.roundNumber.transform(price - discountAmount) as number;
   }
 
   public get addProductLineTaxesTotal(): number {
@@ -728,11 +730,12 @@ export class FormalTransactionViewComponent implements OnInit {
       });
     }
 
+    let totalPrice = this.transaction.subTotal + (this.requestTaxes ? this.taxesAmount : 0);
     Object.assign(this.transaction, {
       discountPercent,
       discountAmount,
       basePrice: this.transaction.subTotal - discountAmount,
-      totalPrice: this.transaction.subTotal + this.taxesAmount - discountAmount,
+      totalPrice: totalPrice - discountAmount,
     });
 
     this.updateTransaction();
