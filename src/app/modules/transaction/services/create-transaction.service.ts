@@ -462,6 +462,7 @@ export class CreateTransactionService {
         requestEmployee: 1,
         requestArticles: 1,
         requestCurrency: 1,
+        allowPromotion: 1,
         requestCompany: 1,
         automaticNumbering: 1,
         company: 1,

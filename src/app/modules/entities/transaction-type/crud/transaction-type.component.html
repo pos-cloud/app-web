@@ -350,6 +350,13 @@
             </select>
           </div>
           <div class="form-group col-md-2">
+            <label class="control-label">{{ 'allowPromotion' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="allowPromotion">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
             <label class="control-label">{{ 'requestCurrency' | translate | capitalize }}:</label>
             <select class="form-control" formControlName="requestCurrency">
               <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>

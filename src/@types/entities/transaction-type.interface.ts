@@ -55,6 +55,7 @@ export interface TransactionType extends Activity {
   allowZero: boolean; // default false
   allowCompanyDiscount: boolean; // default true
   allowPriceList: boolean; // default true
+  allowPromotion: boolean; // default false
   requestCurrency: boolean; // default false
   requestEmployee: EmployeeType;
   requestTransport: boolean; // default false

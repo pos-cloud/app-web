@@ -249,6 +249,12 @@ export class ListTransactionTypeComponent {
       align: 'left',
     },
     {
+      name: 'allowPromotion',
+      filter: true,
+      datatype: 'boolean',
+      align: 'left',
+    },
+    {
       name: 'requestEmployee.name',
       filter: true,
       datatype: 'string',
