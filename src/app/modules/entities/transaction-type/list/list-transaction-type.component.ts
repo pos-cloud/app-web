@@ -245,7 +245,7 @@ export class ListTransactionTypeComponent {
     {
       name: 'requestCurrency',
       filter: true,
-      datatype: 'string',
+      datatype: 'boolean',
       align: 'left',
     },
     {
