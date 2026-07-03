@@ -223,7 +223,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           transactionDestination.letter = transactionDestination.type.fixedLetter;
         }
 
-        if (!transactionDestination.type.cashBoxImpact) {
+        // Si el origen ya impactó caja, la cancelatoria no debe heredar cashBox
+        // (así el tipo destino puede seguir impactando caja en uso directo).
+        if (this.transaction.cashBox || !transactionDestination.type.cashBoxImpact) {
           transactionDestination.cashBox = null;
         }
 
@@ -359,31 +361,28 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     return movsOfArts;
   }
 
-  public async copyMovementsOfCashes(transaction: Transaction): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      try {
-        if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
-          for (let movOfCash of this.movementsOfCashes) {
-            let mov = new MovementOfCash();
-            Object.assign(mov, movOfCash);
-            mov.transaction = transaction;
-            await this.updateMovementOfCash(mov);
-          }
-        }
-        resolve(true);
-      } catch (error) {
-        reject(error);
+  public copyMovementsOfCashes(transaction: Transaction): Promise<MovementOfCash[]> {
+    return new Promise<MovementOfCash[]>((resolve, reject) => {
+      if (!this.movementsOfCashes || this.movementsOfCashes.length === 0) {
+        resolve([]);
+        return;
       }
-    });
-  }
 
-  public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
-    return new Promise<MovementOfCash>((resolve, reject) => {
-      this._movementOfCashService.update(movementOfCash).subscribe(
-        async (result: ApiResponse) => {
-          if (result.status === 200) {
-            resolve(result.result);
-          } else reject(result);
+      const movementsOfCashes: MovementOfCash[] = this.movementsOfCashes.map((movOfCash) => {
+        const mov = new MovementOfCash();
+        Object.assign(mov, movOfCash);
+        delete mov._id;
+        mov.transaction = transaction;
+        return mov;
+      });
+
+      this._movementOfCashService.saveMovementsOfCashes(movementsOfCashes).subscribe(
+        (result) => {
+          if (result.movementsOfCashes) {
+            resolve(result.movementsOfCashes);
+          } else {
+            reject(result);
+          }
         },
         (error) => reject(error)
       );
@@ -602,6 +601,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             fixedLetter: 1,
             cashBoxImpact: 1,
             requestArticles: 1,
+            requestPaymentMethods: 1,
             stockMovement: 1,
             requestTaxes: 1,
             transactionMovement: 1,
