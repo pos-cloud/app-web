@@ -233,6 +233,19 @@ export class TransactionService extends ModelService {
       );
   }
 
+  public syncTransactionFromArca(transactionId: string): Observable<any> {
+    const URL = `${environment.apiv2}/transactions/sync-from-arca/${transactionId}`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, {}, { headers }).pipe(
+      map((res) => res),
+      catchError((err) => of(err))
+    );
+  }
+
   public validateElectronicTransactionMX(
     transaction: Transaction,
     movementsOfArticles: MovementOfArticle[],

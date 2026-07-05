@@ -53,6 +53,8 @@ export class ViewTransactionComponent implements OnInit {
   showDetails = false;
   propertyTerm: string;
   modalData: any;
+  isArcaModal = false;
+  syncingFromArca = false;
   transactionDestinations: Transaction[] = [];
   transactionOrigins: Transaction[] = [];
   roundNumber = new RoundNumberPipe();
@@ -455,6 +457,7 @@ export class ViewTransactionComponent implements OnInit {
       case 'modalObj':
         if (!objData) return;
         this.modalData = objData;
+        this.isArcaModal = this.isArcaResponse(objData);
 
         this._modalService.open(this.modalObj, {
           size: 'l',
@@ -496,5 +499,50 @@ export class ViewTransactionComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  private isArcaResponse(obj: any): boolean {
+    return !!(obj?.FeCabResp && obj?.FeDetResp);
+  }
+
+  public canSyncFromArca(): boolean {
+    if (!this.transaction?.feArObj || this.transaction.state === TransactionState.Closed) return false;
+
+    const feArObj = this.transaction.feArObj;
+    const det = Array.isArray(feArObj?.FeDetResp?.FECAEDetResponse)
+      ? feArObj.FeDetResp.FECAEDetResponse[0]
+      : feArObj?.FeDetResp?.FECAEDetResponse;
+
+    return feArObj?.FeCabResp?.Resultado === 'A' && det?.Resultado === 'A' && !!det?.CAE;
+  }
+
+  public syncFromArca(modal?: { close: () => void }): void {
+    if (!this.transaction?._id || this.syncingFromArca) return;
+
+    this.syncingFromArca = true;
+
+    this._transactionService
+      .syncTransactionFromArca(this.transaction._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this.syncingFromArca = false;
+          if (result?.status === 200) {
+            this.transaction = { ...this.transaction, ...result.result };
+            this._toastService.showToast({ message: 'Transacción alineada con ARCA', type: 'success' });
+            modal?.close();
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this.syncingFromArca = false;
+          this._toastService.showToast(error);
+        },
+      });
+  }
+
+  public syncFromArcaDirect(): void {
+    this.syncFromArca();
   }
 }
