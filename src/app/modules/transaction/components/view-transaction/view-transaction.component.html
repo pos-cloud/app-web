@@ -841,19 +841,16 @@
                   >
                 </div>
               </div>
-              <div class="row" *ngIf="canSyncFromArca()">
+              <div class="row" *ngIf="hasFeArObj()">
                 <div class="form-group col-md-12">
-                  <div class="alert alert-warning mb-0">
-                    Esta transacción tiene CAE pero no está cerrada correctamente.
-                    <button
-                      class="btn btn-sm btn-primary ml-2"
-                      [disabled]="syncingFromArca"
-                      (click)="syncFromArcaDirect()"
-                    >
-                      <i *ngIf="syncingFromArca" class="fa fa-spinner fa-spin"></i>
-                      Alinear con ARCA
-                    </button>
-                  </div>
+                  <button
+                    class="btn btn-sm btn-primary"
+                    [disabled]="syncingFromArca"
+                    (click)="syncFromArcaDirect()"
+                  >
+                    <i *ngIf="syncingFromArca" class="fa fa-spinner fa-spin"></i>
+                    Alinear con ARCA
+                  </button>
                 </div>
               </div>
             </div>
@@ -881,7 +878,7 @@
 
   <div class="modal-footer">
     <button
-      *ngIf="isArcaModal && canSyncFromArca()"
+      *ngIf="isArcaModal"
       class="btn btn-primary"
       [disabled]="syncingFromArca"
       (click)="syncFromArca(modal)"

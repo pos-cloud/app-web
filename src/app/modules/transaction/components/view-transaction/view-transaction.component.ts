@@ -505,15 +505,8 @@ export class ViewTransactionComponent implements OnInit {
     return !!(obj?.FeCabResp && obj?.FeDetResp);
   }
 
-  public canSyncFromArca(): boolean {
-    if (!this.transaction?.feArObj || this.transaction.state === TransactionState.Closed) return false;
-
-    const feArObj = this.transaction.feArObj;
-    const det = Array.isArray(feArObj?.FeDetResp?.FECAEDetResponse)
-      ? feArObj.FeDetResp.FECAEDetResponse[0]
-      : feArObj?.FeDetResp?.FECAEDetResponse;
-
-    return feArObj?.FeCabResp?.Resultado === 'A' && det?.Resultado === 'A' && !!det?.CAE;
+  public hasFeArObj(): boolean {
+    return !!this.transaction?.feArObj;
   }
 
   public syncFromArca(modal?: { close: () => void }): void {
