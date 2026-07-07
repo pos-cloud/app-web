@@ -1126,7 +1126,6 @@ export class FormalTransactionViewComponent implements OnInit {
     this.selectedArticle = this.articles.find((article) => article._id.toString() === articleId?.toString()) || null;
 
     if (this.addProductForm.valid && this.selectedArticle) {
-      let unitPrice = Number(this.addProductForm.get('unitPrice')?.value);
       let basePrice = Number(this.addProductForm.get('basePrice')?.value);
       let quantity = Number(this.addProductForm.get('quantity')?.value);
       let discountRate = Number(this.addProductForm.get('discountRate')?.value);
@@ -1176,7 +1175,7 @@ export class FormalTransactionViewComponent implements OnInit {
         transactionId: this.transaction?._id,
         articleId: this.selectedArticle._id,
         quantity: quantity,
-        salePrice: unitPrice,
+        salePrice: basePrice,
         recalculateParent: false,
       };
 
