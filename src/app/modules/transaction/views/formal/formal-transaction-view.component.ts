@@ -1239,7 +1239,7 @@ export class FormalTransactionViewComponent implements OnInit {
       article: this.selectedArticle || movement.article || null,
       quantity: movement.amount || 1,
       unitPrice: this.roundNumber.transform(movement.unitPrice) as number,
-      basePrice: this.roundNumber.transform(movement.basePrice) as number,
+      basePrice: this.getMovementBasePricePerUnit(movement),
       discountRate: movement.discountRate ?? 0,
     });
   }
@@ -1364,6 +1364,11 @@ export class FormalTransactionViewComponent implements OnInit {
 
   public goBack(): void {
     this.router.navigateByUrl('/pos/mostrador/compra');
+  }
+
+  public getMovementBasePricePerUnit(movement: MovementOfArticle): number {
+    const amount = Number(movement.amount) || 1;
+    return this.roundNumber.transform(movement.basePrice / amount) as number;
   }
 
   public formatMovementTaxLabel(t: Taxes): string {

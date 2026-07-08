@@ -312,7 +312,7 @@
                             </ng-container>
                             <ng-template #priceViewTpl>
                               <span class="price">{{
-                                movement.basePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                                getMovementBasePricePerUnit(movement) | currency: 'USD' : 'symbol-narrow' : '1.2-2'
                               }}</span>
                             </ng-template>
                           </td>
