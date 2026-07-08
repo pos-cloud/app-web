@@ -6,6 +6,11 @@ export const ARTICLE_ROUTES: Routes = [
     loadComponent: () => import('./list/list-articles.component').then((m) => m.ListArticlesComponent),
   },
   {
+    path: 'variants',
+    loadComponent: () =>
+      import('./list/lis-articles-variants/list-articles-variants.component').then((m) => m.ListVariantsComponent),
+  },
+  {
     path: 'add',
     loadComponent: () => import('./crud/article.component').then((m) => m.ArticleComponent),
   },

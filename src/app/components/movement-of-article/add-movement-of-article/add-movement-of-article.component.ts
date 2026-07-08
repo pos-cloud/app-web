@@ -14,18 +14,17 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
-import { VariantType, VariantValue } from '@types';
-import { User } from '@types';
+import { User, VariantType, VariantValue } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Config } from '../../../app.config';
 import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { VariantService } from '../../../core/services/variant.service';
+import { ArticleComponent } from '../../../modules/entities/article/crud/article.component';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { ArticleStock } from '../../article-stock/article-stock';
 import { Article } from '../../article/article';
-import { ArticleComponent } from '../../article/crud/article.component';
 import { TaxBase } from '../../tax/tax';
 import { Taxes } from '../../tax/taxes';
 import { EntryAmount, StockMovement, TransactionMovement } from '@types';
@@ -1070,10 +1069,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   async changeArticleByVariants(articleSelected: Article) {
-    this.movementOfArticle = this.buildMovementFromArticle(
-      articleSelected,
-      this.movementOfArticleForm.value.amount
-    );
+    this.movementOfArticle = this.buildMovementFromArticle(articleSelected, this.movementOfArticleForm.value.amount);
     this.setValueForm();
   }
 

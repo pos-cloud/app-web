@@ -71,7 +71,7 @@ export class HeaderComponent implements OnInit {
       icon: 'fa fa-shopping-basket',
       children: [
         { label: 'Productos', link: 'entities/articles' },
-        { label: 'Variantes', link: 'admin/variants' },
+        { label: 'Variantes', link: 'entities/articles/variants' },
         { label: 'Marcas', link: 'entities/makes' },
         { label: 'Categoria', link: 'admin/categories' },
         { label: '', isDivider: true },
@@ -540,7 +540,7 @@ export class HeaderComponent implements OnInit {
           icon: 'fa fa-shopping-basket',
           children: [
             { label: 'Productos', link: 'entities/articles' },
-            { label: 'Variantes', link: 'admin/variants' },
+            { label: 'Variantes', link: 'entities/articles/variants' },
             { label: 'Marcas', link: 'entities/makes' },
             { label: 'Categoria', link: 'entities/categories' },
             { label: '', isDivider: true },
