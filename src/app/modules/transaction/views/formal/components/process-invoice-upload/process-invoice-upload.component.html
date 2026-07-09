@@ -1,18 +1,19 @@
-<div class="process-invoice-upload d-inline-flex align-items-center">
+<div class="process-invoice-upload">
   <input type="file" #fileInput [accept]="accept" (change)="onFileSelected($event)" hidden />
   <button
     type="button"
-    class="btn btn-sm btn-outline-secondary p-2 d-inline-flex align-items-center justify-content-center"
+    class="formal-tab-action formal-tab-action--ai"
     (click)="$event.stopPropagation(); fileInput.click()"
     [disabled]="uploading"
     title="Subir imagen o PDF de factura"
   >
-    <i *ngIf="uploading" class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+    <i *ngIf="uploading" class="fa fa-spinner fa-spin formal-tab-action__icon" aria-hidden="true"></i>
     <svg
       *ngIf="!uploading"
+      class="formal-tab-action__icon"
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -27,5 +28,6 @@
       <path d="M17.599 6.5a3 3 0 0 0 .399-1.375" />
       <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5" />
     </svg>
+    <span>Leer factura</span>
   </button>
 </div>

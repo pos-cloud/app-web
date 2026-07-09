@@ -3,6 +3,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { ImportComponent } from '@shared/components/import/import.component';
 import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
 import {
   Article,
@@ -1175,7 +1176,8 @@ export class FormalTransactionViewComponent implements OnInit {
         transactionId: this.transaction?._id,
         articleId: this.selectedArticle._id,
         quantity: quantity,
-        salePrice: basePrice,
+        salePrice: 0,
+        basePrice: basePrice,
         recalculateParent: false,
       };
 
@@ -1362,6 +1364,17 @@ export class FormalTransactionViewComponent implements OnInit {
       .catch(() => {});
   }
 
+  get isPurchase(): boolean {
+    return this.transaction?.type?.transactionMovement?.toString() === 'Compra';
+  }
+
+  openImportArticles(): void {
+    const modalRef = this.modal.open(ImportComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.model = 'movements-of-articles';
+    modalRef.componentInstance.title = 'Importar movimentos de artículos';
+    modalRef.componentInstance.transactionId = this.transactionId;
+    modalRef.result.then(() => this.loadTransaction());
+  }
   public goBack(): void {
     this.router.navigateByUrl('/pos/mostrador/compra');
   }

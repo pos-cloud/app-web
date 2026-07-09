@@ -732,10 +732,18 @@
             </ng-template>
           </li>
         </ul>
-        <app-process-invoice-upload
-          class="formal-tabs-card__upload pr-3 pb-2 ml-auto"
-          (invoiceUpload)="onInvoiceUpload($event)"
-        />
+        <div class="formal-tab-actions">
+          <app-process-invoice-upload (invoiceUpload)="onInvoiceUpload($event)" />
+          <!-- <button
+            type="button"
+            class="formal-tab-action"
+            *ngIf="isPurchase"
+            (click)="openImportArticles()"
+          >
+            <i class="fa fa-upload formal-tab-action__icon" aria-hidden="true"></i>
+            <span>Importar artículos</span>
+          </button> -->
+        </div>
       </div>
 
       <div class="card-body formal-tabs-card-body pt-3">
