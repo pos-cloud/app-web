@@ -25,8 +25,8 @@ export class AiChatWidgetComponent implements AfterViewChecked {
   public messages: DisplayMessage[] = [];
   public suggestedQuestions = [
     '¿Cuáles fueron las ventas de hoy?',
-    '¿Cómo van las ventas del mes?',
-    '¿Qué productos se vendieron más?',
+    '¿Cuáles fueron las ventas de enero del año pasado?',
+    '¿Qué productos se vendieron más este mes?',
     '¿Qué artículos tienen stock bajo?',
   ];
 
