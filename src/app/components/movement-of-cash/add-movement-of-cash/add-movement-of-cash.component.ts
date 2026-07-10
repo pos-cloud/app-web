@@ -1836,6 +1836,8 @@ export class AddMovementOfCashComponent implements OnInit {
       movementOfArticle.isGeneratedByPayment = true;
       if (this.paymentMethodSelected.surcharge > 0 && this.paymentMethodSelected.surchargeArticle) {
         movementOfArticle.article = this.paymentMethodSelected.surchargeArticle;
+      } else if (this.paymentMethodSelected.discount > 0 && this.paymentMethodSelected.discountArticle) {
+        movementOfArticle.article = this.paymentMethodSelected.discountArticle;
       }
       let taxes: Taxes[] = new Array();
       let tax: Taxes = new Taxes();
