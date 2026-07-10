@@ -2,3 +2,4 @@
 <app-toasts></app-toasts>
 <router-outlet *ngIf="config$ | async"></router-outlet>
 <app-footer></app-footer>
+<app-ai-chat-widget *ngIf="showChatWidget"></app-ai-chat-widget>

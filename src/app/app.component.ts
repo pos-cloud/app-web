@@ -5,12 +5,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
 import { Config } from './app.config';
+import { AnalyticsService } from './core/services/analytics.service';
 import { AuthService } from './core/services/auth.service';
 import { ConfigService } from './core/services/config.service';
-import { AnalyticsService } from './core/services/analytics.service';
+import { User } from '@types';
 
 import 'moment/locale/es';
-import { ToastService } from './shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -24,12 +24,14 @@ export class AppComponent {
   public isVerifyNotification: boolean = false;
   public readedNotification: boolean = false;
   public showHeader: boolean = true;
+  public showChatWidget: boolean = false;
+  private isLoggedIn = false;
+  private currentUser: User | null = null;
 
   constructor(
     public _configService: ConfigService,
     public _authService: AuthService,
     public activeModal: NgbActiveModal,
-    private _toastService: ToastService,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _router: Router,
@@ -56,6 +58,9 @@ export class AppComponent {
       } else {
         this.config$ = observableMerge(observableOf(true));
       }
+      this.isLoggedIn = !!identity;
+      this.currentUser = identity;
+      this.updateChatWidgetVisibility(this._router.url, this.isLoggedIn);
     });
 
     this._router.events.subscribe((event) => {
@@ -70,6 +75,7 @@ export class AppComponent {
         } else {
           this.showHeader = true;
         }
+        this.updateChatWidgetVisibility(currentUrl, this.isLoggedIn);
       }
     });
   }
@@ -123,5 +129,18 @@ export class AppComponent {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  private updateChatWidgetVisibility(url: string, isLoggedIn: boolean): void {
+    const isPublicRoute =
+      url.includes('/login') ||
+      url.includes('/register') ||
+      url.includes('politicas-de-privacidad') ||
+      url.includes('menu') ||
+      url.includes('galleries/view');
+
+    const hasAiChatPermission = this.currentUser?.permission?.aiChat === true;
+
+    this.showChatWidget = isLoggedIn && !isPublicRoute && hasAiChatPermission;
   }
 }

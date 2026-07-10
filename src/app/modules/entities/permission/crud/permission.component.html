@@ -113,6 +113,13 @@
               <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
             </select>
           </div>
+          <div class="form-group col-md-2">
+            <label for="aiChat" class="control-label">{{ 'aiChat' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="aiChat">
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+            </select>
+          </div>
         </div>
 
         <hr />

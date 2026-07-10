@@ -78,4 +78,5 @@ export interface Permission extends Activity {
   editArticle: boolean;
   allowDiscount: boolean;
   allowPayment: boolean;
+  aiChat: boolean;
 }

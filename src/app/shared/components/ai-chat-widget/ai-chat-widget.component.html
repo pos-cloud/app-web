@@ -1,0 +1,76 @@
+<div class="ai-chat-widget">
+  <div class="ai-chat-widget__panel card shadow" *ngIf="isOpen">
+    <div class="ai-chat-widget__header card-header">
+      <div class="ai-chat-widget__title">
+        <i class="fa fa-magic"></i>
+        <span>Asistente POS</span>
+      </div>
+      <button type="button" class="ai-chat-widget__close btn btn-link" (click)="closePanel()" aria-label="Cerrar chat">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <div class="ai-chat-widget__body card-body" #messagesContainer>
+      <div class="ai-chat-widget__welcome" *ngIf="messages.length === 0">
+        <p>¡Hola! Puedo ayudarte con consultas sobre ventas y stock.</p>
+        <div class="ai-chat-widget__suggestions">
+          <button
+            type="button"
+            class="ai-chat-widget__suggestion btn btn-outline-primary btn-sm"
+            *ngFor="let question of suggestedQuestions"
+            (click)="useSuggestion(question)"
+            [disabled]="loading"
+          >
+            {{ question }}
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="ai-chat-widget__message"
+        *ngFor="let msg of messages"
+        [class.ai-chat-widget__message--user]="msg.role === 'user'"
+        [class.ai-chat-widget__message--assistant]="msg.role === 'assistant'"
+      >
+        <div class="ai-chat-widget__bubble">
+          {{ msg.content }}
+        </div>
+      </div>
+
+      <div class="ai-chat-widget__typing" *ngIf="loading">
+        <i class="fa fa-spinner fa-spin"></i>
+        <span>Consultando...</span>
+      </div>
+    </div>
+
+    <div class="ai-chat-widget__footer card-footer">
+      <textarea
+        class="form-control ai-chat-widget__input"
+        [(ngModel)]="inputMessage"
+        (keydown)="onKeydown($event)"
+        placeholder="Preguntá sobre ventas, stock..."
+        rows="2"
+        [disabled]="loading"
+      ></textarea>
+      <button
+        type="button"
+        class="btn btn-primary ai-chat-widget__send"
+        (click)="sendMessage()"
+        [disabled]="loading || !inputMessage.trim()"
+        aria-label="Enviar mensaje"
+      >
+        <i class="fa fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="ai-chat-widget__toggle btn btn-primary"
+    (click)="togglePanel()"
+    [class.ai-chat-widget__toggle--active]="isOpen"
+    aria-label="Abrir asistente IA"
+  >
+    <i class="fa" [class.fa-comments]="!isOpen" [class.fa-times]="isOpen"></i>
+  </button>
+</div>

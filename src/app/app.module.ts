@@ -70,6 +70,7 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
 
 import { RestoTablesComponent } from './modules/pos/resto/resto-tables/resto-tables.component';
 import { NotificationBellComponent } from './modules/notifications/components/notification-bell/notification-bell.component';
+import { AiChatWidgetComponent } from './shared/components/ai-chat-widget/ai-chat-widget.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
@@ -178,6 +179,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddressModule,
     RestoTablesComponent,
     NotificationBellComponent,
+    AiChatWidgetComponent,
     FocusDirective,
     HeaderTransactionComponent,
     ServiceWorkerModule.register('ngsw-worker.js', {
