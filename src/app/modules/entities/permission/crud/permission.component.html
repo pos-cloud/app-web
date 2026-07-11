@@ -162,10 +162,6 @@
                 <label class="form-check-label" for="sales_resto">{{ 'resto' | translate | capitalize }}</label>
               </div>
               <div class="form-check mb-2">
-                <input type="checkbox" class="form-check-input" id="subscription" formControlName="subscription" />
-                <label class="form-check-label" for="subscription">{{ 'subscription' | translate | capitalize }}</label>
-              </div>
-              <div class="form-check mb-2">
                 <input type="checkbox" class="form-check-input" id="sales_app" formControlName="app" />
                 <label class="form-check-label" for="sales_app">{{ 'app' | translate | capitalize }}</label>
               </div>
@@ -190,6 +186,16 @@
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="appointments" formControlName="appointments" />
               <label class="form-check-label" for="appointments">{{ 'enable' | translate | capitalize }}</label>
+            </div>
+          </div>
+
+          <div class="menu-section mr-4 mb-3">
+            <div class="mb-2">
+              <b>{{ 'subscription' | translate | capitalize }}</b>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="subscription" formControlName="subscription" />
+              <label class="form-check-label" for="subscription">{{ 'enable' | translate | capitalize }}</label>
             </div>
           </div>
 

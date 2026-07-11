@@ -113,6 +113,8 @@ export class RegisterComponent implements OnInit {
     { key: 'stock', name: 'Stock' },
     { key: 'caja', name: 'Caja' },
     { key: 'produccion', name: 'Producción' },
+    { key: 'turnos', name: 'Turnos' },
+    { key: 'suscripciones', name: 'Suscripciones' },
   ];
 
   constructor(

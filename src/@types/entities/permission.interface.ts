@@ -52,13 +52,13 @@ export interface Permission extends Activity {
       delivery: boolean;
       voucherReader: boolean;
       resto: boolean;
-      subscription: boolean;
       app: boolean;
     };
     money: boolean;
     production: boolean;
     purchases: boolean;
     appointments?: boolean;
+    subscription?: boolean;
     stock: boolean;
     articles: boolean;
     companies: {

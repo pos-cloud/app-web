@@ -479,15 +479,13 @@ export class HeaderComponent implements OnInit {
           child.push({ label: 'App', link: 'pos/app' });
         }
 
-        if (user?.permission?.menu?.sales?.subscription) {
-          child.push({ label: 'Suscripciones', link: 'pos/subscription' });
+        if (child.length) {
+          this.menu.push({
+            label: 'Ventas',
+            icon: 'fa fa-fax',
+            children: child,
+          });
         }
-
-        this.menu.push({
-          label: 'Ventas',
-          icon: 'fa fa-fax',
-          children: child,
-        });
       }
 
       if (user?.permission?.menu?.purchases) {
@@ -503,6 +501,14 @@ export class HeaderComponent implements OnInit {
           label: 'Turnos',
           icon: 'fa fa-calendar',
           link: 'pos/appointments',
+        });
+      }
+
+      if (user?.permission?.menu?.subscription) {
+        this.menu.push({
+          label: 'Suscripciones',
+          icon: 'fa fa-refresh',
+          link: 'pos/subscription',
         });
       }
 
