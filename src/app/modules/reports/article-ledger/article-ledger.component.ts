@@ -136,9 +136,11 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
             operationType: 1,
             description: 1,
             code: 1,
+            containsVariants: 1,
           },
           match: {
             operationType: { $ne: 'D' },
+            containsVariants: { $ne: true },
           },
         })
         .pipe(takeUntil(this.destroy$))
