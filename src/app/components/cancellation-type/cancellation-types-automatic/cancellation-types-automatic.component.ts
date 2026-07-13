@@ -251,6 +251,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         movementOfCancellation.transactionOrigin = this.transaction;
         movementOfCancellation.transactionDestination = transactionDestination;
         movementOfCancellation.balance = transactionDestination.totalPrice;
+        movementOfCancellation.type = this.cancellationTypeSelected;
         await this.saveMovementOfCancellation(movementOfCancellation);
         this.transaction.state = this.cancellationTypeSelected.stateOrigin;
         if (this.cancellationTypeSelected.modifyBalance) this.transaction.balance = 0;
