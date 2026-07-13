@@ -223,12 +223,6 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           transactionDestination.letter = transactionDestination.type.fixedLetter;
         }
 
-        // Si el origen ya impactó caja, la cancelatoria no debe heredar cashBox
-        // (así el tipo destino puede seguir impactando caja en uso directo).
-        if (this.transaction.cashBox || !transactionDestination.type.cashBoxImpact) {
-          transactionDestination.cashBox = null;
-        }
-
         // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
         let query = `where= "type":"${transactionDestination.type._id}",
                     "origin":${transactionDestination.origin},
@@ -361,28 +355,31 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     return movsOfArts;
   }
 
-  public copyMovementsOfCashes(transaction: Transaction): Promise<MovementOfCash[]> {
-    return new Promise<MovementOfCash[]>((resolve, reject) => {
-      if (!this.movementsOfCashes || this.movementsOfCashes.length === 0) {
-        resolve([]);
-        return;
-      }
-
-      const movementsOfCashes: MovementOfCash[] = this.movementsOfCashes.map((movOfCash) => {
-        const mov = new MovementOfCash();
-        Object.assign(mov, movOfCash);
-        delete mov._id;
-        mov.transaction = transaction;
-        return mov;
-      });
-
-      this._movementOfCashService.saveMovementsOfCashes(movementsOfCashes).subscribe(
-        (result) => {
-          if (result.movementsOfCashes) {
-            resolve(result.movementsOfCashes);
-          } else {
-            reject(result);
+  public async copyMovementsOfCashes(transaction: Transaction): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+          for (let movOfCash of this.movementsOfCashes) {
+            let mov = new MovementOfCash();
+            Object.assign(mov, movOfCash);
+            mov.transaction = transaction;
+            await this.updateMovementOfCash(mov);
           }
+        }
+        resolve(true);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
+    return new Promise<MovementOfCash>((resolve, reject) => {
+      this._movementOfCashService.update(movementOfCash).subscribe(
+        async (result: ApiResponse) => {
+          if (result.status === 200) {
+            resolve(result.result);
+          } else reject(result);
         },
         (error) => reject(error)
       );
