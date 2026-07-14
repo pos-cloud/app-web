@@ -129,9 +129,7 @@ export class MovementOfCashService extends ModelService {
       );
   }
 
-  public saveMovementsOfCashes(
-    movementsOfCashes: MovementOfCash[]
-  ): Observable<any> {
+  public saveMovementsOfCashes(movementsOfCashes: MovementOfCash[]): Observable<any> {
     const URL = `${environment.apiv2}/movements-of-cashes/bulk`;
 
     const headers = new HttpHeaders()
