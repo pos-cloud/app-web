@@ -5,8 +5,7 @@ import { BranchService } from '@core/services/branch.service';
 import { DepositService } from '@core/services/deposit.service';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch, Deposit, PriceList } from '@types';
-import { TransactionMovement, TransactionType } from '@types';
+import { Branch, Deposit, PriceList, TransactionMovement, TransactionType } from '@types';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
@@ -49,6 +48,7 @@ export class ImportComponent implements OnInit {
   selectedTransactionState: TransactionState = TransactionState.Open;
   priceLists: PriceList[] = [];
   selectedPriceListId: string | null = null;
+  selectedIncludeIva: boolean = false;
   public importForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -195,18 +195,20 @@ export class ImportComponent implements OnInit {
           }
         });
       } else if (this.model === 'movements-of-articles') {
-        this._excelUpdateService.importMovementsOfArticles(file, this.transactionId).subscribe((response) => {
-          if (response.status == 200) {
-            this.countNotUpdate = response.result.countNotUpdate;
-            this.countUpdate = response.result.countUpdate;
-            this.notUpdate = response.result.notUpdateArticle;
-            this.update = response.result.updateArticle;
-            this.loading = false;
-          } else {
-            this._toastService.showToast(response.error);
-            this.loading = false;
-          }
-        });
+        this._excelUpdateService
+          .importMovementsOfArticles(file, this.transactionId, this.selectedIncludeIva)
+          .subscribe((response) => {
+            if (response.status == 200) {
+              this.countNotUpdate = response.result.countNotUpdate;
+              this.countUpdate = response.result.countUpdate;
+              this.notUpdate = response.result.notUpdateArticle;
+              this.update = response.result.updateArticle;
+              this.loading = false;
+            } else {
+              this._toastService.showToast(response.error);
+              this.loading = false;
+            }
+          });
       } else if (this.model === 'purchase') {
         if (!this.transactionTypesSelect?.length) {
           this._toastService.showToast({ message: 'Debe seleccionar un tipo de transacción.' });

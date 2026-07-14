@@ -82,12 +82,13 @@ export class ImportService {
       );
   }
 
-  public importMovementsOfArticles(file: File, transactionId: string) {
+  public importMovementsOfArticles(file: File, transactionId: string, includeIva: boolean) {
     const URL = `${environment.apiv2}/movements-of-articles/import-excel`;
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('transactionId', transactionId);
+    formData.append('includeIva', includeIva.toString());
 
     const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
 
