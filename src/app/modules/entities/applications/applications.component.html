@@ -107,6 +107,15 @@
                     ></app-typeahead-dropdown>
                   </div>
                   <div class="form-group col-md-3">
+                    <label class="control-label">{{ 'deposit' | translate | capitalize }}:</label>
+                    <app-typeahead-dropdown
+                      [control]="integracionesForm.get('tiendaNube.deposit')"
+                      [data]="deposits"
+                      [keyField]="_id"
+                      [displayField]="'name'"
+                    ></app-typeahead-dropdown>
+                  </div>
+                  <div class="form-group col-md-3">
                     <label class="control-label">Verificar webhook:</label> <br />
                     <button class="btn btn-primary" [disabled]="loading" (click)="generateWebhook()">
                       <i class="fa" [ngClass]="{ '': !loading, 'fa-spinner fa-spin': loading }"></i>
@@ -578,7 +587,7 @@
                                 class="fa"
                                 [ngClass]="{
                                   'fa-upload': !isFeArCrtLoading(i),
-                                  'fa-spinner fa-spin': isFeArCrtLoading(i)
+                                  'fa-spinner fa-spin': isFeArCrtLoading(i),
                                 }"
                                 aria-hidden="true"
                               ></i>
@@ -598,7 +607,7 @@
                               class="fa"
                               [ngClass]="{
                                 'fa-save': !isFeArSaveLoading(i),
-                                'fa-spinner fa-spin': isFeArSaveLoading(i)
+                                'fa-spinner fa-spin': isFeArSaveLoading(i),
                               }"
                               aria-hidden="true"
                             ></i>

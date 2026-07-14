@@ -18,6 +18,7 @@ import {
   Application,
   Article,
   Company,
+  Deposit,
   FeArIntegrationEntry,
   PaymentMethod,
   PrintType,
@@ -30,6 +31,7 @@ import * as printJS from 'print-js';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ArticleService } from '../../../core/services/article.service';
+import { DepositService } from '../../../core/services/deposit.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
 import { ShipmentMethodService } from '../../../core/services/shipment-method.service';
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
@@ -69,6 +71,7 @@ export class ListApplicationsComponent implements OnInit {
   public paymentMethods: PaymentMethod[];
   public companies: Company[];
   public articles: Article[];
+  public deposits: Deposit[];
   public focusEvent = new EventEmitter<boolean>();
   public feArPendingCrtFiles: File[][] = [];
 
@@ -88,6 +91,7 @@ export class ListApplicationsComponent implements OnInit {
     public _configService: ConfigService,
     public _printService: PrintService,
     public _authService: AuthService,
+    public _depositService: DepositService,
     public _feArService: FeArService
   ) {
     this.integracionesForm = this.fb.group({
@@ -100,6 +104,7 @@ export class ListApplicationsComponent implements OnInit {
         paymentMethod: [null],
         company: [null],
         article: [null],
+        deposit: [null],
       }),
       wooCommerce: this.fb.group({
         key: [''],
@@ -164,15 +169,17 @@ export class ListApplicationsComponent implements OnInit {
       paymentMethods: this._paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
       companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
       articles: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
+      deposits: this._depositService.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ transactionTypes, shipmentMethods, paymentMethods, companies, articles }) => {
+        next: ({ transactionTypes, shipmentMethods, paymentMethods, companies, articles, deposits }) => {
           this.transactionTypes = transactionTypes ?? [];
           this.shipmentMethods = shipmentMethods ?? [];
           this.paymentMethods = paymentMethods ?? [];
           this.companies = companies ?? [];
           this.articles = articles ?? [];
+          this.deposits = deposits ?? [];
           this.getAllApplication();
         },
         error: (error) => {
@@ -248,9 +255,7 @@ export class ListApplicationsComponent implements OnInit {
 
   public isFeArRowBusy(index: number): boolean {
     return (
-      this.feArCsrLoadingIndex === index ||
-      this.feArCrtLoadingIndex === index ||
-      this.feArSaveLoadingIndex === index
+      this.feArCsrLoadingIndex === index || this.feArCrtLoadingIndex === index || this.feArSaveLoadingIndex === index
     );
   }
 
@@ -314,6 +319,7 @@ export class ListApplicationsComponent implements OnInit {
     const articleTn = this.articles?.find((item) => item._id === this.application?.tiendaNube?.article?.toString());
     const articleWoo = this.articles?.find((item) => item._id === this.application?.wooCommerce?.article?.toString());
 
+    const depositTn = this.deposits?.find((item) => item._id === this.application?.tiendaNube?.deposit?.toString());
     let values = {
       _id: this.application?._id ?? '',
       tiendaNube: {
@@ -324,6 +330,7 @@ export class ListApplicationsComponent implements OnInit {
         paymentMethod: paymentMethodTn ?? null,
         company: companyTn ?? null,
         article: articleTn ?? null,
+        deposit: depositTn ?? null,
       },
 
       wooCommerce: {

@@ -1,4 +1,4 @@
-import { Activity, Article, Company, PaymentMethod, ShipmentMethod, TransactionType } from '@types';
+import { Activity, Article, Company, Deposit, PaymentMethod, ShipmentMethod, TransactionType } from '@types';
 
 export interface FeArIntegrationEntry {
   companyName: string;
@@ -15,6 +15,7 @@ export interface Application extends Activity {
     paymentMethod: PaymentMethod;
     company: Company;
     article: Article;
+    deposit: Deposit;
   };
   menu: {
     portain: string;
