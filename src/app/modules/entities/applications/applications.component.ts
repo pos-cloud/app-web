@@ -66,6 +66,7 @@ export class ListApplicationsComponent implements OnInit {
   public feArCsrLoadingIndex: number | null = null;
   public feArCrtLoadingIndex: number | null = null;
   public feArSaveLoadingIndex: number | null = null;
+  public scaleCsvLoading: boolean = false;
   public transactionTypes: TransactionType[];
   public shipmentMethods: ShipmentMethod[];
   public paymentMethods: PaymentMethod[];
@@ -440,6 +441,83 @@ export class ListApplicationsComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  public downloadScaleModel(): void {
+    this.scaleCsvLoading = true;
+
+    // isWeigth: typo histórico en DB; proyectarlo es obligatorio porque $match va después de $project
+    this._articleService
+      .getAll({
+        project: {
+          code: 1,
+          description: 1,
+          salePrice: 1,
+          isWeigth: 1,
+          'category.description': 1,
+          operationType: 1,
+        },
+        match: {
+          isWeigth: true,
+          operationType: { $ne: 'D' },
+        },
+        sort: { description: 1 },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const raw = response?.result ?? response?.articles ?? [];
+          const articles: Article[] = (Array.isArray(raw) ? raw : []).filter((article) => !!article?.isWeigth);
+
+          if (!articles.length) {
+            this._toastService.showToast(
+              null,
+              'info',
+              '',
+              'No hay productos pesables para exportar. Marque “¿Es Pesable?” = Sí en los artículos.'
+            );
+            this.scaleCsvLoading = false;
+            return;
+          }
+
+          const csv = this.buildSystelCuoraCsv(articles);
+          const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'systel-cuora-max.csv';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          this.scaleCsvLoading = false;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.scaleCsvLoading = false;
+        },
+      });
+  }
+
+  /** CSV Systel Cuora Max / Qendra: sin cabecera, columnas separadas por tabulador. */
+  private buildSystelCuoraCsv(articles: Article[]): string {
+    const escapeField = (value: string): string =>
+      (value ?? '')
+        .toString()
+        .replace(/[\t\r\n]+/g, ' ')
+        .trim();
+
+    const rows = articles.map((article) => {
+      const categoryName = escapeField(article.category?.description ?? (article as any)['category.description'] ?? '');
+      const code = escapeField((article.code ?? '').toString());
+      const description = escapeField((article.description ?? '').toString());
+      const salePrice = Math.round(Number(article.salePrice) || 0).toString();
+
+      // Nombre sección | Codigo PLU | Descripcion | Numero PLU | Precio Lista 1 | Precio Lista 2 | Tipo de Venta | Vencimiento
+      return [categoryName, code, description, code, salePrice, salePrice, 'PESO', '0'].join('\t');
+    });
+
+    return rows.join('\r\n');
   }
 
   public generateCRS(index: number) {

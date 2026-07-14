@@ -491,6 +491,44 @@
             </ng-template>
           </ngb-panel>
 
+          <!-- Panel Balanza Systel Cuora Max -->
+          <ngb-panel id="Balanza">
+            <ng-template ngbPanelTitle>
+              <div class="row align-items-center">
+                <div class="col-auto pr-0">
+                  <i class="fa fa-balance-scale text-dark" style="font-size: 1.5rem" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <p class="mb-0 h5 text-dark">Balanza</p>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="alert alert-info mb-3" role="alert">
+                    Se exportan únicamente los productos marcados como <strong>¿Es Pesable?</strong> = Sí.
+                    El archivo es compatible con Systel Cuora Max (Qendra).
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    [disabled]="scaleCsvLoading"
+                    (click)="downloadScaleModel()"
+                  >
+                    <i
+                      class="fa mr-1"
+                      [ngClass]="{ 'fa-download': !scaleCsvLoading, 'fa-spinner fa-spin': scaleCsvLoading }"
+                      aria-hidden="true"
+                    ></i>
+                    <span *ngIf="!scaleCsvLoading">Descargar modelo</span>
+                    <span *ngIf="scaleCsvLoading">Generando…</span>
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel>
+
           <ngb-panel id="FeAr">
             <ng-template ngbPanelTitle>
               <div class="row align-items-center">
