@@ -132,7 +132,7 @@ export class MovementOfCashService extends ModelService {
   public saveMovementsOfCashes(
     movementsOfCashes: MovementOfCash[]
   ): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-cashes`;
+    const URL = `${environment.apiv2}/movements-of-cashes/bulk`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -147,7 +147,14 @@ export class MovementOfCashService extends ModelService {
         }
       )
       .pipe(
-        map((res) => {
+        map((res: any) => {
+          // Mantener shape legacy usado por apertura/cierre y financiación
+          if (res?.result) {
+            return {
+              ...res,
+              movementsOfCashes: res.result,
+            };
+          }
           return res;
         }),
         catchError((err) => {

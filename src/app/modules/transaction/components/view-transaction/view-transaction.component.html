@@ -444,6 +444,7 @@
                 <tr>
                   <th *ngIf="!readonly"></th>
                   <th>{{ 'method' | translate | capitalize }}</th>
+                  <th>{{ 'transaction.cashBox.number' | translate | capitalize }}</th>
                   <th>Comprobante</th>
                   <th>{{ 'quota' | translate | capitalize }}</th>
                   <th>{{ 'expirationDate' | translate | capitalize }}</th>
@@ -506,6 +507,7 @@
                       </option>
                     </select>
                   </td>
+                  <td>{{ movementOfCash?.cashBox?.number }}</td>
                   <td>{{ movementOfCash?.number }}</td>
                   <td>{{ movementOfCash?.quota }}</td>
                   <td>
@@ -538,7 +540,7 @@
                 </tr>
 
                 <tr align="center " *ngIf="movementsOfCashes?.length === 0">
-                  <td [attr.colspan]="readonly ? 12 : 13">No existen método de pagos en la transacción</td>
+                  <td [attr.colspan]="readonly ? 13 : 14">No existen método de pagos en la transacción</td>
                 </tr>
               </tbody>
             </table>

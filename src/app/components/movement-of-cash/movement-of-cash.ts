@@ -1,4 +1,4 @@
-import { Bank, Company, Movements } from '@types';
+import { Bank, CashBox, Company, Movements } from '@types';
 import * as moment from 'moment';
 import { PaymentMethod } from '../payment-method/payment-method';
 import { Transaction } from '../transaction/transaction';
@@ -29,6 +29,7 @@ export class MovementOfCash {
   observation: string;
   type: PaymentMethod;
   transaction: Transaction;
+  cashBox: CashBox;
   receiver: string;
   number: string;
   bank: Bank;

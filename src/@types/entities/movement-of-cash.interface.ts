@@ -1,4 +1,4 @@
-import { Activity, Bank, Company, CurrencyValue, Movements, PaymentMethod, Transaction } from '@types';
+import { Activity, Bank, CashBox, Company, CurrencyValue, Movements, PaymentMethod, Transaction } from '@types';
 
 export interface MovementOfCash extends Activity {
   _id: string;
@@ -21,6 +21,7 @@ export interface MovementOfCash extends Activity {
   observation: string;
   type: PaymentMethod;
   transaction: Transaction;
+  cashBox?: CashBox;
   receiver: string;
   number: string;
   bank: Bank;
