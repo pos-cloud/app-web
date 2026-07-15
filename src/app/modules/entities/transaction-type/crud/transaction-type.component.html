@@ -236,7 +236,7 @@
           <div class="form-group col-md-2">
             <label class="control-label">{{ 'fixedLetter' | translate | capitalize }}:</label>
             <select class="form-control" formControlName="fixedLetter">
-              <option *ngFor="let letter of fixedLetters" [ngValue]="letter">{{ letter }}</option>
+              <option *ngFor="let letter of fixedLetters" [ngValue]="letter">{{ letter || ' ' }}</option>
             </select>
           </div>
           <div class="form-group col-md-2">

@@ -109,7 +109,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
   public views = Object.values(View);
 
   // Static options
-  public readonly fixedLetters = ['X', 'A', 'B', 'C', 'D', 'E', 'M', 'R', 'T', 'Z'];
+  public readonly fixedLetters = ['', 'X', 'A', 'B', 'C', 'D', 'E', 'M', 'R', 'T', 'Z'];
   public readonly resetOrderNumbers = ['Caja', 'Cantidad', 'Tiempo'];
   public readonly codeLetters = ['A', 'B', 'C', 'D', 'E', 'M', 'R', 'T', 'Z'];
 
@@ -213,7 +213,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       fiscalCode: ['', []],
       defectUseOfCFDI: ['', []],
       fixedOrigin: [0, []],
-      fixedLetter: ['X', []],
+      fixedLetter: ['', []],
       expirationDate: ['', []],
       automaticCreation: [false, []],
       resetOrderNumber: [null, []],
@@ -331,7 +331,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       fiscalCode: tt?.fiscalCode ?? '',
       defectUseOfCFDI: tt?.defectUseOfCFDI ?? null,
       fixedOrigin: tt?.fixedOrigin ?? 0,
-      fixedLetter: tt?.fixedLetter ?? 'X',
+      fixedLetter: tt?.fixedLetter ?? '',
       expirationDate: tt?.expirationDate ? tt.expirationDate.substring(0, 10) : '',
       automaticCreation: tt?.automaticCreation ?? false,
       resetOrderNumber: tt?.resetOrderNumber ?? null,
