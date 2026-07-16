@@ -42,8 +42,8 @@ import { CurrencyService } from '../../../core/services/currency.service';
 
 // Pipes
 import { TranslateService } from '@ngx-translate/core';
-import { Account, ApiResponse, Currency, MediaCategory, PriceList } from '@types';
-import { User } from '@types';
+import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
+import { Account, ApiResponse, Currency, MediaCategory, PriceList, User } from '@types';
 import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { CompanyService } from 'app/core/services/company.service';
 import { FileService } from 'app/core/services/file.service';
@@ -56,12 +56,10 @@ import { VariantTypeService } from 'app/core/services/variant-type.service';
 import { VariantValueService } from 'app/core/services/variant-value.service';
 import { OrderByPipe } from 'app/shared/pipes/order-by.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { merge } from 'rxjs';
+import { forkJoin, merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UnitOfMeasurementService } from '../../../core/services/unit-of-measurement.service';
 import { Tax, TaxClassification } from '../../tax/tax';
-import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-article',
@@ -408,15 +406,13 @@ export class ArticleComponent implements OnInit {
   }
 
   private loadPriceLists(): void {
-    this._priceListService
-      .find({ query: { operationType: { $ne: 'D' } } })
-      .subscribe((priceLists: PriceList[]) => {
-        this.priceLists = priceLists || [];
-        this.refreshManualPriceRows();
-        if (this.articleId) {
-          this.loadManualPricesForArticle(this.articleId);
-        }
-      });
+    this._priceListService.find({ query: { operationType: { $ne: 'D' } } }).subscribe((priceLists: PriceList[]) => {
+      this.priceLists = priceLists || [];
+      this.refreshManualPriceRows();
+      if (this.articleId) {
+        this.loadManualPricesForArticle(this.articleId);
+      }
+    });
   }
 
   private refreshManualPriceRows(): void {
@@ -1632,14 +1628,13 @@ export class ArticleComponent implements OnInit {
   getVariantsByArticleChild(id): Promise<any> {
     return new Promise((resolve, reject) => {
       this.loading = true;
-      let query = 'where="articleChild":"' + id + '"';
 
-      this._variantService.getVariants(query).subscribe(
+      this._variantService.getVariantsByArticle(id).subscribe(
         (result) => {
-          if (!result.variants) {
+          if (!result.result.variants.length) {
             resolve(null);
           } else {
-            resolve(result.variants);
+            resolve(result.result.variants);
           }
           this.loading = false;
         },

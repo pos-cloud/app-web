@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -45,10 +38,7 @@ export class ListVariantsComponent implements OnInit {
     this.alertMessage = '';
     this.areVariantsEmpty = true;
 
-    if (
-      !this.variantsLocals ||
-      (this.variantsLocals && this.variantsLocals.length > 0)
-    ) {
+    if (!this.variantsLocals || (this.variantsLocals && this.variantsLocals.length > 0)) {
       this.variantsLocals = new Array();
     }
 
@@ -73,11 +63,9 @@ export class ListVariantsComponent implements OnInit {
   public getVariantsByArticleParent(): void {
     this.loading = true;
 
-    let query = 'where="articleParent":"' + this.article._id + '"';
-
-    this._variantService.getVariants(query).subscribe(
+    this._variantService.getVariantsByArticle(this.article._id).subscribe(
       (result) => {
-        if (!result.variants) {
+        if (!result.result.variants.length) {
           if (this.variantsLocals && this.variantsLocals.length > 0) {
             this.areVariantsEmpty = false;
           } else {
@@ -85,7 +73,7 @@ export class ListVariantsComponent implements OnInit {
           }
           this.variants = new Array();
         } else {
-          this.variants = this.getUniqueVariants(result.variants);
+          this.variants = this.getUniqueVariants(result.result.variants);
           this.areVariantsEmpty = false;
         }
         this.loading = false;
@@ -170,17 +158,10 @@ export class ListVariantsComponent implements OnInit {
 
     if (this.variantsLocals && this.variantsLocals.length > 0) {
       for (let variantAux of this.variantsLocals) {
-        if (
-          variantAux.type._id === variant.type._id &&
-          variantAux.value._id === variant.value._id
-        ) {
+        if (variantAux.type._id === variant.type._id && variantAux.value._id === variant.value._id) {
           exists = true;
           this.showMessage(
-            'La variante ' +
-              variant.type.name +
-              ' ' +
-              variant.value.description +
-              ' ya existe',
+            'La variante ' + variant.type.name + ' ' + variant.value.description + ' ya existe',
             'info',
             true
           );
@@ -191,17 +172,10 @@ export class ListVariantsComponent implements OnInit {
     if (!exists) {
       if (this.variants && this.variants.length > 0) {
         for (let variantAux of this.variants) {
-          if (
-            variantAux.type._id === variant.type._id &&
-            variantAux.value._id === variant.value._id
-          ) {
+          if (variantAux.type._id === variant.type._id && variantAux.value._id === variant.value._id) {
             exists = true;
             this.showMessage(
-              'La variante ' +
-                variant.type.name +
-                ' ' +
-                variant.value.description +
-                ' ya existe',
+              'La variante ' + variant.type.name + ' ' + variant.value.description + ' ya existe',
               'info',
               true
             );
@@ -219,10 +193,7 @@ export class ListVariantsComponent implements OnInit {
 
     if (this.variantsLocals && this.variantsLocals.length > 0) {
       for (let variantAux of this.variantsLocals) {
-        if (
-          variantAux.type._id === variant.type._id &&
-          variantAux.value._id === variant.value._id
-        ) {
+        if (variantAux.type._id === variant.type._id && variantAux.value._id === variant.value._id) {
           variantToDelete = i;
         }
         i++;
@@ -240,11 +211,7 @@ export class ListVariantsComponent implements OnInit {
     this.openModal('delete', variant);
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

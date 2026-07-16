@@ -111,35 +111,35 @@ export class MovementOfArticleService extends ModelService {
       map((res: any) => ({
         ...res,
         movementOfArticle: res?.status === 200 ? res.result : null,
-        message: res?.status === 200 ? res?.message : res?.error?.message ?? res?.message,
+        message: res?.status === 200 ? res?.message : (res?.error?.message ?? res?.message),
       }))
     );
   }
 
-  saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-articles`;
+  // saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Observable<any> {
+  //   const URL = `${environment.api}/api/movements-of-articles`;
 
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
+  //   const headers = new HttpHeaders()
+  //     .set('Content-Type', 'application/json')
+  //     .set('Authorization', this._authService.getToken());
 
-    return this._http
-      .post(
-        URL,
-        { movementsOfArticles: movementsOfArticles },
-        {
-          headers: headers,
-        }
-      )
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
+  //   return this._http
+  //     .post(
+  //       URL,
+  //       { movementsOfArticles: movementsOfArticles },
+  //       {
+  //         headers: headers,
+  //       }
+  //     )
+  //     .pipe(
+  //       map((res) => {
+  //         return res;
+  //       }),
+  //       catchError((err) => {
+  //         return of(err);
+  //       })
+  //     );
+  // }
 
   updateMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
     const URL = `${environment.api}/api/movement-of-article`;

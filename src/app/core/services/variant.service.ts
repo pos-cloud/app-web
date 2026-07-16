@@ -4,8 +4,8 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { AuthService } from './auth.service';
 import { environment } from 'environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,19 +22,16 @@ export class VariantService extends ModelService {
     );
   }
 
-  public getVariants(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/variants`;
+  public getVariantsByArticle(articleId?: string): Observable<any> {
+    const URL = `${environment.apiv2}/variants/by-article/${articleId}`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('query', query);
-
     return this._http
       .get(URL, {
         headers: headers,
-        params: params,
       })
       .pipe(
         map((res) => {

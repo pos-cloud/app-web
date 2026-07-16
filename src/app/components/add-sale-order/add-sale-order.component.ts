@@ -2,17 +2,17 @@ import { Component, ElementRef, EventEmitter, HostListener, ViewChild, ViewEncap
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
+import { User } from '@types';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { SelectTableComponent } from 'app/components/table/select-table/select-table.component';
-import { User } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
 import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
-import { PriceListService } from 'app/core/services/price-list.service';
 import { PriceListArticleService } from 'app/core/services/price-list-article.service';
+import { PriceListService } from 'app/core/services/price-list.service';
 import { RelationTypeService } from 'app/core/services/relation-type.service';
 import { StructureService } from 'app/core/services/structure.service';
 import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
@@ -23,12 +23,16 @@ import 'moment/locale/es';
 import {
   Category,
   CompanyType,
+  optionalAFIP,
   PriceList,
   Printer,
   PrinterPrintIn,
   RelationType,
+  StockMovement,
   Table,
   TableState,
+  TransactionMovement,
+  TransactionType,
   Transport,
   UseOfCFDI,
 } from '@types';
@@ -61,12 +65,6 @@ import { PrintTransactionTypeComponent } from '../print/print-transaction-type/p
 import { PrintComponent } from '../print/print/print.component';
 import { TaxBase, TaxClassification } from '../tax/tax';
 import { Taxes } from '../tax/taxes';
-import {
-  optionalAFIP,
-  StockMovement,
-  TransactionMovement,
-  TransactionType,
-} from '@types';
 import { Transaction, TransactionState } from '../transaction/transaction';
 
 import { ApiResponse, Currency, EmailProps } from '@types';
@@ -1404,7 +1402,12 @@ export class AddSaleOrderComponent {
         movementOfArticle.unitPrice = unitPrice;
       }
 
-      if (!isManualPriceList && movementOfArticle.article && this.priceList && this.priceList?.percentageType === 'final') {
+      if (
+        !isManualPriceList &&
+        movementOfArticle.article &&
+        this.priceList &&
+        this.priceList?.percentageType === 'final'
+      ) {
         let increasePrice = 0;
 
         if (this.priceList?.rules && this.priceList?.rules?.length > 0) {
@@ -1462,7 +1465,12 @@ export class AddSaleOrderComponent {
         }
       }
 
-      if (!isManualPriceList && movementOfArticle.article && this.newPriceList && this.newPriceList?.percentageType === 'final') {
+      if (
+        !isManualPriceList &&
+        movementOfArticle.article &&
+        this.newPriceList &&
+        this.newPriceList?.percentageType === 'final'
+      ) {
         let increasePrice = 0;
 
         if (this.newPriceList.rules && this.newPriceList.rules.length > 0) {
@@ -1528,7 +1536,10 @@ export class AddSaleOrderComponent {
       movementOfArticle.unitPrice -= this.roundNumber.transform(movementOfArticle.discountAmount);
 
       //logic for sangenemi quiere que se updatee por lista de precios esto lo vamos a mejorar y agregar una funcion en apiv2
-      if (!isManualPriceList && (this.priceList?.percentageType === 'margin' || this.newPriceList?.percentageType === 'margin')) {
+      if (
+        !isManualPriceList &&
+        (this.priceList?.percentageType === 'margin' || this.newPriceList?.percentageType === 'margin')
+      ) {
         const priceListToUse = this.newPriceList ?? this.priceList;
         let markupPrice = this.getIncreasePercentage(priceListToUse, movementOfArticle);
         if (markupPrice) {
@@ -2616,30 +2627,6 @@ export class AddSaleOrderComponent {
       } catch (error) {
         resolve(false);
       }
-    });
-  }
-
-  getVariantsByArticleChild(id): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.loading = true;
-      let query = 'where="articleChild":"' + id + '"';
-
-      this._variantService.getVariants(query).subscribe(
-        (result) => {
-          if (!result.variants) {
-            resolve(null);
-          } else {
-            resolve(result.variants);
-          }
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error al obtener variantes:', error);
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-          reject(error);
-        }
-      );
     });
   }
 
