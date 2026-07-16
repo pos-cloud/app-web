@@ -107,24 +107,13 @@ export class MovementOfArticleService extends ModelService {
   }
 
   saveMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
-    const URL = `${environment.api}/api/movement-of-article`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, movementOfArticle, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
+    return this.save(movementOfArticle).pipe(
+      map((res: any) => ({
+        ...res,
+        movementOfArticle: res?.status === 200 ? res.result : null,
+        message: res?.status === 200 ? res?.message : res?.error?.message ?? res?.message,
+      }))
+    );
   }
 
   saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Observable<any> {
