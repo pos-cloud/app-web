@@ -20,7 +20,6 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
-import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
 import { LoginComponent } from './auth/login/login.component';
@@ -42,7 +41,6 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
 import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportersModule } from './components/export/exporters.module';
-import { ExportExcelModule } from './shared/components/export-excel/export-excel.module';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
@@ -67,10 +65,8 @@ import { ReportSalesByClientComponent } from './components/report-sales-by-clien
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
+import { ExportExcelModule } from './shared/components/export-excel/export-excel.module';
 
-import { RestoTablesComponent } from './modules/pos/resto/resto-tables/resto-tables.component';
-import { NotificationBellComponent } from './modules/notifications/components/notification-bell/notification-bell.component';
-import { AiChatWidgetComponent } from './shared/components/ai-chat-widget/ai-chat-widget.component';
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
@@ -85,7 +81,10 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { FooterComponent } from './layout/footer/footer.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { HomeComponent } from './layout/home/home.component';
+import { NotificationBellComponent } from './modules/notifications/components/notification-bell/notification-bell.component';
+import { RestoTablesComponent } from './modules/pos/resto/resto-tables/resto-tables.component';
 import { HeaderTransactionComponent } from './modules/transaction/views/fast/components/header-transaction/header-transaction.component';
+import { AiChatWidgetComponent } from './shared/components/ai-chat-widget/ai-chat-widget.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { FocusDirective } from './shared/directives/focus.directive';
 import { PipesModule } from './shared/pipes/pipes.module';
@@ -126,7 +125,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
     CashBoxComponent,
-    PushNotificationComponent,
     CancellationTypeComponent,
     ListCancellationTypeComponent,
     MovementOfCancellationComponent,
