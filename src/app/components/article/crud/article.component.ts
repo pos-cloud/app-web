@@ -1625,29 +1625,6 @@ export class ArticleComponent implements OnInit {
     );
   }
 
-  getVariantsByArticleChild(id): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.loading = true;
-
-      this._variantService.getVariantsByArticle(id).subscribe(
-        (result) => {
-          if (!result.result.variants.length) {
-            resolve(null);
-          } else {
-            resolve(result.result.variants);
-          }
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error al obtener variantes:', error);
-          // this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-          reject(error);
-        }
-      );
-    });
-  }
-
   async uploadFile(pictureDelete: string): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
       if (pictureDelete && pictureDelete.includes('https://storage.googleapis')) {

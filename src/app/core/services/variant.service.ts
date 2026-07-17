@@ -22,7 +22,7 @@ export class VariantService extends ModelService {
     );
   }
 
-  public getVariantsByArticle(articleId?: string): Observable<any> {
+  public getVariantByParent(articleId?: string): Observable<any> {
     const URL = `${environment.apiv2}/variants/by-article/${articleId}`;
 
     const headers = new HttpHeaders()

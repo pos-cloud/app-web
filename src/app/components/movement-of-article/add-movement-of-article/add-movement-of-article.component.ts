@@ -530,7 +530,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   getVariantsByArticleParent(): void {
     this.loading = true;
 
-    this._variantService.getVariantsByArticle(this.movementOfArticle.article._id).subscribe(
+    this._variantService.getVariantByParent(this.movementOfArticle.article._id).subscribe(
       (result) => {
         if (!result.result.variants.length) {
           this.areVariantsEmpty = true;

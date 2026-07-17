@@ -63,7 +63,7 @@ export class ListVariantsComponent implements OnInit {
   public getVariantsByArticleParent(): void {
     this.loading = true;
 
-    this._variantService.getVariantsByArticle(this.article._id).subscribe(
+    this._variantService.getVariantByParent(this.article._id).subscribe(
       (result) => {
         if (!result.result.variants.length) {
           if (this.variantsLocals && this.variantsLocals.length > 0) {
