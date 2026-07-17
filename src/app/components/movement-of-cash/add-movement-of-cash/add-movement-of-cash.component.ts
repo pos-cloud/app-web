@@ -1865,7 +1865,7 @@ export class AddMovementOfCashComponent implements OnInit {
             let exists: boolean = false;
 
             for (let transactionTax of this.transaction.taxes) {
-              if (movTax.tax.toString() === transactionTax.tax.toString()) {
+              if (movTax.tax.toString() === transactionTax.tax._id.toString()) {
                 transactionTax.taxAmount += movTax.taxAmount;
                 transactionTax.taxBase += movTax.taxBase;
                 this.transaction.basePrice += transactionTax.taxBase;
