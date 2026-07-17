@@ -811,7 +811,7 @@ export class AddMovementOfCashComponent implements OnInit {
                   let salePrice = 0;
 
                   if (movement.discount && movement.discount !== 0) {
-                    salePrice = (movement.amountPaid * movement.discount) / 100;
+                    salePrice = -(movement.amountPaid * movement.discount) / 100;
                   } else if (movement.surcharge && movement.surcharge !== 0) {
                     salePrice = (movement.amountPaid * movement.surcharge) / 100;
                   }
