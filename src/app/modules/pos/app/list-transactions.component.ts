@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IAttribute } from '@types';
@@ -40,7 +41,8 @@ export class ListAppTransactionsComponent implements OnInit {
   constructor(
     private _transactionService: TransactionService,
     private _toastService: ToastService,
-    private _modalService: NgbModal
+    private _modalService: NgbModal,
+    private _router: Router
   ) {
     this.columns = [
       {
@@ -215,6 +217,17 @@ export class ListAppTransactionsComponent implements OnInit {
       });
       modalRef.componentInstance.transactionId = transaction._id;
     }
+  }
+
+  public openTransaction(transaction: Transaction): void {
+    if (!transaction?._id) return;
+
+    this._router.navigate(['/pos/mostrador/editar-transaccion'], {
+      queryParams: {
+        transactionId: transaction._id,
+        returnURL: this._router.url,
+      },
+    });
   }
 
   public orderBy(term: string): void {

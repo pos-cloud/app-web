@@ -38,4 +38,8 @@ app-list-app-transactions {
   .table-responsive {
     height: 80vh;
   }
+
+  .clickable-row td:not(:first-child) {
+    cursor: pointer;
+  }
 }

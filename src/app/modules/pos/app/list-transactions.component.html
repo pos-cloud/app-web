@@ -52,7 +52,7 @@
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="let transaction of transactions">
+          <tr *ngFor="let transaction of transactions" class="clickable-row">
             <ng-container>
               <td align="left" width="80">
                 <button
@@ -64,18 +64,18 @@
                   <i class="fa fa-eye"></i>
                 </button>
               </td>
-              <td>{{ transaction?.type?.name }}</td>
-              <td>
+              <td (click)="openTransaction(transaction)">{{ transaction?.type?.name }}</td>
+              <td (click)="openTransaction(transaction)">
                 <b>{{ transaction?.number }}</b>
               </td>
-              <td>{{ transaction?.startDate }}</td>
-              <td>{{ transaction?.company?.name }}</td>
-              <td>{{ transaction?.state }}</td>
-              <td>{{ transaction?.employeeClosing?.name }}</td>
-              <td align="right">
+              <td (click)="openTransaction(transaction)">{{ transaction?.startDate }}</td>
+              <td (click)="openTransaction(transaction)">{{ transaction?.company?.name }}</td>
+              <td (click)="openTransaction(transaction)">{{ transaction?.state }}</td>
+              <td (click)="openTransaction(transaction)">{{ transaction?.employeeClosing?.name }}</td>
+              <td align="right" (click)="openTransaction(transaction)">
                 {{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
-              <td align="right">
+              <td align="right" (click)="openTransaction(transaction)">
                 {{ transaction?.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </ng-container>
