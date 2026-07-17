@@ -1065,10 +1065,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   async changeArticleByVariants(articleSelected: Article) {
-    this.movementOfArticle = this.buildMovementFromArticle(
-      articleSelected,
-      this.movementOfArticleForm.value.amount
-    );
+    this.movementOfArticle = this.buildMovementFromArticle(articleSelected, this.movementOfArticleForm.value.amount);
     this.setValueForm();
   }
 
@@ -1648,7 +1645,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     return new Promise<boolean>((resolve, reject) => {
       this._movementOfArticleService.saveMovementsOfArticles(movementOfArticle).subscribe(
         (result) => {
-          if (!result.movementsOfArticles) {
+          if (result.status !== 200) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
@@ -1884,7 +1881,6 @@ export class AddMovementOfArticleComponent implements OnInit {
             //le meto a todos el movimiento del padre
             for (let index = 0; index < this.movChild.length; index++) {
               this.movChild[index].movementParent = result.movementOfArticle;
-
               const structure = this.structures.find(
                 (data) =>
                   data.parent._id === result.movementOfArticle.article._id &&

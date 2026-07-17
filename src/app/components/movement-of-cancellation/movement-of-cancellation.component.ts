@@ -1518,8 +1518,8 @@ export class MovementOfCancellationComponent implements OnInit {
       try {
         this._movementOfArticleService.saveMovementsOfArticles(movemenstOfarticles).subscribe(
           (result) => {
-            if (result.movementsOfArticles) {
-              resolve(result.movementsOfArticles);
+            if (result.status === 200) {
+              resolve(result.result);
             } else reject(result);
           },
           (error) => reject(error)

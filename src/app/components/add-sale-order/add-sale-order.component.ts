@@ -1060,7 +1060,7 @@ export class AddSaleOrderComponent {
       this._movementOfArticleService.saveMovementsOfArticles(movsArticles).subscribe(
         (result) => {
           this.loading = false;
-          if (!result.movementsOfArticles) {
+          if (result.status !== 200) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(false);
           } else {

@@ -117,7 +117,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-articles`;
+    const URL = `${environment.apiv2}/movements-of-articles/bulk`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

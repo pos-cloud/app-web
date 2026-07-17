@@ -6,7 +6,7 @@ import { CancellationTypeService } from '../../../core/services/cancellation-typ
 import { CancellationType } from '../cancellation-type';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse } from '@types';
+import { ApiResponse, TransactionMovement, TransactionType } from '@types';
 import { Config } from 'app/app.config';
 import { ArticleFieldType } from 'app/components/article-field/article-field';
 import { ArticleFields } from 'app/components/article-field/article-fields';
@@ -15,7 +15,6 @@ import { MovementOfCancellation } from 'app/components/movement-of-cancellation/
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { TaxBase } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
-import { TransactionMovement, TransactionType } from '@types';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
@@ -547,8 +546,8 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this._movementOfArticleService.saveMovementsOfArticles(movemenstOfarticles).subscribe(
         (result) => {
-          if (result.movementsOfArticles) {
-            resolve(result.movementsOfArticles);
+          if (result.status === 200) {
+            resolve(result.result);
           } else reject(result);
         },
         (error) => reject(error)
