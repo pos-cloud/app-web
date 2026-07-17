@@ -25,6 +25,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import Keyboard from 'simple-keyboard';
 
+import { Movements } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
@@ -36,7 +37,6 @@ import { MovementOfArticle } from '../../movement-of-article/movement-of-article
 import { PaymentMethod } from '../../payment-method/payment-method';
 import { Tax } from '../../tax/tax';
 import { Taxes } from '../../tax/taxes';
-import { Movements } from '@types';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
 import { MovementOfCash, StatusCheck } from '../movement-of-cash';
@@ -1865,7 +1865,7 @@ export class AddMovementOfCashComponent implements OnInit {
             let exists: boolean = false;
 
             for (let transactionTax of this.transaction.taxes) {
-              if (movTax.tax._id.toString() === transactionTax.tax._id.toString()) {
+              if (movTax.tax.toString() === transactionTax.tax.toString()) {
                 transactionTax.taxAmount += movTax.taxAmount;
                 transactionTax.taxBase += movTax.taxBase;
                 this.transaction.basePrice += transactionTax.taxBase;
