@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, ViewEncapsulation } from '@angu
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Account, ApiResponse, PriceList, Structure, Utilization } from '@types';
+import { Account, ApiResponse, PriceList, Structure, Utilization, Variant } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { AccountService } from 'app/core/services/account.service';
 import { ArticleService } from 'app/core/services/article.service';
@@ -14,8 +14,7 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
-import { VariantType, VariantValue } from '@types';
-import { User } from '@types';
+import { EntryAmount, StockMovement, TransactionMovement, User, VariantType, VariantValue } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Config } from '../../../app.config';
@@ -28,8 +27,6 @@ import { Article } from '../../article/article';
 import { ArticleComponent } from '../../article/crud/article.component';
 import { TaxBase } from '../../tax/tax';
 import { Taxes } from '../../tax/taxes';
-import { EntryAmount, StockMovement, TransactionMovement } from '@types';
-import { Variant } from '../../variant/variant';
 import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article';
 
 @Component({
@@ -533,15 +530,13 @@ export class AddMovementOfArticleComponent implements OnInit {
   getVariantsByArticleParent(): void {
     this.loading = true;
 
-    let query = 'where="articleParent":"' + this.movementOfArticle.article._id + '"';
-
-    this._variantService.getVariants(query).subscribe(
+    this._variantService.getVariantsByArticle(this.movementOfArticle.article._id).subscribe(
       (result) => {
-        if (!result.variants) {
+        if (!result.result.variants.length) {
           this.areVariantsEmpty = true;
           this.variants = null;
         } else {
-          this.variants = result.variants;
+          this.variants = result.result.variants;
           this.variantTypes = this.getUniqueValues('type', this.variants);
           this.variantTypes = this.orderByPipe.transform(this.variantTypes, ['name']);
           this.variantTypes = this.orderByPipe.transform(this.variantTypes, ['order']);
@@ -1468,7 +1463,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   getArticleByVariantSelection(selection: { [typeName: string]: string }): Article {
     let articleToReturn: Article;
-    let articles: Article[] = new Array();
+    let articles = new Array();
 
     if (this.variants && this.variants.length > 0) {
       for (let variant of this.variants) {
