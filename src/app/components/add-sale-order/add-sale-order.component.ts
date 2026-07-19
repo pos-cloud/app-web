@@ -3279,7 +3279,7 @@ export class AddSaleOrderComponent {
       //validate read
       if (mov.length === 0 || mov[0].read >= mov[0].amount) {
         this._toastService.showToast({
-          type: 'info',
+          type: 'danger',
           message: `El producto ya fue cerrado`,
         });
         return;
