@@ -705,11 +705,11 @@ export class HeaderComponent implements OnInit {
                 {
                   label: 'Reportes',
                   children: [
-                    { label: 'Por productos', link: 'reports/mov-art-by-article/produccion' },
-                    { label: 'Por marcas', link: 'reports/mov-art-by-make/produccion' },
-                    { label: 'Por categorias', link: 'reports/mov-art-by-category/produccion' },
-                    { label: 'Por empleado', link: 'reports/transactions-by-employee/produccion' },
-                    { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/produccion' },
+                    { label: 'Por productos', link: 'reports/mov-art-by-article/producción' },
+                    { label: 'Por marcas', link: 'reports/mov-art-by-make/producción' },
+                    { label: 'Por categorias', link: 'reports/mov-art-by-category/producción' },
+                    { label: 'Por empleado', link: 'reports/transactions-by-employee/producción' },
+                    { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/producción' },
                   ],
                 },
               ],
