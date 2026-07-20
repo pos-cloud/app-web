@@ -167,6 +167,10 @@ export class AddSaleOrderComponent {
   height: number = 0;
   user: User;
 
+  get allowedChangeStates(): string[] {
+    return this.user?.permission?.changeStates ?? [];
+  }
+
   constructor(
     private _transactionService: TransactionService,
     private _movementOfArticleService: MovementOfArticleService,
@@ -303,6 +307,11 @@ export class AddSaleOrderComponent {
   async initComponent() {
     try {
       this.loading = true;
+
+      const user = await this.getUser();
+      if (user) {
+        this.user = user;
+      }
 
       if (this.transactionId) {
         this.transaction = await this.getTransaction();
@@ -2869,6 +2878,17 @@ export class AddSaleOrderComponent {
       } else {
         this.backFinal();
       }
+    }
+  }
+
+  async changeTransactionState(state: string): Promise<void> {
+    try {
+      this.loading = true;
+      this.transaction.state = state as TransactionState;
+      await this.updateTransaction();
+      this.backFinal();
+    } catch (error) {
+      this.loading = false;
     }
   }
 

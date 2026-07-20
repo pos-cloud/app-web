@@ -381,15 +381,15 @@
               <i class="fa fa-plus"></i>
             </button>
             <button
-              *ngIf="transaction?.type?.allowTransactionClose"
+              *ngFor="let state of allowedChangeStates"
               type="button"
               class="btn btn-outline-primary pos-pending-btn"
-              (click)="!loading ? close() : $event.stopPropagation()"
-              [disabled]="loading"
-              ngbTooltip="Dejar la operación pendiente"
+              (click)="!loading ? changeTransactionState(state) : $event.stopPropagation()"
+              [disabled]="loading || transaction?.state?.toString() === state"
+              [ngbTooltip]="state"
               placement="left"
             >
-              Pendiente
+              {{ state }}
             </button>
             <button
               type="button"
