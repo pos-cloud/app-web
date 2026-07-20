@@ -261,7 +261,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="row">
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-6" *ngIf="articleType === 'Producto'">
                 <label for="observation" class="control-label">{{ 'observation' | translate | capitalize }}</label>
                 <editor
                   formControlName="observation"
@@ -512,7 +512,7 @@
                 </div>
               </div>
             </div>
-            <div class="row" *ngIf="currencies && currencies.length > 0">
+            <div class="row" *ngIf="currencies && currencies.length > 0 && articleType === 'Producto'">
               <div class="form-group col-md-12">
                 <label for="currency" class="control-label"
                   >{{ 'article.currency.name' | translate | capitalize }}:</label
