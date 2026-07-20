@@ -1,0 +1,59 @@
+<div class="article-searchable-dropdown" [id]="uniqueId">
+  <div
+    class="article-searchable-dropdown__trigger"
+    (click)="toggleDropdown()"
+    [class.disabled]="disabled"
+    [class.is-invalid]="isInvalid"
+  >
+    <div class="article-searchable-dropdown__selected">
+      <div class="article-searchable-dropdown__selected-text" [class.placeholder]="!hasSelection()">
+        {{ getSelectedDisplayText() }}
+      </div>
+    </div>
+    <div class="article-searchable-dropdown__arrow">
+      <i class="fa" [ngClass]="{ 'fa-chevron-down': !isOpen, 'fa-chevron-up': isOpen }"></i>
+    </div>
+  </div>
+
+  <div *ngIf="isOpen" class="article-searchable-dropdown__panel" [style.max-height]="maxHeight">
+    <div class="article-searchable-dropdown__search">
+      <i class="fa fa-search article-searchable-dropdown__search-icon"></i>
+      <input
+        type="text"
+        class="article-searchable-dropdown__search-input"
+        [(ngModel)]="searchTerm"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="onSearchChange()"
+        [placeholder]="searchPlaceholder"
+        (click)="$event.stopPropagation()"
+      />
+    </div>
+
+    <div class="article-searchable-dropdown__items">
+      <div *ngIf="searching" class="article-searchable-dropdown__empty">
+        <i class="fa fa-spinner fa-spin"></i> Buscando...
+      </div>
+
+      <div *ngIf="!searching && filteredItems.length === 0" class="article-searchable-dropdown__empty">
+        {{ emptyMessage }}
+      </div>
+
+      <div
+        *ngFor="let item of filteredItems; trackBy: trackByItem"
+        class="article-searchable-dropdown__item"
+        [class.selected]="isSelected(item)"
+        (click)="selectItem(item); $event.stopPropagation()"
+      >
+        <div class="article-searchable-dropdown__item-line">
+          <span class="article-searchable-dropdown__item-desc">{{ getItemPrimary(item) }}</span>
+          <span class="article-searchable-dropdown__item-sep">·</span>
+          <span><strong>Cód:</strong> {{ getItemCode(item) }}</span>
+          <span class="article-searchable-dropdown__item-sep">·</span>
+          <span><strong>Prov:</strong> {{ getItemCodeProvider(item) }}</span>
+          <span class="article-searchable-dropdown__item-sep">·</span>
+          <span><strong>Marca:</strong> {{ getItemMake(item) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

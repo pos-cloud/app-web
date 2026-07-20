@@ -244,6 +244,79 @@
                       <i class="fa fa-plus"></i> Agregar Producto
                     </button>
                   </div>
+
+                  <!-- Formulario inline para agregar producto -->
+                  <div
+                    *ngIf="showAddProductForm && !editingProductId && requestArticles"
+                    class="card mb-3 formal-add-product-card"
+                  >
+                    <div class="card-body formal-add-product-card__body">
+                      <div class="formal-add-product-card__head">
+                        <h6 class="formal-add-product-card__title mb-0">Agregar producto</h6>
+                      </div>
+
+                      <div
+                        class="row formal-add-product-card__row formal-add-product-card__row--actions align-items-end"
+                      >
+                        <div class="col-12 col-md-6 col-lg-5 formal-add-product-field">
+                          <label class="formal-add-product-label">Artículo</label>
+                          <app-article-searchable-dropdown
+                            [control]="addProductForm.get('article')"
+                            placeholder="Código, proveedor o descripción…"
+                            searchPlaceholder="Buscar…"
+                          />
+                        </div>
+                        <div class="col-4 col-sm-3 col-md-2 col-lg-1 formal-add-product-field">
+                          <label class="formal-add-product-label" for="add-product-qty">Cantidad</label>
+                          <input
+                            id="add-product-qty"
+                            type="text"
+                            class="form-control formal-add-product-input"
+                            inputmode="decimal"
+                            autocomplete="off"
+                            numericText="decimal"
+                            formControlName="quantity"
+                          />
+                        </div>
+                        <div class="col-4 col-sm-3 col-md-2 col-lg-2 formal-add-product-field">
+                          <label class="formal-add-product-label" for="add-product-price">Precio Base</label>
+                          <input
+                            id="add-product-price"
+                            type="text"
+                            class="form-control formal-add-product-input text-right"
+                            inputmode="decimal"
+                            autocomplete="off"
+                            numericText="decimal"
+                            formControlName="basePrice"
+                          />
+                        </div>
+                        <div class="col-auto formal-add-product-field formal-add-product-actions">
+                          <label class="formal-add-product-label formal-add-product-label--spacer" aria-hidden="true"
+                            >&nbsp;</label
+                          >
+                          <div class="formal-add-product-actions__btns d-flex flex-wrap align-items-center">
+                            <button
+                              type="submit"
+                              class="btn btn-success formal-add-product-btn formal-add-product-btn--primary"
+                              [disabled]="addProductForm.invalid"
+                            >
+                              <i class="fa fa-save mr-1" aria-hidden="true"></i>
+                              Guardar
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-outline-secondary formal-add-product-btn"
+                              (click)="cancelAddProduct()"
+                            >
+                              <i class="fa fa-times mr-1" aria-hidden="true"></i>
+                              Cancelar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <thead class="thead-light">
@@ -424,105 +497,6 @@
                         </tr>
                       </tbody>
                     </table>
-                  </div>
-
-                  <!-- Formulario inline para agregar producto -->
-                  <div
-                    *ngIf="showAddProductForm && !editingProductId && requestArticles"
-                    class="card mt-3 formal-add-product-card"
-                  >
-                    <div class="card-body formal-add-product-card__body">
-                      <div class="formal-add-product-card__head">
-                        <div>
-                          <h6 class="formal-add-product-card__title mb-1">Agregar producto</h6>
-                          <p class="formal-add-product-card__subtitle mb-0 text-muted small">
-                            Busque por código, proveedor o descripción e indique cantidad .
-                          </p>
-                        </div>
-                      </div>
-
-                      <div class="row formal-add-product-card__row">
-                        <div class="col-sm-6 col-md-4 col-lg-3 formal-add-product-field">
-                          <label class="formal-add-product-label">Código</label>
-                          <app-typeahead-dropdown
-                            [control]="addProductForm.get('article')"
-                            [data]="articles"
-                            [keyField]="'_id'"
-                            [displayField]="'code'"
-                            placeholder="Código interno…"
-                          />
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-lg-3 formal-add-product-field">
-                          <label class="formal-add-product-label">Código proveedor</label>
-                          <app-typeahead-dropdown
-                            [control]="addProductForm.get('article')"
-                            [data]="articlesWithCompleteProviderData"
-                            [keyField]="'_id'"
-                            [displayField]="'codeProvider'"
-                            placeholder="Código del proveedor…"
-                          />
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-6 formal-add-product-field">
-                          <label class="formal-add-product-label">Artículo</label>
-                          <app-typeahead-dropdown
-                            [control]="addProductForm.get('article')"
-                            [data]="articles"
-                            [keyField]="'_id'"
-                            [displayField]="'description'"
-                            placeholder="Nombre o descripción…"
-                          />
-                        </div>
-                      </div>
-
-                      <div
-                        class="row formal-add-product-card__row formal-add-product-card__row--actions align-items-end"
-                      >
-                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 formal-add-product-field">
-                          <label class="formal-add-product-label" for="add-product-qty">Cantidad</label>
-                          <input
-                            id="add-product-qty"
-                            type="text"
-                            class="form-control formal-add-product-input"
-                            inputmode="decimal"
-                            autocomplete="off"
-                            numericText="decimal"
-                            formControlName="quantity"
-                          />
-                        </div>
-                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 formal-add-product-field">
-                          <label class="formal-add-product-label" for="add-product-price">Precio Base</label>
-                          <input
-                            id="add-product-price"
-                            type="text"
-                            class="form-control formal-add-product-input text-right"
-                            inputmode="decimal"
-                            autocomplete="off"
-                            numericText="decimal"
-                            formControlName="basePrice"
-                          />
-                        </div>
-                        <div
-                          class="col-12 col-sm-4 col-md-6 col-lg-8 formal-add-product-actions d-flex flex-wrap justify-content-sm-end align-items-center mt-3 mt-sm-0"
-                        >
-                          <button
-                            type="submit"
-                            class="btn btn-success formal-add-product-btn formal-add-product-btn--primary"
-                            [disabled]="addProductForm.invalid"
-                          >
-                            <i class="fa fa-save mr-1" aria-hidden="true"></i>
-                            Guardar
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary formal-add-product-btn"
-                            (click)="cancelAddProduct()"
-                          >
-                            <i class="fa fa-times mr-1" aria-hidden="true"></i>
-                            Cancelar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </form>
               </div>

@@ -6,7 +6,6 @@ import { NgbModal, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-boots
 import { ImportComponent } from '@shared/components/import/import.component';
 import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
 import {
-  Article,
   Bank,
   CompanyType,
   MovementOfArticle,
@@ -17,7 +16,6 @@ import {
   Transaction,
   TransactionState,
 } from '@types';
-import { ArticleService } from 'app/core/services/article.service';
 import { BankService } from 'app/core/services/bank.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
@@ -26,11 +24,13 @@ import { TransactionService } from 'app/core/services/transaction.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { ConfirmationQuestionComponent } from 'app/shared/components/confirm/confirmation-question.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
+import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { NumericTextDirective } from 'app/shared/directives/numeric-text.directive';
 import { combineLatest, finalize, Subject, takeUntil } from 'rxjs';
 import { ApplyTaxesTransactionsComponent } from '../../components/apply-taxes-transactions/apply-taxes-transactions.components';
+import { ArticleSearchableDropdownComponent } from './components/article-searchable-dropdown/article-searchable-dropdown.component';
 import { ProcessInvoiceUploadComponent } from './components/process-invoice-upload/process-invoice-upload.component';
 
 @Component({
@@ -43,9 +43,11 @@ import { ProcessInvoiceUploadComponent } from './components/process-invoice-uplo
     FormsModule,
     ReactiveFormsModule,
     TypeaheadDropdownComponent,
+    ArticleSearchableDropdownComponent,
     ProcessInvoiceUploadComponent,
     DateTimePickerComponent,
     NumericTextDirective,
+    SearchableDropdownComponent,
   ],
   templateUrl: './formal-transaction-view.component.html',
   styleUrls: ['./formal-transaction-view.component.scss'],
@@ -64,8 +66,6 @@ export class FormalTransactionViewComponent implements OnInit {
   // Propiedades para agregar producto
   public showAddProductForm: boolean = false;
   public addProductForm: FormGroup;
-  public articles: Article[] = [];
-  public articlesWithCompleteProviderData: Article[] = [];
   public selectedArticle: any = null;
   public editingProductId: string | null = null;
   public showAddPaymentForm: boolean = false;
@@ -214,7 +214,6 @@ export class FormalTransactionViewComponent implements OnInit {
     private modal: NgbModal,
     private toastService: ToastService,
     private fb: FormBuilder,
-    private articleService: ArticleService,
     private bankService: BankService,
     private _toastService: ToastService
   ) {
@@ -226,15 +225,12 @@ export class FormalTransactionViewComponent implements OnInit {
     this.transactionId = this.route.snapshot.paramMap.get('id');
 
     combineLatest({
-      articles: this.articleService.find({ query: { operationType: { $ne: 'D' } } }),
       paymentMethods: this.paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
       banks: this.bankService.find({ query: { operationType: { $ne: 'D' } } }),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ articles, paymentMethods, banks }) => {
-          this.articles = articles || [];
-          this.articlesWithCompleteProviderData = articles.filter((article) => article.codeProvider) || [];
+        next: ({ paymentMethods, banks }) => {
           this.paymentMethods = paymentMethods || [];
           this.banks = banks || [];
           if (this.transactionId) {
@@ -260,8 +256,7 @@ export class FormalTransactionViewComponent implements OnInit {
       .get('article')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((articleValue) => {
-        this.selectedArticle =
-          this.articles.find((article) => article._id.toString() === articleValue?._id?.toString()) || null;
+        this.selectedArticle = articleValue?._id ? articleValue : null;
 
         if (this.selectedArticle) {
           this.addProductForm.patchValue(
@@ -1123,8 +1118,9 @@ export class FormalTransactionViewComponent implements OnInit {
     if (!this.requestArticles) {
       return;
     }
-    let articleId = String(this.addProductForm.get('article')?.value?._id ?? '');
-    this.selectedArticle = this.articles.find((article) => article._id.toString() === articleId?.toString()) || null;
+    this.selectedArticle = this.addProductForm.get('article')?.value?._id
+      ? this.addProductForm.get('article')?.value
+      : null;
 
     if (this.addProductForm.valid && this.selectedArticle) {
       let basePrice = Number(this.addProductForm.get('basePrice')?.value);
@@ -1232,13 +1228,10 @@ export class FormalTransactionViewComponent implements OnInit {
     }
     this.editingProductId = movement._id;
     this.showAddProductForm = false;
-
-    const articleId = String((movement.article as any)?._id ?? movement.article ?? '');
-    this.selectedArticle =
-      this.articles.find((article) => article._id === articleId || article._id?.toString() === articleId) || null;
+    this.selectedArticle = (movement.article as any)?._id ? movement.article : null;
 
     this.addProductForm.patchValue({
-      article: this.selectedArticle || movement.article || null,
+      article: this.selectedArticle || null,
       quantity: movement.amount || 1,
       unitPrice: this.roundNumber.transform(movement.unitPrice) as number,
       basePrice: this.getMovementBasePricePerUnit(movement),
