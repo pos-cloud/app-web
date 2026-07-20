@@ -2884,7 +2884,7 @@ export class AddSaleOrderComponent {
   async changeTransactionState(state: string): Promise<void> {
     try {
       this.loading = true;
-      this.transaction.state = state as TransactionState;
+      this.transaction.state = state as unknown as TransactionState;
       await this.updateTransaction();
       this.backFinal();
     } catch (error) {
