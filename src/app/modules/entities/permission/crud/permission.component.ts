@@ -5,9 +5,10 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 
-import { Permission, TransactionMovement, TransactionType } from '@types';
+import { Permission, TransactionMovement, TransactionState, TransactionType } from '@types';
 import { PermissionService } from 'app/core/services/permission.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -18,7 +19,15 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-permission',
   templateUrl: './permission.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FocusDirective, PipesModule, TranslateModule, ProgressbarModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FocusDirective,
+    PipesModule,
+    TranslateModule,
+    ProgressbarModule,
+    MultiSelectDropdownComponent,
+  ],
 })
 export class PermissionComponent implements OnInit {
   public operation: string;
@@ -29,6 +38,10 @@ export class PermissionComponent implements OnInit {
   public permissionForm: FormGroup;
   public transactionTypes: TransactionType[] = [];
   public transactionTypeGroups: [string, TransactionType[]][] = [];
+  public transactionStateOptions = Object.values(TransactionState).map((state) => ({
+    _id: state,
+    name: state,
+  }));
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -110,6 +123,7 @@ export class PermissionComponent implements OnInit {
       editArticle: [true],
       allowDiscount: [true],
       allowPayment: [true],
+      changeStates: [[]],
       aiChat: [false],
     });
   }
@@ -241,6 +255,7 @@ export class PermissionComponent implements OnInit {
       editArticle: this.permission.editArticle ?? true,
       allowDiscount: this.permission.allowDiscount ?? true,
       allowPayment: this.permission.allowPayment ?? true,
+      changeStates: this.permission.changeStates ?? [],
       aiChat: this.permission.aiChat === true,
     });
 

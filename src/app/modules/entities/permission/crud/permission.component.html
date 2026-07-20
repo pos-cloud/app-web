@@ -309,6 +309,19 @@
 
         <hr />
         <div class="row">
+          <div class="form-group col-md-4">
+            <label class="control-label">{{ 'changeStates' | translate | capitalize }}:</label>
+            <app-multi-select-dropdown
+              formControlName="changeStates"
+              [data]="transactionStateOptions"
+              placeholder="Seleccionar estados"
+            >
+            </app-multi-select-dropdown>
+          </div>
+        </div>
+
+        <hr />
+        <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'transaction-types' | translate | capitalize }}</b>
           </label>
