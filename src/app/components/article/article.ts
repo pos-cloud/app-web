@@ -7,12 +7,12 @@ import {
   Location,
   Make,
   UnitOfMeasurement,
+  User,
   VariantType,
   VariantValue,
 } from '@types';
 import { ArticleFields } from '../article-field/article-fields';
 import { Taxes } from '../tax/taxes';
-import { User } from '@types';
 
 import { Account, Company } from '@types';
 import * as moment from 'moment';
@@ -266,26 +266,7 @@ export let attributesVariant = [
     align: 'left',
     required: false,
   },
-  {
-    name: 'currency.name',
-    visible: false,
-    disabled: false,
-    filter: true,
-    datatype: 'string',
-    project: null,
-    align: 'left',
-    required: false,
-  },
-  {
-    name: 'observation',
-    visible: true,
-    disabled: false,
-    filter: true,
-    datatype: 'string',
-    project: null,
-    align: 'left',
-    required: false,
-  },
+
   {
     name: 'barcode',
     visible: true,
@@ -448,16 +429,6 @@ export let attributesVariant = [
   },
   {
     name: 'url',
-    visible: false,
-    disabled: false,
-    filter: true,
-    datatype: 'string',
-    project: null,
-    align: 'left',
-    required: false,
-  },
-  {
-    name: 'picture',
     visible: false,
     disabled: false,
     filter: true,
