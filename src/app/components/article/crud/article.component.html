@@ -47,7 +47,7 @@
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-8">
+          <div class="form-group" [ngClass]="articleType === 'Producto' ? 'col-md-8' : 'col-md-12'">
             <div class="row">
               <div class="form-group col-md-2">
                 <label type="button" for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
@@ -60,7 +60,7 @@
                   [readonly]="readonly"
                 />
               </div>
-              <div class="form-group col-md-4">
+              <div class="form-group col-md-3">
                 <label for="code" class="control-label">{{ 'article.code' | translate | capitalize }}:</label>
                 <input
                   type="text"
@@ -78,7 +78,7 @@
                   {{ formErrors.code }}
                 </div>
               </div>
-              <div class="form-group col-md-5">
+              <div class="form-group col-md-7">
                 <label for="barcode" class="control-label">{{ 'article.barcode' | translate | capitalize }}:</label>
                 <input
                   type="text"
@@ -94,7 +94,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="form-group col-md-5 typeahead-container">
+              <div class="form-group col-md-6 typeahead-container">
                 <label for="make">{{ 'article.make.description' | translate | capitalize }}:</label>
                 <input
                   id="make"
@@ -158,7 +158,7 @@
                   {{ formErrors.description }}
                 </div>
               </div>
-              <div class="form-group col-md-5">
+              <div class="form-group col-md-6">
                 <label for="posDescription" class="control-label"
                   >{{ 'article.posDescription' | translate | capitalize }}:</label
                 >
@@ -180,7 +180,7 @@
               </div>
             </div>
           </div>
-          <div class="form-group col-md-4 text-center">
+          <div class="form-group col-md-4 text-center" *ngIf="articleType === 'Producto'">
             <div class="custom-file">
               <label *ngIf="operation !== 'view'" class="custom-file-label" for="customFileLang">{{
                 'article.picture' | translate | capitalize
@@ -270,7 +270,7 @@
                 ></editor>
               </div>
 
-              <div class="form-group col-md-5">
+              <div class="form-group" [ngClass]="articleType === 'Producto' ? 'col-md-6' : 'col-md-12'">
                 <label for="note" class="control-label">{{ 'notes' | translate | capitalize }}:</label>
                 <input
                   type="text"
