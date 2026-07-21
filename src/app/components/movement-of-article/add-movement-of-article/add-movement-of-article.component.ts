@@ -1075,6 +1075,10 @@ export class AddMovementOfArticleComponent implements OnInit {
     movementOfArticle.transaction = this.transaction;
     movementOfArticle.modifyStock = this.transaction.type.modifyStock;
     movementOfArticle.stockMovement = this.transaction.type.stockMovement;
+    movementOfArticle.deposit =
+      this.transaction.type.stockMovement === StockMovement.Transfer
+        ? this.transaction.depositOrigin
+        : this.transaction.depositDestination;
     movementOfArticle.article = articleSelected;
     movementOfArticle.code = articleSelected?.code ?? '';
     movementOfArticle.codeSAT = articleSelected.codeSAT;
@@ -1413,30 +1417,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   getArticleStock(movArticle: MovementOfArticle): Promise<ArticleStock> {
     return new Promise<ArticleStock>((resolve, reject) => {
-      let depositID;
-      let query;
-
-      if (movArticle.article.deposits && movArticle.article.deposits.length > 0) {
-        movArticle.article.deposits.forEach(async (element) => {
-          if (
-            element.deposit &&
-            element.deposit.branch &&
-            element.deposit.branch._id === this.transaction.branchOrigin._id
-          ) {
-            depositID = element.deposit._id;
-          }
-        });
-      }
-
-      if (depositID) {
-        query = `where= "article": "${movArticle.article._id}",
-                          "branch": "${this.transaction.branchOrigin._id}",
-                          "deposit": "${depositID}"`;
-      } else {
-        query = `where= "article": "${movArticle.article._id}",
+      const query = `where= "article": "${movArticle.article._id}",
                           "branch": "${this.transaction.branchOrigin._id}",
                           "deposit": "${this.transaction.depositOrigin._id}"`;
-      }
 
       this._articleStockService.getArticleStocks(query).subscribe(
         (result) => {

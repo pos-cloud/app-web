@@ -787,6 +787,10 @@ export class AddSaleOrderComponent {
             movementOfArticle.transaction = this.transaction;
             movementOfArticle.modifyStock = this.transaction.type.modifyStock;
             movementOfArticle.stockMovement = this.transaction.type.stockMovement;
+            movementOfArticle.deposit =
+              this.transaction.type.stockMovement === StockMovement.Transfer
+                ? this.transaction.depositOrigin
+                : this.transaction.depositDestination;
             movementOfArticle.printed = 0;
             movementOfArticle.read = 0;
             if (child && child.length === 0) {
@@ -1180,25 +1184,9 @@ export class AddSaleOrderComponent {
 
   getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock[]> {
     return new Promise<ArticleStock[]>((resolve, reject) => {
-      let depositID;
-      let query;
-
-      if (movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0) {
-        movementOfArticle.article.deposits.forEach((element) => {
-          if (element.deposit.branch._id === this.transaction.branchOrigin._id) {
-            depositID = element.deposit._id;
-          }
-        });
-      }
-      if (depositID) {
-        query = `where= "article": "${movementOfArticle.article._id}",
-                        "branch": "${this.transaction.branchOrigin._id}",
-                        "deposit": "${depositID}"`;
-      } else {
-        query = `where= "article": "${movementOfArticle.article._id}",
+      const query = `where= "article": "${movementOfArticle.article._id}",
                         "branch": "${this.transaction.branchOrigin._id}",
                         "deposit": "${this.transaction.depositOrigin._id}"`;
-      }
 
       this._articleStockService.getArticleStocks(query).subscribe(
         (result) => {
@@ -2652,7 +2640,12 @@ export class AddSaleOrderComponent {
       }
       // ACTUALIZACIÓN DE STOCK
       if (this.config['modules'].stock && this.transaction.type.modifyStock) {
-        if (await this.areValidMovementOfArticle()) await this.updateStockByTransaction();
+        if (await this.areValidMovementOfArticle()) {
+          const stockUpdated = await this.updateStockByTransaction();
+          if (!stockUpdated) {
+            throw new Error('No se pudo actualizar el stock. La transacción no se cerró.');
+          }
+        }
       }
 
       // ACTUALIZACION DE ORDENES DE PRODUCCION
@@ -2708,6 +2701,7 @@ export class AddSaleOrderComponent {
 
       this.loading = false;
     } catch (error) {
+      this.loading = false;
       this._toastService.showToast(error);
     }
   }
