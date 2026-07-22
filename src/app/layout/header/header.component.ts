@@ -384,10 +384,8 @@ export class HeaderComponent implements OnInit {
   }
 
   public actionClick() {
-    this.dds.forEach((dd) => {
-      dd.close();
-      this.toggleMenu();
-    });
+    this.dds?.forEach((dd) => dd.close());
+    this.toggleNavbar = true;
   }
 
   public openModal(op: string): void {

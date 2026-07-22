@@ -79,7 +79,8 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
     private inj: Injector
   ) {
     config.autoClose = 'outside';
-    config.placement = 'auto';
+    config.container = 'body';
+    config.placement = ['bottom-left', 'bottom', 'bottom-right', 'top-left', 'top', 'top-right'];
   }
 
   ngOnInit(): void {
@@ -125,18 +126,20 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
   }
 
   onInputChange($event: any) {
-    const value = $event.target.value;
-    const dt = DateTimeModel.fromLocalString(value);
+    const value = ($event.target.value || '').trim();
+
+    if (value === '') {
+      this.datetime = new DateTimeModel();
+      this.dateString = '';
+      this.onChange(this.dateString);
+      return;
+    }
+
+    const dt = DateTimeModel.fromLocalString(value) || DateTimeModel.fromDisplayString(value);
 
     if (dt) {
       this.datetime = dt;
       this.setDateStringModel();
-    } else if (value.trim() === '') {
-      this.datetime = new DateTimeModel();
-      this.dateString = '';
-      this.onChange(this.dateString);
-    } else {
-      this.onChange(value);
     }
   }
 

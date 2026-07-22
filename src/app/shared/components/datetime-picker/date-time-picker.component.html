@@ -3,14 +3,22 @@
     #dateTimeInput
     class="form-control"
     (blur)="inputBlur($event)"
+    (change)="onInputChange($event)"
     [ngModel]="dateString | date : inputDatetimeFormat"
-    readonly
     [disabled]="disabled"
     [ngStyle]="{ 'background-color': 'white', width: '145px' }"
     tabindex="0"
   />
   <div class="input-group-append">
-    <button class="btn btn-outline-secondary" [ngbPopover]="calendarContent" [disabled]="disabled" type="button">
+    <button
+      class="btn btn-outline-secondary"
+      [ngbPopover]="calendarContent"
+      container="body"
+      placement="bottom-left bottom bottom-right top-left top top-right"
+      popoverClass="popover-class"
+      [disabled]="disabled"
+      type="button"
+    >
       <i class="fa fa-calendar"></i>
     </button>
   </div>

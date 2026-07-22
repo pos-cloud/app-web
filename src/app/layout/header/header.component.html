@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light" *ngIf="!hideMenu && (identity$ | async) as identity">
-  <span class="navbar-brand btn" routerLink="/">
+  <span class="navbar-brand btn" routerLink="/" (click)="actionClick()">
     <img width="60" [src]="img" />
   </span>
   <button
@@ -68,30 +68,46 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
           <div>
-            <a class="dropdown-item" [routerLink]="['license']" [routerLinkActive]="['active']"> Licencia </a>
+            <a class="dropdown-item" [routerLink]="['license']" [routerLinkActive]="['active']" (click)="actionClick()">
+              Licencia
+            </a>
           </div>
           <div>
-            <button class="dropdown-item" (click)="openModal('soporte')" [routerLinkActive]="['active']">
+            <button class="dropdown-item" (click)="actionClick(); openModal('soporte')" [routerLinkActive]="['active']">
               Soporte
             </button>
           </div>
           <div>
-            <button class="dropdown-item" (click)="openModal('changelogs')" [routerLinkActive]="['active']">
+            <button
+              class="dropdown-item"
+              (click)="actionClick(); openModal('changelogs')"
+              [routerLinkActive]="['active']"
+            >
               Actualizaciones
             </button>
           </div>
           <div>
-            <button class="dropdown-item" (click)="openModal('documentation')" [routerLinkActive]="['active']">
+            <button
+              class="dropdown-item"
+              (click)="actionClick(); openModal('documentation')"
+              [routerLinkActive]="['active']"
+            >
               Documentación
             </button>
           </div>
           <div>
-            <button class="dropdown-item" (click)="openModal('change-password')" [routerLinkActive]="['active']">
+            <button
+              class="dropdown-item"
+              (click)="actionClick(); openModal('change-password')"
+              [routerLinkActive]="['active']"
+            >
               Cambiar Contraseña
             </button>
           </div>
           <div>
-            <button class="dropdown-item" (click)="logout()" [routerLinkActive]="['active']">Cerrar Sesión</button>
+            <button class="dropdown-item" (click)="actionClick(); logout()" [routerLinkActive]="['active']">
+              Cerrar Sesión
+            </button>
           </div>
         </div>
       </li>

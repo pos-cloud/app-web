@@ -52,6 +52,51 @@ export class DateTimeModel implements NgbDateTimeStruct {
     });
   }
 
+  /** Parsea fechas tipadas en formato visible: dd/MM/yyyy, dd/MM/yyyy H:mm o con segundos. */
+  public static fromDisplayString(value: string): DateTimeModel {
+    if (!value) {
+      return null;
+    }
+
+    const match = value
+      .trim()
+      .match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?$/);
+
+    if (!match) {
+      return null;
+    }
+
+    const day = parseInt(match[1], 10);
+    const month = parseInt(match[2], 10);
+    const year = parseInt(match[3], 10);
+    const hour = match[4] !== undefined ? parseInt(match[4], 10) : 0;
+    const minute = match[5] !== undefined ? parseInt(match[5], 10) : 0;
+    const second = match[6] !== undefined ? parseInt(match[6], 10) : 0;
+
+    if (month < 1 || month > 12 || day < 1 || day > 31 || hour > 23 || minute > 59 || second > 59) {
+      return null;
+    }
+
+    const date = new Date(year, month - 1, day, hour, minute, second);
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return null;
+    }
+
+    return new DateTimeModel({
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second,
+      timeZoneOffset: date.getTimezoneOffset(),
+    });
+  }
+
   private isInteger(value: any): value is number {
     return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
   }
