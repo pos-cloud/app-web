@@ -849,6 +849,7 @@
   "transaction-types": "Tipos de Transacciones",
   "transaction._id": "Identificador Transacción",
   "transaction.cashBox.number": "Caja",
+  "transaction.company.address": "Dirección",
   "transaction.company.city": "Ciudad",
   "transaction.company.identificationValue": "Identificación de Empresa",
   "transaction.company.name": "Razón Social",
