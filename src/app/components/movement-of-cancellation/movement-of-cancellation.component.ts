@@ -338,6 +338,7 @@ export class MovementOfCancellationComponent implements OnInit {
       'company._id': { $toString: '$company._id' },
       'company.city': 1,
       'company.state.name': 1,
+      'company.name': 1,
       'company.group.description': 1,
       'type._id': { $toString: '$type._id' },
       'type.name': 1,
