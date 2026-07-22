@@ -232,90 +232,55 @@
             <ng-template ngbNavContent>
               <div [class.formal-section--inactive]="!requestArticles">
                 <form [formGroup]="addProductForm" (ngSubmit)="saveProduct()">
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">Lista de Productos</h5>
-                    <button
-                      type="button"
-                      class="btn btn-outline-primary"
-                      (click)="addProduct()"
-                      *ngIf="!showAddProductForm"
-                      [disabled]="!requestArticles"
-                    >
-                      <i class="fa fa-plus"></i> Agregar Producto
-                    </button>
-                  </div>
-
-                  <!-- Formulario inline para agregar producto -->
-                  <div
-                    *ngIf="showAddProductForm && !editingProductId && requestArticles"
-                    class="card mb-3 formal-add-product-card"
-                  >
-                    <div class="card-body formal-add-product-card__body">
-                      <div class="formal-add-product-card__head">
-                        <h6 class="formal-add-product-card__title mb-0">Agregar producto</h6>
+                  <!-- Formulario fijo para agregar producto -->
+                  <div *ngIf="!editingProductId && requestArticles" class="formal-add-bar mb-3">
+                    <div class="row align-items-end">
+                      <div class="col-12 col-md-5 form-group mb-2 mb-md-0">
+                        <label class="mb-1" for="add-product-article">Artículo</label>
+                        <app-article-searchable-dropdown
+                          [control]="addProductForm.get('article')"
+                          placeholder="Código, proveedor o descripción…"
+                          searchPlaceholder="Buscar…"
+                        />
                       </div>
-
-                      <div
-                        class="row formal-add-product-card__row formal-add-product-card__row--actions align-items-end"
-                      >
-                        <div class="col-12 col-md-6 col-lg-5 formal-add-product-field">
-                          <label class="formal-add-product-label">Artículo</label>
-                          <app-article-searchable-dropdown
-                            [control]="addProductForm.get('article')"
-                            placeholder="Código, proveedor o descripción…"
-                            searchPlaceholder="Buscar…"
-                          />
-                        </div>
-                        <div class="col-4 col-sm-3 col-md-2 col-lg-1 formal-add-product-field">
-                          <label class="formal-add-product-label" for="add-product-qty">Cantidad</label>
-                          <input
-                            id="add-product-qty"
-                            type="text"
-                            class="form-control formal-add-product-input"
-                            inputmode="decimal"
-                            autocomplete="off"
-                            numericText="decimal"
-                            formControlName="quantity"
-                          />
-                        </div>
-                        <div class="col-4 col-sm-3 col-md-2 col-lg-2 formal-add-product-field">
-                          <label class="formal-add-product-label" for="add-product-price">Precio Base</label>
-                          <input
-                            id="add-product-price"
-                            type="text"
-                            class="form-control formal-add-product-input text-right"
-                            inputmode="decimal"
-                            autocomplete="off"
-                            numericText="decimal"
-                            formControlName="basePrice"
-                          />
-                        </div>
-                        <div class="col-auto formal-add-product-field formal-add-product-actions">
-                          <label class="formal-add-product-label formal-add-product-label--spacer" aria-hidden="true"
-                            >&nbsp;</label
-                          >
-                          <div class="formal-add-product-actions__btns d-flex flex-wrap align-items-center">
-                            <button
-                              type="submit"
-                              class="btn btn-success formal-add-product-btn formal-add-product-btn--primary"
-                              [disabled]="addProductForm.invalid"
-                            >
-                              <i class="fa fa-save mr-1" aria-hidden="true"></i>
-                              Guardar
-                            </button>
-                            <button
-                              type="button"
-                              class="btn btn-outline-secondary formal-add-product-btn"
-                              (click)="cancelAddProduct()"
-                            >
-                              <i class="fa fa-times mr-1" aria-hidden="true"></i>
-                              Cancelar
-                            </button>
-                          </div>
-                        </div>
+                      <div class="col-4 col-md-2 form-group mb-2 mb-md-0">
+                        <label class="mb-1" for="add-product-qty">Cantidad</label>
+                        <input
+                          id="add-product-qty"
+                          type="text"
+                          class="form-control form-control-sm"
+                          inputmode="decimal"
+                          autocomplete="off"
+                          numericText="decimal"
+                          formControlName="quantity"
+                        />
+                      </div>
+                      <div class="col-4 col-md-2 form-group mb-2 mb-md-0">
+                        <label class="mb-1" for="add-product-price">Precio base</label>
+                        <input
+                          id="add-product-price"
+                          type="text"
+                          class="form-control form-control-sm text-right"
+                          inputmode="decimal"
+                          autocomplete="off"
+                          numericText="decimal"
+                          formControlName="basePrice"
+                        />
+                      </div>
+                      <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0">
+                        <label class="mb-1 d-none d-md-block">&nbsp;</label>
+                        <button
+                          type="submit"
+                          class="btn btn-success formal-add-bar__submit"
+                          [disabled]="addProductForm.invalid"
+                        >
+                          Agregar
+                        </button>
                       </div>
                     </div>
                   </div>
+
+                  <h6 class="formal-section-subtitle mb-2">Productos cargados</h6>
 
                   <div class="table-responsive">
                     <table class="table table-hover">
@@ -515,12 +480,93 @@
             </a>
             <ng-template ngbNavContent>
               <div [class.formal-section--inactive]="!requestPaymentMethods">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="mb-0">Métodos de Pago</h5>
-                  <button class="btn btn-outline-success" (click)="addPayment()" [disabled]="!requestPaymentMethods">
-                    Agregar Pago
-                  </button>
+                <!-- Formulario fijo para agregar pago -->
+                <div *ngIf="requestPaymentMethods" class="formal-add-bar mb-3">
+                  <form [formGroup]="addPaymentForm" (ngSubmit)="savePayment()">
+                    <div class="row align-items-end">
+                      <div class="col-12 col-md-5 form-group mb-2 mb-md-0">
+                        <label class="mb-1">Método de pago</label>
+                        <app-typeahead-dropdown
+                          [control]="addPaymentForm.controls.paymentMethod"
+                          [data]="paymentMethods"
+                          [keyField]="'_id'"
+                          [displayField]="'name'"
+                          [readonly]="!!editingPaymentId"
+                          placeholder="Buscar método de pago…"
+                        />
+                      </div>
+                      <div class="col-4 col-md-2 form-group mb-2 mb-md-0">
+                        <label class="mb-1">Monto</label>
+                        <input
+                          type="text"
+                          class="form-control form-control-sm text-right"
+                          inputmode="decimal"
+                          autocomplete="off"
+                          numericText="decimal"
+                          formControlName="amount"
+                        />
+                      </div>
+                      <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0">
+                        <label class="mb-1 d-none d-md-block">&nbsp;</label>
+                        <button
+                          type="submit"
+                          class="btn btn-success formal-add-bar__submit"
+                          [disabled]="addPaymentForm.invalid"
+                        >
+                          {{ editingPaymentId ? 'Guardar' : 'Agregar' }}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div *ngIf="paymentRequiresCheck || paymentRequiresBank" class="row mt-2 pt-2 border-top">
+                      <ng-container *ngIf="paymentRequiresCheck">
+                        <div class="col-12 mb-2"><small class="text-muted">Datos del cheque</small></div>
+                        <div class="col-12 col-md-4 form-group mb-2">
+                          <label class="mb-1">Comprobante</label>
+                          <input type="text" class="form-control form-control-sm" formControlName="comprobante" />
+                        </div>
+                        <div class="col-12 col-md-4 form-group mb-2">
+                          <label class="mb-1">Fecha de vencimiento</label>
+                          <input
+                            type="date"
+                            class="form-control form-control-sm"
+                            formControlName="expirationDate"
+                            min="2000-01-01"
+                          />
+                        </div>
+                      </ng-container>
+                      <div class="col-12 col-md-4 form-group mb-2">
+                        <label class="mb-1">Banco</label>
+                        <app-typeahead-dropdown
+                          [control]="addPaymentForm.controls.bank"
+                          [data]="banks"
+                          [keyField]="'_id'"
+                          [displayField]="'name'"
+                          placeholder="Buscar banco…"
+                        />
+                      </div>
+                      <ng-container *ngIf="paymentRequiresCheck">
+                        <div class="col-12 col-md-4 form-group mb-2">
+                          <label class="mb-1">Titular</label>
+                          <input type="text" class="form-control form-control-sm" formControlName="titular" />
+                        </div>
+                        <div class="col-12 col-md-4 form-group mb-2">
+                          <label class="mb-1">CUIT</label>
+                          <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            formControlName="cuit"
+                            maxlength="11"
+                            inputmode="numeric"
+                            placeholder="11 dígitos"
+                          />
+                        </div>
+                      </ng-container>
+                    </div>
+                  </form>
                 </div>
+
+                <h6 class="formal-section-subtitle mb-2">Pagos registrados</h6>
 
                 <div class="table-responsive">
                   <table class="table table-hover">
@@ -614,93 +660,6 @@
                       </tr>
                     </tbody>
                   </table>
-                </div>
-
-                <!-- Formulario inline para agregar pago -->
-                <div *ngIf="showAddPaymentForm && requestPaymentMethods" class="card mt-3">
-                  <div class="card-body">
-                    <form [formGroup]="addPaymentForm" (ngSubmit)="savePayment()">
-                      <h6 class="mb-3">{{ editingPaymentId ? 'Editar pago' : 'Agregar pago' }}</h6>
-                      <div class="row">
-                        <div class="col-md-6">
-                          <label class="font-weight-bold">Método de Pago</label>
-                          <app-typeahead-dropdown
-                            [control]="addPaymentForm.controls.paymentMethod"
-                            [data]="paymentMethods"
-                            [keyField]="'_id'"
-                            [displayField]="'name'"
-                            [readonly]="!!editingPaymentId"
-                            placeholder="Buscar método de pago..."
-                          />
-                        </div>
-                        <div class="col-md-4">
-                          <label class="font-weight-bold">Monto</label>
-                          <input
-                            type="text"
-                            class="form-control text-right"
-                            inputmode="decimal"
-                            autocomplete="off"
-                            numericText="decimal"
-                            formControlName="amount"
-                          />
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                          <div class="btn-group w-100">
-                            <button type="submit" class="btn btn-success" [disabled]="addPaymentForm.invalid">
-                              <i class="fa fa-save"></i> Guardar
-                            </button>
-                            <button type="button" class="btn btn-secondary" (click)="cancelAddPayment()">
-                              <i class="fa fa-times"></i> Cancelar
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div *ngIf="paymentRequiresCheck || paymentRequiresBank" class="row mt-3 pt-3 border-top">
-                        <ng-container *ngIf="paymentRequiresCheck">
-                          <div class="col-12 mb-2"><strong>Datos del cheque</strong></div>
-                          <div class="col-md-6 mb-2">
-                            <label class="font-weight-bold">Comprobante</label>
-                            <input type="text" class="form-control" formControlName="comprobante" />
-                          </div>
-                          <div class="col-md-6 mb-2">
-                            <label class="font-weight-bold">Fecha de vencimiento</label>
-                            <input type="date" class="form-control" formControlName="expirationDate" min="2000-01-01" />
-                          </div>
-                        </ng-container>
-                        <div *ngIf="paymentRequiresBank && !paymentRequiresCheck" class="col-12 mb-2">
-                          <strong>Datos del pago</strong>
-                        </div>
-                        <div class="col-md-12 mb-2">
-                          <label class="font-weight-bold">Banco</label>
-                          <app-typeahead-dropdown
-                            [control]="addPaymentForm.controls.bank"
-                            [data]="banks"
-                            [keyField]="'_id'"
-                            [displayField]="'name'"
-                            placeholder="Buscar banco..."
-                          />
-                        </div>
-                        <ng-container *ngIf="paymentRequiresCheck">
-                          <div class="col-md-6 mb-2">
-                            <label class="font-weight-bold">Titular</label>
-                            <input type="text" class="form-control" formControlName="titular" />
-                          </div>
-                          <div class="col-md-6 mb-2">
-                            <label class="font-weight-bold">CUIT</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              formControlName="cuit"
-                              maxlength="11"
-                              inputmode="numeric"
-                              placeholder="11 dígitos"
-                            />
-                          </div>
-                        </ng-container>
-                      </div>
-                    </form>
-                  </div>
                 </div>
               </div>
             </ng-template>

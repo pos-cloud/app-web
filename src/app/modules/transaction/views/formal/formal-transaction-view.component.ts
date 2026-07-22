@@ -64,11 +64,9 @@ export class FormalTransactionViewComponent implements OnInit {
   public activeTab: string = 'products';
 
   // Propiedades para agregar producto
-  public showAddProductForm: boolean = false;
   public addProductForm: FormGroup;
   public selectedArticle: any = null;
   public editingProductId: string | null = null;
-  public showAddPaymentForm: boolean = false;
   public addPaymentForm: FormGroup;
   public paymentMethods: PaymentMethod[] = [];
   public banks: Bank[] = [];
@@ -219,6 +217,7 @@ export class FormalTransactionViewComponent implements OnInit {
   ) {
     this.initAddProductForm();
     this.initAddPaymentForm();
+    this.resetAddProductForm();
   }
 
   ngOnInit(): void {
@@ -476,6 +475,9 @@ export class FormalTransactionViewComponent implements OnInit {
         },
         complete: () => {
           this.loading = false;
+          if (!this.editingPaymentId) {
+            this.resetAddPaymentForm();
+          }
         },
       });
   }
@@ -920,18 +922,22 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public cancelAddProduct(): void {
-    this.showAddProductForm = false;
-    this.addProductForm.reset();
-    this.selectedArticle = null;
+    this.resetAddProductForm();
     this.editingProductId = null;
   }
 
-  public addPayment(): void {
-    if (!this.requestPaymentMethods) {
-      return;
-    }
-    this.editingPaymentId = null;
-    this.showAddPaymentForm = true;
+  private resetAddProductForm(): void {
+    this.addProductForm.reset();
+    this.addProductForm.patchValue({
+      quantity: 1,
+      unitPrice: null,
+      basePrice: null,
+      discountRate: null,
+    });
+    this.selectedArticle = null;
+  }
+
+  private resetAddPaymentForm(): void {
     this.addPaymentForm.reset({
       paymentMethod: null,
       amount: this.suggestedNewPaymentAmount,
@@ -944,21 +950,6 @@ export class FormalTransactionViewComponent implements OnInit {
     });
     this.selectedPaymentMethod = null;
     this.syncPaymentCheckValidators();
-  }
-
-  public addProduct(): void {
-    if (!this.requestArticles) {
-      return;
-    }
-    this.editingProductId = null;
-    this.showAddProductForm = true;
-    this.addProductForm.reset();
-    this.addProductForm.patchValue({
-      quantity: 1,
-      unitPrice: null,
-      basePrice: null,
-      discountRate: null,
-    });
   }
 
   public savePayment(): void {
@@ -1029,7 +1020,7 @@ export class FormalTransactionViewComponent implements OnInit {
               message: 'Pago actualizado exitosamente',
               type: 'success',
             });
-            this.showAddPaymentForm = false;
+            this.resetAddPaymentForm();
             this.editingPaymentId = null;
           } else {
             this.toastService.showToast({
@@ -1093,7 +1084,7 @@ export class FormalTransactionViewComponent implements OnInit {
             message: 'Pago agregado exitosamente',
             type: 'success',
           });
-          this.showAddPaymentForm = false;
+          this.resetAddPaymentForm();
           this.editingPaymentId = null;
         } else {
           this.toastService.showToast({
@@ -1153,7 +1144,7 @@ export class FormalTransactionViewComponent implements OnInit {
                 message: 'Producto actualizado exitosamente',
                 type: 'success',
               });
-              this.showAddProductForm = false;
+              this.resetAddProductForm();
               this.editingProductId = null;
               this.refresh();
             }
@@ -1184,7 +1175,7 @@ export class FormalTransactionViewComponent implements OnInit {
               message: 'Producto agregado exitosamente',
               type: 'success',
             });
-            this.showAddProductForm = false;
+            this.resetAddProductForm();
             this.editingProductId = null;
             this.refresh();
           }
@@ -1206,20 +1197,8 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public cancelAddPayment(): void {
-    this.showAddPaymentForm = false;
-    this.addPaymentForm.reset({
-      paymentMethod: null,
-      amount: null,
-      comprobante: '',
-      expirationDate: '',
-      bank: null,
-      titular: '',
-      cuit: '',
-      quota: 1,
-    });
-    this.selectedPaymentMethod = null;
+    this.resetAddPaymentForm();
     this.editingPaymentId = null;
-    this.syncPaymentCheckValidators();
   }
 
   public editProduct(movement: MovementOfArticle): void {
@@ -1227,7 +1206,6 @@ export class FormalTransactionViewComponent implements OnInit {
       return;
     }
     this.editingProductId = movement._id;
-    this.showAddProductForm = false;
     this.selectedArticle = (movement.article as any)?._id ? movement.article : null;
 
     this.addProductForm.patchValue({
@@ -1244,7 +1222,6 @@ export class FormalTransactionViewComponent implements OnInit {
       return;
     }
     this.editingPaymentId = movement._id;
-    this.showAddPaymentForm = true;
     this.selectedPaymentMethod =
       this.paymentMethods.find((method) => method._id.toString() === movement.type?._id?.toString()) ||
       this.paymentMethods.find((method) => method._id.toString() === movement.type._id.toString()) ||
