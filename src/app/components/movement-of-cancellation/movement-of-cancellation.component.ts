@@ -18,12 +18,13 @@ import { CancellationType } from 'app/components/cancellation-type/cancellation-
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { Taxes } from 'app/components/tax/taxes';
-import { CompanyService } from 'app/core/services/company.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ArticleService } from '../../core/services/article.service';
 import { ViewTransactionComponent } from '../../modules/transaction/components/view-transaction/view-transaction.component';
 import { Article } from '../article/article';
@@ -47,6 +48,7 @@ export class MovementOfCancellationComponent implements OnInit {
   @Input() movementsOfCancellations: MovementOfCancellation[] = new Array();
   @Input() movementsOfCashes: MovementOfCash[] = new Array();
   focusEvent = new EventEmitter<boolean>();
+  private destroy$ = new Subject<void>();
   movsOfArticles: MovementOfArticle[] = new Array();
   transactionDestination: Transaction;
   requestCompany: boolean = false;
@@ -87,7 +89,6 @@ export class MovementOfCancellationComponent implements OnInit {
     private _cancellationTypeService: CancellationTypeService,
     private _movementOfCancellation: MovementOfCancellationService,
     private _transactionService: TransactionService,
-    private _companyService: CompanyService,
     private _movementOfCashService: MovementOfCashService,
     private _movementOfArticleService: MovementOfArticleService,
     private _movementOfCancellationService: MovementOfCancellationService,
@@ -201,14 +202,15 @@ export class MovementOfCancellationComponent implements OnInit {
     return new Promise<Transaction>((resolve, reject) => {
       this.loading = true;
 
-      this._transactionService.getTransaction(transactionId).subscribe(
+      this._transactionService.getById(transactionId).subscribe(
         (result) => {
-          if (!result.transaction) {
+          if (!result.result && !result.result.length) {
             this.totalItems = 0;
+            this.loading = false;
             resolve(null);
           } else {
             this.loading = false;
-            resolve(result.transaction);
+            resolve(result.result);
           }
         },
         (error) => {
@@ -225,48 +227,49 @@ export class MovementOfCancellationComponent implements OnInit {
     this.loading = true;
 
     // CAMPOS A TRAER
-    let project = {
-      'origin._id': 1,
-      'origin.type': 1,
-      'destination._id': 1,
-      operationType: 1,
-      automaticSelection: 1,
-      modifyBalance: 1,
-      requestCompany: 1,
-      stateOrigin: 1,
-      updatePrices: 1,
-      requestStatusOrigin: 1,
+    let query = {
+      project: {
+        'origin._id': 1,
+        'origin.type': 1,
+        'destination._id': 1,
+        operationType: 1,
+        automaticSelection: 1,
+        modifyBalance: 1,
+        requestCompany: 1,
+        stateOrigin: 1,
+        updatePrices: 1,
+        requestStatusOrigin: 1,
+      },
+      match: {
+        'destination._id': { $oid: this.transactionDestination.type._id },
+        origin: { $exists: true },
+        operationType: { $ne: 'D' },
+      },
+      sort: {},
+      group: {},
+      limit: 0,
     };
-
     this._cancellationTypeService
-      .getCancellationTypes(
-        project, // PROJECT
-        {
-          'destination._id': { $oid: this.transactionDestination.type._id },
-          origin: { $exists: true },
-          operationType: { $ne: 'D' },
-        }, // MATCH
-        {}, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
-      .subscribe(
-        (result) => {
-          if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
-            this.cancellationTypes = result.cancellationTypes;
+      .getAll(query)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this.loading = false;
+          if (result.result && result.result.length > 0) {
+            this.cancellationTypes = result.result;
             this.getTransactions();
           } else {
             this.totalItems = 0;
           }
-          this.loading = false;
         },
-        (error) => {
+        error: (error) => {
           this._toastService.showToast(error);
           this.totalItems = 0;
+        },
+        complete: () => {
           this.loading = false;
-        }
-      );
+        },
+      });
   }
 
   async getTransactions() {
@@ -319,53 +322,47 @@ export class MovementOfCancellationComponent implements OnInit {
     }
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = {
-      _id: 1,
-      endDate: {
-        $dateToString: {
-          date: '$endDate',
-          format: '%d/%m/%Y',
-          timezone: timezone,
+    let query = {
+      project: {
+        _id: 1,
+        endDate: {
+          $dateToString: {
+            date: '$endDate',
+            format: '%d/%m/%Y',
+            timezone: timezone,
+          },
         },
+        number: { $toString: '$number' },
+        letter: 1,
+        state: 1,
+        totalPrice: 1,
+        balance: 1,
+        balanceSelected: '$balance',
+        operationType: 1,
+        'company._id': { $toString: '$company._id' },
+        'company.city': 1,
+        'company.state.name': 1,
+        'company.name': 1,
+        'company.group.description': 1,
+        'type._id': { $toString: '$type._id' },
+        'type.name': 1,
+        'type.requestArticles': 1,
+        'type.requestPaymentMethods': 1,
+        'type.movement': 1,
       },
-      number: { $toString: '$number' },
-      letter: 1,
-      state: 1,
-      totalPrice: 1,
-      balance: 1,
-      balanceSelected: '$balance',
-      operationType: 1,
-      'company._id': { $toString: '$company._id' },
-      'company.city': 1,
-      'company.state.name': 1,
-      'company.name': 1,
-      'company.group.description': 1,
-      'type._id': { $toString: '$type._id' },
-      'type.name': 1,
-      'type.requestArticles': 1,
-      'type.requestPaymentMethods': 1,
-      'type.movement': 1,
+      match: match,
+      sort: sortAux,
     };
 
     this._transactionService
-      .getTransactionsV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        {
-          _id: null,
-          count: { $sum: 1 },
-          transactions: { $push: '$$ROOT' },
-        }, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
-      .subscribe(
-        async (result) => {
+      .getAll(query)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: async (result: ApiResponse) => {
           this.loading = false;
-          if (result && result.length > 0 && result[0].transactions) {
-            this.transactions = result[0].transactions;
-            this.totalItems = result[0].count;
+          if (result.result && result.result.length > 0) {
+            this.transactions = result.result;
+            this.totalItems = result.result.length;
             if (this.transactions.length > 0) {
               for (let transaction of this.transactions) {
                 if (!transaction.type.requestArticles && transaction.type.requestPaymentMethods) {
@@ -418,78 +415,88 @@ export class MovementOfCancellationComponent implements OnInit {
             this.totalItems = 0;
           }
         },
-        (error) => {
+        error: (error) => {
           this._toastService.showToast(error);
-          this.loading = false;
           this.totalItems = 0;
-        }
-      );
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   getMovementsOfCashes(query: string): Promise<MovementOfCash[]> {
     return new Promise<MovementOfCash[]>((resolve, reject) => {
       this.loading = true;
-      this._movementOfCashService.getMovementsOfCashes(query).subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.movementsOfCashes) {
+      this._movementOfCashService
+        .getAll(query)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this.loading = false;
+            if (!result.result && !result.result.length) {
+              resolve(null);
+            } else {
+              resolve(result.result);
+            }
+          },
+          error: (error) => {
+            this.loading = false;
             resolve(null);
-          } else {
-            resolve(result.movementsOfCashes);
-          }
-        },
-        (error) => {
-          this.loading = false;
-          resolve(null);
-        }
-      );
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
     });
   }
 
   getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
+    let query = {
+      project: {
+        _id: 0,
+        'transactionOrigin._id': 1,
+        'transactionDestination._id': 1,
+        'transactionDestination.type.groupsArticles': 1,
+        balance: 1,
+        operationType: 1,
+        'transactionOrigin.type.name': 1,
+        'transactionOrigin.type.movement': 1,
+        'transactionOrigin.type.transactionMovement': 1,
+        'transactionOrigin.type.electronics': 1,
+        'transactionOrigin.number': 1,
+        'transactionOrigin.operationType': 1,
+        'transactionOrigin.balance': 1,
+      }, // PROJECT
+      match: {
+        'transactionDestination._id': {
+          $oid: this.transactionDestination._id,
+        },
+        operationType: { $ne: 'D' },
+        'transactionOrigin.operationType': { $ne: 'D' },
+      }, // MATCH
+    };
     return new Promise<MovementOfCancellation[]>((resolve, reject) => {
       this._movementOfCancellationService
-        .getMovementsOfCancellations(
-          {
-            _id: 0,
-            'transactionOrigin._id': 1,
-            'transactionDestination._id': 1,
-            'transactionDestination.type.groupsArticles': 1,
-            balance: 1,
-            operationType: 1,
-            'transactionOrigin.type.name': 1,
-            'transactionOrigin.type.movement': 1,
-            'transactionOrigin.type.transactionMovement': 1,
-            'transactionOrigin.type.electronics': 1,
-            'transactionOrigin.number': 1,
-            'transactionOrigin.operationType': 1,
-            'transactionOrigin.balance': 1,
-          }, // PROJECT
-          {
-            'transactionDestination._id': {
-              $oid: this.transactionDestination._id,
-            },
-            operationType: { $ne: 'D' },
-            'transactionOrigin.operationType': { $ne: 'D' },
-          }, // MATCH
-          {}, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
-              resolve(result.movementsOfCancellations);
-            } else {
+        .getAll(query)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this.loading = false;
+            if (!result.result && !result.result.length) {
               resolve(null);
+            } else {
+              resolve(result.result);
             }
           },
-          (error) => {
-            this._toastService.showToast(error);
+          error: (error) => {
+            this.loading = false;
             resolve(null);
-          }
-        );
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
     });
   }
 
@@ -694,13 +701,26 @@ export class MovementOfCancellationComponent implements OnInit {
         operationType: 1,
         balanceCanceled: 1,
       };
-      this._movementOfCashService.getMovementsOfCashesV2(project, match, sortAux, {}, 0, 0).subscribe(
-        (res) => {
-          this.loading = false;
-          res.movementsOfCashes ? resolve(res.movementsOfCashes) : resolve([]);
-        },
-        (error) => reject(error)
-      );
+      this._movementOfCashService
+        .getAll({ project, match })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: ApiResponse) => {
+            this.loading = false;
+            if (!res.result && !res.result.length) {
+              resolve(null);
+            } else {
+              resolve(res.result);
+            }
+          },
+          error: (error) => {
+            this.loading = false;
+            resolve(null);
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
     });
   }
 
@@ -1112,20 +1132,26 @@ export class MovementOfCancellationComponent implements OnInit {
   public updateTransaction(transaction: Transaction, status: TransactionState): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       transaction.state = status;
-      this._transactionService.update(transaction).subscribe(
-        (result: ApiResponse) => {
-          if (result.status === 200) {
-            resolve(result.result);
-          } else {
-            this._toastService.showToast(result);
-            reject(result);
-          }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          reject(error);
-        }
-      );
+      this._transactionService
+        .update(transaction)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this.loading = false;
+            if (!result.result) {
+              resolve(null);
+            } else {
+              resolve(result.result);
+            }
+          },
+          error: (error) => {
+            this.loading = false;
+            resolve(null);
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
     });
   }
 
