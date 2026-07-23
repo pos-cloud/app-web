@@ -22,7 +22,7 @@ import { HolidayService } from 'app/core/services/holiday.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs/operators';
 import Keyboard from 'simple-keyboard';
 
 import { Movements } from '@types';
@@ -57,7 +57,7 @@ export class AddMovementOfCashComponent implements OnInit {
   @Input() fastPayment: PaymentMethod;
   movementOfCash: MovementOfCash;
   movementsOfCashes: MovementOfCash[];
-  movementsOfCashesToFinance: MovementOfCash[];
+  movementsOfCashesToFinance: MovementOfCash[] = [];
   paymentMethods: PaymentMethod[];
   paymentMethodSelected: PaymentMethod;
   movementOfCashForm: UntypedFormGroup;
@@ -94,6 +94,7 @@ export class AddMovementOfCashComponent implements OnInit {
   currencyNative: Currency = Config.currency;
   quotationNative: number = 0;
   quotationAmount: number = 0;
+  destroy$ = new Subject<void>();
 
   formErrors = {
     paymentMethod: '',
@@ -516,10 +517,16 @@ export class AddMovementOfCashComponent implements OnInit {
               mov.capital = this.roundNumber.transform(amountToPayTemp / this.quotas);
               mov.amountPaid = this.roundNumber.transform(mov.capital + mov.interestAmount + mov.taxAmount);
               amountTotal += mov.amountPaid;
+              this.totalInterestAmount += mov.interestAmount;
+              this.totalTaxAmount += mov.taxAmount;
               if (i === this.quotas - 1) {
-                if (amountTotal !== amountToPayTemp + this.totalInterestAmount + this.totalTaxAmount) {
+                const expectedTotal = this.roundNumber.transform(
+                  amountToPayTemp + this.totalInterestAmount + this.totalTaxAmount
+                );
+                amountTotal = this.roundNumber.transform(amountTotal);
+                if (amountTotal !== expectedTotal) {
                   mov.amountPaid = this.roundNumber.transform(
-                    mov.amountPaid - (amountTotal - (amountToPayTemp + this.totalInterestAmount + this.totalTaxAmount))
+                    mov.amountPaid - (amountTotal - expectedTotal)
                   );
                 }
               }
@@ -551,6 +558,8 @@ export class AddMovementOfCashComponent implements OnInit {
               mov.amountPaid = this.roundNumber.transform(mov.amountPaid);
               amountTotal += mov.amountPaid;
               amountTotal = this.roundNumber.transform(amountTotal);
+              this.totalInterestAmount += mov.interestAmount;
+              this.totalTaxAmount += mov.taxAmount;
               break;
             default:
               mov.interestAmount = this.roundNumber.transform(
@@ -562,17 +571,21 @@ export class AddMovementOfCashComponent implements OnInit {
               mov.capital = this.roundNumber.transform(amountToPayTemp / this.quotas);
               mov.amountPaid = this.roundNumber.transform(mov.capital + mov.interestAmount + mov.taxAmount);
               amountTotal += mov.amountPaid;
+              this.totalInterestAmount += mov.interestAmount;
+              this.totalTaxAmount += mov.taxAmount;
               if (i === this.quotas - 1) {
-                if (amountTotal !== amountToPayTemp + this.totalInterestAmount + this.totalTaxAmount) {
+                const expectedTotal = this.roundNumber.transform(
+                  amountToPayTemp + this.totalInterestAmount + this.totalTaxAmount
+                );
+                amountTotal = this.roundNumber.transform(amountTotal);
+                if (amountTotal !== expectedTotal) {
                   mov.amountPaid = this.roundNumber.transform(
-                    mov.amountPaid - (amountTotal - (amountToPayTemp + this.totalInterestAmount + this.totalTaxAmount))
+                    mov.amountPaid - (amountTotal - expectedTotal)
                   );
                 }
               }
               break;
           }
-          this.totalInterestAmount += mov.interestAmount;
-          this.totalTaxAmount += mov.taxAmount;
           this.totalInterestAmount = this.roundNumber.transform(this.totalInterestAmount);
           this.totalTaxAmount = this.roundNumber.transform(this.totalTaxAmount);
           this.movementsOfCashesToFinance.push(mov);
@@ -1674,21 +1687,21 @@ export class AddMovementOfCashComponent implements OnInit {
                 }
               }
             } else {
-              if (this.totalInterestAmount + this.totalTaxAmount > 0 && this.transaction.totalPrice !== 0) {
-                this.transaction.totalPrice += this.totalInterestAmount + this.totalTaxAmount;
-                this.transaction = await this.updateTransaction();
-              }
               let paid = 0;
               for (let mov of this.movementsOfCashesToFinance) {
                 mov.expirationDate = moment(mov.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
                 paid += mov.amountPaid;
               }
 
-              if (paid != this.transaction.totalPrice) {
-                this.amountDiscount = paid - this.transaction.totalPrice;
+              paid = this.roundNumber.transform(paid);
+              const originalTotalPrice = this.roundNumber.transform(this.transaction.totalPrice);
+              const amountDifference = this.roundNumber.transform(paid - originalTotalPrice);
+
+              if (amountDifference !== 0 && originalTotalPrice !== 0) {
+                this.amountDiscount = amountDifference;
                 this.transaction.totalPrice = paid;
                 this.transaction = await this.updateTransaction();
-                this.addMovementOfArticle();
+                await this.addMovementOfArticle();
               }
               let movementsOfCashes: MovementOfCash[] = await this.saveMovementsOfCashes();
 
@@ -1794,24 +1807,26 @@ export class AddMovementOfCashComponent implements OnInit {
 
   saveMovementsOfCashes(): Promise<MovementOfCash[]> {
     return new Promise<MovementOfCash[]>((resolve, reject) => {
-      this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashesToFinance).subscribe(
-        (result) => {
-          if (!result.movementsOfCashes) {
-            if (result.message && result.message !== '')
-              this._toastService.showToast({
-                type: 'info',
-                message: result.message,
-              });
-            resolve(null);
-          } else {
-            resolve(result.movementsOfCashes);
-          }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          resolve(null);
-        }
-      );
+      this._movementOfCashService
+        .saveMovementsOfCashes(this.movementsOfCashesToFinance)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            if (result.result) {
+              resolve(result.result);
+            } else {
+              this._toastService.showToast(result);
+              reject(result);
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+            reject(error);
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
     });
   }
 
@@ -1819,7 +1834,10 @@ export class AddMovementOfCashComponent implements OnInit {
     try {
       let movementOfArticle = new MovementOfArticle();
 
-      if (this.paymentMethodSelected.surcharge && this.paymentMethodSelected.surcharge > 0) {
+      if (
+        (this.paymentMethodSelected.surcharge && this.paymentMethodSelected.surcharge > 0) ||
+        this.totalInterestAmount + this.totalTaxAmount > 0
+      ) {
         movementOfArticle.description = 'Pago con ' + this.paymentMethodSelected.name;
       } else if (this.paymentMethodSelected.discount && this.paymentMethodSelected.discount > 0) {
         movementOfArticle.description = 'Pago con ' + this.paymentMethodSelected.name;
@@ -1834,7 +1852,10 @@ export class AddMovementOfCashComponent implements OnInit {
       movementOfArticle.modifyStock = this.transaction.type.modifyStock;
       movementOfArticle.stockMovement = this.transaction.type.stockMovement;
       movementOfArticle.isGeneratedByPayment = true;
-      if (this.paymentMethodSelected.surcharge > 0 && this.paymentMethodSelected.surchargeArticle) {
+      if (
+        this.paymentMethodSelected.surchargeArticle &&
+        (this.paymentMethodSelected.surcharge > 0 || this.totalInterestAmount + this.totalTaxAmount > 0)
+      ) {
         movementOfArticle.article = this.paymentMethodSelected.surchargeArticle;
       } else if (this.paymentMethodSelected.discount > 0 && this.paymentMethodSelected.discountArticle) {
         movementOfArticle.article = this.paymentMethodSelected.discountArticle;
@@ -1939,14 +1960,27 @@ export class AddMovementOfCashComponent implements OnInit {
 
   saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
     return new Promise<MovementOfArticle>((resolve, reject) => {
-      this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
-        (result) => {
-          if (result.movementOfArticle) {
-            resolve(result.movementOfArticle);
-          } else reject(result);
-        },
-        (error) => reject(error)
-      );
+      this._movementOfArticleService
+        .saveMovementOfArticle(movementOfArticle)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: ApiResponse) => {
+            this.loading = false;
+            if (result.result) {
+              resolve(result.result);
+            } else {
+              this._toastService.showToast(result);
+              reject(result);
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+            reject(error);
+          },
+          complete: () => {
+            this.loading = false;
+          },
+        });
     });
   }
 
