@@ -8,11 +8,11 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { IAttribute } from '@types';
 import { Config } from 'app/app.config';
-import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
-import { ExportExcelModule } from 'app/shared/components/export-excel/export-excel.module';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { ColumnsConfigComponent } from 'app/shared/components/columns-config/columns-config.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
+import { ExportExcelModule } from 'app/shared/components/export-excel/export-excel.module';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
@@ -118,6 +118,16 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       datatype: 'string',
       project: null,
       align: 'center',
+      required: false,
+    },
+    {
+      name: 'transaction.company.address',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: `{"$trim":{"input":{"$concat":[{"$ifNull":["$transaction.company.address",""]}," ",{"$ifNull":["$transaction.company.addressNumber",""]}]}}}`,
+      align: 'left',
       required: false,
     },
     {
@@ -573,7 +583,6 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       disabled: false,
       filter: false,
       datatype: 'date',
-      defaultFilter: null,
       project: null,
       align: 'left',
       required: false,
@@ -584,7 +593,6 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       disabled: false,
       filter: false,
       datatype: 'date',
-      defaultFilter: null,
       project: null,
       align: 'left',
       required: false,
