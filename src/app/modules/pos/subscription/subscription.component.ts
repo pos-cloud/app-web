@@ -1,11 +1,13 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@core/services/auth.service';
 import { DatatableService } from '@core/services/datatable.service';
 import { TransactionService } from '@core/services/transaction.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { ExportExcelComponent } from '@shared/components/export-excel/export-excel.component';
+import { ExportExcelModule } from '@shared/components/export-excel/export-excel.module';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { DateFormatPipe } from '@shared/pipes/date-format.pipe';
@@ -26,10 +28,22 @@ import { attributes } from './attributes-subscription';
   styleUrls: ['./subscription.component.scss'],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, NgbModule, DatatableModule, PipesModule, TranslateModule, FormsModule, ProgressbarModule],
+  imports: [
+    CommonModule,
+    NgbModule,
+    DatatableModule,
+    PipesModule,
+    TranslateModule,
+    FormsModule,
+    ProgressbarModule,
+    ExportExcelModule,
+  ],
 })
 export class SubscriptionComponent implements OnInit {
+  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
+
   public loading: boolean = false;
+  public title: string = 'Suscripciones Abiertas';
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
   public datePipe = new DateFormatPipe();
   private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
@@ -74,6 +88,11 @@ export class SubscriptionComponent implements OnInit {
     this.destroy$.next();
     this.destroy$.complete();
     this.subscription.unsubscribe();
+  }
+
+  public exportItems(): void {
+    this.exportExcelComponent.items = this.transactions;
+    this.exportExcelComponent.export();
   }
 
   public async getItems() {
