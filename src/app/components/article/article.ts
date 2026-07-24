@@ -143,6 +143,9 @@ export enum Type {
   Final = <any>'Final',
   Variant = <any>'Variante',
   Ingredient = <any>'Ingrediente',
+  RawMaterial = <any>'Materia Prima',
+  SemiFinished = <any>'Semielaborado',
+  Service = <any>'Servicio',
 }
 
 export let attributesVariant = [
