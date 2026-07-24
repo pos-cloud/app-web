@@ -80,6 +80,7 @@ export class MovementOfCancellationComponent implements OnInit {
     'company._id',
     'company.city',
     'company.state.name',
+    'company.name',
     'company.group.description',
   ];
 
