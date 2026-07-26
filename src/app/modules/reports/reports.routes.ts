@@ -10,6 +10,11 @@ export const REPORTS_ROUTES: Routes = [
     loadComponent: () => import('./subscription/subscription.component').then((m) => m.SubscriptionComponent),
   },
   {
+    path: 'active-members',
+    loadComponent: () =>
+      import('./active-members/active-members.component').then((m) => m.ActiveMembersComponent),
+  },
+  {
     path: 'mov-art-by-article/:module',
     loadComponent: () =>
       import('./mov-art-by-article/mov-art-by-article.component').then((m) => m.ReportMovArtByArticleComponent),

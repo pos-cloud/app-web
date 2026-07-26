@@ -1,0 +1,161 @@
+.active-members-report {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.active-members-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.active-members-title {
+  font-weight: 600;
+  color: #333;
+}
+
+.active-members-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.active-members-report .kpi {
+  text-align: center;
+  padding: 10px 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.active-members-report .kpi-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.active-members-report .kpi-title {
+  font-size: 0.75rem;
+  color: #777;
+  margin-top: 4px;
+}
+
+.active-members-report .kpi-danger {
+  border-color: #c62828;
+  background-color: #fff5f5;
+}
+
+.active-members-report .kpi-danger .kpi-value {
+  color: #c62828;
+}
+
+.search-group {
+  margin-bottom: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  color: #777;
+  padding: 24px 8px;
+}
+
+.members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.member-card--inactive {
+  border-color: #e57373;
+  background: #fff8f8;
+}
+
+.member-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.member-card__name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.member-card__meta {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.member-badge {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.member-badge--inactive {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.member-card__status {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.member-card__debt {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f0c0c0;
+}
+
+.debt-item {
+  text-align: center;
+}
+
+.debt-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.debt-value {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #c62828;
+}
+
+@media (min-width: 576px) {
+  .active-members-report .kpi-value {
+    font-size: 1.5rem;
+  }
+}

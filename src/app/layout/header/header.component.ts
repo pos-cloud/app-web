@@ -225,6 +225,13 @@ export class HeaderComponent implements OnInit {
         },
         { label: 'Contable', children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }] },
         {
+          label: 'Suscripción',
+          children: [
+            { label: 'Dashboard', link: 'reports/subscription' },
+            { label: 'Socios activos', link: 'reports/active-members' },
+          ],
+        },
+        {
           label: 'Otros',
           children: [{ label: 'Cumpleaños', link: 'admin/cumpleaños' }],
         },
@@ -733,11 +740,17 @@ export class HeaderComponent implements OnInit {
               ],
             },
             {
+              label: 'Suscripción',
+              children: [
+                { label: 'Dashboard', link: 'reports/subscription' },
+                { label: 'Socios activos', link: 'reports/active-members' },
+              ],
+            },
+            {
               label: 'Otros',
               children: [
                 { label: 'Cumpleaños', link: 'reports/birthday' },
                 { label: 'Dashboard', link: 'reports/dashboard' },
-                { label: 'Dashboard Suscripciones', link: 'reports/subscription' },
                 { label: 'Kardex de método de pago', link: 'reports/payment-methods' },
                 { label: 'Historial por cliente', link: 'reports/mov-art-by-company' },
               ],

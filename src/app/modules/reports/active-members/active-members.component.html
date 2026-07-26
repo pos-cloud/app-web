@@ -1,0 +1,85 @@
+<section class="container-fluid active-members-report">
+  <div class="active-members-header">
+    <h4 class="active-members-title mb-0">Socios activos</h4>
+    <button type="button" class="btn btn-primary btn-sm" (click)="getReport()" [disabled]="loading">
+      <i [ngClass]="{ 'fa fa-refresh': true, 'fa-spin': loading }"></i>
+      Actualizar
+    </button>
+  </div>
+
+  <div class="active-members-kpis" *ngIf="!loading || data.length">
+    <div class="kpi">
+      <div class="kpi-value">{{ totals.members ?? data.length }}</div>
+      <div class="kpi-title">Socios</div>
+    </div>
+    <div class="kpi kpi-danger">
+      <div class="kpi-value">{{ totals.inactiveCount ?? 0 }}</div>
+      <div class="kpi-title">Inactivos</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value">${{ totals.totalDebtFormatted ?? '0' }}</div>
+      <div class="kpi-title">Deuda total</div>
+    </div>
+  </div>
+
+  <div class="form-group search-group">
+    <label for="search-member" class="control-label"><b>Buscar socio</b></label>
+    <input
+      id="search-member"
+      type="search"
+      class="form-control"
+      name="search"
+      placeholder="Nombre, documento o teléfono"
+      [(ngModel)]="search"
+      (ngModelChange)="applyFilter()"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="text-center py-4" *ngIf="loading">
+    <i class="fa fa-spinner fa-spin fa-2x"></i>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && filteredData.length === 0">
+    No hay socios para mostrar.
+  </div>
+
+  <div class="members-list" *ngIf="!loading && filteredData.length">
+    <article
+      class="member-card"
+      *ngFor="let row of filteredData"
+      [class.member-card--inactive]="isInactive(row)"
+    >
+      <div class="member-card__top">
+        <div class="member-card__identity">
+          <h5 class="member-card__name">{{ row.name }}</h5>
+          <p class="member-card__meta" *ngIf="row.identificationValue || row.phones">
+            <span *ngIf="row.identificationValue">{{ row.identificationValue }}</span>
+            <span *ngIf="row.identificationValue && row.phones"> · </span>
+            <span *ngIf="row.phones">{{ row.phones }}</span>
+          </p>
+        </div>
+        <span class="member-badge" [class.member-badge--inactive]="isInactive(row)">
+          {{ row.status }}
+        </span>
+      </div>
+
+      <div class="member-card__status" *ngIf="!isInactive(row)">Al día</div>
+
+      <div class="member-card__debt" *ngIf="isInactive(row)">
+        <div class="debt-item">
+          <span class="debt-label">Deuda</span>
+          <span class="debt-value">${{ row.debtFormatted }}</span>
+        </div>
+        <div class="debt-item">
+          <span class="debt-label">Pendientes</span>
+          <span class="debt-value">{{ row.pendingCount }}</span>
+        </div>
+        <div class="debt-item">
+          <span class="debt-label">Meses</span>
+          <span class="debt-value">{{ row.monthsOwed }}</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
