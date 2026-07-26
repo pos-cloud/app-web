@@ -21,28 +21,20 @@ import { Article, Type } from '../article';
 
 import { ArticleService } from '../../../core/services/article.service';
 
-import {
-  ApiResponse,
-  Category,
-  CompanyType,
-  PriceList,
-  StockMovement,
-  Structure,
-  TransactionMovement,
-  User,
-  Utilization,
-} from '@types';
+import { ApiResponse, Category, CompanyType, PriceList, Structure, Utilization } from '@types';
 import { Tax } from 'app/components/tax/tax';
+import { User } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
-import { PriceListArticleService } from 'app/core/services/price-list-article.service';
 import { PriceListService } from 'app/core/services/price-list.service';
+import { PriceListArticleService } from 'app/core/services/price-list-article.service';
 import { StructureService } from 'app/core/services/structure.service';
 import { TaxService } from 'app/core/services/tax.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { FilterPipe } from 'app/shared/pipes/filter.pipe';
 import { first } from 'rxjs/operators';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
+import { StockMovement, TransactionMovement } from '@types';
 
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
@@ -86,7 +78,6 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   discountCompanyGroup: number = 0;
   /** Precios fijos por artículo para lista manual (clave: articleId). */
   private manualPricesByArticleMap: Record<string, number> = {};
-  private readonly variantType = Type.Variant.toString();
 
   constructor(
     private _articleService: ArticleService,
@@ -196,7 +187,9 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
           if (Array.isArray(itemsCandidate)) {
             for (const it of itemsCandidate) {
               const artId =
-                (typeof it.article === 'string' ? it.article : it.article?._id) || it.articleId || it.article_id;
+                (typeof it.article === 'string' ? it.article : it.article?._id) ||
+                it.articleId ||
+                it.article_id;
               if (artId != null && it?.price != null && !isNaN(Number(it.price))) {
                 map[String(artId)] = Number(it.price);
               }
@@ -229,7 +222,8 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         it.price_list_id;
       if (String(plId || '') !== String(priceListId)) continue;
 
-      const artId = (typeof it.article === 'string' ? it.article : it.article?._id) || it.articleId || it.article_id;
+      const artId =
+        (typeof it.article === 'string' ? it.article : it.article?._id) || it.articleId || it.article_id;
       if (artId != null && it?.price != null && !isNaN(Number(it.price))) {
         this.manualPricesByArticleMap[String(artId)] = Number(it.price);
       }
@@ -276,10 +270,12 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   public getArticles(): void {
     this.loading = true;
 
-    const match: Record<string, unknown> = {
-      type: { $nin: [this.variantType] },
-      operationType: { $ne: 'D' },
-    };
+    let match = {};
+
+    match['$or'] = new Array();
+    match['$or'].push({ type: Type.Final });
+    match['$or'].push({ type: Type.Variant });
+    match['operationType'] = { $ne: 'D' };
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
@@ -374,9 +370,10 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
 
     if (this.priceList && (this.priceList as any).pricingMode === 'manual') {
       let price =
-        this.manualPricesByArticleMap[article._id] != null && !isNaN(Number(this.manualPricesByArticleMap[article._id]))
+        this.manualPricesByArticleMap[article._id] != null &&
+        !isNaN(Number(this.manualPricesByArticleMap[article._id]))
           ? Number(this.manualPricesByArticleMap[article._id])
-          : (article.salePrice ?? 0);
+          : article.salePrice ?? 0;
 
       if (article.currency && Config.currency && Config.currency._id !== article.currency._id) {
         return this.roundNumber.transform(price * quotation);
@@ -858,7 +855,6 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         isCodePrefix = true;
       }
     }
-
     // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
     if (article) {
       // CORTAMOS EL CÓDIGO SI MANDA CANTIDAD *
@@ -868,9 +864,8 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
       }
       await this.getStructureForStock(article, amount);
     } else if (category) {
-      this.filteredArticles = this.excludeVariants(
-        this.filterPipe.transform(this.articles, category._id, 'category')
-      );
+      this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
+      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
       if (this.filterArticle && this.filterArticle !== '') {
         this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
       }
@@ -887,7 +882,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         } else if (this.filteredArticles.length > 1) {
           count = 0;
           for (let art of this.filteredArticles) {
-            if (art.type?.toString() !== this.variantType) {
+            if (art.type === Type.Final) {
               if (
                 isCodePrefix &&
                 this.padNumber(art.code, this.config.tradeBalance.numberOfCode) ===
@@ -966,11 +961,11 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
             await this.getStructureForStock(article);
           }
         } else {
-          this.filteredArticles = this.excludeVariants(this.filteredArticles);
+          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
           this.eventAddItem.emit(null);
         }
       } else {
-        this.filteredArticles = this.excludeVariants(this.filteredArticles);
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
         this._toastService.showToast({
           type: 'warning',
           message: 'No se encontro ningun producto.',
@@ -979,13 +974,10 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         this.eventAddItem.emit(null);
       }
     } else {
-      this.filteredArticles = this.excludeVariants(this.articles);
+      // Sin filtro y sin categoría: mostrar todos los artículos finales
+      this.filteredArticles = this.filterPipe.transform(this.articles, Type.Final.toString(), 'type');
       this.eventAddItem.emit(null);
     }
-  }
-
-  private excludeVariants(articles: Article[]): Article[] {
-    return (articles ?? []).filter((article) => article?.type?.toString() !== this.variantType);
   }
 
   public getListPrice(article: Article): number {
@@ -1000,7 +992,11 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     const salePrice = article?.salePrice ?? null;
     if (salePrice === null) return null;
 
-    return salePrice - (salePrice * this.discountCompany) / 100 - (salePrice * this.discountCompanyGroup) / 100;
+    return (
+      salePrice -
+      (salePrice * this.discountCompany) / 100 -
+      (salePrice * this.discountCompanyGroup) / 100
+    );
   }
 
   beep() {
@@ -1035,7 +1031,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
    */
   public clearFilter(): void {
     this.filterArticle = '';
-    this.filteredArticles = this.excludeVariants(this.articles);
+    this.filteredArticles = this.filterPipe.transform(this.articles, Type.Final.toString(), 'type');
     this.hideMessage();
   }
 }
