@@ -7,11 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import {
-  ShipmentMethod,
-  Zone,
-  ZoneType,
-} from '../shipment-method/shipment-method.model';
+import { ShipmentMethod, Zone, ZoneType } from '@types';
 import { Address } from './address.model';
 declare const google: any;
 

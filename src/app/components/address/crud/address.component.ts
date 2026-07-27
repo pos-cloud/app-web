@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, NgZone, Output, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Company } from '@types';
-import { ShipmentMethod } from 'app/components/shipment-method/shipment-method.model';
+import { Company, ShipmentMethod } from '@types';
 import { CompanyService } from 'app/core/services/company.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';

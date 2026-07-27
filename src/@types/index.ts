@@ -50,7 +50,7 @@ export { PositionPrint, Printer, PrinterPrintIn, TypeFields } from './entities/p
 export { RelationType } from './entities/relation-type.interface';
 export { Resource } from './entities/resource.interface';
 export { Room } from './entities/room.interface';
-export { ShipmentMethod } from './entities/shipment-method.interface';
+export { ShipmentMethod, Zone, ZoneType } from './entities/shipment-method.interface';
 export { State } from './entities/state.interface';
 export { Structure, Utilization } from './entities/structure.interface';
 export { Table, TableState } from './entities/table.interface';
