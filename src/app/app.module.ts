@@ -29,9 +29,7 @@ import { ApplyDiscountComponent } from './components/apply-discount/apply-discou
 import { AddArticleStockComponent } from './components/article-stock/article-stock/add-article-stock.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
-import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type/cancellation-type.component';
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
-import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { CashBoxComponent } from './components/cash-box/cash-box/cash-box.component';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 import { ClockComponent } from './components/clock/clock.component';
@@ -124,8 +122,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
     CashBoxComponent,
-    CancellationTypeComponent,
-    ListCancellationTypeComponent,
     MovementOfCancellationComponent,
     CurrentAccountDetailsComponent,
     ListArticlesPosComponent,

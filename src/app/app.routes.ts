@@ -3,7 +3,6 @@ import { NotificationGuard } from '@core/guards/notification.guard';
 import { LoginComponent } from './auth/login/login.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
-import { ListCancellationTypeComponent } from './components/cancellation-type/list-cancellation-types/list-cancellation-types.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
@@ -175,11 +174,6 @@ export const _routes: Routes = [
   {
     path: 'admin/export-iva',
     component: ExportIvaComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/tipos-de-cancelaciones',
-    component: ListCancellationTypeComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
