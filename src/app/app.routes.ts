@@ -12,7 +12,6 @@ import { ExportIvaComponent } from './components/export/export-iva/export-iva.co
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
-import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
@@ -166,16 +165,6 @@ export const _routes: Routes = [
   {
     path: 'admin/cuentas-corrientes',
     component: CurrentAccountComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'report/venta/movimientos-de-cancellaciones',
-    component: ListMovementsOfCancellationsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'report/compra/movimientos-de-cancellaciones',
-    component: ListMovementsOfCancellationsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

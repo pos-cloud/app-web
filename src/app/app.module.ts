@@ -44,7 +44,6 @@ import { ExportersModule } from './components/export/exporters.module';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
-import { ListMovementsOfCancellationsComponent } from './components/movement-of-cancellation/list-movements-of-cancellations/list-movements-of-cancellations.component';
 import { MovementOfCancellationComponent } from './components/movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from './components/movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { DeleteMovementOfCashComponent } from './components/movement-of-cash/delete-movement-of-cash/delete-movement-of-cash.component';
@@ -144,7 +143,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListEmailTemplatesComponent,
     SelectChecksComponent,
     ListCategoriesPosComponent,
-    ListMovementsOfCancellationsComponent,
     SelectMovementsOfCashesComponent,
     KardexCheckComponent,
     MenuComponent,
