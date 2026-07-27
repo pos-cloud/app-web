@@ -44,7 +44,6 @@ import { CurrencyService } from '../../../core/services/currency.service';
 import { TranslateService } from '@ngx-translate/core';
 import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 import { Account, ApiResponse, Currency, MediaCategory, PriceList, User } from '@types';
-import { AddVariantComponent } from 'app/components/variant/add-variant/add-variant.component';
 import { CompanyService } from 'app/core/services/company.service';
 import { FileService } from 'app/core/services/file.service';
 import { MakeService } from 'app/core/services/make.service';
@@ -305,8 +304,6 @@ export class ArticleComponent implements OnInit {
     const company = this.companies.find((c: Company) => c._id === valueId);
     return company?.name;
   };
-
-  @ViewChild(AddVariantComponent) addVariantComponent: AddVariantComponent;
 
   constructor(
     private _articleService: ArticleService,

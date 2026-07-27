@@ -67,9 +67,6 @@ import { ExportExcelModule } from './shared/components/export-excel/export-excel
 import { SelectTableComponent } from './components/table/select-table/select-table.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
-import { AddVariantComponent } from './components/variant/add-variant/add-variant.component';
-import { DeleteVariantComponent } from './components/variant/delete-variant/delete-variant.component';
-import { ListVariantsComponent } from './components/variant/list-variants/list-variants.component';
 import { VoucherReaderComponent } from './components/voucher-reader/voucher-reader.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
@@ -110,9 +107,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintComponent,
     AddArticleStockComponent,
     UpdateArticleStockComponent,
-    AddVariantComponent,
-    DeleteVariantComponent,
-    ListVariantsComponent,
     AddMovementOfArticleComponent,
     ApplyDiscountComponent,
     DeleteMovementOfCashComponent,
