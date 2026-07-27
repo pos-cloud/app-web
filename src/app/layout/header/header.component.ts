@@ -302,7 +302,7 @@ export class HeaderComponent implements OnInit {
           label: 'Impresoras y Plantillas',
           children: [
             { label: 'Impresoras', link: 'entities/printers' },
-            { label: 'Plantillas para correo', link: 'admin/template-emails' },
+            { label: 'Plantillas para correo', link: 'entities/email-templates' },
           ],
         },
       ],
@@ -825,7 +825,7 @@ export class HeaderComponent implements OnInit {
               label: 'Impresoras y Plantillas',
               children: [
                 { label: 'Impresoras', link: 'entities/printers' },
-                { label: 'Plantillas para correo', link: 'admin/template-emails' },
+                { label: 'Plantillas para correo', link: 'entities/email-templates' },
               ],
             },
           ],

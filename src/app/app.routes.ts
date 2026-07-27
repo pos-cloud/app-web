@@ -5,7 +5,6 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
 import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
@@ -179,11 +178,6 @@ export const _routes: Routes = [
   {
     path: 'report/cartera-de-cheques',
     component: ListChecksComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/template-emails',
-    component: ListEmailTemplatesComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

@@ -36,8 +36,6 @@ import { ClockComponent } from './components/clock/clock.component';
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { EmailTemplateComponent } from './components/email-template/email-template/email-template.component';
-import { ListEmailTemplatesComponent } from './components/email-template/list-email-templates/list-email-templates.component';
 import { ExportersModule } from './components/export/exporters.module';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -129,8 +127,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PosPackingComponent,
     ListChecksComponent,
     SelectTableComponent,
-    EmailTemplateComponent,
-    ListEmailTemplatesComponent,
     SelectChecksComponent,
     ListCategoriesPosComponent,
     SelectMovementsOfCashesComponent,

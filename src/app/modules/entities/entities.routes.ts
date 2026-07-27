@@ -184,6 +184,10 @@ export const ENTITIES_ROUTES: Routes = [
     loadChildren: () => import('./cancellation-type/cancellation-type.routes').then((m) => m.CANCELLATION_TYPE_ROUTES),
   },
   {
+    path: 'email-templates',
+    loadChildren: () => import('./email-template/email-template.routes').then((m) => m.EMAIL_TEMPLATE_ROUTES),
+  },
+  {
     path: 'account-seat',
     loadChildren: () => import('./account-seat/account-seat.routes').then((m) => m.ACCOUNT_SER_ROUTES),
   },
