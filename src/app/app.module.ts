@@ -24,7 +24,6 @@ import { AppComponent } from './app.component';
 import { _routes } from './app.routes';
 import { LoginComponent } from './auth/login/login.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
-import { AddressModule } from './components/address/address.module';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
 import { AddArticleStockComponent } from './components/article-stock/article-stock/add-article-stock.component';
 import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
@@ -158,7 +157,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ExportersModule,
     ExportExcelModule,
     NgMultiSelectDropDownModule.forRoot(),
-    AddressModule,
     RestoTablesComponent,
     NotificationBellComponent,
     AiChatWidgetComponent,

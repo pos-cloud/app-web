@@ -3,7 +3,6 @@ import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators }
 import { Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
-import { AddressService } from '@core/services/address.service';
 import { ArticleService } from '@core/services/article.service';
 import { CompanyGroupService } from '@core/services/company-group.service';
 import { CompanyService } from '@core/services/company.service';
@@ -68,7 +67,6 @@ export class CompanyComponent implements OnInit {
     public _companyService: CompanyService,
     public _vatConditionService: VATConditionService,
     public _companyGroupService: CompanyGroupService,
-    public _addressService: AddressService,
     public _employeeService: EmployeeService,
     public _stateService: StateService,
     public _configService: ConfigService,

@@ -2,6 +2,7 @@ import * as moment from 'moment';
 
 import {
   Account,
+  Address,
   Branch,
   BusinessRule,
   Company,
@@ -12,14 +13,13 @@ import {
   RelationType,
   ShipmentMethod,
   Table,
+  TransactionType,
   Transport,
   UseOfCFDI,
   User,
 } from '@types';
-import { Address } from '../address/address.model';
 import { CashBox } from '../cash-box/cash-box';
 import { Taxes } from '../tax/taxes';
-import { TransactionType } from '@types';
 
 export class Transaction {
   _id: string;
