@@ -295,6 +295,9 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
       'make._id': 1,
       'make.description': 1,
       'make.visibleSale': 1,
+      'currency._id': 1,
+      'currency.code': 1,
+      'currency.sign': 1,
       favourite: 1,
       quantityPerMeasure: 1,
       isWeigth: 1,
@@ -997,6 +1000,10 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
       (salePrice * this.discountCompany) / 100 -
       (salePrice * this.discountCompanyGroup) / 100
     );
+  }
+
+  public getCurrencyCode(article: Article): string {
+    return article?.currency?.code || Config.currency?.code || 'USD';
   }
 
   beep() {

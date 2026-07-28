@@ -249,12 +249,26 @@
           </label>
         </div>
 
+        <div class="row" *ngIf="currencies?.length > 0">
+          <div class="col-md-4">
+            <label for="currency">{{ 'currency' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              placeholder="{{ 'currency' | translate | capitalize }}"
+              [control]="articleForm.get('currency')"
+              [data]="currencies"
+              [readonly]="readonly"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+
         <div class="row">
           <div class="col-md-4">
             <label for="basePrice">{{ 'basePrice' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+                <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
               </div>
               <input
                 type="number"
@@ -278,7 +292,7 @@
             <label class="control-label">{{ 'lastPurchasePrice' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+                <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
               </div>
               <input type="number" class="form-control" formControlName="purchasePrice" readonly />
             </div>
@@ -287,7 +301,7 @@
             <label class="control-label">{{ 'priceCostStructure' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+                <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
               </div>
               <input type="number" class="form-control" formControlName="costPrice2" readonly />
             </div>
@@ -326,7 +340,7 @@
               <label for="taxAmount" class="control-label">{{ 'amountPaid' | translate | capitalize }}:</label>
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text">$</span>
+                  <span class="input-group-text">{{ currencySign }}</span>
                 </div>
                 <input
                   type="number"
@@ -376,11 +390,11 @@
                 </td>
                 <td class="flat">{{ articleTaxAux.get('tax').value?.name ?? '' }}</td>
                 <td class="flat">
-                  {{ articleTaxAux.get('taxBase').value | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  {{ articleTaxAux.get('taxBase').value | currency: currencyCode : 'symbol-narrow' : '1.2-2' }}
                 </td>
                 <td class="flat">{{ articleTaxAux.get('percentage').value }} %</td>
                 <td class="flat">
-                  {{ articleTaxAux.get('taxAmount').value | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  {{ articleTaxAux.get('taxAmount').value | currency: currencyCode : 'symbol-narrow' : '1.2-2' }}
                 </td>
               </tr>
             </tbody>
@@ -392,7 +406,7 @@
             <label for="costPrice">{{ 'costPrice' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+                <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
               </div>
               <input
                 type="number"
@@ -449,7 +463,7 @@
             <label for="markupPriceWithoutVAT">{{ 'markupPriceWithoutVAT' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+                <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
               </div>
               <input
                 type="number"
@@ -465,7 +479,7 @@
             <label for="markupPrice">{{ 'markupPrice' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+                <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
               </div>
               <input
                 type="number"
@@ -493,7 +507,7 @@
             <label for="salePriceWithoutVAT">{{ 'salePriceWithoutVAT' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+                <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
               </div>
               <input
                 type="number"
@@ -509,7 +523,7 @@
             <label for="salePrice">{{ 'salePrice' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
+                <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
               </div>
               <input
                 type="number"
@@ -553,7 +567,7 @@
                     <td>
                       <div class="input-group">
                         <div class="input-group-prepend">
-                          <span class="input-group-text">$</span>
+                          <span class="input-group-text">{{ currencySign }}</span>
                         </div>
                         <input
                           type="number"
@@ -692,7 +706,7 @@
               <label for="salePriceTN" class="control-label">{{ 'salePriceTN' | translate | capitalize }}:</label>
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">$</span>
+                  <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
                 </div>
                 <input
                   type="number"
@@ -710,7 +724,7 @@
               >
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">$</span>
+                  <span class="input-group-text" id="basic-addon1">{{ currencySign }}</span>
                 </div>
                 <input
                   type="number"

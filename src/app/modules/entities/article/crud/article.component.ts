@@ -18,6 +18,7 @@ import {
   Classification,
   Company,
   Config,
+  Currency,
   Make,
   PriceList,
   Tax,
@@ -41,6 +42,7 @@ import { UploadFileComponent } from '@shared/components/upload-file/upload-file.
 import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { ArticlePrintIn } from 'app/components/article/article';
+import { Config as AppConfig } from 'app/app.config';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
@@ -52,6 +54,7 @@ import { AccountService } from '@core/services/account.service';
 import { ClassificationService } from '@core/services/classification.service';
 import { CompanyService } from '@core/services/company.service';
 import { ConfigService } from '@core/services/config.service';
+import { CurrencyService } from '@core/services/currency.service';
 import { FileService } from '@core/services/file.service';
 import { TaxService } from '@core/services/tax.service';
 import { VariantTypeService } from '@core/services/variant-type.service';
@@ -116,6 +119,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   public categoriesTN: Category[] = [];
   public classifications: Classification[] = [];
   public makes: Make[] = [];
+  public currencies: Currency[] = [];
   public unitOfMeasurements: UnitOfMeasurement[] = [];
   public companies: Company[] = [];
   public printIns: ArticlePrintIn[] = [
@@ -158,7 +162,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private _companyService: CompanyService,
     private _variantTypeService: VariantTypeService,
     private _variantValueService: VariantValueService, //  private roundNumber: DecimalPipe
-    private _accountService: AccountService
+    private _accountService: AccountService,
+    private _currencyService: CurrencyService
   ) {
     this.articleForm = this._fb.group({
       _id: ['', []],
@@ -273,6 +278,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       variantTypes: this._variantTypeService.find({ query: { operationType: { $ne: 'D' } } }),
       variantValues: this._variantValueService.find({ query: { operationType: { $ne: 'D' } } }),
       config: this._configService.find({ query: { operationType: { $ne: 'D' } } }),
+      currencies: this._currencyService.find({ query: { operationType: { $ne: 'D' } } }),
       code: this._articleService.getLasCode(),
       accounts: this._accountService.find({ query: { operationType: { $ne: 'D' } } }),
     })
@@ -288,6 +294,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
           companies,
           variantTypes,
           config,
+          currencies,
           variantValues,
           code,
           accounts,
@@ -302,7 +309,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
           this.classifications = classifications || [];
           this.companies = companies || [];
           this.variantTypes = variantTypes || [];
-          this.config = config || [];
+          this.config = Array.isArray(config) ? config[0] : config;
+          this.currencies = currencies || [];
           this.variantValues = variantValues || [];
           this.allVariantValues = variantValues || [];
           this.code = code.code;
@@ -412,6 +420,16 @@ export class ArticleComponent implements OnInit, OnDestroy {
     const provider = this.companies?.find((item) => item._id === this.article?.provider?.toString());
     const salesAccounts = this.accounts?.find((item) => item._id === this.article?.salesAccount?.toString());
     const purchaseAccounts = this.accounts?.find((item) => item._id === this.article?.purchaseAccount?.toString());
+    const articleCurrencyId =
+      typeof this.article?.currency === 'string' ? this.article.currency : this.article?.currency?._id;
+    const defaultCurrencyId =
+      typeof this.config?.currency === 'string'
+        ? this.config.currency
+        : (this.config?.currency?._id ?? AppConfig.currency?._id);
+    const currency =
+      this.currencies?.find((item) => item._id === articleCurrencyId?.toString()) ??
+      this.currencies?.find((item) => item._id === defaultCurrencyId?.toString()) ??
+      null;
 
     const values = {
       _id: this.article?._id ?? '',
@@ -436,6 +454,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       salePrice: this.article?.salePrice ?? 0,
       markupPriceWithoutVAT: 0, // Campo calculado
       salePriceWithoutVAT: 0, // Campo calculado
+      currency: currency,
       classification: classification ?? null,
       provider: provider ?? null,
       taxes: [],
@@ -532,6 +551,22 @@ export class ArticleComponent implements OnInit, OnDestroy {
     };
 
     this.taxForm.setValue(values);
+  }
+
+  public get currencySign(): string {
+    return (
+      this.articleForm?.get('currency')?.value?.sign ||
+      AppConfig.currency?.sign ||
+      '$'
+    );
+  }
+
+  public get currencyCode(): string {
+    return (
+      this.articleForm?.get('currency')?.value?.code ||
+      AppConfig.currency?.code ||
+      'USD'
+    );
   }
 
   public changeTax(op: string): void {

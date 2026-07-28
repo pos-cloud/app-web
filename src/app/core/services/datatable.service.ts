@@ -38,7 +38,7 @@ export class DatatableService {
         case 'currency':
           value = this.currencyPipe.transform(
             this.roundNumberPipe.transform(eval(val)),
-            'USD',
+            item?.currency?.code || Config.currency?.code || 'USD',
             'symbol-narrow',
             '1.2-2'
           );
