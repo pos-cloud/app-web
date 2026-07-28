@@ -27,7 +27,6 @@ import { ArticleService } from '../../../core/services/article.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { VariantService } from '../../../core/services/variant.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { ArticleStock } from '../../article-stock/article-stock';
 import { Taxes } from '../../tax/taxes';
 import { Variant } from '../../variant/variant';
 import { Article, ArticlePrintIn, Type } from '../article';
@@ -78,7 +77,6 @@ export class ArticleComponent implements OnInit {
   public variant: Variant;
   private subscription: Subscription = new Subscription();
   article: Article;
-  articleStock: ArticleStock;
   config: Config;
   articleForm: UntypedFormGroup;
   public variantsByTypes: any[];
@@ -1788,10 +1786,6 @@ export class ArticleComponent implements OnInit {
   addArticleTaxes(articleTaxes: Taxes[]): void {
     this.taxes = articleTaxes;
     this.updatePrices('taxes');
-  }
-
-  addStock(articleStock: ArticleStock): void {
-    this.articleStock = articleStock;
   }
 
   manageVariants(variants: Variant[]): void {

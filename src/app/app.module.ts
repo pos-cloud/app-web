@@ -25,8 +25,6 @@ import { _routes } from './app.routes';
 import { LoginComponent } from './auth/login/login.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
-import { AddArticleStockComponent } from './components/article-stock/article-stock/add-article-stock.component';
-import { UpdateArticleStockComponent } from './components/article-stock/update-article-stock/update-article-stock.component';
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { CashBoxComponent } from './components/cash-box/cash-box/cash-box.component';
@@ -102,8 +100,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddTransactionComponent,
     CurrentAccountComponent,
     PrintComponent,
-    AddArticleStockComponent,
-    UpdateArticleStockComponent,
     AddMovementOfArticleComponent,
     ApplyDiscountComponent,
     DeleteMovementOfCashComponent,
