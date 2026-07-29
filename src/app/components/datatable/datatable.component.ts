@@ -198,6 +198,18 @@ export class DatatableComponent {
     eval(event);
   }
 
+  public isRowButtonVisible(button: IButton, item: any): boolean {
+    if (!button.showWhen) {
+      return true;
+    }
+
+    try {
+      return !!eval(button.showWhen);
+    } catch {
+      return false;
+    }
+  }
+
   public getValue(item, column): any {
     return this._datatableService.getValue(item, column);
   }

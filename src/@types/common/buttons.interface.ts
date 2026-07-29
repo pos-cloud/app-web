@@ -3,4 +3,5 @@ export interface IButton {
   class: string;
   icon: string;
   click: string;
+  showWhen?: string;
 }

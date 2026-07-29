@@ -497,12 +497,14 @@ export class ListCompanyComponent implements OnInit {
         title: 'current-account1',
         class: 'btn btn-light btn-sm',
         icon: 'fa fa-book',
+        showWhen: 'item.allowCurrentAccount',
         click: `this.emitEvent('current-account1', item)`,
       },
       {
         title: 'current-account2',
         class: 'btn btn-light btn-sm',
         icon: 'fa fa-address-book',
+        showWhen: 'item.allowCurrentAccount',
         click: `this.emitEvent('current-account2', item)`,
       }
     );
