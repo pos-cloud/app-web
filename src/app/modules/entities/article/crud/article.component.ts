@@ -561,14 +561,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
     );
   }
 
-  public get currencyCode(): string {
-    return (
-      this.articleForm?.get('currency')?.value?.code ||
-      AppConfig.currency?.code ||
-      'USD'
-    );
-  }
-
   public changeTax(op: string): void {
     if (this.taxForm.value.tax) {
       let taxedAmount = 0;
