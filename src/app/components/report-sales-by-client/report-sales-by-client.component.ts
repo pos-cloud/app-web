@@ -5,15 +5,12 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Branch, CompanyType } from '@types';
+import { CompanyType, TransactionType } from '@types';
 import { Config } from 'app/app.config';
-import { AuthService } from 'app/core/services/auth.service';
-import { BranchService } from 'app/core/services/branch.service';
 import { Subscription } from 'rxjs';
 import { CompanyService } from '../../core/services/company.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
 import { TransactionService } from '../../core/services/transaction.service';
-import { TransactionType } from '@types';
 
 @Component({
   selector: 'app-report-sales-by-client',
@@ -41,9 +38,7 @@ export class ReportSalesByClientComponent implements OnInit {
   public transactionMovement: string;
   public totalItem;
   public totalAmount;
-  public branches: Branch[];
-  @Input() branchSelectedId: String;
-  public allowChangeBranch: boolean;
+  @Input() branchSelectedId: string | null = null;
   private subscription: Subscription = new Subscription();
   public stateSelect: string = 'Cerrado';
 
@@ -68,9 +63,7 @@ export class ReportSalesByClientComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
-    private _branchService: BranchService,
-    private _authService: AuthService
+    public alertConfig: NgbAlertConfig
   ) {
     this.startDate = moment().format('YYYY-MM-DD');
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
@@ -81,57 +74,10 @@ export class ReportSalesByClientComponent implements OnInit {
   }
 
   async ngOnInit() {
-    if (!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
-        this.branches = branches;
-        if (this.branches && this.branches.length > 1) {
-          this.branchSelectedId = this.branches[0]._id;
-        }
-      });
-      this._authService.getIdentity.subscribe(async (identity) => {
-        if (identity && identity.origin) {
-          this.allowChangeBranch = false;
-          this.branchSelectedId = identity.origin.branch._id;
-        } else {
-          this.allowChangeBranch = true;
-          this.branchSelectedId = null;
-        }
-      });
-    }
-
     await this.getTransactionTypes().then((result) => {
       if (result) {
         this.transactionTypes = result;
       }
-    });
-
-    this.getSalesByCompany();
-  }
-
-  public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            if (result && result.branches) {
-              resolve(result.branches);
-            } else {
-              resolve(null);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            resolve(null);
-          }
-        );
     });
   }
 

@@ -1,0 +1,38 @@
+app-select-movement-of-cancellation {
+  .balance-summary {
+    margin-right: 12px;
+    font-weight: 600;
+  }
+
+  .progress-row {
+    padding: 0;
+  }
+
+  .balance-input {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .action-buttons {
+    white-space: nowrap;
+
+    .btn + .btn {
+      margin-left: 8px;
+    }
+  }
+
+  .row-active {
+    background-color: #0275d8 !important;
+    color: #fff !important;
+
+    .form-control {
+      color: #000;
+      background-color: #fff;
+    }
+  }
+
+  .row-inactive {
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+}

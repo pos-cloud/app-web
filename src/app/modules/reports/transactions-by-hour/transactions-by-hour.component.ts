@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BranchService } from '@core/services/branch.service';
 import { TransactionTypeService } from '@core/services/transaction-type.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,9 +9,10 @@ import { DataTableReportsComponent } from '@shared/components/data-table-reports
 import { DateTimePickerComponent } from '@shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { Branch, TransactionType } from '@types';
+import { TransactionType } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -67,6 +67,7 @@ export type ChartOptions = {
     PipesModule,
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
+    UserBranchSelectComponent,
     DataTableReportsComponent,
   ],
 })
@@ -77,8 +78,7 @@ export class TransactionsComponetByHour {
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
-  branches: Branch[];
-  branchSelectedId: string[] = [];
+  branchSelectedId: string | null = null;
 
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
@@ -89,42 +89,13 @@ export class TransactionsComponetByHour {
     private _service: ReportSystemService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
-    private _transactionTypeService: TransactionTypeService,
-    private _branchService: BranchService
+    private _transactionTypeService: TransactionTypeService
   ) {}
 
   ngOnInit(): void {
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
-      this.getSalesByMonth();
-      this.getBranches();
       this.getTransactionTypes();
-    });
-  }
-
-  private getBranches(): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getAll({
-          project: {
-            _id: 1,
-            operationType: 1,
-            name: 1,
-          },
-          match: {
-            operationType: { $ne: 'D' },
-          },
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.branches = result.result;
-          },
-          error: (error) => {
-            resolve(null);
-          },
-          complete: () => {},
-        });
     });
   }
 
@@ -163,7 +134,7 @@ export class TransactionsComponetByHour {
         startDate: this.startDate,
         endDate: this.endDate,
         type: this.transactionMovement,
-        branches: this.branchSelectedId,
+        branches: this.branchSelectedId ? [this.branchSelectedId] : [],
         transactionTypes: this.transactionTypesSelect ?? [],
       },
     };

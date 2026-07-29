@@ -1,14 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Branch } from '@types';
 import { Config } from 'app/app.config';
-import { AuthService } from 'app/core/services/auth.service';
-import { BranchService } from 'app/core/services/branch.service';
 import { MakeService } from 'app/core/services/make.service';
 import { Subscription } from 'rxjs';
 
@@ -18,7 +15,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./report-sales-by-make.component.css'],
   providers: [NgbAlertConfig],
 })
-export class ReportSalesByMakeComponent implements OnInit {
+export class ReportSalesByMakeComponent {
   public items: any[] = new Array();
   public areMakesEmpty: boolean = true;
   public alertMessage: string = '';
@@ -38,18 +35,14 @@ export class ReportSalesByMakeComponent implements OnInit {
   public transactionMovement: string;
   public totalItem;
   public totalAmount;
-  public branches: Branch[];
-  @Input() branchSelectedId: String;
-  public allowChangeBranch: boolean;
+  @Input() branchSelectedId: string | null = null;
   private subscription: Subscription = new Subscription();
 
   constructor(
     public _makeService: MakeService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig,
-    private _branchService: BranchService,
-    private _authService: AuthService
+    public alertConfig: NgbAlertConfig
   ) {
     this.startDate = moment().format('YYYY-MM-DD');
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
@@ -58,56 +51,6 @@ export class ReportSalesByMakeComponent implements OnInit {
     this.totalItem = 0;
     this.totalAmount = 0;
   }
-
-  async ngOnInit() {
-    if (!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
-        this.branches = branches;
-        if (this.branches && this.branches.length > 1) {
-          this.branchSelectedId = this.branches[0]._id;
-        }
-      });
-      this._authService.getIdentity.subscribe(async (identity) => {
-        if (identity && identity.origin) {
-          this.allowChangeBranch = false;
-          this.branchSelectedId = identity.origin.branch._id;
-        } else {
-          this.allowChangeBranch = true;
-          this.branchSelectedId = null;
-        }
-      });
-    }
-
-    this.getSalesByMake();
-  }
-
-  public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            if (result && result.branches) {
-              resolve(result.branches);
-            } else {
-              resolve(null);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            resolve(null);
-          }
-        );
-    });
-  }
-
   public getSalesByMake(): void {
     this.loading = true;
     let pathLocation: string[] = this._router.url.split('/');

@@ -1,13 +1,13 @@
 <!--ESTADISTICAS GENERALES-->
-<div class="card " *ngIf="listType === 'statistics'">
+<div class="card" *ngIf="listType === 'statistics'">
   <div class="card-header">
-      <span>{{title}}</span>
+    <span>{{ title }}</span>
   </div>
   <div class="card-block table-responsive">
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>Producto </th>
+          <th>Producto</th>
           <th>Cantidad</th>
           <th>Unidad</th>
           <th>Monto</th>
@@ -24,13 +24,13 @@
           <td class="flat">{{ item.count }}</td>
           <td class="flat" *ngIf="item.article.unitOfMeasurement">{{ item.article.unitOfMeasurement.name }}</td>
           <td class="flat" *ngIf="!item.article.unitOfMeasurement"></td>
-          <td class="flat align-right">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+          <td class="flat align-right">{{ item.total | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
         </tr>
         <tr *ngIf="items.length > 0 && transactionMovement === 'Venta'" align="center">
-          <td colspan="4"><a [routerLink]="['','admin','venta','productos-mas-vendidos']">Ver más...</a></td>
+          <td colspan="4"><a [routerLink]="['', 'admin', 'venta', 'productos-mas-vendidos']">Ver más...</a></td>
         </tr>
         <tr *ngIf="items.length > 0 && transactionMovement === 'Compra'" align="center">
-          <td colspan="4"><a [routerLink]="['','admin','compra','productos-mas-comprados']">Ver más...</a></td>
+          <td colspan="4"><a [routerLink]="['', 'admin', 'compra', 'productos-mas-comprados']">Ver más...</a></td>
         </tr>
         <tr align="center" *ngIf="areArticlesEmpty && !loading">
           <td colspan="4">No se encontraron productos</td>
@@ -43,33 +43,19 @@
 <!--REPORTE-->
 <section class="container-fluid" *ngIf="listType !== 'statistics'">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage = ''">
+      {{ alertMessage }}
     </ngb-alert>
   </div>
   <div class="row container-filter">
     <div class="col-md-2">
-      <label for="branch" class="control-label">
-        <b>Sucursal</b>
-      </label>
-      <select class="form-control" [(ngModel)]="branchSelectedId">
-        <option [ngValue]="null" [disabled]="!allowChangeBranch">
-          Todas
-        </option>
-        <option
-          *ngFor="let branch of branches"
-          [ngValue]="branch._id"
-          [disabled]="!allowChangeBranch"
-          >
-          {{branch.number}} - {{branch.name}}
-        </option>
-      </select>
+      <app-user-branch-select [(ngModel)]="branchSelectedId" (branchChange)="refresh()"></app-user-branch-select>
     </div>
     <div class="col-md-2">
-        <label for="category" class="control-label">
-            <b>Rubro</b>
-        </label>
-        <ng-multiselect-dropdown
+      <label for="category" class="control-label">
+        <b>Rubro</b>
+      </label>
+      <ng-multiselect-dropdown
         [placeholder]="'Rubro'"
         [settings]="dropdownSettingsCategories"
         [data]="categories"
@@ -80,10 +66,10 @@
       </ng-multiselect-dropdown>
     </div>
     <div class="col-md-2">
-        <label for="transactionType" class="control-label">
-            <b>Tipo</b>
-        </label>
-        <ng-multiselect-dropdown
+      <label for="transactionType" class="control-label">
+        <b>Tipo</b>
+      </label>
+      <ng-multiselect-dropdown
         [placeholder]="'Tipo de Transacción'"
         [settings]="dropdownSettingsTransactionType"
         [data]="transactionTypes"
@@ -118,30 +104,41 @@
       <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
     </div>
     <div class="col-md-2" (click)="refresh()">
-        <label for="action" class="control-label">
-            <b>Acción:</b>
-          </label>
+      <label for="action" class="control-label">
+        <b>Acción:</b>
+      </label>
       <span class="form-control btn-action center-content">
-        <i class="fa fa-refresh" [ngClass]="{'fa-spin':loading}"></i>Actualizar
+        <i class="fa fa-refresh" [ngClass]="{ 'fa-spin': loading }"></i>Actualizar
       </span>
     </div>
   </div>
-  <div class="card  card-large">
+  <div class="card card-large">
     <div class="card-header">
-      <span>{{title}}</span>
+      <span>{{ title }}</span>
       <div class="pull-right">
-        <app-export-excel #exportExcelComponent [title]="title" [loading]="loading" [columns]="columns" (eventExport)="exportItems($event)"></app-export-excel>
+        <app-export-excel
+          #exportExcelComponent
+          [title]="title"
+          [loading]="loading"
+          [columns]="columns"
+          (eventExport)="exportItems($event)"
+        ></app-export-excel>
         <div class="btn-group" ngbDropdown>
-          <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i class="fa fa-columns"></i><span>Columnas</span></button>
+          <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas">
+            <i class="fa fa-columns"></i><span>Columnas</span>
+          </button>
           <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
             <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-              <div
-                class="example-box"
-                *ngFor="let column of columns"
-                cdkDrag
-                [cdkDragDisabled]="column.disabled">
-                  <label for="column"><input type="checkbox" [id]="column.name" [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
-                </div>
+              <div class="example-box" *ngFor="let column of columns" cdkDrag [cdkDragDisabled]="column.disabled">
+                <label for="column"
+                  ><input
+                    type="checkbox"
+                    [id]="column.name"
+                    [(ngModel)]="column.visible"
+                    [disabled]="column.disabled"
+                  />{{ column.name | translate }}</label
+                >
+              </div>
             </div>
           </div>
         </div>
@@ -162,7 +159,14 @@
             <th></th>
             <ng-container *ngFor="let column of columns">
               <th *ngIf="column.visible">
-                <input type="text" class="form-control" [(ngModel)]="filters[column.name]" (keydown.enter)="getItems()" placeholder="{{ column.name | translate }}" [disabled]="!column.filter">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filters[column.name]"
+                  (keydown.enter)="getItems()"
+                  placeholder="{{ column.name | translate }}"
+                  [disabled]="!column.filter"
+                />
               </th>
             </ng-container>
           </tr>
@@ -175,10 +179,12 @@
           </tr>
           <tr *ngFor="let item of items">
             <td align="left" width="50">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', item)" title="Ver">
+                <i class="fa fa-eye"></i>
+              </button>
             </td>
             <ng-container *ngFor="let column of columns">
-              <td *ngIf="column.visible" [attr.align]="column.align">{{getValue(item, column)}}</td>
+              <td *ngIf="column.visible" [attr.align]="column.align">{{ getValue(item, column) }}</td>
             </ng-container>
           </tr>
           <tr align="center" *ngIf="areArticlesEmpty && !loading">
@@ -188,14 +194,17 @@
         <tfoot>
           <tr>
             <th [attr.colspan]="getColumnsVisibles() - 2"></th>
-            <th class="align-right"> <strong>Total</strong></th>
-            <th class="align-right"><strong>{{totalItem | number:'1.2-2'}}</strong></th>
-            <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
+            <th class="align-right"><strong>Total</strong></th>
+            <th class="align-right">
+              <strong>{{ totalItem | number: '1.2-2' }}</strong>
+            </th>
+            <th class="align-right">
+              <strong>{{ totalAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+            </th>
           </tr>
         </tfoot>
       </table>
     </div>
-    <div class="card-footer">
-    </div>
+    <div class="card-footer"></div>
   </div>
 </section>

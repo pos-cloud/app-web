@@ -1,0 +1,361 @@
+<!-- SELECCIONAR -->
+<section class="container-fluid" *ngIf="selectionView">
+  <div class="card">
+    <div class="card-header">
+      <span>Seleccionar transacciones a cancelar</span>
+      <div class="pull-right">
+        <span class="balance-summary">
+          Saldo seleccionado: {{ balanceSelected | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+        </span>
+        <button type="button" class="btn fa fa-minus-square" (click)="deleteAllMovements()" [disabled]="loading">
+          <span>Deseleccionar todo</span>
+        </button>
+        <button type="button" class="btn fa fa-clock-o" (click)="getOverdueTransactions()" [disabled]="loading">
+          <span>Atrasadas</span>
+        </button>
+        <button type="button" class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
+          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i><span>Actualizar</span>
+        </button>
+        <button type="button" class="btn fa fa-close" (click)="activeModal.dismiss('close_click')">
+          <span>Cerrar</span>
+        </button>
+      </div>
+    </div>
+    <div class="card-block table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><i class="fa fa-bars"></i></th>
+            <th (click)="orderBy('endDate')">Fecha</th>
+            <th (click)="orderBy('expirationDate')">Vencimiento</th>
+            <th (click)="orderBy('type.name')">Nombre</th>
+            <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
+            <th (click)="orderBy('letter')">Letra</th>
+            <th (click)="orderBy('number')">Número</th>
+            <th *ngIf="!requestCompany" (click)="orderBy('company.name')">Cliente</th>
+            <th *ngIf="!requestCompany" (click)="orderBy('company.city')">Ciudad</th>
+            <th *ngIf="!requestCompany" (click)="orderBy('company.state.name')">Provincia</th>
+            <th *ngIf="!requestCompany" (click)="orderBy('company.group.description')">Grupo</th>
+            <th (click)="orderBy('totalPrice')">Precio total</th>
+            <th (click)="orderBy('balance')">Saldo</th>
+            <th>Acciones</th>
+          </tr>
+          <tr class="filters">
+            <th></th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['endDate']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Fecha..."
+                [focus]="focusEvent"
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['expirationDate']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Vencimiento..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['type.name']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Nombre..."
+              />
+            </th>
+            <th *ngIf="userCountry === 'AR'">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['origin']"
+                (keydown.enter)="getTransactions()"
+                placeholder="POS..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['letter']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Letra..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['number']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Número..."
+              />
+            </th>
+            <th *ngIf="!requestCompany">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['company.name']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Cliente..."
+              />
+            </th>
+            <th *ngIf="!requestCompany">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['company.city']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Ciudad..."
+              />
+            </th>
+            <th *ngIf="!requestCompany">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['company.state.name']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Provincia..."
+              />
+            </th>
+            <th *ngIf="!requestCompany">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['company.group.description']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Grupo..."
+              />
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td [attr.colspan]="getSelectionColumnCount()" class="progress-row">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
+          <tr
+            *ngFor="let transaction of transactions; trackBy: trackByTransactionId"
+            [ngClass]="{
+              'row-active': isTransactionSelected(transaction),
+              'row-inactive': !isTransactionSelected(transaction),
+            }"
+          >
+            <td align="left" width="50">
+              <button
+                type="button"
+                class="btn btn-success btn-sm"
+                (click)="openModal('view', transaction)"
+                title="Ver"
+              >
+                <i class="fa fa-eye"></i>
+              </button>
+            </td>
+            <td>{{ transaction.endDate }}</td>
+            <td>{{ transaction.expirationDate }}</td>
+            <td>{{ transaction.type?.name }}</td>
+            <td *ngIf="userCountry === 'AR'">{{ transaction.origin }}</td>
+            <td>{{ transaction.letter }}</td>
+            <td>{{ transaction.number }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.name }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.city }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.state?.name }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.group?.description }}</td>
+            <td>{{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+            <td>
+              <input
+                type="number"
+                class="form-control balance-input"
+                [(ngModel)]="transaction.balanceSelected"
+                (blur)="updateBalanceOrigin(transaction)"
+                [readonly]="transaction.isFinanced"
+              />
+            </td>
+            <td class="action-buttons">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="openModal('select-movements-of-cashes', transaction)"
+                *ngIf="transaction.isFinanced"
+              >
+                Parcial
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="selectTransaction(transaction, false)"
+              >
+                Total
+              </button>
+            </td>
+          </tr>
+          <tr align="center" *ngIf="totalItems === 0 && !loading">
+            <td [attr.colspan]="getSelectionColumnCount()">No se encontraron transacciones para cancelar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <b>Saldo seleccionado: {{ balanceSelected | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</b>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-default btn-block" (click)="activeModal.close()" [disabled]="loading">
+            Cancelar
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-primary btn-block" (click)="finish()" [disabled]="loading">
+            <i class="fa" [ngClass]="{ 'fa-check': !loading, 'fa-spinner fa-spin': loading }"></i>
+            <span>Aceptar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISTA ADMIN -->
+<section class="container-fluid" *ngIf="!selectionView">
+  <div class="card">
+    <div class="card-header">
+      <span>Transacciones canceladas</span>
+      <div class="pull-right">
+        <button type="button" class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
+          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i><span>Actualizar</span>
+        </button>
+      </div>
+    </div>
+    <div class="card-block table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><i class="fa fa-bars"></i></th>
+            <th (click)="orderBy('endDate')">Fecha</th>
+            <th (click)="orderBy('state')">Estado</th>
+            <th (click)="orderBy('type.name')">Nombre</th>
+            <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
+            <th (click)="orderBy('letter')">Letra</th>
+            <th (click)="orderBy('number')">Número</th>
+            <th (click)="orderBy('totalPrice')">Precio total</th>
+            <th (click)="orderBy('balance')">Saldo cancelado</th>
+          </tr>
+          <tr class="filters">
+            <th></th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['endDate']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Fecha..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['state']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Estado..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['type.name']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Nombre..."
+              />
+            </th>
+            <th *ngIf="userCountry === 'AR'">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['origin']"
+                (keydown.enter)="getTransactions()"
+                placeholder="POS..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['letter']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Letra..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['number']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Número..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters['totalPrice']"
+                (keydown.enter)="getTransactions()"
+                placeholder="Precio total..."
+              />
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td [attr.colspan]="getAdminColumnCount()" class="progress-row">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
+          <tr
+            *ngFor="let transaction of transactions; trackBy: trackByTransactionId"
+            [ngClass]="{
+              'row-active': isTransactionSelected(transaction),
+              'row-inactive': !isTransactionSelected(transaction),
+            }"
+          >
+            <td align="left" width="50">
+              <button
+                type="button"
+                class="btn btn-success btn-sm"
+                (click)="openModal('view', transaction)"
+                title="Ver"
+              >
+                <i class="fa fa-eye"></i>
+              </button>
+            </td>
+            <td>{{ transaction.endDate | dateFormat: 'DD/MM/YYYY' }}</td>
+            <td>{{ transaction.state }}</td>
+            <td>{{ transaction.type?.name }}</td>
+            <td *ngIf="userCountry === 'AR'">{{ transaction.origin }}</td>
+            <td>{{ transaction.letter }}</td>
+            <td>{{ transaction.number }}</td>
+            <td>{{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+            <td>{{ transaction.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+          </tr>
+          <tr align="center" *ngIf="transactions.length === 0 && !loading">
+            <td [attr.colspan]="getAdminColumnCount()">No se encontraron transacciones</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

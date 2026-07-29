@@ -1,0 +1,15 @@
+<label *ngIf="showLabel" for="user-branch-select" class="control-label">
+  <b>{{ label }}</b>
+</label>
+<select
+  id="user-branch-select"
+  class="form-control"
+  [(ngModel)]="branchSelectedId"
+  (ngModelChange)="onBranchChange()"
+  [disabled]="formDisabled || !allowChangeBranch"
+>
+  <option *ngIf="showAllOption" [ngValue]="null">{{ allOptionLabel }}</option>
+  <option *ngFor="let branch of branches" [ngValue]="branch._id">
+    {{ branch.number }} - {{ branch.name }}
+  </option>
+</select>

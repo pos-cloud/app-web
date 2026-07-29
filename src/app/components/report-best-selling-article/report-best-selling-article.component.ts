@@ -10,18 +10,15 @@ import 'moment/locale/es';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CurrencyPipe } from '@angular/common';
-import { Branch, Category } from '@types';
+import { Category, Movements, TransactionMovement, TransactionType } from '@types';
 import { Config } from 'app/app.config';
-import { Movements, TransactionMovement, TransactionType } from '@types';
-import { AuthService } from 'app/core/services/auth.service';
-import { BranchService } from 'app/core/services/branch.service';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import { Subscription } from 'rxjs';
 import { ArticleService } from '../../core/services/article.service';
 import { CategoryService } from '../../core/services/category.service';
 import { MovementOfArticleService } from '../../core/services/movement-of-article.service';
 import { TransactionTypeService } from '../../core/services/transaction-type.service';
-import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 
 @Component({
   selector: 'app-report-best-selling-article',
@@ -50,9 +47,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
   public totalAmount;
   public totalItem;
   public filters: any[];
-  public branches: Branch[];
-  @Input() branchSelectedId: String;
-  public allowChangeBranch: boolean;
+  @Input() branchSelectedId: string | null = null;
   public scrollY: number = 0;
   public title: string;
   private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
@@ -211,9 +206,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
     public _modalService: NgbModal,
     public _transactionTypeService: TransactionTypeService,
     public _categoriesService: CategoryService,
-    public alertConfig: NgbAlertConfig,
-    private _branchService: BranchService,
-    private _authService: AuthService
+    public alertConfig: NgbAlertConfig
   ) {
     this.startDate = moment().format('YYYY-MM-DD');
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
@@ -232,24 +225,6 @@ export class ReportBestSellingArticleComponent implements OnInit {
     this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.listType = pathLocation[3];
 
-    if (!this.branchSelectedId) {
-      await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
-        this.branches = branches;
-        if (this.branches && this.branches.length > 1) {
-          this.branchSelectedId = this.branches[0]._id;
-        }
-      });
-      this._authService.getIdentity.subscribe(async (identity) => {
-        if (identity && identity.origin) {
-          this.allowChangeBranch = false;
-          this.branchSelectedId = identity.origin.branch._id;
-        } else {
-          this.allowChangeBranch = true;
-          this.branchSelectedId = null;
-        }
-      });
-    }
-
     await this.getTransactionTypes().then((result) => {
       if (result) {
         this.transactionTypes = result;
@@ -261,8 +236,6 @@ export class ReportBestSellingArticleComponent implements OnInit {
         this.categories = result;
       }
     });
-
-    this.getItems();
   }
 
   public drop(event: CdkDragDrop<string[]>): void {
@@ -279,33 +252,6 @@ export class ReportBestSellingArticleComponent implements OnInit {
         break;
       default:
     }
-  }
-
-  public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            if (result && result.branches) {
-              resolve(result.branches);
-            } else {
-              resolve(null);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            resolve(null);
-          }
-        );
-    });
   }
 
   public exportItems(): void {

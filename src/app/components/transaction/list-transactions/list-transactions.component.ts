@@ -4,7 +4,6 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'app/core/services/auth.service';
-import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import * as moment from 'moment';
@@ -15,7 +14,7 @@ import { UserService } from '@core/services/user.service';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, Branch, PrintType, Printer } from '@types';
+import { ApiResponse, PrintType, Printer } from '@types';
 import { User } from '@types';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
@@ -80,9 +79,7 @@ export class ListTransactionsComponent implements OnInit {
     itemsShowLimit: 3,
     allowSearchFilter: true,
   };
-  branchSelectedId: String;
-  allowChangeBranch: boolean;
-  branches: Branch[];
+  branchSelectedId: string | null = null;
   config: Config;
   database: string;
 
@@ -97,7 +94,6 @@ export class ListTransactionsComponent implements OnInit {
     private _router: Router,
     private _modalService: NgbModal,
     private _route: ActivatedRoute,
-    private _branchService: BranchService,
     private _authService: AuthService,
     private _printService: PrintService,
     private _toastService: ToastService,
@@ -120,10 +116,6 @@ export class ListTransactionsComponent implements OnInit {
 
   async ngOnInit() {
     this.database = localStorage.getItem('company');
-
-    await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
-      this.branches = branches;
-    });
 
     let pathLocation: string[] = this._router.url.split('/');
 
@@ -149,18 +141,15 @@ export class ListTransactionsComponent implements OnInit {
         this.editTransaction = transactionObject.edit;
       }
 
-      if (identity && identity.origin) {
-        this.branchSelectedId = identity.origin.branch._id;
-        this.allowChangeBranch = false;
+      const userBranchId = this.getUserBranchId(identity);
+      this.branchSelectedId = userBranchId;
 
+      if (userBranchId) {
         for (let index = 0; index < this.columns.length; index++) {
           if (this.columns[index].name === 'branchDestination') {
-            this.columns[index].defaultFilter = `{ "${identity.origin.branch._id}" }`;
+            this.columns[index].defaultFilter = `{ "${userBranchId}" }`;
           }
         }
-      } else {
-        this.allowChangeBranch = true;
-        this.branchSelectedId = null;
       }
     });
 
@@ -170,39 +159,35 @@ export class ListTransactionsComponent implements OnInit {
       }
     });
 
-    this.getItems();
     this.initDragHorizontalScroll();
   }
 
-  public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve) => {
-      this._branchService
-        .getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            if (result && result.branches) {
-              resolve(result.branches);
-            } else {
-              resolve(null);
-            }
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-            resolve(null);
-          },
-          complete: () => {
-            resolve(null);
-          },
-        });
-    });
+  private getUserBranchId(user: User | null): string | null {
+    if (!user) {
+      return null;
+    }
+
+    const branch = user.branch as string | { _id?: string } | null | undefined;
+    if (branch) {
+      if (typeof branch === 'string') {
+        return branch;
+      }
+      if (branch._id) {
+        return String(branch._id);
+      }
+    }
+
+    const originBranch = user.origin?.branch;
+    if (originBranch) {
+      if (typeof originBranch === 'string') {
+        return originBranch;
+      }
+      if (originBranch._id) {
+        return String(originBranch._id);
+      }
+    }
+
+    return null;
   }
 
   public getTransactionTypes(): Promise<TransactionType[]> {

@@ -4,14 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from '@types';
 import { TransactionMovement } from '@types';
-import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
-import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -27,7 +25,7 @@ import { takeUntil } from 'rxjs/operators';
     TranslateModule,
     PipesModule,
     DateTimePickerComponent,
-    MultiSelectDropdownComponent,
+    UserBranchSelectComponent,
     DataTableReportsComponent,
   ],
 })
@@ -43,8 +41,7 @@ export class ReportTransactionsByTypeComponent {
   private subscription: Subscription = new Subscription();
 
   // filter
-  branches: Branch[];
-  branchSelectedId: string[] = [];
+  branchSelectedId: string | null = null;
 
   startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
   endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
@@ -57,7 +54,6 @@ export class ReportTransactionsByTypeComponent {
 
   constructor(
     private _service: ReportSystemService,
-    private _branchService: BranchService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
     private _title: Title,
@@ -68,8 +64,6 @@ export class ReportTransactionsByTypeComponent {
   async ngOnInit() {
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
-      this.getBranches();
-      this.getReport();
     });
   }
 
@@ -81,7 +75,7 @@ export class ReportTransactionsByTypeComponent {
     return {
       reportType: 'transactions-by-type',
       filters: {
-        branches: this.branchSelectedId,
+        branches: this.branchSelectedId ? [this.branchSelectedId] : [],
         transactionMovement: this.transactionMovement,
         startDate: this.startDate,
         endDate: this.endDate,
@@ -92,32 +86,6 @@ export class ReportTransactionsByTypeComponent {
       },
       sorting: this.sort,
     };
-  }
-
-  private getBranches(): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getAll({
-          project: {
-            _id: 1,
-            operationType: 1,
-            name: 1,
-          },
-          match: {
-            operationType: { $ne: 'D' },
-          },
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.branches = result.result;
-          },
-          error: (error) => {
-            resolve(null);
-          },
-          complete: () => {},
-        });
-    });
   }
 
   public getReport(): void {

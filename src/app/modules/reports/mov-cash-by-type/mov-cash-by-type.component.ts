@@ -5,15 +5,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
-import { Branch } from '@types';
 import { TransactionType } from '@types';
-import { BranchService } from 'app/core/services/branch.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -30,6 +29,7 @@ import { takeUntil } from 'rxjs/operators';
     PipesModule,
     DateTimePickerComponent,
     MultiSelectDropdownComponent,
+    UserBranchSelectComponent,
     DataTableReportsComponent,
   ],
 })
@@ -45,8 +45,7 @@ export class ReportMovCashByTypeComponent implements OnInit {
   private subscription: Subscription = new Subscription();
 
   //filter
-  branches: Branch[];
-  branchSelectedId: string[] = [];
+  branchSelectedId: string | null = null;
 
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
@@ -63,7 +62,6 @@ export class ReportMovCashByTypeComponent implements OnInit {
   constructor(
     public _service: ReportSystemService,
     public _router: Router,
-    private _branchService: BranchService,
     public _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private _activatedRoute: ActivatedRoute,
@@ -74,9 +72,7 @@ export class ReportMovCashByTypeComponent implements OnInit {
   async ngOnInit() {
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
-      this.getBranches();
       this.getTransactionTypes();
-      this.getReport();
     });
   }
 
@@ -88,7 +84,7 @@ export class ReportMovCashByTypeComponent implements OnInit {
     return {
       reportType: 'mov-cash-by-type',
       filters: {
-        branches: this.branchSelectedId,
+        branches: this.branchSelectedId ? [this.branchSelectedId] : [],
         transactionMovement: this.transactionMovement,
         transactionTypes: this.transactionTypesSelect ?? [],
         startDate: this.startDate,
@@ -100,32 +96,6 @@ export class ReportMovCashByTypeComponent implements OnInit {
       },
       sorting: this.sort,
     };
-  }
-
-  private getBranches(): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getAll({
-          project: {
-            _id: 1,
-            operationType: 1,
-            name: 1,
-          },
-          match: {
-            operationType: { $ne: 'D' },
-          },
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.branches = result.result;
-          },
-          error: (error) => {
-            resolve(null);
-          },
-          complete: () => {},
-        });
-    });
   }
 
   private getTransactionTypes() {

@@ -75,6 +75,7 @@ import { RestoTablesComponent } from './modules/pos/resto/resto-tables/resto-tab
 import { HeaderTransactionComponent } from './modules/transaction/views/fast/components/header-transaction/header-transaction.component';
 import { AiChatWidgetComponent } from './shared/components/ai-chat-widget/ai-chat-widget.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
+import { UserBranchSelectComponent } from './shared/components/user-branch-select/user-branch-select.component';
 import { FocusDirective } from './shared/directives/focus.directive';
 import { PipesModule } from './shared/pipes/pipes.module';
 
@@ -156,6 +157,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     RestoTablesComponent,
     NotificationBellComponent,
     AiChatWidgetComponent,
+    UserBranchSelectComponent,
     FocusDirective,
     HeaderTransactionComponent,
     ServiceWorkerModule.register('ngsw-worker.js', {

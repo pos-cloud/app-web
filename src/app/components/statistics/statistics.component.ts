@@ -5,10 +5,8 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { Router } from '@angular/router';
-import { Branch } from '@types';
 import { Config } from 'app/app.config';
 import { AuthService } from 'app/core/services/auth.service';
-import { BranchService } from 'app/core/services/branch.service';
 import { CompanyService } from '../../core/services/company.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { ReportBestSellingArticleComponent } from '../report-best-selling-article/report-best-selling-article.component';
@@ -42,17 +40,14 @@ export class StatisticsComponent implements OnInit {
   @ViewChild(ReportSalesByMakeComponent, { static: true })
   reportSalesByMake: ReportSalesByMakeComponent;
   public transactionMovement: string;
-  public branches: Branch[];
-  public branchSelectedId: String;
-  public allowChangeBranch: boolean;
+  public branchSelectedId: string | null = null;
 
   constructor(
     public _companyService: CompanyService,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
     public _authService: AuthService,
-    public _router: Router,
-    private _branchService: BranchService
+    public _router: Router
   ) {
     let pathLocation: string[] = this._router.url.split('/');
     this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
@@ -64,20 +59,6 @@ export class StatisticsComponent implements OnInit {
     this.endDate = moment().format('YYYY-MM-DD');
     this.endTime = moment('23:59', 'HH:mm').format('HH:mm');
     this.showStatistics = true;
-    await this.getBranches({ operationType: { $ne: 'D' } }).then((branches) => {
-      this.branches = branches;
-    });
-    this._authService.getIdentity.subscribe(async (identity) => {
-      if (identity && identity.origin) {
-        this.allowChangeBranch = false;
-        this.branchSelectedId = identity.origin.branch._id;
-      } else {
-        this.allowChangeBranch = true;
-        this.branchSelectedId = null;
-      }
-    });
-
-    this.loadStatistics();
   }
 
   ngAfterViewInit() {
@@ -85,33 +66,6 @@ export class StatisticsComponent implements OnInit {
       if (identity) {
         this.showStatistics = true;
       }
-    });
-  }
-
-  public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
-      this._branchService
-        .getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            if (result && result.branches) {
-              resolve(result.branches);
-            } else {
-              resolve(null);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            resolve(null);
-          }
-        );
     });
   }
 
