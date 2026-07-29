@@ -22,7 +22,7 @@
               <td class="text-nowrap">{{ article.barcode || '-' }}</td>
               <td>{{ article.description }}</td>
               <td class="text-end text-nowrap" *ngIf="transaction?.type?.showPrices">
-                {{ getListPrice(article) | currency : getCurrencyCode(article) : 'symbol-narrow' : '1.2-2' }}
+                {{ getListPrice(article) | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </tr>
             <tr *ngIf="filteredArticles.length === 0 && !loading">
@@ -48,14 +48,14 @@
           >
             <span class="badge badge-info">
               <b *ngIf="transaction.type.transactionMovement.toString() !== 'Venta'">{{
-                article.costPrice | currency : getCurrencyCode(article) : 'symbol-narrow' : '1.2-2'
+                article.costPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2'
               }}</b>
               <b *ngIf="transaction.type.transactionMovement.toString() === 'Venta'">
                 {{
                   article.salePrice -
                     (article.salePrice * this.discountCompany) / 100 -
                     (article.salePrice * this.discountCompanyGroup) / 100
-                    | currency : getCurrencyCode(article) : 'symbol-narrow' : '1.2-2'
+                    | currency : 'USD' : 'symbol-narrow' : '1.2-2'
                 }}
               </b>
               <div
@@ -67,7 +67,7 @@
                   transaction.priceList
                 "
               >
-                <b>PL:{{ getRealPrice(article) | currency : getCurrencyCode(article) : 'symbol-narrow' : '1.2-2' }} </b>
+                <b>PL:{{ getRealPrice(article) | currency : 'USD' : 'symbol-narrow' : '1.2-2' }} </b>
               </div>
             </span>
           </div>

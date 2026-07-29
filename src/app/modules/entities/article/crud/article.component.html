@@ -390,11 +390,11 @@
                 </td>
                 <td class="flat">{{ articleTaxAux.get('tax').value?.name ?? '' }}</td>
                 <td class="flat">
-                  {{ articleTaxAux.get('taxBase').value | currency: currencyCode : 'symbol-narrow' : '1.2-2' }}
+                  {{ articleTaxAux.get('taxBase').value | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                 </td>
                 <td class="flat">{{ articleTaxAux.get('percentage').value }} %</td>
                 <td class="flat">
-                  {{ articleTaxAux.get('taxAmount').value | currency: currencyCode : 'symbol-narrow' : '1.2-2' }}
+                  {{ articleTaxAux.get('taxAmount').value | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                 </td>
               </tr>
             </tbody>
