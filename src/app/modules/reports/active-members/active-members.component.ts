@@ -16,7 +16,7 @@ export interface ActiveMemberRow {
   pendingCount: number;
   debt: number;
   debtFormatted: string;
-  monthsOwed: number;
+  days: number;
 }
 
 @Component({
@@ -30,12 +30,6 @@ export interface ActiveMemberRow {
 export class ActiveMembersComponent implements OnInit, OnDestroy {
   public data: ActiveMemberRow[] = [];
   public filteredData: ActiveMemberRow[] = [];
-  public totals: {
-    members?: number;
-    inactiveCount?: number;
-    totalDebt?: number;
-    totalDebtFormatted?: string;
-  } = {};
   public search = '';
   public loading = false;
 
@@ -75,7 +69,6 @@ export class ActiveMembersComponent implements OnInit, OnDestroy {
           next: (result) => {
             this._toastService.showToast(result);
             this.data = result?.result?.data ?? [];
-            this.totals = result?.result?.totals ?? {};
             this.applyFilter();
             this.cdRef.detectChanges();
           },
@@ -107,5 +100,9 @@ export class ActiveMembersComponent implements OnInit, OnDestroy {
 
   public isInactive(row: ActiveMemberRow): boolean {
     return row.status === 'Inactivo';
+  }
+
+  public isWarning(row: ActiveMemberRow): boolean {
+    return this.isInactive(row) && (row.days ?? 0) <= 10;
   }
 }
