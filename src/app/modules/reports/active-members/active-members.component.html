@@ -7,21 +7,6 @@
     </button>
   </div>
 
-  <div class="active-members-kpis" *ngIf="!loading || data.length">
-    <div class="kpi">
-      <div class="kpi-value">{{ totals.members ?? data.length }}</div>
-      <div class="kpi-title">Socios</div>
-    </div>
-    <div class="kpi kpi-danger">
-      <div class="kpi-value">{{ totals.inactiveCount ?? 0 }}</div>
-      <div class="kpi-title">Inactivos</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-value">${{ totals.totalDebtFormatted ?? '0' }}</div>
-      <div class="kpi-title">Deuda total</div>
-    </div>
-  </div>
-
   <div class="form-group search-group">
     <label for="search-member" class="control-label"><b>Buscar socio</b></label>
     <input
@@ -49,6 +34,7 @@
       class="member-card"
       *ngFor="let row of filteredData"
       [class.member-card--inactive]="isInactive(row)"
+      [class.member-card--warning]="isWarning(row)"
     >
       <div class="member-card__top">
         <div class="member-card__identity">
@@ -59,7 +45,11 @@
             <span *ngIf="row.phones">{{ row.phones }}</span>
           </p>
         </div>
-        <span class="member-badge" [class.member-badge--inactive]="isInactive(row)">
+        <span
+          class="member-badge"
+          [class.member-badge--inactive]="isInactive(row) && !isWarning(row)"
+          [class.member-badge--warning]="isWarning(row)"
+        >
           {{ row.status }}
         </span>
       </div>
@@ -72,12 +62,12 @@
           <span class="debt-value">${{ row.debtFormatted }}</span>
         </div>
         <div class="debt-item">
-          <span class="debt-label">Pendientes</span>
+          <span class="debt-label">Meses</span>
           <span class="debt-value">{{ row.pendingCount }}</span>
         </div>
         <div class="debt-item">
-          <span class="debt-label">Meses</span>
-          <span class="debt-value">{{ row.monthsOwed }}</span>
+          <span class="debt-label">Días</span>
+          <span class="debt-value" [class.debt-value--warning]="isWarning(row)">{{ row.days }}</span>
         </div>
       </div>
     </article>
