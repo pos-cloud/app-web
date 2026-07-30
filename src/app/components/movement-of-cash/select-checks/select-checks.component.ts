@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TransactionType } from '@types';
 import { MovementOfCash, StatusCheck } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { TransactionType } from '@types';
 import { TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { CheckWalletEditComponent } from '../../../modules/transaction/components/edit-check/check-wallet-edit.component';
 import { ViewTransactionComponent } from '../../../modules/transaction/components/view-transaction/view-transaction.component';
-import { EditCheckComponent } from '../edit-check/edit-check.component';
 
 @Component({
   selector: 'app-select-checks',
@@ -221,19 +221,14 @@ export class SelectChecksComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'edit':
-        modalRef = this._modalService.open(EditCheckComponent, {
+        modalRef = this._modalService.open(CheckWalletEditComponent, {
           size: 'lg',
           backdrop: 'static',
         });
         modalRef.componentInstance.movementOfCashId = movementOfCash._id;
-        modalRef.componentInstance.readonly = true;
         modalRef.result.then(
-          (result) => {
-            this.getMovementOfCashes();
-          },
-          (reason) => {
-            this.getMovementOfCashes();
-          }
+          () => this.getMovementOfCashes(),
+          () => this.getMovementOfCashes()
         );
         break;
       default:

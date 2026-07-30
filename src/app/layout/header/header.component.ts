@@ -217,7 +217,7 @@ export class HeaderComponent implements OnInit {
             {
               label: 'Reportes',
               children: [
-                { label: 'Cartera de cheques', link: 'report/cartera-de-cheques' },
+                { label: 'Cartera de cheques', link: 'reports/check-wallet' },
                 { label: 'Kardex de cheques', link: 'cheque' },
               ],
             },
@@ -733,7 +733,7 @@ export class HeaderComponent implements OnInit {
                 {
                   label: 'Reportes',
                   children: [
-                    { label: 'Cartera de cheques', link: 'report/cartera-de-cheques' },
+                    { label: 'Cartera de cheques', link: 'reports/check-wallet' },
                     { label: 'Kardex de cheques', link: 'cheque' },
                   ],
                 },

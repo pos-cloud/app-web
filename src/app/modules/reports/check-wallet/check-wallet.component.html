@@ -1,0 +1,37 @@
+<section class="container-fluid">
+  <!-- Filtros -->
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2 branch-filter">
+      <app-user-branch-select [(ngModel)]="branchSelectedId" (branchChange)="getReport()"></app-user-branch-select>
+    </div>
+
+    <!-- Botón de Actualizar -->
+    <div class="form-group ml-auto">
+      <label class="control-label"> </label>
+      <button class="btn btn-primary" (click)="getReport()">
+        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+      </button>
+    </div>
+  </div>
+
+  <div class="card bg-light mb-3 p-3" *ngIf="header?.length">
+    <div class="d-flex flex-wrap align-items-center">
+      <div class="header-detail p-2" *ngFor="let detail of header">
+        <strong>{{ detail.label | translate | capitalize }}:</strong> {{ detail.value }}
+      </div>
+    </div>
+  </div>
+
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="title"
+    [loading]="loading"
+    [rowButtons]="rowButtons"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
+    (eventFunction)="onEventFunction($event)"
+  >
+  </app-data-table-reports>
+</section>

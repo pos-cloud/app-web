@@ -10,7 +10,6 @@ import { ExportIvaComponent } from './components/export/export-iva/export-iva.co
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
-import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
 import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
@@ -173,11 +172,6 @@ export const _routes: Routes = [
   {
     path: 'admin/export-iva',
     component: ExportIvaComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'report/cartera-de-cheques',
-    component: ListChecksComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
