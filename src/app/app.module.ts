@@ -34,7 +34,6 @@ import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ExportersModule } from './components/export/exporters.module';
-import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { MovementOfCancellationComponent } from './components/movement-of-cancellation/movement-of-cancellation.component';
@@ -122,7 +121,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectChecksComponent,
     ListCategoriesPosComponent,
     SelectMovementsOfCashesComponent,
-    KardexCheckComponent,
     MenuComponent,
   ],
   imports: [

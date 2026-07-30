@@ -1,15 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { ChangeDetectorRef, Component, HostListener, ViewEncapsulation } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { IButton } from '@types';
+import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
+import { ViewTransactionComponent } from '../../transaction/components/view-transaction/view-transaction.component';
+import { MovementOfCash } from '../../../components/movement-of-cash/movement-of-cash';
 
 @Component({
   selector: 'app-check-ledger',
@@ -17,13 +23,29 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./check-ledger.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, PipesModule, DataTableReportsComponent, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    PipesModule,
+    DataTableReportsComponent,
+    ReactiveFormsModule,
+    SearchableDropdownComponent,
+  ],
 })
 export class ReportCheckLedgerComponent {
   public loading: boolean = false;
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
-  public form: FormGroup;
+  public checkForm: UntypedFormGroup;
+  public checkControl: any;
+  public movementOfCashes: MovementOfCash[] = [];
+  public movementOfCashMatch = {
+    operationType: { $ne: 'D' },
+    'type.inputAndOuput': true,
+    statusCheck: 'Disponible',
+    number: { $exists: true, $ne: '' },
+  };
 
   // data table
   public data: any[] = [];
@@ -37,30 +59,50 @@ export class ReportCheckLedgerComponent {
     direction: 'desc',
   };
 
+  public rowButtons: IButton[] = [
+    {
+      title: 'kardex-check',
+      class: 'btn btn-success btn-sm',
+      icon: 'fa fa-eye',
+      click: `kardex-check`,
+    },
+  ];
+
   constructor(
     private _service: ReportSystemService,
+    private _movementOfCashService: MovementOfCashService,
     private _toastService: ToastService,
     private _fb: UntypedFormBuilder,
     private cdRef: ChangeDetectorRef,
     public _router: Router,
+    private _modalService: NgbModal,
     private _title: Title
   ) {
-    this.form = this._fb.group({
-      checkNumber: [''],
-    });
+    this.checkForm = this._fb.group({ checkNumber: [null] });
+    this.checkControl = this.checkForm.get('checkNumber');
   }
 
-  async ngOnInit() {}
+  async ngOnInit() {
+    this.getMovementOfCashes();
+  }
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  @HostListener('keydown.enter', ['$event'])
+  onEnterKey(event: KeyboardEvent): void {
+    if ((event.target as HTMLElement).closest('.check-filter')) {
+      event.preventDefault();
+      this.getReport();
+    }
   }
 
   private get requestPayload() {
     return {
       reportType: 'check-ledger',
       filters: {
-        number: this.form.value.checkNumber,
+        number: this.checkControl?.value?.number ?? '',
       },
       pagination: {
         page: 1,
@@ -68,6 +110,34 @@ export class ReportCheckLedgerComponent {
       },
       sorting: this.sort,
     };
+  }
+
+  public getMovementOfCashes(): void {
+    this.subscription.add(
+      this._movementOfCashService
+        .getAll({
+          project: {
+            _id: 1,
+            number: 1,
+            'bank.name': 1,
+            'type.inputAndOuput': 1,
+            statusCheck: 1,
+            amountPaid: 1,
+            operationType: 1,
+          },
+          match: this.movementOfCashMatch,
+          sort: { number: 1 },
+        })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            this.movementOfCashes = result?.result ?? [];
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+        })
+    );
   }
 
   public getReport(): void {
@@ -83,7 +153,7 @@ export class ReportCheckLedgerComponent {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            this.header = result?.result?.header ?? {};
+            this.header = result?.result?.header ?? [];
             this.title = result?.result?.info?.title ?? 'Kadex de cheque';
             this._title.setTitle(this.title);
 
@@ -107,36 +177,14 @@ export class ReportCheckLedgerComponent {
     };
     this.getReport();
   }
-  public onExportExcel(event): void {
-    this.loading = true;
-    const pathUrl = this._router.url.split('/');
-    const entity = pathUrl[2];
 
-    this.subscription.add(
-      this._service
-        .downloadXlsx(this.requestPayload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            try {
-              const blobUrl = URL.createObjectURL(result);
-              const a = document.createElement('a');
-              a.href = blobUrl;
-              a.download = `${entity}.xlsx`;
-              a.click();
-              URL.revokeObjectURL(blobUrl);
-            } catch (e) {
-              this._toastService.showToast({ message: 'Error al generar el Excel' });
-            }
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-          },
-          complete: () => {
-            this.loading = false;
-            this.cdRef.detectChanges();
-          },
-        })
-    );
+  public onEventFunction(event: { op: string; obj: any; items: any[] }): void {
+    if (event.op === 'kardex-check') {
+      let modalRef = this._modalService.open(ViewTransactionComponent, {
+        size: 'lg',
+        backdrop: 'static',
+      });
+      modalRef.componentInstance.transactionId = event?.obj?._id;
+    }
   }
 }

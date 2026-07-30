@@ -1,4 +1,15 @@
 app-check-ledger {
+  .check-filter {
+    min-width: 320px;
+    flex: 0 0 auto;
+
+    app-searchable-dropdown,
+    .searchable-dropdown-container {
+      display: block;
+      min-width: 320px;
+    }
+  }
+
   .card {
     border-radius: 0.75rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

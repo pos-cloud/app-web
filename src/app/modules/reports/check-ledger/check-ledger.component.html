@@ -1,11 +1,17 @@
 <section class="container-fluid">
   <div class="d-flex align-items-center justify-content-between flex-wrap">
-    <div class="form-group mr-2 pt-3">
-      <label for="article" class="control-label">
-        <b>{{ 'check' | translate | capitalize }}</b></label
+    <div class="form-group mr-2 pt-3 check-filter">
+      <label for="checkNumber" class="control-label">
+        <b>{{ 'checkNumber' | translate | capitalize }}</b></label
       >
-      <form [formGroup]="form">
-        <input type="text" class="form-control" formControlName="checkNumber" name="checkNumber" id="checkNumber" />
+      <form [formGroup]="checkForm" (ngSubmit)="getReport()">
+        <app-searchable-dropdown
+          [control]="checkControl"
+          [data]="movementOfCashes"
+          [keyField]="'_id'"
+          [displayField]="'number'"
+          [minSearchLength]="1"
+        ></app-searchable-dropdown>
       </form>
     </div>
 
@@ -32,9 +38,10 @@
     [totals]="totals"
     [title]="title"
     [loading]="loading"
+    [rowButtons]="rowButtons"
     [(sorting)]="sort"
     (sortingChange)="onSortingChange($event)"
-    (eventExport)="onExportExcel($event)"
+    (eventFunction)="onEventFunction($event)"
   >
   </app-data-table-reports>
 </section>

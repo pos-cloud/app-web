@@ -8,7 +8,6 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
 import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
 import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
-import { KardexCheckComponent } from './components/kardex-check/kardex-check.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
@@ -67,11 +66,6 @@ export const _routes: Routes = [
   {
     path: 'admin/venta/statistics',
     component: StatisticsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'cheque',
-    component: KardexCheckComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
