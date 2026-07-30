@@ -40,8 +40,6 @@ import { AddMovementOfArticleComponent } from './components/movement-of-article/
 import { MovementOfCancellationComponent } from './components/movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from './components/movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { DeleteMovementOfCashComponent } from './components/movement-of-cash/delete-movement-of-cash/delete-movement-of-cash.component';
-import { EditCheckComponent } from './components/movement-of-cash/edit-check/edit-check.component';
-import { ListChecksComponent } from './components/movement-of-cash/list-checks/list-checks.component';
 import { SelectChecksComponent } from './components/movement-of-cash/select-checks/select-checks.component';
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
@@ -113,7 +111,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     MovementOfCancellationComponent,
     CurrentAccountDetailsComponent,
     ListArticlesPosComponent,
-    EditCheckComponent,
     PrintVatBookComponent,
     PrintTransactionTypeComponent,
     CancellationTypeAutomaticComponent,
@@ -121,7 +118,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PosKitchenComponent,
     PosClientViewComponent,
     PosPackingComponent,
-    ListChecksComponent,
     SelectTableComponent,
     SelectChecksComponent,
     ListCategoriesPosComponent,
