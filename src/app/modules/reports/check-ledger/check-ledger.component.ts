@@ -9,13 +9,13 @@ import { IButton } from '@types';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
+import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
-import { ViewTransactionComponent } from '../../transaction/components/view-transaction/view-transaction.component';
 import { MovementOfCash } from '../../../components/movement-of-cash/movement-of-cash';
+import { ViewTransactionComponent } from '../../transaction/components/view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-check-ledger',
@@ -55,7 +55,7 @@ export class ReportCheckLedgerComponent {
   public title: '';
   // sort
   public sort = {
-    column: 'totalPrice',
+    column: 'endDate',
     direction: 'desc',
   };
 
@@ -176,6 +176,39 @@ export class ReportCheckLedgerComponent {
       direction: event.direction,
     };
     this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .downloadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
   }
 
   public onEventFunction(event: { op: string; obj: any; items: any[] }): void {

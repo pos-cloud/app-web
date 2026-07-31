@@ -1,91 +1,88 @@
-<section class="container-fluid">
-  <div class="card">
-    <div class="card-header">
-      <span style="color: #607d8b"> {{ 'edit' | translate | capitalize }} {{ movementOfCash?.number ?? '' }} </span>
+<div class="card">
+  <div class="card-header">
+    <span style="color: #607d8b"> {{ 'edit' | translate | capitalize }} {{ movementOfCash?.number ?? '' }} </span>
 
-      <div class="pull-right">
-        <button type="button" class="btn" (click)="returnTo()">
-          <i class="fa fa-times"></i>
-          <span>{{ 'close' | translate | capitalize }}</span>
-        </button>
-        <button type="button" class="btn" [disabled]="loading" (click)="handleMovementOfCashOperation()">
-          <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
-          <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
-          <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
-        </button>
-      </div>
-    </div>
-    <div class="card-body scroll">
-      <form [formGroup]="movementOfCashForm" (ngSubmit)="handleMovementOfCashOperation()" autocomplete="off">
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>{{ 'mainData' | translate | capitalize }}</b>
-          </label>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-6">
-            <label for="expirationDate" class="control-label">{{ 'expirationDate' | translate | capitalize }}:</label>
-            <input
-              type="date"
-              class="form-control"
-              formControlName="expirationDate"
-              id="expirationDate"
-              [focus]="focusEvent"
-              min="2000-01-01"
-              [ngClass]="{
-                'is-invalid':
-                  movementOfCashForm.get('expirationDate')?.touched &&
-                  movementOfCashForm.get('expirationDate')?.invalid,
-              }"
-            />
-
-            <div
-              class="invalid-feedback"
-              *ngIf="movementOfCashForm.get('name')?.touched && movementOfCashForm.get('name')?.hasError('required')"
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-10">
-            <label for="bank" class="control-label">{{ 'bank' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
-              [control]="movementOfCashForm.get('bank')"
-              [data]="banks"
-              [keyField]="'_id'"
-              [displayField]="'name'"
-            ></app-typeahead-dropdown>
-            <div
-              class="invalid-feedback"
-              *ngIf="movementOfCashForm.get('bank')?.touched && movementOfCashForm.get('bank')?.hasError('required')"
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-6">
-            <label for="deliveredBy" class="control-label">Entregado por:</label>
-            <input type="text" class="form-control" formControlName="deliveredBy" id="deliveredBy" />
-          </div>
-
-          <div class="form-group col-md-6">
-            <label for="receiver" class="control-label">Destinatario:</label>
-            <input type="text" class="form-control" formControlName="receiver" id="receiver" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-6">
-            <label for="titular" class="control-label">Titular:</label>
-            <input type="text" class="form-control" name="titular" formControlName="titular" />
-          </div>
-          <div class="form-group col-md-6">
-            <label for="CUIT" class="control-label">CUIT:</label>
-            <input type="text" class="form-control" name="CUIT" formControlName="CUIT" />
-          </div>
-        </div>
-      </form>
+    <div class="pull-right">
+      <button type="button" class="btn" (click)="returnTo()">
+        <i class="fa fa-times"></i>
+        <span>{{ 'close' | translate | capitalize }}</span>
+      </button>
+      <button type="button" class="btn" [disabled]="loading" (click)="handleMovementOfCashOperation()">
+        <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+        <span *ngIf="!loading"> {{ 'save' | translate | capitalize }}</span>
+        <span *ngIf="loading"> {{ 'loading' | translate | capitalize }}</span>
+      </button>
     </div>
   </div>
-</section>
+  <div class="card-body scroll">
+    <form [formGroup]="movementOfCashForm" (ngSubmit)="handleMovementOfCashOperation()" autocomplete="off">
+      <div class="row">
+        <label class="form-group col-md-12">
+          <b>{{ 'mainData' | translate | capitalize }}</b>
+        </label>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="expirationDate" class="control-label">{{ 'expirationDate' | translate | capitalize }}:</label>
+          <input
+            type="date"
+            class="form-control"
+            formControlName="expirationDate"
+            id="expirationDate"
+            [focus]="focusEvent"
+            min="2000-01-01"
+            [ngClass]="{
+              'is-invalid':
+                movementOfCashForm.get('expirationDate')?.touched && movementOfCashForm.get('expirationDate')?.invalid,
+            }"
+          />
+
+          <div
+            class="invalid-feedback"
+            *ngIf="movementOfCashForm.get('name')?.touched && movementOfCashForm.get('name')?.hasError('required')"
+          >
+            {{ 'fieldRequired' | translate | capitalize }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-10">
+          <label for="bank" class="control-label">{{ 'bank' | translate | capitalize }}:</label>
+          <app-typeahead-dropdown
+            [control]="movementOfCashForm.get('bank')"
+            [data]="banks"
+            [keyField]="'_id'"
+            [displayField]="'name'"
+          ></app-typeahead-dropdown>
+          <div
+            class="invalid-feedback"
+            *ngIf="movementOfCashForm.get('bank')?.touched && movementOfCashForm.get('bank')?.hasError('required')"
+          >
+            {{ 'fieldRequired' | translate | capitalize }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="deliveredBy" class="control-label">Entregado por:</label>
+          <input type="text" class="form-control" formControlName="deliveredBy" id="deliveredBy" />
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="receiver" class="control-label">Destinatario:</label>
+          <input type="text" class="form-control" formControlName="receiver" id="receiver" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="titular" class="control-label">Titular:</label>
+          <input type="text" class="form-control" name="titular" formControlName="titular" />
+        </div>
+        <div class="form-group col-md-6">
+          <label for="CUIT" class="control-label">CUIT:</label>
+          <input type="text" class="form-control" name="CUIT" formControlName="CUIT" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
