@@ -10,12 +10,14 @@ import {
   CompanyType,
   MovementOfArticle,
   MovementOfCash,
+  Movements,
   PaymentMethod,
   StatusCheck,
   Taxes,
   Transaction,
   TransactionState,
 } from '@types';
+import { SelectChecksComponent } from 'app/components/movement-of-cash/select-checks/select-checks.component';
 import { BankService } from 'app/core/services/bank.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
@@ -110,6 +112,24 @@ export class FormalTransactionViewComponent implements OnInit {
 
   public get paymentRequiresCheck(): boolean {
     return this.selectedPaymentMethod?.checkDetail === true;
+  }
+
+  /** Compra con cheque en cartera: seleccionar cheques disponibles en lugar de cargarlos a mano. */
+  public get paymentUsesCheckWallet(): boolean {
+    return (
+      this.paymentRequiresCheck &&
+      this.selectedPaymentMethod?.inputAndOuput === true &&
+      this.transaction?.type?.movement?.toString() === Movements.Outflows
+    );
+  }
+
+  /** Cheque ingresado manualmente (venta u otros métodos sin cartera). */
+  public get paymentShowsManualCheckFields(): boolean {
+    return (
+      this.paymentRequiresCheck &&
+      (!this.selectedPaymentMethod?.inputAndOuput ||
+        this.transaction?.type?.movement?.toString() === Movements.Inflows)
+    );
   }
 
   /** Si el método de pago exige banco (configuración `allowBank`). */
@@ -303,8 +323,8 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   private syncPaymentCheckValidators(): void {
-    const check = this.paymentRequiresCheck;
-    const bankRequired = this.paymentRequiresBank;
+    const check = this.paymentShowsManualCheckFields;
+    const bankRequired = this.paymentRequiresBank && !this.paymentUsesCheckWallet;
 
     for (const name of ['comprobante', 'expirationDate', 'bank', 'titular', 'cuit'] as const) {
       const c = this.addPaymentForm.get(name);
@@ -967,6 +987,14 @@ export class FormalTransactionViewComponent implements OnInit {
       return;
     }
 
+    if (this.paymentUsesCheckWallet && !this.editingPaymentId) {
+      this.toastService.showToast({
+        message: 'Debe seleccionar los cheques en cartera a utilizar',
+        type: 'info',
+      });
+      return;
+    }
+
     if (this.editingPaymentId) {
       const movementToUpdate = this.movementsOfCash.find((movement) => movement._id === this.editingPaymentId);
       if (!movementToUpdate) {
@@ -1289,6 +1317,136 @@ export class FormalTransactionViewComponent implements OnInit {
       .catch(() => {});
   }
 
+  public openSelectChecksModal(): void {
+    if (!this.requestPaymentMethods || !this.selectedPaymentMethod) {
+      this.toastService.showToast({
+        message: 'Seleccioná un método de pago válido',
+        type: 'info',
+      });
+      return;
+    }
+
+    const modalRef = this.modal.open(SelectChecksComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+
+    const due = this.roundNumber.transform(this.transaction.totalPrice) as number;
+    const paid = this.roundNumber.transform(this.totalPaid) as number;
+    modalRef.componentInstance.transactionAmount = this.roundNumber.transform(Math.max(0, due - paid)) as number;
+    modalRef.componentInstance.paymentMethod = this.selectedPaymentMethod;
+    modalRef.componentInstance.transactionType = this.transaction.type;
+
+    modalRef.result
+      .then((result) => {
+        if (result?.movementsOfCashes?.length) {
+          this.saveChecksFromWallet(result.movementsOfCashes);
+        }
+      })
+      .catch(() => {});
+  }
+
+  private saveChecksFromWallet(checks: MovementOfCash[]): void {
+    const baseDate = this.transaction.endDate || this.transaction.startDate || new Date().toISOString();
+    let index = 0;
+
+    const saveNext = (): void => {
+      if (index >= checks.length) {
+        this.toastService.showToast({
+          message: 'Pagos agregados exitosamente',
+          type: 'success',
+        });
+        this.resetAddPaymentForm();
+        this.refresh();
+        return;
+      }
+
+      const mov = checks[index];
+      const movement = {
+        transaction: this.transaction,
+        type: mov.type,
+        amountPaid: mov.amountPaid,
+        date: baseDate,
+        expirationDate: mov.expirationDate,
+        paymentChange: 0,
+        statusCheck: StatusCheck.Closed,
+        quota: mov.quota ?? 1,
+        amountDiscount: 0,
+        balanceCanceled: 0,
+        titular: mov.titular,
+        observation: mov.observation,
+        deliveredBy: mov.deliveredBy,
+        CUIT: mov.CUIT,
+        bank: mov.bank,
+        number: mov.number,
+        receiver: mov.receiver,
+      } as MovementOfCash;
+
+      this.movementOfCashService.save(movement).subscribe({
+        next: (response) => {
+          if (response?.status === 200) {
+            const walletCheck = { ...mov, statusCheck: StatusCheck.Closed };
+            this.movementOfCashService.update(walletCheck).subscribe({
+              next: () => {
+                index++;
+                saveNext();
+              },
+              error: () => {
+                this.toastService.showToast({
+                  message: 'Error al actualizar el cheque en cartera',
+                  type: 'error',
+                });
+                this.refresh();
+              },
+            });
+          } else {
+            this.toastService.showToast({
+              message: response?.message || 'Error al agregar el pago',
+              type: 'error',
+            });
+            this.refresh();
+          }
+        },
+        error: () => {
+          this.toastService.showToast({
+            message: 'Error al agregar el pago',
+            type: 'error',
+          });
+          this.refresh();
+        },
+      });
+    };
+
+    saveNext();
+  }
+
+  private releaseWalletCheck(movement: MovementOfCash): void {
+    const typeId = movement.type?._id;
+    if (!movement.type?.checkDetail || !typeId || !movement.number) {
+      this.refresh();
+      return;
+    }
+
+    const query = `where="number":"${movement.number}","type":"${typeId}"`;
+    this.movementOfCashService
+      .getMovementsOfCashes(query)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          const walletChecks = result?.movementsOfCashes;
+          if (walletChecks?.length) {
+            const walletCheck = { ...walletChecks[0], statusCheck: StatusCheck.Available };
+            this.movementOfCashService.update(walletCheck).subscribe({
+              complete: () => this.refresh(),
+            });
+          } else {
+            this.refresh();
+          }
+        },
+        error: () => this.refresh(),
+      });
+  }
+
   public deletePayment(movement: MovementOfCash): void {
     if (!movement?._id || !this.requestPaymentMethods) {
       return;
@@ -1315,7 +1473,15 @@ export class FormalTransactionViewComponent implements OnInit {
                 message: 'Pago eliminado correctamente',
                 type: 'success',
               });
-              this.refresh();
+              if (
+                movement.type?.checkDetail &&
+                movement.type?.inputAndOuput &&
+                this.transaction?.type?.movement?.toString() === Movements.Outflows
+              ) {
+                this.releaseWalletCheck(movement);
+              } else {
+                this.refresh();
+              }
             } else {
               this.toastService.showToast({
                 message: response?.message || 'No se pudo eliminar el pago',

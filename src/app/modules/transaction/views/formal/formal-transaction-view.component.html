@@ -495,7 +495,7 @@
                           placeholder="Buscar método de pago…"
                         />
                       </div>
-                      <div class="col-4 col-md-2 form-group mb-2 mb-md-0">
+                      <div class="col-4 col-md-2 form-group mb-2 mb-md-0" *ngIf="!paymentUsesCheckWallet || editingPaymentId">
                         <label class="mb-1">Monto</label>
                         <input
                           type="text"
@@ -506,7 +506,18 @@
                           formControlName="amount"
                         />
                       </div>
-                      <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0">
+                      <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0" *ngIf="paymentUsesCheckWallet && !editingPaymentId">
+                        <label class="mb-1 d-none d-md-block">&nbsp;</label>
+                        <button
+                          type="button"
+                          class="btn btn-outline-primary formal-add-bar__submit"
+                          [disabled]="!selectedPaymentMethod"
+                          (click)="openSelectChecksModal()"
+                        >
+                          Buscar en Cartera
+                        </button>
+                      </div>
+                      <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0" *ngIf="!paymentUsesCheckWallet || editingPaymentId">
                         <label class="mb-1 d-none d-md-block">&nbsp;</label>
                         <button
                           type="submit"
@@ -519,7 +530,10 @@
                     </div>
 
                     <div *ngIf="paymentRequiresCheck || paymentRequiresBank" class="row mt-2 pt-2 border-top">
-                      <ng-container *ngIf="paymentRequiresCheck">
+                      <div *ngIf="paymentUsesCheckWallet && !editingPaymentId" class="col-12 form-group mb-0">
+                        <small class="text-muted">Seleccioná cheques disponibles en cartera para esta compra.</small>
+                      </div>
+                      <ng-container *ngIf="paymentShowsManualCheckFields">
                         <div class="col-12 mb-2"><small class="text-muted">Datos del cheque</small></div>
                         <div class="col-12 col-md-4 form-group mb-2">
                           <label class="mb-1">Comprobante</label>
@@ -534,18 +548,16 @@
                             min="2000-01-01"
                           />
                         </div>
-                      </ng-container>
-                      <div class="col-12 col-md-4 form-group mb-2">
-                        <label class="mb-1">Banco</label>
-                        <app-typeahead-dropdown
-                          [control]="addPaymentForm.controls.bank"
-                          [data]="banks"
-                          [keyField]="'_id'"
-                          [displayField]="'name'"
-                          placeholder="Buscar banco…"
-                        />
-                      </div>
-                      <ng-container *ngIf="paymentRequiresCheck">
+                        <div class="col-12 col-md-4 form-group mb-2">
+                          <label class="mb-1">Banco</label>
+                          <app-typeahead-dropdown
+                            [control]="addPaymentForm.controls.bank"
+                            [data]="banks"
+                            [keyField]="'_id'"
+                            [displayField]="'name'"
+                            placeholder="Buscar banco…"
+                          />
+                        </div>
                         <div class="col-12 col-md-4 form-group mb-2">
                           <label class="mb-1">Titular</label>
                           <input type="text" class="form-control form-control-sm" formControlName="titular" />
@@ -562,6 +574,16 @@
                           />
                         </div>
                       </ng-container>
+                      <div *ngIf="paymentRequiresBank && !paymentRequiresCheck" class="col-12 col-md-4 form-group mb-2">
+                        <label class="mb-1">Banco</label>
+                        <app-typeahead-dropdown
+                          [control]="addPaymentForm.controls.bank"
+                          [data]="banks"
+                          [keyField]="'_id'"
+                          [displayField]="'name'"
+                          placeholder="Buscar banco…"
+                        />
+                      </div>
                     </div>
                   </form>
                 </div>
