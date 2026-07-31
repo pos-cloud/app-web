@@ -76,10 +76,7 @@
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i><span>Actualizar</span>
         </button>
-        <button class="btn" (click)="exportIVA()"><i class="fa fa-book"></i><span>Exportar IVA</span></button>
-        <button class="btn" (click)="exportCiti()">
-          <i class="fa fa-list"></i><span>Exportar Régimen de Información</span>
-        </button>
+        <button class="btn" (click)="exportIvaArca()"><i class="fa fa-book"></i><span>Exportar IVA Arca </span></button>
         <app-export-excel
           #exportExcelComponent
           [title]="title"

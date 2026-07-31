@@ -5,8 +5,6 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
-import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
@@ -156,16 +154,6 @@ export const _routes: Routes = [
   {
     path: 'admin/cuentas-corrientes',
     component: CurrentAccountComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/export-citi',
-    component: ExportCitiComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/export-iva',
-    component: ExportIvaComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {

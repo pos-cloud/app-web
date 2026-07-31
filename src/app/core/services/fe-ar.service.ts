@@ -1,6 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, of } from 'rxjs';
+import { TransactionMovement } from '@types';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 
@@ -69,5 +70,43 @@ export class FeArService {
 
       xhr.send(formData);
     });
+  }
+
+  public exportIva(VATPeriod: string, transactionMovement: TransactionMovement): Observable<any> {
+    const URL = `${environment.apiv2}/arca/export-iva`;
+
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams().set('VATPeriod', VATPeriod).set('transactionMovement', String(transactionMovement));
+
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+        responseType: 'blob',
+        observe: 'response',
+      })
+      .pipe(
+        catchError((err: HttpErrorResponse) => {
+          if (err.error instanceof Blob) {
+            return new Observable<never>((observer) => {
+              const reader = new FileReader();
+
+              reader.onload = () => {
+                try {
+                  observer.error(JSON.parse(reader.result as string));
+                } catch {
+                  observer.error(err);
+                }
+              };
+
+              reader.onerror = () => observer.error(err);
+              reader.readAsText(err.error);
+            });
+          }
+
+          return throwError(() => err);
+        })
+      );
   }
 }

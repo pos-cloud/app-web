@@ -25,9 +25,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Config } from '../../../app.config';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { ExportCitiComponent } from '../../export/export-citi/export-citi.component';
 import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
-import { ExportIvaComponent } from '../../export/export-iva/export-iva.component';
+import { ExportIvaArcaComponent } from 'app/modules/transaction/components/export-iva-arca/export-iva-arca.component';
 import { TransactionMovement, TransactionType } from '@types';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction';
@@ -687,32 +686,17 @@ export class ListTransactionsComponent implements OnInit {
       });
   }
 
-  public exportCiti(): void {
-    let modalRef = this._modalService.open(ExportCitiComponent, {
-      size: 'lg',
-      backdrop: 'static',
-    });
-
-    modalRef.componentInstance.transactionMovement = this.transactionMovement;
-    modalRef.result.then(
-      (result) => {},
-      (reason) => {}
-    );
-  }
-
-  public exportIVA(): void {
-    let modalRef = this._modalService.open(ExportIvaComponent, {
+  public exportIvaArca(): void {
+    const modalRef = this._modalService.open(ExportIvaArcaComponent, {
       size: 'md',
       backdrop: 'static',
     });
 
-    modalRef.componentInstance.type = this.listType;
+    modalRef.componentInstance.transactionMovement = this.transactionMovement;
+
     modalRef.result.then(
-      (result) => {
-        if (result === 'export') {
-        }
-      },
-      (reason) => {}
+      () => {},
+      () => {}
     );
   }
 

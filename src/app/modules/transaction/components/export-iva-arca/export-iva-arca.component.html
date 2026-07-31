@@ -1,0 +1,73 @@
+<section class="container-fluid">
+  <div class="modal-header">
+    <h4 class="modal-title">Exportar IVA ARCA</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="exportIvaArcaForm" (ngSubmit)="exportZip()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="month" class="control-label">Mes:</label>
+          <select
+            class="form-control"
+            formControlName="month"
+            id="month"
+            [ngClass]="{
+              'is-invalid': exportIvaArcaForm.get('month')?.touched && exportIvaArcaForm.get('month')?.invalid,
+            }"
+          >
+            <option *ngFor="let month of months" [ngValue]="month">
+              {{ month }}
+            </option>
+          </select>
+          <div
+            class="invalid-feedback"
+            *ngIf="exportIvaArcaForm.get('month')?.touched && exportIvaArcaForm.get('month')?.hasError('required')"
+          >
+            {{ 'fieldRequired' | translate | capitalize }}
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="year" class="control-label">Año (*)</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="year"
+            name="year"
+            id="year"
+            maxlength="4"
+            [ngClass]="{
+              'is-invalid': exportIvaArcaForm.get('year')?.touched && exportIvaArcaForm.get('year')?.invalid,
+            }"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="exportIvaArcaForm.get('year')?.touched && exportIvaArcaForm.get('year')?.hasError('required')"
+          >
+            {{ 'fieldRequired' | translate | capitalize }}
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              exportIvaArcaForm.get('year')?.touched &&
+              !exportIvaArcaForm.get('year')?.hasError('required') &&
+              exportIvaArcaForm.get('year')?.invalid
+            "
+          >
+            Formato inválido (AAAA).
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        <i class="fa" [ngClass]="{ 'fa-file-archive-o': !loading, 'fa-spinner fa-spin': loading }"></i>
+        <span *ngIf="!loading">Exportar ZIP</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

@@ -7,7 +7,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { Config } from '../../app.config';
-import { TransactionMovement } from '@types';
 import { AuthService } from './auth.service';
 
 import { environment } from 'environments/environment';
@@ -164,32 +163,6 @@ export class TransactionService extends ModelService {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('query', query);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public exportCiti(VATPeriod: string, transactionMovement: TransactionMovement): Observable<any> {
-    const URL = `${environment.api}/api/export-citi`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    let query = '{ "VATPeriod": "' + VATPeriod + '", "transactionMovement": "' + transactionMovement + '" }';
 
     const params = new HttpParams().set('query', query);
 

@@ -33,7 +33,6 @@ import { ClockComponent } from './components/clock/clock.component';
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { ExportersModule } from './components/export/exporters.module';
 import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { MovementOfCancellationComponent } from './components/movement-of-cancellation/movement-of-cancellation.component';
@@ -145,7 +144,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     PipesModule,
     ComponentsModule,
-    ExportersModule,
     ExportExcelModule,
     NgMultiSelectDropDownModule.forRoot(),
     RestoTablesComponent,
