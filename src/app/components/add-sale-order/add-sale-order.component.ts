@@ -1198,6 +1198,29 @@ export class AddSaleOrderComponent {
     });
   }
 
+  private getConfigCurrencyId(): string | null {
+    const currency = this.config?.['currency'];
+    if (!currency) return null;
+    return String(currency._id ?? currency);
+  }
+
+  private isForeignCurrencyArticle(article: { currency?: any } | null | undefined): boolean {
+    if (!article?.currency) return false;
+    const configCurrencyId = this.getConfigCurrencyId();
+    if (!configCurrencyId) return false;
+    const articleCurrencyId = String(article.currency._id ?? article.currency);
+    return articleCurrencyId !== configCurrencyId;
+  }
+
+  /** Reescala unitPrice solo si la cotización cambió respecto de la ya aplicada a las líneas. */
+  private applyQuotationToUnitPrice(unitPrice: number, quotation: number): number {
+    const lastQ = this.lastQuotation > 0 ? this.lastQuotation : 1;
+    if (lastQ === quotation) {
+      return unitPrice;
+    }
+    return this.roundNumber.transform((unitPrice / lastQ) * quotation);
+  }
+
   recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
     let quotation = 1;
 
@@ -1209,15 +1232,8 @@ export class AddSaleOrderComponent {
       movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount
     );
 
-    if (
-      movementOfArticle.article &&
-      movementOfArticle.article.currency &&
-      this.config['currency'] &&
-      this.config['currency']._id !== movementOfArticle.article.currency._id
-    ) {
-      movementOfArticle.unitPrice = this.roundNumber.transform(
-        (movementOfArticle.unitPrice / this.lastQuotation) * quotation
-      );
+    if (this.isForeignCurrencyArticle(movementOfArticle.article)) {
+      movementOfArticle.unitPrice = this.applyQuotationToUnitPrice(movementOfArticle.unitPrice, quotation);
     }
 
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform(
@@ -1300,16 +1316,14 @@ export class AddSaleOrderComponent {
         quotation = this.transaction.quotation;
       }
 
+      const isForeignCurrency = this.isForeignCurrencyArticle(movementOfArticle.article);
+
       if (movementOfArticle.article) {
         movementOfArticle.basePrice = this.roundNumber.transform(
           movementOfArticle.article.basePrice * movementOfArticle.amount
         );
 
-        if (
-          movementOfArticle.article.currency &&
-          this.config['currency'] &&
-          this.config['currency']._id !== movementOfArticle.article.currency._id
-        ) {
+        if (isForeignCurrency) {
           movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
         }
       }
@@ -1337,11 +1351,7 @@ export class AddSaleOrderComponent {
         movementOfArticle.costPrice = this.roundNumber.transform(
           movementOfArticle.article.costPrice * movementOfArticle.amount
         );
-        if (
-          movementOfArticle.article.currency &&
-          this.config['currency'] &&
-          this.config['currency']._id !== movementOfArticle.article.currency._id
-        ) {
+        if (isForeignCurrency) {
           movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
         }
       }
@@ -1349,15 +1359,18 @@ export class AddSaleOrderComponent {
       movementOfArticle.unitPrice = this.roundNumber.transform(
         movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount + movementOfArticle.discountAmount
       );
-      if (
-        movementOfArticle.article &&
-        movementOfArticle.article.currency &&
-        this.config['currency'] &&
-        this.config['currency']._id !== movementOfArticle.article.currency._id
-      ) {
-        movementOfArticle.unitPrice = this.roundNumber.transform(
-          (movementOfArticle.unitPrice / this.lastQuotation) * quotation
-        );
+      if (isForeignCurrency) {
+        const lastQ = this.lastQuotation > 0 ? this.lastQuotation : 1;
+        if (lastQ !== quotation) {
+          movementOfArticle.unitPrice = this.applyQuotationToUnitPrice(movementOfArticle.unitPrice, quotation);
+        } else if (quotation !== 1 && movementOfArticle.article) {
+          // Cotización ya sincronizada en lastQuotation (p.ej. seteada con carrito vacío) pero la
+          // línea quedó en moneda del artículo: convertir desde el precio del artículo.
+          const articleUnitPrice = movementOfArticle.article.salePrice ?? 0;
+          if (articleUnitPrice > 0 && Math.abs(movementOfArticle.unitPrice - articleUnitPrice) < 0.0001) {
+            movementOfArticle.unitPrice = this.roundNumber.transform(articleUnitPrice * quotation);
+          }
+        }
       }
 
       const activePriceList: PriceList | undefined = (this.newPriceList ??
@@ -1370,11 +1383,7 @@ export class AddSaleOrderComponent {
       // ya cargados vuelvan a su precio original.
       if (movementOfArticle.article && this.explicitNoPriceList) {
         let unitPrice = movementOfArticle.article.salePrice ?? 0;
-        if (
-          movementOfArticle.article.currency &&
-          this.config['currency'] &&
-          this.config['currency']._id !== movementOfArticle.article.currency._id
-        ) {
+        if (isForeignCurrency) {
           unitPrice = this.roundNumber.transform(unitPrice * quotation);
         } else {
           unitPrice = this.roundNumber.transform(unitPrice);
@@ -1386,11 +1395,7 @@ export class AddSaleOrderComponent {
         const manualPrice = await this.getManualPriceForArticle(activePriceList._id, movementOfArticle.article._id);
         let unitPrice = manualPrice ?? movementOfArticle.article.salePrice ?? 0;
 
-        if (
-          movementOfArticle.article.currency &&
-          this.config['currency'] &&
-          this.config['currency']._id !== movementOfArticle.article.currency._id
-        ) {
+        if (isForeignCurrency) {
           unitPrice = this.roundNumber.transform(unitPrice * quotation);
         } else {
           unitPrice = this.roundNumber.transform(unitPrice);
