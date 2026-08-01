@@ -88,6 +88,7 @@ export class PaymentMethodComponent implements OnInit {
 
     if (this.operation === 'view' || this.operation === 'delete') this.paymentMethodForm.disable();
     this.loading = true;
+    this.setupConditionalArticleValidators();
 
     combineLatest({
       articles: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
@@ -111,6 +112,31 @@ export class PaymentMethodComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  private setupConditionalArticleValidators(): void {
+    this.paymentMethodForm
+      .get('discount')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((value) => this.toggleArticleRequired('discountArticle', value));
+
+    this.paymentMethodForm
+      .get('surcharge')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((value) => this.toggleArticleRequired('surchargeArticle', value));
+  }
+
+  private toggleArticleRequired(articleControlName: string, value: unknown): void {
+    const articleControl = this.paymentMethodForm.get(articleControlName);
+    if (!articleControl) return;
+
+    const hasValue = value !== null && value !== undefined && value !== '' && Number(value) > 0;
+    if (hasValue) {
+      articleControl.setValidators([Validators.required]);
+    } else {
+      articleControl.clearValidators();
+    }
+    articleControl.updateValueAndValidity({ emitEvent: false });
   }
 
   ngAfterViewInit() {
@@ -161,6 +187,8 @@ export class PaymentMethodComponent implements OnInit {
       allowBank: this.paymentMethod?.allowBank ?? false,
     };
     this.paymentMethodForm.setValue(values);
+    this.toggleArticleRequired('discountArticle', values.discount);
+    this.toggleArticleRequired('surchargeArticle', values.surcharge);
   }
 
   returnTo() {
@@ -194,7 +222,15 @@ export class PaymentMethodComponent implements OnInit {
       this.loading = false;
       return;
     }
-    this.paymentMethod = this.paymentMethodForm.value;
+    this.paymentMethod = {
+      ...this.paymentMethodForm.value,
+      commission: 0,
+      commissionArticle: null,
+      administrativeExpense: 0,
+      administrativeExpenseArticle: null,
+      otherExpense: 0,
+      otherExpenseArticle: null,
+    };
     switch (this.operation) {
       case 'add':
         this.savePaymentMethod();

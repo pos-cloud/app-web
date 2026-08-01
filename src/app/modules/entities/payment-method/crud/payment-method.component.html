@@ -46,13 +46,14 @@
         autocomplete="off"
         *ngIf="!loading"
       >
+        <!-- 1. Datos principales -->
         <div class="row">
           <label class="form-group col-md-12">
             <b>{{ 'mainData' | translate | capitalize }}</b>
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-2">
             <label for="order" class="control-label">{{ 'order' | translate | capitalize }}:</label>
             <input
               type="number"
@@ -63,7 +64,7 @@
               id="order"
             />
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-2">
             <label for="code" class="control-label">{{ 'code' | translate | capitalize }}:</label>
             <input
               type="number"
@@ -74,7 +75,7 @@
               id="code"
             />
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-8">
             <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
             <input
               type="text"
@@ -95,6 +96,13 @@
             </div>
           </div>
         </div>
+
+        <!-- 2. Condiciones comerciales -->
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>Condiciones comerciales</b>
+          </label>
+        </div>
         <div class="row">
           <div class="form-group col-md-3">
             <label for="discount" class="control-label">Descuento:</label>
@@ -112,7 +120,7 @@
               />
             </div>
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-9">
             <label for="discountArticle">{{ 'discountArticle' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="paymentMethodForm.get('discountArticle')"
@@ -120,7 +128,18 @@
               [keyField]="'_id'"
               [displayField]="'description'"
             ></app-typeahead-dropdown>
+            <div
+              class="invalid-feedback d-block"
+              *ngIf="
+                paymentMethodForm.get('discountArticle')?.touched &&
+                paymentMethodForm.get('discountArticle')?.hasError('required')
+              "
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
           </div>
+        </div>
+        <div class="row">
           <div class="form-group col-md-3">
             <label for="surcharge" class="control-label">{{ 'surcharge' | translate | capitalize }}:</label>
             <div class="input-group">
@@ -137,7 +156,7 @@
               />
             </div>
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-9">
             <label for="surchargeArticle">{{ 'surchargeArticle.description' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="paymentMethodForm.get('surchargeArticle')"
@@ -145,8 +164,19 @@
               [keyField]="'_id'"
               [displayField]="'description'"
             ></app-typeahead-dropdown>
+            <div
+              class="invalid-feedback d-block"
+              *ngIf="
+                paymentMethodForm.get('surchargeArticle')?.touched &&
+                paymentMethodForm.get('surchargeArticle')?.hasError('required')
+              "
+            >
+              {{ 'fieldRequired' | translate | capitalize }}
+            </div>
           </div>
         </div>
+
+        <!-- Ocultos temporalmente: comisión, gasto administrativo y otro gasto
         <div class="row">
           <div class="form-group col-md-3">
             <label for="commission" class="control-label">{{ 'commission' | translate | capitalize }}:</label>
@@ -230,8 +260,16 @@
             ></app-typeahead-dropdown>
           </div>
         </div>
+        -->
+
+        <!-- 3. Cuenta corriente y contabilidad -->
         <div class="row">
-          <div class="form-group col-md-3">
+          <label class="form-group col-md-12">
+            <b>Cuenta corriente y contabilidad</b>
+          </label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
             <label for="isCurrentAccount" class="control-label"
               >{{ 'isCurrentAccount' | translate | capitalize }}:</label
             >
@@ -240,7 +278,7 @@
               <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
             </select>
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-4">
             <label for="expirationDays" class="control-label">{{ 'expirationDays' | translate | capitalize }}:</label>
             <input
               type="number"
@@ -251,13 +289,47 @@
               [readonly]="readonly"
             />
           </div>
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-4">
             <label for="acceptReturned" class="control-label">{{ 'acceptReturned' | translate | capitalize }}:</label>
             <select class="form-control" formControlName="acceptReturned">
               <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
               <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
             </select>
           </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="cashBoxImpact" class="control-label">{{ 'cashBoxImpact' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="cashBoxImpact">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="allowCurrencyValue" class="control-label"
+              >{{ 'allowCurrencyValue' | translate | capitalize }}:</label
+            >
+            <select class="form-control" formControlName="allowCurrencyValue">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="account">{{ 'account.description' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="paymentMethodForm.get('account')"
+              [data]="accounts"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+
+        <!-- 4. Comportamiento del medio -->
+        <div class="row">
+          <label class="form-group col-md-12">
+            <b>Comportamiento del medio</b>
+          </label>
         </div>
         <div class="row">
           <div class="form-group col-md-4">
@@ -312,34 +384,8 @@
             </select>
           </div>
         </div>
-        <div class="row">
-          <div class="form-group col-md-4">
-            <label for="cashBoxImpact" class="control-label">{{ 'cashBoxImpact' | translate | capitalize }}:</label>
-            <select class="form-control" formControlName="cashBoxImpact">
-              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
-              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
-            </select>
-          </div>
-          <div class="form-group col-md-4">
-            <label for="allowCurrencyValue" class="control-label"
-              >{{ 'allowCurrencyValue' | translate | capitalize }}:</label
-            >
-            <select class="form-control" formControlName="allowCurrencyValue">
-              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
-              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
-            </select>
-          </div>
-          <div class="form-group col-md-4">
-            <label for="account">{{ 'account.description' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
-              [control]="paymentMethodForm.get('account')"
-              [data]="accounts"
-              [keyField]="'_id'"
-              [displayField]="'description'"
-            ></app-typeahead-dropdown>
-          </div>
-        </div>
 
+        <!-- 5. Auditoría -->
         <hr />
         <div class="row">
           <label class="form-group col-md-12">
