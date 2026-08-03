@@ -6,15 +6,12 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { IButton } from '@types';
-import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
-import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MovementOfCash } from '../../../components/movement-of-cash/movement-of-cash';
 import { ViewTransactionComponent } from '../../transaction/components/view-transaction/view-transaction.component';
 
 @Component({
@@ -30,7 +27,6 @@ import { ViewTransactionComponent } from '../../transaction/components/view-tran
     PipesModule,
     DataTableReportsComponent,
     ReactiveFormsModule,
-    SearchableDropdownComponent,
   ],
 })
 export class ReportCheckLedgerComponent {
@@ -38,14 +34,6 @@ export class ReportCheckLedgerComponent {
   private destroy$ = new Subject<void>();
   private subscription: Subscription = new Subscription();
   public checkForm: UntypedFormGroup;
-  public checkControl: any;
-  public movementOfCashes: MovementOfCash[] = [];
-  public movementOfCashMatch = {
-    operationType: { $ne: 'D' },
-    'type.inputAndOuput': true,
-    statusCheck: 'Disponible',
-    number: { $exists: true, $ne: '' },
-  };
 
   // data table
   public data: any[] = [];
@@ -70,7 +58,6 @@ export class ReportCheckLedgerComponent {
 
   constructor(
     private _service: ReportSystemService,
-    private _movementOfCashService: MovementOfCashService,
     private _toastService: ToastService,
     private _fb: UntypedFormBuilder,
     private cdRef: ChangeDetectorRef,
@@ -78,12 +65,7 @@ export class ReportCheckLedgerComponent {
     private _modalService: NgbModal,
     private _title: Title
   ) {
-    this.checkForm = this._fb.group({ checkNumber: [null] });
-    this.checkControl = this.checkForm.get('checkNumber');
-  }
-
-  async ngOnInit() {
-    this.getMovementOfCashes();
+    this.checkForm = this._fb.group({ checkNumber: [''] });
   }
 
   public ngOnDestroy(): void {
@@ -102,7 +84,7 @@ export class ReportCheckLedgerComponent {
     return {
       reportType: 'check-ledger',
       filters: {
-        number: this.checkControl?.value?.number ?? '',
+        number: this.checkForm.get('checkNumber')?.value ?? '',
       },
       pagination: {
         page: 1,
@@ -110,34 +92,6 @@ export class ReportCheckLedgerComponent {
       },
       sorting: this.sort,
     };
-  }
-
-  public getMovementOfCashes(): void {
-    this.subscription.add(
-      this._movementOfCashService
-        .getAll({
-          project: {
-            _id: 1,
-            number: 1,
-            'bank.name': 1,
-            'type.inputAndOuput': 1,
-            statusCheck: 1,
-            amountPaid: 1,
-            operationType: 1,
-          },
-          match: this.movementOfCashMatch,
-          sort: { number: 1 },
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.movementOfCashes = result?.result ?? [];
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-          },
-        })
-    );
   }
 
   public getReport(): void {

@@ -5,13 +5,13 @@
         <b>{{ 'checkNumber' | translate | capitalize }}</b></label
       >
       <form [formGroup]="checkForm" (ngSubmit)="getReport()">
-        <app-searchable-dropdown
-          [control]="checkControl"
-          [data]="movementOfCashes"
-          [keyField]="'_id'"
-          [displayField]="'number'"
-          [minSearchLength]="1"
-        ></app-searchable-dropdown>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="checkNumber"
+          id="checkNumber"
+          name="checkNumber"
+        />
       </form>
     </div>
 
