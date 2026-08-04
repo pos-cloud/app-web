@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CompanyService } from '@core/services/company.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -18,7 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
   imports: [DatatableModule],
   encapsulation: ViewEncapsulation.None,
 })
-export class ListCompanyComponent implements OnInit {
+export class ListCompanyComponent implements OnInit, OnDestroy {
   public companyType: string;
   public title: string;
   public loading: boolean = false;
@@ -262,7 +262,7 @@ export class ListCompanyComponent implements OnInit {
       filter: true,
       datatype: 'boolean',
       align: 'left',
-      required: true,
+      required: false,
     },
     {
       name: 'observation',
@@ -373,31 +373,65 @@ export class ListCompanyComponent implements OnInit {
     private route: ActivatedRoute,
     private _modalService: NgbModal,
     private _authService: AuthService
-  ) {
-    this.route.url.subscribe(() => {
-      const pathUrl = this._router.url.split('/');
-      this.companyType = pathUrl[3];
-      this.type = pathUrl[3] === 'client' ? CompanyType.Client : CompanyType.Provider;
-      this.title = this.type;
-
-      this.columns.push({
-        name: 'type',
-        visible: false,
-        disabled: true,
-        filter: false,
-        datatype: 'string',
-        defaultFilter: `{ "$eq": "${this.type}" }`,
-        project: null,
-        align: 'left',
-        required: true,
-      });
-
-      this.datatableComponent.refresh();
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getPermissions();
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const companyType = params['type'];
+      if (!companyType) {
+        return;
+      }
+
+      const typeChanged = !!this.companyType && this.companyType !== companyType;
+      this.type = companyType === 'client' ? CompanyType.Client : CompanyType.Provider;
+      this.title = this.type;
+      this.updateTypeColumn();
+      this.companyType = companyType;
+
+      if (typeChanged) {
+        this.refreshDatatable();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private updateTypeColumn(): void {
+    const typeFilter = `{ "$eq": "${this.type}" }`;
+    const typeColumn = this.columns.find((column) => column.name === 'type');
+
+    if (typeColumn) {
+      typeColumn.defaultFilter = typeFilter;
+      return;
+    }
+
+    this.columns.push({
+      name: 'type',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: typeFilter,
+      project: null,
+      align: 'left',
+      required: true,
+    });
+  }
+
+  private refreshDatatable(): void {
+    if (!this.datatableComponent) {
+      return;
+    }
+
+    if (this.datatableComponent.filters) {
+      this.datatableComponent.filters['type'] = `{ "$eq": "${this.type}" }`;
+    }
+    this.datatableComponent.currentPage = 1;
+    this.datatableComponent.refresh();
   }
 
   public async emitEvent(event) {
@@ -497,14 +531,12 @@ export class ListCompanyComponent implements OnInit {
         title: 'current-account1',
         class: 'btn btn-light btn-sm',
         icon: 'fa fa-book',
-        showWhen: 'item.allowCurrentAccount',
         click: `this.emitEvent('current-account1', item)`,
       },
       {
         title: 'current-account2',
         class: 'btn btn-light btn-sm',
         icon: 'fa fa-address-book',
-        showWhen: 'item.allowCurrentAccount',
         click: `this.emitEvent('current-account2', item)`,
       }
     );
