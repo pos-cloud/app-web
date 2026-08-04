@@ -262,7 +262,7 @@ export class ListCompanyComponent implements OnInit {
       filter: true,
       datatype: 'boolean',
       align: 'left',
-      required: false,
+      required: true,
     },
     {
       name: 'observation',
