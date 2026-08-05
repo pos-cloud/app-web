@@ -828,6 +828,15 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     });
   }
 
+  /** Tipos de artículo visibles/seleccionables en el listado POS. */
+  private isPosListableType(type: Type | string): boolean {
+    return type === Type.Final || type === Type.RawMaterial;
+  }
+
+  private filterPosListableArticles(articles: Article[]): Article[] {
+    return (articles || []).filter((art) => this.isPosListableType(art.type));
+  }
+
   async filterItem(article?: Article, category?: Category) {
     this.lastCategory = category ?? null;
     let isCodePrefix: boolean = false;
@@ -870,7 +879,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
       await this.getStructureForStock(article, amount);
     } else if (category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
-      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
+      this.filteredArticles = this.filterPosListableArticles(this.filteredArticles);
       if (this.filterArticle && this.filterArticle !== '') {
         this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
       }
@@ -887,7 +896,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         } else if (this.filteredArticles.length > 1) {
           count = 0;
           for (let art of this.filteredArticles) {
-            if (art.type === Type.Final) {
+            if (this.isPosListableType(art.type)) {
               if (
                 isCodePrefix &&
                 this.padNumber(art.code, this.config.tradeBalance.numberOfCode) ===
@@ -966,11 +975,11 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
             await this.getStructureForStock(article);
           }
         } else {
-          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
+          this.filteredArticles = this.filterPosListableArticles(this.filteredArticles);
           this.eventAddItem.emit(null);
         }
       } else {
-        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, Type.Final.toString(), 'type');
+        this.filteredArticles = this.filterPosListableArticles(this.filteredArticles);
         this._toastService.showToast({
           type: 'warning',
           message: 'No se encontro ningun producto.',
@@ -979,8 +988,8 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         this.eventAddItem.emit(null);
       }
     } else {
-      // Sin filtro y sin categoría: mostrar todos los artículos finales
-      this.filteredArticles = this.filterPipe.transform(this.articles, Type.Final.toString(), 'type');
+      // Sin filtro y sin categoría: mostrar artículos Final y Materia Prima
+      this.filteredArticles = this.filterPosListableArticles(this.articles);
       this.eventAddItem.emit(null);
     }
   }
@@ -1032,7 +1041,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
    */
   public clearFilter(): void {
     this.filterArticle = '';
-    this.filteredArticles = this.filterPipe.transform(this.articles, Type.Final.toString(), 'type');
+    this.filteredArticles = this.filterPosListableArticles(this.articles);
     this.hideMessage();
   }
 }
