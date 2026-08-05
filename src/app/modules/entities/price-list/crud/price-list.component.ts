@@ -10,11 +10,11 @@ import {
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
-import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
-import { ApiResponse, Article, Category, Make, PriceList } from '@types';
+import { ApiResponse, PriceList } from '@types';
+import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { combineLatest, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ArticleService } from '../../../../core/services/article.service';
 import { CategoryService } from '../../../../core/services/category.service';
@@ -30,7 +30,7 @@ import { PriceListService } from '../../../../core/services/price-list.service';
     ReactiveFormsModule,
     PipesModule,
     TranslateModule,
-    TypeaheadDropdownComponent,
+    SearchableDropdownComponent,
     ProgressbarModule,
   ],
 })
@@ -42,9 +42,6 @@ export class PriceListComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public priceListForm: UntypedFormGroup;
   private destroy$ = new Subject<void>();
-  public articles: Article[] = [];
-  public categories: Category[] = [];
-  public makes: Make[] = [];
 
   constructor(
     public _priceListService: PriceListService,
@@ -60,7 +57,7 @@ export class PriceListComponent implements OnInit {
       name: ['', [Validators.required]],
       pricingMode: ['dynamic', [Validators.required]],
       percentage: ['', [Validators.required]],
-      percentageType: ['final', [Validators.required]], // Nuevo campo
+      percentageType: ['final', [Validators.required]],
       allowSpecialRules: [false, []],
       default: [false, [Validators.required]],
       rules: this._fb.array([]),
@@ -68,91 +65,61 @@ export class PriceListComponent implements OnInit {
     });
   }
 
-  // Getter para acceder fácilmente al FormArray de rules
   get rulesArray(): UntypedFormArray {
     return this.priceListForm.get('rules') as UntypedFormArray;
   }
 
-  // Getter para acceder fácilmente al FormArray de exceptions
   get exceptionsArray(): UntypedFormArray {
     return this.priceListForm.get('exceptions') as UntypedFormArray;
   }
 
-  // Método para crear un FormGroup para una regla
-  private createRuleFormGroup(): UntypedFormGroup {
+  private createRuleFormGroup(rule?: PriceList['rules'][number]): UntypedFormGroup {
     return this._fb.group({
-      _id: [null, []],
-      category: [null, []],
-      make: [null, []],
-      percentage: [0, []],
+      _id: [rule?._id || null, []],
+      category: [rule?.category || null, []],
+      make: [rule?.make || null, []],
+      percentage: [rule?.percentage ?? 0, []],
     });
   }
 
-  // Método para crear un FormGroup para una excepción
-  private createExceptionFormGroup(): UntypedFormGroup {
+  private createExceptionFormGroup(exception?: PriceList['exceptions'][number]): UntypedFormGroup {
     return this._fb.group({
-      _id: [null, []],
-      article: [null, []],
-      percentage: [0, []],
+      _id: [exception?._id || null, []],
+      article: [exception?.article || null, []],
+      percentage: [exception?.percentage ?? 0, []],
     });
   }
 
-  // Método para agregar una nueva regla
   public addRule(): void {
     this.rulesArray.push(this.createRuleFormGroup());
   }
 
-  // Método para eliminar una regla
   public removeRule(index: number): void {
     this.rulesArray.removeAt(index);
   }
 
-  // Método para agregar una nueva excepción
   public addException(): void {
     this.exceptionsArray.push(this.createExceptionFormGroup());
   }
 
-  // Método para eliminar una excepción
   public removeException(index: number): void {
     this.exceptionsArray.removeAt(index);
   }
 
   ngOnInit() {
     const pathUrl = this._router.url.split('/');
-    const priceListId = pathUrl[4];
     this.operation = pathUrl[3];
+    this.priceListId = pathUrl[4];
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') {
+    if (this.operation === 'view' || this.operation === 'delete') {
       this.priceListForm.disable();
     }
 
-    this.loading = true;
-
-    combineLatest({
-      articles: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
-      categories: this._categoryService.find({ query: { operationType: { $ne: 'D' } } }),
-      makes: this._makeService.find({ query: { operationType: { $ne: 'D' } } }),
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: ({ articles, categories, makes }) => {
-          this.articles = articles || [];
-          this.categories = categories || [];
-          this.makes = makes || [];
-
-          if (priceListId) {
-            this.getPriceList(priceListId);
-          } else {
-            this.setValueForm();
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    if (this.priceListId) {
+      this.getPriceList(this.priceListId);
+    } else {
+      this.setValueForm();
+    }
   }
 
   ngAfterViewInit() {
@@ -167,12 +134,12 @@ export class PriceListComponent implements OnInit {
   public getPriceList(id: string) {
     this.loading = true;
     this._priceListService
-      .getById(id)
+      .getPriceListObjById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: ApiResponse) => {
           if (response.status === 200) {
-            this.priceList = response.result;
+            this.priceList = Array.isArray(response.result) ? response.result[0] : response.result;
             this.setValueForm();
           } else {
             this._toastService.showToast(response.message);
@@ -188,68 +155,38 @@ export class PriceListComponent implements OnInit {
   }
 
   private setValueForm() {
+    while (this.rulesArray.length !== 0) {
+      this.rulesArray.removeAt(0);
+    }
+    while (this.exceptionsArray.length !== 0) {
+      this.exceptionsArray.removeAt(0);
+    }
+
     if (this.priceList) {
-      // Limpiar arrays existentes
-      while (this.rulesArray.length !== 0) {
-        this.rulesArray.removeAt(0);
-      }
-      while (this.exceptionsArray.length !== 0) {
-        this.exceptionsArray.removeAt(0);
-      }
+      (this.priceList.rules || []).forEach((rule) => {
+        this.rulesArray.push(this.createRuleFormGroup(rule));
+      });
 
-      // Agregar reglas
-      if (this.priceList.rules && this.priceList.rules.length > 0) {
-        this.priceList.rules.forEach((rule) => {
-          // Buscar la categoría y marca completas por ID
-          const categoryId = typeof rule.category === 'string' ? rule.category : rule.category?._id;
-          const makeId = typeof rule.make === 'string' ? rule.make : rule.make?._id;
-          const categoryObj = categoryId ? this.categories.find((cat) => cat._id === categoryId) : null;
-          const makeObj = makeId ? this.makes.find((make) => make._id === makeId) : null;
-
-          this.rulesArray.push(
-            this._fb.group({
-              _id: [rule._id || null, []],
-              category: [categoryObj || null, []],
-              make: [makeObj || null, []],
-              percentage: [rule.percentage, []],
-            })
-          );
-        });
-      }
-
-      // Agregar excepciones
-      if (this.priceList.exceptions && this.priceList.exceptions.length > 0) {
-        this.priceList.exceptions.forEach((exception) => {
-          // Buscar el artículo completo por ID
-          const articleId = typeof exception.article === 'string' ? exception.article : exception.article?._id;
-          const articleObj = articleId ? this.articles.find((art) => art._id === articleId) : null;
-          this.exceptionsArray.push(
-            this._fb.group({
-              _id: [exception._id || null, []],
-              article: [articleObj || null, []],
-              percentage: [exception.percentage, []],
-            })
-          );
-        });
-      }
+      (this.priceList.exceptions || []).forEach((exception) => {
+        this.exceptionsArray.push(this.createExceptionFormGroup(exception));
+      });
 
       this.priceListForm.patchValue({
         _id: this.priceList._id || '',
         name: this.priceList.name || '',
-        pricingMode: (this.priceList as any).pricingMode || 'dynamic',
-        percentage: this.priceList.percentage || 0,
-        percentageType: this.priceList.percentageType || 'base', // Nuevo campo
+        pricingMode: this.priceList.pricingMode || 'dynamic',
+        percentage: this.priceList.percentage ?? 0,
+        percentageType: this.priceList.percentageType || 'final',
         allowSpecialRules: this.priceList.allowSpecialRules || false,
         default: this.priceList.default || false,
       });
     } else {
-      // Valores por defecto para nuevo registro
       this.priceListForm.patchValue({
         _id: '',
         name: '',
         pricingMode: 'dynamic',
         percentage: 0,
-        percentageType: 'base', // Nuevo campo
+        percentageType: 'final',
         allowSpecialRules: false,
         default: false,
       });
@@ -266,48 +203,9 @@ export class PriceListComponent implements OnInit {
     }
 
     const formValue = this.priceListForm.value;
-
-    // Preparar el objeto priceList con las reglas y excepciones
     const priceListData: PriceList = {
-      ...this.priceList, // Mantener todos los campos existentes
-      _id: this.priceList?._id || formValue._id,
-      name: formValue.name,
-      pricingMode: formValue.pricingMode,
-      percentage: formValue.percentage,
-      percentageType: formValue.percentageType, // Nuevo campo
-      allowSpecialRules: formValue.allowSpecialRules,
-      default: formValue.default,
-      rules: formValue.rules.map((rule) => {
-        // La interfaz permite Category | string, así que manejamos ambos casos
-        const categoryObj =
-          typeof rule.category === 'string'
-            ? this.categories.find((cat) => cat._id === rule.category) || null
-            : rule.category;
-
-        // La interfaz permite Make | string, así que manejamos ambos casos
-        const makeObj =
-          typeof rule.make === 'string' ? this.makes.find((make) => make._id === rule.make) || null : rule.make;
-
-        return {
-          _id: rule._id || null,
-          category: categoryObj,
-          make: makeObj,
-          percentage: rule.percentage || 0,
-        };
-      }),
-      exceptions: formValue.exceptions.map((exception) => {
-        // La interfaz permite Article | string, así que manejamos ambos casos
-        const articleObj =
-          typeof exception.article === 'string'
-            ? this.articles.find((art) => art._id === exception.article) || null
-            : exception.article;
-
-        return {
-          _id: exception._id || null,
-          article: articleObj,
-          percentage: exception.percentage || 0,
-        };
-      }),
+      ...this.priceList,
+      ...formValue,
     };
 
     switch (this.operation) {

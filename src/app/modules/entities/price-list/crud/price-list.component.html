@@ -58,7 +58,7 @@
               id="name"
               [readonly]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
-                'is-invalid': priceListForm.get('name')?.touched && priceListForm.get('name')?.invalid
+                'is-invalid': priceListForm.get('name')?.touched && priceListForm.get('name')?.invalid,
               }"
             />
             <div
@@ -90,7 +90,7 @@
               step="0.01"
               [readonly]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
-                'is-invalid': priceListForm.get('percentage')?.touched && priceListForm.get('percentage')?.invalid
+                'is-invalid': priceListForm.get('percentage')?.touched && priceListForm.get('percentage')?.invalid,
               }"
             />
             <div
@@ -109,7 +109,7 @@
               [disabled]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
                 'is-invalid':
-                  priceListForm.get('percentageType')?.touched && priceListForm.get('percentageType')?.invalid
+                  priceListForm.get('percentageType')?.touched && priceListForm.get('percentageType')?.invalid,
               }"
             >
               <option value="final">{{ 'finalPrice' | translate | capitalize }}</option>
@@ -130,11 +130,11 @@
               id="default"
               [disabled]="operation === 'view' || operation === 'delete'"
               [ngClass]="{
-                'is-invalid': priceListForm.get('default')?.touched && priceListForm.get('default')?.invalid
+                'is-invalid': priceListForm.get('default')?.touched && priceListForm.get('default')?.invalid,
               }"
             >
-              <option value="false">{{ 'no' | translate | capitalize }}</option>
-              <option value="true">{{ 'yes' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
             </select>
             <div
               class="invalid-feedback"
@@ -179,25 +179,23 @@
                 <tbody formArrayName="rules">
                   <tr *ngFor="let rule of rulesArray.controls; let i = index" [formGroupName]="i">
                     <td>
-                      <div class="typeahead-wrapper">
-                        <app-typeahead-dropdown
+                      <div class="dropdown-wrapper">
+                        <app-searchable-dropdown
                           [control]="rule.get('category')"
-                          [data]="categories"
+                          [service]="_categoryService"
                           [keyField]="'_id'"
                           [displayField]="'description'"
-                          [disabled]="operation === 'view' || operation === 'delete'"
-                        />
+                        ></app-searchable-dropdown>
                       </div>
                     </td>
                     <td>
-                      <div class="typeahead-wrapper">
-                        <app-typeahead-dropdown
+                      <div class="dropdown-wrapper">
+                        <app-searchable-dropdown
                           [control]="rule.get('make')"
-                          [data]="makes"
+                          [service]="_makeService"
                           [keyField]="'_id'"
                           [displayField]="'description'"
-                          [disabled]="operation === 'view' || operation === 'delete'"
-                        />
+                        ></app-searchable-dropdown>
                       </div>
                     </td>
                     <td>
@@ -208,7 +206,7 @@
                         step="0.01"
                         [readonly]="operation === 'view' || operation === 'delete'"
                         [ngClass]="{
-                          'is-invalid': rule.get('percentage')?.touched && rule.get('percentage')?.invalid
+                          'is-invalid': rule.get('percentage')?.touched && rule.get('percentage')?.invalid,
                         }"
                       />
                       <div
@@ -263,13 +261,15 @@
                 <tbody formArrayName="exceptions">
                   <tr *ngFor="let exception of exceptionsArray.controls; let i = index" [formGroupName]="i">
                     <td>
-                      <app-typeahead-dropdown
-                        [control]="exception.get('article')"
-                        [data]="articles"
-                        [keyField]="'_id'"
-                        [displayField]="'description'"
-                        [disabled]="operation === 'view' || operation === 'delete'"
-                      />
+                      <div class="dropdown-wrapper">
+                        <app-searchable-dropdown
+                          [control]="exception.get('article')"
+                          [service]="_articleService"
+                          [keyField]="'_id'"
+                          [displayField]="'description'"
+                          [searchFields]="['description', 'code', 'barcode']"
+                        ></app-searchable-dropdown>
+                      </div>
                     </td>
                     <td>
                       <input
@@ -279,7 +279,7 @@
                         step="0.01"
                         [readonly]="operation === 'view' || operation === 'delete'"
                         [ngClass]="{
-                          'is-invalid': exception.get('percentage')?.touched && exception.get('percentage')?.invalid
+                          'is-invalid': exception.get('percentage')?.touched && exception.get('percentage')?.invalid,
                         }"
                       />
                       <div
@@ -308,14 +308,8 @@
 </section>
 
 <style>
-  /* Estilos para solucionar el problema del dropdown en la tabla */
-  .typeahead-wrapper {
+  .dropdown-wrapper {
     position: relative;
-  }
-
-  .typeahead-wrapper .dropdown-menu {
-    z-index: 9999 !important;
-    position: absolute !important;
   }
 
   .table-responsive {
