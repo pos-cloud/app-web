@@ -14,9 +14,13 @@ import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Branch, Currency, Deposit, Printer, PrinterPrintIn } from '@types';
 import {
+  Branch,
+  Currency,
   CurrentAccount,
+  Deposit,
+  Printer,
+  PrinterPrintIn,
   StockMovement,
   TransactionMovement,
   TransactionType,
@@ -1397,6 +1401,23 @@ export class PointOfSaleComponent implements OnInit {
         );
         break;
       case 'cash-box':
+        // modalRef = this._modalService.open(AddCashBoxComponent, {
+        //   size: 'lg',
+        //   backdrop: 'static',
+        // });
+        // modalRef.componentInstance.transactionType = this.transaction.type;
+        // modalRef.result.then(
+        //   (result) => {
+        //     if (result && result.cashBox) {
+        //     } else {
+        //       this.hideMessage();
+        //     }
+        //   },
+        //   (reason) => {
+        //     this.hideMessage();
+        //   }
+        // );
+        // break;
         modalRef = this._modalService.open(CashBoxComponent, {
           size: 'lg',
           backdrop: 'static',

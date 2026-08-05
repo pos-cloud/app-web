@@ -1,0 +1,29 @@
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .pull-right {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .btn span {
+    margin-left: 0.35rem;
+  }
+}
+
+.card-body {
+  .btn span {
+    margin-left: 0.35rem;
+  }
+
+  .table {
+    margin-bottom: 1rem;
+  }
+
+  .text-muted {
+    margin-top: 0.25rem;
+  }
+}
