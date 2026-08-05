@@ -9,22 +9,24 @@ import * as printJS from 'print-js';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { PrintService } from '@core/services/print.service';
+import {
+  AuthService,
+  CashBoxService,
+  ConfigService,
+  CurrencyValueService,
+  MovementOfCashService,
+  PaymentMethodService,
+  PrintService,
+  TransactionService,
+  TransactionTypeService,
+} from '@core/services';
+import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
+import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, CashBox, CashBoxState, CurrencyValue, PrintType, TransactionType, User } from '@types';
 import { Config } from 'app/app.config';
 import { currencyValue, MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
-import { AuthService } from 'app/core/services/auth.service';
-import { CashBoxService } from 'app/core/services/cash-box.service';
-import { ConfigService } from 'app/core/services/config.service';
-import { CurrencyValueService } from 'app/core/services/currency-value.service';
-import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
-import { PaymentMethodService } from 'app/core/services/payment-method.service';
-import { TransactionTypeService } from 'app/core/services/transaction-type.service';
-import { TransactionService } from 'app/core/services/transaction.service';
-import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
-import { ToastService } from 'app/shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-add-cash-box',
@@ -607,8 +609,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
           if (result?.status === 200) {
             this._toastService.showToast({
               type: 'success',
-              message:
-                'La numeracion del tipo de transaccion: ' + result.result.name + ' se reinicio correctamente',
+              message: 'La numeracion del tipo de transaccion: ' + result.result.name + ' se reinicio correctamente',
             });
           } else {
             this._toastService.showToast(result?.error ?? result);

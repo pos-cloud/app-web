@@ -6,7 +6,9 @@
     "allowJs": true,
     "baseUrl": "src",
     "paths": {
-      "@types/*": ["types/*"],
+      "@types": ["@types/index.ts"],
+      "@types/*": ["@types/*"],
+      "@core/services": ["app/core/services/index.ts"],
       "@core/*": ["app/core/*"],
       "@shared/*": ["app/shared/*"]
     },
