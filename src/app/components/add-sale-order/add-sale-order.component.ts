@@ -1515,8 +1515,10 @@ export class AddSaleOrderComponent {
 
         if (this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0) {
           this.newPriceList.exceptions.forEach((exception) => {
-            if (exception) {
-              if (exception.article._id === movementOfArticle.article._id) {
+            if (exception?.article) {
+              const exceptionArticleId =
+                typeof exception.article === 'string' ? exception.article : exception.article._id;
+              if (exceptionArticleId === movementOfArticle.article._id) {
                 increasePrice = this.roundNumber.transform(exception.percentage);
               }
             }
