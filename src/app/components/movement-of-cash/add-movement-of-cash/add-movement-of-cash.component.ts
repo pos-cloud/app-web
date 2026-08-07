@@ -1217,7 +1217,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this.amountDiscount = this.transactionAmount - this.transaction.totalPrice;
 
     if (this.paymentMethodSelected.allowToFinance) {
-      this.calculateQuotas('quotas');
+      this.calculateQuotas('quota');
     }
 
     if (op === 'init' && this.keyboard) {
@@ -1338,17 +1338,22 @@ export class AddMovementOfCashComponent implements OnInit {
         }
 
         if (this.paymentMethodSelected.allowToFinance) {
-          let amountTotal = 0;
+          if (!this.movementsOfCashesToFinance || this.movementsOfCashesToFinance.length === 0) {
+            this.calculateQuotas('quota');
+          }
 
-          if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
-            for (let mov of this.movementsOfCashesToFinance) {
-              amountTotal = this.roundNumber.transform(amountTotal + mov.amountPaid);
-              if (!moment(mov.expirationDate).isValid()) {
-                throw new Error('Debe ingresar fechas de vencimiento de pago válidas');
-              } else {
-                if (moment(mov.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0) {
-                  throw new Error('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción');
-                }
+          if (!this.movementsOfCashesToFinance || this.movementsOfCashesToFinance.length === 0) {
+            throw new Error('Debe cargar la financiación antes de guardar');
+          }
+
+          let amountTotal = 0;
+          for (let mov of this.movementsOfCashesToFinance) {
+            amountTotal = this.roundNumber.transform(amountTotal + mov.amountPaid);
+            if (!moment(mov.expirationDate).isValid()) {
+              throw new Error('Debe ingresar fechas de vencimiento de pago válidas');
+            } else {
+              if (moment(mov.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0) {
+                throw new Error('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción');
               }
             }
           }
@@ -1422,7 +1427,7 @@ export class AddMovementOfCashComponent implements OnInit {
       daysCommission: this.daysCommission,
       percentageCommission: this.percentageCommission,
     });
-    if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
+    if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quota');
   }
 
   changePercentageAdministrativeExpense(administrativeExpenseAmount: number = null) {
@@ -1446,7 +1451,7 @@ export class AddMovementOfCashComponent implements OnInit {
       administrativeExpenseAmount: this.movementOfCash.administrativeExpenseAmount,
       percentageAdministrativeExpense: this.percentageAdministrativeExpense,
     });
-    if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
+    if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quota');
   }
 
   changePercentageOtherExpense(otherExpenseAmount: number = null) {
@@ -1470,7 +1475,7 @@ export class AddMovementOfCashComponent implements OnInit {
       otherExpenseAmount: this.movementOfCash.otherExpenseAmount,
       percentageOtherExpense: this.percentageOtherExpense,
     });
-    if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
+    if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quota');
   }
 
   changeVatOfExpenses() {
@@ -1510,7 +1515,7 @@ export class AddMovementOfCashComponent implements OnInit {
       administrativeExpenseAmount: this.movementOfCash.administrativeExpenseAmount,
       otherExpenseAmount: this.movementOfCash.otherExpenseAmount,
     });
-    if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quotas');
+    if (this.paymentMethodSelected && this.paymentMethodSelected.allowToFinance) this.calculateQuotas('quota');
   }
 
   getHolidays(): Promise<Holiday[]> {
