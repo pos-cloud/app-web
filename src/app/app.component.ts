@@ -8,6 +8,7 @@ import { Config } from './app.config';
 import { AnalyticsService } from './core/services/analytics.service';
 import { AuthService } from './core/services/auth.service';
 import { ConfigService } from './core/services/config.service';
+import { NavigationService } from './layout/navigation/navigation.service';
 import { User } from '@types';
 
 import 'moment/locale/es';
@@ -25,6 +26,7 @@ export class AppComponent {
   public readedNotification: boolean = false;
   public showHeader: boolean = true;
   public showChatWidget: boolean = false;
+  public isSidebarLayout = true;
   private isLoggedIn = false;
   private currentUser: User | null = null;
 
@@ -36,11 +38,13 @@ export class AppComponent {
     public _modalService: NgbModal,
     public _router: Router,
     private _translateService: TranslateService,
-    private _analyticsService: AnalyticsService
+    private _analyticsService: AnalyticsService,
+    private _nav: NavigationService
   ) {
     this._translateService.setDefaultLang('es');
     this._translateService.use('es');
     this.config$ = this._configService.getConfig;
+    this.isSidebarLayout = this._nav.isSidebarLayout;
   }
 
   async ngOnInit() {

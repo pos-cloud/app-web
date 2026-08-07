@@ -1,0 +1,87 @@
+<ng-container *ngIf="(hideMenu$ | async) === false && (identity$ | async) as identity">
+  <div
+    class="sidebar-backdrop"
+    *ngIf="(mobileOpen$ | async) || ((collapsed$ | async) && (peekOpen$ | async))"
+    (click)="closeOverlay()"
+  ></div>
+
+  <aside
+    class="app-sidebar"
+    [class.collapsed]="collapsed$ | async"
+    [class.peek]="peekOpen$ | async"
+    [class.mobile-open]="mobileOpen$ | async"
+    (mouseenter)="onSidebarEnter()"
+    (mouseleave)="onSidebarLeave()"
+  >
+    <div class="sidebar-header d-lg-none">
+      <a class="sidebar-brand" routerLink="/" (click)="onLinkClick()" title="Inicio">
+        <img [src]="img" alt="Logo" />
+      </a>
+      <button
+        type="button"
+        class="sidebar-close-btn"
+        (click)="closeMobile()"
+        aria-label="Cerrar menú"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav" *ngIf="menu$ | async as menu">
+      <ng-container *ngFor="let node of menu; trackBy: trackByLabel">
+        <ng-container
+          *ngTemplateOutlet="navNodeTpl; context: { node: node, depth: 0, key: node.label }"
+        ></ng-container>
+      </ng-container>
+    </nav>
+  </aside>
+</ng-container>
+
+<ng-template #navNodeTpl let-node="node" let-depth="depth" let-key="key">
+  <div *ngIf="node.isDivider" class="sidebar-divider"></div>
+
+  <ng-container *ngIf="!node.isDivider">
+    <a
+      *ngIf="node.link && !node.children"
+      class="sidebar-item"
+      [class.depth-0]="depth === 0"
+      [class.depth-n]="depth > 0"
+      [routerLink]="[node.link]"
+      routerLinkActive="active"
+      [title]="node.label"
+      (click)="onLinkClick()"
+    >
+      <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
+      <i *ngIf="!node.icon && depth === 0" class="fa fa-circle-o" aria-hidden="true"></i>
+      <span class="item-label">{{ node.label }}</span>
+    </a>
+
+    <ng-container *ngIf="node.children?.length">
+      <button
+        type="button"
+        class="sidebar-item sidebar-toggle"
+        [class.depth-0]="depth === 0"
+        [class.depth-n]="depth > 0"
+        [class.expanded]="isExpanded(key)"
+        [title]="node.label"
+        (click)="toggleExpand(key, $event)"
+      >
+        <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
+        <i *ngIf="!node.icon && depth === 0" class="fa fa-folder-o" aria-hidden="true"></i>
+        <span class="item-label">{{ node.label }}</span>
+        <i class="fa fa-chevron-down chevron" aria-hidden="true"></i>
+      </button>
+
+      <div class="sidebar-children" *ngIf="isExpanded(key)" [style.--depth]="depth">
+        <ng-container *ngFor="let child of node.children; trackBy: trackByLabel">
+          <ng-container
+            *ngTemplateOutlet="
+              navNodeTpl;
+              context: { node: child, depth: depth + 1, key: key + '/' + child.label }
+            "
+          ></ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-template>

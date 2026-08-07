@@ -1,5 +1,7 @@
+<app-sidebar *ngIf="showHeader && isSidebarLayout"></app-sidebar>
 <app-header *ngIf="showHeader"></app-header>
 <app-toasts></app-toasts>
-<router-outlet *ngIf="config$ | async"></router-outlet>
-<app-footer></app-footer>
+<div class="app-main">
+  <router-outlet *ngIf="config$ | async"></router-outlet>
+</div>
 <app-ai-chat-widget *ngIf="showChatWidget"></app-ai-chat-widget>

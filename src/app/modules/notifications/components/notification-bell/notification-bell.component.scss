@@ -6,13 +6,35 @@
   position: relative;
   border: none;
   background: transparent;
-  padding: 0.5rem 0.75rem;
+  padding: 0.25rem;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &::after {
+    display: none !important;
+  }
+
+  &:hover {
+    color: #0275d8;
+    background: #f3f6fb;
+  }
+}
+
+.notification-bell__icon {
+  font-size: 20px;
+  line-height: 1;
 }
 
 .notification-bell__badge {
   position: absolute;
-  top: 4px;
-  right: 2px;
+  top: 0;
+  right: 0;
   min-width: 14px;
   height: 14px;
   padding: 0 3px;

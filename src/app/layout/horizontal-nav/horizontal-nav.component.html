@@ -1,0 +1,46 @@
+<ul class="navbar-nav mr-auto horizontal-nav">
+  <ng-template #nodeTemplateRef let-node="node">
+    <li *ngIf="!node.isDivider" #dd="ngbDropdown" class="dropdown-submenu" ngbDropdown [autoClose]="'outside'">
+      <a *ngIf="node.link" class="dropdown-item" [routerLink]="[node.link]" (click)="onItemClick()">
+        <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
+        {{ node.label }}
+      </a>
+      <a *ngIf="node.children" class="dropdown-item" ngbDropdownToggle href="javascript:void(0)">
+        <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
+        {{ node.label }}
+      </a>
+      <ul *ngIf="node.children" class="dropdown-menu" ngbDropdownMenu>
+        <ng-container *ngFor="let child of node.children; trackBy: trackByLabel">
+          <ng-container *ngTemplateOutlet="nodeTemplateRef; context: { node: child }"></ng-container>
+        </ng-container>
+      </ul>
+    </li>
+    <div *ngIf="node.isDivider" class="dropdown-divider"></div>
+  </ng-template>
+
+  <ng-container *ngFor="let topNode of menu; trackBy: trackByLabel">
+    <li *ngIf="!topNode.children" class="nav-item">
+      <a class="nav-link" [routerLink]="[topNode.link]" (click)="onItemClick()">
+        <i *ngIf="topNode.icon" [class]="topNode.icon" aria-hidden="true"></i>
+        {{ topNode.label }}
+      </a>
+    </li>
+    <li
+      *ngIf="topNode.children"
+      #dd="ngbDropdown"
+      class="nav-item dropdown"
+      ngbDropdown
+      [autoClose]="'outside'"
+    >
+      <a class="nav-link" href="javascript:void(0)" ngbDropdownToggle>
+        <i *ngIf="topNode.icon" [class]="topNode.icon" aria-hidden="true"></i>
+        {{ topNode.label }}
+      </a>
+      <ul class="dropdown-menu" ngbDropdownMenu>
+        <ng-container *ngFor="let child of topNode.children; trackBy: trackByLabel">
+          <ng-container *ngTemplateOutlet="nodeTemplateRef; context: { node: child }"></ng-container>
+        </ng-container>
+      </ul>
+    </li>
+  </ng-container>
+</ul>

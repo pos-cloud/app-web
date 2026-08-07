@@ -66,6 +66,8 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { FooterComponent } from './layout/footer/footer.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { HomeComponent } from './layout/home/home.component';
+import { HorizontalNavComponent } from './layout/horizontal-nav/horizontal-nav.component';
+import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { NotificationBellComponent } from './modules/notifications/components/notification-bell/notification-bell.component';
 import { RestoTablesComponent } from './modules/pos/resto/resto-tables/resto-tables.component';
 import { HeaderTransactionComponent } from './modules/transaction/views/fast/components/header-transaction/header-transaction.component';
@@ -86,6 +88,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     HomeComponent,
     HeaderComponent,
+    HorizontalNavComponent,
+    SidebarComponent,
     FooterComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,

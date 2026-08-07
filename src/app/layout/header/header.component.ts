@@ -1,337 +1,59 @@
 // ANGULAR
-import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { Event as NavigationEvent, NavigationStart, Router } from '@angular/router';
-import { fromEvent, map, merge, Observable, of } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { fromEvent, map, merge, Observable, of, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 // DE TERCEROS
-import { NgbDropdown, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // MODELS
-import { User } from '@types';
+import { Branch, User } from '@types';
 
 // SERVICES
 import { TranslateService } from '@ngx-translate/core';
 import { ChangePasswordComponent } from 'app/auth/change-password/change-password.component';
 import { AuthService } from 'app/core/services/auth.service';
+import { BranchService } from 'app/core/services/branch.service';
 import { PushNotificationsService } from 'app/core/services/notification.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { NavNode } from '../navigation/navigation.types';
+import { NavigationService } from '../navigation/navigation.service';
 
-interface NestedMenuNode {
-  label: string;
-  icon?: string;
-  link?: string;
-  isDivider?: boolean;
-  children?: NestedMenuNode[];
-}
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
-  @ViewChildren('dd') dds: QueryList<NgbDropdown>;
-
-  menu: NestedMenuNode[] = [
-    {
-      label: 'Ventas',
-      icon: 'fa fa-fax',
-      children: [
-        { label: 'Resto', link: 'pos/resto' },
-        { label: 'Mostrador', link: 'pos/mostrador/venta' },
-        { label: 'Delivery', link: 'pos/delivery' },
-        { label: 'Lector de Vouchers', link: 'pos/lector-de-vouchers' },
-        { label: 'Tienda Nube', link: 'modules/sales/tienda-nube' },
-      ],
-    },
-    {
-      label: 'Compras',
-      icon: 'fa fa-clipboard',
-      link: 'pos/mostrador/compra',
-    },
-    {
-      label: 'Fondos',
-      icon: 'fa fa-money',
-      children: [
-        { label: 'Movimientos', link: 'pos/mostrador/fondo' },
-        { label: 'Cajas', link: 'entities/cash-boxes' },
-      ],
-    },
-    {
-      label: 'Producción',
-      icon: 'fa fa-paste',
-      link: 'pos/mostrador/production',
-    },
-    {
-      label: 'Stock',
-      icon: 'fa fa-dropbox',
-      link: 'pos/mostrador/stock',
-    },
-    {
-      label: 'Productos',
-      icon: 'fa fa-shopping-basket',
-      children: [
-        { label: 'Productos', link: 'entities/articles' },
-        { label: 'Variantes', link: 'admin/variants' },
-        { label: 'Marcas', link: 'entities/makes' },
-        { label: 'Categoria', link: 'admin/categories' },
-        { label: '', isDivider: true },
-        { label: 'Tipos de Variantes', link: 'admin/tipos-de-variantes' },
-        { label: 'Valores de Variantes', link: 'variant-values' },
-        { label: '', isDivider: true },
-        { label: 'Depositos', link: 'entities/deposit' },
-        { label: 'Ubicaciones', link: 'entities/location' },
-        { label: '', isDivider: true },
-        { label: 'Estructura', link: 'entities/structures' },
-        { label: 'Clasificaciones', link: 'entities/classification' },
-        { label: 'Unidad de medida', link: 'entities/unit-of-measurements' },
-      ],
-    },
-    {
-      label: 'Empresas',
-      icon: 'fa fa-male',
-      children: [
-        { label: 'Clientes', link: 'entities/companies/client' },
-        { label: 'Proveedores', link: 'entities/companies/provider' },
-        { label: '', isDivider: true },
-        { label: 'Grupo de empresas', link: 'entities/company-groups' },
-      ],
-    },
-    {
-      label: 'Resto',
-      icon: 'fa fa-cutlery',
-      children: [
-        { label: 'Mesas', link: 'entities/tables' },
-        { label: 'Salones', link: 'entities/rooms' },
-      ],
-    },
-    {
-      label: 'Contenido',
-      icon: 'fa fa-image',
-      children: [
-        { label: 'Recursos', link: 'entities/resources' },
-        { label: 'Galerías', link: 'entities/galleries' },
-      ],
-    },
-    {
-      label: 'Reportes',
-      icon: 'fa fa-bar-chart',
-      children: [
-        {
-          label: 'Ventas',
-          children: [
-            {
-              label: 'Listados',
-              children: [
-                { label: 'Transacciones', link: 'admin/ventas' },
-                { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/venta' },
-                { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/venta' },
-                { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/venta' },
-              ],
-            },
-            {
-              label: 'Reportes',
-              children: [
-                { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
-                { label: 'Productos más vendidos', link: 'admin/venta/productos-mas-vendidos' },
-                { label: 'Ventas por medio de pago', link: 'admin/venta/ventas-por-metodo-de-pago' },
-                { label: 'Marcas más vendidas', link: 'admin/venta/marcas-mas-vendidas' },
-                { label: 'Categorias más vendidos', link: 'admin/venta/rubros-mas-vendidos' },
-                { label: 'Ventas por cliente', link: 'admin/venta/ventas-por-cliente' },
-                { label: 'Ventas por empleado', link: 'admin/venta/ventas-por-empleado' },
-                { label: 'Ventas por tipo de transacciones', link: 'report/venta/ventas-por-tipo-de-transacción' },
-              ],
-            },
-          ],
-        },
-        {
-          label: 'Compras',
-          children: [
-            {
-              label: 'Listados',
-              children: [
-                { label: 'Transacciones', link: 'admin/compra' },
-                { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/compra' },
-                { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/compra' },
-                { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/venta' },
-              ],
-            },
-            {
-              label: 'Reportes',
-              children: [
-                { label: 'Estadísticas Generales', link: 'admin/compra/statistics' },
-                { label: 'Productos más comprados', link: 'admin/compra/productos-mas-comprados' },
-                { label: 'Compras por medio de pago', link: 'admin/compras/compras-por-metodo-de-pago' },
-                { label: 'Marcas', link: 'admin/compra/marcas-mas-compradas' },
-                { label: 'Categorias más vendidos', link: 'admin/compra/rubros-mas-comprados' },
-                { label: 'Compras por proveedor', link: 'admin/compra/compras-por-proveedor' },
-                { label: 'Compras por empleado', link: 'admin/compra/compras-por-empleado' },
-                { label: 'Compras por tipo de transacciones', link: 'report/compra/compras-por-tipo-de-transacción' },
-              ],
-            },
-          ],
-        },
-        {
-          label: 'Stock',
-          children: [
-            {
-              label: 'Listados',
-              children: [
-                { label: 'Transacciones', link: 'admin/stock' },
-                { label: 'Movimientos de Productos', link: 'admin/stock/movimientos-de-productos' },
-              ],
-            },
-            {
-              label: 'Reportes',
-              children: [{ label: 'Inventario', link: 'entities/article-stock' }],
-            },
-          ],
-        },
-        {
-          label: 'Producción',
-          children: [
-            {
-              label: 'Listados',
-              children: [
-                { label: 'Transacciones', link: 'admin/production' },
-                { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/prodution' },
-                { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/prodution' },
-                { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/production' },
-              ],
-            },
-            {
-              label: 'Reportes',
-              children: [{ label: 'Requerimientos de producción', link: 'reports/production/requierements' }],
-            },
-          ],
-        },
-        {
-          label: 'Fondos',
-          children: [
-            {
-              label: 'Listados',
-              children: [
-                { label: 'Transacciones', link: 'admin/fondos' },
-                { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/fondos' },
-              ],
-            },
-            {
-              label: 'Reportes',
-              children: [
-                { label: 'Cartera de cheques', link: 'reports/check-wallet' },
-                { label: 'Kardex de cheques', link: 'reports/check-ledger' },
-              ],
-            },
-          ],
-        },
-        { label: 'Contable', children: [{ label: 'Suma de Saldos por Cuenta', link: 'admin/accountant/ledger' }] },
-        {
-          label: 'Suscripción',
-          children: [
-            { label: 'Dashboard', link: 'reports/subscription' },
-            { label: 'Socios activos', link: 'reports/active-members' },
-          ],
-        },
-        {
-          label: 'Otros',
-          children: [{ label: 'Cumpleaños', link: 'admin/cumpleaños' }],
-        },
-      ],
-    },
-    {
-      label: 'Configuraciones',
-      icon: 'fa fa-gears',
-      children: [
-        {
-          label: 'General',
-          children: [
-            { label: 'Tipos de Transacciones', link: 'entities/transaction-types' },
-            { label: 'Tipos de Cancelaciones', link: 'entities/cancellation-types' },
-            { label: 'Promociones', link: 'entities/business-rules' },
-            { label: 'Tipos de Relaciones', link: 'entities/relation-type' },
-            { label: 'Tipos de Identificación', link: 'entities/identification-type' },
-            { label: 'Métodos de pago', link: 'entities/payment-methods' },
-            { label: 'Lista de Precios', link: 'entities/price-list' },
-            { label: 'Aplicaciones', link: 'entities/applications' },
-            { label: 'Métodos de entrega', link: 'entities/shipment-methods' },
-            { label: 'Feriados', link: 'entities/holidays' },
-            { label: 'Condiciones de IVA', link: 'entities/vat-condition' },
-            { label: 'Reports', link: 'reports' },
-            { label: 'Historial', link: 'histories' },
-            { label: 'Sistema', link: 'admin/configuraciones' },
-          ],
-        },
-        {
-          label: 'Gestión de Usuarios',
-          children: [
-            { label: 'Usuarios Sistema', link: 'entities/users' },
-            { label: 'Empleados', link: 'entities/employees' },
-            { label: 'Tipos de Empleado', link: 'entities/employee-types' },
-            { label: 'Permisos', link: '/entities/permissions' },
-          ],
-        },
-        {
-          label: 'Contabilidad',
-          children: [
-            { label: 'Cuenta contable', link: 'entities/accounts' },
-            { label: 'Periodos contable', link: 'account-periods' },
-            { label: 'Asientos contable', link: 'entities/account-seat' },
-            { label: 'Impuestos', link: 'entities/taxes' },
-            { label: 'Tipos de cajas', link: 'entities/cash-box-types' },
-            { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
-          ],
-        },
-        {
-          label: 'Sucursales y Puntos de Venta',
-          children: [
-            { label: 'Sucursales', link: 'admin/sucursales' },
-            { label: 'Puntos de venta', link: 'entities/origins' },
-            { label: 'Transportes', link: 'entities/transports' },
-          ],
-        },
-        {
-          label: 'Monedas y Bancos',
-          children: [
-            { label: 'Bancos', link: 'entities/banks' },
-            { label: 'Monedas', link: 'entities/currencies' },
-            { label: 'Tipos de Monedas', link: 'entities/currency-values' },
-            { label: 'Provincias', link: 'entities/states' },
-            { label: 'Países', link: 'entities/countries' },
-          ],
-        },
-        {
-          label: 'Impresoras y Plantillas',
-          children: [
-            { label: 'Impresoras', link: 'entities/printers' },
-            { label: 'Plantillas para correo', link: 'entities/email-templates' },
-          ],
-        },
-      ],
-    },
-  ];
-
-  public toggleNavbar = true;
+export class HeaderComponent implements OnInit, OnDestroy {
   public img = 'assets/img/logo.png';
-  public config$: any;
   public identity$: Observable<User>;
   public online$: Observable<boolean>;
   public online: boolean = true;
-  public hideMenu: boolean = true;
+  public hideMenu$: Observable<boolean>;
+  public collapsed$: Observable<boolean>;
+  public menu$: Observable<NavNode[]>;
   public languages = ['en', 'es', 'it'];
   public currentLanguage = 'es';
+  public branch: Branch | null = null;
+  public horizontalCollapsed = true;
+  public isSidebarLayout = true;
 
-  public user: User;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private _authService: AuthService,
-    private _router: Router,
     private _toastService: ToastService,
     private _modalService: NgbModal,
     private translate: TranslateService,
-    private _notificationService: PushNotificationsService
+    private _notificationService: PushNotificationsService,
+    private _nav: NavigationService,
+    private _branchService: BranchService
   ) {
-    //pedimos permiso
+    this.hideMenu$ = this._nav.hideMenu$;
+    this.collapsed$ = this._nav.collapsed$;
+    this.menu$ = this._nav.menu$;
+    this.isSidebarLayout = this._nav.isSidebarLayout;
     this._notificationService.requestPermission();
-    // REVISAR INTERNET
     this.online$ = merge(
       of(navigator.onLine),
       fromEvent(window, 'online').pipe(map(() => true)),
@@ -355,44 +77,85 @@ export class HeaderComponent implements OnInit {
     });
 
     this.identity$ = this._authService.getIdentity;
-
-    this._router.events.forEach((event: NavigationEvent) => {
-      if (event instanceof NavigationStart) {
-        const pathLocation: string[] = event.url.split('?')[0].split('/');
-        if (
-          pathLocation[1] === 'login' ||
-          pathLocation[1] === 'registrar' ||
-          pathLocation[1] === 'politicas-de-privacidad' ||
-          pathLocation[2] === 'retiro-de-pedidos' ||
-          pathLocation[2] === 'armado-de-pedidos' ||
-          pathLocation[2] === 'cocina' ||
-          pathLocation[3] === 'agregar-transaccion' ||
-          pathLocation[3] === 'editar-transaccion' ||
-          pathLocation[7] === 'agregar-transaccion' ||
-          pathLocation[7] === 'editar-transaccion' ||
-          pathLocation[8] === 'agregar-transaccion' ||
-          pathLocation[2] === 'ver-galeria' ||
-          (pathLocation[1] === 'transaction' && pathLocation[2] === 'view' && pathLocation[3] === 'formal')
-        ) {
-          this.hideMenu = true;
-        } else {
-          this.hideMenu = false;
-        }
-      }
-    });
   }
 
   ngOnInit(): void {
-    this._authService.getIdentity.subscribe((identity) => {
+    const savedLang = localStorage.getItem('lang');
+    if (savedLang) {
+      this.currentLanguage = savedLang;
+      this.translate.use(savedLang);
+    }
+
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
       if (identity) {
-        this.buildMenu(identity);
+        this.loadFirstBranch();
+      } else {
+        this.branch = null;
       }
     });
   }
 
-  public actionClick() {
-    this.dds?.forEach((dd) => dd.close());
-    this.toggleNavbar = true;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  get branchName(): string {
+    if (!this.branch) {
+      return '';
+    }
+    return this.branch.fantasyName || this.branch.name || '';
+  }
+
+  get branchLogo(): string | null {
+    const image = this.branch?.image?.trim();
+    if (!image || image === 'default.jpg' || image.includes('default.jpg')) {
+      return null;
+    }
+    return image;
+  }
+
+  public toggleCollapsed(): void {
+    this._nav.toggleCollapsed();
+  }
+
+  public onCollapseHover(enter: boolean): void {
+    if (!this._nav.collapsed) {
+      return;
+    }
+    this._nav.setPeekOpen(enter);
+  }
+
+  public switchToClassic(): void {
+    this._nav.switchLayoutAndReload('horizontal');
+  }
+
+  public switchToSidebar(): void {
+    this._nav.switchLayoutAndReload('sidebar');
+  }
+
+  public toggleHorizontalMenu(): void {
+    this.horizontalCollapsed = !this.horizontalCollapsed;
+  }
+
+  public closeHorizontalMenu(): void {
+    this.horizontalCollapsed = true;
+  }
+
+  private loadFirstBranch(): void {
+    this._branchService
+      .getBranches(
+        { name: 1, fantasyName: 1, image: 1, number: 1 },
+        { operationType: { $ne: 'D' } },
+        { number: 1 },
+        {},
+        1,
+        0
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result) => {
+        this.branch = result?.branches?.[0] ?? null;
+      });
   }
 
   public openModal(op: string): void {
@@ -415,14 +178,9 @@ export class HeaderComponent implements OnInit {
         modalRef.componentInstance.model = 'articles';
         modalRef.componentInstance.title = 'Importar artículos';
         modalRef.result.then(
-          (result) => {
-            if (result === 'save_close') {
-              //this.refresh();
-            }
-          },
-          (reason) => {}
+          () => {},
+          () => {}
         );
-
         break;
       default:
         break;
@@ -437,8 +195,8 @@ export class HeaderComponent implements OnInit {
     window.location.reload();
   }
 
-  public toggleMenu() {
-    this.toggleNavbar = !this.toggleNavbar;
+  public toggleMobileMenu() {
+    this._nav.toggleMobileOpen();
   }
 
   public changeLanguage(lang: string): void {
@@ -447,390 +205,5 @@ export class HeaderComponent implements OnInit {
       this.translate.reloadLang(lang);
     });
     localStorage.setItem('lang', lang);
-  }
-
-  private buildMenu(user: User) {
-    if (user.permission) {
-      this.menu = [];
-
-      if (user?.permission?.menu?.sales) {
-        let child = [];
-
-        if (user?.permission?.menu?.sales?.counter) {
-          child.push({ label: 'Mostrador', link: 'pos/mostrador/venta' });
-        }
-
-        if (user?.permission?.menu?.sales?.resto) {
-          child.push({ label: 'Resto', link: 'pos/resto' });
-        }
-
-        if (user?.permission?.menu?.sales?.delivery) {
-          child.push({ label: 'Delivery', link: 'pos/delivery' });
-        }
-
-        if (user?.permission?.menu?.sales?.voucherReader) {
-          child.push({ label: 'Lector de Vouchers', link: 'pos/lector-de-vouchers' });
-        }
-
-        if (user?.permission?.menu?.sales?.tiendaNube) {
-          child.push({ label: 'Tienda Nube', link: 'pos/tienda-nube' });
-        }
-
-        if (user?.permission?.menu?.sales?.wooCommerce) {
-          child.push({ label: 'Woo Commerce', link: 'pos/woo-commerce' });
-        }
-
-        if (user?.permission?.menu?.sales?.app) {
-          child.push({ label: 'App', link: 'pos/app' });
-        }
-
-        if (child.length) {
-          this.menu.push({
-            label: 'Ventas',
-            icon: 'fa fa-fax',
-            children: child,
-          });
-        }
-      }
-
-      if (user?.permission?.menu?.purchases) {
-        this.menu.push({
-          label: 'Compras',
-          icon: 'fa fa-clipboard',
-          link: 'pos/mostrador/compra',
-        });
-      }
-
-      if (user?.permission?.menu?.appointments) {
-        this.menu.push({
-          label: 'Turnos',
-          icon: 'fa fa-calendar',
-          link: 'pos/appointments',
-        });
-      }
-
-      if (user?.permission?.menu?.subscription) {
-        this.menu.push({
-          label: 'Suscripciones',
-          icon: 'fa fa-refresh',
-          link: 'pos/subscription',
-        });
-      }
-
-      if (user?.permission?.menu?.stock) {
-        this.menu.push({
-          label: 'Stock',
-          icon: 'fa fa-dropbox',
-          link: 'pos/mostrador/stock',
-        });
-      }
-
-      if (user?.permission?.menu?.money) {
-        this.menu.push({
-          label: 'Fondos',
-          icon: 'fa fa-money',
-          link: 'pos/mostrador/fondo',
-        });
-      }
-
-      if (user?.permission?.menu?.production) {
-        this.menu.push({
-          label: 'Producción',
-          icon: 'fa fa-paste',
-          link: 'pos/mostrador/production',
-          // children: [
-          //   { label: 'Cocina', link: 'pos/cocina' },
-          //   { label: 'Planta', link: 'pos/mostrador/production' },
-          // ],
-        });
-      }
-
-      if (user?.permission?.menu?.articles) {
-        this.menu.push({
-          label: 'Productos',
-          icon: 'fa fa-shopping-basket',
-          children: [
-            { label: 'Productos', link: 'entities/articles' },
-            { label: 'Variantes', link: 'admin/variants' },
-            { label: 'Marcas', link: 'entities/makes' },
-            { label: 'Categoria', link: 'entities/categories' },
-            { label: '', isDivider: true },
-            { label: 'Tipos de Variantes', link: 'entities/variant-types' },
-            { label: 'Valores de Variantes', link: 'entities/variant-values' },
-            { label: '', isDivider: true },
-            { label: 'Depositos', link: 'entities/deposit' },
-            { label: 'Ubicaciones', link: 'entities/location' },
-            { label: '', isDivider: true },
-            { label: 'Estructura', link: 'entities/structures' },
-            { label: 'Clasificaciones', link: 'entities/classification' },
-            { label: 'Unidad de medida', link: 'entities/unit-of-measurements' },
-          ],
-        });
-      }
-
-      if (user?.permission?.menu?.companies?.client || user?.permission?.menu?.companies?.provider) {
-        let companies = [];
-
-        if (user.permission.menu.companies.client) {
-          companies.push({ label: 'Clientes', link: 'entities/companies/client' });
-        }
-
-        if (user.permission.menu.companies.provider) {
-          companies.push({ label: 'Proveedores', link: 'entities/companies/provider' });
-        }
-
-        companies.push({ label: '', isDivider: true }, { label: 'Grupo de empresa', link: 'entities/company-groups' });
-
-        this.menu.push({
-          label: 'Empresas',
-          icon: 'fa fa-male',
-          children: companies,
-        });
-      }
-
-      if (user.permission.menu.resto) {
-        this.menu.push({
-          label: 'Resto',
-          icon: 'fa fa-cutlery',
-          children: [
-            { label: 'Mesas', link: 'entities/tables' },
-            { label: 'Salones', link: 'entities/rooms' },
-          ],
-        });
-      }
-
-      if (user.permission.menu.gallery) {
-        this.menu.push({
-          label: 'Contenido',
-          icon: 'fa fa-image',
-          children: [
-            { label: 'Recursos', link: 'entities/resources' },
-            { label: 'Galerías', link: 'entities/galleries' },
-          ],
-        });
-      }
-
-      if (user.permission.menu.report) {
-        this.menu.push({
-          label: 'Reportes',
-          icon: 'fa fa-bar-chart',
-          children: [
-            {
-              label: 'Ventas',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/ventas' },
-                    { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/venta' },
-                    { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/venta' },
-                    { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/venta' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Estadísticas Generales', link: 'admin/venta/statistics' },
-                    { label: 'Por productos', link: 'reports/mov-art-by-article/venta' },
-                    { label: 'Por marcas', link: 'reports/mov-art-by-make/venta' },
-                    { label: 'Por categorias', link: 'reports/mov-art-by-category/venta' },
-                    { label: 'Por método de pago', link: 'reports/mov-cash-by-type/venta' },
-                    { label: 'Por cliente', link: 'reports/transactions-by-company/cliente' },
-                    { label: 'Por empleado', link: 'reports/transactions-by-employee/venta' },
-                    { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/venta' },
-                    { label: 'Por hora', link: 'reports/transactions-by-hour/venta' },
-                    { label: 'Cuentas Corrientes', link: 'reports/account-receivables/cliente' },
-                    { label: 'Cuentas Corrientes a fecha', link: 'reports/account-receivables-by-date/cliente' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Compras',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/compras' },
-                    { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/compra' },
-                    { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/compra' },
-                    { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/compra' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Estadísticas Generales', link: 'admin/compra/statistics' },
-                    { label: 'Por productos', link: 'reports/mov-art-by-article/compra' },
-                    { label: 'Por marcas', link: 'reports/mov-art-by-make/compra' },
-                    { label: 'Por categorias', link: 'reports/mov-art-by-category/compra' },
-                    { label: 'Por método de pago', link: 'reports/mov-cash-by-type/compra' },
-                    { label: 'Por proveedor', link: 'reports/transactions-by-company/proveedor' },
-                    { label: 'Por empleado', link: 'reports/transactions-by-employee/compra' },
-                    { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/compra' },
-                    { label: 'Por hora', link: 'reports/transactions-by-hour/compra' },
-                    { label: 'Cuentas Corrientes', link: 'reports/account-receivables/proveedor' },
-                    { label: 'Cuentas Corrientes a fecha', link: 'reports/account-receivables-by-date/proveedor' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Stock',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/stock' },
-                    { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/stock' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Inventario', link: 'entities/article-stock' },
-                    { label: 'Kardex de producto', link: 'reports/article-ledger' },
-                    { label: 'Stock Valorizado', link: 'reports/inventory-valued' },
-                    { label: 'Inventario por fecha', link: 'reports/inventory-for-date' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Producción',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/production' },
-                    { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/production' },
-                    { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/production' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Por productos', link: 'reports/mov-art-by-article/producción' },
-                    { label: 'Por marcas', link: 'reports/mov-art-by-make/producción' },
-                    { label: 'Por categorias', link: 'reports/mov-art-by-category/producción' },
-                    { label: 'Por empleado', link: 'reports/transactions-by-employee/producción' },
-                    { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/producción' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Fondos',
-              children: [
-                {
-                  label: 'Listados',
-                  children: [
-                    { label: 'Transacciones', link: 'admin/fondos' },
-                    { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/fondos' },
-                    { label: 'Cajas', link: 'entities/cash-boxes' },
-                  ],
-                },
-                {
-                  label: 'Reportes',
-                  children: [
-                    { label: 'Cartera de cheques', link: 'reports/check-wallet' },
-                    { label: 'Kardex de cheques', link: 'reports/check-ledger' },
-                  ],
-                },
-              ],
-            },
-            {
-              label: 'Suscripción',
-              children: [
-                { label: 'Dashboard', link: 'reports/subscription' },
-                { label: 'Socios activos', link: 'reports/active-members' },
-              ],
-            },
-            {
-              label: 'Otros',
-              children: [
-                { label: 'Cumpleaños', link: 'reports/birthday' },
-                { label: 'Dashboard', link: 'reports/dashboard' },
-                { label: 'Kardex de método de pago', link: 'reports/payment-methods' },
-                { label: 'Historial por cliente', link: 'reports/mov-art-by-company' },
-              ],
-            },
-          ],
-        });
-      }
-
-      if (user.permission.menu.config) {
-        this.menu.push({
-          label: 'Configuraciones',
-          icon: 'fa fa-gears',
-          children: [
-            {
-              label: 'General',
-              children: [
-                { label: 'Aplicaciones', link: 'entities/applications' },
-                { label: 'Tipos de Transacciones', link: 'entities/transaction-types' },
-                { label: 'Tipos de Cancelaciones', link: 'entities/cancellation-types' },
-                { label: 'Promociones', link: 'entities/business-rules' },
-                { label: 'Tipos de Relaciones', link: 'entities/relation-type' },
-                { label: 'Tipos de Identificación', link: 'entities/identification-type' },
-                { label: 'Condiciones de IVA', link: 'entities/vat-condition' },
-                { label: 'Métodos de pago', link: 'entities/payment-methods' },
-                { label: 'Métodos de entrega', link: 'entities/shipment-methods' },
-                { label: 'Lista de Precios', link: 'entities/price-list' },
-                { label: 'Reports', link: 'reports' },
-                { label: 'Historial', link: 'histories' },
-                { label: 'Sistema', link: 'admin/configuraciones' },
-              ],
-            },
-            {
-              label: 'Gestión de Usuarios',
-              children: [
-                { label: 'Usuarios Sistema', link: 'entities/users' },
-                { label: 'Empleados', link: 'entities/employees' },
-                { label: 'Tipos de Empleado', link: 'entities/employee-types' },
-                { label: 'Permisos', link: 'entities/permissions' },
-              ],
-            },
-            {
-              label: 'Contabilidad',
-              children: [
-                { label: 'Cuenta contable', link: 'entities/accounts' },
-                { label: 'Periodos contable', link: 'entities/account-periods' },
-                { label: 'Asientos contable', link: 'entities/account-seat' },
-                { label: 'Impuestos', link: 'entities/taxes' },
-                { label: 'Tipos de cajas', link: 'entities/cash-box-types' },
-                { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
-                { label: 'Feriados', link: 'entities/holidays' },
-              ],
-            },
-            {
-              label: 'Sucursales y Puntos de Venta',
-              children: [
-                { label: 'Sucursales', link: 'entities/branches' },
-                { label: 'Puntos de venta', link: 'entities/origins' },
-                { label: 'Transportes', link: 'entities/transports' },
-              ],
-            },
-            {
-              label: 'Monedas y Bancos',
-              children: [
-                { label: 'Bancos', link: 'entities/banks' },
-                { label: 'Monedas', link: 'entities/currencies' },
-                { label: 'Tipos de Monedas', link: 'entities/currency-values' },
-                { label: 'Provincias', link: 'entities/states' },
-                { label: 'Países', link: 'entities/countries' },
-              ],
-            },
-            {
-              label: 'Impresoras y Plantillas',
-              children: [
-                { label: 'Impresoras', link: 'entities/printers' },
-                { label: 'Plantillas para correo', link: 'entities/email-templates' },
-              ],
-            },
-          ],
-        });
-      }
-    }
   }
 }

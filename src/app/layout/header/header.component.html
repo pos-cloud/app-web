@@ -1,149 +1,174 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light" *ngIf="!hideMenu && (identity$ | async) as identity">
-  <span class="navbar-brand btn" routerLink="/" (click)="actionClick()">
-    <img width="60" [src]="img" />
-  </span>
-  <button
-    class="navbar-toggler"
-    type="button"
-    (click)="toggleMenu()"
-    [attr.aria-expanded]="toggleNavbar ? 'true' : 'false'"
-    aria-label="Toggle navigation"
-  >
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div [class.collapse]="toggleNavbar" class="navbar-collapse">
-    <ul class="navbar-nav mr-auto">
-      <ng-template #nodeTemplateRef let-node="node">
-        <li *ngIf="!node.isDivider" #dd="ngbDropdown" class="dropdown-submenu" ngbDropdown [autoClose]="'outside'">
-          <a *ngIf="node.link" class="dropdown-item" [routerLink]="[node.link]" (click)="actionClick()">
-            <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
-            {{ node.label }}
-          </a>
-          <a *ngIf="node.children" class="dropdown-item" ngbDropdownToggle>
-            <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
-            {{ node.label }}
-          </a>
-          <ul *ngIf="node.children" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" ngbDropdownMenu>
-            <ng-template ngFor [ngForOf]="node.children" let-child>
-              <ng-template
-                [ngTemplateOutlet]="nodeTemplateRef"
-                [ngTemplateOutletContext]="{ node: child }"
-              ></ng-template>
-            </ng-template>
-          </ul>
-        </li>
-        <div *ngIf="node.isDivider" class="dropdown-divider"></div>
-      </ng-template>
+<header *ngIf="!(hideMenu$ | async) && (identity$ | async) as identity">
+  <!-- SIDEBAR LAYOUT: topbar con iconos a la derecha -->
+  <div class="app-topbar" *ngIf="isSidebarLayout">
+    <div class="topbar-left">
+      <button
+        type="button"
+        class="topbar-menu-btn d-lg-none"
+        (click)="toggleMobileMenu()"
+        aria-label="Abrir menú"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-      <!-- Top-level menu -->
-      <ng-template ngFor [ngForOf]="menu" let-topNode>
-        <li *ngIf="!topNode.children" class="nav-item">
-          <a class="nav-link" [routerLink]="[topNode.link]" (click)="actionClick()">
-            <i *ngIf="topNode.icon" [class]="topNode.icon" aria-hidden="true"></i>
-            {{ topNode.label }}
-          </a>
-        </li>
-        <li #dd="ngbDropdown" class="nav-item dropdown" ngbDropdown [autoClose]="'outside'" *ngIf="topNode.children">
-          <a class="nav-link" href="javascript:void(0)" ngbDropdownToggle>
-            <i *ngIf="topNode.icon" [class]="topNode.icon" aria-hidden="true"></i>
-            {{ topNode.label }}
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" ngbDropdownMenu>
-            <ng-template ngFor [ngForOf]="topNode.children" let-child>
-              <ng-template
-                [ngTemplateOutlet]="nodeTemplateRef"
-                [ngTemplateOutletContext]="{ node: child }"
-              ></ng-template>
-            </ng-template>
-          </ul>
-        </li>
-      </ng-template>
-    </ul>
+      <button
+        type="button"
+        class="topbar-collapse-btn d-none d-lg-inline-flex"
+        (click)="toggleCollapsed()"
+        (mouseenter)="onCollapseHover(true)"
+        (mouseleave)="onCollapseHover(false)"
+        [attr.aria-label]="(collapsed$ | async) ? 'Mostrar menú' : 'Ocultar menú'"
+        [title]="(collapsed$ | async) ? 'Mostrar menú' : 'Ocultar menú'"
+      >
+        <i class="fa" [ngClass]="(collapsed$ | async) ? 'fa-angle-right' : 'fa-angle-left'"></i>
+      </button>
 
-    <ul class="navbar-nav navbar-right">
+      <a class="topbar-brand" routerLink="/" title="Inicio">
+        <img [src]="img" alt="Logo" />
+      </a>
+
+      <span class="topbar-divider" aria-hidden="true"></span>
+
+      <div class="topbar-branch" *ngIf="branchName">
+        <img *ngIf="branchLogo" class="topbar-branch-logo" [src]="branchLogo" [alt]="branchName" />
+        <span class="topbar-branch-name">{{ branchName }}</span>
+      </div>
+    </div>
+
+    <ul class="topbar-actions">
+      <li class="topbar-layout-cta">
+        <button type="button" class="layout-switch-btn layout-switch-btn--subtle" (click)="switchToClassic()">
+          <i class="material-icons">view_headline</i>
+          <span>Menú clásico</span>
+        </button>
+      </li>
       <app-notification-bell></app-notification-bell>
-      <li class="nav-item" ngbDropdown>
-        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
-          <i class="fa fa-user"></i> {{ identity?.employee?.name }}
-        </a>
-        <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
-          <div>
-            <a class="dropdown-item" [routerLink]="['license']" [routerLinkActive]="['active']" (click)="actionClick()">
-              Licencia
-            </a>
-          </div>
-          <div>
-            <button class="dropdown-item" (click)="actionClick(); openModal('soporte')" [routerLinkActive]="['active']">
-              Soporte
-            </button>
-          </div>
-          <div>
-            <button
-              class="dropdown-item"
-              (click)="actionClick(); openModal('changelogs')"
-              [routerLinkActive]="['active']"
-            >
-              Actualizaciones
-            </button>
-          </div>
-          <div>
-            <button
-              class="dropdown-item"
-              (click)="actionClick(); openModal('documentation')"
-              [routerLinkActive]="['active']"
-            >
-              Documentación
-            </button>
-          </div>
-          <div>
-            <button
-              class="dropdown-item"
-              (click)="actionClick(); openModal('change-password')"
-              [routerLinkActive]="['active']"
-            >
-              Cambiar Contraseña
-            </button>
-          </div>
-          <div>
-            <button class="dropdown-item" (click)="actionClick(); logout()" [routerLinkActive]="['active']">
-              Cerrar Sesión
+      <li class="topbar-icon-item">
+        <button
+          type="button"
+          class="topbar-icon-btn"
+          (click)="openModal('documentation')"
+          title="Documentación"
+          aria-label="Documentación"
+        >
+          <i class="material-icons">help_outline</i>
+        </button>
+      </li>
+      <li class="topbar-icon-item">
+        <i
+          class="fa fa-wifi"
+          *ngIf="online$ | async; else blockOfflineSidebar"
+          style="color: #04b431"
+          title="Conectado"
+        ></i>
+        <ng-template #blockOfflineSidebar>
+          <i class="fa fa-wifi" style="color: #ff0000" title="Sin conexión"></i>
+        </ng-template>
+      </li>
+      <li class="topbar-icon-item">
+        <button type="button" class="topbar-icon-btn" (click)="reload()" title="Recargar" aria-label="Recargar">
+          <i class="material-icons">refresh</i>
+        </button>
+      </li>
+      <li class="topbar-lang topbar-icon-item">
+        <div ngbDropdown>
+          <button
+            ngbDropdownToggle
+            class="btn btn-light lang-btn topbar-icon-btn"
+            type="button"
+            title="Idioma"
+            aria-label="Idioma"
+          >
+            <i class="material-icons">language</i>
+          </button>
+          <div ngbDropdownMenu>
+            <button *ngFor="let lang of languages" ngbDropdownItem type="button" (click)="changeLanguage(lang)">
+              {{ lang | uppercase }}
             </button>
           </div>
         </div>
       </li>
-      <li class="nav-item">
-        <i
-          class="fa fa-wifi"
-          *ngIf="online$ | async; else blockOffline"
-          style="color: #04b431; margin-top: 13px; margin-left: 5px"
-        ></i>
-        <ng-template #blockOffline>
-          <i class="fa fa-wifi" style="color: #ff0000; margin-top: 13px; margin-left: 5px"></i>
-        </ng-template>
-      </li>
-      <li>
-        <i class="fa fa-refresh" style="color: blue; margin-top: 13px; margin-left: 5px" (click)="reload()"></i>
-      </li>
-      <li style="margin-top: 5px; margin-left: 5px">
-        <div ngbDropdown>
-          <button
-            ngbDropdownToggle
-            class="btn btn-light d-flex align-items-center"
-            style="border: none; box-shadow: none; font-size: 12px"
-          >
-            <i class="fa fa-globe"></i>
-            <span style="margin-left: 5px; font-size: 12px">{{ currentLanguage | uppercase }}</span>
-          </button>
-
-          <div ngbDropdownMenu>
-            <button *ngFor="let lang of languages" ngbDropdownItem (click)="changeLanguage(lang)">
-              <div style="font-size: 12px">
-                {{ lang | uppercase }}
-              </div>
-            </button>
-          </div>
+      <li class="nav-item" ngbDropdown>
+        <a class="nav-link btn topbar-user" ngbDropdownToggle>
+          <i class="fa fa-user"></i>
+          <span class="user-name d-none d-sm-inline">{{ identity?.employee?.name }}</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+          <a class="dropdown-item" [routerLink]="['license']">Licencia</a>
+          <button class="dropdown-item" type="button" (click)="openModal('soporte')">Soporte</button>
+          <button class="dropdown-item" type="button" (click)="openModal('changelogs')">Actualizaciones</button>
+          <button class="dropdown-item" type="button" (click)="openModal('change-password')">Cambiar Contraseña</button>
+          <button class="dropdown-item" type="button" (click)="logout()">Cerrar Sesión</button>
         </div>
       </li>
     </ul>
   </div>
-</nav>
+
+  <!-- HORIZONTAL LAYOUT: acciones dentro del menú usuario -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light app-horizontal-navbar" *ngIf="!isSidebarLayout">
+    <a class="navbar-brand btn" routerLink="/" (click)="closeHorizontalMenu()">
+      <img width="42" [src]="img" alt="Logo" />
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      (click)="toggleHorizontalMenu()"
+      [attr.aria-expanded]="!horizontalCollapsed"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="navbar-collapse" [class.collapse]="horizontalCollapsed" [class.show]="!horizontalCollapsed">
+      <app-horizontal-nav
+        *ngIf="menu$ | async as menu"
+        [menu]="menu"
+        (itemClick)="closeHorizontalMenu()"
+      ></app-horizontal-nav>
+
+      <ul class="navbar-nav navbar-right ml-auto topbar-actions horizontal-actions">
+        <li class="topbar-layout-cta">
+          <button type="button" class="layout-switch-btn layout-switch-btn--promo" (click)="switchToSidebar()">
+            <i class="material-icons">dashboard</i>
+            <span>Nuevo Menu!</span>
+          </button>
+        </li>
+        <li class="nav-item" ngbDropdown>
+          <a class="nav-link btn topbar-user" ngbDropdownToggle>
+            <i class="fa fa-user"></i>
+            <span class="user-name d-none d-sm-inline">{{ identity?.employee?.name }}</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+            <a class="dropdown-item" routerLink="/notifications" (click)="closeHorizontalMenu()">Notificaciones</a>
+            <button class="dropdown-item" type="button" (click)="openModal('documentation')">Documentación</button>
+            <button class="dropdown-item" type="button" (click)="reload()">Recargar</button>
+            <div class="dropdown-item user-menu-status" style="pointer-events: none">
+              <i
+                class="fa fa-wifi"
+                [style.color]="(online$ | async) ? '#04b431' : '#ff0000'"
+              ></i>
+              {{ (online$ | async) ? 'Conectado' : 'Sin conexión' }}
+            </div>
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header">Idioma</h6>
+            <button
+              *ngFor="let lang of languages"
+              class="dropdown-item"
+              type="button"
+              [class.active]="lang === currentLanguage"
+              (click)="changeLanguage(lang)"
+            >
+              {{ lang | uppercase }}
+            </button>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" [routerLink]="['license']" (click)="closeHorizontalMenu()">Licencia</a>
+            <button class="dropdown-item" type="button" (click)="openModal('soporte')">Soporte</button>
+            <button class="dropdown-item" type="button" (click)="openModal('changelogs')">Actualizaciones</button>
+            <button class="dropdown-item" type="button" (click)="openModal('change-password')">Cambiar Contraseña</button>
+            <button class="dropdown-item" type="button" (click)="logout()">Cerrar Sesión</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>

@@ -10,6 +10,8 @@ declare global {
   }
 }
 
+const NAV_LAYOUT_KEY = 'nav.layout';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -59,6 +61,7 @@ export class AnalyticsService {
       // Crear las propiedades que se enviarán a Plausible
       const props: any = {
         company: this.currentCompany, // Esta es la propiedad principal que verás en Plausible
+        nav_layout: this.getNavLayout(),
       };
 
       // Agregar info adicional si está disponible
@@ -75,6 +78,37 @@ export class AnalyticsService {
   }
 
   /**
+   * Evento custom de Plausible (requiere goal configurado en el dashboard).
+   */
+  trackEvent(eventName: string, extraProps: Record<string, string | number | boolean> = {}): void {
+    if (typeof window === 'undefined' || !window.plausible) {
+      return;
+    }
+
+    const props: Record<string, string | number | boolean> = {
+      ...extraProps,
+      nav_layout: this.getNavLayout(),
+    };
+
+    if (this.currentCompany) {
+      props.company = this.currentCompany;
+    }
+
+    window.plausible(eventName, { props });
+  }
+
+  trackNavLayout(layout: 'sidebar' | 'horizontal', source: 'session' | 'switch' = 'session'): void {
+    this.trackEvent('Nav Layout', {
+      layout,
+      source,
+    });
+  }
+
+  private getNavLayout(): 'sidebar' | 'horizontal' {
+    return localStorage.getItem(NAV_LAYOUT_KEY) === 'horizontal' ? 'horizontal' : 'sidebar';
+  }
+
+  /**
    * Actualiza la información del cliente cuando cambia (solo para login)
    */
   updateClient(companyName: string) {
@@ -83,6 +117,7 @@ export class AnalyticsService {
     // Enviar inmediatamente después de login
     setTimeout(() => {
       this.sendPageviewWithCompany();
+      this.trackNavLayout(this.getNavLayout(), 'session');
     }, 200);
   }
 
@@ -94,6 +129,7 @@ export class AnalyticsService {
       // Delay inicial para asegurar que Plausible esté cargado
       setTimeout(() => {
         this.sendPageviewWithCompany();
+        this.trackNavLayout(this.getNavLayout(), 'session');
       }, 500);
     }
   }
