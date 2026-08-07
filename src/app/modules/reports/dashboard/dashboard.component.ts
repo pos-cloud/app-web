@@ -27,8 +27,8 @@ export type ChartOptions = {
   series: ApexAxisChartSeries | ApexNonAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
-  markers: any; //ApexMarkers;
-  stroke: any; //ApexStroke;
+  markers: any;
+  stroke: any;
   yaxis: ApexYAxis | ApexYAxis[];
   plotOptions: ApexPlotOptions;
   dataLabels: ApexDataLabels;
@@ -40,6 +40,16 @@ export type ChartOptions = {
   legend: ApexLegend;
   fill: ApexFill;
   tooltip: ApexTooltip;
+  grid?: any;
+};
+
+export type TopProduct = {
+  rank: number;
+  description: string;
+  code: string;
+  quantity: number;
+  total: number;
+  totalFormatted: string;
 };
 
 @Component({
@@ -53,10 +63,11 @@ export type ChartOptions = {
 export class DasboardComponent {
   salesTotal: Partial<ChartOptions>;
   purchaseTotal: Partial<ChartOptions>;
-  inventoryTotal: Partial<ChartOptions>;
-  accountReveivable: Partial<ChartOptions>;
+  inventoryTotal: string;
+  accountReveivable: string;
   salesByMonth: Partial<ChartOptions>;
   salesByCategory: Partial<ChartOptions>;
+  topProducts: TopProduct[] = [];
 
   private subscription: Subscription = new Subscription();
   private destroy$ = new Subject<void>();
@@ -70,6 +81,7 @@ export class DasboardComponent {
     this.getAccountReveivable();
     this.getSalesByMonth();
     this.getSalesByCategory();
+    this.getTopSellingProducts();
     this._title.setTitle('Dashboard');
   }
 
@@ -177,7 +189,39 @@ export class DasboardComponent {
         .subscribe({
           next: (result) => {
             if (result) {
-              this.salesByMonth = result;
+              this.salesByMonth = {
+                ...result,
+                chart: {
+                  ...(result.chart || {}),
+                  type: 'line',
+                  height: result.chart?.height || 360,
+                  toolbar: { show: false },
+                  zoom: { enabled: false },
+                },
+                stroke: {
+                  curve: 'smooth',
+                  width: 3,
+                },
+                markers: {
+                  size: 4,
+                  hover: { size: 6 },
+                },
+                colors: result.colors || ['#2563eb', '#10b981'],
+                yaxis: {
+                  ...(result.yaxis || {}),
+                  decimalsInFloat: 2,
+                  labels: {
+                    ...(result.yaxis?.labels || {}),
+                    formatter: (val: number) => this.formatMoney(val),
+                  },
+                },
+                tooltip: {
+                  ...(result.tooltip || {}),
+                  y: {
+                    formatter: (val: number) => `$ ${this.formatMoney(val)}`,
+                  },
+                },
+              };
             }
           },
           error: (error) => {
@@ -186,6 +230,14 @@ export class DasboardComponent {
           complete: () => {},
         })
     );
+  }
+
+  private formatMoney(value: number | string | null | undefined): string {
+    const amount = Number(value) || 0;
+    return amount.toLocaleString('es-AR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }
 
   private getSalesByCategory(): void {
@@ -201,6 +253,29 @@ export class DasboardComponent {
           next: (result) => {
             if (result) {
               this.salesByCategory = result;
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {},
+        })
+    );
+  }
+
+  private getTopSellingProducts(): void {
+    const requestPayload = {
+      type: 'top-selling-products',
+    };
+
+    this.subscription.add(
+      this._service
+        .getChart(requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            if (result?.products) {
+              this.topProducts = result.products;
             }
           },
           error: (error) => {

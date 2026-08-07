@@ -1,68 +1,88 @@
 <section class="container-fluid dashboard">
-  <div class="row">
-    <div class="col-md-4">
-      <div class="chart">
-        <apx-chart
-          #chartspark1
-          [series]="salesTotal?.series"
-          [chart]="salesTotal?.chart"
-          [stroke]="salesTotal?.stroke"
-          [yaxis]="salesTotal?.yaxis"
-          [fill]="salesTotal?.fill"
-          [title]="salesTotal?.title"
-          [subtitle]="salesTotal?.subtitle"
-        ></apx-chart>
+  <div class="row kpi-row">
+    <div class="col-md-3">
+      <div class="chart kpi">
+        <div class="kpi-value">{{ salesTotal?.title?.text }}</div>
+        <div class="kpi-title">{{ salesTotal?.subtitle?.text }}</div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="chart">
-        <apx-chart
-          #chartspark2
-          [series]="purchaseTotal?.series"
-          [chart]="purchaseTotal?.chart"
-          [stroke]="purchaseTotal?.stroke"
-          [yaxis]="purchaseTotal?.yaxis"
-          [fill]="purchaseTotal?.fill"
-          [title]="purchaseTotal?.title"
-          [subtitle]="purchaseTotal?.subtitle"
-        ></apx-chart>
+    <div class="col-md-3">
+      <div class="chart kpi">
+        <div class="kpi-value">{{ purchaseTotal?.title?.text }}</div>
+        <div class="kpi-title">{{ purchaseTotal?.subtitle?.text }}</div>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="chart kpi">
         <div class="kpi-value">{{ inventoryTotal }}</div>
-        <div class="kpi-title">{{ 'Inventario valorizado' }}</div>
+        <div class="kpi-title">Inventario valorizado</div>
       </div>
+    </div>
+    <div class="col-md-3">
       <div class="chart kpi">
         <div class="kpi-value">{{ accountReveivable }}</div>
-        <div class="kpi-title">{{ 'Deudas totales de clientes' }}</div>
+        <div class="kpi-title">Deudas totales de clientes</div>
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-7 chart">
-      <span>Ventas/Compras de los últimos 12 meses</span>
-      <apx-chart
-        [series]="salesByMonth?.series"
-        [chart]="salesByMonth?.chart"
-        [dataLabels]="salesByMonth?.dataLabels"
-        [plotOptions]="salesByMonth?.plotOptions"
-        [yaxis]="salesByMonth?.yaxis"
-        [legend]="salesByMonth?.legend"
-        [fill]="salesByMonth?.fill"
-        [stroke]="salesByMonth?.stroke"
-        [tooltip]="salesByMonth?.tooltip"
-        [xaxis]="salesByMonth?.xaxis"
-      ></apx-chart>
+
+  <div class="row chart-row">
+    <div class="col-12">
+      <div class="chart chart-panel">
+        <span class="chart-title">Últimos 12 meses</span>
+        <apx-chart
+          *ngIf="salesByMonth?.series"
+          [series]="salesByMonth?.series"
+          [chart]="salesByMonth?.chart"
+          [dataLabels]="salesByMonth?.dataLabels"
+          [yaxis]="salesByMonth?.yaxis"
+          [legend]="salesByMonth?.legend"
+          [stroke]="salesByMonth?.stroke"
+          [markers]="salesByMonth?.markers"
+          [colors]="salesByMonth?.colors"
+          [grid]="salesByMonth?.grid"
+          [tooltip]="salesByMonth?.tooltip"
+          [xaxis]="salesByMonth?.xaxis"
+        ></apx-chart>
+      </div>
     </div>
-    <div class="col-md-4 chart">
-      <span>Ventas por categoría</span>
-      <apx-chart
-        [series]="salesByCategory.series"
-        [chart]="salesByCategory?.chart"
-        [labels]="salesByCategory?.labels"
-        [responsive]="salesByCategory?.responsive"
-      ></apx-chart>
+  </div>
+
+  <div class="row bottom-charts-row">
+    <div class="col-md-6">
+      <div class="chart chart-panel">
+        <span class="chart-title">Ventas por categoría</span>
+        <apx-chart
+          *ngIf="salesByCategory?.series"
+          [series]="salesByCategory?.series"
+          [chart]="salesByCategory?.chart"
+          [labels]="salesByCategory?.labels"
+          [legend]="salesByCategory?.legend"
+          [dataLabels]="salesByCategory?.dataLabels"
+          [responsive]="salesByCategory?.responsive"
+        ></apx-chart>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="chart chart-panel">
+        <span class="chart-title">Productos más vendidos</span>
+        <div class="products-list" *ngIf="topProducts?.length; else emptyProducts">
+          <div class="product-item" *ngFor="let product of topProducts">
+            <div class="product-rank">{{ product.rank }}</div>
+            <div class="product-info">
+              <div class="product-name">{{ product.description }}</div>
+              <div class="product-meta" *ngIf="product.code">Código: {{ product.code }}</div>
+            </div>
+            <div class="product-stats">
+              <div class="product-qty">{{ product.quantity }} u.</div>
+              <div class="product-total">{{ product.totalFormatted }}</div>
+            </div>
+          </div>
+        </div>
+        <ng-template #emptyProducts>
+          <div class="empty-state">No hay productos vendidos en el mes actual.</div>
+        </ng-template>
+      </div>
     </div>
   </div>
 </section>
