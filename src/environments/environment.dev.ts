@@ -5,4 +5,10 @@ export const environment = {
   apiStorage: 'https://d-api-storage.poscloud.ar',
   feAr: 'https://d-fe-ar.poscloud.ar',
   apiLicense: 'https://d-api-license.poscloud.ar',
+  faro: {
+    url: '',
+    name: 'poscloud',
+    version: '1.0.0',
+    environment: 'development',
+  },
 };

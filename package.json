@@ -28,6 +28,8 @@
     "@angular/platform-browser-dynamic": "^15.2.7",
     "@angular/router": "^15.2.7",
     "@angular/service-worker": "^15.2.10",
+    "@grafana/faro-web-sdk": "^2.9.0",
+    "@grafana/faro-web-tracing": "^2.9.0",
     "@mercadopago/sdk-js": "^0.0.3",
     "@ng-bootstrap/ng-bootstrap": "^11.0.0",
     "@ngx-translate/core": "^11.0.1",
