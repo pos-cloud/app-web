@@ -83,9 +83,7 @@ export class LoginComponent {
             type: 'success',
           });
 
-          this._authService.loginStorage(u);
-          localStorage.setItem('company', this.company);
-
+          this._authService.loginStorage(u, this.company);
           this._analyticsService.updateClient(this.company);
 
           this._route.queryParams.subscribe({

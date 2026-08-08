@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { faro } from '@grafana/faro-web-sdk';
 import { User } from '@types';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -16,6 +17,7 @@ export class AuthService {
     const storedUser = sessionStorage.getItem('user');
     if (storedUser) {
       this.identity.next(JSON.parse(storedUser));
+      this.setFaroCompany(localStorage.getItem('company'));
     }
   }
 
@@ -90,11 +92,17 @@ export class AuthService {
       );
   }
 
-  loginStorage(user: User): void {
+  loginStorage(user: User, company?: string): void {
     this.clearDatatableSessionPreferences();
     sessionStorage.setItem('user', JSON.stringify(user));
     sessionStorage.setItem('session_token', user.token);
     this.identity.next(user);
+
+    const negocio = (company ?? localStorage.getItem('company') ?? '').trim();
+    if (negocio) {
+      localStorage.setItem('company', negocio);
+      this.setFaroCompany(negocio);
+    }
   }
 
   private clearDatatableSessionPreferences(): void {
@@ -107,10 +115,28 @@ export class AuthService {
     });
   }
 
+  private setFaroCompany(company: string | null): void {
+    if (!environment.faro?.url || !faro?.api) {
+      return;
+    }
+
+    const negocio = (company ?? '').trim();
+    if (negocio) {
+      // Identidad = base/negocio (no el usuario admin, que se repite entre clientes)
+      faro.api.setUser({
+        id: negocio,
+        username: negocio,
+      });
+    } else {
+      faro.api.resetUser();
+    }
+  }
+
   logoutStorage(): void {
     sessionStorage.removeItem('session_token');
     sessionStorage.removeItem('user');
     this.identity.next(null);
+    this.setFaroCompany(null);
     this._router.navigate(['/login']);
   }
 
@@ -118,6 +144,7 @@ export class AuthService {
     sessionStorage.removeItem('session_token');
     sessionStorage.removeItem('user');
     this.identity.next(null);
+    this.setFaroCompany(null);
     this._router.navigate(['/login'], {
       queryParams: {
         return: this._router.url,
