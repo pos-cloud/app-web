@@ -75,6 +75,38 @@ export class TransactionService extends ModelService {
       );
   }
 
+  /** Próximo número de comprobante (api-v2). Cuando migremos a contadores no hay que tocar el front. */
+  public getNextNumber(type: string, origin: number, letter: string, excludeId?: string): Observable<any> {
+    const URL = `${environment.apiv2}/transactions/next-number`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    let params = new HttpParams()
+      .set('type', type)
+      .set('origin', String(origin ?? 0))
+      .set('letter', letter ?? '');
+
+    if (excludeId) {
+      params = params.set('excludeId', excludeId);
+    }
+
+    return this._http
+      .get(URL, {
+        headers: headers,
+        params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
   public getTransactionsV2(
     project: {},
     match: {},

@@ -223,19 +223,11 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         }
 
         // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
-        let query = `where= "type":"${transactionDestination.type._id}",
-                    "origin":${transactionDestination.origin},
-                    "letter":"${transactionDestination.letter}"
-                    &sort="number":-1
-                    &limit=1`;
-
-        let transactions: Transaction[] = await this.getTransactions(query);
-
-        if (transactions && transactions.length > 0) {
-          transactionDestination.number = transactions[0].number + 1;
-        } else {
-          transactionDestination.number = 1;
-        }
+        transactionDestination.number = await this.getNextTransactionNumber(
+          transactionDestination.type._id,
+          transactionDestination.origin,
+          transactionDestination.letter
+        );
         transactionDestination = await this.saveTransaction(transactionDestination);
         // SI REQUIERE ARTÍCULOS GUARDAMOS ARTÍCULOS
         if (transactionDestination.type.requestArticles && this.transaction.type.requestArticles) {
@@ -562,6 +554,21 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           if (result.transactions) {
             resolve(result.transactions);
           } else reject(result);
+        },
+        (error) => reject(error)
+      );
+    });
+  }
+
+  public getNextTransactionNumber(typeId: string, origin: number, letter: string, excludeId?: string): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this._transactionService.getNextNumber(typeId, origin, letter, excludeId).subscribe(
+        (result) => {
+          if (result.status === 200 && result.result?.number != null) {
+            resolve(result.result.number);
+          } else {
+            resolve(1);
+          }
         },
         (error) => reject(error)
       );

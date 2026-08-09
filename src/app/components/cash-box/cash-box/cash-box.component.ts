@@ -296,12 +296,8 @@ export class CashBoxComponent implements OnInit {
                   this.transaction.letter = '';
                 }
               }
-              await this.getLastTransactionByType().then((transaction) => {
-                if (transaction) {
-                  this.transaction.number = transaction.number + 1;
-                } else {
-                  this.transaction.number = 1;
-                }
+              await this.getLastTransactionByType().then((number) => {
+                this.transaction.number = number;
                 this.addTransaction();
               });
             } else {
@@ -348,12 +344,8 @@ export class CashBoxComponent implements OnInit {
               true
             );
           } else {
-            await this.getLastTransactionByType().then((transaction) => {
-              if (transaction) {
-                this.transaction.number = transaction.number + 1;
-              } else {
-                this.transaction.number = 1;
-              }
+            await this.getLastTransactionByType().then((number) => {
+              this.transaction.number = number;
               this.addTransaction();
             });
           }
@@ -599,30 +591,23 @@ export class CashBoxComponent implements OnInit {
     });
   }
 
-  public getLastTransactionByType(): Promise<Transaction> {
-    return new Promise<Transaction>((resolve, reject) => {
-      let query =
-        'where="type":"' +
-        this.transaction.type._id +
-        '","origin":"' +
-        0 +
-        '","letter":"' +
-        this.transaction.letter +
-        '"&sort="number":-1&limit=1';
-
-      this._transactionService.getTransactions(query).subscribe(
-        (result) => {
-          if (!result.transactions || result.transactions.length === 0) {
-            resolve(null);
-          } else {
-            resolve(result.transactions[0]);
+  public getLastTransactionByType(): Promise<number> {
+    return new Promise<number>((resolve) => {
+      this._transactionService
+        .getNextNumber(this.transaction.type._id, 0, this.transaction.letter)
+        .subscribe(
+          (result) => {
+            if (result.status === 200 && result.result?.number != null) {
+              resolve(result.result.number);
+            } else {
+              resolve(1);
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
+            resolve(1);
           }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 

@@ -417,22 +417,13 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
   }
 
   getLastTransactionByType(): void {
-    const query =
-      'where="type":"' +
-      this.transaction.type._id +
-      '","origin":"' +
-      0 +
-      '","letter":"' +
-      this.transaction.letter +
-      '"&sort="number":-1&limit=1';
-
     this._transactionService
-      .getTransactions(query)
+      .getNextNumber(this.transaction.type._id, 0, this.transaction.letter)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          const last = result?.transactions?.[0];
-          this.transaction.number = last ? last.number + 1 : 1;
+          this.transaction.number =
+            result?.status === 200 && result?.result?.number != null ? result.result.number : 1;
           this.addTransaction();
         },
         error: (error) => {

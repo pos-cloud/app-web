@@ -3264,27 +3264,27 @@ export class AddSaleOrderComponent {
 
   async assignTransactionNumber() {
     try {
-      let query = `where= "type":"${this.transaction.type._id}",
-            "origin":${this.transaction.origin},
-            "letter":"${this.transaction.letter}",
-            "_id":{"$ne":"${this.transaction._id}"}
-            &sort="number":-1
-            &limit=1`;
-
-      this._transactionService.getTransactions(query).subscribe(
-        async (result) => {
-          if (!result.transactions || result.transactions.length === 0) {
-            this.transaction.number = 1;
-          } else {
-            this.transaction.number = result.transactions[0].number + 1;
+      this._transactionService
+        .getNextNumber(
+          this.transaction.type._id,
+          this.transaction.origin,
+          this.transaction.letter,
+          this.transaction._id
+        )
+        .subscribe(
+          async (result) => {
+            if (result.status === 200 && result.result?.number != null) {
+              this.transaction.number = result.result.number;
+            } else {
+              this.transaction.number = 1;
+            }
+            this.transaction = await this.updateTransaction();
+            this.close('charge');
+          },
+          (error) => {
+            throw error;
           }
-          this.transaction = await this.updateTransaction();
-          this.close('charge');
-        },
-        (error) => {
-          throw error;
-        }
-      );
+        );
     } catch (error) {
       this._toastService.showToast(error);
     }
