@@ -1373,6 +1373,10 @@ export class AddSaleOrderComponent {
         }
       }
 
+      // Solo forzar precio de lista cuando el usuario está cambiando la lista (newPriceList/priceList).
+      // Si usamos siempre transaction.priceList, getMovementsOfTransaction → updatePrices pisa el
+      // precio que el usuario acaba de editar en el modal de movimiento.
+      const isApplyingPriceList = !!(this.newPriceList || this.priceList);
       const activePriceList: PriceList | undefined = (this.newPriceList ??
         this.priceList ??
         this.transaction?.priceList) as PriceList | undefined;
@@ -1391,7 +1395,7 @@ export class AddSaleOrderComponent {
         movementOfArticle.unitPrice = unitPrice;
       }
 
-      if (movementOfArticle.article && isManualPriceList) {
+      if (movementOfArticle.article && isManualPriceList && isApplyingPriceList) {
         const manualPrice = await this.getManualPriceForArticle(activePriceList._id, movementOfArticle.article._id);
         let unitPrice = manualPrice ?? movementOfArticle.article.salePrice ?? 0;
 
@@ -1762,6 +1766,9 @@ export class AddSaleOrderComponent {
 
     this.priceList = null;
     this.newPriceList = null;
+    // Ya se aplicó el revert a precio base; si queda en true, el próximo updatePrices
+    // (p.ej. al editar un movimiento) vuelve a pisar el precio editado por el usuario.
+    this.explicitNoPriceList = false;
 
     if (isUpdateValid) {
       this.transaction.totalPrice = totalPriceAux;
