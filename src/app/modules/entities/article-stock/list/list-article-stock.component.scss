@@ -1,0 +1,23 @@
+.list-article-stock {
+  .container-filter {
+    margin-bottom: 0.75rem;
+  }
+
+  // Evita el doble container-fluid del datatable (desalineaba el filtro vs la card)
+  ::ng-deep > app-datatable > .container-fluid {
+    padding: 0 !important;
+    margin-top: 0 !important;
+    background-color: transparent;
+  }
+
+  ::ng-deep app-datatable {
+    .card-large {
+      min-height: calc(100vh - 130px);
+      max-height: calc(100vh - 130px);
+    }
+
+    .table-responsive {
+      height: calc(100vh - 220px);
+    }
+  }
+}

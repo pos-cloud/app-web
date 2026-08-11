@@ -1,11 +1,22 @@
-<app-datatable
-  [title]="title"
-  [columns]="columns"
-  [rowButtons]="rowButtons"
-  [headerButtons]="headerButtons"
-  [loading]="loading"
-  [sort]="sort"
-  [_service]="_service"
-  (eventFunction)="emitEvent($event)"
->
-</app-datatable>
+<section class="container-fluid list-article-stock">
+  <div class="row container-filter">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+      <app-user-branch-select
+        [(ngModel)]="branchSelectedId"
+        (branchChange)="onBranchChange()"
+      ></app-user-branch-select>
+    </div>
+  </div>
+
+  <app-datatable
+    [title]="title"
+    [columns]="columns"
+    [rowButtons]="rowButtons"
+    [headerButtons]="headerButtons"
+    [loading]="loading"
+    [sort]="sort"
+    [_service]="_service"
+    (eventFunction)="emitEvent($event)"
+  >
+  </app-datatable>
+</section>

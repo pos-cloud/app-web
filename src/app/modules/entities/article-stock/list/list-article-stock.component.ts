@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ArticleStockService } from '@core/services/article-stock.service';
 import { PrintService } from '@core/services/print.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
 import { ToastService } from '@shared/components/toast/toast.service';
+import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
 import { ApiResponse, IAttribute, IButton, PrintType } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
@@ -14,15 +16,17 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-list-structure',
   templateUrl: './list-article-stock.component.html',
+  styleUrls: ['./list-article-stock.component.scss'],
   standalone: true,
-  imports: [DatatableModule],
+  imports: [DatatableModule, FormsModule, UserBranchSelectComponent],
 })
-export class ListArticleStockComponent implements OnInit {
+export class ListArticleStockComponent implements OnInit, OnDestroy {
   public title: string = 'inventory';
   public sort = { code: 1 };
 
   public pathLocation: string[];
   public loading: boolean = false;
+  public branchSelectedId: string | null = null;
   public headerButtons: IButton[] = [
     {
       title: 'refresh',
@@ -68,6 +72,16 @@ export class ListArticleStockComponent implements OnInit {
       name: '_id',
       visible: false,
       disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+    {
+      name: 'branch',
+      visible: false,
+      disabled: true,
       filter: true,
       datatype: 'string',
       project: null,
@@ -481,6 +495,30 @@ export class ListArticleStockComponent implements OnInit {
     private _printService: PrintService
   ) {}
   ngOnInit() {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  public onBranchChange(): void {
+    const branchColumn = this.columns.find((column) => column.name === 'branch');
+    if (!branchColumn || !this.datatableComponent) {
+      return;
+    }
+
+    if (this.branchSelectedId) {
+      const branchFilter = `{ "$oid": "${this.branchSelectedId}" }`;
+      branchColumn.defaultFilter = branchFilter;
+      this.datatableComponent.filters['branch'] = branchFilter;
+    } else {
+      delete branchColumn.defaultFilter;
+      delete this.datatableComponent.filters['branch'];
+    }
+
+    this.datatableComponent.currentPage = 1;
+    this.datatableComponent.refresh();
+  }
 
   public async emitEvent(event) {
     this.redirect(event.op, event.obj);

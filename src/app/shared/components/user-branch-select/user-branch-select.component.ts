@@ -63,10 +63,7 @@ export class UserBranchSelectComponent implements OnInit, OnDestroy, ControlValu
   registerOnChange(fn: (value: string | null) => void): void {
     this.onChange = fn;
     this.cvaReady = true;
-    fn(this.branchSelectedId);
-    if (this.branchInitialized) {
-      this.branchChange.emit(this.branchSelectedId);
-    }
+    this.emitBranchValue();
   }
 
   registerOnTouched(fn: () => void): void {
@@ -109,11 +106,17 @@ export class UserBranchSelectComponent implements OnInit, OnDestroy, ControlValu
     }
 
     this.branchInitialized = true;
-    this.onChange(this.branchSelectedId);
+    this.emitBranchValue();
+  }
 
-    if (this.cvaReady) {
-      this.branchChange.emit(this.branchSelectedId);
-    }
+  private emitBranchValue(): void {
+    // Diferir para evitar ExpressionChangedAfterItHasBeenCheckedError (NG0100)
+    queueMicrotask(() => {
+      this.onChange(this.branchSelectedId);
+      if (this.cvaReady && this.branchInitialized) {
+        this.branchChange.emit(this.branchSelectedId);
+      }
+    });
   }
 
   private getUserBranchId(user: User | null): string | null {
