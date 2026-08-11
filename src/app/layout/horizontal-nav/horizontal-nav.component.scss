@@ -1,3 +1,10 @@
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+}
+
 .dropdown-submenu {
   position: relative;
   cursor: pointer;
@@ -11,9 +18,21 @@
 }
 
 .horizontal-nav {
+  flex-wrap: nowrap;
+  align-items: center;
+
+  > .nav-item {
+    flex: 0 0 auto;
+  }
+
   .nav-link {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
     color: #111827 !important;
     font-size: 0.875rem;
+    padding: 0.4rem 0.5rem;
+    line-height: 1.25;
 
     &:hover,
     &:focus {
@@ -22,7 +41,9 @@
 
     i {
       margin-right: 0.35rem;
+      flex-shrink: 0;
       color: inherit;
+      font-size: 0.95em;
     }
   }
 
@@ -58,6 +79,23 @@
   :host {
     display: block;
     width: 100%;
+    flex: none;
+    min-width: 0;
+  }
+
+  .horizontal-nav {
+    flex-wrap: wrap;
+    width: 100%;
+
+    > .nav-item {
+      width: 100%;
+    }
+
+    .nav-link {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
   }
 
   .dropdown-submenu > .dropdown-menu {

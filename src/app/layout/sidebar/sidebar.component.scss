@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.35);
-  z-index: 1040;
+  z-index: 1020;
 }
 
 .app-sidebar {
@@ -17,7 +17,7 @@
   width: var(--sidebar-width, 240px);
   background: #ffffff;
   border-right: 1px solid #d8dee9;
-  z-index: 1050;
+  z-index: 1025;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;

@@ -1,3 +1,9 @@
+/* Oculto hasta pasar validación de apertura/cierre (evita flash del modal). */
+.cash-box-modal-pending {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .card-header {
   display: flex;
   align-items: center;
