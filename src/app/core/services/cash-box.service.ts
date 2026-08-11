@@ -4,9 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
+import { environment } from 'environments/environment';
 import { CashBox } from '../../components/cash-box/cash-box';
 import { AuthService } from './auth.service';
-import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +36,26 @@ export class CashBoxService extends ModelService {
       .get(URL, {
         headers: headers,
         params: params,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public getLastCashBox(): Observable<any> {
+    const URL = `${environment.apiv2}/cash-boxes/last-cash-box`;
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .get(URL, {
+        headers: headers,
       })
       .pipe(
         map((res) => {

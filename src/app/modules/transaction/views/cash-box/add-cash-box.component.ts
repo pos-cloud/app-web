@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, Inject, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import * as moment from 'moment';
 import * as printJS from 'print-js';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -73,7 +72,8 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
     private _configService: ConfigService,
     private _printService: PrintService,
     private _toastService: ToastService,
-    public activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal,
+    @Inject(DOCUMENT) private _document: Document
   ) {}
 
   ngOnInit(): void {
@@ -151,38 +151,67 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
     });
   }
 
-  private buildOpenCashBoxQuery(): string {
-    let query = 'where="state":"' + CashBoxState.Open + '"';
+  private buildOpenCashBoxMatch(): Record<string, unknown> {
+    const match: Record<string, unknown> = {
+      state: CashBoxState.Open,
+      operationType: { $ne: 'D' },
+    };
 
     if (this.identity) {
       if (this.config?.cashBox?.perUser) {
-        query += ',"creationUser":"' + this.identity._id + '"';
+        match['creationUser'] = { $oid: this.identity._id };
       } else if (this.identity.cashBoxType) {
-        query += ',"type":"' + this.identity.cashBoxType._id + '"';
+        match['type'] = { $oid: this.identity.cashBoxType._id };
       } else {
-        query += ',"type":null';
+        match['type'] = null;
       }
     }
 
-    return query + '&sort="number":-1&limit=1';
+    return match;
+  }
+
+  private revealModal(): void {
+    this._document.querySelectorAll('.cash-box-modal-pending').forEach((el) => {
+      el.classList.remove('cash-box-modal-pending');
+    });
+  }
+
+  private rejectAndClose(message: string): void {
+    this.loading = false;
+    this._toastService.showToast(null, 'danger', '', message);
+    this.activeModal.dismiss('validation');
   }
 
   getOpenCashBox(): void {
     this.loading = true;
     this._cashBoxService
-      .getCashBoxes(this.buildOpenCashBoxQuery())
+      .getAll({
+        match: this.buildOpenCashBoxMatch(),
+        sort: { number: -1 },
+        limit: 1,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          if (result?.cashBoxes?.length) {
-            this.cashBox = result.cashBoxes[0];
+          if (result?.status !== 200) {
+            this._toastService.showToast(result?.error ?? result);
+            this.activeModal.dismiss('error');
+            return;
+          }
+
+          const cashBoxes = result?.result ?? [];
+          if (cashBoxes.length) {
+            this.cashBox = cashBoxes[0];
             this.validateCashBoxState();
           } else if (this.transactionType?.cashClosing) {
-            this._toastService.showToast({ message: 'No se encuentran cajas abiertas.', type: 'info' });
+            this.rejectAndClose('No se encuentran cajas abiertas.');
+          } else {
+            this.revealModal();
           }
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.activeModal.dismiss('error');
         },
         complete: () => {
           this.loading = false;
@@ -192,39 +221,51 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
 
   private validateCashBoxState(): void {
     if (this.transactionType?.cashOpening) {
-      this._toastService.showToast({ message: 'La caja ya se encuentra abierta.', type: 'info' });
+      this.rejectAndClose('La caja ya se encuentra abierta.');
       return;
     }
 
     if (this.transactionType?.cashClosing && this.cashBox?._id) {
       this.getOpenTransactionsForCashBox(this.cashBox._id, true);
+      return;
     }
+
+    this.revealModal();
   }
 
   getOpenTransactionsForCashBox(cashBoxId: string, onlyValidate = false): void {
-    const query =
-      'where="$and":[{"state":{"$ne": "' +
-      TransactionState.Closed +
-      '"}},{"state":{"$ne": "' +
-      TransactionState.Canceled +
-      '"}},{"state":{"$ne": "' +
-      TransactionState.PaymentDeclined +
-      '"}},{"cashBox":"' +
-      cashBoxId +
-      '"}]';
+    const match = {
+      state: {
+        $nin: [TransactionState.Closed, TransactionState.Canceled, TransactionState.PaymentDeclined],
+      },
+      cashBox: { $oid: cashBoxId },
+    };
+    const project = {
+      'type.name': 1,
+      origin: 1,
+      letter: 1,
+      number: 1,
+      state: 1,
+      cashBox: 1,
+    };
 
     this.loading = true;
     this._transactionService
-      .getTransactions(query)
+      .getAll({ project, match })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          const transactions = result?.transactions;
-          if (transactions?.length) {
+          if (result?.status && result.status !== 200) {
+            this._toastService.showToast(result?.error ?? result);
+            if (onlyValidate) this.activeModal.dismiss('error');
+            return;
+          }
+
+          const transactions = result?.result ?? [];
+          if (transactions.length) {
             const tx = transactions[0];
-            this._toastService.showToast({
-              message:
-                'No puede cerrar la caja. La transacción: ' +
+            this.rejectAndClose(
+              'No puede cerrar la caja. La transacción: ' +
                 tx.type.name +
                 ' ' +
                 tx.origin +
@@ -232,18 +273,21 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
                 tx.letter +
                 '-' +
                 tx.number +
-                ' se encuentra abierta.',
-              type: 'info',
-            });
+                ' se encuentra abierta.'
+            );
             return;
           }
 
-          if (!onlyValidate) {
-            this.prepareTransaction();
+          if (onlyValidate) {
+            this.revealModal();
+            return;
           }
+
+          this.prepareTransaction();
         },
         error: (error) => {
           this._toastService.showToast(error);
+          if (onlyValidate) this.activeModal.dismiss('error');
         },
         complete: () => {
           this.loading = false;
@@ -338,21 +382,20 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
     if (!this.transactionType) return;
 
     if (this.cashBox?._id) {
-      this._toastService.showToast({ message: 'La caja ya se encuentra abierta.', type: 'info' });
+      this._toastService.showToast(null, 'danger', '', 'La caja ya se encuentra abierta.');
       return;
     }
 
     this.loading = true;
     this._cashBoxService
-      .getCashBoxes('sort="number":-1&limit=1')
+      .getLastCashBox()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          const lastCashBoxes = result?.cashBoxes;
           this.cashBox = {
-            number: lastCashBoxes?.length ? lastCashBoxes[0].number + 1 : 1,
+            number: result.status === 200 ? result.result.number + 1 : 1,
             state: CashBoxState.Open,
-            openingDate: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+            openingDate: new Date().toISOString(),
             type: this.identity?.cashBoxType ?? null,
           } as CashBox;
 
@@ -367,7 +410,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
 
   closeCashBox(): void {
     if (!this.cashBox?._id) {
-      this._toastService.showToast({ message: 'No se encuentran cajas abiertas.', type: 'info' });
+      this._toastService.showToast(null, 'danger', '', 'No se encuentran cajas abiertas.');
       return;
     }
 
@@ -381,20 +424,19 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
 
   saveCashBox(): void {
     this._cashBoxService
-      .saveCashBox(this.cashBox as any)
+      .save(this.cashBox as any)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          if (!result?.cashBox) {
-            if (result?.message) {
-              this._toastService.showToast({ message: result.message, type: 'info' });
-            }
+          if (result?.status !== 200) {
+            this._toastService.showToast(result);
             this.loading = false;
             return;
           }
 
-          this.cashBox = result.cashBox;
+          this.cashBox = result.result;
           this.prepareTransaction();
+          this.loading = false;
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -422,8 +464,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          this.transaction.number =
-            result?.status === 200 && result?.result?.number != null ? result.result.number : 1;
+          this.transaction.number = result?.status === 200 && result?.result?.number != null ? result.result.number : 1;
           this.addTransaction();
         },
         error: (error) => {
@@ -446,8 +487,9 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
         this.transaction.totalPrice += mov.amountPaid;
       }
       this.transaction.state = TransactionState.Closed;
-      this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-      this.transaction.VATPeriod = moment().format('YYYYMM');
+      this.transaction.endDate = new Date().toISOString();
+      const now = new Date();
+      this.transaction.VATPeriod = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
       this.transaction.expirationDate = this.transaction.endDate;
       this.saveTransaction();
       return;
@@ -487,15 +529,14 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          if (!result?.movementsOfCashes) {
-            if (result?.message) {
-              this._toastService.showToast({ message: result.message, type: 'info' });
-            }
+          if (result?.status !== 200) {
+            this._toastService.showToast(result);
             this.loading = false;
             return;
           }
 
           this.finishCashBoxFlow();
+          this.loading = false;
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -511,7 +552,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.cashBox.closingDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    this.cashBox.closingDate = new Date().toISOString();
     this.cashBox.state = CashBoxState.Closed;
     this.resetOrderNumber();
     this.updateCashBox();
@@ -519,20 +560,19 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
 
   updateCashBox(): void {
     this._cashBoxService
-      .updateCashBox(this.cashBox as any)
+      .update(this.cashBox as any)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          if (!result?.cashBox) {
-            if (result?.message) {
-              this._toastService.showToast({ message: result.message, type: 'info' });
-            }
+          if (result.status !== 200) {
+            this._toastService.showToast(result);
             this.loading = false;
             return;
           }
 
-          this.cashBox = result.cashBox;
+          this.cashBox = result.result;
           this.printAndBack();
+          this.loading = false;
         },
         error: (error) => {
           this._toastService.showToast(error);
