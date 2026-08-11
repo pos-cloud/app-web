@@ -564,7 +564,7 @@
                               class="form-control"
                               [(ngModel)]="manualPriceRows[i].price"
                               [ngModelOptions]="{ standalone: true }"
-                              [readonly]="readonly"
+                              [readonly]="operation === 'view' || operation === 'delete'"
                               step="1"
                               min="0"
                             />
