@@ -229,9 +229,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           transactionDestination.letter
         );
         transactionDestination = await this.saveTransaction(transactionDestination);
-        // SI REQUIERE ARTÍCULOS GUARDAMOS ARTÍCULOS
+        // SI REQUIERE ARTÍCULOS REASIGNAMOS ARTÍCULOS A LA TRANSACCIÓN DESTINO
         if (transactionDestination.type.requestArticles && this.transaction.type.requestArticles) {
-          await this.saveMovementsOfArticles(this.copyMovementsOfArticles(transactionDestination));
+          await this.copyMovementsOfArticles(transactionDestination);
         }
 
         if (transactionDestination.type.requestPaymentMethods && this.transaction.type.requestPaymentMethods) {
@@ -286,67 +286,95 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     });
   }
 
-  public copyMovementsOfArticles(transaction: Transaction): MovementOfArticle[] {
-    let movsOfArts = new Array();
-    for (let movOfArt of this.movementsOfArticles) {
-      let mov = new MovementOfArticle();
-      mov = Object.assign(mov, movOfArt);
-      delete mov._id;
-      mov.transaction = transaction;
-      mov.quantityForStock = 0;
-      mov.discountAmount = movOfArt.discountAmount;
-      mov.discountRate = movOfArt.discountRate;
-      mov.transactionDiscountAmount = movOfArt.transactionDiscountAmount;
-      mov.status = MovementOfArticleStatus.Ready;
-      mov.stockMovement = transaction.type.stockMovement;
-      if (this.transaction.type.requestTaxes && !transaction.type.requestTaxes) {
-        mov.costPrice = movOfArt.costPrice;
-        mov.salePrice = movOfArt.salePrice;
-        let taxes: Taxes[] = new Array();
-        if (mov.article && mov.article.taxes && mov.article.taxes.length > 0) {
-          for (let taxAux of mov.article.taxes) {
-            let tax: Taxes = new Taxes();
-            tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            tax.tax = taxAux.tax;
-            if (tax.tax.taxBase == TaxBase.Neto) {
-              tax.taxBase = this.roundNumber.transform(mov.salePrice);
-            }
-            if (tax.percentage === 0) {
-              tax.taxAmount = this.roundNumber.transform(tax.taxAmount * mov.amount);
+  public async copyMovementsOfArticles(transaction: Transaction): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+          for (let movOfArt of this.movementsOfArticles) {
+            let mov = new MovementOfArticle();
+            mov = Object.assign(mov, movOfArt);
+            mov.transaction = transaction;
+            mov.quantityForStock = 0;
+            mov.discountAmount = movOfArt.discountAmount;
+            mov.discountRate = movOfArt.discountRate;
+            mov.transactionDiscountAmount = movOfArt.transactionDiscountAmount;
+            mov.status = MovementOfArticleStatus.Ready;
+            mov.stockMovement = transaction.type.stockMovement;
+            if (this.transaction.type.requestTaxes && !transaction.type.requestTaxes) {
+              mov.costPrice = movOfArt.costPrice;
+              mov.salePrice = movOfArt.salePrice;
+              let taxes: Taxes[] = new Array();
+              if (mov.article && mov.article.taxes && mov.article.taxes.length > 0) {
+                for (let taxAux of mov.article.taxes) {
+                  let tax: Taxes = new Taxes();
+                  tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                  tax.tax = taxAux.tax;
+                  if (tax.tax.taxBase == TaxBase.Neto) {
+                    tax.taxBase = this.roundNumber.transform(mov.salePrice);
+                  }
+                  if (tax.percentage === 0) {
+                    tax.taxAmount = this.roundNumber.transform(tax.taxAmount * mov.amount);
+                  } else {
+                    tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage) / 100);
+                  }
+                  mov.salePrice += tax.taxAmount;
+                  taxes.push(tax);
+                }
+              }
+              mov.taxes = taxes;
+
+              mov.unitPrice = mov.salePrice / mov.amount;
+              mov.markupPrice = this.roundNumber.transform(mov.salePrice - mov.costPrice);
+              mov.markupPercentage = this.roundNumber.transform((mov.markupPrice / mov.costPrice) * 100, 3);
+              mov.roundingAmount = movOfArt.roundingAmount;
+              mov.taxes = [];
             } else {
-              tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage) / 100);
+              if (this.transaction.type.requestTaxes && transaction.type.requestTaxes) {
+                mov.taxes = movOfArt.taxes;
+              } else {
+                mov.taxes = [];
+              }
+              mov.costPrice = movOfArt.costPrice;
+              mov.unitPrice = movOfArt.unitPrice;
+              mov.markupPercentage = movOfArt.markupPercentage;
+              mov.markupPrice = movOfArt.markupPrice;
+              mov.salePrice = movOfArt.salePrice;
+              mov.roundingAmount = movOfArt.roundingAmount;
             }
-            mov.salePrice += tax.taxAmount;
-            taxes.push(tax);
+            if (transaction.type.transactionMovement === TransactionMovement.Sale) {
+              mov = this.recalculateSalePrice(mov, transaction);
+            } else {
+              mov = this.recalculateCostPrice(mov, transaction);
+            }
+            if (!transaction.type.requestTaxes) {
+              mov.taxes = [];
+            }
+            mov.transaction = new Transaction();
+            mov.transaction._id = transaction._id;
+            await this.updateMovementOfArticle(mov);
           }
         }
-        mov.taxes = taxes;
-
-        mov.unitPrice = mov.salePrice / mov.amount;
-        mov.markupPrice = this.roundNumber.transform(mov.salePrice - mov.costPrice);
-        mov.markupPercentage = this.roundNumber.transform((mov.markupPrice / mov.costPrice) * 100, 3);
-        mov.roundingAmount = movOfArt.roundingAmount;
-      } else {
-        if (this.transaction.type.requestTaxes && transaction.type.requestTaxes) {
-          mov.taxes = movOfArt.taxes;
-        }
-        mov.costPrice = movOfArt.costPrice;
-        mov.unitPrice = movOfArt.unitPrice;
-        mov.markupPercentage = movOfArt.markupPercentage;
-        mov.markupPrice = movOfArt.markupPrice;
-        mov.salePrice = movOfArt.salePrice;
-        mov.roundingAmount = movOfArt.roundingAmount;
+        resolve(true);
+      } catch (error) {
+        reject(error);
       }
-      if (transaction.type.transactionMovement === TransactionMovement.Sale) {
-        mov = this.recalculateSalePrice(mov, transaction);
-      } else {
-        mov = this.recalculateCostPrice(mov, transaction);
-      }
-      movsOfArts.push(mov);
-    }
-    return movsOfArts;
+    });
   }
 
+  public updateMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
+    return new Promise<MovementOfArticle>((resolve, reject) => {
+      this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
+        (result) => {
+          if (result?.movementOfArticle) {
+            resolve(result.movementOfArticle);
+          } else {
+            reject(result);
+          }
+        },
+        (error) => reject(error)
+      );
+    });
+  }
   public async copyMovementsOfCashes(transaction: Transaction): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
       try {
