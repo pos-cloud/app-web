@@ -79,11 +79,9 @@ export class AccountReceivablesComponent implements OnInit, AfterViewInit {
       company: this.company,
     };
 
-    if (this.startDate) {
-      filters.startDate = this.normalizeDate(this.startDate, 0, 0, 0, 0);
-    }
-    if (this.endDate) {
-      filters.endDate = this.normalizeDate(this.endDate, 23, 59, 59, 999);
+    if (this.startDate || this.endDate) {
+      filters.startDate = this.normalizeDate(this.startDate || new Date().toISOString(), 0, 0, 0, 0);
+      filters.endDate = this.normalizeDate(this.endDate || new Date().toISOString(), 23, 59, 59, 999);
     }
 
     return {
