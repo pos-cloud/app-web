@@ -4,32 +4,40 @@
   pointer-events: none !important;
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  .pull-right {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .btn span {
-    margin-left: 0.35rem;
-  }
+.modal-content app-add-cash-box section.container-fluid {
+  padding: 0 !important;
 }
 
-.card-body {
-  .btn span {
-    margin-left: 0.35rem;
+app-add-cash-box {
+  app-progressbar > div {
+    height: 0 !important;
   }
 
-  .table {
-    margin-bottom: 1rem;
+  .modal-body {
+    padding: 0.5rem 1rem 0.25rem;
+
+    .table {
+      margin-bottom: 0.75rem;
+    }
+
+    .text-muted {
+      margin-top: 0.25rem;
+    }
   }
 
-  .text-muted {
-    margin-top: 0.25rem;
+  .form-group {
+    margin-bottom: 0.5rem;
+  }
+
+  .control-label {
+    display: block;
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+  }
+
+  .modal-footer {
+    .btn span {
+      margin-left: 0.35rem;
+    }
   }
 }

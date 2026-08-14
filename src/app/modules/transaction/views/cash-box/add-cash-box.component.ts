@@ -1,31 +1,18 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, Inject, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as printJS from 'print-js';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import {
-  AuthService,
-  CashBoxService,
-  ConfigService,
-  CurrencyValueService,
-  MovementOfCashService,
-  PaymentMethodService,
-  PrintService,
-  TransactionService,
-  TransactionTypeService,
-} from '@core/services';
+import { CashBoxService, CurrencyValueService, PaymentMethodService, PrintService } from '@core/services';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, CashBox, CashBoxState, CurrencyValue, PrintType, TransactionType, User } from '@types';
-import { Config } from 'app/app.config';
+import { ApiResponse, CashBox, CurrencyValue, PrintType, TransactionType } from '@types';
 import { currencyValue, MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 
 @Component({
   selector: 'app-add-cash-box',
@@ -40,36 +27,22 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
   @Input() transactionType!: TransactionType;
 
   public loading = false;
-  public madeIn = 'mostrador';
-
   public cashBoxForm!: FormGroup;
   public formAddCurrencyValue!: FormGroup;
   public paymentMethods: PaymentMethod[] = [];
   public currencyValues: CurrencyValue[] = [];
   public currencyValuesForm: currencyValue[] = [];
   public totalCurrencyValue = 0;
-  public selectedPayment: PaymentMethod | null = null;
-
+  public selectPayment: any;
   public cashBox: CashBox = {} as CashBox;
-  public transaction = new Transaction();
   public movementsOfCashes: MovementOfCash[] = [];
-
-  private config: Config | null = null;
-  private identity: User | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
     private _fb: FormBuilder,
-    private _route: ActivatedRoute,
-    private _router: Router,
     private _paymentMethodService: PaymentMethodService,
-    private _movementOfCashService: MovementOfCashService,
-    private _transactionTypeService: TransactionTypeService,
     private _cashBoxService: CashBoxService,
-    private _authService: AuthService,
-    private _transactionService: TransactionService,
     private _currencyValueService: CurrencyValueService,
-    private _configService: ConfigService,
     private _printService: PrintService,
     private _toastService: ToastService,
     public activeModal: NgbActiveModal,
@@ -77,13 +50,10 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.madeIn = this.resolveMadeIn();
     this.buildForm();
     this.loading = true;
 
     combineLatest({
-      config: this._configService.getConfig,
-      identity: this._authService.getIdentity,
       currencyValues: this._currencyValueService.find({ query: { operationType: { $ne: 'D' } } }),
       paymentMethods: this._paymentMethodService.find({
         query: { cashBoxImpact: true, operationType: { $ne: 'D' } },
@@ -91,23 +61,19 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ config, identity, currencyValues, paymentMethods }) => {
-          this.config = config;
-          this.identity = identity;
+        next: ({ currencyValues, paymentMethods }) => {
           this.currencyValues = currencyValues ?? [];
           this.paymentMethods = paymentMethods ?? [];
           this.setValueForm();
-
           if (this.transactionType) {
-            this.getOpenCashBox();
+            this.getAvailableCashBox();
           }
         },
         error: (error) => {
           this._toastService.showToast(error);
-          this.loading = false;
         },
         complete: () => {
-          this.loading = false;
+          if (!this.transactionType) this.loading = false;
         },
       });
   }
@@ -117,101 +83,50 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private resolveMadeIn(): string {
-    const fromQuery = this._route.snapshot.queryParams['madeIn'];
-    if (fromQuery) return fromQuery;
-
-    const path = this._router.url.split('/');
-    return path[2] || 'mostrador';
-  }
-
-  private buildForm(): void {
+  public buildForm(): void {
     this.cashBoxForm = this._fb.group({
       paymentMethod: [null, [Validators.required]],
       amount: [null],
     });
-
     this.formAddCurrencyValue = this._fb.group({
       currencyValue: [null, [Validators.required]],
       currencyAmount: [0],
     });
-
     this.cashBoxForm
       .get('paymentMethod')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe((payment: PaymentMethod | null) => {
-        this.selectedPayment = payment;
+      .subscribe((data) => {
+        this.selectPayment = data;
       });
   }
 
-  private setValueForm(): void {
+  public setValueForm(): void {
     this.cashBoxForm.patchValue({
       paymentMethod: this.paymentMethods[0] ?? null,
       amount: null,
     });
   }
 
-  private buildOpenCashBoxMatch(): Record<string, unknown> {
-    const match: Record<string, unknown> = {
-      state: CashBoxState.Open,
-      operationType: { $ne: 'D' },
-    };
-
-    if (this.identity) {
-      if (this.config?.cashBox?.perUser) {
-        match['creationUser'] = { $oid: this.identity._id };
-      } else if (this.identity.cashBoxType) {
-        match['type'] = { $oid: this.identity.cashBoxType._id };
-      } else {
-        match['type'] = null;
-      }
-    }
-
-    return match;
-  }
-
-  private revealModal(): void {
-    this._document.querySelectorAll('.cash-box-modal-pending').forEach((el) => {
-      el.classList.remove('cash-box-modal-pending');
-    });
-  }
-
-  private rejectAndClose(message: string): void {
-    this.loading = false;
-    this._toastService.showToast(null, 'danger', '', message);
-    this.activeModal.dismiss('validation');
-  }
-
-  getOpenCashBox(): void {
+  public getAvailableCashBox(): void {
     this.loading = true;
     this._cashBoxService
-      .getAll({
-        match: this.buildOpenCashBoxMatch(),
-        sort: { number: -1 },
-        limit: 1,
-      })
+      .availableCashBox(this.transactionType.cashOpening)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result) => {
-          if (result?.status !== 200) {
-            this._toastService.showToast(result?.error ?? result);
-            this.activeModal.dismiss('error');
-            return;
-          }
-
-          const cashBoxes = result?.result ?? [];
-          if (cashBoxes.length) {
-            this.cashBox = cashBoxes[0];
-            this.validateCashBoxState();
-          } else if (this.transactionType?.cashClosing) {
-            this.rejectAndClose('No se encuentran cajas abiertas.');
+        next: (result: ApiResponse) => {
+          if (result.status == 200) {
+            if (result.result) this.cashBox = result.result;
+            this._document.querySelectorAll('.cash-box-modal-pending').forEach((el) => {
+              el.classList.remove('cash-box-modal-pending');
+            });
           } else {
-            this.revealModal();
+            this._toastService.showToast(result.error ?? result);
+            this.activeModal.dismiss('validation');
           }
         },
         error: (error) => {
           this._toastService.showToast(error);
-          this.activeModal.dismiss('error');
+          this.activeModal.dismiss('validation');
         },
         complete: () => {
           this.loading = false;
@@ -219,108 +134,33 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
       });
   }
 
-  private validateCashBoxState(): void {
-    if (this.transactionType?.cashOpening) {
-      this.rejectAndClose('La caja ya se encuentra abierta.');
-      return;
-    }
-
-    if (this.transactionType?.cashClosing && this.cashBox?._id) {
-      this.getOpenTransactionsForCashBox(this.cashBox._id, true);
-      return;
-    }
-
-    this.revealModal();
-  }
-
-  getOpenTransactionsForCashBox(cashBoxId: string, onlyValidate = false): void {
-    const match = {
-      state: {
-        $nin: [TransactionState.Closed, TransactionState.Canceled, TransactionState.PaymentDeclined],
-      },
-      cashBox: { $oid: cashBoxId },
-    };
-    const project = {
-      'type.name': 1,
-      origin: 1,
-      letter: 1,
-      number: 1,
-      state: 1,
-      cashBox: 1,
-    };
-
-    this.loading = true;
-    this._transactionService
-      .getAll({ project, match })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          if (result?.status && result.status !== 200) {
-            this._toastService.showToast(result?.error ?? result);
-            if (onlyValidate) this.activeModal.dismiss('error');
-            return;
-          }
-
-          const transactions = result?.result ?? [];
-          if (transactions.length) {
-            const tx = transactions[0];
-            this.rejectAndClose(
-              'No puede cerrar la caja. La transacción: ' +
-                tx.type.name +
-                ' ' +
-                tx.origin +
-                '-' +
-                tx.letter +
-                '-' +
-                tx.number +
-                ' se encuentra abierta.'
-            );
-            return;
-          }
-
-          if (onlyValidate) {
-            this.revealModal();
-            return;
-          }
-
-          this.prepareTransaction();
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          if (onlyValidate) this.activeModal.dismiss('error');
-        },
-        complete: () => {
-          this.loading = false;
-        },
+  public addCurrencyValue(): void {
+    let e = this.formAddCurrencyValue.value;
+    if (e && parseInt(e.currencyValue) && e.currencyAmount) {
+      this.currencyValuesForm.push({
+        value: parseInt(e.currencyValue),
+        quantity: e.currencyAmount,
       });
-  }
-
-  addCurrencyValue(): void {
-    const formValue = this.formAddCurrencyValue.value;
-    if (!(formValue && parseInt(formValue.currencyValue, 10) && formValue.currencyAmount)) {
+      this.totalCurrencyValue = 0;
+      for (const iterator of this.currencyValuesForm) {
+        this.totalCurrencyValue = this.totalCurrencyValue + iterator.quantity * iterator.value;
+      }
+      this.formAddCurrencyValue.patchValue({ currencyValue: null, currencyAmount: null });
+    } else {
       this._toastService.showToast({ message: 'Debe completar todos los campos', type: 'info' });
-      return;
     }
-
-    this.currencyValuesForm.push({
-      value: parseInt(formValue.currencyValue, 10),
-      quantity: formValue.currencyAmount,
-    });
-    this.recalcCurrencyTotal();
-    this.formAddCurrencyValue.patchValue({ currencyValue: null, currencyAmount: null });
   }
 
-  deleteCurrencyValue(index: number): void {
+  public deleteCurrencyValue(index: number): void {
     this.currencyValuesForm.splice(index, 1);
-    this.recalcCurrencyTotal();
+    this.totalCurrencyValue = 0;
+    for (const iterator of this.currencyValuesForm) {
+      this.totalCurrencyValue = this.totalCurrencyValue + iterator.quantity * iterator.value;
+    }
   }
 
-  private recalcCurrencyTotal(): void {
-    this.totalCurrencyValue = this.currencyValuesForm.reduce((sum, item) => sum + item.quantity * item.value, 0);
-  }
-
-  addMovementOfCash(): void {
-    const paymentMethod: PaymentMethod = this.cashBoxForm.value.paymentMethod;
+  public addMovementOfCash(): void {
+    let paymentMethod: PaymentMethod = this.cashBoxForm.value.paymentMethod;
     if (!paymentMethod) return;
 
     if (this.movementsOfCashes.some((m) => m.type?._id === paymentMethod._id)) {
@@ -339,8 +179,16 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
     const useCurrencyBreakdown =
       paymentMethod.allowCurrencyValue && this.currencyValuesForm && this.currencyValuesForm.length > 0;
 
-    let amountPaid = 0;
-    if (!useCurrencyBreakdown) {
+    let mov = new MovementOfCash();
+    mov.type = paymentMethod;
+
+    if (useCurrencyBreakdown) {
+      mov.currencyValues = this.currencyValuesForm;
+      mov.amountPaid = 0;
+      mov.currencyValues.forEach((element) => {
+        mov.amountPaid = mov.amountPaid + element.quantity * element.value;
+      });
+    } else {
       const raw = this.cashBoxForm.value.amount;
       if (raw === null || raw === undefined || (typeof raw === 'string' && String(raw).trim() === '')) {
         this._toastService.showToast({ message: 'Ingrese un monto.', type: 'info' });
@@ -351,17 +199,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
         this._toastService.showToast({ message: 'El monto debe ser un número mayor o igual a 0.', type: 'info' });
         return;
       }
-      amountPaid = num;
-    }
-
-    const mov = new MovementOfCash();
-    mov.type = paymentMethod;
-
-    if (useCurrencyBreakdown) {
-      mov.currencyValues = [...this.currencyValuesForm];
-      mov.amountPaid = mov.currencyValues.reduce((sum, el) => sum + el.quantity * el.value, 0);
-    } else {
-      mov.amountPaid = amountPaid;
+      mov.amountPaid = num;
     }
 
     this.movementsOfCashes.push(mov);
@@ -371,315 +209,30 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
     this.formAddCurrencyValue.patchValue({ currencyValue: null, currencyAmount: null });
   }
 
-  removeMovement(movement: MovementOfCash): void {
-    const index = this.movementsOfCashes.findIndex((m) => m === movement);
-    if (index >= 0) {
-      this.movementsOfCashes.splice(index, 1);
-    }
-  }
-
-  openCashBox(): void {
-    if (!this.transactionType) return;
-
-    if (this.cashBox?._id) {
-      this._toastService.showToast(null, 'danger', '', 'La caja ya se encuentra abierta.');
+  public openCashBox(): void {
+    if (!this.movementsOfCashes?.length) {
+      this._toastService.showToast({
+        message: 'Debe confirmar al menos un movimiento para abrir la caja.',
+        type: 'info',
+      });
       return;
     }
 
     this.loading = true;
     this._cashBoxService
-      .getLastCashBox()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          this.cashBox = {
-            number: result.status === 200 ? result.result.number + 1 : 1,
-            state: CashBoxState.Open,
-            openingDate: new Date().toISOString(),
-            type: this.identity?.cashBoxType ?? null,
-          } as CashBox;
-
-          this.saveCashBox();
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        },
-      });
-  }
-
-  closeCashBox(): void {
-    if (!this.cashBox?._id) {
-      this._toastService.showToast(null, 'danger', '', 'No se encuentran cajas abiertas.');
-      return;
-    }
-
-    if (this.cashBox.state === CashBoxState.Closed) {
-      this.printAndBack();
-      return;
-    }
-
-    this.getOpenTransactionsForCashBox(this.cashBox._id, false);
-  }
-
-  saveCashBox(): void {
-    this._cashBoxService
-      .save(this.cashBox as any)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          if (result?.status !== 200) {
-            this._toastService.showToast(result);
-            this.loading = false;
-            return;
-          }
-
-          this.cashBox = result.result;
-          this.prepareTransaction();
-          this.loading = false;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        },
-      });
-  }
-
-  prepareTransaction(): void {
-    this.transaction.origin = this.transactionType.fixedOrigin ?? 0;
-
-    if (this.transactionType.fixedLetter) {
-      this.transaction.letter = this.transactionType.fixedLetter;
-    } else {
-      this.transaction.letter = Config.country === 'AR' ? 'X' : '';
-    }
-
-    this.transaction.type = this.transactionType;
-    this.getLastTransactionByType();
-  }
-
-  getLastTransactionByType(): void {
-    this._transactionService
-      .getNextNumber(this.transaction.type._id, 0, this.transaction.letter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          this.transaction.number = result?.status === 200 && result?.result?.number != null ? result.result.number : 1;
-          this.addTransaction();
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        },
-      });
-  }
-
-  addTransaction(): void {
-    if (!this.transactionType) return;
-
-    this.transaction.madein = this.madeIn === 'cuentas-corrientes' ? 'mostrador' : this.madeIn;
-    this.transaction.totalPrice = 0;
-    this.transaction.cashBox = this.cashBox as any;
-    this.transaction.type = this.transactionType;
-
-    if (this.movementsOfCashes.length > 0) {
-      for (const mov of this.movementsOfCashes) {
-        this.transaction.totalPrice += mov.amountPaid;
-      }
-      this.transaction.state = TransactionState.Closed;
-      this.transaction.endDate = new Date().toISOString();
-      const now = new Date();
-      this.transaction.VATPeriod = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
-      this.transaction.expirationDate = this.transaction.endDate;
-      this.saveTransaction();
-      return;
-    }
-
-    this.finishCashBoxFlow();
-  }
-
-  saveTransaction(): void {
-    this._transactionService
-      .save(this.transaction)
+      .openCashBox(this.movementsOfCashes, this.transactionType._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          if (result.status !== 200) {
-            this._toastService.showToast(result);
-            this.loading = false;
-            return;
-          }
-
-          this.transaction = result.result;
-          for (const movementOfCash of this.movementsOfCashes) {
-            movementOfCash.transaction = this.transaction;
-          }
-          this.saveMovementsOfCashes();
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        },
-      });
-  }
-
-  saveMovementsOfCashes(): void {
-    this._movementOfCashService
-      .saveMovementsOfCashes(this.movementsOfCashes)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          if (result?.status !== 200) {
-            this._toastService.showToast(result);
-            this.loading = false;
-            return;
-          }
-
-          this.finishCashBoxFlow();
-          this.loading = false;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        },
-      });
-  }
-
-  private finishCashBoxFlow(): void {
-    if (this.transactionType.cashOpening) {
-      this.loading = false;
-      this.activeModal.close({ cashBox: this.cashBox });
-      return;
-    }
-
-    this.cashBox.closingDate = new Date().toISOString();
-    this.cashBox.state = CashBoxState.Closed;
-    this.resetOrderNumber();
-    this.updateCashBox();
-  }
-
-  updateCashBox(): void {
-    this._cashBoxService
-      .update(this.cashBox as any)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          if (result.status !== 200) {
-            this._toastService.showToast(result);
-            this.loading = false;
-            return;
-          }
-
-          this.cashBox = result.result;
-          this.printAndBack();
-          this.loading = false;
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        },
-      });
-  }
-
-  resetOrderNumber(): void {
-    const match: any = {
-      operationType: { $ne: 'D' },
-      resetOrderNumber: 'Caja',
-      orderNumber: { $gte: 0 },
-    };
-
-    if (this.cashBox.type) {
-      match['cashBoxType._id'] = { $oid: this.cashBox.type._id };
-    }
-
-    this._transactionTypeService
-      .getAll({
-        project: {
-          resetOrderNumber: 1,
-          orderNumber: 1,
-          operationType: 1,
-          order: 1,
-          transactionMovement: 1,
-          abbreviation: 1,
-          name: 1,
-          currentAccount: 1,
-          stockMovement: 1,
-          movement: 1,
-          modifyStock: 1,
-          requestArticles: 1,
-          requestTaxes: 1,
-          'cashBoxType._id': 1,
-        },
-        match,
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          if (result?.status !== 200) {
-            this._toastService.showToast(result?.error ?? result);
-            return;
-          }
-
-          for (const element of result.result as TransactionType[]) {
-            this.updateTransactionTypeOrder(element);
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-      });
-  }
-
-  private updateTransactionTypeOrder(transactionType: TransactionType): void {
-    transactionType.orderNumber = 1;
-    this._transactionTypeService
-      .update(transactionType)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          if (result?.status === 200) {
-            this._toastService.showToast({
-              type: 'success',
-              message: 'La numeracion del tipo de transaccion: ' + result.result.name + ' se reinicio correctamente',
-            });
+          if (result.status == 200) {
+            this.cashBox = result.result?.cashBox ?? result.result ?? this.cashBox;
+            this.activeModal.close({ cashBox: this.cashBox });
           } else {
-            this._toastService.showToast(result?.error ?? result);
+            this._toastService.showToast(result.error ?? result);
           }
         },
         error: (error) => {
           this._toastService.showToast(error);
-        },
-      });
-  }
-
-  private printAndBack(): void {
-    this.toPrint(PrintType.CashBox, { cashBoxId: this.cashBox._id });
-    this.activeModal.close({ cashBox: this.cashBox });
-  }
-
-  toPrint(type: PrintType, data: {}): void {
-    this.loading = true;
-    this._printService
-      .toPrint(type, data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: Blob | ApiResponse) => {
-          if (!result) {
-            this._toastService.showToast({ message: 'Error al generar el PDF' });
-            return;
-          }
-          if (result instanceof Blob) {
-            try {
-              printJS(URL.createObjectURL(result));
-            } catch {
-              this._toastService.showToast({ message: 'Error al generar el PDF' });
-            }
-          } else {
-            this._toastService.showToast(result);
-          }
-        },
-        error: () => {
-          this._toastService.showToast({ message: 'Error al generar el PDF' });
         },
         complete: () => {
           this.loading = false;
@@ -687,7 +240,54 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
       });
   }
 
-  closeModal(): void {
-    this.activeModal.dismiss('close_click');
+  public closeCashBox(): void {
+    this.loading = true;
+    this._cashBoxService
+      .closeCashBox(this.movementsOfCashes, this.transactionType._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          if (result.status == 200) {
+            this.cashBox = result.result?.cashBox ?? result.result ?? this.cashBox;
+            this.toPrint(PrintType.CashBox, { cashBoxId: this.cashBox._id });
+            this.activeModal.close({ cashBox: this.cashBox });
+          } else {
+            this._toastService.showToast(result.error ?? result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
+  }
+
+  public toPrint(type: PrintType, data: {}): void {
+    this.loading = true;
+    this._printService.toPrint(type, data).subscribe({
+      next: (result: Blob | ApiResponse) => {
+        if (!result) {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+          return;
+        }
+        if (result instanceof Blob) {
+          try {
+            printJS(URL.createObjectURL(result));
+          } catch (e) {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+          }
+        } else {
+          this._toastService.showToast(result);
+        }
+      },
+      error: () => {
+        this._toastService.showToast({ message: 'Error al generar el PDF' });
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
   }
 }

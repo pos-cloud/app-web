@@ -49,7 +49,9 @@ import { ClaimService } from 'app/core/services/claim.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
+import { AddCashBoxComponent } from 'app/modules/transaction/views/cash-box/add-cash-box.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { environment } from 'environments/environment';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { BranchService } from '../../core/services/branch.service';
@@ -1401,40 +1403,45 @@ export class PointOfSaleComponent implements OnInit {
         );
         break;
       case 'cash-box':
-        // modalRef = this._modalService.open(AddCashBoxComponent, {
-        //   size: 'lg',
-        //   backdrop: 'static',
-        // });
-        // modalRef.componentInstance.transactionType = this.transaction.type;
-        // modalRef.result.then(
-        //   (result) => {
-        //     if (result && result.cashBox) {
-        //     } else {
-        //       this.hideMessage();
-        //     }
-        //   },
-        //   (reason) => {
-        //     this.hideMessage();
-        //   }
-        // );
-        // break;
-        modalRef = this._modalService.open(CashBoxComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.transactionType = this.transaction.type;
-        modalRef.result.then(
-          (result) => {
-            if (result && result.cashBox) {
-            } else {
+        if (environment.production) {
+          modalRef = this._modalService.open(CashBoxComponent, {
+            size: 'lg',
+            backdrop: 'static',
+          });
+          modalRef.componentInstance.transactionType = this.transaction.type;
+          modalRef.result.then(
+            (result) => {
+              if (result && result.cashBox) {
+              } else {
+                this.hideMessage();
+              }
+            },
+            (reason) => {
               this.hideMessage();
             }
-          },
-          (reason) => {
-            this.hideMessage();
-          }
-        );
-        break;
+          );
+          break;
+        } else {
+          modalRef = this._modalService.open(AddCashBoxComponent, {
+            size: 'lg',
+            backdrop: 'static',
+            windowClass: 'cash-box-modal-pending',
+            backdropClass: 'cash-box-modal-pending',
+          });
+          modalRef.componentInstance.transactionType = this.transaction.type;
+          modalRef.result.then(
+            (result) => {
+              if (result && result.cashBox) {
+              } else {
+                this.hideMessage();
+              }
+            },
+            (reason) => {
+              this.hideMessage();
+            }
+          );
+          break;
+        }
       case 'select-branch':
         modalRef = this._modalService.open(SelectBranchComponent);
         modalRef.result.then(

@@ -1,16 +1,148 @@
-<div class="card">
-  <div class="card-header">
-    <span style="color: #607d8b">{{ transactionType?.name || 'Caja' }}</span>
-    <div class="pull-right">
-      <button type="button" class="btn" (click)="closeModal()">
-        <i class="fa fa-times"></i>
-        <span>Cerrar</span>
-      </button>
+<div class="modal-header">
+  <h4 class="modal-title">{{ transactionType?.name || 'Caja' }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<section class="container-fluid">
+  <app-progressbar [loading]="loading"></app-progressbar>
+
+  <form *ngIf="transactionType" [formGroup]="cashBoxForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
+    <div class="modal-body">
+      <div class="row align-items-end">
+        <div class="form-group col-md-4">
+          <label for="paymentMethod" class="control-label">Medio de pago:</label>
+          <select class="form-control" formControlName="paymentMethod" id="paymentMethod">
+            <option *ngFor="let paymentMethod of paymentMethods" [ngValue]="paymentMethod">
+              {{ paymentMethod.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6" *ngIf="selectPayment && !selectPayment.allowCurrencyValue">
+          <label for="amount" class="control-label">Monto:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <input type="number" class="form-control" formControlName="amount" id="amount" min="0" step="any" />
+          </div>
+        </div>
+
+        <div class="form-group col-md-2" *ngIf="selectPayment && !selectPayment.allowCurrencyValue">
+          <label class="control-label">Acción:</label>
+          <button type="submit" class="btn btn-success btn-block">Confirmar</button>
+        </div>
+      </div>
+
+      <ng-container *ngIf="selectPayment?.allowCurrencyValue">
+        <div class="row align-items-end" [formGroup]="formAddCurrencyValue">
+          <div class="form-group col-md-5">
+            <label class="control-label">Valor de moneda:</label>
+            <select formControlName="currencyValue" class="form-control">
+              <option [ngValue]="null" disabled>Seleccione</option>
+              <option *ngFor="let currencyValue of currencyValues" [value]="currencyValue.value">
+                {{ currencyValue.value }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group col-md-5">
+            <label class="control-label">Cantidad:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">$</span>
+              </div>
+              <input formControlName="currencyAmount" type="number" class="form-control" min="0" />
+            </div>
+          </div>
+
+          <div class="form-group col-md-2">
+            <label class="control-label">Acción:</label>
+            <button type="button" class="btn btn-success btn-block" (click)="addCurrencyValue()">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="currencyValuesForm?.length">
+          <div class="form-group col-md-12 table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Valor de moneda</th>
+                  <th>Cantidad</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let field of currencyValuesForm; let i = index">
+                  <td>{{ field.value }}</td>
+                  <td>{{ field.quantity }}</td>
+                  <td align="right" width="10">
+                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteCurrencyValue(i)">
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="3" class="text-right">
+                    <strong>Total: $ {{ totalCurrencyValue | number: '1.2-2' }}</strong>
+                  </th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="row" *ngIf="selectPayment?.allowCurrencyValue && currencyValuesForm?.length">
+        <div class="form-group col-md-2">
+          <label class="control-label">Acción:</label>
+          <button type="submit" class="btn btn-success">Confirmar</button>
+        </div>
+      </div>
+
+      <div class="row table-responsive" *ngIf="movementsOfCashes?.length">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th width="130">
+                <i class="fa fa-bars"></i>
+              </th>
+              <th>Método</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let movement of movementsOfCashes; let i = index">
+              <td align="left" width="130">
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  title="Eliminar"
+                  (click)="movementsOfCashes.splice(i, 1)"
+                >
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+              <td>{{ movement.type?.name }}</td>
+              <td>{{ movement.amountPaid | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
       <button
         type="button"
-        class="btn"
+        class="btn btn-primary"
         *ngIf="transactionType?.cashOpening"
-        [disabled]="!cashBoxForm?.valid || loading"
+        [disabled]="!cashBoxForm?.valid || loading || !movementsOfCashes?.length"
         (click)="openCashBox()"
       >
         <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
@@ -19,7 +151,7 @@
       </button>
       <button
         type="button"
-        class="btn"
+        class="btn btn-primary"
         *ngIf="transactionType?.cashClosing"
         [disabled]="!cashBoxForm?.valid || loading"
         (click)="closeCashBox()"
@@ -29,168 +161,7 @@
         <span *ngIf="loading">Espere por favor</span>
       </button>
     </div>
-  </div>
+  </form>
 
-  <div class="card-body scroll">
-    <app-progressbar [loading]="loading"></app-progressbar>
-
-    <ng-container *ngIf="transactionType">
-      <form [formGroup]="cashBoxForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>Movimiento</b>
-          </label>
-        </div>
-
-        <div class="row">
-          <div class="form-group col-md-4">
-            <label for="paymentMethod" class="control-label">Medio de pago:</label>
-            <select class="form-control" formControlName="paymentMethod" id="paymentMethod">
-              <option *ngFor="let paymentMethod of paymentMethods" [ngValue]="paymentMethod">
-                {{ paymentMethod.name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group col-md-4" *ngIf="selectedPayment && !selectedPayment.allowCurrencyValue">
-            <label for="amount" class="control-label">Monto:</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text">$</span>
-              </div>
-              <input type="number" class="form-control" formControlName="amount" id="amount" min="0" step="any" />
-            </div>
-          </div>
-
-          <div class="form-group col-md-2" *ngIf="selectedPayment && !selectedPayment.allowCurrencyValue">
-            <label class="control-label">Acción:</label>
-            <div class="input-group">
-              <button type="submit" class="btn btn-success">
-                <i class="fa fa-plus"></i>
-                <span>Confirmar</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <ng-container *ngIf="selectedPayment?.allowCurrencyValue">
-          <div class="row" [formGroup]="formAddCurrencyValue">
-            <div class="form-group col-md-4">
-              <label class="control-label">Valor de moneda:</label>
-              <select formControlName="currencyValue" class="form-control">
-                <option [ngValue]="null" disabled>Seleccione</option>
-                <option *ngFor="let currencyValue of currencyValues" [value]="currencyValue.value">
-                  {{ currencyValue.value }}
-                </option>
-              </select>
-            </div>
-
-            <div class="form-group col-md-4">
-              <label class="control-label">Cantidad:</label>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">$</span>
-                </div>
-                <input formControlName="currencyAmount" type="number" class="form-control" min="0" />
-              </div>
-            </div>
-
-            <div class="form-group col-md-2">
-              <label class="control-label">Acción:</label>
-              <div class="input-group">
-                <button type="button" class="btn btn-success" (click)="addCurrencyValue()">
-                  <i class="fa fa-plus"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="currencyValuesForm?.length">
-            <div class="col-md-12 table-responsive">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Valor de moneda</th>
-                    <th>Cantidad</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let field of currencyValuesForm; let i = index">
-                    <td>{{ field.value }}</td>
-                    <td>{{ field.quantity }}</td>
-                    <td align="right" width="10">
-                      <button type="button" class="btn btn-danger btn-sm" (click)="deleteCurrencyValue(i)">
-                        <i class="fa fa-trash-o"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td></td>
-                    <td colspan="2" class="text-right">
-                      <strong>Total: $ {{ totalCurrencyValue | number: '1.2-2' }}</strong>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="currencyValuesForm?.length">
-            <div class="form-group col-md-2">
-              <label class="control-label">Acción:</label>
-              <div class="input-group">
-                <button type="submit" class="btn btn-success">
-                  <i class="fa fa-plus"></i>
-                  <span>Confirmar</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-
-        <hr />
-
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>Movimientos cargados</b>
-          </label>
-        </div>
-
-        <div class="row" *ngIf="movementsOfCashes?.length">
-          <div class="col-md-12 table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th width="80"></th>
-                  <th>Método</th>
-                  <th class="text-right">Monto</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let movement of movementsOfCashes">
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      title="Eliminar"
-                      (click)="removeMovement(movement)"
-                    >
-                      <i class="fa fa-trash-o"></i>
-                    </button>
-                  </td>
-                  <td>{{ movement.type?.name }}</td>
-                  <td class="text-right">{{ movement.amountPaid | number: '1.2-2' }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </form>
-    </ng-container>
-
-    <p *ngIf="!transactionType && !loading" class="text-muted">No se encontró el tipo de transacción de caja.</p>
-  </div>
-</div>
+  <p *ngIf="!transactionType && !loading" class="text-muted">No se encontró el tipo de transacción de caja.</p>
+</section>

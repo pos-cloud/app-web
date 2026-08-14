@@ -47,16 +47,71 @@ export class CashBoxService extends ModelService {
       );
   }
 
-  public getLastCashBox(): Observable<any> {
-    const URL = `${environment.apiv2}/cash-boxes/last-cash-box`;
+  public availableCashBox(isOpen: boolean): Observable<any> {
+    const URL = `${this.URL}/available-cash-box`;
+
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
     return this._http
-      .get(URL, {
-        headers: headers,
-      })
+      .post(
+        URL,
+        { isOpen },
+        {
+          headers: headers,
+        }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public openCashBox(movementsOfCashes: any[], transactionTypeId: string): Observable<any> {
+    const URL = `${this.URL}/open-cash-box`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(
+        URL,
+        { movementsOfCashes, transactionTypeId },
+        {
+          headers: headers,
+        }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public closeCashBox(movementsOfCashes: any[], transactionTypeId: string): Observable<any> {
+    const URL = `${this.URL}/close-cash-box`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(
+        URL,
+        { movementsOfCashes, transactionTypeId },
+        {
+          headers: headers,
+        }
+      )
       .pipe(
         map((res) => {
           return res;
