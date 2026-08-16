@@ -62,6 +62,7 @@ export class CompanyComponent implements OnInit {
   public type: string;
   public genders: any[] = ['', GenderType.Male, GenderType.Female];
   public BusinessModel = BusinessModel;
+  public stateMatch: Record<string, unknown> = { operationType: { $ne: 'D' } };
 
   constructor(
     public _companyService: CompanyService,
@@ -145,10 +146,6 @@ export class CompanyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._configService.getConfig.subscribe((config) => {
-      this.config = config;
-    });
-
     if (this.property) {
       this.operation = this.property.operation;
       this.companyId = this.property.companyId;
@@ -159,13 +156,30 @@ export class CompanyComponent implements OnInit {
       this.companyId = URL[5];
       this.type = URL[4];
     }
+
+    this._configService.getConfig.pipe(takeUntil(this.destroy$)).subscribe((config) => {
+      this.config = config;
+    });
+
+    this.companyForm
+      .get('country')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((country) => this.setStateMatch(country));
+
     if (this.operation === 'view' || this.operation === 'delete') this.companyForm.disable();
 
     if (this.companyId) {
-      if (this.companyId) this.getCompany(this.companyId);
+      this.getCompany(this.companyId);
     } else {
       this.setValueForm();
     }
+  }
+
+  private setStateMatch(country: any): void {
+    const countryId = country?._id || country;
+    this.stateMatch = countryId
+      ? { operationType: { $ne: 'D' }, country: { $oid: countryId } }
+      : { operationType: { $ne: 'D' } };
   }
 
   private businessModelMatches(model: BusinessModel): boolean {
@@ -271,6 +285,7 @@ export class CompanyComponent implements OnInit {
       },
     };
     this.companyForm.setValue(values);
+    this.setStateMatch(values.country);
   }
 
   returnTo() {
