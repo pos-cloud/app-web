@@ -587,13 +587,18 @@ export class NavigationService {
             ],
           },
           {
+            label: 'Ubicación',
+            children: [
+              { label: 'Países', link: 'entities/countries' },
+              { label: 'Provincias', link: 'entities/states' },
+            ],
+          },
+          {
             label: 'Monedas y Bancos',
             children: [
               { label: 'Bancos', link: 'entities/banks' },
               { label: 'Monedas', link: 'entities/currencies' },
               { label: 'Tipos de Monedas', link: 'entities/currency-values' },
-              { label: 'Provincias', link: 'entities/states' },
-              { label: 'Países', link: 'entities/countries' },
             ],
           },
           {
