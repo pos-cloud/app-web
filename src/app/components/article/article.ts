@@ -128,6 +128,7 @@ export class Article {
   ];
   public publishTiendaNube: Boolean = false;
   public publishWooCommerce: Boolean = false;
+  public visibleTN: Boolean = false;
 
   constructor() {}
 }

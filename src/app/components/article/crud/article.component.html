@@ -698,7 +698,7 @@
               </option>
             </select>
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-2">
             <label for="salePriceTN" class="control-label">{{ 'salePriceTN' | translate | capitalize }}:</label>
             <div class="input-group">
               <div class="input-group-prepend">
@@ -733,6 +733,17 @@
                 (blur)="updatePrices('basePrice'); onValueChanged($event.target.id)"
               />
             </div>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="visibleTN" class="control-label">Visible en la tienda online</label>
+            <select class="form-control" formControlName="visibleTN">
+              <option [ngValue]="true">
+                {{ 'true' | translate | capitalize }}
+              </option>
+              <option [ngValue]="false">
+                {{ 'false' | translate | capitalize }}
+              </option>
+            </select>
           </div>
         </div>
         <br />

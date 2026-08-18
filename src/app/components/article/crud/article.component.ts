@@ -565,6 +565,7 @@ export class ArticleComponent implements OnInit {
       promotionalPriceTN: [this.article.promotionalPriceTN, []],
       publishTiendaNube: [[this.article.publishTiendaNube, []]],
       publishWooCommerce: [[this.article.publishWooCommerce, []]],
+      visibleTN: [false, []],
     });
 
     this.articleForm.valueChanges.subscribe((data) => this.onValueChanged(data));
@@ -1465,6 +1466,7 @@ export class ArticleComponent implements OnInit {
       promotionalPriceTN: this.roundNumber.transform(this.article.promotionalPriceTN ?? 0.0),
       publishTiendaNube: this.article.publishTiendaNube ?? false,
       publishWooCommerce: this.article.publishWooCommerce ?? false,
+      visibleTN: this.article.visibleTN ?? false,
     };
 
     this.articleForm.patchValue(values);
