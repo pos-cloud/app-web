@@ -19,6 +19,7 @@ import {
   Currency,
   CurrentAccount,
   Deposit,
+  Movements,
   Printer,
   PrinterPrintIn,
   StockMovement,
@@ -50,6 +51,7 @@ import { SelectCompanyComponent } from 'app/modules/entities/company/select-comp
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
 import { AddCashBoxComponent } from 'app/modules/transaction/views/cash-box/add-cash-box.component';
+import { TransferCashBoxComponent } from 'app/modules/transaction/views/cash-box/components/transfer-cash-box/transfer-cash-box.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { environment } from 'environments/environment';
 import { Subscription } from 'rxjs';
@@ -436,6 +438,7 @@ export class PointOfSaleComponent implements OnInit {
         cashBoxImpact: 1,
         fixedOrigin: 1,
         transactionMovement: 1,
+        movement: 1,
         stockMovement: 1,
         maxOrderNumber: 1,
         requestEmployee: 1,
@@ -748,44 +751,44 @@ export class PointOfSaleComponent implements OnInit {
       this.transaction.totalPrice = this.totalPrice;
     }
 
-    if (!type.cashOpening && !type.cashClosing) {
-      if (this.transaction.type.cashBoxImpact) {
-        let query = 'where="state":"' + CashBoxState.Open + '"';
-        if (this.config.cashBox.perUser) {
-          query += ',"creationUser":"' + this.identity._id + '"';
-        } else if (this.identity.cashBoxType) {
-          query += ',"type":"' + this.identity.cashBoxType._id + '"';
-        } else {
-          query += ',"type":null';
-        }
-        query += '&sort="number":-1&limit=1';
-        await this.getCashBoxes(query).then(async (cashBoxes) => {
-          if (cashBoxes) {
-            this.transaction.cashBox = cashBoxes[0];
-            this.nextStepTransaction();
-          } else {
-            let match = {
-              cashOpening: true,
-            };
-            await this.getTransactionTypes(match).then((transactionTypes) => {
-              if (transactionTypes && transactionTypes.length > 0) {
-                this.transaction.type = transactionTypes[0];
-                this.openModal('cash-box');
-              } else {
-                this.showMessage(
-                  'Debe configurar un tipo de transacción para realizar la apertura de caja.',
-                  'info',
-                  true
-                );
-              }
-            });
-          }
-        });
-      } else {
-        this.nextStepTransaction();
-      }
-    } else {
+    if (type.cashOpening || type.cashClosing) {
       this.openModal('cash-box');
+    } else if (type.movement === Movements.Transfer && type.transactionMovement === TransactionMovement.Money) {
+      this.openModal('cash-transfer');
+    } else if (this.transaction.type.cashBoxImpact) {
+      let query = 'where="state":"' + CashBoxState.Open + '"';
+      if (this.config.cashBox.perUser) {
+        query += ',"creationUser":"' + this.identity._id + '"';
+      } else if (this.identity.cashBoxType) {
+        query += ',"type":"' + this.identity.cashBoxType._id + '"';
+      } else {
+        query += ',"type":null';
+      }
+      query += '&sort="number":-1&limit=1';
+      await this.getCashBoxes(query).then(async (cashBoxes) => {
+        if (cashBoxes) {
+          this.transaction.cashBox = cashBoxes[0];
+          this.nextStepTransaction();
+        } else {
+          let match = {
+            cashOpening: true,
+          };
+          await this.getTransactionTypes(match).then((transactionTypes) => {
+            if (transactionTypes && transactionTypes.length > 0) {
+              this.transaction.type = transactionTypes[0];
+              this.openModal('cash-box');
+            } else {
+              this.showMessage(
+                'Debe configurar un tipo de transacción para realizar la apertura de caja.',
+                'info',
+                true
+              );
+            }
+          });
+        }
+      });
+    } else {
+      this.nextStepTransaction();
     }
   }
 
@@ -1442,6 +1445,26 @@ export class PointOfSaleComponent implements OnInit {
           );
           break;
         }
+      case 'cash-transfer':
+        modalRef = this._modalService.open(TransferCashBoxComponent, {
+          size: 'lg',
+          backdrop: 'static',
+          windowClass: 'cash-box-modal-pending',
+          backdropClass: 'cash-box-modal-pending',
+        });
+        modalRef.componentInstance.transactionType = this.transaction.type;
+        modalRef.result.then(
+          (result) => {
+            if (result && (result.cashBoxOrigin || result.cashBoxDestination)) {
+            } else {
+              this.hideMessage();
+            }
+          },
+          (reason) => {
+            this.hideMessage();
+          }
+        );
+        break;
       case 'select-branch':
         modalRef = this._modalService.open(SelectBranchComponent);
         modalRef.result.then(
@@ -1574,7 +1597,6 @@ export class PointOfSaleComponent implements OnInit {
         );
         break;
       case 'uploadFile':
-        console.log('uploadFile');
         modalRef = this._modalService.open(ImportComponent, {
           size: 'lg',
           backdrop: 'static',

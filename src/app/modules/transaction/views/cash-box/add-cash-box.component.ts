@@ -7,10 +7,11 @@ import * as printJS from 'print-js';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { normalizeApiResponse } from '@core/http';
 import { CashBoxService, CurrencyValueService, PaymentMethodService, PrintService } from '@core/services';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, CashBox, CurrencyValue, PrintType, TransactionType } from '@types';
+import { CashBox, CurrencyValue, PrintType, TransactionType } from '@types';
 import { currencyValue, MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { PaymentMethod } from 'app/components/payment-method/payment-method';
 
@@ -113,19 +114,21 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
       .availableCashBox(this.transactionType.cashOpening)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result: ApiResponse) => {
-          if (result.status == 200) {
-            if (result.result) this.cashBox = result.result;
+        next: (result) => {
+          const response = normalizeApiResponse(result);
+          if (response?.ok) {
+            if (response.body.result) this.cashBox = response.body.result as CashBox;
             this._document.querySelectorAll('.cash-box-modal-pending').forEach((el) => {
               el.classList.remove('cash-box-modal-pending');
             });
           } else {
-            this._toastService.showToast(result.error ?? result);
+            this._toastService.showToast(null, 'danger', '', response?.body.message ?? 'Algo salió mal.');
             this.activeModal.dismiss('validation');
           }
         },
         error: (error) => {
-          this._toastService.showToast(error);
+          const response = normalizeApiResponse(error);
+          this._toastService.showToast(null, 'danger', '', response?.body.message ?? 'Algo salió mal.');
           this.activeModal.dismiss('validation');
         },
         complete: () => {
@@ -223,16 +226,18 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
       .openCashBox(this.movementsOfCashes, this.transactionType._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result: ApiResponse) => {
-          if (result.status == 200) {
-            this.cashBox = result.result?.cashBox ?? result.result ?? this.cashBox;
+        next: (result) => {
+          const response = normalizeApiResponse(result);
+          if (response?.ok) {
+            this.cashBox = (response.body.result as any)?.cashBox ?? (response.body.result as CashBox) ?? this.cashBox;
             this.activeModal.close({ cashBox: this.cashBox });
           } else {
-            this._toastService.showToast(result.error ?? result);
+            this._toastService.showToast(null, 'danger', '', response?.body.message ?? 'Algo salió mal.');
           }
         },
         error: (error) => {
-          this._toastService.showToast(error);
+          const response = normalizeApiResponse(error);
+          this._toastService.showToast(null, 'danger', '', response?.body.message ?? 'Algo salió mal.');
         },
         complete: () => {
           this.loading = false;
@@ -246,17 +251,19 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
       .closeCashBox(this.movementsOfCashes, this.transactionType._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result: ApiResponse) => {
-          if (result.status == 200) {
-            this.cashBox = result.result?.cashBox ?? result.result ?? this.cashBox;
+        next: (result) => {
+          const response = normalizeApiResponse(result);
+          if (response?.ok) {
+            this.cashBox = (response.body.result as any)?.cashBox ?? (response.body.result as CashBox) ?? this.cashBox;
             this.toPrint(PrintType.CashBox, { cashBoxId: this.cashBox._id });
             this.activeModal.close({ cashBox: this.cashBox });
           } else {
-            this._toastService.showToast(result.error ?? result);
+            this._toastService.showToast(null, 'danger', '', response?.body.message ?? 'Algo salió mal.');
           }
         },
         error: (error) => {
-          this._toastService.showToast(error);
+          const response = normalizeApiResponse(error);
+          this._toastService.showToast(null, 'danger', '', response?.body.message ?? 'Algo salió mal.');
         },
         complete: () => {
           this.loading = false;
@@ -267,7 +274,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
   public toPrint(type: PrintType, data: {}): void {
     this.loading = true;
     this._printService.toPrint(type, data).subscribe({
-      next: (result: Blob | ApiResponse) => {
+      next: (result: Blob | { message?: string }) => {
         if (!result) {
           this._toastService.showToast({ message: 'Error al generar el PDF' });
           return;

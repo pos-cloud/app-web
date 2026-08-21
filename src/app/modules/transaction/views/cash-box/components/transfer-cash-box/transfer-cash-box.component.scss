@@ -1,0 +1,43 @@
+/* Oculto hasta pasar validación de cajas abiertas (evita flash del modal). */
+.cash-box-modal-pending {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.modal-content app-transfer-cash-box section.container-fluid {
+  padding: 0 !important;
+}
+
+app-transfer-cash-box {
+  app-progressbar > div {
+    height: 0 !important;
+  }
+
+  .modal-body {
+    padding: 0.5rem 1rem 0.25rem;
+
+    .table {
+      margin-bottom: 0.75rem;
+    }
+
+    .text-muted {
+      margin-top: 0.25rem;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 0.5rem;
+  }
+
+  .control-label {
+    display: block;
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+  }
+
+  .modal-footer {
+    .btn span {
+      margin-left: 0.35rem;
+    }
+  }
+}

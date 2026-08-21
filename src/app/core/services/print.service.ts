@@ -11,9 +11,12 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class PrintService {
-  constructor(private _http: HttpClient, private _authService: AuthService) {}
+  constructor(
+    private _http: HttpClient,
+    private _authService: AuthService
+  ) {}
 
-  public toPrint(type: PrintType, body: {}): Observable<Blob> {
+  public toPrint(type: PrintType | string, body: {}): Observable<Blob> {
     const URL_PRINT = `${environment.apiv2}/to-print/${type}`;
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

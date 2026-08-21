@@ -122,6 +122,36 @@ export class CashBoxService extends ModelService {
       );
   }
 
+  public transferCashBox(
+    movementsOfCashes: any[],
+    transactionTypeId: string,
+    cashBoxOriginId: string,
+    cashBoxDestinationId: string
+  ): Observable<any> {
+    const URL = `${this.URL}/transfer-cash-box`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(
+        URL,
+        { movementsOfCashes, transactionTypeId, cashBoxOriginId, cashBoxDestinationId },
+        {
+          headers: headers,
+        }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
   public getCashBoxesV2(
     project: {},
     match: {},

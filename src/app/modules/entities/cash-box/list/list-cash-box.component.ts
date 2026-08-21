@@ -6,6 +6,7 @@ import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, IAttribute, IButton, PrintType } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
+import { environment } from 'environments/environment';
 import * as printJS from 'print-js';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -178,6 +179,16 @@ export class ListCashBoxComponent {
       icon: 'fa fa-print',
       click: `this.emitEvent('print-box', item, null)`,
     },
+    ...(!environment.production
+      ? [
+          {
+            title: 'Imprimir-2',
+            class: 'btn btn-light btn-sm',
+            icon: 'fa fa-print',
+            click: `this.emitEvent('print-box-2', item, null)`,
+          },
+        ]
+      : []),
   ];
   public headerButtons: IButton[] = [
     {
@@ -213,11 +224,17 @@ export class ListCashBoxComponent {
         };
         this.toPrint(PrintType.CashBox, dataLabels);
         break;
+      case 'print-box-2':
+        const dataLabels2 = {
+          cashBoxId: obj._id,
+        };
+        this.toPrint('cash-box-2', dataLabels2);
+        break;
       default:
     }
   }
 
-  public toPrint(type: PrintType, data: {}): void {
+  public toPrint(type: PrintType | string, data: {}): void {
     this.loading = true;
 
     this._printService
