@@ -105,6 +105,7 @@ export enum View {
 export enum Movements {
   Inflows = 'Entrada',
   Outflows = 'Salida',
+  Transfer = 'Transferencia',
 }
 
 export enum StockMovement {
