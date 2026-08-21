@@ -25,6 +25,7 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
   @Input() service?: { getAll: (params: any) => Observable<any> };
   @Input() searchFields?: string[];
   @Input() match: Record<string, unknown> = { operationType: { $ne: 'D' } };
+  @Input() projectFields?: string[];
   @Input() minSearchLength: number = 2;
   @Input() initialLimit: number = 10;
   @Input() resultLimit: number = 20;
@@ -73,6 +74,10 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && !this.isRemote) {
       this.refreshLocalItems();
+    }
+
+    if (this.isRemote && changes['match'] && !changes['match'].firstChange && this.isOpen) {
+      this.requestSearch(this.searchTerm);
     }
   }
 
@@ -203,6 +208,14 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
     };
     fields.forEach((field) => {
       project[field] = 1;
+    });
+    this.projectFields?.forEach((field) => {
+      project[field] = 1;
+    });
+    Object.keys(match).forEach((field) => {
+      if (!field.startsWith('$')) {
+        project[field] = 1;
+      }
     });
 
     return this.service!.getAll({
