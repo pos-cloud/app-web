@@ -1,0 +1,94 @@
+.open-cash-boxes {
+  width: 95%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
+
+.open-cash-boxes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.open-cash-boxes-title {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.empty-state {
+  padding: 40px 16px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.cash-boxes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 18px;
+}
+
+.cash-box-card {
+  background: #fff;
+  border: 1px solid #e6ebf2;
+  border-radius: 14px;
+  padding: 24px;
+  min-height: 180px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.cash-box-card:hover {
+  background: #f8fafc;
+  border-color: #dbe4f0;
+}
+
+.cash-box-card__name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.cash-box-card__user {
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: #6b7280;
+}
+
+.payments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #eef2f7;
+}
+
+.payment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.payment-method {
+  font-size: 15px;
+  color: #374151;
+}
+
+.payment-saldo {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.empty-payments {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #9ca3af;
+}

@@ -1,17 +1,4 @@
 <section class="container-fluid">
-  <div class="d-flex align-items-center justify-content-end mb-3 flex-wrap">
-    <div class="form-group mb-0 mr-2">
-      <button type="button" class="btn btn-light" (click)="goBackToList()">
-        <i class="fa fa-arrow-left"></i> {{ 'Volver' | translate | capitalize }}
-      </button>
-    </div>
-    <div class="form-group mb-0">
-      <button type="button" class="btn btn-primary" (click)="getReport()" [disabled]="loading">
-        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
-      </button>
-    </div>
-  </div>
-
   <div class="card bg-light mb-3 p-3" *ngIf="header?.length">
     <div class="d-flex flex-wrap align-items-center">
       <div class="header-detail p-2" *ngFor="let detail of header">
@@ -23,6 +10,15 @@
   <div class="card card-large">
     <div class="card-header">
       <span style="color: #607d8b">{{ title | translate | capitalize }}</span>
+      <div class="pull-right">
+        <button type="button" class="btn btn-light" (click)="goBackToList()">
+          <i class="fa fa-arrow-left"></i><span>{{ 'Volver' | translate | capitalize }}</span>
+        </button>
+        <button type="button" class="btn btn-light" (click)="getReport()" [disabled]="loading">
+          <i class="fa fa-refresh" [ngClass]="{ 'fa-spin': loading }"></i
+          ><span>{{ 'refresh' | translate | capitalize }}</span>
+        </button>
+      </div>
     </div>
     <div class="table-responsive">
       <table class="table table-striped">
@@ -122,16 +118,18 @@
             <td class="align-center">{{ movement.paymentMethod }}</td>
             <td class="align-center">{{ movement.observation }}</td>
             <td class="align-center">
-              <ng-container *ngIf="movement.movement === 'Entrada'">
+              <ng-container>
                 {{ movement.inflow | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </ng-container>
             </td>
             <td class="align-center">
-              <ng-container *ngIf="movement.movement === 'Salida'">
+              <ng-container>
                 {{ movement.outflow | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </ng-container>
             </td>
-            <td class="align-center">{{ movement.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+            <td class="align-center">
+              {{ movement.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+            </td>
           </tr>
           <tr align="center" *ngIf="(!items || items.length === 0) && !loading">
             <td colspan="10">{{ 'no data found' | translate | capitalize }}</td>
@@ -147,7 +145,7 @@
             <th></th>
             <th></th>
             <th></th>
-            <th><strong>Total : </strong></th>
+            <th><strong>Total: </strong></th>
             <td class="align-right">
               <strong>{{ balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
             </td>

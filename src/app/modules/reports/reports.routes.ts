@@ -120,4 +120,9 @@ export const REPORTS_ROUTES: Routes = [
     path: 'cash-box/:cashBoxId',
     loadComponent: () => import('./cash-box/cash-box.component').then((m) => m.ReportCashBoxComponent),
   },
+  {
+    path: 'open-cash-boxes',
+    loadComponent: () =>
+      import('./open-cash-boxes/open-cash-boxes.component').then((m) => m.OpenCashBoxesComponent),
+  },
 ];

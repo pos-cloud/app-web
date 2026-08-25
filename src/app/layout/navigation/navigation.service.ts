@@ -510,6 +510,7 @@ export class NavigationService {
                 children: [
                   { label: 'Cartera de cheques', link: 'reports/check-wallet' },
                   { label: 'Kardex de cheques', link: 'reports/check-ledger' },
+                  { label: 'Cajas abiertas', link: 'reports/open-cash-boxes' },
                 ],
               },
             ],
