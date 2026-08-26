@@ -5,6 +5,7 @@ export interface Gallery extends Activity {
   name: string;
   interval: number;
   barcode: boolean;
+  background?: Resource | string;
   resources: [
     {
       resource: Resource;

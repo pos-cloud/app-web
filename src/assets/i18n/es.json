@@ -163,6 +163,8 @@
   "banks": "Bancos",
   "bank": "Banco",
   "barcode": "Código de Barras",
+  "background": "Fondo",
+  "background.name": "Fondo",
   "basePrice": "Precio Base",
   "birthday": "Cumpleaños",
   "body": "Cuerpo",

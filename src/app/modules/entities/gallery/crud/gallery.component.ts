@@ -53,6 +53,7 @@ export class GalleryComponent implements OnInit {
       name: ['', [Validators.required]],
       interval: [10, []],
       barcode: [true, []],
+      background: [null, []],
       resources: this._fb.array([]),
     });
   }
@@ -133,6 +134,7 @@ export class GalleryComponent implements OnInit {
       name: this.gallery?.name ?? '',
       interval: this.gallery?.interval ?? 10,
       barcode: this.gallery.barcode || false,
+      background: this.getBackgroundId(this.gallery?.background),
     };
 
     if (this.gallery.resources && this.gallery.resources.length > 0) {
@@ -156,6 +158,11 @@ export class GalleryComponent implements OnInit {
     this.galleryForm.patchValue(values);
   }
 
+  private getBackgroundId(background: any): string | null {
+    if (!background) return null;
+    return typeof background === 'string' ? background : background._id ?? null;
+  }
+
   returnTo() {
     return this._router.navigate(['/entities/galleries']);
   }
@@ -168,6 +175,7 @@ export class GalleryComponent implements OnInit {
     }
 
     this.gallery = this.galleryForm.value;
+    if (!this.gallery.background) this.gallery.background = null;
 
     switch (this.operation) {
       case 'add':

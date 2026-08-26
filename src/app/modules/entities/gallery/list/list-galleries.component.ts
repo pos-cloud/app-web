@@ -88,6 +88,16 @@ export class ListGalleriesComponent {
         required: false,
       },
       {
+        name: 'background.name',
+        visible: true,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
         name: '_id',
         visible: false,
         disabled: false,

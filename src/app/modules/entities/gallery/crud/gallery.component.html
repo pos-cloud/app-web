@@ -97,6 +97,17 @@
             </select>
           </div>
         </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="background" class="control-label">{{ 'background' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="background" id="background">
+              <option [ngValue]="null">{{ 'select' | translate | capitalize }}</option>
+              <option *ngFor="let resource of resources" [ngValue]="resource._id">
+                {{ resource.name }}
+              </option>
+            </select>
+          </div>
+        </div>
         <form #resourceForm="ngForm" (ngSubmit)="addResource(resourceForm)">
           <div class="row">
             <div class="form-group col-md-5">

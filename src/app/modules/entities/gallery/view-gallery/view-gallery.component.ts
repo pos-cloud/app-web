@@ -22,6 +22,7 @@ export class ViewGalleryComponent implements OnInit {
   public objectKeys = Object.keys;
   public gallery: Gallery;
   public images = [];
+  public backgroundImage: string = null;
   public viewBotton = true;
   public elem;
   public filterArticle: string;
@@ -46,6 +47,10 @@ export class ViewGalleryComponent implements OnInit {
     }
   }
 
+  public get isBackgroundLayout(): boolean {
+    return !!this.backgroundImage;
+  }
+
   public getGallery(galleryId: string) {
     this._galleryService.getById(galleryId).subscribe(
       (result) => {
@@ -53,14 +58,7 @@ export class ViewGalleryComponent implements OnInit {
           this._toastr.showToast(result);
         } else {
           this.gallery = result.result;
-          if (this.gallery?.resources?.length > 0) {
-            this.gallery.resources.forEach((element) => {
-              let fileImg = this.resource.find((file) =>
-                typeof element.resource === 'string' ? element.resource === file._id : element.resource._id === file._id
-              );
-              this.images.push(fileImg.file);
-            });
-          }
+          this.resolveMedia();
 
           if (this.gallery.barcode) {
             setTimeout(() => {
@@ -73,6 +71,29 @@ export class ViewGalleryComponent implements OnInit {
         this._toastr.showToast(error);
       }
     );
+  }
+
+  private resolveMedia() {
+    if (!this.gallery || !this.resource) return;
+
+    this.images = [];
+    this.backgroundImage = null;
+
+    const backgroundId =
+      typeof this.gallery.background === 'string' ? this.gallery.background : this.gallery.background?._id;
+    if (backgroundId) {
+      const backgroundResource = this.resource.find((file) => file._id === backgroundId);
+      this.backgroundImage = backgroundResource?.file ?? null;
+    }
+
+    if (this.backgroundImage || !this.gallery?.resources?.length) return;
+
+    this.gallery.resources.forEach((element) => {
+      const fileImg = this.resource.find((file) =>
+        typeof element.resource === 'string' ? element.resource === file._id : element.resource._id === file._id
+      );
+      if (fileImg?.file) this.images.push(fileImg.file);
+    });
   }
 
   public getArticle(): void {
@@ -128,6 +149,7 @@ export class ViewGalleryComponent implements OnInit {
           this._toastr.showToast(result);
         } else {
           this.resource = result.result;
+          this.resolveMedia();
         }
       },
       (error) => {
