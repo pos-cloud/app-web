@@ -46,7 +46,6 @@ import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.compon
 import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
-import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
 import { PrintComponent } from './components/print/print/print.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
@@ -113,7 +112,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     MovementOfCancellationComponent,
     CurrentAccountDetailsComponent,
     ListArticlesPosComponent,
-    PrintVatBookComponent,
     PrintTransactionTypeComponent,
     CancellationTypeAutomaticComponent,
     VoucherReaderComponent,
