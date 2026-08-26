@@ -54,7 +54,10 @@
         </span>
       </div>
 
-      <div class="member-card__status" *ngIf="!isInactive(row)">Al día</div>
+      <div class="member-card__status" *ngIf="!isInactive(row)">
+        <span>Al día</span>
+        <button type="button" class="btn btn-sm debt-detail-btn" (click)="openHistory(row)">detalle</button>
+      </div>
 
       <div class="member-card__debt" *ngIf="isInactive(row)">
         <div class="debt-item">
@@ -68,6 +71,9 @@
         <div class="debt-item">
           <span class="debt-label">Días</span>
           <span class="debt-value" [class.debt-value--warning]="isWarning(row)">{{ row.days }}</span>
+        </div>
+        <div class="debt-item debt-item--action">
+          <button type="button" class="btn btn-sm debt-detail-btn" (click)="openHistory(row)">detalle</button>
         </div>
       </div>
     </article>

@@ -15,6 +15,13 @@ export const REPORTS_ROUTES: Routes = [
       import('./active-members/active-members.component').then((m) => m.ActiveMembersComponent),
   },
   {
+    path: 'subscription-history-by-client',
+    loadComponent: () =>
+      import('./subscription-history-by-client/subscription-history-by-client.component').then(
+        (m) => m.ReportSubscriptionHistoryByClientComponent
+      ),
+  },
+  {
     path: 'mov-art-by-article/:module',
     loadComponent: () =>
       import('./mov-art-by-article/mov-art-by-article.component').then((m) => m.ReportMovArtByArticleComponent),

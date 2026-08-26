@@ -25,10 +25,14 @@ export class DataTableReportsComponent implements OnInit {
   @Input() title: string = '';
   @Input() loading: boolean = true;
   @Input() rowButtons: IButton[] = [];
+  @Input() showRefresh = false;
+  @Input() showBack = false;
 
   @Input() sorting: { column: string; direction: string };
   @Output() sortingChange = new EventEmitter<{ column: string; direction: string }>();
   @Output() eventExport = new EventEmitter<boolean>();
+  @Output() eventRefresh = new EventEmitter<void>();
+  @Output() eventBack = new EventEmitter<void>();
   @Output() eventFunction = new EventEmitter<{
     op: string;
     obj: any;
@@ -40,6 +44,10 @@ export class DataTableReportsComponent implements OnInit {
   }
 
   constructor(private _title: Title) {}
+
+  get hasTotals(): boolean {
+    return !!this.totals && typeof this.totals === 'object' && Object.keys(this.totals).length > 0;
+  }
 
   ngOnInit(): void {
     this._title.setTitle(this.title);

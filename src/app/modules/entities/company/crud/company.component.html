@@ -17,6 +17,16 @@
         <button
           type="button"
           class="btn"
+          *ngIf="showSubscriptionSection && companyId && !property"
+          (click)="openSubscriptionHistory()"
+          [title]="'subscription-history' | translate | capitalize"
+        >
+          <i class="fa fa-history"></i>
+          <span>{{ 'subscription-history' | translate | capitalize }}</span>
+        </button>
+        <button
+          type="button"
+          class="btn"
           [disabled]="loading"
           *ngIf="operation !== 'delete' && operation !== 'view'"
           (click)="handleCompanyOperation()"

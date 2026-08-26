@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { Subject, Subscription } from 'rxjs';
@@ -40,7 +41,8 @@ export class ActiveMembersComponent implements OnInit, OnDestroy {
     private _service: ReportSystemService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
-    private _title: Title
+    private _title: Title,
+    private _router: Router
   ) {}
 
   ngOnInit(): void {
@@ -104,5 +106,12 @@ export class ActiveMembersComponent implements OnInit, OnDestroy {
 
   public isWarning(row: ActiveMemberRow): boolean {
     return this.isInactive(row) && (row.days ?? 0) <= 10;
+  }
+
+  public openHistory(row: ActiveMemberRow): void {
+    if (!row?.companyId) return;
+    this._router.navigate(['/reports/subscription-history-by-client'], {
+      queryParams: { company: row.companyId, returnTo: '/reports/active-members' },
+    });
   }
 }

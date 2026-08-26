@@ -5,10 +5,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
 
 import { AuthService } from '@core/services/auth.service';
+import { ConfigService } from '@core/services/config.service';
 import { CompanyType, IAttribute, IButton } from '@types';
+import { Config } from 'app/app.config';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { CurrentAccountDetailsComponent } from 'app/components/print/current-account-details/current-account-details.component';
+import { BusinessModel } from 'app/core/enums/business-model.enum';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -364,6 +367,7 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
   ];
   public headerButtons: IButton[] = [];
   public rowButtons: IButton[] = [];
+  public config: Config;
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
@@ -372,10 +376,17 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
     private _router: Router,
     private route: ActivatedRoute,
     private _modalService: NgbModal,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _configService: ConfigService
   ) {}
 
   ngOnInit(): void {
+    this._configService.getConfig.pipe(takeUntil(this.destroy$)).subscribe((config) => {
+      this.config = config;
+      if (this.user) {
+        this.configureButtons();
+      }
+    });
     this.getPermissions();
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const companyType = params['type'];
@@ -388,6 +399,7 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
       this.title = this.type;
       this.updateTypeColumn();
       this.companyType = companyType;
+      this.configureButtons();
 
       if (typeChanged) {
         this.refreshDatatable();
@@ -456,6 +468,14 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
       case 'current-account2':
         this._router.navigateByUrl('reports/current-account/' + obj._id);
         break;
+      case 'subscription-history':
+        this._router.navigate(['/reports/subscription-history-by-client'], {
+          queryParams: {
+            company: obj._id,
+            returnTo: `/entities/companies/${this.companyType}`,
+          },
+        });
+        break;
       case 'current-account1':
         this._router.navigateByUrl('admin/cuentas-corrientes?companyId=' + obj._id + '&companyType=' + this.type);
         break;
@@ -501,7 +521,24 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
     });
   }
 
+  private isSubscriptionConfig(): boolean {
+    const businessModel = this.config?.businessModel;
+    if (typeof businessModel !== 'string') {
+      return false;
+    }
+
+    const model = businessModel.trim().toLowerCase();
+    return model === BusinessModel.SuscripcionesYMembresias || model === BusinessModel.Asociacion;
+  }
+
   private configureButtons(): void {
+    if (!this.user) {
+      return;
+    }
+
+    this.rowButtons = [];
+    this.headerButtons = [];
+
     this.rowButtons.push({
       title: 'view',
       class: 'btn btn-success btn-sm',
@@ -540,6 +577,15 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
         click: `this.emitEvent('current-account2', item)`,
       }
     );
+
+    if (this.type === CompanyType.Client && this.isSubscriptionConfig()) {
+      this.rowButtons.push({
+        title: 'subscription-history',
+        class: 'btn btn-light btn-sm',
+        icon: 'fa fa-history',
+        click: `this.emitEvent('subscription-history', item)`,
+      });
+    }
 
     if (this.user.permission.collections.companies.add) {
       this.headerButtons.push({

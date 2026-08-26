@@ -1,0 +1,24 @@
+app-subscription-history-by-client {
+  .card {
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-height: auto;
+  }
+
+  .card .p-2 {
+    min-width: 200px;
+  }
+
+  .header-total-debe {
+    background: #ffebee;
+    border: 1px solid #ef9a9a;
+    border-radius: 8px;
+    color: #c62828;
+  }
+
+  .header-total-debe strong,
+  .header-total-debe {
+    color: #c62828;
+    font-weight: 700;
+  }
+}

@@ -2,13 +2,20 @@
   <div class="card-header">
     <span style="color: #607d8b">{{ title | translate | capitalize }}</span>
     <div class="pull-right">
-      <!-- <app-export-excel
-        #exportExcelComponent
-        [title]="title"
-        [loading]="loading"
-        [columns]="columns"
-        (eventExport)="exportItems()"
-      ></app-export-excel> -->
+      <button *ngIf="showBack" type="button" class="btn btn-light mr-2" (click)="eventBack.emit()">
+        <i class="fa fa-arrow-left"></i>
+        <span>{{ 'return' | translate | capitalize }}</span>
+      </button>
+      <button
+        *ngIf="showRefresh"
+        type="button"
+        class="btn btn-light mr-2"
+        (click)="eventRefresh.emit()"
+        [disabled]="loading"
+      >
+        <i class="fa fa-refresh" [ngClass]="{ 'fa-spin': loading }"></i>
+        <span>{{ 'refresh' | translate | capitalize }}</span>
+      </button>
       <button type="button" class="btn btn-light mr-2" (click)="eventExport.emit(true)" [disabled]="loading">
         <i class="fa fa-download"></i>
         <span>Exportar</span>
@@ -62,7 +69,18 @@
           </td>
           <ng-container *ngFor="let column of columns">
             <td *ngIf="column.show !== false">
-              {{ item?.[column.label] | dynamicFormat: column.dataType }}
+              <span
+                *ngIf="column.dataType === 'status'"
+                class="status-pill"
+                [class.status-pill--debe]="item?.[column.label] === 'Debe'"
+                [class.status-pill--pagado]="item?.[column.label] === 'Pagado'"
+                [title]="item?.[column.label]"
+              >
+                {{ item?.[column.label] }}
+              </span>
+              <ng-container *ngIf="column.dataType !== 'status'">
+                {{ item?.[column.label] | dynamicFormat: column.dataType }}
+              </ng-container>
             </td>
           </ng-container>
         </tr>
@@ -72,7 +90,7 @@
         </tr>
       </tbody>
 
-      <tfoot *ngIf="data?.length > 0">
+      <tfoot *ngIf="data?.length > 0 && hasTotals">
         <tr>
           <td *ngFor="let column of columns; let i = index">
             <strong *ngIf="i > 0 && totals?.[column.label]">

@@ -1,0 +1,31 @@
+<section class="container-fluid">
+  <div class="card bg-light mb-3 p-3" *ngIf="header?.length">
+    <div class="d-flex flex-wrap">
+      <div
+        class="p-2 header-detail"
+        *ngFor="let detail of header"
+        [class.header-total-debe]="detail.label === 'totalDebe'"
+      >
+        <strong>{{ detail.label | translate | capitalize }}:</strong> {{ detail.value }}
+      </div>
+    </div>
+  </div>
+
+  <app-data-table-reports
+    [data]="data"
+    [columns]="columns"
+    [totals]="totals"
+    [title]="title"
+    [loading]="loading"
+    [rowButtons]="rowButtons"
+    [showRefresh]="true"
+    [showBack]="true"
+    [(sorting)]="sort"
+    (sortingChange)="onSortingChange($event)"
+    (eventFunction)="onEventFunction($event)"
+    (eventExport)="onExportExcel()"
+    (eventRefresh)="getReport()"
+    (eventBack)="goBack()"
+  >
+  </app-data-table-reports>
+</section>

@@ -296,6 +296,17 @@ export class CompanyComponent implements OnInit {
     }
   }
 
+  public openSubscriptionHistory(): void {
+    if (!this.companyId) return;
+
+    this._router.navigate(['/reports/subscription-history-by-client'], {
+      queryParams: {
+        company: this.companyId,
+        returnTo: this._router.url.split('?')[0],
+      },
+    });
+  }
+
   public getCompany(id: string) {
     this.loading = true;
 
