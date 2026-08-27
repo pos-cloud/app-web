@@ -54,7 +54,6 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ExportExcelModule } from './shared/components/export-excel/export-excel.module';
 
-import { SelectTableComponent } from './components/table/select-table/select-table.component';
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { VoucherReaderComponent } from './components/voucher-reader/voucher-reader.component';
@@ -68,7 +67,8 @@ import { HomeComponent } from './layout/home/home.component';
 import { HorizontalNavComponent } from './layout/horizontal-nav/horizontal-nav.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { NotificationBellComponent } from './modules/notifications/components/notification-bell/notification-bell.component';
-import { RestoTablesComponent } from './modules/pos/resto/resto-tables/resto-tables.component';
+
+import { RestoTablesComponent } from './modules/pos/resto/resto-tables.component';
 import { HeaderTransactionComponent } from './modules/transaction/views/fast/components/header-transaction/header-transaction.component';
 import { AiChatWidgetComponent } from './shared/components/ai-chat-widget/ai-chat-widget.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
@@ -118,7 +118,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     PosKitchenComponent,
     PosClientViewComponent,
     PosPackingComponent,
-    SelectTableComponent,
     SelectChecksComponent,
     ListCategoriesPosComponent,
     SelectMovementsOfCashesComponent,
@@ -148,10 +147,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     ComponentsModule,
     ExportExcelModule,
     NgMultiSelectDropDownModule.forRoot(),
-    RestoTablesComponent,
     NotificationBellComponent,
     AiChatWidgetComponent,
     UserBranchSelectComponent,
+    RestoTablesComponent,
     FocusDirective,
     HeaderTransactionComponent,
     ServiceWorkerModule.register('ngsw-worker.js', {

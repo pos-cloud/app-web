@@ -2,11 +2,9 @@ import { Component, ElementRef, EventEmitter, HostListener, ViewChild, ViewEncap
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
-import { User } from '@types';
+import { PaymentMethod, User } from '@types';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { PaymentMethod } from 'app/components/payment-method/payment-method';
-import { SelectTableComponent } from 'app/components/table/select-table/select-table.component';
 import { ArticleService } from 'app/core/services/article.service';
 import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
 import { ConfigService } from 'app/core/services/config.service';
@@ -76,6 +74,7 @@ import { DeleteTransactionComponent } from 'app/modules/transaction/components/d
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
 import { SelectPriceListComponent } from 'app/modules/transaction/components/select-price-list/select-price-list.component';
 import { SelectShipmentMethodComponentNew } from 'app/modules/transaction/components/select-shipment-method/select-shipment-method';
+import { SelectTableComponent } from 'app/modules/transaction/components/select-table/select-table.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { VariantService } from '../../core/services/variant.service';
 import { ApplyBusinessRuleComponent } from '../../modules/transaction/components/apply-business-rule/apply-business-rule.component';

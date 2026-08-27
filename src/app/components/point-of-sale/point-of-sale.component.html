@@ -11,11 +11,11 @@
     <app-resto-tables (eventTableSelected)="selectTable($event)" [loading]="loading"></app-resto-tables>
   </div>
   <div class="row header-bottom">
-    <div class="quick-btn" (click)="initTransactionByType('defectOrders', true)">
+    <!-- <div class="quick-btn" (click)="initTransactionByType('defectOrders', true)">
       <i class="fa fa-bolt"></i>
       <br />
       <strong>Venta<br />Rápida</strong>
-    </div>
+    </div> -->
     <div class="quick-btn" (click)="initTransactionByType('cashOpening')" *ngIf="config['modules'].money">
       <i class="fa fa-money"></i>
       <br />
