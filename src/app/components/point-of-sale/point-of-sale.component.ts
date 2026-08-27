@@ -53,7 +53,6 @@ import { FinishTransactionDialogComponent } from 'app/modules/transaction/compon
 import { AddCashBoxComponent } from 'app/modules/transaction/views/cash-box/add-cash-box.component';
 import { TransferCashBoxComponent } from 'app/modules/transaction/views/cash-box/components/transfer-cash-box/transfer-cash-box.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { environment } from 'environments/environment';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { BranchService } from '../../core/services/branch.service';
@@ -72,7 +71,6 @@ import { SelectBranchComponent } from '../../shared/components/select-branch/sel
 import { SelectDepositComponent } from '../../shared/components/select-deposit/select-deposit.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { TranslateMePipe } from '../../shared/pipes/translate-me';
-import { CashBoxComponent } from '../cash-box/cash-box/cash-box.component';
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
@@ -1406,45 +1404,26 @@ export class PointOfSaleComponent implements OnInit {
         );
         break;
       case 'cash-box':
-        if (environment.production) {
-          modalRef = this._modalService.open(CashBoxComponent, {
-            size: 'lg',
-            backdrop: 'static',
-          });
-          modalRef.componentInstance.transactionType = this.transaction.type;
-          modalRef.result.then(
-            (result) => {
-              if (result && result.cashBox) {
-              } else {
-                this.hideMessage();
-              }
-            },
-            (reason) => {
+        modalRef = this._modalService.open(AddCashBoxComponent, {
+          size: 'lg',
+          backdrop: 'static',
+          windowClass: 'cash-box-modal-pending',
+          backdropClass: 'cash-box-modal-pending',
+        });
+        modalRef.componentInstance.transactionType = this.transaction.type;
+        modalRef.result.then(
+          (result) => {
+            if (result && result.cashBox) {
+            } else {
               this.hideMessage();
             }
-          );
-          break;
-        } else {
-          modalRef = this._modalService.open(AddCashBoxComponent, {
-            size: 'lg',
-            backdrop: 'static',
-            windowClass: 'cash-box-modal-pending',
-            backdropClass: 'cash-box-modal-pending',
-          });
-          modalRef.componentInstance.transactionType = this.transaction.type;
-          modalRef.result.then(
-            (result) => {
-              if (result && result.cashBox) {
-              } else {
-                this.hideMessage();
-              }
-            },
-            (reason) => {
-              this.hideMessage();
-            }
-          );
-          break;
-        }
+          },
+          (reason) => {
+            this.hideMessage();
+          }
+        );
+        break;
+
       case 'cash-transfer':
         modalRef = this._modalService.open(TransferCashBoxComponent, {
           size: 'lg',
