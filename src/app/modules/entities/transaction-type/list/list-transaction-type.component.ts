@@ -489,6 +489,12 @@ export class ListTransactionTypeComponent {
       icon: 'fa fa-trash-o',
       click: `this.emitEvent('delete', item, null)`,
     },
+    {
+      title: 'Copiar',
+      class: 'btn btn-light btn-sm',
+      icon: ' fa fa-copy',
+      click: `this.emitEvent('copy', item, null)`,
+    },
   ];
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
@@ -516,6 +522,9 @@ export class ListTransactionTypeComponent {
         break;
       case 'add':
         this._router.navigateByUrl('entities/transaction-types/add');
+        break;
+      case 'copy':
+        this._router.navigateByUrl(`entities/transaction-types/copy/${obj._id}`);
         break;
     }
   }

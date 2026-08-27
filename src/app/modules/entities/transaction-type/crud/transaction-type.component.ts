@@ -452,6 +452,13 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result: ApiResponse) => {
           this.transactionType = result.result;
+          if (this.operation === 'copy') {
+            this.transactionType._id = '';
+            this.transactionType.creationDate = '';
+            this.transactionType.updateDate = '';
+            this.transactionType.creationUser = null;
+            this.transactionType.updateUser = null;
+          }
           if (result.status === 200) this.setValueForm();
         },
         error: (error) => {
@@ -475,6 +482,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
 
     switch (this.operation) {
       case 'add':
+      case 'copy':
         this.saveTransactionType();
         break;
       case 'update':

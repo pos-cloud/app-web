@@ -21,4 +21,8 @@ export const TRANSANCTION_TYPE_ROUTES: Routes = [
     path: 'delete/:id',
     loadComponent: () => import('./crud/transaction-type.component').then((m) => m.TransactionTypeComponent),
   },
+  {
+    path: 'copy/:id',
+    loadComponent: () => import('./crud/transaction-type.component').then((m) => m.TransactionTypeComponent),
+  },
 ];
