@@ -50,14 +50,15 @@ export class SelectTableComponent implements OnInit, OnDestroy {
     });
   }
 
-  public onRoomChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
+  public onRoomChange(): void {
+    this.tables = [];
     this.tableForm.patchValue({ table: null });
-    this.getTables(select.value);
+    this.getTables(this.tableForm.get('room')?.value);
   }
 
   public selectTable(): void {
-    if (!this.tableForm.value.table) {
+    const selectedTable = this.tableForm.get('table')?.value as Table | null;
+    if (!selectedTable) {
       this._toastService.showToast({
         type: 'info',
         message: 'Debe seleccionar una mesa.',
@@ -65,8 +66,15 @@ export class SelectTableComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.activeModal.close({ table: this.tableForm.value.table });
+    this.activeModal.close({ table: selectedTable });
   }
+
+  public compareById = (a: Table | null, b: Table | null): boolean => {
+    if (a == null || b == null) {
+      return a === b;
+    }
+    return this.normalizeId(a._id) === this.normalizeId(b._id);
+  };
 
   private getRooms(): void {
     this.loading = true;
@@ -104,7 +112,7 @@ export class SelectTableComponent implements OnInit, OnDestroy {
       : null;
     const room = roomFromInput || this.rooms[0];
 
-    this.tableForm.patchValue({ room: room._id });
+    this.tableForm.patchValue({ room: this.normalizeId(room._id) });
     this.getTables(room._id);
   }
 
@@ -141,8 +149,10 @@ export class SelectTableComponent implements OnInit, OnDestroy {
             this.tables = [...result].sort((a, b) =>
               (a.description || '').localeCompare(b.description || '', undefined, { numeric: true })
             );
+            this.tableForm.patchValue({ table: this.tables[0] });
           } else {
             this.tables = [];
+            this.tableForm.patchValue({ table: null });
             this._toastService.showToast({
               type: 'info',
               message: 'No se encontraron mesas disponibles.',
@@ -157,7 +167,7 @@ export class SelectTableComponent implements OnInit, OnDestroy {
       });
   }
 
-  private normalizeId(id: unknown): string {
+  public normalizeId(id: unknown): string {
     if (id == null) {
       return '';
     }
