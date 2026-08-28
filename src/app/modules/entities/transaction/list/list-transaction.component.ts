@@ -11,9 +11,9 @@ import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, IAttribute, IButton, PrintType, TransactionMovement, User } from '@types';
 import { Config } from 'app/app.config';
-import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
+import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { ExportIvaArcaComponent } from 'app/modules/transaction/components/export-iva-arca/export-iva-arca.component';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
@@ -459,6 +459,7 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
       this.setTransactionMovement(params['type']);
       this.applyFilters();
     });
+    this.title = `Transaction ${this._route.snapshot.params['type']}`;
   }
 
   ngOnDestroy(): void {
@@ -548,6 +549,10 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
 
   public refresh() {
     this.datatableComponent.refresh();
+  }
+
+  public onDatePickerChange(): void {
+    this.applyFilters();
   }
 
   public applyFilters(): void {

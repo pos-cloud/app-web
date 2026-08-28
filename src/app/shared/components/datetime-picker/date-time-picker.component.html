@@ -1,17 +1,16 @@
-<div class="input-group mr-2">
+<div class="input-group datetime-picker">
   <input
     #dateTimeInput
-    class="form-control"
+    class="form-control datetime-picker__input"
     (blur)="inputBlur($event)"
     (change)="onInputChange($event)"
     [ngModel]="dateString | date : inputDatetimeFormat"
     [disabled]="disabled"
-    [ngStyle]="{ 'background-color': 'white', width: '145px' }"
     tabindex="0"
   />
   <div class="input-group-append">
     <button
-      class="btn btn-outline-secondary"
+      class="btn btn-outline-secondary datetime-picker__btn"
       [ngbPopover]="calendarContent"
       container="body"
       placement="bottom-left bottom bottom-right top-left top top-right"

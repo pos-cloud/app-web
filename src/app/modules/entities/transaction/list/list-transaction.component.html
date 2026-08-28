@@ -10,49 +10,43 @@
   (eventFunction)="emitEvent($event)"
 >
   <div datatableFilters>
-    <div class="row container-filter">
-      <div class="col-md-2">
-        <app-user-branch-select [(ngModel)]="branchSelectedId" (branchChange)="applyFilters()">
-        </app-user-branch-select>
-      </div>
-      <div class="col-md-2">
-        <label for="dataSelect" class="control-label">
-          <b>Por Fecha de:</b>
-        </label>
-        <select class="form-control" [(ngModel)]="dateSelect">
-          <option value="creationDate2">Creación</option>
-          <option value="updateDate2">Modificación</option>
-          <option value="endDate2">Finalización</option>
-        </select>
-      </div>
-      <div class="col-md-3">
-        <label for="startDate" class="control-label">
-          <b>Fecha Desde:</b>
-        </label>
-        <app-date-time-picker
-          [(ngModel)]="startDate"
-          name="startDate"
-          [inputDatetimeFormat]="'dd/MM/yyyy'"
-          [seconds]="false"
-        ></app-date-time-picker>
-      </div>
-      <div class="col-md-3">
-        <label for="endDate" class="control-label">
-          <b>Fecha Hasta:</b>
-        </label>
-        <app-date-time-picker
-          [(ngModel)]="endDate"
-          name="endDate"
-          [inputDatetimeFormat]="'dd/MM/yyyy'"
-          [seconds]="false"
-        ></app-date-time-picker>
-      </div>
-      <div class="col-md-2" (click)="applyFilters()">
-        <label for="btn-action" class="control-label"><b>Acción:</b></label>
-        <span class="form-control btn-action center-content">
-          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i>Actualizar
-        </span>
-      </div>
+    <app-user-branch-select [(ngModel)]="branchSelectedId" (branchChange)="applyFilters()">
+    </app-user-branch-select>
+    <div class="datatable-filter-field">
+      <label for="dataSelect" class="control-label">
+        <b>Por Fecha de:</b>
+      </label>
+      <select class="form-control" [(ngModel)]="dateSelect" (ngModelChange)="applyFilters()">
+        <option value="creationDate2">Creación</option>
+        <option value="updateDate2">Modificación</option>
+        <option value="endDate2">Finalización</option>
+      </select>
+    </div>
+    <div class="datatable-filter-field">
+      <label for="startDate" class="control-label">
+        <b>Fecha Desde:</b>
+      </label>
+      <app-date-time-picker
+        [(ngModel)]="startDate"
+        name="startDate"
+        [inputDatetimeFormat]="'dd/MM/yyyy'"
+        [seconds]="false"
+        [deferEmitUntilClose]="true"
+        (ngModelChange)="onDatePickerChange()"
+      ></app-date-time-picker>
+    </div>
+    <div class="datatable-filter-field">
+      <label for="endDate" class="control-label">
+        <b>Fecha Hasta:</b>
+      </label>
+      <app-date-time-picker
+        [(ngModel)]="endDate"
+        name="endDate"
+        [inputDatetimeFormat]="'dd/MM/yyyy'"
+        [seconds]="false"
+        [deferEmitUntilClose]="true"
+        (ngModelChange)="onDatePickerChange()"
+      ></app-date-time-picker>
     </div>
   </div>
 </app-datatable>
