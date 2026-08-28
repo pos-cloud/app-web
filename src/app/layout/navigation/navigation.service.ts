@@ -397,7 +397,7 @@ export class NavigationService {
               {
                 label: 'Listados',
                 children: [
-                  { label: 'Transacciones', link: 'admin/ventas' },
+                  { label: 'Transacciones', link: 'entities/transactions/venta' },
                   { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/venta' },
                   { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/venta' },
                   { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/venta' },
@@ -427,7 +427,7 @@ export class NavigationService {
               {
                 label: 'Listados',
                 children: [
-                  { label: 'Transacciones', link: 'admin/compras' },
+                  { label: 'Transacciones', link: 'entities/transactions/compra' },
                   { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/compra' },
                   { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/compra' },
                   { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/compra' },
@@ -457,7 +457,7 @@ export class NavigationService {
               {
                 label: 'Listados',
                 children: [
-                  { label: 'Transacciones', link: 'admin/stock' },
+                  { label: 'Transacciones', link: 'entities/transactions/stock' },
                   { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/stock' },
                 ],
               },
@@ -478,7 +478,7 @@ export class NavigationService {
               {
                 label: 'Listados',
                 children: [
-                  { label: 'Transacciones', link: 'admin/production' },
+                  { label: 'Transacciones', link: 'entities/transactions/production' },
                   { label: 'Movimientos de Productos', link: 'entities/movements-of-articles/production' },
                   { label: 'Cancelaciones', link: 'entities/movements-of-cancellation/production' },
                 ],
@@ -501,7 +501,7 @@ export class NavigationService {
               {
                 label: 'Listados',
                 children: [
-                  { label: 'Transacciones', link: 'admin/fondos' },
+                  { label: 'Transacciones', link: 'entities/transactions/fondos' },
                   { label: 'Movimientos de Caja', link: 'entities/movements-of-cashes/fondos' },
                   { label: 'Cajas', link: 'entities/cash-boxes' },
                 ],

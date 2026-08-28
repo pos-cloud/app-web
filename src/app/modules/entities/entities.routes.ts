@@ -209,6 +209,10 @@ export const ENTITIES_ROUTES: Routes = [
     loadChildren: () => import('./transaction-type/transaction-type.routes').then((m) => m.TRANSANCTION_TYPE_ROUTES),
   },
   {
+    path: 'transactions',
+    loadChildren: () => import('./transaction/transaction.routes').then((m) => m.TRANSACTION_ROUTES),
+  },
+  {
     path: 'cash-boxes',
     loadChildren: () => import('./cash-box/cash-box.component').then((m) => m.CASH_BOX_ROUTES),
   },
