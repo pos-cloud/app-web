@@ -73,7 +73,9 @@ export class AppComponent {
         if (
           currentUrl.includes('menu') ||
           currentUrl.includes('galleries/view') ||
-          currentUrl.includes('politicas-de-privacidad')
+          currentUrl.includes('politicas-de-privacidad') ||
+          currentUrl.includes('/login') ||
+          currentUrl.includes('/register')
         ) {
           this.showHeader = false;
         } else {

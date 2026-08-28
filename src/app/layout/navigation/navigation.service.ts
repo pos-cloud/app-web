@@ -210,6 +210,7 @@ export class NavigationService {
 
     return (
       pathLocation[1] === 'login' ||
+      pathLocation[1] === 'register' ||
       pathLocation[1] === 'registrar' ||
       pathLocation[1] === 'politicas-de-privacidad' ||
       pathLocation[2] === 'retiro-de-pedidos' ||

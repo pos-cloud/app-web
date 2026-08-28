@@ -1,4 +1,26 @@
+body.nav-sidebar-visible .app-main:has(app-datatable),
+body.nav-horizontal-visible .app-main:has(app-datatable) {
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
 app-datatable {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  .container-fluid {
+    padding: 18px 20px !important;
+    margin-top: 0 !important;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
   .has-data {
     background-color: #d4edda;
     border-color: #c3e6cb;
@@ -8,16 +30,41 @@ app-datatable {
     user-select: none;
   }
 
+  .card,
   .card-large {
-    min-height: calc(100vh - 120px);
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
+    flex: 1;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
   }
 
   .card-footer {
     margin-top: auto;
+  }
+
+  .card-footer .row {
+    align-items: center;
+  }
+
+  .card-footer .col:first-child {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .card-footer ngb-pagination,
+  .card-footer .pagination {
+    margin: 0;
+  }
+
+  .records-count {
+    font-size: 14px;
+    font-weight: 400;
+    color: #212529;
+    white-space: nowrap;
   }
 
   table {
@@ -34,7 +81,10 @@ app-datatable {
   }
 
   .table-responsive {
-    height: 80vh;
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    overflow: auto;
   }
 
   .columns-dropdown-menu {
@@ -44,3 +94,4 @@ app-datatable {
     overflow: hidden;
   }
 }
+

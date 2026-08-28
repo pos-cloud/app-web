@@ -21,8 +21,8 @@
   }
 
   &:hover {
-    color: #0275d8;
-    background: #f3f6fb;
+    color: var(--nav-accent, #0275d8);
+    background: var(--nav-hover-bg, #f3f6fb);
   }
 }
 

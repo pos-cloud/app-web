@@ -38,7 +38,7 @@
 </ng-container>
 
 <ng-template #navNodeTpl let-node="node" let-depth="depth" let-key="key">
-  <div *ngIf="node.isDivider" class="sidebar-divider"></div>
+  <div *ngIf="node.isDivider" class="sidebar-divider" role="separator"></div>
 
   <ng-container *ngIf="!node.isDivider">
     <a
@@ -52,6 +52,7 @@
       (click)="onLinkClick()"
     >
       <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
+      <span *ngIf="!node.icon && depth > 0" class="item-dot" aria-hidden="true"></span>
       <i *ngIf="!node.icon && depth === 0" class="fa fa-circle-o" aria-hidden="true"></i>
       <span class="item-label">{{ node.label }}</span>
     </a>
@@ -63,16 +64,24 @@
         [class.depth-0]="depth === 0"
         [class.depth-n]="depth > 0"
         [class.expanded]="isExpanded(key)"
+        [class.has-active]="hasActiveChild(node)"
+        [attr.aria-expanded]="isExpanded(key)"
         [title]="node.label"
         (click)="toggleExpand(key, $event)"
       >
         <i *ngIf="node.icon" [class]="node.icon" aria-hidden="true"></i>
+        <span *ngIf="!node.icon && depth > 0" class="item-branch" aria-hidden="true"></span>
         <i *ngIf="!node.icon && depth === 0" class="fa fa-folder-o" aria-hidden="true"></i>
         <span class="item-label">{{ node.label }}</span>
-        <i class="fa fa-chevron-down chevron" aria-hidden="true"></i>
+        <i class="fa fa-angle-right chevron" aria-hidden="true"></i>
       </button>
 
-      <div class="sidebar-children" *ngIf="isExpanded(key)" [style.--depth]="depth">
+      <div
+        class="sidebar-children"
+        *ngIf="isExpanded(key)"
+        [@collapse]
+        [attr.data-depth]="depth"
+      >
         <ng-container *ngFor="let child of node.children; trackBy: trackByLabel">
           <ng-container
             *ngTemplateOutlet="

@@ -1,236 +1,270 @@
-<section class="fondo-register center-content">
-  <div class="box-register">
-    <div class="row" align="center">
-      <div class="logo">
-        <img width="130" src="assets/img/logo.png" />
+<section class="auth-shell">
+  <aside class="auth-aside" aria-label="Por qué POS Cloud">
+    <div class="auth-aside-rings" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="auth-aside-inner">
+      <a class="auth-brand" routerLink="/login">
+        <img src="assets/img/logo.png" alt="POS Cloud" />
+        <span class="auth-brand-name">POS Cloud</span>
+      </a>
+
+      <p class="auth-aside-kicker">POS Cloud</p>
+      <h1 class="auth-aside-title">Todo tu negocio, en un solo sistema</h1>
+      <p class="auth-aside-lead">
+        Vendé, cobrá, controlá stock y facturá sin pasar de un programa a otro. Pensado para kioscos,
+        supermercados, restaurantes, indumentaria y el negocio que estás armando ahora.
+      </p>
+
+      <div class="auth-benefits">
+        <div class="auth-benefit">
+          <span class="auth-benefit-icon"><i class="fa fa-desktop" aria-hidden="true"></i></span>
+          <div>
+            <h3>Punto de venta en segundos</h3>
+            <p>Mostrador, salón o delivery: cobrá rápido, con precios, descuentos y múltiples medios de pago.</p>
+          </div>
+        </div>
+        <div class="auth-benefit">
+          <span class="auth-benefit-icon"><i class="fa fa-cubes" aria-hidden="true"></i></span>
+          <div>
+            <h3>Stock que se actualiza solo</h3>
+            <p>Cada venta descuenta mercadería. Compras, depósitos y alertas para no vender lo que no tenés.</p>
+          </div>
+        </div>
+        <div class="auth-benefit">
+          <span class="auth-benefit-icon"><i class="fa fa-file-text-o" aria-hidden="true"></i></span>
+          <div>
+            <h3>Facturación electrónica ARCA</h3>
+            <p>Emití facturas, notas de crédito y el libro de IVA sin salir del sistema.</p>
+          </div>
+        </div>
+        <div class="auth-benefit">
+          <span class="auth-benefit-icon"><i class="fa fa-cutlery" aria-hidden="true"></i></span>
+          <div>
+            <h3>Restaurante, turnos y suscripciones</h3>
+            <p>Mesas y comandas, agenda de turnos o cuotas de socios: el mismo POS se adapta a tu rubro.</p>
+          </div>
+        </div>
+        <div class="auth-benefit">
+          <span class="auth-benefit-icon"><i class="fa fa-plug" aria-hidden="true"></i></span>
+          <div>
+            <h3>Tu tienda online, conectada</h3>
+            <p>Tienda Nube, WooCommerce y Mercado Libre sincronizan productos y stock con el local.</p>
+          </div>
+        </div>
+        <div class="auth-benefit">
+          <span class="auth-benefit-icon"><i class="fa fa-bar-chart" aria-hidden="true"></i></span>
+          <div>
+            <h3>Caja y reportes del día a día</h3>
+            <p>Abrí y cerrá caja, transferí dinero y mirá qué se vende, quién debe y cómo cierra el mes.</p>
+          </div>
+        </div>
+      </div>
+      <p class="auth-aside-note">Sin instalar nada. Entrá desde el navegador y empezá a vender hoy.</p>
+    </div>
+  </aside>
+
+  <div class="auth-main">
+    <div class="auth-card is-wide">
+      <div class="auth-card-heading">
+        <p class="auth-card-kicker">Nuevo negocio</p>
+        <h2 class="auth-card-title">Crear cuenta</h2>
+        <p class="auth-card-subtitle">Completá tus datos y empezá en minutos.</p>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+        <div class="auth-field">
+          <label for="fullName">Nombre y apellido</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="fullName"
+            name="fullName"
+            id="fullName"
+            [ngClass]="{
+              'is-invalid': registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid,
+            }"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')"
+          >
+            Este campo es requerido.
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('minlength')"
+          >
+            El nombre debe tener al menos 2 caracteres.
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label for="companyName">Nombre del negocio</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="companyName"
+            name="companyName"
+            id="companyName"
+            [ngClass]="{
+              'is-invalid': registerForm.get('companyName')?.touched && registerForm.get('companyName')?.invalid,
+            }"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('required')"
+          >
+            Este campo es requerido.
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('minlength')"
+          >
+            El nombre del negocio debe tener al menos 2 caracteres.
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('pattern')"
+          >
+            Solo se permiten letras y números (sin espacios).
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            name="email"
+            id="email"
+            placeholder="juan@example.com"
+            [ngClass]="{
+              'is-invalid': registerForm.get('email')?.touched && registerForm.get('email')?.invalid,
+            }"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')"
+          >
+            Este campo es requerido.
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')"
+          >
+            Ingrese un email válido.
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label for="phone">Teléfono</label>
+          <input
+            type="tel"
+            class="form-control"
+            formControlName="phone"
+            name="phone"
+            id="phone"
+            [ngClass]="{
+              'is-invalid': registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid,
+            }"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('required')"
+          >
+            Este campo es requerido.
+          </div>
+        </div>
+
+        <div class="auth-row">
+          <div class="auth-field">
+            <label for="country">País</label>
+            <select
+              class="form-control"
+              formControlName="country"
+              name="country"
+              id="country"
+              [ngClass]="{
+                'is-invalid': registerForm.get('country')?.touched && registerForm.get('country')?.invalid,
+              }"
+            >
+              <option value="">Seleccione un país</option>
+              <option *ngFor="let country of countries" [value]="country.code">
+                {{ country.name }}
+              </option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="registerForm.get('country')?.touched && registerForm.get('country')?.hasError('required')"
+            >
+              Debe seleccionar un país.
+            </div>
+          </div>
+          <div class="auth-field">
+            <label for="businessModel">Tipo de negocio</label>
+            <select
+              class="form-control"
+              formControlName="businessModel"
+              name="businessModel"
+              id="businessModel"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.invalid,
+              }"
+            >
+              <option value="">Seleccione un tipo de negocio</option>
+              <option *ngFor="let model of businessModels" [value]="model.key">
+                {{ model.name }}
+              </option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.hasError('required')
+              "
+            >
+              Debe seleccionar un tipo de negocio.
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-row">
+          <div>
+            <p class="auth-section-label">Integraciones</p>
+            <small class="auth-section-hint">Opcional. Elegí las que necesites.</small>
+            <div [formGroupName]="'integrations'" class="auth-checks">
+              <label class="auth-check" *ngFor="let integration of integrations">
+                <input type="checkbox" [formControlName]="integration.key" />
+                <span>{{ integration.name }}</span>
+              </label>
+            </div>
+          </div>
+          <div>
+            <p class="auth-section-label">Módulos</p>
+            <small class="auth-section-hint">Opcional. Elegí los que necesites.</small>
+            <div [formGroupName]="'modules'" class="auth-checks">
+              <label class="auth-check" *ngFor="let module of modules">
+                <input type="checkbox" [formControlName]="module.key" />
+                <span>{{ module.name }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="auth-submit" [disabled]="loading">
+          <span *ngIf="!loading">Crear cuenta</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
+      </form>
+
+      <div class="auth-links">
+        ¿Ya tenés una cuenta? <a routerLink="/login">Iniciar sesión</a>
       </div>
     </div>
-    <br />
-    <div class="row center-content register-header">
-      <h1 class="register-heading">Crear cuenta</h1>
-      <p class="register-subheading">Completá tus datos y empezá en minutos</p>
-    </div>
-    <hr />
-    <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
-      <div class="row">
-        <div class="center-content">
-          <div class="row">
-            <div class="col-md-12">
-              <label for="fullName" class="control-label">Nombre y Apellido:</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="fullName"
-                name="fullName"
-                id="fullName"
-                [focus]="focusEvent"
-                [ngClass]="{
-                  'is-invalid': registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid,
-                }"
-              />
-              <div
-                class="invalid-feedback"
-                *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')"
-              >
-                Este campo es requerido.
-              </div>
-              <div
-                class="invalid-feedback"
-                *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('minlength')"
-              >
-                El nombre debe tener al menos 2 caracteres.
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <label for="companyName" class="control-label">Nombre del negocio:</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="companyName"
-                name="companyName"
-                id="companyName"
-                [ngClass]="{
-                  'is-invalid': registerForm.get('companyName')?.touched && registerForm.get('companyName')?.invalid,
-                }"
-              />
-              <div
-                class="invalid-feedback"
-                *ngIf="
-                  registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('required')
-                "
-              >
-                Este campo es requerido.
-              </div>
-              <div
-                class="invalid-feedback"
-                *ngIf="
-                  registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('minlength')
-                "
-              >
-                El nombre del negocio debe tener al menos 2 caracteres.
-              </div>
-              <div
-                class="invalid-feedback"
-                *ngIf="registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('pattern')"
-              >
-                Solo se permiten letras y números (sin espacios).
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <label for="email" class="control-label">Email:</label>
-              <input
-                type="email"
-                class="form-control"
-                formControlName="email"
-                name="email"
-                id="email"
-                placeholder="juan@example.com"
-                [ngClass]="{
-                  'is-invalid': registerForm.get('email')?.touched && registerForm.get('email')?.invalid,
-                }"
-              />
-              <div
-                class="invalid-feedback"
-                *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')"
-              >
-                Este campo es requerido.
-              </div>
-              <div
-                class="invalid-feedback"
-                *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')"
-              >
-                Ingrese un email válido.
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <label for="phone" class="control-label">Teléfono:</label>
-              <input
-                type="tel"
-                class="form-control"
-                formControlName="phone"
-                name="phone"
-                id="phone"
-                [ngClass]="{
-                  'is-invalid': registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid,
-                }"
-              />
-              <div
-                class="invalid-feedback"
-                *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('required')"
-              >
-                Este campo es requerido.
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <label for="country" class="control-label">País:</label>
-              <select
-                class="form-control"
-                formControlName="country"
-                name="country"
-                id="country"
-                [ngClass]="{
-                  'is-invalid': registerForm.get('country')?.touched && registerForm.get('country')?.invalid,
-                }"
-              >
-                <option value="">Seleccione un país</option>
-                <option *ngFor="let country of countries" [value]="country.code">
-                  {{ country.name }}
-                </option>
-              </select>
-              <div
-                class="invalid-feedback"
-                *ngIf="registerForm.get('country')?.touched && registerForm.get('country')?.hasError('required')"
-              >
-                Debe seleccionar un país.
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label for="businessModel" class="control-label">Tipo de Negocio:</label>
-              <select
-                class="form-control"
-                formControlName="businessModel"
-                name="businessModel"
-                id="businessModel"
-                [ngClass]="{
-                  'is-invalid':
-                    registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.invalid,
-                }"
-              >
-                <option value="">Seleccione un tipo de negocio</option>
-                <option *ngFor="let model of businessModels" [value]="model.key">
-                  {{ model.name }}
-                </option>
-              </select>
-              <div
-                class="invalid-feedback"
-                *ngIf="
-                  registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.hasError('required')
-                "
-              >
-                Debe seleccionar un tipo de negocio.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="center-content">
-          <div class="row">
-            <div class="col-md-6">
-              <label class="control-label section-label">Integraciones:</label>
-              <small class="form-text text-muted"> Selecciona las integraciones que necesitas (opcional) </small>
-              <div [formGroupName]="'integrations'" class="checkbox-group">
-                <div class="checkbox-item" *ngFor="let integration of integrations">
-                  <label class="checkbox-label">
-                    <input type="checkbox" [formControlName]="integration.key" class="checkbox-input" />
-                    <span class="checkbox-text">{{ integration.name }}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="control-label section-label">Módulos:</label>
-              <small class="form-text text-muted"> Selecciona los módulos que necesitas (opcional) </small>
-              <div [formGroupName]="'modules'" class="checkbox-group">
-                <div class="checkbox-item" *ngFor="let module of modules">
-                  <label class="checkbox-label">
-                    <input type="checkbox" [formControlName]="module.key" class="checkbox-input" />
-                    <span class="checkbox-text">{{ module.name }}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="center-content">
-          <div class="row">
-            <div class="col-md-12" align="center">
-              <button type="submit" class="btn btn-primary" [disabled]="loading">
-                <span *ngIf="!loading">Crear cuenta</span>
-                <span *ngIf="loading">Espere por favor</span>
-              </button>
-            </div>
-          </div>
-          <br /><br />
-          <div class="row">
-            <div class="col-md-12" align="center">
-              <b>¿Ya tienes una cuenta?</b><a routerLink="/login"> Iniciar sesión</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
   </div>
 </section>

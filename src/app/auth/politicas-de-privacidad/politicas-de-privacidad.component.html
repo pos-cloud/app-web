@@ -1,89 +1,125 @@
-<section class="pagina-legal">
-  <div class="contenedor-legal">
-    <div class="cabecera">
-      <a routerLink="/login" class="logo">
-        <img width="120" src="assets/img/logo.png" alt="Logo" />
+<section class="auth-shell">
+  <aside class="auth-aside" aria-label="Índice de políticas de privacidad">
+    <div class="auth-aside-rings" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="auth-aside-inner">
+      <a class="auth-brand" routerLink="/login">
+        <img src="assets/img/logo.png" alt="POS Cloud" />
+        <span class="auth-brand-name">POS Cloud</span>
       </a>
-      <h1>Políticas de Privacidad</h1>
-      <p class="fecha-actualizacion">Última actualización: febrero 2025</p>
+
+      <p class="auth-aside-kicker">Transparencia</p>
+      <h1 class="auth-aside-title">Cómo cuidamos tus datos</h1>
+      <p class="auth-aside-lead">
+        En POS Cloud tratamos la información de tu negocio con el mismo cuidado con el que vos atendés a tus
+        clientes.
+      </p>
+
+      <nav class="auth-toc" aria-label="Contenido">
+        <button
+          type="button"
+          class="auth-toc-item"
+          *ngFor="let section of sections"
+          (click)="scrollTo(section.id)"
+        >
+          <span class="auth-toc-num">{{ section.n }}</span>
+          <span>{{ section.title }}</span>
+        </button>
+      </nav>
+
+      <p class="auth-aside-note">¿Tenés dudas? Escribinos y te lo explicamos en criollo.</p>
     </div>
+  </aside>
 
-    <div class="contenido-legal">
-      <section>
-        <h2>1. Responsable del tratamiento</h2>
-        <p>
-          Los datos personales que nos proporcione serán tratados por [Nombre de la empresa / Razón social],
-          con domicilio en [Dirección], como responsable del tratamiento.
-        </p>
-      </section>
+  <div class="auth-main">
+    <div class="auth-card is-legal">
+      <div class="auth-card-heading is-centered">
+        <a class="auth-card-logo" routerLink="/login">
+          <img src="assets/img/logo.png" alt="POS Cloud" />
+        </a>
+        <h2 class="auth-card-title">Políticas de privacidad</h2>
+        <p class="auth-card-subtitle">Cómo recolectamos, usamos y protegemos tu información.</p>
+        <span class="auth-date">Última actualización: febrero 2025</span>
+      </div>
 
-      <section>
-        <h2>2. Finalidad del tratamiento</h2>
-        <p>
-          Utilizamos sus datos para la gestión de la relación comercial, la prestación de los servicios
-          contratados, la facturación, el envío de comunicaciones relacionadas con el servicio y, en su caso,
-          el cumplimiento de obligaciones legales.
-        </p>
-      </section>
+      <div class="auth-legal-doc">
+        <section class="auth-legal-section" id="responsable">
+          <h2>1. Responsable del tratamiento</h2>
+          <p>
+            Los datos personales que nos proporcione serán tratados por [Nombre de la empresa / Razón social],
+            con domicilio en [Dirección], como responsable del tratamiento.
+          </p>
+        </section>
 
-      <section>
-        <h2>3. Legitimación</h2>
-        <p>
-          El tratamiento de sus datos se basa en la ejecución del contrato de prestación de servicios,
-          en el consentimiento que nos ha otorgado y, cuando corresponda, en el cumplimiento de obligaciones
-          legales aplicables.
-        </p>
-      </section>
+        <section class="auth-legal-section" id="finalidad">
+          <h2>2. Finalidad del tratamiento</h2>
+          <p>
+            Utilizamos sus datos para la gestión de la relación comercial, la prestación de los servicios
+            contratados, la facturación, el envío de comunicaciones relacionadas con el servicio y, en su caso,
+            el cumplimiento de obligaciones legales.
+          </p>
+        </section>
 
-      <section>
-        <h2>4. Conservación de los datos</h2>
-        <p>
-          Conservaremos sus datos personales mientras sea necesario para las finalidades indicadas y,
-          en todo caso, durante los plazos legalmente establecidos. Pasado ese plazo, serán suprimidos
-          o anonimizados.
-        </p>
-      </section>
+        <section class="auth-legal-section" id="legitimacion">
+          <h2>3. Legitimación</h2>
+          <p>
+            El tratamiento de sus datos se basa en la ejecución del contrato de prestación de servicios, en el
+            consentimiento que nos ha otorgado y, cuando corresponda, en el cumplimiento de obligaciones legales
+            aplicables.
+          </p>
+        </section>
 
-      <section>
-        <h2>5. Destinatarios y transferencias</h2>
-        <p>
-          Sus datos no serán cedidos a terceros salvo obligación legal o cuando sea necesario para la
-          prestación del servicio (por ejemplo, proveedores de hosting o herramientas de soporte).
-          En su caso, se garantizarán medidas adecuadas de protección.
-        </p>
-      </section>
+        <section class="auth-legal-section" id="conservacion">
+          <h2>4. Conservación de los datos</h2>
+          <p>
+            Conservaremos sus datos personales mientras sea necesario para las finalidades indicadas y, en todo
+            caso, durante los plazos legalmente establecidos. Pasado ese plazo, serán suprimidos o anonimizados.
+          </p>
+        </section>
 
-      <section>
-        <h2>6. Derechos del interesado</h2>
-        <p>
-          Puede ejercer sus derechos de acceso, rectificación, supresión, limitación del tratamiento,
-          oposición y portabilidad, así como el derecho a no ser objeto de decisiones individualizadas
-          automatizadas, dirigiendo una comunicación escrita a [email de contacto] o al domicilio indicado,
-          acompañando copia de su DNI o documento equivalente. También tiene derecho a reclamar ante la
-          autoridad de control competente.
-        </p>
-      </section>
+        <section class="auth-legal-section" id="destinatarios">
+          <h2>5. Destinatarios y transferencias</h2>
+          <p>
+            Sus datos no serán cedidos a terceros salvo obligación legal o cuando sea necesario para la prestación
+            del servicio (por ejemplo, proveedores de hosting o herramientas de soporte). En su caso, se
+            garantizarán medidas adecuadas de protección.
+          </p>
+        </section>
 
-      <section>
-        <h2>7. Seguridad</h2>
-        <p>
-          Se han adoptado medidas técnicas y organizativas adecuadas para garantizar la seguridad e
-          integridad de sus datos y evitar su alteración, pérdida o acceso no autorizado.
-        </p>
-      </section>
+        <section class="auth-legal-section" id="derechos">
+          <h2>6. Derechos del interesado</h2>
+          <p>
+            Puede ejercer sus derechos de acceso, rectificación, supresión, limitación del tratamiento, oposición
+            y portabilidad, así como el derecho a no ser objeto de decisiones individualizadas automatizadas,
+            dirigiendo una comunicación escrita a [email de contacto] o al domicilio indicado, acompañando copia
+            de su DNI o documento equivalente. También tiene derecho a reclamar ante la autoridad de control
+            competente.
+          </p>
+        </section>
 
-      <section>
-        <h2>8. Cambios en esta política</h2>
-        <p>
-          Nos reservamos el derecho a modificar esta política de privacidad para adaptarla a novedades
-          legislativas o jurisprudenciales. Los cambios serán publicados en esta misma dirección. Se
-          recomienda su lectura periódica.
-        </p>
-      </section>
-    </div>
+        <section class="auth-legal-section" id="seguridad">
+          <h2>7. Seguridad</h2>
+          <p>
+            Se han adoptado medidas técnicas y organizativas adecuadas para garantizar la seguridad e integridad
+            de sus datos y evitar su alteración, pérdida o acceso no autorizado.
+          </p>
+        </section>
 
-    <div class="pie-legal">
-      <a routerLink="/login" class="btn-volver">Volver al inicio de sesión</a>
+        <section class="auth-legal-section" id="cambios">
+          <h2>8. Cambios en esta política</h2>
+          <p>
+            Nos reservamos el derecho a modificar esta política de privacidad para adaptarla a novedades
+            legislativas o jurisprudenciales. Los cambios serán publicados en esta misma dirección. Se recomienda
+            su lectura periódica.
+          </p>
+        </section>
+      </div>
+
+      <a routerLink="/login" class="auth-submit">Volver al inicio de sesión</a>
     </div>
   </div>
 </section>

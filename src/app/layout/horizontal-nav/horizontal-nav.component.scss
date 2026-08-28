@@ -36,7 +36,7 @@
 
     &:hover,
     &:focus {
-      color: #0275d8 !important;
+      color: var(--nav-accent, #0275d8) !important;
     }
 
     i {
@@ -60,8 +60,8 @@
 
     &:hover,
     &:focus {
-      color: #0275d8 !important;
-      background: #f3f6fb !important;
+      color: var(--nav-accent, #0275d8) !important;
+      background: var(--nav-hover-bg, #f3f6fb) !important;
     }
 
     i {

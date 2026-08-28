@@ -170,6 +170,7 @@
             [pageSize]="itemsPerPage"
             (pageChange)="pageChange($event)"
           ></ngb-pagination>
+          <span class="records-count" *ngIf="!loading">{{ totalItems }} registros</span>
         </div>
         <div class="col text-right">
           <div ngbDropdown placement="top-right">

@@ -1,5 +1,5 @@
 // ANGULAR
-import { Component, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -10,13 +10,13 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../core/services/auth.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { ToastService } from '../../shared/components/toast/toast.service';
+import { AuthUpdate, AuthUpdatesService } from '../auth-updates.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None,
 })
 export class LoginComponent {
   public loginForm: UntypedFormGroup;
@@ -27,6 +27,7 @@ export class LoginComponent {
   public password: string;
   public checkLockInput: boolean = false;
   public showPassword: boolean = false;
+  public updates: AuthUpdate[] = [];
 
   constructor(
     private _authService: AuthService,
@@ -34,7 +35,8 @@ export class LoginComponent {
     private _router: Router,
     private _route: ActivatedRoute,
     private _toastService: ToastService,
-    private _analyticsService: AnalyticsService
+    private _analyticsService: AnalyticsService,
+    private _authUpdatesService: AuthUpdatesService
   ) {
     const savedCompany = localStorage.getItem('company');
     this.checkLockInput = !!savedCompany;
@@ -43,6 +45,14 @@ export class LoginComponent {
       company: [savedCompany || '', [Validators.required]],
       user: ['', [Validators.required]],
       password: ['', [Validators.required]],
+    });
+  }
+
+  ngOnInit(): void {
+    this._authUpdatesService.getLatest().subscribe({
+      next: (updates) => {
+        this.updates = updates;
+      },
     });
   }
 
