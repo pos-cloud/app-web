@@ -1,8 +1,18 @@
 <section class="container-fluid">
   <div class="card card-large">
     <div class="card-header">
-      <span style="color: #607d8b">{{ title | translate | capitalize }}</span>
-      <div class="pull-right">
+      <span class="datatable-title">{{ title | translate | capitalize }}</span>
+      <button
+        type="button"
+        class="btn btn-light datatable-filter-toggle"
+        (click)="advancedFiltersOpen = !advancedFiltersOpen"
+        [class.is-open]="advancedFiltersOpen"
+      >
+        <i class="fa fa-filter"></i>
+        <span>Filtros avanzados</span>
+        <i class="fa" [ngClass]="advancedFiltersOpen ? 'fa-angle-up' : 'fa-angle-down'"></i>
+      </button>
+      <div class="datatable-header-actions">
         <button
           *ngFor="let button of headerButtons"
           [type]="'button'"
@@ -42,6 +52,11 @@
           [columns]="columns"
           (eventExport)="exportItems()"
         ></app-export-excel>
+      </div>
+    </div>
+    <div class="datatable-filter-bar" [class.is-open]="advancedFiltersOpen">
+      <div class="datatable-filter-fields">
+        <ng-content select="[datatableFilters]"></ng-content>
       </div>
     </div>
     <div class="table-responsive">

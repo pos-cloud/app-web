@@ -16,7 +16,6 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-list-structure',
   templateUrl: './list-article-stock.component.html',
-  styleUrls: ['./list-article-stock.component.scss'],
   standalone: true,
   imports: [DatatableModule, FormsModule, UserBranchSelectComponent],
 })
@@ -87,16 +86,6 @@ export class ListArticleStockComponent implements OnInit, OnDestroy {
       project: null,
       align: 'left',
       required: true,
-    },
-    {
-      name: 'branch.name',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'left',
-      required: false,
     },
     {
       name: 'deposit.name',
