@@ -21,7 +21,6 @@ export { CancellationType } from './entities/cancellation-type.interface';
 export { CashBoxType } from './entities/cash-box-type.interface';
 export { CashBox, CashBoxBalanceItem, CashBoxState, CashBoxSummary } from './entities/cash-box.interface';
 export { Category } from './entities/category.interface';
-export { Claim, ClaimPriority, ClaimType } from './entities/claim.interface';
 export { Classification } from './entities/classification.interface';
 export { CompanyGroup } from './entities/company-group.interface';
 export { Company, CompanyType, GenderType } from './entities/company.interface';

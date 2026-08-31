@@ -35,9 +35,6 @@ import { TransactionService } from '../../core/services/transaction.service';
 import { ImportComponent } from '@shared/components/import/import.component';
 import {
   ApiResponse,
-  Claim,
-  ClaimPriority,
-  ClaimType,
   Company,
   CompanyType,
   EmployeeType,
@@ -46,7 +43,6 @@ import {
   User,
   View,
 } from '@types';
-import { ClaimService } from 'app/core/services/claim.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
@@ -148,7 +144,6 @@ export class PointOfSaleComponent implements OnInit {
     private _originService: OriginService,
     private _configService: ConfigService,
     private _userService: UserService,
-    private _claimService: ClaimService,
     public translatePipe: TranslateMePipe,
     private _toastService: ToastService,
     private _movementOfCashService: MovementOfCashService,
@@ -1713,19 +1708,6 @@ export class PointOfSaleComponent implements OnInit {
           }
         );
     });
-  }
-
-  public saveClaim(titulo: string, message: string): void {
-    this.loading = true;
-
-    let claim: Claim;
-    claim.description = message;
-    claim.name = titulo;
-    claim.priority = ClaimPriority.High;
-    claim.type = ClaimType.Err;
-    claim.listName = 'ERRORES 500';
-
-    this._claimService.saveClaim(claim).subscribe();
   }
 
   public updateTable(): Promise<Table> {

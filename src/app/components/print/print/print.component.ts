@@ -6,7 +6,6 @@ import { MovementOfCancellation } from 'app/components/movement-of-cancellation/
 import { TaxClassification } from 'app/components/tax/tax';
 import { Voucher } from 'app/components/voucher-reader/voucher';
 import { BranchService } from 'app/core/services/branch.service';
-import { ClaimService } from 'app/core/services/claim.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { UserService } from 'app/core/services/user.service';
 import { VoucherService } from 'app/core/services/voucher.service';
@@ -159,7 +158,6 @@ export class PrintComponent implements OnInit {
     public _movementOfCancellation: MovementOfCancellationService,
     public _articleService: ArticleService,
     public alertConfig: NgbAlertConfig,
-    public _claimService: ClaimService,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
     private domSanitizer: DomSanitizer,

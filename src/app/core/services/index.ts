@@ -17,7 +17,6 @@ export * from './cancellation-type.service';
 export * from './cash-box-type.service';
 export * from './cash-box.service';
 export * from './category.service';
-export * from './claim.service';
 export * from './classification.service';
 export * from './clock.service';
 export * from './company-current-account.service';

@@ -189,30 +189,6 @@ export class TransactionService extends ModelService {
       );
   }
 
-  public getVATBook(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/get-vat-book`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('query', query);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public validateElectronicTransactionAR(transaction: Transaction, canceledTransactions): Observable<any> {
     const URL = `${environment.apiv2}/transactions/validate-electronic/${transaction._id}`;
 
