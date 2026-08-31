@@ -10,18 +10,38 @@
     <link rel="icon" type="image/x-icon" href="./assets/img/favicon-pos.ico" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
-    <script
-      defer
-      data-domain="prod.poscloud.ar"
-      src="https://analytics.poscloud.ar/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"
-    ></script>
-
     <script>
       window.plausible =
         window.plausible ||
         function () {
           (window.plausible.q = window.plausible.q || []).push(arguments);
         };
+
+      function loadPlausible() {
+        if (document.querySelector('script[data-domain="prod.poscloud.ar"]')) {
+          return;
+        }
+        var s = document.createElement('script');
+        s.async = true;
+        s.setAttribute('data-domain', 'prod.poscloud.ar');
+        s.src =
+          'https://analytics.poscloud.ar/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js';
+        document.head.appendChild(s);
+      }
+
+      function schedulePlausible() {
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadPlausible, { timeout: 4000 });
+        } else {
+          setTimeout(loadPlausible, 1);
+        }
+      }
+
+      if (document.readyState === 'complete') {
+        schedulePlausible();
+      } else {
+        window.addEventListener('load', schedulePlausible);
+      }
     </script>
 
     <script>
