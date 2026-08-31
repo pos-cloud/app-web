@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { NgbDropdownModule, NgbTypeahead, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbTypeahead,
+  NgbTypeaheadModule,
+  NgbTypeaheadSelectItemEvent,
+} from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject, merge } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
@@ -25,28 +30,30 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   @Input() formSubmitted: boolean = false;
 
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;
+  @ViewChild('typeaheadInput', { static: true }) typeaheadInput: ElementRef<HTMLInputElement>;
 
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
   private controlSubscription: Subscription;
+  /** Último ítem elegido de la lista; el texto escrito no cuenta como valor. */
+  private lastSelected: any = null;
 
   ngOnInit(): void {
-    // Suscribirse a los cambios del FormControl
+    this.lastSelected = this.isSelectedItem(this.control?.value) ? this.control.value : null;
+
     this.controlSubscription = this.control.valueChanges.subscribe((value) => {
-      if (value === '') {
-        this.control.setValue(null, { emitEvent: false });
+      if (this.isSelectedItem(value)) {
+        this.lastSelected = value;
       }
     });
   }
 
   ngOnDestroy(): void {
-    // Desuscribirse al destruir el componente
     if (this.controlSubscription) {
       this.controlSubscription.unsubscribe();
     }
   }
 
-  // Función de búsqueda
   searchFn = (text$: Observable<string>): Observable<readonly any[]> => {
     const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
@@ -61,6 +68,39 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
     );
   };
 
-  // Formatear resultados para mostrar en el input y en la lista de opciones
-  resultFormatter = (item: any): string => item[this.displayField] || '';
+  resultFormatter = (item: any): string => item?.[this.displayField] || '';
+
+  onSelectItem(event: NgbTypeaheadSelectItemEvent): void {
+    this.lastSelected = event.item;
+  }
+
+  onBlur(): void {
+    // Esperar a que el click en una opción dispare selectItem antes de validar.
+    setTimeout(() => this.syncInputWithSelection());
+  }
+
+  private syncInputWithSelection(): void {
+    const value = this.control?.value;
+    if (this.isSelectedItem(value)) {
+      this.lastSelected = value;
+      return;
+    }
+
+    const typed = (this.typeaheadInput?.nativeElement?.value || '').trim();
+    if (!typed) {
+      this.lastSelected = null;
+      this.control.setValue(null);
+      return;
+    }
+
+    // Texto escrito sin elegir un ítem: no se guarda, se restaura la última selección o se limpia.
+    this.control.setValue(this.lastSelected);
+    if (!this.lastSelected && this.typeaheadInput?.nativeElement) {
+      this.typeaheadInput.nativeElement.value = '';
+    }
+  }
+
+  private isSelectedItem(value: any): boolean {
+    return !!value && typeof value === 'object' && value[this.keyField] != null;
+  }
 }

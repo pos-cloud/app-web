@@ -5,11 +5,15 @@
     class="form-control custom-typeahead"
     [ngbTypeahead]="searchFn"
     autocomplete="nope"
+    [editable]="false"
     [resultFormatter]="resultFormatter"
     [inputFormatter]="resultFormatter"
     (focus)="focus$.next('')"
     (click)="click$.next('')"
+    (selectItem)="onSelectItem($event)"
+    (blur)="onBlur()"
     #instance="ngbTypeahead"
+    #typeaheadInput
     [readonly]="readonly"
     [placeholder]="placeholder || ''"
     [ngClass]="{
