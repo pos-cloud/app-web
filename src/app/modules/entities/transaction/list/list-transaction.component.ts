@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -31,7 +31,8 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class ListTransactionComponent implements OnInit, OnDestroy {
   public loading: boolean = false;
-  public title: string = 'transactions';
+  public title: string = 'Transacciones';
+  public showDatatable: boolean = true;
   public exportPermision: boolean = false;
   public sort = { endDate: -1 };
   public user: User | null = null;
@@ -446,7 +447,8 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
     private _authService: AuthService,
     private _printService: PrintService,
     private _toastService: ToastService,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _changeDetectorRef: ChangeDetectorRef
   ) {
     this.initDateFilters();
     this.setTransactionMovement(this._route.snapshot.params['type']);
@@ -456,10 +458,20 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getPermissions();
     this._route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const previousMovement = this.transactionMovement;
       this.setTransactionMovement(params['type']);
+      this.updateTitle(params['type']);
+      this.applyDateFilter();
+      this.applyBranchFilter();
+      this.applyMovementFilter();
+
+      if (previousMovement && previousMovement !== this.transactionMovement) {
+        this.recreateDatatable();
+        return;
+      }
+
       this.applyFilters();
     });
-    this.title = `Transaction ${this._route.snapshot.params['type']}`;
   }
 
   ngOnDestroy(): void {
@@ -640,6 +652,18 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
     } else if (type === 'fondos') {
       this.transactionMovement = TransactionMovement.Money;
     }
+  }
+
+  private updateTitle(typeParam?: string): void {
+    this.title = this.transactionMovement
+      ? `Transacciones ${this.transactionMovement}`
+      : `Transacciones ${typeParam || ''}`.trim();
+  }
+
+  private recreateDatatable(): void {
+    this.showDatatable = false;
+    this._changeDetectorRef.detectChanges();
+    this.showDatatable = true;
   }
 
   private applyMovementFilter(): void {
