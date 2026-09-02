@@ -1,13 +1,23 @@
 import { Injectable } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { User } from '@types';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, merge, Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { AnalyticsService } from 'app/core/services/analytics.service';
 import { AuthService } from 'app/core/services/auth.service';
 import { NavLayout, NavNode } from './navigation.types';
 
 const SIDEBAR_COLLAPSED_KEY = 'nav.sidebarCollapsed';
 const NAV_LAYOUT_KEY = 'nav.layout';
+const TRACKED_MODULES = new Set([
+  'Ventas',
+  'Compras',
+  'Turnos',
+  'Suscripciones',
+  'Stock',
+  'Fondos',
+  'Producción',
+]);
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +39,8 @@ export class NavigationService {
   readonly peekOpen$: Observable<boolean> = this.peekOpenSubject.asObservable();
   readonly layout$: Observable<NavLayout> = this.layoutSubject.asObservable();
 
+  private lastTrackedModulo: string | null = null;
+
   constructor(
     private _authService: AuthService,
     private _router: Router,
@@ -43,9 +55,18 @@ export class NavigationService {
       } else {
         this.menuSubject.next([]);
         this.hideMenuSubject.next(true);
+        this.lastTrackedModulo = null;
       }
       this.applyBodyClasses();
     });
+
+    merge(
+      this.menu$.pipe(map(() => this._router.url)),
+      this._router.events.pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        map((event) => event.urlAfterRedirects)
+      )
+    ).subscribe((url) => this.trackModuleUsage(url));
 
     this._router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
@@ -98,7 +119,6 @@ export class NavigationService {
       return;
     }
     localStorage.setItem(NAV_LAYOUT_KEY, layout);
-    this._analyticsService.trackNavLayout(layout, 'switch');
     window.location.reload();
   }
 
@@ -615,5 +635,62 @@ export class NavigationService {
     }
 
     return menu;
+  }
+
+  private trackModuleUsage(url: string): void {
+    const menu = this.menuSubject.value;
+    if (!menu.length) {
+      return;
+    }
+
+    const path = this.findMenuPath(menu, this.normalizeAnalyticsUrl(url));
+    const top = path[0]?.label;
+    if (!top || !TRACKED_MODULES.has(top)) {
+      return;
+    }
+
+    const modulo = top === 'Ventas' ? path[1]?.label : top;
+    if (!modulo || modulo === this.lastTrackedModulo) {
+      return;
+    }
+
+    this.lastTrackedModulo = modulo;
+    this._analyticsService.trackModule(modulo);
+  }
+
+  private findMenuPath(nodes: NavNode[], url: string): NavNode[] {
+    let best: NavNode[] = [];
+    let bestLen = -1;
+
+    const walk = (list: NavNode[], trail: NavNode[]) => {
+      for (const node of list) {
+        if (node.isDivider) {
+          continue;
+        }
+        const next = [...trail, node];
+        if (node.link && this.analyticsUrlMatches(url, node.link)) {
+          const len = node.link.length;
+          if (len > bestLen) {
+            best = next;
+            bestLen = len;
+          }
+        }
+        if (node.children?.length) {
+          walk(node.children, next);
+        }
+      }
+    };
+
+    walk(nodes, []);
+    return best;
+  }
+
+  private analyticsUrlMatches(url: string, link: string): boolean {
+    const path = '/' + link.replace(/^\//, '');
+    return url === path || url.startsWith(path + '/');
+  }
+
+  private normalizeAnalyticsUrl(url: string): string {
+    return (url || '/').split('?')[0].split('#')[0];
   }
 }
