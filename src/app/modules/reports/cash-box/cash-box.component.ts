@@ -9,6 +9,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { CashBoxService } from 'app/core/services/cash-box.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -66,6 +67,7 @@ export class ReportCashBoxComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private _router: Router,
     private _service: ReportSystemService,
+    private _cashBoxService: CashBoxService,
     private _toastService: ToastService,
     private _modalService: NgbModal,
     private _title: Title
@@ -145,6 +147,34 @@ export class ReportCashBoxComponent implements OnInit, OnDestroy {
             this.header = [];
           },
           complete: () => {
+            this.loading = false;
+          },
+        })
+    );
+  }
+
+  public ajusteCashBox(): void {
+    if (!this.cashBoxId || this.loading) {
+      return;
+    }
+
+    this.loading = true;
+
+    this.subscription.add(
+      this._cashBoxService
+        .ajusteCashBox(this.cashBoxId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            this._toastService.showToast(result);
+            if (result?.status === 200) {
+              this.getReport();
+              return;
+            }
+            this.loading = false;
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
             this.loading = false;
           },
         })

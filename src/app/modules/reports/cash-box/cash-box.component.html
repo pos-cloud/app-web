@@ -18,6 +18,9 @@
           <i class="fa fa-refresh" [ngClass]="{ 'fa-spin': loading }"></i
           ><span>{{ 'refresh' | translate | capitalize }}</span>
         </button>
+        <button type="button" class="btn btn-light" (click)="ajusteCashBox()" [disabled]="loading">
+          <i class="fa fa-adjust"></i><span>Ajuste</span>
+        </button>
       </div>
     </div>
     <div class="table-responsive">

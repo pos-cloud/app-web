@@ -152,6 +152,31 @@ export class CashBoxService extends ModelService {
       );
   }
 
+  public ajusteCashBox(cashBoxId: string): Observable<any> {
+    const URL = `${this.URL}/ajuste-cash-box`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(
+        URL,
+        { cashBoxId },
+        {
+          headers: headers,
+        }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
   public getClosingCashBox(_id: string): Observable<any> {
     const URL = `${environment.api}/api/get-closing-cash-box`;
 
