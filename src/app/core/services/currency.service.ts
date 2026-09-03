@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { Currency } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
 import { AuthService } from './auth.service';
@@ -23,30 +22,6 @@ export class CurrencyService extends ModelService {
     );
   }
 
-  public getCurrency(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/currency`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public getCurrencies(query?: string): Observable<any> {
     const URL = `${environment.apiv2}/currencies`;
 
@@ -58,75 +33,6 @@ export class CurrencyService extends ModelService {
 
     return this._http
       .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public saveCurrency(currency: Currency): Observable<any> {
-    const URL = `${environment.api}/api/currency`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, currency, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public updateCurrency(currency: Currency): Observable<any> {
-    const URL = `${environment.api}/api/currency`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', currency._id);
-
-    return this._http
-      .put(URL, currency, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public deleteCurrency(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/currency`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .delete(URL, {
         headers: headers,
         params: params,
       })

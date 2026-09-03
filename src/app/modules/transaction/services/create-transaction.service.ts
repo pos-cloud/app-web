@@ -4,15 +4,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ApiResponse, Branch, Company, Deposit, User, View } from '@types';
 
+import { CurrentAccount, StockMovement, TransactionMovement, TransactionType } from '@types';
 import { Config } from 'app/app.config';
 import { CashBox, CashBoxState } from 'app/components/cash-box/cash-box';
 import { Origin } from 'app/components/origin/origin';
-import {
-  CurrentAccount,
-  StockMovement,
-  TransactionMovement,
-  TransactionType,
-} from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 
 import { BranchService } from 'app/core/services/branch.service';
@@ -22,13 +17,13 @@ import { OriginService } from 'app/core/services/origin.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 
-import { CashBoxComponent } from 'app/components/cash-box/cash-box/cash-box.component';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { SelectOriginComponent } from 'app/modules/transaction/components/select-origin/select-origin.component';
-import { ToastService } from 'app/shared/components/toast/toast.service';
 import { SelectBranchComponent } from 'app/shared/components/select-branch/select-branch.component';
 import { SelectDepositComponent } from 'app/shared/components/select-deposit/select-deposit.component';
 import { SelectEmployeeComponent } from 'app/shared/components/select-employee/select-employee.component';
+import { ToastService } from 'app/shared/components/toast/toast.service';
+import { AddCashBoxComponent } from '../views/cash-box/add-cash-box.component';
 
 /**
  * Datos del contexto donde se dispara el alta. El servicio no conoce al componente:
@@ -277,7 +272,10 @@ export class CreateTransactionService {
     }
     const depositOrigin = await this.getDeposits({ _id: { $oid: result.origin }, operationType: { $ne: 'D' } });
     tx.depositOrigin = depositOrigin[0];
-    const branchOrigin = await this.getBranches({ _id: { $oid: depositOrigin[0].branch }, operationType: { $ne: 'D' } });
+    const branchOrigin = await this.getBranches({
+      _id: { $oid: depositOrigin[0].branch },
+      operationType: { $ne: 'D' },
+    });
     tx.branchOrigin = branchOrigin[0];
     const depositDestination = await this.getDeposits({
       _id: { $oid: result.destination },
@@ -364,7 +362,9 @@ export class CreateTransactionService {
     }
 
     const route =
-      ctx.posType === 'cuentas-corrientes' ? '/pos/mostrador/editar-transaccion' : '/pos/' + ctx.posType + '/editar-transaccion';
+      ctx.posType === 'cuentas-corrientes'
+        ? '/pos/mostrador/editar-transaccion'
+        : '/pos/' + ctx.posType + '/editar-transaccion';
     const queryParams: Record<string, any> = { transactionId: tx._id, returnURL };
     if (tx.type.automaticCreation && ctx.posType !== 'resto') {
       queryParams.automaticCreation = tx.type._id;
@@ -423,7 +423,7 @@ export class CreateTransactionService {
   }
 
   private openCashBox(tx: Transaction): Promise<void> {
-    const ref = this._modalService.open(CashBoxComponent, { size: 'lg', backdrop: 'static' });
+    const ref = this._modalService.open(AddCashBoxComponent, { size: 'lg', backdrop: 'static' });
     ref.componentInstance.transactionType = tx.type;
     return ref.result.then(
       () => {},

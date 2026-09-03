@@ -27,7 +27,6 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
-import { CashBoxComponent } from './components/cash-box/cash-box/cash-box.component';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { ComponentsModule } from './components/components.module';
@@ -108,7 +107,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
-    CashBoxComponent,
     MovementOfCancellationComponent,
     CurrentAccountDetailsComponent,
     ListArticlesPosComponent,
