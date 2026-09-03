@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
 import { ArticleService } from 'app/core/services/article.service';
 import { Observable, of, Subject, Subscription } from 'rxjs';
@@ -24,10 +24,13 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
   @Input() initialLimit = 10;
   @Input() resultLimit = 20;
 
+  @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
+
   isOpen = false;
   searching = false;
   searchTerm = '';
   filteredItems: any[] = [];
+  highlightedIndex = -1;
   emptyMessage = 'No se encontraron resultados';
   uniqueId = 'article-searchable-dropdown-' + Math.random().toString(36).substr(2, 9);
 
@@ -39,9 +42,16 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
   constructor(private articleService: ArticleService) {}
 
   ngOnInit(): void {
+    this.searchTerm = this.formatArticleLabel(this.control?.value);
+
     this.controlSubscription = this.control.valueChanges.subscribe((value) => {
       if (value === '') {
         this.control.setValue(null, { emitEvent: false });
+        value = null;
+      }
+
+      if (!this.isOpen) {
+        this.searchTerm = this.formatArticleLabel(value);
       }
     });
 
@@ -53,9 +63,11 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (items) => {
           this.filteredItems = items;
+          this.highlightedIndex = items.length ? 0 : -1;
         },
         error: () => {
           this.filteredItems = [];
+          this.highlightedIndex = -1;
           this.searching = false;
         },
       });
@@ -75,44 +87,106 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
     return this.control?.invalid && (this.showInvalidOnlyAfterSubmit ? this.formSubmitted : this.control?.touched);
   }
 
-  getSelectedDisplayText(): string {
-    const value = this.control?.value;
-    if (!value) {
-      return this.placeholder || '';
-    }
-    return this.formatArticleLabel(value);
-  }
-
   hasSelection(): boolean {
     return !!this.control?.value;
+  }
+
+  onInputFocus(event: FocusEvent): void {
+    if (this.disabled) {
+      return;
+    }
+
+    this.openDropdown();
+    const input = event.target as HTMLInputElement;
+    queueMicrotask(() => input.select());
+  }
+
+  onInputClick(): void {
+    if (this.disabled) {
+      return;
+    }
+
+    this.openDropdown();
   }
 
   toggleDropdown(): void {
     if (this.disabled) {
       return;
     }
-    this.isOpen = !this.isOpen;
+
     if (this.isOpen) {
-      this.searchTerm = '';
-      this.control.markAsTouched();
-      this.requestSearch('');
+      this.closeDropdown();
+      return;
     }
+
+    this.openDropdown();
+    this.searchInput?.nativeElement?.focus();
   }
 
   closeDropdown(): void {
+    if (!this.isOpen) {
+      return;
+    }
+
     this.isOpen = false;
-    this.searchTerm = '';
     this.searching = false;
+    this.highlightedIndex = -1;
+
+    if (!this.searchTerm.trim()) {
+      this.control.setValue(null);
+      this.searchTerm = '';
+      return;
+    }
+
+    this.searchTerm = this.formatArticleLabel(this.control?.value);
   }
 
   onSearchChange(): void {
+    if (!this.isOpen) {
+      this.openDropdown();
+    }
+
     this.requestSearch(this.searchTerm);
+  }
+
+  onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.closeDropdown();
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (!this.isOpen) {
+        this.openDropdown();
+        return;
+      }
+      this.moveHighlight(1);
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.moveHighlight(-1);
+      return;
+    }
+
+    if (event.key === 'Enter' && this.isOpen && this.highlightedIndex >= 0) {
+      event.preventDefault();
+      const item = this.filteredItems[this.highlightedIndex];
+      if (item) {
+        this.selectItem(item);
+      }
+    }
   }
 
   selectItem(item: any): void {
     this.control.setValue(item);
     this.control.markAsTouched();
-    this.closeDropdown();
+    this.searchTerm = this.formatArticleLabel(item);
+    this.isOpen = false;
+    this.searching = false;
+    this.highlightedIndex = -1;
   }
 
   isSelected(item: any): boolean {
@@ -151,7 +225,39 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
     }
   }
 
+  private openDropdown(): void {
+    if (this.isOpen || this.disabled) {
+      return;
+    }
+
+    this.isOpen = true;
+    this.control.markAsTouched();
+    this.requestSearch('');
+  }
+
+  private moveHighlight(direction: number): void {
+    if (!this.filteredItems.length) {
+      this.highlightedIndex = -1;
+      return;
+    }
+
+    const lastIndex = this.filteredItems.length - 1;
+    let next = this.highlightedIndex + direction;
+
+    if (next < 0) {
+      next = lastIndex;
+    } else if (next > lastIndex) {
+      next = 0;
+    }
+
+    this.highlightedIndex = next;
+  }
+
   private formatArticleLabel(article: any): string {
+    if (!article || typeof article !== 'object') {
+      return '';
+    }
+
     const description = article?.description || '';
     const code = article?.code ? `${article.code}` : '';
     if (code && description) {

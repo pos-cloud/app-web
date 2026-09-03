@@ -1,34 +1,38 @@
 <div class="article-searchable-dropdown" [id]="uniqueId">
   <div
     class="article-searchable-dropdown__trigger"
-    (click)="toggleDropdown()"
     [class.disabled]="disabled"
     [class.is-invalid]="isInvalid"
+    [class.is-open]="isOpen"
   >
-    <div class="article-searchable-dropdown__selected">
-      <div class="article-searchable-dropdown__selected-text" [class.placeholder]="!hasSelection()">
-        {{ getSelectedDisplayText() }}
-      </div>
-    </div>
-    <div class="article-searchable-dropdown__arrow">
+    <input
+      #searchInput
+      type="text"
+      class="article-searchable-dropdown__input"
+      [(ngModel)]="searchTerm"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="onSearchChange()"
+      (focus)="onInputFocus($event)"
+      (click)="onInputClick()"
+      (keydown)="onKeydown($event)"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      autocomplete="off"
+    />
+    <button
+      type="button"
+      class="article-searchable-dropdown__arrow"
+      (mousedown)="$event.preventDefault()"
+      (click)="toggleDropdown()"
+      [disabled]="disabled"
+      tabindex="-1"
+      aria-label="Abrir listado de artículos"
+    >
       <i class="fa" [ngClass]="{ 'fa-chevron-down': !isOpen, 'fa-chevron-up': isOpen }"></i>
-    </div>
+    </button>
   </div>
 
   <div *ngIf="isOpen" class="article-searchable-dropdown__panel" [style.max-height]="maxHeight">
-    <div class="article-searchable-dropdown__search">
-      <i class="fa fa-search article-searchable-dropdown__search-icon"></i>
-      <input
-        type="text"
-        class="article-searchable-dropdown__search-input"
-        [(ngModel)]="searchTerm"
-        [ngModelOptions]="{ standalone: true }"
-        (ngModelChange)="onSearchChange()"
-        [placeholder]="searchPlaceholder"
-        (click)="$event.stopPropagation()"
-      />
-    </div>
-
     <div class="article-searchable-dropdown__items">
       <div *ngIf="searching" class="article-searchable-dropdown__empty">
         <i class="fa fa-spinner fa-spin"></i> Buscando...
@@ -39,10 +43,12 @@
       </div>
 
       <div
-        *ngFor="let item of filteredItems; trackBy: trackByItem"
+        *ngFor="let item of filteredItems; let i = index; trackBy: trackByItem"
         class="article-searchable-dropdown__item"
         [class.selected]="isSelected(item)"
-        (click)="selectItem(item); $event.stopPropagation()"
+        [class.highlighted]="highlightedIndex === i"
+        (mousedown)="$event.preventDefault()"
+        (click)="selectItem(item)"
       >
         <div class="article-searchable-dropdown__item-line">
           <span class="article-searchable-dropdown__item-desc">{{ getItemPrimary(item) }}</span>
