@@ -1,39 +1,23 @@
-import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '@core/services/auth.service';
 import { MovementOfCancellationService } from '@core/services/movement-of-cancellation.service';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateModule } from '@ngx-translate/core';
-import { IAttribute } from '@types';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IAttribute, IButton } from '@types';
 import { Config } from 'app/app.config';
+import { DatatableComponent } from 'app/components/datatable/datatable.component';
+import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
-import { ColumnsConfigComponent } from 'app/shared/components/columns-config/columns-config.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
-import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
-import { ExportExcelModule } from 'app/shared/components/export-excel/export-excel.module';
-import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
-import { ToastService } from 'app/shared/components/toast/toast.service';
-import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
-import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-list-movement-of-cancellation',
   templateUrl: './list-movements-of-cancellation.component.html',
+  styleUrls: ['./list-movements-of-cancellation.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NgbModule,
-    ProgressbarModule,
-    TranslateModule,
-    ExportExcelModule,
-    DateTimePickerComponent,
-    ColumnsConfigComponent,
-  ],
-  encapsulation: ViewEncapsulation.None,
+  imports: [CommonModule, FormsModule, DatatableModule, DateTimePickerComponent],
 })
 export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
   public title: string = 'Movimientos de Cancelaciones';
@@ -316,53 +300,112 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
     },
   ];
 
-  public items: any[] = [];
-  public totalItems: number = 0;
-  public itemsPerPage: number = 10;
-  public currentPage: number = 1;
-  public filters: any = {};
-  public timezone: string = '-03:00';
-
-  // Filtros de fecha por defecto
-  public startDate: string;
-  public endDate: string;
+  public showDatatable: boolean = true;
+  public exportPermision: boolean = true;
   public dateSelect: string = 'transactionOrigin.endDate2';
+  public startDate: string = '';
+  public endDate: string = '';
+  public timezone: string = '-03:00';
+  public transactionMovement: string;
   public stateSelectOrigin: string = 'Cerrado';
   public stateSelectDestination: string = 'Cerrado';
-  public transactionMovement: string;
-  public pathLocation: string[];
-  private identifier: string = 'list-movements-of-cancellation';
-  public export;
-
-  private subscription: Subscription = new Subscription();
-  private roundNumberPipe: RoundNumberPipe = new RoundNumberPipe();
-  private currencyPipe: CurrencyPipe = new CurrencyPipe('es-Ar');
-  private dateFormatPipe: DateFormatPipe = new DateFormatPipe();
-  @ViewChild(ExportExcelComponent) exportExcelComponent: ExportExcelComponent;
+  public headerButtons: IButton[] = [
+    {
+      title: 'refresh',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.refresh()`,
+    },
+  ];
+  public rowButtons: IButton[] = [
+    {
+      title: 'view',
+      class: 'btn btn-success btn-sm',
+      icon: 'fa fa-eye',
+      click: `this.emitEvent('view', item, null)`,
+    },
+  ];
+  private readonly dateFilterColumns = [
+    'transactionOrigin.creationDate2',
+    'transactionOrigin.updateDate2',
+    'transactionOrigin.endDate2',
+    'transactionDestination.creationDate2',
+    'transactionDestination.updateDate2',
+    'transactionDestination.endDate2',
+  ];
   private destroy$ = new Subject<void>();
+
+  @ViewChild(DatatableComponent) datatableComponent!: DatatableComponent;
 
   constructor(
     public _service: MovementOfCancellationService,
     private _router: Router,
     private _route: ActivatedRoute,
-    private _toastService: ToastService,
     private _modalService: NgbModal,
-    private _authService: AuthService
+    private _changeDetectorRef: ChangeDetectorRef
   ) {
-    this.setDefaultDates();
+    this.initDateFilters();
+    this.setTransactionMovement(this._route.snapshot.params['type']);
+    this.updateTitle();
+    this.applyMovementFilter();
+    this.applyStateFilter();
+  }
 
-    // Inicializar filtros (igual que ListTransactionsComponent)
-    this.filters = new Array();
-    for (let field of this.columns) {
-      if (field.defaultFilter) {
-        this.filters[field.name] = field.defaultFilter;
-      } else {
-        this.filters[field.name] = '';
+  ngOnInit(): void {
+    this._route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const previousMovement = this.transactionMovement;
+      this.setTransactionMovement(params['type']);
+      this.updateTitle();
+      this.applyDateFilter();
+      this.applyMovementFilter();
+      this.applyStateFilter();
+
+      if (previousMovement && previousMovement !== this.transactionMovement) {
+        this.recreateDatatable();
+        return;
       }
+
+      this.applyFilters();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  public emitEvent(event: { op: string; obj: any }): void {
+    if (event.op === 'view' || event.op === 'on-click') {
+      this.openTransaction(event.obj);
     }
   }
 
-  private setDefaultDates(): void {
+  public refresh(): void {
+    this.datatableComponent.refresh();
+  }
+
+  public onDatePickerChange(): void {
+    this.applyFilters();
+  }
+
+  public applyFilters(): void {
+    this.applyDateFilter();
+    this.applyMovementFilter();
+    this.applyStateFilter();
+
+    if (!this.datatableComponent) {
+      return;
+    }
+
+    this.datatableComponent.currentPage = 1;
+    this.datatableComponent.refresh();
+  }
+
+  private initDateFilters(): void {
+    if (Config.timezone && Config.timezone !== '') {
+      this.timezone = Config.timezone.split('UTC')[1];
+    }
+
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
@@ -371,363 +414,142 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
     const endOfToday = new Date();
     endOfToday.setHours(23, 59, 59, 999);
     this.endDate = endOfToday.toISOString();
+
+    this.applyDateFilter();
   }
 
-  ngOnInit(): void {
-    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
-      this.export = true;
-    });
-    if (Config.timezone && Config.timezone !== '') {
-      this.timezone = Config.timezone.split('UTC')[1];
-    }
+  private applyDateFilter(): void {
+    const rangeFilter = `{ "$gte": { "$date": "${this.toDateStart(this.startDate)}" }, "$lte": { "$date": "${this.toDateEnd(this.endDate)}" } }`;
 
-    // Cargar visibilidad de columnas guardada
-    this.loadColumnVisibility();
+    this.columns.forEach((column) => {
+      if (!this.dateFilterColumns.includes(column.name)) {
+        return;
+      }
 
-    // Obtener transactionMovement desde el parámetro de ruta
-    this._route.params.subscribe((params) => {
-      if (params['type']) {
-        let type = params['type'].toLowerCase();
-        if (type === 'produccion' || type === 'production') {
-          this.transactionMovement = 'Producción';
-        } else if (type === 'venta') {
-          this.transactionMovement = 'Venta';
-        } else if (type === 'compra') {
-          this.transactionMovement = 'Compra';
-        } else if (type === 'stock') {
-          this.transactionMovement = 'Stock';
-        } else if (type === 'fondos') {
-          this.transactionMovement = 'Fondos';
-        } else {
-          this.transactionMovement = type.charAt(0).toUpperCase() + type.slice(1);
+      if (column.name === this.dateSelect) {
+        column.defaultFilter = rangeFilter;
+        if (this.datatableComponent?.filters) {
+          this.datatableComponent.filters[column.name] = rangeFilter;
         }
       } else {
-        // Fallback: obtener desde la URL (igual que ListTransactionsComponent)
-        this.pathLocation = this._router.url.split('/');
-        let listType = this.pathLocation[2]
-          ? this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1)
-          : '';
-        if (listType === 'Compras') {
-          this.transactionMovement = 'Compra';
-        } else if (listType === 'Ventas') {
-          this.transactionMovement = 'Venta';
-        } else if (listType === 'Stock') {
-          this.transactionMovement = 'Stock';
-        } else if (listType === 'Fondos') {
-          this.transactionMovement = 'Fondos';
-        } else if (listType === 'Production') {
-          this.transactionMovement = 'Producción';
+        delete column.defaultFilter;
+        if (this.datatableComponent?.filters) {
+          delete this.datatableComponent.filters[column.name];
         }
       }
-      this.getItems();
     });
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  public getItems(): void {
-    this.loading = true;
-
-    // FILTRAMOS LA CONSULTA
-    let match = `{`;
-
-    for (let i = 0; i < this.columns.length; i++) {
-      if (this.columns[i].visible || this.columns[i].required) {
-        let value = this.filters[this.columns[i].name];
-
-        if (value && value != '') {
-          if (this.columns[i].defaultFilter) {
-            match += `"${this.columns[i].name}": ${this.columns[i].defaultFilter}`;
-          } else {
-            if (this.columns[i].name.includes('_id')) {
-              match += `"${this.columns[i].name}": { "$oid": "${value}" }`;
-            } else {
-              if (value.includes('$')) {
-                match += `"${this.columns[i].name}": { ${value} }`;
-              } else {
-                match += `"${this.columns[i].name}": { "$regex": "${value}", "$options": "i"}`;
-              }
-            }
-          }
-          if (i < this.columns.length - 1) {
-            match += ',';
-          }
-        }
-      }
-    }
-
-    if (match.charAt(match.length - 1) === '}') match += ',';
-    match += `"transactionOrigin.type.transactionMovement": "${this.transactionMovement}",`;
-    match += `"transactionOrigin.state": "${this.stateSelectOrigin}",`;
-    match += `"transactionDestination.state": "${this.stateSelectDestination}",`;
-
-    // Convertir fechas ISO a formato para la consulta
-    const startDateStr = this.startDate
-      ? new Date(this.startDate).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0];
-    const endDateStr = this.endDate
-      ? new Date(this.endDate).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0];
-
-    match += `"${this.dateSelect}" : {
-                    "$gte" : { "$date" : "${startDateStr}T00:00:00${this.timezone}" },
-                    "$lte" : { "$date" : "${endDateStr}T23:59:59${this.timezone}" }
-                }`;
-
-    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
-
-    match += `}`;
-
-    match = JSON.parse(match);
-
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = `{`;
-    let j = 0;
-
-    for (let i = 0; i < this.columns.length; i++) {
-      if (this.columns[i].visible || this.columns[i].required) {
-        if (j > 0) {
-          project += `,`;
-        }
-        j++;
-
-        if (this.columns[i].project === null || this.columns[i].project === undefined) {
-          project += `"${this.columns[i].name}": 1`;
-        } else {
-          project += `"${this.columns[i].name}": ${this.columns[i].project}`;
-        }
-      }
-    }
-    project += `}`;
-
-    project = JSON.parse(project);
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {
-      _id: null,
-      count: { $sum: 1 },
-      items: { $push: '$$ROOT' },
-    };
-
-    let page = 0;
-
-    if (this.currentPage != 0) {
-      page = this.currentPage - 1;
-    }
-    let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
-    let limit = this.itemsPerPage;
-
-    this.subscription.add(
-      this._service
-        .getMovementsOfCancellations(
-          project, // PROJECT
-          match, // MATCH
-          this.sort, // SORT
-          group, // GROUP
-          limit, // LIMIT
-          skip // SKIP
-        )
-        .subscribe(
-          (result: any) => {
-            this.loading = false;
-            const data = this.parseListResult(result);
-            if (data) {
-              if (this.itemsPerPage === 0) {
-                this.exportExcelComponent.items = data.items;
-                this.exportExcelComponent.export();
-                this.itemsPerPage = 10;
-                this.getItems();
-              } else {
-                this.items = data.items;
-                this.totalItems = data.count;
-              }
-            } else {
-              this.items = new Array();
-              this.totalItems = 0;
-            }
-          },
-          (error: any) => {
-            this.loading = false;
-            this.totalItems = 0;
-            this._toastService.showToast(error);
-          }
-        )
-    );
-  }
-
-  private parseListResult(result: any): { items: any[]; count: number } | null {
-    const group = result?.result?.[0] ?? result?.[0];
-    if (group?.items) {
-      return { items: group.items, count: group.count ?? group.items.length };
-    }
-    return null;
-  }
-
-  public getValue(item: any, column: IAttribute): any {
-    let val: string = 'item';
-    let exists: boolean = true;
-    let value: any = '';
-
-    for (let a of column.name.split('.')) {
-      val += '.' + a;
-      if (exists && !eval(val)) {
-        exists = false;
-      }
-    }
-
-    if (exists) {
-      switch (column.datatype) {
-        case 'number':
-          value = this.roundNumberPipe.transform(eval(val));
-          break;
-        case 'currency':
-          value = this.currencyPipe.transform(
-            this.roundNumberPipe.transform(eval(val)),
-            'USD',
-            'symbol-narrow',
-            '1.2-2'
-          );
-          break;
-        case 'percent':
-          value = this.roundNumberPipe.transform(eval(val)) + '%';
-          break;
-        case 'date':
-          value = this.dateFormatPipe.transform(eval(val), 'DD/MM/YYYY');
-          break;
-        default:
-          value = eval(val);
-          break;
-      }
-    }
-    return value;
-  }
-
-  public pageChange(page: number): void {
-    this.currentPage = page;
-    this.getItems();
-  }
-
-  public onItemsPerPageChange(): void {
-    this.currentPage = 1; // Resetear a la primera página cuando cambia itemsPerPage
-    this.getItems();
-  }
-
-  public exportItems(): void {
-    this.loading = true;
-    this.itemsPerPage = 0; // Para obtener todos los items
-    this.getItems();
-  }
-
-  public orderBy(columnName: string): void {
-    if (this.sort[columnName]) {
-      this.sort[columnName] = this.sort[columnName] * -1;
-    } else {
-      this.sort = {} as any;
-      this.sort[columnName] = 1;
-    }
-    this.getItems();
-  }
-
-  public getColumnsVisibles(): number {
-    return this.columns.filter((column) => column.visible).length;
-  }
-
-  public openModal(op: string, obj: any): void {
-    if (!obj || !obj.transactionOrigin || !obj.transactionOrigin._id) {
+  private applyMovementFilter(): void {
+    const movementColumn = this.columns.find((column) => column.name === 'transactionOrigin.type.transactionMovement');
+    if (!movementColumn || !this.transactionMovement) {
       return;
     }
 
-    if (op === 'view') {
-      const modalRef = this._modalService.open(ViewTransactionComponent, {
-        size: 'lg',
-        backdrop: 'static',
-      });
-      modalRef.componentInstance.transactionId = obj.transactionOrigin._id;
-      modalRef.componentInstance.readonly = true;
+    const movementFilter = `"${this.transactionMovement}"`;
+    movementColumn.defaultFilter = movementFilter;
+    if (this.datatableComponent?.filters) {
+      this.datatableComponent.filters['transactionOrigin.type.transactionMovement'] = movementFilter;
     }
   }
 
-  public refresh(): void {
-    this.getItems();
+  private applyStateFilter(): void {
+    this.setColumnFilter('transactionOrigin.state', this.stateSelectOrigin);
+    this.setColumnFilter('transactionDestination.state', this.stateSelectDestination);
   }
 
-  public onColumnsChange(updatedColumns: IAttribute[]): void {
-    // Actualizar las columnas manteniendo la referencia
-    this.columns.length = 0;
-    this.columns.push(...updatedColumns);
-    // Guardar el orden de las columnas
-    this.saveColumnOrder();
-    this.getItems();
-  }
+  private setColumnFilter(columnName: string, value: string): void {
+    const column = this.columns.find((item) => item.name === columnName);
+    if (!column) {
+      return;
+    }
 
-  public loadColumnVisibility(): void {
-    const storedColumnVisibility = JSON.parse(localStorage.getItem(`${this.identifier}_columnVisibility`) || '{}');
-
-    this.columns.forEach((column) => {
-      if (storedColumnVisibility[column.name] !== undefined) {
-        column.visible = storedColumnVisibility[column.name];
+    if (value) {
+      const filter = `"${value}"`;
+      column.defaultFilter = filter;
+      if (this.datatableComponent?.filters) {
+        this.datatableComponent.filters[columnName] = filter;
       }
-    });
-
-    // Cargar el orden de las columnas guardado
-    this.loadColumnOrder();
-  }
-
-  public saveColumnVisibility(): void {
-    // Guardar solo la visibilidad de las columnas en localStorage
-    const columnVisibility = {};
-    this.columns.forEach((column) => {
-      columnVisibility[column.name] = column.visible;
-    });
-    localStorage.setItem(`${this.identifier}_columnVisibility`, JSON.stringify(columnVisibility));
-    this.getItems();
-  }
-
-  private loadColumnOrder(): void {
-    const storedOrder = JSON.parse(localStorage.getItem(`${this.identifier}_columnOrder`) || '[]');
-
-    if (storedOrder.length > 0) {
-      // Crear un mapa de columnas por nombre para acceso rápido
-      const columnMap = new Map(this.columns.map((col) => [col.name, col]));
-
-      // Crear el nuevo orden basado en el orden guardado
-      const orderedColumns: IAttribute[] = [];
-      const usedColumns = new Set<string>();
-
-      // Primero agregar las columnas en el orden guardado
-      storedOrder.forEach((columnName: string) => {
-        const column = columnMap.get(columnName);
-        if (column) {
-          orderedColumns.push(column);
-          usedColumns.add(columnName);
-        }
-      });
-
-      // Agregar las columnas que no estaban en el orden guardado (columnas nuevas)
-      this.columns.forEach((column) => {
-        if (!usedColumns.has(column.name)) {
-          orderedColumns.push(column);
-        }
-      });
-
-      // Actualizar el array de columnas con el orden cargado
-      this.columns.length = 0;
-      this.columns.push(...orderedColumns);
     } else {
-      // Si no hay orden guardado, ordenar poniendo primero las columnas visibles
-      this.columns.sort((a, b) => {
-        if (a.visible && !b.visible) return -1;
-        if (!a.visible && b.visible) return 1;
-        return 0;
-      });
+      delete column.defaultFilter;
+      if (this.datatableComponent?.filters) {
+        delete this.datatableComponent.filters[columnName];
+      }
     }
   }
 
-  private saveColumnOrder(): void {
-    // Guardar el orden como un array de nombres de columnas
-    const columnOrder = this.columns.map((column) => column.name);
-    localStorage.setItem(`${this.identifier}_columnOrder`, JSON.stringify(columnOrder));
+  private updateTitle(): void {
+    this.title = this.transactionMovement
+      ? `Movimientos de Cancelaciones de ${this.transactionMovement}`
+      : 'Movimientos de Cancelaciones';
+  }
+
+  private setTransactionMovement(typeParam?: string): void {
+    if (typeParam) {
+      const type = typeParam.toLowerCase();
+      if (type === 'produccion' || type === 'production') {
+        this.transactionMovement = 'Producción';
+      } else if (type === 'venta') {
+        this.transactionMovement = 'Venta';
+      } else if (type === 'compra') {
+        this.transactionMovement = 'Compra';
+      } else if (type === 'stock') {
+        this.transactionMovement = 'Stock';
+      } else if (type === 'fondos') {
+        this.transactionMovement = 'Fondos';
+      } else {
+        this.transactionMovement = type.charAt(0).toUpperCase() + type.slice(1);
+      }
+      return;
+    }
+
+    const pathLocation = this._router.url.split('/');
+    const listType = pathLocation[2] ? pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1) : '';
+    if (listType === 'Compras') {
+      this.transactionMovement = 'Compra';
+    } else if (listType === 'Ventas') {
+      this.transactionMovement = 'Venta';
+    } else if (listType === 'Stock') {
+      this.transactionMovement = 'Stock';
+    } else if (listType === 'Fondos') {
+      this.transactionMovement = 'Fondos';
+    } else if (listType === 'Production') {
+      this.transactionMovement = 'Producción';
+    }
+  }
+
+  private recreateDatatable(): void {
+    this.showDatatable = false;
+    this._changeDetectorRef.detectChanges();
+    this.showDatatable = true;
+  }
+
+  private toDateStart(value: string): string {
+    return `${this.formatDateYmd(value)}T00:00:00${this.timezone}`;
+  }
+
+  private toDateEnd(value: string): string {
+    return `${this.formatDateYmd(value)}T23:59:59${this.timezone}`;
+  }
+
+  private formatDateYmd(value: string): string {
+    const date = value ? new Date(value) : new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private openTransaction(obj: any): void {
+    if (!obj?.transactionOrigin?._id) {
+      return;
+    }
+
+    const modalRef = this._modalService.open(ViewTransactionComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.transactionId = obj.transactionOrigin._id;
+    modalRef.componentInstance.readonly = true;
   }
 }

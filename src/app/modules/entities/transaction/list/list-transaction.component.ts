@@ -656,8 +656,8 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
 
   private updateTitle(typeParam?: string): void {
     this.title = this.transactionMovement
-      ? `Transacciones ${this.transactionMovement}`
-      : `Transacciones ${typeParam || ''}`.trim();
+      ? `Transacciones de ${this.transactionMovement}`
+      : 'Transacciones';
   }
 
   private recreateDatatable(): void {

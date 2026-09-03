@@ -22,7 +22,15 @@
         >
           <i [class]="button.icon"></i><span>{{ button.title | translate | capitalize }}</span>
         </button>
-        <div class="columns-area float-right" ngbDropdown>
+        <app-export-excel
+          *ngIf="exportPermision"
+          #exportExcelComponent
+          [title]="title"
+          [loading]="loading"
+          [columns]="columns"
+          (eventExport)="exportItems()"
+        ></app-export-excel>
+        <div class="columns-area" ngbDropdown>
           <button
             class="btn btn-light"
             type="button"
@@ -41,17 +49,6 @@
             ></app-columns-config>
           </div>
         </div>
-        <!-- <span>|</span>
-        <button class="btn btn-light" (click)="refresh()" [disabled]="loading"><i
-            class="fa fa-refresh"></i><span>Actualizar</span></button> -->
-        <app-export-excel
-          *ngIf="exportPermision"
-          #exportExcelComponent
-          [title]="title"
-          [loading]="loading"
-          [columns]="columns"
-          (eventExport)="exportItems()"
-        ></app-export-excel>
       </div>
     </div>
     <div class="datatable-filter-bar" [class.is-open]="advancedFiltersOpen">
