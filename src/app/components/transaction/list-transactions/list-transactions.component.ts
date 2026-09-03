@@ -14,10 +14,11 @@ import { UserService } from '@core/services/user.service';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, PrintType, Printer } from '@types';
-import { User } from '@types';
+import { ApiResponse, PrintType, Printer, TransactionMovement, TransactionType, User } from '@types';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
+import { ExportIvaArcaComponent } from 'app/modules/transaction/components/export-iva-arca/export-iva-arca.component';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import 'moment/locale/es';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
@@ -25,9 +26,6 @@ import { takeUntil } from 'rxjs/operators';
 import { Config } from '../../../app.config';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
-import { ExportIvaArcaComponent } from 'app/modules/transaction/components/export-iva-arca/export-iva-arca.component';
-import { TransactionMovement, TransactionType } from '@types';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { Transaction, attributes } from '../transaction';
 
@@ -526,87 +524,10 @@ export class ListTransactionsComponent implements OnInit {
         );
         break;
       case 'print':
-        // if (environment.production) {
-        //   if (transaction.type.transactionMovement === TransactionMovement.Production) {
-        //     const data = {
-        //       transactionId: transaction._id,
-        //     };
-        //     this.toPrint(PrintType.Transaction, data);
-        //   } else {
-        //     if (
-        //       transaction.type.expirationDate &&
-        //       moment(transaction.type.expirationDate).diff(moment(), 'days') <= 0
-        //     ) {
-        //       this._toastService.showToast({ message: 'El documento esta vencido' });
-        //     } else {
-        //       if (transaction.type.readLayout) {
-        //         modalRef = this._modalService.open(PrintTransactionTypeComponent);
-        //         modalRef.componentInstance.transactionId = transaction._id;
-        //       } else {
-        //         let printer: Printer;
-
-        //         await this.getUser().then(async (user) => {
-        //           if (user && user.printers && user.printers.length > 0) {
-        //             for (const element of user.printers) {
-        //               if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
-        //                 printer = element.printer;
-        //               }
-        //             }
-        //           } else {
-        //             if (transaction.type.defectPrinter) {
-        //               printer = transaction.type.defectPrinter;
-        //             } else {
-        //               if (this.printers && this.printers.length > 0) {
-        //                 for (let printer of this.printers) {
-        //                   if (printer.printIn === PrinterPrintIn.Counter) {
-        //                     printer = printer;
-        //                   }
-        //                 }
-        //               }
-        //             }
-        //           }
-        //         });
-
-        //         modalRef = this._modalService.open(PrintComponent);
-        //         modalRef.componentInstance.company = transaction.company;
-        //         modalRef.componentInstance.transactionId = transaction._id;
-        //         modalRef.componentInstance.typePrint = 'invoice';
-        //         modalRef.componentInstance.printer = printer;
-
-        //         modalRef.result.then(
-        //           (result) => {
-        //             if (transaction.taxes && transaction.taxes.length > 0) {
-        //               for (const tax of transaction.taxes) {
-        //                 if (tax.tax.printer) {
-        //                   modalRef = this._modalService.open(PrintTransactionTypeComponent);
-        //                   modalRef.componentInstance.transactionId = transaction._id;
-        //                   modalRef.componentInstance.printerID = tax.tax.printer;
-        //                 }
-        //               }
-        //             }
-        //           },
-        //           (reason) => {
-        //             if (transaction.taxes && transaction.taxes.length > 0) {
-        //               for (const tax of transaction.taxes) {
-        //                 if (tax.tax.printer) {
-        //                   modalRef = this._modalService.open(PrintTransactionTypeComponent);
-        //                   modalRef.componentInstance.transactionId = transaction._id;
-        //                   modalRef.componentInstance.printerID = tax.tax.printer;
-        //                 }
-        //               }
-        //             }
-        //           }
-        //         );
-        //       }
-        //     }
-        //   }
-        // } else {
         const data = {
           transactionId: transaction._id,
         };
         this.toPrint(PrintType.Transaction, data);
-        // }
-
         break;
       case 'delete':
         modalRef = this._modalService.open(DeleteTransactionComponent, {

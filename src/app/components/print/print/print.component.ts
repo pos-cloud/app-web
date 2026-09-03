@@ -13,7 +13,7 @@ import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import jsPDF from 'jspdf';
 import * as moment from 'moment';
 
-import { Printer, PrinterPrintIn } from '@types';
+import { DescriptionType, Printer, PrinterPrintIn, TransactionMovement, TransactionType } from '@types';
 import { Config } from '../../../app.config';
 import { ArticleService } from '../../../core/services/article.service';
 import { CashBoxService } from '../../../core/services/cash-box.service';
@@ -28,7 +28,6 @@ import { Article } from '../../article/article';
 import { CashBox } from '../../cash-box/cash-box';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
-import { DescriptionType, TransactionMovement, TransactionType } from '@types';
 
 //Paquetes de terceros
 
@@ -2169,11 +2168,11 @@ export class PrintComponent implements OnInit {
 
   getCompanyData(): void {
     let margin: number = 5;
-
+    console.log('config', this.config);
     this.doc.setFontSize(this.fontSizes.extraLarge);
     this.doc.setFont('helvetica', 'bold');
     if (this.config[0].companyFantasyName) {
-      if (this.config[0].companyFantasyName.length > 23) {
+      if (this.config[0].companyFantasyName?.length > 23) {
         this.doc.setFontSize(this.fontSizes.normal);
         this.centerText(margin, margin, 105, 0, 20, this.config[0].companyFantasyName);
       } else {

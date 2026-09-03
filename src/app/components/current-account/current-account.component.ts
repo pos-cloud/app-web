@@ -21,14 +21,12 @@ import { TransactionService } from '../../core/services/transaction.service';
 //Componentes
 import { PrintService } from '@core/services/print.service';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { Printer } from '@types';
+import { Printer, TransactionMovement, TransactionType, User } from '@types';
 import { Config } from 'app/app.config';
 import { CompanyType } from 'app/components/payment-method/payment-method';
-import { PrintComponent } from 'app/components/print/print/print.component';
-import { TransactionMovement, TransactionType } from '@types';
-import { User } from '@types';
 import { ConfigService } from 'app/core/services/config.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
+import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
@@ -37,7 +35,6 @@ import { AuthService } from '../../core/services/auth.service';
 import { PrinterService } from '../../core/services/printer.service';
 import { ViewTransactionComponent } from '../../modules/transaction/components/view-transaction/view-transaction.component';
 import { SendEmailComponent } from '../../shared/components/send-email/send-email.component';
-import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 
 @Component({
@@ -490,49 +487,25 @@ export class CurrentAccountComponent implements OnInit {
         );
         break;
       case 'send-email-current':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.items = this.items;
-        modalRef.componentInstance.company = this.companySelected;
-        modalRef.componentInstance.params = {
-          detailsPaymentMethod: this.detailsPaymentMethod,
-        };
-        modalRef.componentInstance.typePrint = 'current-account';
-        modalRef.componentInstance.source = 'mail';
-        modalRef.componentInstance.balance = this.balance;
-        // Pasar una impresora por defecto para evitar el error
-        modalRef.componentInstance.printer = this.getDefaultPrinter();
+        modalRef = this._modalService.open(SendEmailComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.to = this.companySelected.emails;
+        modalRef.componentInstance.subject = `Resumen de cuenta corriente de ${this.companySelected.name}`;
+        modalRef.componentInstance.companyId = this.companySelected._id;
+        modalRef.componentInstance.items = this.itemsPerPage;
 
-        if (this.companySelected) {
-          modalRef = this._modalService.open(SendEmailComponent, {
-            size: 'lg',
-            backdrop: 'static',
-          });
-          modalRef.componentInstance.emails = this.companySelected.emails;
-          modalRef.componentInstance.subject = 'Cuenta Corriente';
-          modalRef.componentInstance.body = ' ';
-          const db = localStorage.getItem('company') || '';
-          modalRef.componentInstance.attachments = {
-            filename: `current-account.pdf`,
-            path: `/home/clients/${db}/others/current-account.pdf`,
-          };
-        } else {
-          this.showMessage('Debe seleccionar una empresa.', 'info', true);
-        }
         break;
       case 'print':
         if (this.companySelected) {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.items = this.items;
-          modalRef.componentInstance.company = this.companySelected;
-          modalRef.componentInstance.params = {
-            detailsPaymentMethod: this.detailsPaymentMethod,
+          const dataLabels = {
+            companyId: this.companySelected._id,
+            items: this.itemsPerPage,
           };
-          modalRef.componentInstance.typePrint = 'current-account';
-          modalRef.componentInstance.balance = this.balance;
-          // Pasar una impresora por defecto para evitar el error
-          modalRef.componentInstance.printer = this.getDefaultPrinter();
+          this.toPrint(PrintType.CurrentAccount, dataLabels);
         } else {
-          this.showMessage('Debe seleccionar una empresa.', 'info', true);
+          this._toastService.showToast({ message: 'Debe seleccionar una empresa.' });
         }
         break;
       case 'print-transaction':

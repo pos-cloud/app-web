@@ -4,13 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { PrintService } from '@core/services/print.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ApiResponse, IAttribute, Printer, PrinterPrintIn, PrintType } from '@types';
+import { ApiResponse, IAttribute, Printer, PrintType, TransactionMovement, User } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { PrintTransactionTypeComponent } from 'app/components/print/print-transaction-type/print-transaction-type.component';
-import { PrintComponent } from 'app/components/print/print/print.component';
-import { TransactionMovement } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
-import { User } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { TransactionService } from 'app/core/services/transaction.service';
@@ -363,70 +359,10 @@ export class ListOrdersWooCommerceComponent implements OnInit {
         break;
       case 'print':
         if (transaction) {
-          if (transaction.type.transactionMovement === TransactionMovement.Production) {
-            const data = {
-              transactionId: transaction._id,
-            };
-            this.toPrint(PrintType.Transaction, data);
-          } else {
-            if (transaction.type.readLayout) {
-              modalRef = this._modalService.open(PrintTransactionTypeComponent);
-              modalRef.componentInstance.transactionId = transaction._id;
-            } else {
-              let printer: Printer;
-
-              if (this.user && this.user.printers && this.user.printers.length > 0) {
-                for (const element of this.user.printers) {
-                  if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
-                    printer = element.printer;
-                  }
-                }
-              } else {
-                if (transaction.type.defectPrinter) {
-                  printer = transaction.type.defectPrinter;
-                } else {
-                  if (this.printers && this.printers.length > 0) {
-                    for (let printer of this.printers) {
-                      if (printer.printIn === PrinterPrintIn.Counter) {
-                        printer = printer;
-                      }
-                    }
-                  }
-                }
-              }
-
-              modalRef = this._modalService.open(PrintComponent);
-              modalRef.componentInstance.company = transaction.company;
-              modalRef.componentInstance.transactionId = transaction._id;
-              modalRef.componentInstance.typePrint = 'invoice';
-              modalRef.componentInstance.printer = printer;
-
-              modalRef.result.then(
-                (result) => {
-                  if (transaction.taxes && transaction.taxes.length > 0) {
-                    for (const tax of transaction.taxes) {
-                      if (tax.tax.printer) {
-                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                        modalRef.componentInstance.transactionId = transaction._id;
-                        modalRef.componentInstance.printerID = tax.tax.printer;
-                      }
-                    }
-                  }
-                },
-                (reason) => {
-                  if (transaction.taxes && transaction.taxes.length > 0) {
-                    for (const tax of transaction.taxes) {
-                      if (tax.tax.printer) {
-                        modalRef = this._modalService.open(PrintTransactionTypeComponent);
-                        modalRef.componentInstance.transactionId = transaction._id;
-                        modalRef.componentInstance.printerID = tax.tax.printer;
-                      }
-                    }
-                  }
-                }
-              );
-            }
-          }
+          const data = {
+            transactionId: transaction._id,
+          };
+          this.toPrint(PrintType.Transaction, data);
         }
         break;
       case 'sync-orders':
