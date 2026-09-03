@@ -154,15 +154,15 @@
             </td>
             <td>{{ transaction.letter }}</td>
             <td>{{ transaction.number }}</td>
-            <td *ngIf="!requestCompany">{{ transaction.company.name }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.name }}</td>
             <td *ngIf="!requestCompany">
-              {{ transaction.company.city }}
+              {{ transaction.company?.city }}
             </td>
             <td *ngIf="!requestCompany">
-              {{ transaction.company.state?.name }}
+              {{ transaction.company?.state?.name }}
             </td>
             <td *ngIf="!requestCompany">
-              {{ transaction.company.group?.description }}
+              {{ transaction.company?.group?.description }}
             </td>
             <td>
               {{ transaction.totalPrice }}

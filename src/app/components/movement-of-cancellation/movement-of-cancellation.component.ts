@@ -293,6 +293,7 @@ export class MovementOfCancellationComponent implements OnInit {
     }
     match += `"$or": [`;
 
+    this.requestCompany = false;
     for (let index = 0; index < this.cancellationTypes.length; index++) {
       match += `{ "$and":[{ "type._id"  : "${this.cancellationTypes[index].origin._id}"},{"state":"${this.cancellationTypes[index].requestStatusOrigin}"}]}`;
       if (this.cancellationTypes[index].requestCompany) {
@@ -309,6 +310,8 @@ export class MovementOfCancellationComponent implements OnInit {
 
     if (this.requestCompany && this.transactionDestination.company) {
       match += `"company._id":  "${this.transactionDestination.company._id}",`;
+    } else {
+      this.requestCompany = false;
     }
 
     match += `"operationType": { "$ne": "D" }, "balance": { "$gt": 0 } }`;
