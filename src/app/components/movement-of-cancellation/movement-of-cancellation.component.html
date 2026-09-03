@@ -58,14 +58,13 @@
                 placeholder="Nombre..."
               />
             </th>
-            <th>
+            <th *ngIf="userCountry === 'AR'">
               <input
                 type="text"
                 class="form-control"
                 [(ngModel)]="filters['origin']"
                 (input)="getTransactions()"
                 placeholder="POS..."
-                *ngIf="userCountry === 'AR'"
               />
             </th>
             <th>
