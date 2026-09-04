@@ -764,9 +764,9 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       const previousMovement = this.transactionMovement;
       this.setTransactionMovement(params['type']);
       this.updateTitle();
-      this.syncAdvancedFilters();
 
       if (previousMovement && previousMovement !== this.transactionMovement) {
+        this.resetListState();
         this.recreateDatatable();
         return;
       }
@@ -789,6 +789,10 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
   public refresh(): void {
     this.syncAdvancedFilters();
     this.datatableComponent?.refresh();
+  }
+
+  public onDatePickerChange(): void {
+    this.applyFilters();
   }
 
   public syncAdvancedFilters(): void {
@@ -898,10 +902,31 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
     }
   }
 
+  private resetListState(): void {
+    this.dateSelect = 'endDate2';
+    this.initDateFilters();
+    this.applyMovementFilter();
+    this.clearUserColumnFilters();
+  }
+
   private recreateDatatable(): void {
     this.showDatatable = false;
     this._changeDetectorRef.detectChanges();
     this.showDatatable = true;
+  }
+
+  private clearUserColumnFilters(): void {
+    if (!this.datatableComponent?.filters) {
+      return;
+    }
+
+    for (const column of this.columns) {
+      if (this.dateFilterColumns.includes(column.name) || column.defaultFilter) {
+        continue;
+      }
+
+      delete this.datatableComponent.filters[column.name];
+    }
   }
 
   private toDateStart(value: string): string {
