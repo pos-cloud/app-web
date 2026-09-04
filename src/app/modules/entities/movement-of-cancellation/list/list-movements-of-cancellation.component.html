@@ -9,13 +9,14 @@
   [sort]="sort"
   [_service]="_service"
   (eventFunction)="emitEvent($event)"
+  (beforeGetItems)="syncAdvancedFilters()"
 >
   <div datatableFilters>
     <div class="datatable-filter-field">
       <label class="control-label">
         <b>Estado Transacción Origen:</b>
       </label>
-      <select class="form-control" [(ngModel)]="stateSelectOrigin" (ngModelChange)="applyFilters()">
+      <select class="form-control" [(ngModel)]="stateSelectOrigin">
         <option value="Cerrado">Cerrado</option>
         <option value="Abierto">Abierto</option>
         <option value="Armando">Armando</option>
@@ -30,7 +31,7 @@
       <label class="control-label">
         <b>Estado Transacción Destino:</b>
       </label>
-      <select class="form-control" [(ngModel)]="stateSelectDestination" (ngModelChange)="applyFilters()">
+      <select class="form-control" [(ngModel)]="stateSelectDestination">
         <option value="Cerrado">Cerrado</option>
         <option value="Abierto">Abierto</option>
         <option value="Armando">Armando</option>
@@ -45,7 +46,7 @@
       <label for="dataSelect" class="control-label">
         <b>Por Fecha de:</b>
       </label>
-      <select class="form-control" [(ngModel)]="dateSelect" (ngModelChange)="applyFilters()">
+      <select class="form-control" [(ngModel)]="dateSelect">
         <option value="transactionOrigin.creationDate2">Creación Origen</option>
         <option value="transactionOrigin.updateDate2">Modificación Origen</option>
         <option value="transactionOrigin.endDate2">Finalización Origen</option>
@@ -64,7 +65,6 @@
         [inputDatetimeFormat]="'dd/MM/yyyy'"
         [seconds]="false"
         [deferEmitUntilClose]="true"
-        (ngModelChange)="onDatePickerChange()"
       ></app-date-time-picker>
     </div>
     <div class="datatable-filter-field">
@@ -77,7 +77,6 @@
         [inputDatetimeFormat]="'dd/MM/yyyy'"
         [seconds]="false"
         [deferEmitUntilClose]="true"
-        (ngModelChange)="onDatePickerChange()"
       ></app-date-time-picker>
     </div>
   </div>

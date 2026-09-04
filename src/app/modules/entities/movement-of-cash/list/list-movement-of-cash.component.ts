@@ -349,7 +349,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
       title: 'refresh',
       class: 'btn btn-light',
       icon: 'fa fa-refresh',
-      click: `this.refresh()`,
+      click: `this.addFilters()`,
     },
   ];
   public rowButtons: IButton[] = [
@@ -383,8 +383,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
       const previousMovement = this.transactionMovement;
       this.setTransactionMovement(params['type']);
       this.updateTitle();
-      this.applyDateFilter();
-      this.applyMovementFilter();
+      this.syncAdvancedFilters();
 
       if (previousMovement && previousMovement !== this.transactionMovement) {
         this.recreateDatatable();
@@ -407,16 +406,17 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
   }
 
   public refresh(): void {
-    this.datatableComponent.refresh();
+    this.syncAdvancedFilters();
+    this.datatableComponent?.refresh();
   }
 
-  public onDatePickerChange(): void {
-    this.applyFilters();
+  public syncAdvancedFilters(): void {
+    this.applyDateFilter();
+    this.applyMovementFilter();
   }
 
   public applyFilters(): void {
-    this.applyDateFilter();
-    this.applyMovementFilter();
+    this.syncAdvancedFilters();
 
     if (!this.datatableComponent) {
       return;

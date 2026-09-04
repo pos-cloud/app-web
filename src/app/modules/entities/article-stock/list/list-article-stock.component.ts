@@ -26,12 +26,13 @@ export class ListArticleStockComponent implements OnInit, OnDestroy {
   public pathLocation: string[];
   public loading: boolean = false;
   public branchSelectedId: string | null = null;
+  private branchFilterInitialized = false;
   public headerButtons: IButton[] = [
     {
       title: 'refresh',
       class: 'btn btn-light',
       icon: 'fa fa-refresh',
-      click: `this.refresh()`,
+      click: `this.addFilters()`,
     },
     {
       title: 'Imprimir Inventario',
@@ -491,22 +492,48 @@ export class ListArticleStockComponent implements OnInit, OnDestroy {
   }
 
   public onBranchChange(): void {
+    const shouldApply = !this.branchFilterInitialized;
+    this.branchFilterInitialized = true;
+    this.syncAdvancedFilters();
+
+    if (shouldApply) {
+      this.applyFilters();
+    }
+  }
+
+  public syncAdvancedFilters(): void {
+    this.applyBranchFilter();
+  }
+
+  public applyFilters(): void {
+    this.syncAdvancedFilters();
+
+    if (!this.datatableComponent) {
+      return;
+    }
+
+    this.datatableComponent.currentPage = 1;
+    this.datatableComponent.refresh();
+  }
+
+  private applyBranchFilter(): void {
     const branchColumn = this.columns.find((column) => column.name === 'branch');
-    if (!branchColumn || !this.datatableComponent) {
+    if (!branchColumn) {
       return;
     }
 
     if (this.branchSelectedId) {
       const branchFilter = `{ "$oid": "${this.branchSelectedId}" }`;
       branchColumn.defaultFilter = branchFilter;
-      this.datatableComponent.filters['branch'] = branchFilter;
+      if (this.datatableComponent?.filters) {
+        this.datatableComponent.filters['branch'] = branchFilter;
+      }
     } else {
       delete branchColumn.defaultFilter;
-      delete this.datatableComponent.filters['branch'];
+      if (this.datatableComponent?.filters) {
+        delete this.datatableComponent.filters['branch'];
+      }
     }
-
-    this.datatableComponent.currentPage = 1;
-    this.datatableComponent.refresh();
   }
 
   public async emitEvent(event) {
@@ -545,7 +572,8 @@ export class ListArticleStockComponent implements OnInit, OnDestroy {
   }
 
   public refresh() {
-    this.datatableComponent.refresh();
+    this.syncAdvancedFilters();
+    this.datatableComponent?.refresh();
   }
 
   public toPrint(type: PrintType, data: {}): void {
