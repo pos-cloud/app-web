@@ -115,16 +115,6 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transactionOrigin.letter',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'center',
-      required: false,
-    },
-    {
       name: 'transactionOrigin.number',
       visible: true,
       disabled: false,
@@ -169,12 +159,12 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
 
     {
       name: 'transactionOrigin.state',
-      visible: false,
+      visible: true,
       disabled: false,
-      filter: false,
+      filter: true,
       datatype: 'string',
       project: null,
-      align: 'left',
+      align: 'center',
       required: true,
     },
     {
@@ -238,31 +228,11 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transactionDestination.letter',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'center',
-      required: false,
-    },
-    {
       name: 'transactionDestination.number',
       visible: true,
       disabled: false,
       filter: true,
       datatype: 'number',
-      project: null,
-      align: 'center',
-      required: false,
-    },
-    {
-      name: 'transactionDestination.totalPrice',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'currency',
       project: null,
       align: 'center',
       required: false,
@@ -280,12 +250,12 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
     },
     {
       name: 'transactionDestination.state',
-      visible: false,
+      visible: true,
       disabled: false,
-      filter: false,
+      filter: true,
       datatype: 'string',
       project: null,
-      align: 'left',
+      align: 'center',
       required: true,
     },
     {
@@ -307,8 +277,6 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
   public endDate: string = '';
   public timezone: string = '-03:00';
   public transactionMovement: string;
-  public stateSelectOrigin: string = 'Cerrado';
-  public stateSelectDestination: string = 'Cerrado';
   public headerButtons: IButton[] = [
     {
       title: 'refresh',
@@ -348,7 +316,6 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
     this.setTransactionMovement(this._route.snapshot.params['type']);
     this.updateTitle();
     this.applyMovementFilter();
-    this.applyStateFilter();
   }
 
   ngOnInit(): void {
@@ -383,14 +350,9 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
     this.datatableComponent?.refresh();
   }
 
-  public onDatePickerChange(): void {
-    this.applyFilters();
-  }
-
   public syncAdvancedFilters(): void {
     this.applyDateFilter();
     this.applyMovementFilter();
-    this.applyStateFilter();
   }
 
   public applyFilters(): void {
@@ -456,31 +418,6 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private applyStateFilter(): void {
-    this.setColumnFilter('transactionOrigin.state', this.stateSelectOrigin);
-    this.setColumnFilter('transactionDestination.state', this.stateSelectDestination);
-  }
-
-  private setColumnFilter(columnName: string, value: string): void {
-    const column = this.columns.find((item) => item.name === columnName);
-    if (!column) {
-      return;
-    }
-
-    if (value) {
-      const filter = `"${value}"`;
-      column.defaultFilter = filter;
-      if (this.datatableComponent?.filters) {
-        this.datatableComponent.filters[columnName] = filter;
-      }
-    } else {
-      delete column.defaultFilter;
-      if (this.datatableComponent?.filters) {
-        delete this.datatableComponent.filters[columnName];
-      }
-    }
-  }
-
   private updateTitle(): void {
     this.title = this.transactionMovement
       ? `Movimientos de Cancelaciones de ${this.transactionMovement}`
@@ -523,11 +460,8 @@ export class ListMovementOfCancellationsComponent implements OnInit, OnDestroy {
 
   private resetListState(): void {
     this.dateSelect = 'transactionOrigin.endDate2';
-    this.stateSelectOrigin = 'Cerrado';
-    this.stateSelectDestination = 'Cerrado';
     this.initDateFilters();
     this.applyMovementFilter();
-    this.applyStateFilter();
     this.clearUserColumnFilters();
   }
 
