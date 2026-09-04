@@ -1,14 +1,14 @@
 export const environment = {
   production: false,
-  api: 'https://d-api-v1.poscloud.ar',
-  apiv2: 'https://d-api-v2.poscloud.ar',
-  apiStorage: 'https://d-api-storage.poscloud.ar',
-  feAr: 'https://d-fe-ar.poscloud.ar',
-  apiLicense: 'https://d-api-license.poscloud.ar',
+  api: 'http://localhost:300',
+  apiv2: 'http://localhost:308',
+  apiStorage: 'http://localhost:303',
+  feAr: 'http://localhost:307',
+  apiLicense: 'http://localhost:311',
   faro: {
     url: '',
     name: 'poscloud',
     version: '1.0.0',
-    environment: 'development',
+    environment: 'local',
   },
 };

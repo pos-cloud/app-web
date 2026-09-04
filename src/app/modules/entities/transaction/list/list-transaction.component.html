@@ -9,15 +9,16 @@
   [sort]="sort"
   [_service]="_service"
   (eventFunction)="emitEvent($event)"
+  (beforeGetItems)="syncAdvancedFilters()"
 >
   <div datatableFilters>
-    <app-user-branch-select [(ngModel)]="branchSelectedId" (branchChange)="applyFilters()">
+    <app-user-branch-select [(ngModel)]="branchSelectedId" (branchChange)="onBranchChange()">
     </app-user-branch-select>
     <div class="datatable-filter-field">
       <label for="dataSelect" class="control-label">
         <b>Por Fecha de:</b>
       </label>
-      <select class="form-control" [(ngModel)]="dateSelect" (ngModelChange)="applyFilters()">
+      <select class="form-control" [(ngModel)]="dateSelect">
         <option value="creationDate2">Creación</option>
         <option value="updateDate2">Modificación</option>
         <option value="endDate2">Finalización</option>
@@ -33,7 +34,6 @@
         [inputDatetimeFormat]="'dd/MM/yyyy'"
         [seconds]="false"
         [deferEmitUntilClose]="true"
-        (ngModelChange)="onDatePickerChange()"
       ></app-date-time-picker>
     </div>
     <div class="datatable-filter-field">
@@ -46,7 +46,6 @@
         [inputDatetimeFormat]="'dd/MM/yyyy'"
         [seconds]="false"
         [deferEmitUntilClose]="true"
-        (ngModelChange)="onDatePickerChange()"
       ></app-date-time-picker>
     </div>
   </div>

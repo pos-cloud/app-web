@@ -45,6 +45,7 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
   public timezone: string = '-03:00';
   public transactionMovement: TransactionMovement;
   private readonly dateFilterColumns = ['creationDate2', 'updateDate2', 'endDate2'];
+  private branchFilterInitialized = false;
   private destroy$ = new Subject<void>();
   public columns: IAttribute[] = [
     {
@@ -461,9 +462,7 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
       const previousMovement = this.transactionMovement;
       this.setTransactionMovement(params['type']);
       this.updateTitle(params['type']);
-      this.applyDateFilter();
-      this.applyBranchFilter();
-      this.applyMovementFilter();
+      this.syncAdvancedFilters();
 
       if (previousMovement && previousMovement !== this.transactionMovement) {
         this.recreateDatatable();
@@ -560,17 +559,28 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
   }
 
   public refresh() {
-    this.datatableComponent.refresh();
+    this.syncAdvancedFilters();
+    this.datatableComponent?.refresh();
   }
 
-  public onDatePickerChange(): void {
-    this.applyFilters();
+  public onBranchChange(): void {
+    const shouldApply = !this.branchFilterInitialized;
+    this.branchFilterInitialized = true;
+    this.syncAdvancedFilters();
+
+    if (shouldApply) {
+      this.applyFilters();
+    }
   }
 
-  public applyFilters(): void {
+  public syncAdvancedFilters(): void {
     this.applyDateFilter();
     this.applyBranchFilter();
     this.applyMovementFilter();
+  }
+
+  public applyFilters(): void {
+    this.syncAdvancedFilters();
 
     if (!this.datatableComponent) {
       return;
@@ -773,7 +783,7 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
         title: 'refresh',
         class: 'btn btn-light',
         icon: 'fa fa-refresh',
-        click: `this.refresh()`,
+        click: `this.addFilters()`,
       }
     );
   }

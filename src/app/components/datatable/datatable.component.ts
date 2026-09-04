@@ -39,6 +39,7 @@ export class DatatableComponent {
     obj: any;
     items: any[];
   }>();
+  @Output() beforeGetItems = new EventEmitter<void>();
 
   // TABLA
   public _datatableService: DatatableService;
@@ -257,6 +258,7 @@ export class DatatableComponent {
   }
 
   public async getItems() {
+    this.beforeGetItems.emit();
     this.loading = true;
     this.subscription.add(
       await this._datatableService
