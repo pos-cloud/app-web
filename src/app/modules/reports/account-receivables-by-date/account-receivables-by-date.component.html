@@ -1,6 +1,6 @@
 <section class="container-fluid">
-  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
-    <div class="form-group w-50 me-2">
+  <div class="d-flex align-items-end justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2 flex-grow-1">
       <label for="company" class="control-label">
         <b>{{ 'company' | translate | capitalize }}</b>
       </label>
@@ -11,24 +11,35 @@
         id="company"
         [(ngModel)]="company"
         (keyup.enter)="getReport()"
+        [placeholder]="'company' | translate | capitalize"
+        autocomplete="off"
       />
     </div>
 
     <div class="form-group mr-2">
       <label for="endDate" class="control-label">
-        <b>{{ 'endDate' | translate | capitalize }}:</b>
+        <b>{{ 'endDate' | translate | capitalize }}</b>
       </label>
       <app-date-time-picker [(ngModel)]="endDate" name="activeEndDate"></app-date-time-picker>
     </div>
 
-    <div class="form-group mr-2">
-      <div class="col-md-6">
-        <button class="btn btn-primary" (click)="getReport()">
-          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
-        </button>
-      </div>
+    <div class="form-group ml-auto">
+      <button
+        type="button"
+        class="btn btn-warning mr-2"
+        (click)="onAdjust($event)"
+        [disabled]="loading"
+      >
+        <i class="fa fa-adjust"></i>
+        <span>Ajustar</span>
+      </button>
+      <button type="button" class="btn btn-primary" (click)="getReport()" [disabled]="loading">
+        <i class="fa fa-refresh" [ngClass]="{ 'fa-spin': loading }"></i>
+        {{ 'refresh' | translate | capitalize }}
+      </button>
     </div>
   </div>
+
   <app-data-table-reports
     [data]="data"
     [columns]="columns"
