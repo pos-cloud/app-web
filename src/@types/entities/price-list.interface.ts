@@ -7,7 +7,6 @@ export interface PriceList extends Activity {
   percentage: number;
   percentageType: 'final' | 'margin'; // Nuevo campo
   allowSpecialRules: boolean;
-  default: boolean;
   rules: {
     _id: string;
     category: Category | string;

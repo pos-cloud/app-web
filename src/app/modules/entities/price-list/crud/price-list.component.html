@@ -80,7 +80,7 @@
               <option value="manual">Manual (precio fijo)</option>
             </select>
           </div>
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-2" *ngIf="!isManualMode">
             <label for="percentage" class="control-label">{{ 'percentage' | translate | capitalize }}:</label>
             <input
               type="number"
@@ -100,7 +100,7 @@
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-3" *ngIf="!isManualMode">
             <label for="percentageType" class="control-label">{{ 'percentageType' | translate | capitalize }}:</label>
             <select
               class="form-control"
@@ -122,29 +122,9 @@
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
-          <div class="form-group col-md-3">
-            <label for="default" class="control-label">{{ 'default' | translate | capitalize }}:</label>
-            <select
-              class="form-control"
-              formControlName="default"
-              id="default"
-              [disabled]="operation === 'view' || operation === 'delete'"
-              [ngClass]="{
-                'is-invalid': priceListForm.get('default')?.touched && priceListForm.get('default')?.invalid,
-              }"
-            >
-              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
-              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
-            </select>
-            <div
-              class="invalid-feedback"
-              *ngIf="priceListForm.get('default')?.touched && priceListForm.get('default')?.invalid"
-            >
-              {{ 'fieldRequired' | translate | capitalize }}
-            </div>
-          </div>
         </div>
 
+        <ng-container *ngIf="!isManualMode">
         <hr />
 
         <!-- Reglas especiales -->
@@ -302,6 +282,7 @@
             </div>
           </div>
         </div>
+        </ng-container>
       </form>
     </div>
   </div>

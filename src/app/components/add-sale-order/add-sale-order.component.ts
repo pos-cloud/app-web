@@ -5,6 +5,7 @@ import { ImportComponent } from '@shared/components/import/import.component';
 import { PaymentMethod, User } from '@types';
 import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
+import { extractApiResult } from '@core/http';
 import { ArticleService } from 'app/core/services/article.service';
 import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
 import { ConfigService } from 'app/core/services/config.service';
@@ -210,13 +211,7 @@ export class AddSaleOrderComponent {
       this._priceListArticleService.getByArticle(articleId).subscribe({
         next: (res: any) => {
           // Ojo: este service hace catchError(of(err)), así que errores llegan por "next".
-          // Solo cacheamos si efectivamente encontramos un array con items.
-          const itemsCandidate =
-            (Array.isArray(res?.result) && res.result) ||
-            (Array.isArray(res) && res) ||
-            (Array.isArray(res?.result?.result) && res.result.result) ||
-            (Array.isArray(res?.priceListArticles) && res.priceListArticles) ||
-            [];
+          const itemsCandidate = (extractApiResult(res) as any[]) ?? [];
 
           if (!Array.isArray(itemsCandidate)) {
             delete this.manualPricesInflightByArticleId[articleId];

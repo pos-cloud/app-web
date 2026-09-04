@@ -57,5 +57,18 @@ export class PriceListArticleService extends ModelService {
         catchError((err) => of(err))
       );
   }
+
+  public updatePrices(payload: { priceListId: string; type: number; decimal: number; amount: number }): Observable<any> {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .post(`${environment.apiv2}/price-list-articles/update-prices`, payload, { headers })
+      .pipe(
+        map((res) => res),
+        catchError((err) => of(err))
+      );
+  }
 }
 

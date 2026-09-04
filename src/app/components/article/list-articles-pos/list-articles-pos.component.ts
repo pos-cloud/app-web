@@ -33,6 +33,7 @@ import {
   Utilization,
 } from '@types';
 import { Tax } from 'app/components/tax/tax';
+import { extractApiResult } from '@core/http';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PriceListArticleService } from 'app/core/services/price-list-article.service';
@@ -184,12 +185,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     return new Promise((resolve) => {
       this._priceListArticleService.getByPriceList(priceListId).subscribe({
         next: (res: any) => {
-          const itemsCandidate =
-            (Array.isArray(res?.result) && res.result) ||
-            (Array.isArray(res) && res) ||
-            (Array.isArray(res?.result?.result) && res.result.result) ||
-            (Array.isArray(res?.priceListArticles) && res.priceListArticles) ||
-            [];
+          const itemsCandidate = (extractApiResult(res) as any[]) ?? [];
 
           const map: Record<string, number> = {};
           if (Array.isArray(itemsCandidate)) {
@@ -211,12 +207,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
   }
 
   private mergeManualPriceFromArticleResponse(priceListId: string, res: any): void {
-    const itemsCandidate =
-      (Array.isArray(res?.result) && res.result) ||
-      (Array.isArray(res) && res) ||
-      (Array.isArray(res?.result?.result) && res.result.result) ||
-      (Array.isArray(res?.priceListArticles) && res.priceListArticles) ||
-      [];
+    const itemsCandidate = (extractApiResult(res) as any[]) ?? [];
 
     if (!Array.isArray(itemsCandidate)) return;
 

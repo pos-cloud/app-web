@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BranchService } from '@core/services/branch.service';
 import { DepositService } from '@core/services/deposit.service';
+import { normalizeApiResponse } from '@core/http';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Deposit, PriceList, TransactionMovement, TransactionType } from '@types';
@@ -248,18 +249,27 @@ export class ImportComponent implements OnInit {
           this.loading = false;
           return;
         }
-        this._excelUpdateService.importPriceListArticles(file, priceListId).subscribe((response) => {
-          if (response.status == 200) {
-            this.countUpdate = response.result.countUpdate;
-            this.countNotUpdate = response.result.countNotFound + response.result.countInvalidPrice;
-            this.update = response.result.update;
-            this.notUpdate = [...(response.result.notFound || []), ...(response.result.invalidPrice || [])];
+        this._excelUpdateService.importPriceListArticles(file, priceListId).subscribe({
+          next: (response) => {
+            const normalized = normalizeApiResponse(response);
+            if (normalized?.ok) {
+              const data = (normalized.body.result as any) || {};
+              this.countUpdate = data.countUpdate;
+              this.countNotUpdate = (data.countNotFound || 0) + (data.countInvalidPrice || 0);
+              this.update = data.update;
+              this.notUpdate = [...(data.notFound || []), ...(data.invalidPrice || [])];
+              this.loading = false;
+              this._toastService.showToast(null, 'success', '', normalized.body.message);
+            } else {
+              this._toastService.showToast(null, 'danger', '', normalized?.body.message ?? 'Algo salió mal.');
+              this.loading = false;
+            }
+          },
+          error: (error) => {
+            const normalized = normalizeApiResponse(error);
+            this._toastService.showToast(null, 'danger', '', normalized?.body.message ?? 'Algo salió mal.');
             this.loading = false;
-            this._toastService.showToast(response);
-          } else {
-            this._toastService.showToast(response.error?.message || response.message || response.error);
-            this.loading = false;
-          }
+          },
         });
       }
     }

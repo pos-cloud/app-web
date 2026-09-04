@@ -31,6 +31,7 @@ import {
 } from '@types';
 
 import { CommonModule, DecimalPipe } from '@angular/common';
+import { extractApiResult } from '@core/http';
 import { ArticleService } from '@core/services/article.service';
 import { CategoryService } from '@core/services/category.service';
 import { MakeService } from '@core/services/make.service';
@@ -354,7 +355,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   private loadManualPricesForArticle(articleId: string): void {
     this._priceListArticleService.getByArticle(articleId).subscribe((res: any) => {
-      const items = res?.result ?? res ?? [];
+      const extracted = extractApiResult(res);
+      const items = Array.isArray(extracted) ? extracted : [];
       const byPriceListId: Record<string, number> = {};
       for (const it of items) {
         const plId = typeof it.priceList === 'string' ? it.priceList : it.priceList?._id;

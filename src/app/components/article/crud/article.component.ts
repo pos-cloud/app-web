@@ -43,6 +43,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
 import { TranslateService } from '@ngx-translate/core';
 import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 import { Account, ApiResponse, Currency, MediaCategory, PriceList, User } from '@types';
+import { extractApiResult } from '@core/http';
 import { CompanyService } from 'app/core/services/company.service';
 import { FileService } from 'app/core/services/file.service';
 import { MakeService } from 'app/core/services/make.service';
@@ -421,8 +422,8 @@ export class ArticleComponent implements OnInit {
 
   private loadManualPricesForArticle(articleId: string): void {
     this._priceListArticleService.getByArticle(articleId).subscribe((res: any) => {
-      // api-core devuelve Responser(200, items) => {status,result,...} o directamente items si algo viejo.
-      const items = res?.result ?? res ?? [];
+      const extracted = extractApiResult(res);
+      const items = Array.isArray(extracted) ? extracted : [];
       const byPriceListId: Record<string, number> = {};
       for (const it of items) {
         const plId = typeof it.priceList === 'string' ? it.priceList : it.priceList?._id;

@@ -59,7 +59,6 @@ export class PriceListComponent implements OnInit {
       percentage: ['', [Validators.required]],
       percentageType: ['final', [Validators.required]],
       allowSpecialRules: [false, []],
-      default: [false, [Validators.required]],
       rules: this._fb.array([]),
       exceptions: this._fb.array([]),
     });
@@ -71,6 +70,10 @@ export class PriceListComponent implements OnInit {
 
   get exceptionsArray(): UntypedFormArray {
     return this.priceListForm.get('exceptions') as UntypedFormArray;
+  }
+
+  get isManualMode(): boolean {
+    return this.priceListForm.get('pricingMode')?.value === 'manual';
   }
 
   private createRuleFormGroup(rule?: PriceList['rules'][number]): UntypedFormGroup {
@@ -120,6 +123,11 @@ export class PriceListComponent implements OnInit {
     } else {
       this.setValueForm();
     }
+
+    this.priceListForm
+      .get('pricingMode')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((mode) => this.applyPricingMode(mode));
   }
 
   ngAfterViewInit() {
@@ -178,7 +186,6 @@ export class PriceListComponent implements OnInit {
         percentage: this.priceList.percentage ?? 0,
         percentageType: this.priceList.percentageType || 'final',
         allowSpecialRules: this.priceList.allowSpecialRules || false,
-        default: this.priceList.default || false,
       });
     } else {
       this.priceListForm.patchValue({
@@ -188,9 +195,32 @@ export class PriceListComponent implements OnInit {
         percentage: 0,
         percentageType: 'final',
         allowSpecialRules: false,
-        default: false,
       });
     }
+
+    this.applyPricingMode(this.priceListForm.get('pricingMode')?.value);
+  }
+
+  private applyPricingMode(mode: string): void {
+    const percentage = this.priceListForm.get('percentage');
+    const percentageType = this.priceListForm.get('percentageType');
+
+    if (mode === 'manual') {
+      percentage?.clearValidators();
+      percentageType?.clearValidators();
+      if (percentage?.value === '' || percentage?.value == null) {
+        percentage?.setValue(0, { emitEvent: false });
+      }
+      if (!percentageType?.value) {
+        percentageType?.setValue('final', { emitEvent: false });
+      }
+    } else {
+      percentage?.setValidators([Validators.required]);
+      percentageType?.setValidators([Validators.required]);
+    }
+
+    percentage?.updateValueAndValidity({ emitEvent: false });
+    percentageType?.updateValueAndValidity({ emitEvent: false });
   }
 
   public handlePriceListOperation() {

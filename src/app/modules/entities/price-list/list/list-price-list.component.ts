@@ -8,6 +8,7 @@ import { IAttribute, IButton } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { ImportComponent } from '@shared/components/import/import.component';
+import { UpdatePriceListPricesComponent } from '../actions/update-price-list-prices/update-price-list-prices.component';
 
 @Component({
   selector: 'app-list-price-list',
@@ -29,6 +30,24 @@ export class ListPriceListComponent {
       datatype: 'string',
       project: null,
       align: 'left',
+      required: false,
+    },
+    {
+      name: 'pricingMode',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: `{
+        "$switch": {
+          "branches": [
+            { "case": { "$eq": ["$pricingMode", "manual"] }, "then": "Manual (precio fijo)" },
+            { "case": { "$eq": ["$pricingMode", "dynamic"] }, "then": "Dinámica (%)" }
+          ],
+          "default": "$pricingMode"
+        }
+      }`,
+      align: 'center',
       required: false,
     },
     {
@@ -56,16 +75,6 @@ export class ListPriceListComponent {
           "default": "$percentageType"
         }
       }`,
-      align: 'center',
-      required: false,
-    },
-    {
-      name: 'default',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'boolean',
-      project: null,
       align: 'center',
       required: false,
     },
@@ -144,6 +153,13 @@ export class ListPriceListComponent {
       click: `this.emitEvent('update', item)`,
     },
     {
+      title: 'Actualizar Precios',
+      class: 'btn btn-light btn-sm',
+      icon: 'fa fa-percent',
+      click: `this.emitEvent('update-prices', item)`,
+      showWhen: `item.pricingMode === 'manual' || item.pricingMode === 'Manual (precio fijo)'`,
+    },
+    {
       title: 'delete',
       class: 'btn btn-danger btn-sm',
       icon: 'fa fa-trash-o',
@@ -184,9 +200,18 @@ export class ListPriceListComponent {
     modalRef.componentInstance.title = 'Importar precios manuales (Excel)';
   }
 
+  public openUpdatePrices(priceList: any): void {
+    const modalRef = this._modalService.open(UpdatePriceListPricesComponent, { backdrop: 'static' });
+    modalRef.componentInstance.priceList = priceList;
+  }
+
   public async emitEvent(event) {
     if (event?.op === 'uploadFile') {
       this.openImportManualPrices();
+      return;
+    }
+    if (event?.op === 'update-prices') {
+      this.openUpdatePrices(event.obj);
       return;
     }
     this.openModal(event.op, event.obj);

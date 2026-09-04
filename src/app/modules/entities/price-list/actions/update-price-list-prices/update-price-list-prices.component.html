@@ -1,0 +1,96 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    Actualizar Precios
+    <small class="text-muted d-block" *ngIf="priceList?.name">{{ priceList.name }}</small>
+  </h4>
+  <button type="button" class="close" aria-label="Cerrar" (click)="activeModal.dismiss('close')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<form [formGroup]="form" (ngSubmit)="updatePrice()" autocomplete="off">
+  <section class="container-fluid">
+    <div class="modal-body">
+      <p class="text-muted">
+        Aplica a todos los precios fijos cargados en esta lista. No crea precios nuevos ni modifica el catálogo.
+      </p>
+
+      <div class="row">
+        <div class="col-12">
+          <label for="type" class="control-label">
+            Forma de actualización
+            <i class="fa fa-info-circle text-muted ml-1" [ngbTooltip]="getTypeTooltip()"></i>
+          </label>
+          <select
+            id="type"
+            class="form-control"
+            formControlName="type"
+            [ngClass]="{ 'is-invalid': form.get('type')?.touched && form.get('type')?.invalid }"
+          >
+            <option [ngValue]="null" disabled>Seleccionar...</option>
+            <option *ngFor="let opt of typeOptions" [ngValue]="opt.value">{{ opt.label }}</option>
+          </select>
+          <div *ngIf="form.get('type')?.touched && form.get('type')?.hasError('required')" class="invalid-feedback">
+            {{ 'fieldRequired' | translate | capitalize }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <label for="amount" class="control-label">
+            Valor
+            <span class="text-muted" *ngIf="getAmountPrefix() === '$'">(monto en $)</span>
+            <span class="text-muted" *ngIf="getAmountPrefix() === '%'">(porcentaje %)</span>
+          </label>
+          <div class="input-group">
+            <div class="input-group-prepend" *ngIf="getAmountPrefix()">
+              <span class="input-group-text">{{ getAmountPrefix() }}</span>
+            </div>
+            <input
+              id="amount"
+              type="number"
+              step="0.01"
+              class="form-control"
+              formControlName="amount"
+              [ngClass]="{ 'is-invalid': form.get('amount')?.touched && form.get('amount')?.invalid }"
+              [placeholder]="
+                getAmountPrefix() === '$'
+                  ? 'Ej: 150.50'
+                  : getAmountPrefix() === '%'
+                    ? 'Ej: 10'
+                    : 'Seleccione la forma de actualización'
+              "
+            />
+          </div>
+          <div *ngIf="form.get('amount')?.touched && form.get('amount')?.hasError('required')" class="invalid-feedback">
+            {{ 'fieldRequired' | translate | capitalize }}
+          </div>
+          <small *ngIf="getValueExample()" class="form-text text-muted d-block mt-2">
+            <strong>Ejemplo para Valor:</strong> {{ getValueExample() }}
+          </small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <label for="decimal" class="control-label">Cantidad de decimales</label>
+          <select
+            id="decimal"
+            class="form-control"
+            formControlName="decimal"
+            ngbTooltip="Decimales a mostrar en los precios resultantes"
+          >
+            <option *ngFor="let d of decimalOptions" [ngValue]="d">{{ d }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">
+        <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
+        <span class="ml-2">{{ loading ? 'Actualizando...' : 'Actualizar' }}</span>
+      </button>
+    </div>
+  </section>
+</form>
