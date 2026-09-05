@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Unit tests
+        run: npm test -- --ci
+
       - name: Build
         run: npm run build:dev
 
