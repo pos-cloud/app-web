@@ -1,4 +1,4 @@
-name: PROD System
+name: Deploy PROD
 
 on:
   push:
@@ -8,8 +8,29 @@ on:
       - "services/**"
 
 jobs:
-  build:
+  test:
+    name: Test
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Unit tests
+        run: npm test -- --ci
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
 
     steps:
       - name: Checkout repository
@@ -26,12 +47,9 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Unit tests
-        run: npm test -- --ci
-
       - name: Build
         run: npm run build:prod
-      
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -39,6 +57,7 @@ jobs:
           path: dist
 
   deploy:
+    name: Deploy
     runs-on: [prod]
     needs: build
     steps:
@@ -61,4 +80,3 @@ jobs:
         with:
           name: build-prod
           path: /home/sites/system/
-
