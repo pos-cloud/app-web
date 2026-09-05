@@ -16,10 +16,13 @@ import 'moment/locale/es';
 
 import {
   Branch,
+  CashBox,
+  CashBoxState,
   Currency,
   CurrentAccount,
   Deposit,
   Movements,
+  Origin,
   Printer,
   PrinterPrintIn,
   StockMovement,
@@ -72,8 +75,6 @@ import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { AddTransactionComponent } from '../transaction/add-transaction/add-transaction.component';
 import { Config } from './../../app.config';
-import { CashBox, CashBoxState } from './../../components/cash-box/cash-box';
-import { Origin } from './../../components/origin/origin';
 
 @Component({
   selector: 'app-point-of-sale',

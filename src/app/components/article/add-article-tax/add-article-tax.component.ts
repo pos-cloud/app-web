@@ -6,10 +6,8 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ArticleFieldType } from 'app/components/article-field/article-field';
-import { ArticleFields } from 'app/components/article-field/article-fields';
+import { ArticleFieldType, ArticleFields, Tax, TaxBase, TaxClassification } from '@types';
 import { Article } from 'app/components/article/article';
-import { Tax, TaxBase, TaxClassification } from 'app/components/tax/tax';
 import { Transaction } from 'app/components/transaction/transaction';
 import { TaxService } from 'app/core/services/tax.service';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';

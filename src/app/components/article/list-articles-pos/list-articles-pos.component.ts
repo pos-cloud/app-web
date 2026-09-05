@@ -32,7 +32,7 @@ import {
   User,
   Utilization,
 } from '@types';
-import { Tax } from 'app/components/tax/tax';
+import { Tax } from '@types';
 import { extractApiResult } from '@core/http';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';

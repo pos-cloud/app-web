@@ -121,7 +121,7 @@ export enum CurrentAccount {
   Charge = 'Cobra',
 }
 
-export class CodeAFIP {
+export interface CodeAFIP {
   letter: string;
   code: number;
 }

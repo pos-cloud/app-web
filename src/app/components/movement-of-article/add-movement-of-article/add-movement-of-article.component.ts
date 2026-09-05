@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, ViewEncapsulation } from '@angu
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Account, ApiResponse, PriceList, Structure, Utilization, Variant } from '@types';
+import { Account, ApiResponse, ArticleStock, PriceList, Structure, TaxBase, Utilization, Variant } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { AccountService } from 'app/core/services/account.service';
 import { ArticleService } from 'app/core/services/article.service';
@@ -22,10 +22,8 @@ import { ArticleStockService } from '../../../core/services/article-stock.servic
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { VariantService } from '../../../core/services/variant.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { ArticleStock } from '../../article-stock/article-stock';
 import { Article } from '../../article/article';
 import { ArticleComponent } from '../../article/crud/article.component';
-import { TaxBase } from '../../tax/tax';
 import { Taxes } from '../../tax/taxes';
 import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article';
 

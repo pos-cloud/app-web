@@ -1,8 +1,7 @@
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { User } from '@types';
+import { CancellationType, User } from '@types';
 import { Transaction } from '../transaction/transaction';
-import { CancellationType } from '../cancellation-type/cancellation-type';
 
 export class MovementOfCancellation {
 

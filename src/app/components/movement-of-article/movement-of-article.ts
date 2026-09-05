@@ -1,12 +1,13 @@
 import * as moment from 'moment';
 
-import { Account, Category, Deposit, Make } from '@types';
-import { ArticleFields } from '../article-field/article-fields';
+import { Account, ArticleFields, Category, Deposit, Make } from '@types';
 import { Article, ArticlePrintIn } from '../article/article';
 import { Taxes } from '../tax/taxes';
-import { StockMovement } from '@types';
+import { MovementOfArticleStatus, StockMovement } from '@types';
 import { Transaction } from '../transaction/transaction';
 import { User } from '@types';
+
+export { MovementOfArticleStatus } from '@types';
 
 export class MovementOfArticle {
   _id: string;
@@ -57,13 +58,6 @@ export class MovementOfArticle {
   updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 
   constructor() {}
-}
-
-export enum MovementOfArticleStatus {
-  Pending = <any>'Pendiente',
-  Preparing = <any>'Preparando',
-  LastOrder = <any>'Última Orden',
-  Ready = <any>'Listo',
 }
 
 export let attributes = [

@@ -4,7 +4,7 @@ import { AuthService } from 'app/core/services/auth.service';
 import { ModelService } from 'app/core/services/model.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Tax } from '../../components/tax/tax';
+import { Tax } from '@types';
 import { environment } from 'environments/environment';
 
 @Injectable({

@@ -5,6 +5,7 @@ import {
   Address,
   Branch,
   BusinessRule,
+  CashBox,
   Company,
   Currency,
   Deposit,
@@ -13,13 +14,15 @@ import {
   RelationType,
   ShipmentMethod,
   Table,
+  TransactionState,
   TransactionType,
   Transport,
   UseOfCFDI,
   User,
 } from '@types';
-import { CashBox } from '../cash-box/cash-box';
 import { Taxes } from '../tax/taxes';
+
+export { TransactionState, TransactionStateTiendaNube, TransactionStatusWooCommerce } from '@types';
 
 export class Transaction {
   _id: string;
@@ -96,38 +99,6 @@ export class Transaction {
   };
 
   constructor() {}
-}
-
-export enum TransactionState {
-  Open = <any>'Abierto',
-  Outstanding = <any>'Pendiente de pago',
-  PaymentConfirmed = <any>'Pago Confirmado',
-  PaymentDeclined = <any>'Pago Rechazado',
-  Canceled = <any>'Anulado',
-  Packing = <any>'Armando',
-  Closed = <any>'Cerrado',
-  Delivered = <any>'Entregado',
-  Sent = <any>'Enviado',
-  Preparing = <any>'Preparando',
-  Pending = <any>'Pendiente',
-  Produccion = <any>'En Producción',
-}
-
-export enum TransactionStateTiendaNube {
-  Open = <any>'open', //abierto
-  Closed = <any>'closed', //cerrado
-  Canceled = <any>'canceled', //cancelado
-  Packed = <any>'packed', //preparado
-  Fulfilled = <any>'fulfilled', //completado
-}
-
-export enum TransactionStatusWooCommerce {
-  Pending = <any>'pending', //pendiente
-  Processing = <any>'processing', //procesando
-  Onhold = <any>'onhold', //en espera
-  Completed = <any>'completed', //preparado
-  Cancelled = <any>'cancelled', //completado
-  Refunded = <any>'refunded', //reenboldado
 }
 
 export let attributes = [

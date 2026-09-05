@@ -1,5 +1,6 @@
 import {
   Application,
+  ArticleFields,
   Category,
   Classification,
   Currency,
@@ -11,11 +12,12 @@ import {
   VariantType,
   VariantValue,
 } from '@types';
-import { ArticleFields } from '../article-field/article-fields';
 import { Taxes } from '../tax/taxes';
 
-import { Account, Company } from '@types';
+import { Account, ArticlePrintIn, Company, Type } from '@types';
 import * as moment from 'moment';
+
+export { ArticlePrintIn, Type } from '@types';
 
 export class Article {
   public _id: string;
@@ -131,22 +133,6 @@ export class Article {
   public visibleTN: Boolean = false;
 
   constructor() {}
-}
-
-export enum ArticlePrintIn {
-  Bar = <any>'Bar',
-  Kitchen = <any>'Cocina',
-  Counter = <any>'Mostrador',
-  Voucher = <any>'Voucher',
-}
-
-export enum Type {
-  Final = <any>'Final',
-  Variant = <any>'Variante',
-  Ingredient = <any>'Ingrediente',
-  RawMaterial = <any>'Materia Prima',
-  SemiFinished = <any>'Semielaborado',
-  Service = <any>'Servicio',
 }
 
 export let attributesVariant = [

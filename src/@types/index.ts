@@ -13,7 +13,9 @@ export {
   AppointmentStatus,
   AppointmentWeekday,
 } from './entities/appointment.interface';
-export { Article, Type } from './entities/article.interface';
+export { Article, ArticlePrintIn, Type } from './entities/article.interface';
+export { ArticleField, ArticleFields, ArticleFieldType } from './entities/article-field.interface';
+export { ArticleStock } from './entities/article-stock.interface';
 export { Bank } from './entities/bank.interface';
 export { Branch } from './entities/branch.interface';
 export { BusinessRule, BusinessRuleArticleGroup, Day, DiscountType } from './entities/business-rule.interface';
@@ -34,16 +36,18 @@ export { EmployeeType } from './entities/employee-type.interface';
 export { Employee } from './entities/employee.interface';
 export { Gallery } from './entities/gallery.interface';
 export { Holiday } from './entities/holiday.interface';
+export { History } from './entities/history.interface';
 export { IdentificationType } from './entities/identification-type.interface';
 export { Location } from './entities/location.interface';
 export { Make } from './entities/make.interface';
 export { MovementOfArticle, MovementOfArticleStatus } from './entities/movement-of-article.interface';
 export { MovementOfCancellation } from './entities/movement-of-cancellation.interface';
-export { MovementOfCash, StatusCheck } from './entities/movement-of-cash.interface';
+export { MovementOfCash, PaymentStatus, StatusCheck } from './entities/movement-of-cash.interface';
 export { Notification, NotificationType } from './entities/notification.interface';
 export { Origin } from './entities/origin.interface';
 export { PaymentMethod } from './entities/payment-method.interface';
 export { Permission } from './entities/permission.interface';
+export { Print } from './entities/print.interface';
 export { PriceList } from './entities/price-list.interface';
 export { PositionPrint, Printer, PrinterPrintIn, TypeFields } from './entities/printer.interface';
 export { RelationType } from './entities/relation-type.interface';

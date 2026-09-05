@@ -21,7 +21,7 @@ import { NgbActiveModal, NgbModal, NgbTypeahead, NgbTypeaheadConfig } from '@ng-
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
-import { Category, Classification, Company, Make, UnitOfMeasurement, VariantType, VariantValue } from '@types';
+import { Category, Classification, Company, Make, Tax, TaxClassification, UnitOfMeasurement, VariantType, VariantValue } from '@types';
 import { Config } from '../../../app.config';
 import { ArticleService } from '../../../core/services/article.service';
 import { CategoryService } from '../../../core/services/category.service';
@@ -58,7 +58,6 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { forkJoin, merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UnitOfMeasurementService } from '../../../core/services/unit-of-measurement.service';
-import { Tax, TaxClassification } from '../../tax/tax';
 
 @Component({
   selector: 'app-article',

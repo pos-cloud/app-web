@@ -1,5 +1,7 @@
-import { User } from '@types';
+import { ArticleFieldType, User } from '@types';
 import * as moment from 'moment';
+
+export { ArticleFieldType } from '@types';
 export class ArticleField {
 
 	public _id: string;
@@ -19,11 +21,4 @@ export class ArticleField {
 	
 
 	constructor() { }
-}
-
-export enum ArticleFieldType {
-    Percentage = <any> "Porcentaje",
-    Number = <any> "Número",
-    String = <any> "Alfabético",
-    Array = <any> "Lista"
 }

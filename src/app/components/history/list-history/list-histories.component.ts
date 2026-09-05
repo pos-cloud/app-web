@@ -5,7 +5,8 @@ import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Subscription } from 'rxjs';
 import { HistoryService } from '../../../core/services/history.service';
 import { DatatableComponent } from '../../datatable/datatable.component';
-import { History } from '../history.model';
+import { History } from '@types';
+import { getHistoryAttributes } from '../history.attributes';
 
 @Component({
   selector: 'app-list-histories',
@@ -16,7 +17,7 @@ import { History } from '../history.model';
 export class ListHistoriesComponent {
   public title: string = 'histories';
   public sort = { name: 1 };
-  public columns = History.getAttributes();
+  public columns = getHistoryAttributes();
   public loading: boolean = false;
   public rowButtons: IButton[] = [
     {

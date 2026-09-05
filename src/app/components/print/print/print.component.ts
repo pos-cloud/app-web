@@ -3,7 +3,6 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
-import { TaxClassification } from 'app/components/tax/tax';
 import { Voucher } from 'app/components/voucher-reader/voucher';
 import { BranchService } from 'app/core/services/branch.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
@@ -13,7 +12,7 @@ import { CapitalizePipe } from 'app/shared/pipes/capitalize';
 import jsPDF from 'jspdf';
 import * as moment from 'moment';
 
-import { DescriptionType, Printer, PrinterPrintIn, TransactionMovement, TransactionType } from '@types';
+import { DescriptionType, Printer, PrinterPrintIn, TaxClassification, TransactionMovement, TransactionType } from '@types';
 import { Config } from '../../../app.config';
 import { ArticleService } from '../../../core/services/article.service';
 import { CashBoxService } from '../../../core/services/cash-box.service';
@@ -23,9 +22,9 @@ import { MovementOfCashService } from '../../../core/services/movement-of-cash.s
 import { PrinterService } from '../../../core/services/printer.service';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { ArticleStock } from '../../article-stock/article-stock';
+import { ArticleStock } from '@types';
 import { Article } from '../../article/article';
-import { CashBox } from '../../cash-box/cash-box';
+import { CashBox } from '@types';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { MovementOfCash } from '../../movement-of-cash/movement-of-cash';
 

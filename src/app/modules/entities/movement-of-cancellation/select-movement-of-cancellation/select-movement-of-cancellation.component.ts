@@ -19,16 +19,13 @@ import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap'
 import { TranslateModule } from '@ngx-translate/core';
 import { ApiResponse, Movements, TransactionMovement } from '@types';
 import { Config } from 'app/app.config';
-import { ArticleFieldType } from 'app/components/article-field/article-field';
-import { ArticleFields } from 'app/components/article-field/article-fields';
+import { ArticleFieldType, ArticleFields, CancellationType, TaxBase } from '@types';
 import { Article } from 'app/components/article/article';
-import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { SelectMovementsOfCashesComponent } from 'app/components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
 import { Taxes } from 'app/components/tax/taxes';
-import { TaxBase } from 'app/components/tax/tax';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';

@@ -3,17 +3,15 @@ import { Router } from '@angular/router';
 
 import { CancellationTypeService } from '../../../core/services/cancellation-type.service';
 
-import { CancellationType } from '../cancellation-type';
+import { CancellationType } from '@types';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse, TransactionMovement, TransactionType } from '@types';
 import { Config } from 'app/app.config';
-import { ArticleFieldType } from 'app/components/article-field/article-field';
-import { ArticleFields } from 'app/components/article-field/article-fields';
+import { ArticleFieldType, ArticleFields, TaxBase } from '@types';
 import { MovementOfArticle, MovementOfArticleStatus } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { TaxBase } from 'app/components/tax/tax';
 import { Taxes } from 'app/components/tax/taxes';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';

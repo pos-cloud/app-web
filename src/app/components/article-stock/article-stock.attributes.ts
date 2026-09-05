@@ -1,20 +1,4 @@
-import { Branch, Deposit } from '@types';
-import { Article } from '../article/article';
-
-export class ArticleStock {
-  public _id: string;
-  public article: Article;
-  public branch: Branch;
-  public deposit: Deposit;
-  public realStock: number = 0.0;
-  public minStock: number = 0.0;
-  public maxStock: number = 0.0;
-  public updateDate: string;
-
-  constructor() {}
-}
-
-export let attributes = [
+export const attributes = [
   {
     name: '_id',
     visible: false,

@@ -1,7 +1,9 @@
-import { Bank, CashBox, Company, Movements } from '@types';
+import { Bank, CashBox, Company, Movements, PaymentStatus, StatusCheck } from '@types';
 import * as moment from 'moment';
 import { PaymentMethod } from '../payment-method/payment-method';
 import { Transaction } from '../transaction/transaction';
+
+export { PaymentStatus, StatusCheck } from '@types';
 
 export interface currencyValue {
   value: number;
@@ -47,22 +49,6 @@ export class MovementOfCash {
   movement: Movements;
 
   constructor() {}
-}
-
-export enum StatusCheck {
-  Rejected = <any>'Rechazado',
-  Closed = <any>'Cerrado',
-  Deposit = <any>'Depositado',
-  Available = <any>'Disponible',
-}
-
-export enum PaymentStatus {
-  Authorized = <any>'Autorizado',
-  Pending = <any>'Pendiente',
-  Paid = <any>'Pagado',
-  Abandoned = <any>'Abandonado',
-  Refunded = <any>'Reembolso',
-  Voided = <any>'Anulado',
 }
 
 export let attributes = [

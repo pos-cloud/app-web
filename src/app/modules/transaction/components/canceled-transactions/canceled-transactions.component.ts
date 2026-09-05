@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { ApiResponse, Transaction } from '@types';
-import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
+import { CancellationType } from '@types';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 @Component({

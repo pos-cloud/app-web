@@ -1,6 +1,6 @@
 'use strict'
 
-import { Tax } from 'app/components/tax/tax';
+import { Tax } from '@types';
 
 
 export class Taxes {

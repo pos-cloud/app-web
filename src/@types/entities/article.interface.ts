@@ -58,7 +58,7 @@ export interface Article extends Activity {
   barcode: string;
   wooId: string;
   meliId: string;
-  printIn: string;
+  printIn: ArticlePrintIn | string;
   posKitchen: boolean;
   allowPurchase: boolean;
   allowSale: boolean;
@@ -115,9 +115,17 @@ export interface Article extends Activity {
   descriptionTN: string;
 }
 
+export enum ArticlePrintIn {
+  Bar = 'Bar',
+  Kitchen = 'Cocina',
+  Counter = 'Mostrador',
+  Voucher = 'Voucher',
+}
+
 export enum Type {
   Final = 'Final',
   Variant = 'Variante',
+  Ingredient = 'Ingrediente',
   RawMaterial = 'Materia Prima',
   SemiFinished = 'Semielaborado',
   Service = 'Servicio',

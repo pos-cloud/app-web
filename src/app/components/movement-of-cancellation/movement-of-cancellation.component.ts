@@ -12,9 +12,7 @@ import { TransactionService } from '../../core/services/transaction.service';
 import { Router } from '@angular/router';
 import { ApiResponse } from '@types';
 import { Config } from 'app/app.config';
-import { ArticleFieldType } from 'app/components/article-field/article-field';
-import { ArticleFields } from 'app/components/article-field/article-fields';
-import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
+import { ArticleFieldType, ArticleFields, CancellationType } from '@types';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { Taxes } from 'app/components/tax/taxes';
@@ -29,7 +27,7 @@ import { ViewTransactionComponent } from '../../modules/transaction/components/v
 import { Article } from '../article/article';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { SelectMovementsOfCashesComponent } from '../movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
-import { TaxBase } from '../tax/tax';
+import { TaxBase } from '@types';
 
 @Component({
   selector: 'app-movement-of-cancellation',

@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { CancellationType } from '../../components/cancellation-type/cancellation-type';
+import { CancellationType } from '@types';
 import { AuthService } from './auth.service';
 import { environment } from 'environments/environment';
 

@@ -2,12 +2,10 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ApiResponse, Branch, Company, Deposit, User, View } from '@types';
+import { ApiResponse, Branch, CashBox, CashBoxState, Company, Deposit, Origin, User, View } from '@types';
 
 import { CurrentAccount, StockMovement, TransactionMovement, TransactionType } from '@types';
 import { Config } from 'app/app.config';
-import { CashBox, CashBoxState } from 'app/components/cash-box/cash-box';
-import { Origin } from 'app/components/origin/origin';
 import { Transaction } from 'app/components/transaction/transaction';
 
 import { BranchService } from 'app/core/services/branch.service';

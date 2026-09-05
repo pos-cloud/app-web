@@ -35,7 +35,7 @@ import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { PaymentMethod } from '../../payment-method/payment-method';
-import { Tax } from '../../tax/tax';
+import { Tax } from '@types';
 import { Taxes } from '../../tax/taxes';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';

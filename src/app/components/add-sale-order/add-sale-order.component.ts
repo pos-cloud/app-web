@@ -1,11 +1,10 @@
 import { Component, ElementRef, EventEmitter, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { extractApiResult } from '@core/http';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
-import { PaymentMethod, User } from '@types';
-import { CancellationType } from 'app/components/cancellation-type/cancellation-type';
+import { CancellationType, PaymentMethod, User } from '@types';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { extractApiResult } from '@core/http';
 import { ArticleService } from 'app/core/services/article.service';
 import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
 import { ConfigService } from 'app/core/services/config.service';
@@ -20,16 +19,22 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import {
+  ArticleFields,
+  ArticleFieldType,
+  ArticleStock,
   Category,
   CompanyType,
   optionalAFIP,
   PriceList,
+  Print,
   Printer,
   PrinterPrintIn,
   RelationType,
   StockMovement,
   Table,
   TableState,
+  TaxBase,
+  TaxClassification,
   TransactionMovement,
   TransactionType,
   Transport,
@@ -46,9 +51,6 @@ import { SelectEmployeeComponent } from '../../shared/components/select-employee
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
 import { ApplyDiscountComponent } from '../apply-discount/apply-discount.component';
-import { ArticleFieldType } from '../article-field/article-field';
-import { ArticleFields } from '../article-field/article-fields';
-import { ArticleStock } from '../article-stock/article-stock';
 import { Article, ArticlePrintIn } from '../article/article';
 import { ArticleComponent } from '../article/crud/article.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
@@ -59,10 +61,8 @@ import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-artic
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
-import { Print } from '../print/print';
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 import { PrintComponent } from '../print/print/print.component';
-import { TaxBase, TaxClassification } from '../tax/tax';
 import { Taxes } from '../tax/taxes';
 import { Transaction, TransactionState } from '../transaction/transaction';
 
