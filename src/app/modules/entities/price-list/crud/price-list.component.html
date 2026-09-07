@@ -69,15 +69,15 @@
             </div>
           </div>
           <div class="form-group col-md-2">
-            <label for="pricingMode" class="control-label">Modo:</label>
+            <label for="pricingMode" class="control-label">{{ 'pricingMode' | translate | capitalize }}:</label>
             <select
               class="form-control"
               formControlName="pricingMode"
               id="pricingMode"
               [disabled]="operation === 'view' || operation === 'delete'"
             >
-              <option value="dynamic">Dinámica (%)</option>
-              <option value="manual">Manual (precio fijo)</option>
+              <option value="dynamic">{{ 'pricingModeDynamic' | translate | capitalize }}</option>
+              <option value="manual">{{ 'pricingModeManual' | translate | capitalize }}</option>
             </select>
           </div>
           <div class="form-group col-md-2" *ngIf="!isManualMode">
