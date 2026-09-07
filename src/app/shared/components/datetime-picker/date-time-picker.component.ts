@@ -50,7 +50,7 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
 
   /**
    * Si es true, no notifica al formulario (ngModel) hasta que el usuario cierra el calendario.
-   * Así puede elegir fecha, pasar al reloj, ajustar hora y recién ahí se dispara un solo cambio.
+   * Al elegir un día el popover se cierra solo; la hora se ajusta reabriendo y tocando el reloj.
    */
   @Input()
   deferEmitUntilClose = false;
@@ -166,14 +166,17 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
     this.datetime.day = date.day;
 
     this.setDateStringModel();
+  }
 
-    // Con deferEmitUntilClose el popover queda abierto para poder pasar al reloj sin disparar el guardado aún.
-    const autoCloseAfterDate = !this.showTimePickerToggle && !this.deferEmitUntilClose;
-    if (autoCloseAfterDate) {
-      setTimeout(() => {
-        this.closePopover();
-      }, 100);
+  /** Cierra al elegir un día. La hora se setea reabriendo el popover y tocando el ícono del reloj. */
+  onDateSelect() {
+    if (this.showTimePickerToggle) {
+      return;
     }
+
+    setTimeout(() => {
+      this.closePopover();
+    }, 100);
   }
 
   onTimeChange(event: NgbTimeStruct) {
