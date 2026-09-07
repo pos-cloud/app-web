@@ -74,6 +74,7 @@ import { ToastComponent } from './shared/components/toast/toast.component';
 import { UserBranchSelectComponent } from './shared/components/user-branch-select/user-branch-select.component';
 import { FocusDirective } from './shared/directives/focus.directive';
 import { PipesModule } from './shared/pipes/pipes.module';
+import { TransactionStateComponent } from './shared/components/transaction-state/transaction-state.component';
 
 // Loader de traducciones
 export function HttpLoaderFactory(http: HttpClient) {
@@ -151,6 +152,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     RestoTablesComponent,
     FocusDirective,
     HeaderTransactionComponent,
+    TransactionStateComponent,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: true,
       registrationStrategy: 'registerWhenStable:30000',

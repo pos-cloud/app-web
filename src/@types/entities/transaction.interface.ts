@@ -96,6 +96,7 @@ export interface Transaction extends Activity {
   subTotal: number;
 }
 
+/** Colores globales en `src/styles.css`: `--transaction-state-*` y clase `.transaction-state`. */
 export enum TransactionState {
   Open = 'Abierto',
   Outstanding = 'Pendiente de pago',

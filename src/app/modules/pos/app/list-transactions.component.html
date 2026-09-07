@@ -70,7 +70,9 @@
               </td>
               <td (click)="openTransaction(transaction)">{{ transaction?.startDate }}</td>
               <td (click)="openTransaction(transaction)">{{ transaction?.company?.name }}</td>
-              <td (click)="openTransaction(transaction)">{{ transaction?.state }}</td>
+              <td (click)="openTransaction(transaction)">
+                <app-transaction-state [state]="transaction?.state"></app-transaction-state>
+              </td>
               <td (click)="openTransaction(transaction)">{{ transaction?.employeeClosing?.name }}</td>
               <td align="right" (click)="openTransaction(transaction)">
                 {{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}

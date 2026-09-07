@@ -245,6 +245,7 @@
             <th (click)="orderBy('type', 'name')">Tipo</th>
             <th (click)="orderBy('startDate')">Fecha</th>
             <th (click)="orderBy('number')">Número</th>
+            <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('employeeClosing', 'name')" *ngIf="transactionMovement.toString() === 'Venta'">
               Vendedor
             </th>
@@ -266,6 +267,9 @@
             </th>
             <th>
               <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..." />
+            </th>
+            <th>
+              <input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..." />
             </th>
             <th *ngIf="transactionMovement.toString() === 'Venta'">
               <input type="text" class="form-control" [(ngModel)]="filterEmployeeClosing" placeholder="Vendedor..." />
@@ -296,6 +300,7 @@
                 | filter: filterType : 'name' : 'type'
                 | filter: filterStartDate : 'startDate'
                 | filter: filterNumber : 'number'
+                | filter: filterState : 'state'
                 | filter: filterObservation : 'observation'
                 | filter: filterEmployeeClosing : 'name' : 'employeeClosing'
                 | filter: filterCompany : 'name' : 'company'
@@ -333,6 +338,9 @@
             </td>
             <td (click)="openTransaction(transaction)">
               <b>{{ transaction.number }}</b>
+            </td>
+            <td (click)="openTransaction(transaction)">
+              <app-transaction-state [state]="transaction.state"></app-transaction-state>
             </td>
             <td
               *ngIf="transaction.employeeClosing && transactionMovement.toString() === 'Venta'"

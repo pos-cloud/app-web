@@ -14,6 +14,7 @@ import { ViewTransactionComponent } from 'app/modules/transaction/components/vie
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { TransactionStateComponent } from 'app/shared/components/transaction-state/transaction-state.component';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -23,7 +24,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
   providers: [TranslateService],
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, NgbModule, DatatableModule, PipesModule, TranslateModule, FormsModule, ProgressbarModule],
+  imports: [CommonModule, NgbModule, DatatableModule, PipesModule, TranslateModule, FormsModule, ProgressbarModule, TransactionStateComponent],
 })
 export class ListAppTransactionsComponent implements OnInit {
   public loading: boolean = false;

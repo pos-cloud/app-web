@@ -16,6 +16,19 @@
   --nav-active-bg: #e8f2fd;
   --nav-ink: #0f172a;
   --nav-radius: 8px;
+
+  --transaction-state-abierto: #b45309;
+  --transaction-state-pendiente: #0369a1;
+  --transaction-state-pendiente-de-pago: #c2410c;
+  --transaction-state-pago-confirmado: #15803d;
+  --transaction-state-pago-rechazado: #b91c1c;
+  --transaction-state-anulado: #9f1239;
+  --transaction-state-armando: #7c3aed;
+  --transaction-state-cerrado: #047857;
+  --transaction-state-entregado: #0f766e;
+  --transaction-state-enviado: #1d4ed8;
+  --transaction-state-preparando: #6d28d9;
+  --transaction-state-en-produccion: #4338ca;
 }
 
 html {
@@ -521,4 +534,76 @@ td {
   max-height: 300px !important;
   overflow-y: auto !important;
   width: 400px !important;
+}
+
+.transaction-state {
+  --transaction-state-color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px 2px 6px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: var(--transaction-state-color);
+  background: color-mix(in srgb, var(--transaction-state-color) 12%, #fff);
+}
+
+.transaction-state::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.transaction-state[data-state='Abierto'] {
+  --transaction-state-color: var(--transaction-state-abierto);
+}
+
+.transaction-state[data-state='Pendiente'] {
+  --transaction-state-color: var(--transaction-state-pendiente);
+}
+
+.transaction-state[data-state='Pendiente de pago'] {
+  --transaction-state-color: var(--transaction-state-pendiente-de-pago);
+}
+
+.transaction-state[data-state='Pago Confirmado'] {
+  --transaction-state-color: var(--transaction-state-pago-confirmado);
+}
+
+.transaction-state[data-state='Pago Rechazado'] {
+  --transaction-state-color: var(--transaction-state-pago-rechazado);
+}
+
+.transaction-state[data-state='Anulado'] {
+  --transaction-state-color: var(--transaction-state-anulado);
+}
+
+.transaction-state[data-state='Armando'] {
+  --transaction-state-color: var(--transaction-state-armando);
+}
+
+.transaction-state[data-state='Cerrado'] {
+  --transaction-state-color: var(--transaction-state-cerrado);
+}
+
+.transaction-state[data-state='Entregado'] {
+  --transaction-state-color: var(--transaction-state-entregado);
+}
+
+.transaction-state[data-state='Enviado'] {
+  --transaction-state-color: var(--transaction-state-enviado);
+}
+
+.transaction-state[data-state='Preparando'] {
+  --transaction-state-color: var(--transaction-state-preparando);
+}
+
+.transaction-state[data-state='En Producción'] {
+  --transaction-state-color: var(--transaction-state-en-produccion);
 }

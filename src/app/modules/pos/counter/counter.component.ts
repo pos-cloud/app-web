@@ -17,6 +17,7 @@ import { CreateTransactionService, PosContext } from 'app/modules/transaction/se
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { TransactionStateComponent } from 'app/shared/components/transaction-state/transaction-state.component';
 
 @Component({
   selector: 'app-pos-counter',
@@ -25,7 +26,7 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
   standalone: true,
   providers: [TranslateService],
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, NgbModule, FormsModule, TranslateModule, PipesModule, ProgressbarModule],
+  imports: [CommonModule, NgbModule, FormsModule, TranslateModule, PipesModule, ProgressbarModule, TransactionStateComponent],
 })
 export class CounterComponent implements OnInit, OnDestroy {
   public readonly movement = TransactionMovement.Sale;
@@ -44,6 +45,7 @@ export class CounterComponent implements OnInit, OnDestroy {
   public filterCompany = '';
   public filterEmployee = '';
   public filterObservation = '';
+  public filterState = '';
 
   private user: User;
   private config: any;
@@ -104,6 +106,10 @@ export class CounterComponent implements OnInit, OnDestroy {
     if (this.filterCompany) match['company.name'] = { $regex: this.filterCompany, $options: 'i' };
     if (this.filterEmployee) match['employeeClosing.name'] = { $regex: this.filterEmployee, $options: 'i' };
     if (this.filterObservation) match['observation'] = { $regex: this.filterObservation, $options: 'i' };
+    if (this.filterState) {
+      match['state'].$regex = this.filterState;
+      match['state'].$options = 'i';
+    }
 
     const group = { _id: null, count: { $sum: 1 }, items: { $push: '$$ROOT' } };
     const skip = (this.currentPage > 0 ? this.currentPage - 1 : 0) * this.itemsPerPage;

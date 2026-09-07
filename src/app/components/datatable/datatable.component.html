@@ -155,7 +155,11 @@
                 [attr.align]="column.align"
                 (click)="onRowClick(item)"
               >
-                {{ getValue(item, column) }}
+                <app-transaction-state
+                  *ngIf="column.name === 'state'"
+                  [state]="getValue(item, column)"
+                ></app-transaction-state>
+                <ng-container *ngIf="column.name !== 'state'">{{ getValue(item, column) }}</ng-container>
               </td>
               <td *ngIf="column.visible && column.datatype === 'boolean'" [attr.align]="column.align">
                 <input type="checkbox" [checked]="getValue(item, column)" disabled />

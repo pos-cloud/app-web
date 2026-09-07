@@ -8,6 +8,7 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { ColumnsConfigComponent } from '../../shared/components/columns-config/columns-config.component';
 import { ExportExcelModule } from '../../shared/components/export-excel/export-excel.module';
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
+import { TransactionStateComponent } from '../../shared/components/transaction-state/transaction-state.component';
 import { DatatableComponent } from './datatable.component';
 
 @NgModule({
@@ -22,6 +23,7 @@ import { DatatableComponent } from './datatable.component';
     PipesModule,
     NgbModule,
     ColumnsConfigComponent,
+    TransactionStateComponent,
   ],
   exports: [DatatableComponent],
   declarations: [DatatableComponent],
