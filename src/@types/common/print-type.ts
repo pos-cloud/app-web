@@ -4,7 +4,7 @@ export enum PrintType {
   CurrentAccount = 'current-account',
   Labels = 'labels',
   Transaction = 'transaction',
-  Bar = 'Bar',
+  Bar = 'bar',
   Kitchen = 'kitchen',
   Inventory = 'inventory',
   Qr = 'qr',

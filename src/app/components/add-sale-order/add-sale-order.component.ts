@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { extractApiResult } from '@core/http';
 import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
-import { CancellationType, PaymentMethod, User } from '@types';
+
+import { PaymentMethod, PrintType, User } from '@types';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { ArticleService } from 'app/core/services/article.service';
 import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
@@ -22,6 +23,7 @@ import {
   ArticleFields,
   ArticleFieldType,
   ArticleStock,
+  CancellationType,
   Category,
   CompanyType,
   optionalAFIP,
@@ -61,11 +63,10 @@ import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-artic
 import { MovementOfCancellation } from '../movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from '../movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
-import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
-import { PrintComponent } from '../print/print/print.component';
 import { Taxes } from '../tax/taxes';
 import { Transaction, TransactionState } from '../transaction/transaction';
 
+import { PrintService } from '@core/services/print.service';
 import { ApiResponse, Currency, EmailProps } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
@@ -77,6 +78,8 @@ import { SelectPriceListComponent } from 'app/modules/transaction/components/sel
 import { SelectShipmentMethodComponentNew } from 'app/modules/transaction/components/select-shipment-method/select-shipment-method';
 import { SelectTableComponent } from 'app/modules/transaction/components/select-table/select-table.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import * as printJS from 'print-js';
+import { Subject, takeUntil } from 'rxjs';
 import { VariantService } from '../../core/services/variant.service';
 import { ApplyBusinessRuleComponent } from '../../modules/transaction/components/apply-business-rule/apply-business-rule.component';
 import { ChangeDateComponent } from '../../modules/transaction/components/change-date/change-date.component';
@@ -127,8 +130,6 @@ export class AddSaleOrderComponent {
   kitchenArticlesPrinted: number = 0;
   barArticlesToPrint: MovementOfArticle[];
   barArticlesPrinted: number = 0;
-  voucherArticlesToPrint: MovementOfArticle[];
-  voucherArticlesPrinted: number = 0;
   printSelected: Print;
   filterArticle: string = '';
   focusEvent = new EventEmitter<boolean>();
@@ -146,6 +147,8 @@ export class AddSaleOrderComponent {
   database: string;
   lastMovementOfArticle: MovementOfArticle;
   isCancellationAutomatic: boolean = false;
+  private destroy$ = new Subject<void>();
+  private printChain: Promise<void> = Promise.resolve();
 
   priceList: PriceList;
   newPriceList: any;
@@ -195,7 +198,8 @@ export class AddSaleOrderComponent {
     public translatePipe: TranslateMePipe,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _authService: AuthService
+    public _authService: AuthService,
+    public _printService: PrintService
   ) {
     this.initVariables();
     this.processParams();
@@ -262,7 +266,6 @@ export class AddSaleOrderComponent {
     this.printersAux = new Array();
     this.barArticlesToPrint = new Array();
     this.kitchenArticlesToPrint = new Array();
-    this.voucherArticlesToPrint = new Array();
     this.usesOfCFDI = new Array();
     this.relationTypes = new Array();
     this.currencies = new Array();
@@ -2046,7 +2049,6 @@ export class AddSaleOrderComponent {
           }
         });
         break;
-
       case 'movement_of_article':
         const movementOfArticleCollection = this.user?.permission?.collections?.movementsOfArticles;
 
@@ -2266,8 +2268,6 @@ export class AddSaleOrderComponent {
                     this.close('charge');
                   }
                 }
-              } else {
-                this.voucherArticlesToPrint = [];
               }
             });
           } else {
@@ -2409,72 +2409,26 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'print':
-        if (this.transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.result.then(() => {
-            this.backFinal();
-          });
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.transactionId = this.transaction._id;
-          modalRef.componentInstance.company = this.transaction.company;
-          modalRef.componentInstance.printer = this.printerSelected;
-          modalRef.componentInstance.typePrint = 'invoice';
-          modalRef.result
-            .then(() => {
-              this.backFinal();
-            })
-            .catch((e) => {
-              this.backFinal();
-            });
-        }
-
+        const datalabeTransaction = {
+          transactionId: this.transaction._id,
+        };
+        this.toPrint(PrintType.Transaction, datalabeTransaction, true);
         break;
       case 'printKitchen':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.componentInstance.movementsOfArticles = this.kitchenArticlesToPrint;
-        modalRef.componentInstance.printer = this.printerSelected;
-        modalRef.componentInstance.typePrint = 'kitchen';
-
-        modalRef.result
-          .then(() => {
-            this.updateMovementOfArticlePrintedKitchen();
-          })
-          .catch((e) => {
-            this.updateMovementOfArticlePrintedKitchen();
-          });
+        const datalabel = {
+          transactionId: this.transaction._id,
+        };
+        this.toPrint(PrintType.Kitchen, datalabel).then(() => {
+          this.updateMovementOfArticlePrintedKitchen();
+        });
         break;
       case 'printBar':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.componentInstance.movementsOfArticles = this.barArticlesToPrint;
-        modalRef.componentInstance.printer = this.printerSelected;
-        modalRef.componentInstance.typePrint = 'bar';
-
-        modalRef.result
-          .then(() => {
-            this.updateMovementOfArticlePrintedBar();
-          })
-          .catch((e) => {
-            this.updateMovementOfArticlePrintedBar();
-          });
-        break;
-      case 'printVoucher':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.componentInstance.movementsOfArticles = this.voucherArticlesToPrint;
-        modalRef.componentInstance.printer = this.printerSelected;
-        modalRef.componentInstance.typePrint = 'voucher';
-
-        modalRef.result
-          .then(() => {
-            this.updateMovementOfArticlePrintedVoucher();
-          })
-          .catch((e) => {
-            this.updateMovementOfArticlePrintedVoucher();
-          });
+        const datalabelBar = {
+          transactionId: this.transaction._id,
+        };
+        this.toPrint(PrintType.Bar, datalabelBar).then(() => {
+          this.updateMovementOfArticlePrintedBar();
+        });
         break;
       case 'change-shipment-method':
         if (this.transaction.company) {
@@ -2854,13 +2808,6 @@ export class AddSaleOrderComponent {
           ) {
             this.kitchenArticlesToPrint.push(movementOfArticle);
           }
-          if (
-            movementOfArticle.article &&
-            movementOfArticle.article.printIn === ArticlePrintIn.Voucher &&
-            movementOfArticle.printed < movementOfArticle.amount
-          ) {
-            this.voucherArticlesToPrint.push(movementOfArticle);
-          }
         }
       }
     }
@@ -2870,9 +2817,6 @@ export class AddSaleOrderComponent {
       this.distributeImpressions();
     } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = 'kitchen';
-      this.distributeImpressions();
-    } else if (this.voucherArticlesToPrint && this.voucherArticlesToPrint.length !== 0) {
-      this.typeOfOperationToPrint = 'voucher';
       this.distributeImpressions();
     } else {
       if (this.isCharge) {
@@ -2979,9 +2923,6 @@ export class AddSaleOrderComponent {
             if (this.kitchenArticlesToPrint.length > 0) {
               this.typeOfOperationToPrint = 'kitchen';
               this.distributeImpressions(null);
-            } else if (this.voucherArticlesToPrint.length > 0) {
-              this.typeOfOperationToPrint = 'voucher';
-              this.distributeImpressions(null);
             } else {
               if (this.isCharge) {
                 this.finish();
@@ -3015,15 +2956,10 @@ export class AddSaleOrderComponent {
             if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
               this.updateMovementOfArticlePrintedKitchen();
             } else {
-              if (this.voucherArticlesToPrint.length > 0) {
-                this.typeOfOperationToPrint = 'voucher';
-                this.distributeImpressions(null);
+              if (this.isCharge) {
+                this.finish();
               } else {
-                if (this.isCharge) {
-                  this.finish();
-                } else {
-                  this.backFinal();
-                }
+                this.backFinal();
               }
             }
           }
@@ -3034,49 +2970,6 @@ export class AddSaleOrderComponent {
           this.loading = false;
         }
       );
-  }
-
-  updateMovementOfArticlePrintedVoucher(): void {
-    this.loading = true;
-
-    if (
-      this.voucherArticlesToPrint[this.voucherArticlesPrinted] &&
-      this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount
-    ) {
-      this.voucherArticlesToPrint[this.voucherArticlesPrinted].printed =
-        this.voucherArticlesToPrint[this.voucherArticlesPrinted].amount;
-      this._movementOfArticleService
-        .updateMovementOfArticle(this.voucherArticlesToPrint[this.voucherArticlesPrinted])
-        .subscribe(
-          async (result) => {
-            if (!result.movementOfArticle) {
-              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            } else {
-              this.voucherArticlesPrinted++;
-              if (this.voucherArticlesPrinted < this.voucherArticlesToPrint.length) {
-                this.updateMovementOfArticlePrintedVoucher();
-              } else {
-                if (this.isCharge) {
-                  this.finish();
-                } else {
-                  this.backFinal();
-                }
-              }
-            }
-            this.loading = false;
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            this.loading = false;
-          }
-        );
-    } else {
-      if (this.isCharge) {
-        this.openModal('charge');
-      } else {
-        this.backFinal();
-      }
-    }
   }
 
   countPrinters(): number {
@@ -3096,9 +2989,6 @@ export class AddSaleOrderComponent {
           this.printersAux.push(printer);
           numberOfPrinters++;
         } else if (this.typeOfOperationToPrint === 'kitchen' && printer.printIn === PrinterPrintIn.Kitchen) {
-          this.printersAux.push(printer);
-          numberOfPrinters++;
-        } else if (this.typeOfOperationToPrint === 'voucher' && printer.printIn === PrinterPrintIn.Voucher) {
           this.printersAux.push(printer);
           numberOfPrinters++;
         }
@@ -3141,14 +3031,6 @@ export class AddSaleOrderComponent {
             ) {
               this.printerSelected = element.printer;
             }
-            if (
-              element &&
-              element.printer &&
-              element.printer.printIn === PrinterPrintIn.Voucher &&
-              this.typeOfOperationToPrint === 'voucher'
-            ) {
-              this.printerSelected = element.printer;
-            }
           }
         } else {
           if (!this.printerSelected) {
@@ -3166,13 +3048,7 @@ export class AddSaleOrderComponent {
                   ) {
                     this.printerSelected = element;
                   }
-                  if (
-                    element &&
-                    element.printIn === PrinterPrintIn.Voucher &&
-                    this.typeOfOperationToPrint === 'voucher'
-                  ) {
-                    this.printerSelected = element;
-                  }
+
                   if (
                     element &&
                     element.printIn === PrinterPrintIn.Counter &&
@@ -3201,9 +3077,6 @@ export class AddSaleOrderComponent {
           break;
         case 'bar':
           this.openModal('printBar');
-          break;
-        case 'voucher':
-          this.openModal('printVoucher');
           break;
         default:
           this.showMessage('No se reconoce la operación de impresión.', 'danger', false);
@@ -3621,6 +3494,93 @@ export class AddSaleOrderComponent {
 
     if (this.transactionMovement && this.transactionMovement !== 'Stock' && this.transactionMovement !== 'Producción') {
       this.openModal('charge');
+    }
+  }
+
+  public toPrint(type: PrintType, data: {}, closeAfter = false): Promise<boolean> {
+    this.loading = true;
+
+    return new Promise((resolve) => {
+      this._printService
+        .toPrint(type, data)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result: Blob | ApiResponse) => {
+            if (!result) {
+              this._toastService.showToast({ message: 'Error al generar el PDF' });
+              this.finishPrint(closeAfter);
+              resolve(false);
+              return;
+            }
+            if (result instanceof Blob) {
+              const blobUrl = URL.createObjectURL(result);
+              this.printBlobUrl(blobUrl)
+                .then(() => {
+                  this.finishPrint(closeAfter);
+                  resolve(true);
+                })
+                .catch(() => {
+                  this._toastService.showToast({ message: 'Error al generar el PDF' });
+                  this.finishPrint(closeAfter);
+                  resolve(false);
+                });
+            } else {
+              this._toastService.showToast(result);
+              this.finishPrint(closeAfter);
+              resolve(false);
+            }
+          },
+          error: () => {
+            this._toastService.showToast({ message: 'Error al generar el PDF' });
+            this.finishPrint(closeAfter);
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  private printBlobUrl(blobUrl: string): Promise<void> {
+    this.printChain = this.printChain
+      .then(() => {
+        const dialogClosed = new Promise<void>((resolve) => {
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            resolve();
+          };
+
+          try {
+            printJS({
+              printable: blobUrl,
+              type: 'pdf',
+              onPrintDialogClose: finish,
+              onError: () => finish(),
+            });
+          } catch {
+            finish();
+          }
+
+          window.setTimeout(finish, 45000);
+        });
+
+        const minDelay = new Promise<void>((resolve) => {
+          window.setTimeout(resolve, 1500);
+        });
+
+        return Promise.all([dialogClosed, minDelay]).then(() => {
+          URL.revokeObjectURL(blobUrl);
+        });
+      })
+      .catch(() => undefined);
+
+    return this.printChain;
+  }
+
+  private finishPrint(closeAfter: boolean): void {
+    this.loading = false;
+    if (closeAfter) {
+      this.backFinal();
     }
   }
 }
