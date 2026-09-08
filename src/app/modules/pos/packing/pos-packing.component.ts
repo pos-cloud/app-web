@@ -1,10 +1,9 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse, Printer, PrinterPrintIn } from '@types';
+import { ApiResponse, Printer, User } from '@types';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
-import { User } from '@types';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { PrinterService } from 'app/core/services/printer.service';
 import { TransactionService } from 'app/core/services/transaction.service';
@@ -12,8 +11,6 @@ import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
-import { PrintComponent } from '../print/print/print.component';
 
 @Component({
   selector: 'app-pos-packing',
@@ -337,89 +334,89 @@ export class PosPackingComponent {
 
     switch (op) {
       case 'print':
-        await this.getTransaction(transaction._id).then(async (result) => {
-          if (result) {
-            transaction = result;
-          }
-        });
-        if (transaction.type.readLayout) {
-          modalRef = this._modalService.open(PrintTransactionTypeComponent);
-          modalRef.componentInstance.transactionId = transaction._id;
-          modalRef.result.then(
-            async (result) => {},
-            async (reason) => {
-              if (transaction.state === TransactionState.Packing) {
-                // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
-                transaction.state = TransactionState.Delivered;
-                await this.updateTransaction(transaction).then(async (transaction) => {
-                  if (transaction) {
-                    this.loadPacking();
-                  }
-                });
-              }
-            }
-          );
-        } else {
-          modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.company = transaction.company;
-          modalRef.componentInstance.transactionId = transaction._id;
-          modalRef.componentInstance.typePrint = 'invoice';
-          if (transaction.type.defectPrinter) {
-            modalRef.componentInstance.printer = transaction.type.defectPrinter;
-          } else {
-            await this.getUser().then(async (user) => {
-              if (user) {
-                if (user.printers && user.printers.length > 0) {
-                  for (const element of user.printers) {
-                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Bar) {
-                      printerSelect = element.printer;
-                    }
-                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
-                      printerSelect = element.printer;
-                    }
-                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen) {
-                      printerSelect = element.printer;
-                    }
-                    if (element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher) {
-                      printerSelect = element.printer;
-                    }
-                  }
-                } else {
-                  if (!printerSelect) {
-                    if (this.printers && this.printers.length > 0) {
-                      for (let printer of this.printers) {
-                        //traer usuario y la impresora seteada y asignar
-                        if (printer.printIn === PrinterPrintIn.Counter) {
-                          printerSelect = printer;
-                        }
-                      }
-                    }
-                  }
-                }
-                modalRef.componentInstance.printer = printerSelect;
-              } else {
-                this.showMessage('Debe iniciar sesión', 'danger', false);
-              }
-            });
-          }
-          modalRef.result.then(
-            async (result) => {},
-            async (reason) => {
-              if (transaction.state === TransactionState.Packing) {
-                // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
-                transaction.state = TransactionState.Delivered;
-                if (transaction?.shipmentMethod?.name === 'Auto') {
-                  transaction.state = TransactionState.Closed;
-                }
-                await this.updateTransaction(transaction).then(async (transaction) => {
-                  if (transaction) {
-                    this.loadPacking();
-                  }
-                });
-              }
-            }
-          );
-        }
+        // await this.getTransaction(transaction._id).then(async (result) => {
+        //   if (result) {
+        //     transaction = result;
+        //   }
+        // });
+        // if (transaction.type.readLayout) {
+        //   modalRef = this._modalService.open(PrintTransactionTypeComponent);
+        //   modalRef.componentInstance.transactionId = transaction._id;
+        //   modalRef.result.then(
+        //     async (result) => {},
+        //     async (reason) => {
+        //       if (transaction.state === TransactionState.Packing) {
+        //         // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
+        //         transaction.state = TransactionState.Delivered;
+        //         await this.updateTransaction(transaction).then(async (transaction) => {
+        //           if (transaction) {
+        //             this.loadPacking();
+        //           }
+        //         });
+        //       }
+        //     }
+        //   );
+        // } else {
+        //   modalRef = this._modalService.open(PrintComponent);
+        //   modalRef.componentInstance.company = transaction.company;
+        //   modalRef.componentInstance.transactionId = transaction._id;
+        //   modalRef.componentInstance.typePrint = 'invoice';
+        //   if (transaction.type.defectPrinter) {
+        //     modalRef.componentInstance.printer = transaction.type.defectPrinter;
+        //   } else {
+        //     await this.getUser().then(async (user) => {
+        //       if (user) {
+        //         if (user.printers && user.printers.length > 0) {
+        //           for (const element of user.printers) {
+        //             if (element && element.printer && element.printer.printIn === PrinterPrintIn.Bar) {
+        //               printerSelect = element.printer;
+        //             }
+        //             if (element && element.printer && element.printer.printIn === PrinterPrintIn.Counter) {
+        //               printerSelect = element.printer;
+        //             }
+        //             if (element && element.printer && element.printer.printIn === PrinterPrintIn.Kitchen) {
+        //               printerSelect = element.printer;
+        //             }
+        //             if (element && element.printer && element.printer.printIn === PrinterPrintIn.Voucher) {
+        //               printerSelect = element.printer;
+        //             }
+        //           }
+        //         } else {
+        //           if (!printerSelect) {
+        //             if (this.printers && this.printers.length > 0) {
+        //               for (let printer of this.printers) {
+        //                 //traer usuario y la impresora seteada y asignar
+        //                 if (printer.printIn === PrinterPrintIn.Counter) {
+        //                   printerSelect = printer;
+        //                 }
+        //               }
+        //             }
+        //           }
+        //         }
+        //         modalRef.componentInstance.printer = printerSelect;
+        //       } else {
+        //         this.showMessage('Debe iniciar sesión', 'danger', false);
+        //       }
+        //     });
+        //   }
+        //   modalRef.result.then(
+        //     async (result) => {},
+        //     async (reason) => {
+        //       if (transaction.state === TransactionState.Packing) {
+        //         // PONEMOS LA TRANSACCION EN ESTADO EN ENTREGADO
+        //         transaction.state = TransactionState.Delivered;
+        //         if (transaction?.shipmentMethod?.name === 'Auto') {
+        //           transaction.state = TransactionState.Closed;
+        //         }
+        //         await this.updateTransaction(transaction).then(async (transaction) => {
+        //           if (transaction) {
+        //             this.loadPacking();
+        //           }
+        //         });
+        //       }
+        //     }
+        //   );
+        // }
         break;
       default:
         break;

@@ -28,7 +28,6 @@ import { ApplyDiscountComponent } from './components/apply-discount/apply-discou
 import { ListArticlesPosComponent } from './components/article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeAutomaticComponent } from './components/cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCategoriesPosComponent } from './components/category/list-categories-pos/list-categories-pos.component';
-import { ClockComponent } from './components/clock/clock.component';
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
@@ -40,12 +39,6 @@ import { DeleteMovementOfCashComponent } from './components/movement-of-cash/del
 import { SelectChecksComponent } from './components/movement-of-cash/select-checks/select-checks.component';
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
-import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
-import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
-import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
-import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
-import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
-import { PrintComponent } from './components/print/print/print.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
@@ -55,7 +48,6 @@ import { ExportExcelModule } from './shared/components/export-excel/export-excel
 
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
-import { VoucherReaderComponent } from './components/voucher-reader/voucher-reader.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { NotificationGuard } from './core/guards/notification.guard';
@@ -94,12 +86,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddSaleOrderComponent,
     PointOfSaleComponent,
     LoginComponent,
-    ClockComponent,
     AddMovementOfCashComponent,
     ConfigComponent,
     AddTransactionComponent,
     CurrentAccountComponent,
-    PrintComponent,
     AddMovementOfArticleComponent,
     ApplyDiscountComponent,
     DeleteMovementOfCashComponent,
@@ -109,14 +99,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
     MovementOfCancellationComponent,
-    CurrentAccountDetailsComponent,
     ListArticlesPosComponent,
-    PrintTransactionTypeComponent,
     CancellationTypeAutomaticComponent,
-    VoucherReaderComponent,
-    PosKitchenComponent,
-    PosClientViewComponent,
-    PosPackingComponent,
     SelectChecksComponent,
     ListCategoriesPosComponent,
     SelectMovementsOfCashesComponent,

@@ -1,0 +1,190 @@
+<section>
+	<div class="center-content" *ngIf="alertMessage !== ''">
+		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+			{{alertMessage}}
+		</ngb-alert>
+	</div>
+	<div class="row">
+		<div class="col-md-12 center-content">
+			<button type="button" class="btn btn-success btn-production" (click)="startProduction()"
+				[disabled]="productionStarted">INICIAR PRODUCCIÓN</button>
+			<button type="button" class="btn btn-danger btn-production" (click)="stopProduction()"
+				[disabled]="!productionStarted">PARAR PRODUCCIÓN</button>
+		</div>
+	</div>
+	<div class="row" style="margin: 0px;">
+		<div class="col-md-12">
+			<div class="card">
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-2">
+							<div class="card-title">
+								Notas
+							</div>
+							<div class="card-text notes" *ngIf="movementOfArticle && movementOfArticle.notes">
+								<div class="row" *ngFor="let note of movementOfArticle.notes.split('; ')">
+									<div class="col-md-12">
+										{{ note }}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-5">
+							<div *ngIf="movementOfArticle" class="card-title" style="font-size: 30px;">
+								{{movementOfArticle.description}}
+							</div>
+							<div class="card-title" *ngIf="!productionStarted">
+								Esperando iniciar producción.
+							</div>
+							<div class="card-title" *ngIf="productionStarted && !loading && !movementOfArticle">
+								Esperando nuevos pedidos.
+							</div>
+							<div *ngIf="!movementOfArticle && loading" class="card-title" style="font-size: 30px;">
+								Cargando...
+							</div>
+							<div class="row" (click)="changeStatusToReady()">
+								<div class="col-md-12 center-content" style="padding: 20px;">
+									<img *ngIf="movementOfArticle && movementOfArticle.article && (!movementOfArticle.article.picture || movementOfArticle.article.picture == 'default.jpg')"
+										src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementOfArticle && movementOfArticle.article.picture && movementOfArticle.article.picture !== 'default.jpg'"
+										[src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture+'/'+database">
+								</div>
+							</div>
+							<div class="row" *ngIf="movementOfArticle && movementOfArticle.transaction">
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-12 center-content">
+											<span *ngIf="movementOfArticle.transaction.orderNumber > 0">Pedido Nro.
+												{{movementOfArticle.transaction.orderNumber}} Realizado</span>
+											<span *ngIf="!movementOfArticle.transaction.orderNumber">Pedido Nro.
+												{{movementOfArticle.transaction.number}} Realizado</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 center-content" style="font-size: 25px;">
+											<b>{{getTime(movementOfArticle.transaction.endDate)}}</b>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 center-content" style="font-size: 20px;">
+											(<app-clock [startTime]="movementOfArticle.transaction.endDate"
+												[format]="'HH:mm:ss'"></app-clock>)
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-12 center-content">
+											Produciendo
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 center-content" style="font-size: 25px;">
+											<b>{{getTime(startProductionDate)}}</b>
+										</div>
+									</div>
+									<div class="row" *ngIf="startProductionDate">
+										<div class="col-md-12 center-content" style="font-size: 20px;">
+											(<app-clock [startTime]="startProductionDate" [format]="'HH:mm:ss'">
+											</app-clock>)
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="card-title">
+								Estructura
+							</div>
+							<div class="card-text notes">
+								<div class="row" *ngFor="let mov of movementsOfArticlesChildren">
+									<div class="col-md-12">
+										{{ mov.description }}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3" *ngIf="movementsOfArticles && movementsOfArticles.length > 0">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="card-title" style="padding: 10px;">
+										Últimos pedidos producidos
+									</div>
+								</div>
+							</div>
+							<div class="row" *ngIf="movementsOfArticles && movementsOfArticles[0]">
+								<div class="col-md-4 center-content" style="padding: 20px;"
+									(click)="viewArticle(movementsOfArticles[0])">
+									<img *ngIf="!movementsOfArticles[0] || !movementsOfArticles[0].article.picture || movementsOfArticles[0].article.picture == 'default.jpg'"
+										src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[0] && movementsOfArticles[0].article.picture && movementsOfArticles[0].article.picture !== 'default.jpg'"
+										[src]="apiURL + 'get-image-article/'+movementsOfArticles[0].article.picture+'/'+database">
+								</div>
+								<div class="col-md-8">
+									<div class="card-title">
+										<span>{{movementsOfArticles[0].description}}</span><br>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[0].transaction">
+											<span *ngIf="movementsOfArticles[0].transaction.orderNumber > 0">Pedido Nro.
+												{{movementsOfArticles[0].transaction.orderNumber}} Realizado</span>
+											<span *ngIf="!movementsOfArticles[0].transaction.orderNumber">Pedido Nro.
+												{{movementsOfArticles[0].transaction.number}} Realizado</span>
+										</span>
+									</div>
+									<div class="card-text">
+										{{movementsOfArticles[0].notes}}
+									</div>
+								</div>
+							</div>
+							<div class="row" *ngIf="movementsOfArticles && movementsOfArticles[1]">
+								<div class="col-md-4 center-content" style="padding: 20px;"
+									(click)="viewArticle(movementsOfArticles[1])">
+									<img *ngIf="!movementsOfArticles[1] || !movementsOfArticles[1].article.picture || movementsOfArticles[1].article.picture == 'default.jpg'"
+										src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[1] && movementsOfArticles[1].article.picture && movementsOfArticles[1].article.picture !== 'default.jpg'"
+										[src]="apiURL + 'get-image-article/'+movementsOfArticles[1].article.picture+'/'+database">
+								</div>
+								<div class="col-md-8">
+									<div class="card-title">
+										<span>{{movementsOfArticles[1].description}}</span><br>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[1].transaction">
+											<span *ngIf="movementsOfArticles[1].transaction.orderNumber > 0">Pedido Nro.
+												{{movementsOfArticles[1].transaction.orderNumber}} Realizado</span>
+											<span *ngIf="!movementsOfArticles[1].transaction.orderNumber">Pedido Nro.
+												{{movementsOfArticles[1].transaction.number}} Realizado</span>
+										</span>
+									</div>
+									<div class="card-text">
+										{{movementsOfArticles[1].notes}}
+									</div>
+								</div>
+							</div>
+							<div class="row" *ngIf="movementsOfArticles && movementsOfArticles[2]">
+								<div class="col-md-4 center-content" style="padding: 20px;"
+									(click)="viewArticle(movementsOfArticles[2])">
+									<img *ngIf="!movementsOfArticles[2] || !movementsOfArticles[2].article.picture || movementsOfArticles[2].article.picture == 'default.jpg'"
+										src="./../../../assets/img/default.jpg">
+									<img *ngIf="movementsOfArticles[2] && movementsOfArticles[2].article.picture && movementsOfArticles[2].article.picture !== 'default.jpg'"
+										[src]="apiURL + 'get-image-article/'+movementsOfArticles[2].article.picture+'/'+database">
+								</div>
+								<div class="col-md-8">
+									<div class="card-title">
+										<span>{{movementsOfArticles[2].description}}</span><br>
+										<span style="font-size: 15px;" *ngIf="movementsOfArticles[2].transaction">
+											<span *ngIf="movementsOfArticles[1].transaction.orderNumber > 0">Pedido Nro.
+												{{movementsOfArticles[1].transaction.orderNumber}} Realizado</span>
+											<span *ngIf="!movementsOfArticles[1].transaction.orderNumber">Pedido Nro.
+												{{movementsOfArticles[1].transaction.number}} Realizado</span>
+										</span>
+									</div>
+									<div class="card-text">
+										{{movementsOfArticles[2].notes}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

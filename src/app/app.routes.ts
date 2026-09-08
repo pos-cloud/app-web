@@ -8,10 +8,6 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
-import { PosClientViewComponent } from './components/pos-client-view/pos-client-view.component';
-import { PosKitchenComponent } from './components/pos-kitchen/pos-kitchen.component';
-import { PosPackingComponent } from './components/pos-packing/pos-packing.component';
-import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
@@ -166,11 +162,11 @@ export const _routes: Routes = [
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  {
-    path: 'report/current-account',
-    component: CurrentAccountDetailsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
+  // {
+  //   path: 'report/current-account',
+  //   component: CurrentAccountDetailsComponent,
+  //   canActivate: [AuthGuard, LicenseGuard],
+  // },
   {
     path: 'pos',
     component: PointOfSaleComponent,
@@ -211,16 +207,16 @@ export const _routes: Routes = [
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  {
-    path: 'pos/retiro-de-pedidos',
-    component: PosClientViewComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'pos/armado-de-pedidos',
-    component: PosPackingComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
+  // {
+  //   path: 'pos/retiro-de-pedidos',
+  //   component: PosClientViewComponent,
+  //   canActivate: [AuthGuard, LicenseGuard],
+  // },
+  // {
+  //   path: 'pos/armado-de-pedidos',
+  //   component: PosPackingComponent,
+  //   canActivate: [AuthGuard, LicenseGuard],
+  // },
   {
     path: 'pos/delivery/editar-transaccion',
     component: AddSaleOrderComponent,
@@ -241,11 +237,11 @@ export const _routes: Routes = [
     component: PointOfSaleComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  {
-    path: 'pos/cocina',
-    component: PosKitchenComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
+  // {
+  //   path: 'pos/cocina',
+  //   component: PosKitchenComponent,
+  //   canActivate: [AuthGuard, LicenseGuard],
+  // },
   {
     path: 'menu/:database',
     component: MenuComponent,

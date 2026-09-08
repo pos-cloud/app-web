@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ClockService } from '../../core/services/clock.service';
+import { ClockService } from '../../../../core/services/clock.service';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -26,12 +26,10 @@ export class ClockComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._clockSubscription = this.clockSubscription
-      .getClock()
-      .subscribe((time) => {
-        this.endTime = time;
-        this.calculateDiff();
-      });
+    this._clockSubscription = this.clockSubscription.getClock().subscribe((time) => {
+      this.endTime = time;
+      this.calculateDiff();
+    });
   }
 
   ngOnDestroy(): void {
