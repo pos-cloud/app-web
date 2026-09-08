@@ -10,7 +10,7 @@ import { CompanyType, IAttribute, IButton } from '@types';
 import { Config } from 'app/app.config';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { CurrentAccountDetailsComponent } from 'app/components/print/current-account-details/current-account-details.component';
+//import { CurrentAccountDetailsComponent } from 'app/components/print/current-account-details/current-account-details.component';
 import { BusinessModel } from 'app/core/enums/business-model.enum';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -479,17 +479,17 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
       case 'current-account1':
         this._router.navigateByUrl('admin/cuentas-corrientes?companyId=' + obj._id + '&companyType=' + this.type);
         break;
-      case 'current':
-        modalRef = this._modalService.open(CurrentAccountDetailsComponent, {
-          size: 'lg',
-          backdrop: 'static',
-        });
-        modalRef.componentInstance.companyType = this.type;
-        modalRef.result.then(
-          (result) => {},
-          (reason) => {}
-        );
-        break;
+      // case 'current':
+      //   modalRef = this._modalService.open(CurrentAccountDetailsComponent, {
+      //     size: 'lg',
+      //     backdrop: 'static',
+      //   });
+      //   modalRef.componentInstance.companyType = this.type;
+      //   modalRef.result.then(
+      //     (result) => {},
+      //     (reason) => {}
+      //   );
+      //   break;
       case 'uploadFile':
         modalRef = this._modalService.open(ImportComponent, {
           size: 'lg',
@@ -597,12 +597,12 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
     }
 
     this.headerButtons.push(
-      {
-        title: 'Detalle de cuenta corriente',
-        class: 'btn',
-        icon: 'fa fa-book',
-        click: `this.emitEvent('current', null)`,
-      },
+      // {
+      //   title: 'Detalle de cuenta corriente',
+      //   class: 'btn',
+      //   icon: 'fa fa-book',
+      //   click: `this.emitEvent('current', null)`,
+      // },
       {
         title: 'refresh',
         class: 'btn btn-light',
