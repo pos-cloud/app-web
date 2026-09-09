@@ -5,10 +5,11 @@
         'add-article' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ article?.description ?? '' }}</span
+        >{{ 'edit' | translate | capitalize }} {{ articleType }} {{ article?.code ?? '' }} -
+        {{ article?.description ?? '' }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
-        {{ article?.description ?? '' }}</span
+        {{ articleType }} {{ article?.code ?? '' }} - {{ article?.description ?? '' }}</span
       >
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
@@ -52,11 +53,18 @@
           </label>
         </div>
         <div class="row">
-          <div class="col-md-8">
+          <div [ngClass]="articleType === 'Producto' ? 'col-md-8' : 'col-md-12'">
             <div class="row">
               <div class="col-md-2">
                 <label for="order">{{ 'order' | translate | capitalize }}:</label>
-                <input type="number" class="form-control" formControlName="order" name="order" id="order" />
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="order"
+                  name="order"
+                  id="order"
+                  [readonly]="readonly"
+                />
               </div>
               <div class="col-md-5">
                 <label for="code">{{ 'code' | translate | capitalize }}:</label>
@@ -67,6 +75,7 @@
                   name="code"
                   id="code"
                   [focus]="focusEvent"
+                  [readonly]="readonly"
                   [ngClass]="{
                     'is-invalid': articleForm.get('code')?.touched && articleForm.get('code')?.invalid,
                   }"
@@ -80,7 +89,14 @@
               </div>
               <div class="col-md-5">
                 <label for="barcode">{{ 'barcode' | translate | capitalize }}:</label>
-                <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" />
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="barcode"
+                  name="barcode"
+                  id="barcode"
+                  [readonly]="readonly"
+                />
               </div>
             </div>
             <div class="row">
@@ -118,6 +134,7 @@
                   name="description"
                   id="description"
                   (blur)="loadPosDescription()"
+                  [readonly]="readonly"
                   [ngClass]="{
                     'is-invalid': articleForm.get('description')?.touched && articleForm.get('description')?.invalid,
                   }"
@@ -139,6 +156,7 @@
                   formControlName="posDescription"
                   name="posDescription"
                   id="posDescription"
+                  [readonly]="readonly"
                   [ngClass]="{
                     'is-invalid':
                       articleForm.get('posDescription')?.touched && articleForm.get('posDescription')?.invalid,
@@ -170,7 +188,7 @@
             </div>
           </div>
 
-          <div class="col-md-4" style="text-align: center">
+          <div class="col-md-4" style="text-align: center" *ngIf="articleType === 'Producto'">
             <app-upload-file
               (uploadedUrls)="onImagesUploaded($event)"
               [folder]="'article'"
@@ -214,7 +232,7 @@
               </option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3" *ngIf="articleType === 'Producto'">
             <label for="type" class="control-label">{{ 'Tipo de producto' | translate | capitalize }}:</label>
             <select class="form-control" formControlName="type">
               <option value="Final" [disabled]="readonly">
@@ -574,7 +592,7 @@
                           class="form-control"
                           [(ngModel)]="manualPriceRows[i].price"
                           [ngModelOptions]="{ standalone: true }"
-                          [readonly]="readonly"
+                          [readonly]="operation === 'view' || operation === 'delete'"
                           step="1"
                           min="0"
                         />
@@ -590,12 +608,12 @@
           </div>
         </div>
         <hr />
-        <div class="row">
+        <div class="row" *ngIf="articleType === 'Producto'">
           <label class="form-group col-md-5">
             <b>{{ 'variant' | translate | capitalize }}</b>
           </label>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="articleType === 'Producto'">
           <div class="col-md-12">
             <div class="row">
               <div class="form-group col-md-5">

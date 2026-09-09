@@ -90,7 +90,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
 
   public operation: string;
-  public readonly: boolean;
+  public readonly: boolean = false;
+  public articleType: string = 'Producto';
   public article: Article;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -251,11 +252,24 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const pathUrl = this._router.url.split('/');
-    const articleId = pathUrl[4];
-    this.operation = pathUrl[3];
+    const pathUrl = this._router.url.split('?')[0].split('/').filter(Boolean);
+    const articlesIndex = pathUrl.indexOf('articles');
+    const isVariant = pathUrl[articlesIndex + 1] === 'variants';
+    let articleId: string;
 
-    if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.articleForm.disable();
+    if (isVariant) {
+      this.articleType = 'Variante';
+      this.readonly = true;
+      this.operation = pathUrl[articlesIndex + 2];
+      articleId = pathUrl[articlesIndex + 3];
+    } else {
+      this.articleType = 'Producto';
+      this.operation = pathUrl[articlesIndex + 1];
+      articleId = pathUrl[articlesIndex + 2];
+      this.readonly = this.operation === 'view' || this.operation === 'delete';
+    }
+
+    if (this.operation === 'view' || this.operation === 'delete') this.articleForm.disable();
 
     this.variantTypeControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((type: VariantType) => {
       this.variantValueControl.setValue(null, { emitEvent: false });
@@ -670,6 +684,9 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   returnTo() {
+    if (this.articleType === 'Variante') {
+      return this._router.navigate(['/entities/articles/variants']);
+    }
     return this._router.navigate(['/entities/articles']);
   }
 
@@ -712,11 +729,21 @@ export class ArticleComponent implements OnInit, OnDestroy {
       return;
     }
 
-    await this.uploadFileComponent.uploadImages();
+    if (this.uploadFileComponent) {
+      await this.uploadFileComponent.uploadImages();
+    }
 
     this.article = { ...this.article, ...this.articleForm.value };
     this.article.salePriceTN = Number(this.article.salePriceTN) || 0;
     this.article.promotionalPriceTN = Number(this.article.promotionalPriceTN) || 0;
+
+    if (this.articleType === 'Variante') {
+      this.article.type = Type.Variant;
+    } else if (this.article.variants && this.article.variants.length > 0) {
+      this.article.containsVariants = true;
+    } else {
+      this.article.containsVariants = false;
+    }
 
     switch (this.operation) {
       case 'add':
@@ -728,6 +755,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
         break;
       case 'delete':
         this.deleteArticle();
+        break;
       default:
         break;
     }

@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { NotificationGuard } from '@core/guards/notification.guard';
 import { LoginComponent } from './auth/login/login.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
-import { ListArticlesComponent } from './components/article/list-articles/list-articles.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
@@ -108,11 +107,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
-    path: 'admin/variantes',
-    component: ListArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
     path: 'admin/ventas',
     component: ListTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
@@ -137,11 +131,7 @@ export const _routes: Routes = [
     component: ListTransactionsComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  {
-    path: 'admin/variantes/:id',
-    component: ListArticlesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
+
   {
     path: 'admin/configuraciones',
     component: ConfigComponent,
