@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { normalizeApiResponse } from '@core/http';
 import { BranchService } from '@core/services/branch.service';
 import { DepositService } from '@core/services/deposit.service';
-import { normalizeApiResponse } from '@core/http';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Branch, Deposit, PriceList, TransactionMovement, TransactionType } from '@types';
@@ -211,37 +211,20 @@ export class ImportComponent implements OnInit {
             }
           });
       } else if (this.model === 'purchase') {
-        if (!this.transactionTypesSelect?.length) {
-          this._toastService.showToast({ message: 'Debe seleccionar un tipo de transacción.' });
-          this.loading = false;
-          return;
-        }
-        if (!this.selectedTransactionState) {
-          this._toastService.showToast({ message: 'Debe seleccionar un estado de transacción.' });
-          this.loading = false;
-          return;
-        }
-        this._excelUpdateService
-          .importPurchase(
-            file,
-            this.transactionTypesSelect[0]._id,
-            this.selectedTransactionState.toString(),
-            this.branchesSelected[0]._id
-          )
-          .subscribe((response) => {
-            if (response.status == 200) {
-              this.countNotUpdate = response.result.countNotUpdate;
-              this.countUpdate = response.result.countUpdate;
-              this.notUpdate = response.result.notUpdateTransaction;
-              this.update = response.result.updateTransaction;
-              this.messageImport = response.result.message;
-              this.loading = false;
-              this._toastService.showToast(response);
-            } else {
-              this._toastService.showToast(response.error?.message || response.message || response.error);
-              this.loading = false;
-            }
-          });
+        this._excelUpdateService.importPurchase(file, this.branchesSelected[0]._id).subscribe((response) => {
+          if (response.status == 200) {
+            this.countNotUpdate = response.result.countNotUpdate;
+            this.countUpdate = response.result.countUpdate;
+            this.notUpdate = response.result.notUpdateTransaction;
+            this.update = response.result.updateTransaction;
+            this.messageImport = response.result.message;
+            this.loading = false;
+            this._toastService.showToast(response);
+          } else {
+            this._toastService.showToast(response.error?.message || response.message || response.error);
+            this.loading = false;
+          }
+        });
       } else if (this.model === 'price-list-articles') {
         const priceListId = this.selectedPriceListId || this.priceListId;
         if (!priceListId) {

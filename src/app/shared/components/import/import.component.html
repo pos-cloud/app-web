@@ -81,25 +81,6 @@
         (onSelect)="onBranchSelect($event)"
       ></ng-multiselect-dropdown>
     </div>
-    <div class="col-md-3 mt-3">
-      <label for="transactionType" class="control-label">
-        <b>Tipo de transaccion</b>
-      </label>
-      <ng-multiselect-dropdown
-        [placeholder]="'transaction-type' | translate"
-        [settings]="dropdownSettings"
-        [data]="transactionTypes"
-        [(ngModel)]="transactionTypesSelect"
-      ></ng-multiselect-dropdown>
-    </div>
-    <div class="col-md-3 mt-3">
-      <label for="transactionState" class="control-label">
-        <b>Estado de transaccion</b>
-      </label>
-      <select class="form-control" id="transactionState" [(ngModel)]="selectedTransactionState">
-        <option *ngFor="let state of transactionStates" [ngValue]="state">{{ state }}</option>
-      </select>
-    </div>
   </div>
   <div class="row container-filter" *ngIf="model === 'movements-of-articles'">
     <div class="col-md-6">
@@ -134,8 +115,10 @@
   <div class="container" *ngIf="notUpdate?.length > 0 || update?.length > 0">
     <p>
       <span class="font-weight-bold"
-        >{{ countUpdate }} {{ model === 'company' ? 'empresa' : 'artículo' }}<span *ngIf="countUpdate !== 1">s</span>
-        {{ model === 'company' ? 'actualizada' : 'actualizado' }}<span *ngIf="countUpdate !== 1">s</span>:
+        >{{ countUpdate }} {{ model === 'company' ? 'empresa' : model === 'purchase' ? 'compra' : 'artículo'
+        }}<span *ngIf="countUpdate !== 1">s</span>
+        {{ model === 'company' ? 'actualizada' : model === 'purchase' ? 'actualizada' : 'actualizado'
+        }}<span *ngIf="countUpdate !== 1">s</span>:
       </span>
 
       <ng-container *ngFor="let article of update; let last = last">
@@ -145,7 +128,7 @@
     </p>
     <p>
       <span class="font-weight-bold"
-        >{{ countNotUpdate }} {{ model === 'company' ? 'empresa' : 'artículo'
+        >{{ countNotUpdate }} {{ model === 'company' ? 'empresa' : model === 'purchase' ? 'compra' : 'artículo'
         }}<span *ngIf="countNotUpdate !== 1">s</span> no {{ model === 'company' ? 'actualizada' : 'actualizado'
         }}<span *ngIf="countNotUpdate !== 1">s</span>:
       </span>
