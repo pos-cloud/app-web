@@ -499,11 +499,12 @@ export class CurrentAccountComponent implements OnInit {
         break;
       case 'print':
         if (this.companySelected) {
-          const dataLabels = {
+          console.log(this.itemsPerPage);
+          const data = {
             companyId: this.companySelected._id,
-            items: this.itemsPerPage,
+            items: this.items.length,
           };
-          this.toPrint(PrintType.CurrentAccount, dataLabels);
+          this.toPrint(PrintType.CurrentAccount, data);
         } else {
           this._toastService.showToast({ message: 'Debe seleccionar una empresa.' });
         }
