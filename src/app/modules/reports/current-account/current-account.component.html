@@ -1,7 +1,20 @@
 <section class="container-fluid">
   <div class="card">
     <div class="card-header">
-      {{ 'currentAccount' | translate | capitalize }}
+      <ng-container *ngIf="companySelected; else defaultTitle">
+        {{ 'currentAccount' | translate | capitalize }} de {{ companySelected.name }}
+        <button
+          type="button"
+          class="btn btn-success btn-sm btn-view-company"
+          (click)="openModal('view-company')"
+          [title]="'Ver ' + (companySelected.type | lowercase)"
+        >
+          <i class="fa fa-eye"></i>
+        </button>
+      </ng-container>
+      <ng-template #defaultTitle>
+        {{ 'currentAccount' | translate | capitalize }}
+      </ng-template>
       <div class="pull-right">
         <button class="btn btn-light" (click)="refresh()" [disabled]="loading">
           <i class="fa fa-refresh"></i><span>{{ 'refresh' | translate | capitalize }}</span>
@@ -21,42 +34,6 @@
       </div>
     </div>
     <div class="card-block table-responsive">
-      <div class="row">
-        <div class="form-group col-md-4" *ngIf="companySelected">
-          <label for="name" class="control-label">{{ 'name' | translate | capitalize }}:</label>
-          <input type="text" class="form-control" [value]="companySelected.name" readonly />
-        </div>
-        <div class="form-group col-md-8" *ngIf="companySelected">
-          <label for="address" class="control-label">{{ 'address' | translate | capitalize }}:</label>
-          <input
-            type="text"
-            class="form-control"
-            [value]="
-              (companySelected.address ? ' Dirección: ' + companySelected.address : '') +
-              (companySelected.city ? ', Ciudad: ' + companySelected.city : '') +
-              (companySelected.addressNumber ? ', N°: ' + companySelected.addressNumber : '') +
-              (companySelected.floorNumber ? ', P: ' + companySelected.floorNumber : '') +
-              (companySelected.flat ? ', D: ' + companySelected.flat : '') +
-              (companySelected.zipCode ? ', CP: ' + companySelected.zipCode : '')
-            "
-            readonly
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-4" *ngIf="companySelected">
-          <label for="name" class="control-label">{{ 'fantasyName' | translate | capitalize }}:</label>
-          <input type="text" class="form-control" [value]="companySelected.fantasyName" readonly />
-        </div>
-        <div class="form-group col-md-4" *ngIf="companySelected">
-          <label for="phones" class="control-label">{{ 'phone' | translate | capitalize }}:</label>
-          <input type="text" class="form-control" [value]="companySelected.phones" readonly />
-        </div>
-        <div class="form-group col-md-4" *ngIf="companySelected">
-          <label for="emails" class="control-label">{{ 'email' | translate | capitalize }}:</label>
-          <input type="text" class="form-control" [value]="companySelected.emails" readonly />
-        </div>
-      </div>
       <div class="row center-content">
         <table class="table table-striped">
           <thead>

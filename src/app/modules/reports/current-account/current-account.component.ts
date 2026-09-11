@@ -22,6 +22,7 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { CompanyComponent } from '../../entities/company/crud/company.component';
 import { CompanyCurrentAccountService } from '../../../core/services/company-current-account.service';
 import { ViewTransactionComponent } from '../../transaction/components/view-transaction/view-transaction.component';
 @Component({
@@ -92,6 +93,7 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
             } else {
               this.transactionMovement = TransactionMovement.Purchase;
             }
+            this._title.setTitle(`Cuenta corriente de ${this.companySelected.name}`);
             this.refresh();
           }
         },
@@ -191,6 +193,20 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   async openModal(op: string, transaction?: Transaction) {
     let modalRef;
     switch (op) {
+      case 'view-company':
+        if (!this.companySelected) {
+          break;
+        }
+        modalRef = this._modalService.open(CompanyComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.property = {
+          companyId: this.companySelected._id,
+          operation: 'view',
+          type: '',
+        };
+        break;
       case 'send-email':
         modalRef = this._modalService.open(SendEmailComponent, {
           size: 'lg',

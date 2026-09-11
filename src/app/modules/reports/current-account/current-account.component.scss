@@ -33,3 +33,24 @@ th {
 .align-center {
   text-align: center;
 }
+
+.btn-view-company {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.card-header .btn.btn-success {
+  color: #fff !important;
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+
+  i {
+    margin-right: 0;
+  }
+
+  &:hover:not(:disabled) {
+    color: #fff !important;
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+  }
+}
