@@ -87,7 +87,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
   public buildForm(): void {
     this.cashBoxForm = this._fb.group({
       paymentMethod: [null, [Validators.required]],
-      amount: [null],
+      amount: [0],
     });
     this.formAddCurrencyValue = this._fb.group({
       currencyValue: [null, [Validators.required]],
@@ -104,7 +104,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
   public setValueForm(): void {
     this.cashBoxForm.patchValue({
       paymentMethod: this.paymentMethods[0] ?? null,
-      amount: null,
+      amount: 0,
     });
   }
 
@@ -208,7 +208,7 @@ export class AddCashBoxComponent implements OnInit, OnDestroy {
     this.movementsOfCashes.push(mov);
     this.currencyValuesForm = [];
     this.totalCurrencyValue = 0;
-    this.cashBoxForm.patchValue({ amount: null });
+    this.cashBoxForm.patchValue({ amount: 0 });
     this.formAddCurrencyValue.patchValue({ currencyValue: null, currencyAmount: null });
   }
 
