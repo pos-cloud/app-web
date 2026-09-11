@@ -16,6 +16,7 @@ import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { ExportIvaArcaComponent } from 'app/modules/transaction/components/export-iva-arca/export-iva-arca.component';
+import { ReconcileIvaArcaComponent } from 'app/modules/transaction/components/reconcile-iva-arca/reconcile-iva-arca.component';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
 import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
@@ -462,6 +463,9 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
       const previousMovement = this.transactionMovement;
       this.setTransactionMovement(params['type']);
       this.updateTitle(params['type']);
+      if (this.user) {
+        this.configureButtons();
+      }
       this.syncAdvancedFilters();
 
       if (previousMovement && previousMovement !== this.transactionMovement) {
@@ -553,6 +557,17 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
           backdrop: 'static',
         });
         modalRef.componentInstance.transactionMovement = this.transactionMovement || TransactionMovement.Sale;
+        break;
+      }
+      case 'reconcile-iva-arca': {
+        const modalRef = this._modalService.open(ReconcileIvaArcaComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.result.then(
+          () => this.refresh(),
+          () => this.refresh()
+        );
         break;
       }
     }
@@ -772,20 +787,28 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.headerButtons.push(
-      {
-        title: 'Exportar IVA Arca',
+    this.headerButtons.push({
+      title: 'Exportar IVA Arca',
+      class: 'btn btn-light',
+      icon: 'fa fa-book',
+      click: `this.emitEvent('export-iva-arca', null)`,
+    });
+
+    if (this.transactionMovement === TransactionMovement.Sale && this.user?.name?.toLowerCase() === 'soporte') {
+      this.headerButtons.push({
+        title: 'Reconciliar IVA ARCA',
         class: 'btn btn-light',
-        icon: 'fa fa-book',
-        click: `this.emitEvent('export-iva-arca', null)`,
-      },
-      {
-        title: 'refresh',
-        class: 'btn btn-light',
-        icon: 'fa fa-refresh',
-        click: `this.addFilters()`,
-      }
-    );
+        icon: 'fa fa-upload',
+        click: `this.emitEvent('reconcile-iva-arca', null)`,
+      });
+    }
+
+    this.headerButtons.push({
+      title: 'refresh',
+      class: 'btn btn-light',
+      icon: 'fa fa-refresh',
+      click: `this.addFilters()`,
+    });
   }
 
   private padNumber(n: string | number, length: number): string {

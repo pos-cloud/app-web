@@ -109,4 +109,34 @@ export class FeArService {
         })
       );
   }
+
+  public reconcileIva(VATPeriod: string, file: File): Observable<any> {
+    const URL = `${environment.apiv2}/arca/reconcile-iva`;
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('VATPeriod', VATPeriod);
+
+    return this._http.post(URL, formData, { headers }).pipe(
+      catchError((err: HttpErrorResponse) => {
+        return throwError(() => err);
+      })
+    );
+  }
+}
+
+export interface IvaReconcileItem {
+  cae: string;
+  origin?: number;
+  letter?: string;
+  number?: number;
+  reason?: string;
+  diffs?: Record<string, { from: unknown; to: unknown }>;
+}
+
+export interface IvaReconcileResult {
+  updated: IvaReconcileItem[];
+  created: IvaReconcileItem[];
+  unchanged: IvaReconcileItem[];
+  errors: IvaReconcileItem[];
 }

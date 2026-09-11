@@ -1,0 +1,83 @@
+<section class="container-fluid">
+  <div class="modal-header">
+    <h4 class="modal-title">Reconciliar IVA ARCA</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="reconcile()" autocomplete="off">
+    <div class="modal-body">
+      <p class="text-muted">
+        Subí el Excel de Mis Comprobantes Emitidos. Se busca cada CAE en el sistema: si existe se actualiza la
+        cabecera, si no se crea.
+      </p>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="month" class="control-label">Mes:</label>
+          <select
+            class="form-control"
+            formControlName="month"
+            id="month"
+            [ngClass]="{ 'is-invalid': form.get('month')?.touched && form.get('month')?.invalid }"
+          >
+            <option *ngFor="let month of months" [ngValue]="month">{{ month }}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="year" class="control-label">Año (*)</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="year"
+            id="year"
+            maxlength="4"
+            [ngClass]="{ 'is-invalid': form.get('year')?.touched && form.get('year')?.invalid }"
+          />
+        </div>
+        <div class="form-group col-md-12">
+          <label for="reconcileIvaFile" class="control-label">Excel ARCA:</label>
+          <input type="file" class="form-control" id="reconcileIvaFile" accept=".xlsx,.xls" />
+        </div>
+      </div>
+
+      <div *ngIf="result" class="mt-3">
+        <p>
+          <span class="font-weight-bold text-success">{{ result.updated.length }} actualizadas</span>
+          ·
+          <span class="font-weight-bold text-primary">{{ result.created.length }} creadas</span>
+          ·
+          <span class="font-weight-bold">{{ result.unchanged.length }} sin cambios</span>
+          ·
+          <span class="font-weight-bold text-danger">{{ result.errors.length }} errores</span>
+        </p>
+
+        <div *ngIf="result.updated.length">
+          <strong>Actualizadas</strong>
+          <ul>
+            <li *ngFor="let item of result.updated">{{ labelFor(item) }}</li>
+          </ul>
+        </div>
+        <div *ngIf="result.created.length">
+          <strong>Creadas</strong>
+          <ul>
+            <li *ngFor="let item of result.created">{{ labelFor(item) }}</li>
+          </ul>
+        </div>
+        <div *ngIf="result.errors.length">
+          <strong>Errores</strong>
+          <ul>
+            <li *ngFor="let item of result.errors">{{ labelFor(item) }} — {{ item.reason }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cerrar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        <i class="fa" [ngClass]="{ 'fa-upload': !loading, 'fa-spinner fa-spin': loading }"></i>
+        <span *ngIf="!loading">Reconciliar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>
