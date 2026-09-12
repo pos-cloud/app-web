@@ -75,7 +75,17 @@ export class AddTransactionComponent implements OnInit {
     TransactionState.PaymentDeclined,
     TransactionState.Pending,
   ];
-  public madeIns: string[] = ['mostrador', 'resto'];
+  public madeIns: string[] = [
+    'mostrador',
+    'resto',
+    'woo-commerce',
+    'tiendanube',
+    'excel',
+    'mercadolibre',
+    'pedidos-web',
+    'subscription',
+    'app',
+  ];
   public companyName: string = 'Consumidor Final';
   public transactionDate: string;
   public userCountry: string;
@@ -228,6 +238,9 @@ export class AddTransactionComponent implements OnInit {
     if (!this.transaction.number) this.transaction.number = 1;
     if (!this.transaction.observation) this.transaction.observation = '';
     if (!this.transaction.madein) this.transaction.madein = 'mostrador';
+    if (this.transaction.madein && !this.madeIns.includes(this.transaction.madein)) {
+      this.madeIns = [...this.madeIns, this.transaction.madein];
+    }
 
     let employeeOpening;
     if (!this.transaction.employeeOpening) {
