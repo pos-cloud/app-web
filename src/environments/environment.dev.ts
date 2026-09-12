@@ -5,6 +5,7 @@ export const environment = {
   apiStorage: 'https://d-api-storage.poscloud.ar',
   feAr: 'https://d-fe-ar.poscloud.ar',
   apiLicense: 'https://d-api-license.poscloud.ar',
+  agentUrl: 'http://127.0.0.1:17777',
   faro: {
     url: '',
     name: 'poscloud',

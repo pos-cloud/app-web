@@ -7,7 +7,8 @@ import { AuthService } from 'app/core/services/auth.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import * as moment from 'moment';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { PrintService } from '@core/services/print.service';
 import { UserService } from '@core/services/user.service';
@@ -19,10 +20,7 @@ import { DeleteTransactionComponent } from 'app/modules/transaction/components/d
 import { ExportIvaArcaComponent } from 'app/modules/transaction/components/export-iva-arca/export-iva-arca.component';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { ExportExcelComponent } from 'app/shared/components/export-excel/export-excel.component';
-import 'moment/locale/es';
 import * as printJS from 'print-js';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { Config } from '../../../app.config';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';

@@ -6,12 +6,14 @@ import { NgbActiveModal, NgbAlertConfig, NgbAlertModule, NgbModal, NgbTooltipMod
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PrintService } from '@core/services/print.service';
+import { PosCloudAgentService } from '@core/services/pos-cloud-agent.service';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { ApiResponse, PrintType } from '@types';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as printJS from 'print-js';
+import { firstValueFrom } from 'rxjs';
 
 interface TransactionOption {
   id: string;
@@ -37,6 +39,12 @@ export class FinishTransactionDialogComponent implements OnInit {
       description: 'Imprimir la transacción',
     },
     {
+      id: 'print-direct',
+      name: 'Impresión directa',
+      icon: 'fa-bolt',
+      description: 'Imprimir sin diálogo y abrir la gaveta',
+    },
+    {
       id: 'whatsapp',
       name: 'Enviar por WhatsApp',
       icon: 'fa-whatsapp',
@@ -60,6 +68,7 @@ export class FinishTransactionDialogComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     private _modalService: NgbModal,
     private _printService: PrintService,
+    private _agent: PosCloudAgentService,
     private _toastService: ToastService
   ) {}
 
@@ -87,6 +96,9 @@ export class FinishTransactionDialogComponent implements OnInit {
         case 'print':
           await this.printTransaction();
           break;
+        case 'print-direct':
+          await this.printDirect();
+          break;
         case 'whatsapp':
           await this.sendWhatsApp();
           break;
@@ -102,47 +114,78 @@ export class FinishTransactionDialogComponent implements OnInit {
   }
 
   private async printTransaction(): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const data = {
-        transactionId: this.transaction._id,
-      };
+    try {
+      const result = await firstValueFrom(
+        this._printService.toPrint(PrintType.Transaction, { transactionId: this.transaction._id })
+      );
 
-      this._printService.toPrint(PrintType.Transaction, data).subscribe({
-        next: (result: Blob | ApiResponse) => {
-          if (!result) {
-            this._toastService.showToast({ message: 'Error al generar el PDF' });
-            resolve();
-            return;
-          }
-          if (result instanceof Blob) {
-            try {
-              const blobUrl = URL.createObjectURL(result);
-              printJS(blobUrl);
-              this.activeModal.close({
-                option: this.selectedOption,
-                action: 'print',
-                success: true,
-              });
-            } catch (e) {
-              this._toastService.showToast({ message: 'Error al generar el PDF' });
-            } finally {
-              resolve();
-            }
-          } else {
-            this._toastService.showToast(result);
-            resolve();
-          }
-        },
-        error: () => {
-          this._toastService.showToast({ message: 'Error al generar el PDF' });
-          resolve();
-        },
-        complete: () => {
-          // En caso de que no haya pasado por next/error
-          resolve();
-        },
+      if (!result) {
+        this._toastService.showToast({ message: 'Error al generar el PDF' });
+        return;
+      }
+
+      if (result instanceof Blob) {
+        printJS(URL.createObjectURL(result));
+        this.activeModal.close({
+          option: this.selectedOption,
+          action: 'print',
+          success: true,
+        });
+        return;
+      }
+
+      this._toastService.showToast(result);
+    } catch {
+      this._toastService.showToast({ message: 'Error al generar el PDF' });
+    }
+  }
+
+  private async printDirect(): Promise<void> {
+    if (!(await this._agent.isAvailable())) {
+      this._toastService.showToast({
+        message: 'No se encontró el agente de impresión. Instalá POS Cloud Agent en esta PC o usá Imprimir.',
       });
-    });
+      return;
+    }
+
+    try {
+      const result = await firstValueFrom(
+        this._printService.toPrint(PrintType.Transaction, { transactionId: this.transaction._id })
+      );
+
+      if (!result) {
+        this._toastService.showToast({ message: 'Error al generar el PDF' });
+        return;
+      }
+
+      if (!(result instanceof Blob)) {
+        this._toastService.showToast(result);
+        return;
+      }
+
+      const printed = await this._agent.printPdf(result);
+      if (!printed) {
+        this._toastService.showToast({
+          message: 'No se pudo imprimir. Probá de nuevo o usá Imprimir.',
+        });
+        return;
+      }
+
+      const drawerOpened = await this._agent.openDrawer();
+      if (!drawerOpened) {
+        this._toastService.showToast({
+          message: 'Se imprimió el ticket, pero no se pudo abrir la gaveta.',
+        });
+      }
+
+      this.activeModal.close({
+        option: this.selectedOption,
+        action: 'print-direct',
+        success: true,
+      });
+    } catch {
+      this._toastService.showToast({ message: 'Error al generar el PDF' });
+    }
   }
 
   private async sendWhatsApp(): Promise<void> {

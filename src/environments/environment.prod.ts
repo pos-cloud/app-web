@@ -5,6 +5,7 @@ export const environment = {
   apiStorage: 'https://api-storage.poscloud.ar',
   feAr: 'https://fe-ar.poscloud.ar',
   apiLicense: 'https://api-license.poscloud.ar',
+  agentUrl: 'http://127.0.0.1:17777',
   faro: {
     url: 'https://faro-collector-prod-sa-east-1.grafana.net/collect/570840a22b58381da442efea58daa3b3',
     name: 'poscloud',

@@ -53,6 +53,7 @@ export * from './payment-method.service';
 export * from './permission.service';
 export * from './price-list-article.service';
 export * from './price-list.service';
+export * from './pos-cloud-agent.service';
 export * from './print.service';
 export * from './printer.service';
 export * from './relation-type.service';
