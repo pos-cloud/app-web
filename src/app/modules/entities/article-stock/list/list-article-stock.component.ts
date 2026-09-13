@@ -271,16 +271,6 @@ export class ListArticleStockComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'article.otherFieldsValues',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: `{"$reduce":{"input":"$article.otherFields.value","initialValue":"","in":{"$concat":["$$value",{"$cond":{"if":{"$eq":["$$value",""]},"then":"","else":"; "}},{"$concat":[{"$toString":"$$this"},""]}]}}}`,
-      align: 'left',
-      required: false,
-    },
-    {
       name: 'realStock',
       visible: true,
       disabled: false,

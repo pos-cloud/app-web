@@ -1,6 +1,5 @@
 import {
   Application,
-  ArticleFields,
   Category,
   Classification,
   Currency,
@@ -38,7 +37,6 @@ export class Article {
   public tags: string[];
   public basePrice: number = 0.0;
   public taxes: Taxes[];
-  public otherFields: ArticleFields[];
   public costPrice: number = 0.0;
   public costPrice2: number = 0.0;
   public markupPercentage: number = 0.0;

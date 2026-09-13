@@ -6,7 +6,6 @@ export * from './ai-chat.service';
 export * from './analytics.service';
 export * from './application.service';
 export * from './appointment.service';
-export * from './article-field.service';
 export * from './article-stock.service';
 export * from './article.service';
 export * from './auth.service';

@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ArticleFieldType, ArticleFields, Tax, TaxBase, TaxClassification } from '@types';
+import { Tax, TaxBase, TaxClassification } from '@types';
 import { Article } from 'app/components/article/article';
 import { Transaction } from 'app/components/transaction/transaction';
 import { TaxService } from 'app/core/services/tax.service';
@@ -31,7 +31,6 @@ export class AddArticleTaxComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
   @Input() article: Article;
-  @Input() otherFields: ArticleFields[];
   @Input() articleTaxes: Taxes[] = new Array();
   @Input() filtersTaxClassification: TaxClassification[];
   @Input() transaction: Transaction;
@@ -181,23 +180,6 @@ export class AddArticleTaxComponent implements OnInit {
 
       if (this.article) {
         taxedAmount = this.article.basePrice;
-
-        if (this.otherFields && this.otherFields.length > 0) {
-          for (const field of this.otherFields) {
-            if (field.articleField.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform(
-                (this.article.basePrice * parseFloat(field.value)) / 100
-              );
-            } else if (
-              field.articleField.datatype === ArticleFieldType.Number
-            ) {
-              field.amount = parseFloat(field.value);
-            }
-            if (field.articleField.modifyVAT) {
-              taxedAmount += field.amount;
-            }
-          }
-        }
       } else if (this.transaction) {
         taxedAmount = this.transaction.basePrice;
       }

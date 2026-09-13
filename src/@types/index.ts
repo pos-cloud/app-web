@@ -14,7 +14,6 @@ export {
   AppointmentWeekday,
 } from './entities/appointment.interface';
 export { Article, ArticlePrintIn, Type } from './entities/article.interface';
-export { ArticleField, ArticleFields, ArticleFieldType } from './entities/article-field.interface';
 export { ArticleStock } from './entities/article-stock.interface';
 export { Bank } from './entities/bank.interface';
 export { Branch } from './entities/branch.interface';

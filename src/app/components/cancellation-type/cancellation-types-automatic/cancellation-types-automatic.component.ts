@@ -6,9 +6,8 @@ import { CancellationTypeService } from '../../../core/services/cancellation-typ
 import { CancellationType } from '@types';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse, TransactionMovement, TransactionType } from '@types';
+import { ApiResponse, TaxBase, TransactionMovement, TransactionType } from '@types';
 import { Config } from 'app/app.config';
-import { ArticleFieldType, ArticleFields, TaxBase } from '@types';
 import { MovementOfArticle, MovementOfArticleStatus } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
@@ -385,28 +384,6 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     let taxedAmount = movementOfArticle.basePrice;
     movementOfArticle.costPrice = 0;
 
-    let fields: ArticleFields[] = new Array();
-    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-      for (const field of movementOfArticle.otherFields) {
-        if (
-          field.articleField.datatype === ArticleFieldType.Percentage ||
-          field.articleField.datatype === ArticleFieldType.Number
-        ) {
-          if (field.articleField.datatype === ArticleFieldType.Percentage) {
-            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value)) / 100);
-          } else if (field.articleField.datatype === ArticleFieldType.Number) {
-            field.amount = parseFloat(field.value);
-          }
-          if (field.articleField.modifyVAT) {
-            taxedAmount += field.amount;
-          } else {
-            movementOfArticle.costPrice += field.amount;
-          }
-        }
-        fields.push(field);
-      }
-    }
-    movementOfArticle.otherFields = fields;
     if (transaction.type.requestTaxes) {
       if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
         let taxes: Taxes[] = new Array();
@@ -457,24 +434,6 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
     }
-
-    let fields: ArticleFields[] = new Array();
-    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-      for (const field of movementOfArticle.otherFields) {
-        if (
-          field.articleField.datatype === ArticleFieldType.Percentage ||
-          field.articleField.datatype === ArticleFieldType.Number
-        ) {
-          if (field.articleField.datatype === ArticleFieldType.Percentage) {
-            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value)) / 100);
-          } else if (field.articleField.datatype === ArticleFieldType.Number) {
-            field.amount = parseFloat(field.value);
-          }
-        }
-        fields.push(field);
-      }
-    }
-    movementOfArticle.otherFields = fields;
 
     if (movementOfArticle.article) {
       movementOfArticle.costPrice = this.roundNumber.transform(

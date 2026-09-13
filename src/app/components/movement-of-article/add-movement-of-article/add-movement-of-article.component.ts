@@ -1100,7 +1100,6 @@ export class AddMovementOfArticleComponent implements OnInit {
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
     }
 
-    movementOfArticle.otherFields = articleSelected.otherFields;
     movementOfArticle.costPrice = articleSelected.costPrice;
     if (
       this.transaction &&

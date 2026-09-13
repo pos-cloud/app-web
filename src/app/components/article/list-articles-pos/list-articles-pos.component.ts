@@ -532,7 +532,6 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
           movementOfArticle.barcode = article.barcode;
           movementOfArticle.transaction = this.transaction;
           movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-          movementOfArticle.otherFields = article.otherFields;
           movementOfArticle.op = Date.now() + Math.floor(Math.random() * 100000);
           movementOfArticle.deposit =
             (stockMovement ? stockMovement : this.transaction.type.stockMovement) === StockMovement.Transfer

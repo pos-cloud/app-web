@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { Account, ArticleFields, Category, Deposit, Make } from '@types';
+import { Account, Category, Deposit, Make } from '@types';
 import { Article, ArticlePrintIn } from '../article/article';
 import { Taxes } from '../tax/taxes';
 import { MovementOfArticleStatus, StockMovement } from '@types';
@@ -16,7 +16,6 @@ export class MovementOfArticle {
   description: string = '';
   observation: string;
   basePrice: number = 0.0;
-  otherFields: ArticleFields[];
   taxes: Taxes[];
   costPrice: number = 0.0;
   unitPrice: number = 0.0;
