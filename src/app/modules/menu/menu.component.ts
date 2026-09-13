@@ -1,9 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-
 import { ActivatedRoute } from '@angular/router';
-import { TranslateMePipe } from 'app/shared/pipes/translate-me';
-import { ApplicationService } from '../../core/services/application.service';
-import { MenuService } from '../../core/services/menu.service';
+import { MenuService } from '@core/services/menu.service';
 
 type MenuBranding = {
   cover: string;
@@ -25,9 +23,10 @@ const POSCLOUD_URL = 'https://poscloud.com.ar';
 
 @Component({
   selector: 'app-menu',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
-  providers: [TranslateMePipe],
   encapsulation: ViewEncapsulation.None,
 })
 export class MenuComponent implements OnInit {
@@ -37,7 +36,7 @@ export class MenuComponent implements OnInit {
   coverImage = '';
   themeClass = '';
 
-  constructor(private route: ActivatedRoute, private _menu: MenuService, private _objService: ApplicationService) {}
+  constructor(private route: ActivatedRoute, private _menu: MenuService) {}
 
   async ngOnInit() {
     this.route.params.subscribe((params) => {

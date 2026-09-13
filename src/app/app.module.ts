@@ -31,7 +31,6 @@ import { ListCategoriesPosComponent } from './components/category/list-categorie
 import { ComponentsModule } from './components/components.module';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { MenuComponent } from './components/menu/menu.component';
 import { AddMovementOfArticleComponent } from './components/movement-of-article/add-movement-of-article/add-movement-of-article.component';
 import { MovementOfCancellationComponent } from './components/movement-of-cancellation/movement-of-cancellation.component';
 import { AddMovementOfCashComponent } from './components/movement-of-cash/add-movement-of-cash/add-movement-of-cash.component';
@@ -104,7 +103,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectChecksComponent,
     ListCategoriesPosComponent,
     SelectMovementsOfCashesComponent,
-    MenuComponent,
   ],
   imports: [
     BrowserModule,

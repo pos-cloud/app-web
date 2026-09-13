@@ -5,7 +5,6 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
-import { MenuComponent } from './components/menu/menu.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
@@ -234,7 +233,7 @@ export const _routes: Routes = [
   // },
   {
     path: 'menu/:database',
-    component: MenuComponent,
+    loadComponent: () => import('./modules/menu/menu.component').then((m) => m.MenuComponent),
   },
   // MODULES ROUTES
   {
