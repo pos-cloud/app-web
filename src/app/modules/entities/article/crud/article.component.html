@@ -95,7 +95,7 @@
                   formControlName="barcode"
                   name="barcode"
                   id="barcode"
-                  [readonly]="readonly"
+                  [readonly]="operation === 'view' || operation === 'delete'"
                 />
               </div>
             </div>
