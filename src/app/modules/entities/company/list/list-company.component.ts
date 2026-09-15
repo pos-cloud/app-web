@@ -597,12 +597,12 @@ export class ListCompanyComponent implements OnInit, OnDestroy {
     }
 
     this.headerButtons.push(
-      // {
-      //   title: 'Detalle de cuenta corriente',
-      //   class: 'btn',
-      //   icon: 'fa fa-book',
-      //   click: `this.emitEvent('current', null)`,
-      // },
+      {
+        title: 'account-summary',
+        class: 'btn btn-light',
+        icon: 'fa fa-book',
+        click: `this.emitEvent('current', null)`,
+      },
       {
         title: 'refresh',
         class: 'btn btn-light',
