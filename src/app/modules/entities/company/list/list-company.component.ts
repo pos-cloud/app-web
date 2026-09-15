@@ -18,7 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
   selector: 'app-list-companies',
   templateUrl: './list-company.component.html',
   standalone: true,
-  imports: [DatatableModule],
+  imports: [DatatableModule, CurrentAccountDetailsComponent],
   encapsulation: ViewEncapsulation.None,
 })
 export class ListCompanyComponent implements OnInit, OnDestroy {

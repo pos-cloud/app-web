@@ -1,9 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { FormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import jsPDF from 'jspdf';
 
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Company, CompanyGroup, CompanyType } from '@types';
 import { EmployeeService } from 'app/core/services/employee.service';
 import { TransactionService } from 'app/core/services/transaction.service';
@@ -11,7 +12,8 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { Config } from './../../../app.config';
 
-import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Employee, TransactionType } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { CompanyGroupService } from 'app/core/services/company-group.service';
@@ -64,6 +66,9 @@ jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string
   selector: 'app-current-account-details',
   templateUrl: './current-account-details.component.html',
   styleUrls: ['./current-account-details.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, NgbModule, NgMultiSelectDropDownModule],
+  providers: [NgbAlertConfig],
 })
 export class CurrentAccountDetailsComponent implements OnInit {
   @Input() companyType: CompanyType;
