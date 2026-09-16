@@ -56,7 +56,7 @@
             <label class="control-label">{{ 'branch' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('branch')"
-              [data]="branches"
+              [service]="_branchService"
               [keyField]="'_id'"
               [displayField]="'name'"
             ></app-typeahead-dropdown>
@@ -173,7 +173,7 @@
             <label class="control-label">{{ 'application' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('application')"
-              [data]="applications"
+              [service]="_applicationService"
               [keyField]="'_id'"
               [displayField]="'name'"
             ></app-typeahead-dropdown>
@@ -266,14 +266,20 @@
             <label class="control-label">{{ 'cashBoxType' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('cashBoxType')"
-              [data]="cashBoxTypes"
+              [service]="_cashBoxTypeService"
               [keyField]="'_id'"
               [displayField]="'name'"
             ></app-typeahead-dropdown>
           </div>
           <div class="form-group col-md-2">
             <label class="control-label">{{ 'defectUseOfCFDI' | translate | capitalize }}:</label>
-            <input type="text" class="form-control" formControlName="defectUseOfCFDI" autocomplete="off" />
+            <app-typeahead-dropdown
+              [control]="transactionTypeForm.get('defectUseOfCFDI')"
+              [service]="_useOfCFDIService"
+              [keyField]="'_id'"
+              [displayField]="'description'"
+              [searchFields]="['code', 'description']"
+            ></app-typeahead-dropdown>
           </div>
           <div class="form-group col-md-4">
             <label class="control-label">{{ 'optionalAFIP' | translate | capitalize }}:</label>
@@ -319,7 +325,7 @@
             <label class="control-label">{{ 'company' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('company')"
-              [data]="companies"
+              [service]="_companyService"
               [keyField]="'_id'"
               [displayField]="'name'"
             ></app-typeahead-dropdown>
@@ -328,7 +334,7 @@
             <label class="control-label">{{ 'requestEmployee' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('requestEmployee')"
-              [data]="employeeTypes"
+              [service]="_employeeTypeService"
               [keyField]="'_id'"
               [displayField]="'description'"
             ></app-typeahead-dropdown>
@@ -576,7 +582,7 @@
             <label class="control-label">{{ 'defectEmailTemplate' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('defectEmailTemplate')"
-              [data]="emailTemplates"
+              [service]="_emailTemplateService"
               [keyField]="'_id'"
               [displayField]="'name'"
             ></app-typeahead-dropdown>
@@ -602,7 +608,7 @@
             <label class="control-label">{{ 'defectShipmentMethod' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('defectShipmentMethod')"
-              [data]="shipmentMethods"
+              [service]="_shipmentMethodService"
               [keyField]="'_id'"
               [displayField]="'name'"
             ></app-typeahead-dropdown>
@@ -625,7 +631,7 @@
             <label class="control-label">{{ 'defectPrinter' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('defectPrinter')"
-              [data]="printers"
+              [service]="_printerService"
               [keyField]="'_id'"
               [displayField]="'name'"
             ></app-typeahead-dropdown>
@@ -744,7 +750,7 @@
             <label class="control-label">{{ 'fastPayment' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="transactionTypeForm.get('fastPayment')"
-              [data]="paymentMethods"
+              [service]="_paymentMethodService"
               [keyField]="'_id'"
               [displayField]="'name'"
             ></app-typeahead-dropdown>

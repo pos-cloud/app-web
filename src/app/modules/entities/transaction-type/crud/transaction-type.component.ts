@@ -13,26 +13,19 @@ import { PaymentMethodService } from '@core/services/payment-method.service';
 import { PrinterService } from '@core/services/printer.service';
 import { ShipmentMethodService } from '@core/services/shipment-method.service';
 import { TransactionTypeService } from '@core/services/transaction-type.service';
+import { UseOfCFDIService } from '@core/services/use-of-CFDI.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import {
   ApiResponse,
-  Application,
-  Branch,
-  CashBoxType,
-  Company,
   CompanyType,
   CurrentAccount,
   DescriptionType,
-  EmailTemplate,
-  EmployeeType,
   EntryAmount,
   Movements,
   OPTIONAL_AFIP,
   PaymentMethod,
   PriceType,
-  Printer,
-  ShipmentMethod,
   StockMovement,
   TransactionMovement,
   TransactionState,
@@ -43,7 +36,7 @@ import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 interface OptionalAFIP {
@@ -75,15 +68,6 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
   public focusEvent = new EventEmitter<boolean>();
   private destroy$ = new Subject<void>();
 
-  // Relational data for typeahead dropdowns
-  public branches: Branch[] = [];
-  public cashBoxTypes: CashBoxType[] = [];
-  public companies: Company[] = [];
-  public employeeTypes: EmployeeType[] = [];
-  public applications: Application[] = [];
-  public emailTemplates: EmailTemplate[] = [];
-  public shipmentMethods: ShipmentMethod[] = [];
-  public printers: Printer[] = [];
   public paymentMethods: PaymentMethod[] = [];
   public optionalAFIPList: OptionalAFIP[] = OPTIONAL_AFIP;
 
@@ -114,16 +98,17 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
   public readonly codeLetters = ['A', 'B', 'C', 'D', 'E', 'M', 'R', 'T', 'Z'];
 
   constructor(
-    private _transactionTypeService: TransactionTypeService,
-    private _branchService: BranchService,
-    private _cashBoxTypeService: CashBoxTypeService,
-    private _companyService: CompanyService,
-    private _employeeTypeService: EmployeeTypeService,
-    private _applicationService: ApplicationService,
-    private _emailTemplateService: EmailTemplateService,
-    private _shipmentMethodService: ShipmentMethodService,
-    private _printerService: PrinterService,
-    private _paymentMethodService: PaymentMethodService,
+    public _transactionTypeService: TransactionTypeService,
+    public _branchService: BranchService,
+    public _cashBoxTypeService: CashBoxTypeService,
+    public _companyService: CompanyService,
+    public _employeeTypeService: EmployeeTypeService,
+    public _applicationService: ApplicationService,
+    public _emailTemplateService: EmailTemplateService,
+    public _shipmentMethodService: ShipmentMethodService,
+    public _printerService: PrinterService,
+    public _paymentMethodService: PaymentMethodService,
+    public _useOfCFDIService: UseOfCFDIService,
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _toastService: ToastService
@@ -138,43 +123,13 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
 
     if (this.operation === 'view' || this.operation === 'delete') this.transactionTypeForm.disable();
 
-    this.loading = true;
-    combineLatest({
-      branches: this._branchService.find({ query: { operationType: { $ne: 'D' } } }),
-      cashBoxTypes: this._cashBoxTypeService.find({ query: { operationType: { $ne: 'D' } } }),
-      companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
-      employeeTypes: this._employeeTypeService.find({ query: { operationType: { $ne: 'D' } } }),
-      applications: this._applicationService.find({ query: { operationType: { $ne: 'D' } } }),
-      emailTemplates: this._emailTemplateService.find({ query: { operationType: { $ne: 'D' } } }),
-      shipmentMethods: this._shipmentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
-      printers: this._printerService.find({ query: { operationType: { $ne: 'D' } } }),
-      paymentMethods: this._paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.branches = data.branches ?? [];
-          this.cashBoxTypes = data.cashBoxTypes ?? [];
-          this.companies = data.companies ?? [];
-          this.employeeTypes = data.employeeTypes ?? [];
-          this.applications = data.applications ?? [];
-          this.emailTemplates = data.emailTemplates ?? [];
-          this.shipmentMethods = data.shipmentMethods ?? [];
-          this.printers = data.printers ?? [];
-          this.paymentMethods = data.paymentMethods ?? [];
+    this.loadPaymentMethods();
 
-          if (this.transactionTypeId) {
-            this.getTransactionType(this.transactionTypeId);
-          } else {
-            this.setValueForm();
-            this.loading = false;
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        },
-      });
+    if (this.transactionTypeId) {
+      this.getTransactionType(this.transactionTypeId);
+    } else {
+      this.setValueForm();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -185,6 +140,20 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.focusEvent.complete();
+  }
+
+  private loadPaymentMethods(): void {
+    this._paymentMethodService
+      .find({ query: { operationType: { $ne: 'D' } } })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.paymentMethods = Array.isArray(result) ? result : (result?.result ?? []);
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
   }
 
   private buildForm(): void {
@@ -211,7 +180,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       requestTaxes: [false, []],
       automaticNumbering: [true, []],
       fiscalCode: ['', []],
-      defectUseOfCFDI: ['', []],
+      defectUseOfCFDI: [null, []],
       fixedOrigin: [0, []],
       fixedLetter: ['', []],
       expirationDate: ['', []],
@@ -292,18 +261,8 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
     });
   }
 
-  private findById<T extends { _id?: string }>(list: T[], value: any): T | null {
-    if (!value) return null;
-    const id = typeof value === 'object' ? value._id : value;
-    return list.find((item) => item._id === id?.toString()) ?? null;
-  }
-
   public setValueForm(): void {
     const tt = this.transactionType;
-
-    const selectedPaymentMethods = (tt?.paymentMethods ?? [])
-      .map((pm: any) => this.findById(this.paymentMethods, pm))
-      .filter((pm): pm is PaymentMethod => pm !== null);
 
     const selectedOptionalAFIP = tt?.optionalAFIP?.id
       ? (this.optionalAFIPList.find((item) => item.id === tt.optionalAFIP.id) ?? null)
@@ -312,7 +271,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
     this.transactionTypeForm.patchValue({
       _id: tt?._id ?? '',
       order: tt?.order ?? 1,
-      branch: this.findById(this.branches, tt?.branch),
+      branch: tt?.branch ?? null,
       name: tt?.name ?? '',
       abbreviation: tt?.abbreviation ?? '',
       transactionMovement: tt?.transactionMovement ?? null,
@@ -323,7 +282,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       allowDelete: tt?.allowDelete ?? false,
       allowAPP: tt?.allowAPP ?? false,
       allowTransactionClose: tt?.allowTransactionClose ?? true,
-      application: this.findById(this.applications, tt?.application),
+      application: tt?.application ?? null,
       electronics: tt?.electronics ?? false,
       tax: tt?.tax ?? false,
       requestTaxes: tt?.requestTaxes ?? false,
@@ -332,20 +291,20 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       defectUseOfCFDI: tt?.defectUseOfCFDI ?? null,
       fixedOrigin: tt?.fixedOrigin ?? 0,
       fixedLetter: tt?.fixedLetter ?? '',
-      expirationDate: tt?.expirationDate ? tt.expirationDate.substring(0, 10) : '',
+      expirationDate: tt?.expirationDate ? String(tt.expirationDate).substring(0, 10) : '',
       automaticCreation: tt?.automaticCreation ?? false,
       resetOrderNumber: tt?.resetOrderNumber ?? null,
       maxOrderNumber: tt?.maxOrderNumber ?? 0,
       orderNumber: tt?.orderNumber ?? 0,
-      cashBoxType: this.findById(this.cashBoxTypes, tt?.cashBoxType),
+      cashBoxType: tt?.cashBoxType ?? null,
       optionalAFIP: selectedOptionalAFIP,
       optionalAFIPValue: tt?.optionalAFIP?.value ?? '',
       requestCompany: tt?.requestCompany ?? null,
-      company: this.findById(this.companies, tt?.company),
+      company: tt?.company ?? null,
       allowCompanyDiscount: tt?.allowCompanyDiscount ?? true,
       allowPriceList: tt?.allowPriceList ?? true,
       allowPromotion: tt?.allowPromotion ?? false,
-      requestEmployee: this.findById(this.employeeTypes, tt?.requestEmployee),
+      requestEmployee: tt?.requestEmployee ?? null,
       requestCurrency: tt?.requestCurrency ?? false,
       defectOrders: tt?.defectOrders ?? false,
       requestTransport: tt?.requestTransport ?? false,
@@ -368,11 +327,11 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       cashOpening: tt?.cashOpening ?? false,
       cashClosing: tt?.cashClosing ?? false,
       requestEmailTemplate: tt?.requestEmailTemplate ?? false,
-      defectEmailTemplate: this.findById(this.emailTemplates, tt?.defectEmailTemplate),
+      defectEmailTemplate: tt?.defectEmailTemplate ?? null,
       requestShipmentMethod: tt?.requestShipmentMethod ?? false,
-      defectShipmentMethod: this.findById(this.shipmentMethods, tt?.defectShipmentMethod),
+      defectShipmentMethod: tt?.defectShipmentMethod ?? null,
       labelPrint: tt?.labelPrint ?? '',
-      defectPrinter: this.findById(this.printers, tt?.defectPrinter),
+      defectPrinter: tt?.defectPrinter ?? null,
       isPreprinted: tt?.isPreprinted ?? false,
       printable: tt?.printable ?? false,
       readLayout: tt?.readLayout ?? false,
@@ -385,10 +344,10 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       numberPrint: tt?.numberPrint ?? 0,
       requestPaymentMethods: tt?.requestPaymentMethods ?? true,
       allowZero: tt?.allowZero ?? false,
-      fastPayment: this.findById(this.paymentMethods, tt?.fastPayment),
+      fastPayment: tt?.fastPayment ?? null,
       finishCharge: tt?.finishCharge ?? true,
       showKeyboard: tt?.showKeyboard ?? false,
-      paymentMethods: selectedPaymentMethods,
+      paymentMethods: tt?.paymentMethods ?? [],
     });
 
     this.setCodesForm(tt?.codes ?? []);
@@ -451,15 +410,19 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this.transactionType = result.result;
-          if (this.operation === 'copy') {
-            this.transactionType._id = '';
-            this.transactionType.creationDate = '';
-            this.transactionType.updateDate = '';
-            this.transactionType.creationUser = null;
-            this.transactionType.updateUser = null;
+          if (result.status === 200) {
+            this.transactionType = Array.isArray(result.result) ? result.result[0] : result.result;
+            if (this.operation === 'copy') {
+              this.transactionType._id = '';
+              this.transactionType.creationDate = '';
+              this.transactionType.updateDate = '';
+              this.transactionType.creationUser = null;
+              this.transactionType.updateUser = null;
+            }
+            this.setValueForm();
+          } else {
+            this._toastService.showToast(result);
           }
-          if (result.status === 200) this.setValueForm();
         },
         error: (error) => {
           this._toastService.showToast(error);
