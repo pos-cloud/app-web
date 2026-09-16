@@ -7,9 +7,9 @@ import {
   NgbTypeaheadModule,
   NgbTypeaheadSelectItemEvent,
 } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, Subject, merge } from 'rxjs';
+import { Observable, Subject, merge, of } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-typeahead-dropdown',
@@ -19,15 +19,20 @@ import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators'
   imports: [CommonModule, NgbDropdownModule, NgbTypeaheadModule, ReactiveFormsModule],
 })
 export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
-  @Input() placeholder: string = ''; // Placeholder opcional
-  @Input() control: FormControl; // Control del formulario
-  @Input() data: any[] = []; // Lista de opciones para el dropdown
-  @Input() readonly: boolean = false; // Deshabilitar el input si es necesario
-  @Input() keyField: string = '_id'; // Campo clave del objeto (default: `_id`)
-  @Input() displayField: string = 'description'; // Campo para mostrar en el dropdown (default: `description`)
-  /** Si true, solo muestra borde rojo cuando formSubmitted es true (no al salir del campo) */
+  @Input() placeholder: string = '';
+  @Input() control: FormControl;
+  @Input() data: any[] = [];
+  @Input() readonly: boolean = false;
+  @Input() keyField: string = '_id';
+  @Input() displayField: string = 'description';
+  @Input() limit: number = 10;
   @Input() showInvalidOnlyAfterSubmit: boolean = false;
   @Input() formSubmitted: boolean = false;
+  @Input() service?: { getAll: (params: any) => Observable<any> };
+  @Input() searchFields?: string[];
+  @Input() match: Record<string, unknown> = { operationType: { $ne: 'D' } };
+  @Input() projectFields?: string[];
+  @Input() minSearchLength: number = 1;
 
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;
   @ViewChild('typeaheadInput', { static: true }) typeaheadInput: ElementRef<HTMLInputElement>;
@@ -35,8 +40,11 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
   private controlSubscription: Subscription;
-  /** Último ítem elegido de la lista; el texto escrito no cuenta como valor. */
   private lastSelected: any = null;
+
+  get isRemote(): boolean {
+    return !!this.service;
+  }
 
   ngOnInit(): void {
     this.lastSelected = this.isSelectedItem(this.control?.value) ? this.control.value : null;
@@ -55,16 +63,17 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   }
 
   searchFn = (text$: Observable<string>): Observable<readonly any[]> => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const selectedLabel$ = text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter((term) => this.shouldSearchTerm(term))
+    );
     const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
     const inputFocus$ = this.focus$;
 
-    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map((term) =>
-        term === ''
-          ? this.data
-          : this.data.filter((item) => item[this.displayField]?.toLowerCase().includes(term.toLowerCase()))
-      )
+    return merge(selectedLabel$, inputFocus$, clicksWithClosedPopup$).pipe(
+      map((term) => this.normalizeTerm(term)),
+      switchMap((term) => this.runSearch(term))
     );
   };
 
@@ -75,8 +84,92 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   }
 
   onBlur(): void {
-    // Esperar a que el click en una opción dispare selectItem antes de validar.
     setTimeout(() => this.syncInputWithSelection());
+  }
+
+  private shouldSearchTerm(term: string): boolean {
+    const query = this.normalizeTerm(term).toLowerCase();
+    const selectedLabel = this.resultFormatter(this.control?.value).trim().toLowerCase();
+    if (!query) {
+      return true;
+    }
+    return query !== selectedLabel;
+  }
+
+  private normalizeTerm(term: unknown): string {
+    return (typeof term === 'string' ? term : '').trim();
+  }
+
+  private runSearch(term: string): Observable<any[]> {
+    if (this.isRemote) {
+      return this.runRemoteSearch(term);
+    }
+    return of(this.getLocalResults(term));
+  }
+
+  private runRemoteSearch(term: string): Observable<any[]> {
+    const query = term.toLowerCase();
+    if (query.length > 0 && query.length < this.minSearchLength) {
+      return of([]);
+    }
+
+    const fields = this.searchFields?.length ? this.searchFields : [this.displayField];
+    const match: Record<string, unknown> = { ...this.match };
+
+    if (query.length >= this.minSearchLength) {
+      match.$or = fields.map((field) => ({
+        [field]: { $regex: term.trim(), $options: 'i' },
+      }));
+    }
+
+    const project: Record<string, 1> = {
+      [this.keyField]: 1,
+      [this.displayField]: 1,
+      operationType: 1,
+    };
+    fields.forEach((field) => {
+      project[field] = 1;
+    });
+    this.projectFields?.forEach((field) => {
+      project[field] = 1;
+    });
+    Object.keys(match).forEach((field) => {
+      if (!field.startsWith('$')) {
+        project[field] = 1;
+      }
+    });
+
+    const max = Number(this.limit) > 0 ? Number(this.limit) : 10;
+
+    return this.service!.getAll({
+      project,
+      match,
+      sort: { [this.displayField]: 1 },
+      limit: max,
+    }).pipe(
+      map((result) => this.unwrapResult(result)),
+      catchError(() => of([]))
+    );
+  }
+
+  private getLocalResults(term: string): any[] {
+    const list = Array.isArray(this.data) ? this.data : [];
+    const query = term.toLowerCase();
+    const filtered = query
+      ? list.filter((item) => item?.[this.displayField]?.toString().toLowerCase().includes(query))
+      : list;
+    const max = Number(this.limit) > 0 ? Number(this.limit) : 10;
+    return filtered.slice(0, max);
+  }
+
+  private unwrapResult(result: any): any[] {
+    if (Array.isArray(result)) {
+      return result;
+    }
+    if (result?.status === 200) {
+      return result.result ?? [];
+    }
+    return Array.isArray(result?.result) ? result.result : [];
   }
 
   private syncInputWithSelection(): void {
@@ -93,7 +186,6 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Texto escrito sin elegir un ítem: no se guarda, se restaura la última selección o se limpia.
     this.control.setValue(this.lastSelected);
     if (!this.lastSelected && this.typeaheadInput?.nativeElement) {
       this.typeaheadInput.nativeElement.value = '';

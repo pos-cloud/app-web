@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup 
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { Article, Deposit } from '@types';
+import { Deposit } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
 import { DepositService } from 'app/core/services/deposit.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
@@ -50,8 +50,11 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
   deposits: Deposit[];
   depositSelectedId: string[] = [];
 
-  articles: Article[];
   articleControl: any;
+  public articleMatch = {
+    operationType: { $ne: 'D' },
+    containsVariants: { $ne: true },
+  };
 
   // sort
   public sort = {
@@ -63,7 +66,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     private _service: ReportSystemService,
     private _depositService: DepositService,
     private _toastService: ToastService,
-    private _articleService: ArticleService,
+    public _articleService: ArticleService,
     public _fb: UntypedFormBuilder,
     private cdRef: ChangeDetectorRef,
     public _router: Router,
@@ -75,7 +78,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.getDeposits();
-    this.getArticles();
   }
 
   public ngOnDestroy(): void {
@@ -118,35 +120,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
             for (let deposit of this.deposits) {
               if (deposit.default) this.depositSelectedId.push(deposit._id);
             }
-          },
-          error: (error) => {
-            resolve(null);
-          },
-          complete: () => {},
-        });
-    });
-  }
-
-  private getArticles(): Promise<Article[]> {
-    return new Promise<Article[]>((resolve, reject) => {
-      this._articleService
-        .getAll({
-          project: {
-            _id: 1,
-            operationType: 1,
-            description: 1,
-            code: 1,
-            containsVariants: 1,
-          },
-          match: {
-            operationType: { $ne: 'D' },
-            containsVariants: { $ne: true },
-          },
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.articles = result.result;
           },
           error: (error) => {
             resolve(null);

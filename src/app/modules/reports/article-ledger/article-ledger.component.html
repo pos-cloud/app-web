@@ -6,9 +6,13 @@
       >
       <app-typeahead-dropdown
         [control]="articleControl"
-        [data]="articles"
+        [service]="_articleService"
         [keyField]="'_id'"
         [displayField]="'code'"
+        [searchFields]="['code', 'description', 'barcode']"
+        [projectFields]="['code', 'description', 'barcode']"
+        [match]="articleMatch"
+        [limit]="10"
         [placeholder]="''"
       ></app-typeahead-dropdown>
     </div>
@@ -19,9 +23,13 @@
       >
       <app-typeahead-dropdown
         [control]="articleControl"
-        [data]="articles"
+        [service]="_articleService"
         [keyField]="'_id'"
         [displayField]="'description'"
+        [searchFields]="['description', 'code', 'barcode']"
+        [projectFields]="['code', 'description', 'barcode']"
+        [match]="articleMatch"
+        [limit]="10"
         [placeholder]="''"
       ></app-typeahead-dropdown>
     </div>
