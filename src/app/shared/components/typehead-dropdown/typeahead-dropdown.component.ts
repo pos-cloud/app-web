@@ -25,6 +25,7 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   @Input() readonly: boolean = false;
   @Input() keyField: string = '_id';
   @Input() displayField: string = 'description';
+  @Input() displayFields?: string[];
   @Input() limit: number = 10;
   @Input() showInvalidOnlyAfterSubmit: boolean = false;
   @Input() formSubmitted: boolean = false;
@@ -77,7 +78,15 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
     );
   };
 
-  resultFormatter = (item: any): string => item?.[this.displayField] || '';
+  resultFormatter = (item: any): string => {
+    if (this.displayFields?.length) {
+      return this.displayFields
+        .map((field) => item?.[field])
+        .filter((value) => value != null && value !== '')
+        .join(' - ');
+    }
+    return item?.[this.displayField] || '';
+  };
 
   onSelectItem(event: NgbTypeaheadSelectItemEvent): void {
     this.lastSelected = event.item;
