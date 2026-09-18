@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -48,7 +48,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
 
   // filters
   deposits: Deposit[];
-  depositSelectedId: string[] = [];
+  depositSelectedId: string | null = null;
 
   articleControl: any;
   public articleMatch = {
@@ -72,7 +72,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     public _router: Router,
     private _title: Title
   ) {
-    this.articleForm = this._fb.group({ article: [null] });
+    this.articleForm = this._fb.group({ article: [null, Validators.required] });
     this.articleControl = this.articleForm.get('article');
   }
 
@@ -89,7 +89,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
       reportType: 'article-ledger',
       filters: {
         article: this.articleControl?.value?._id,
-        deposits: this.depositSelectedId,
+        deposits: this.depositSelectedId ? [this.depositSelectedId] : [],
       },
       pagination: {
         page: 1,
@@ -118,7 +118,10 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
           next: (result) => {
             this.deposits = result.result;
             for (let deposit of this.deposits) {
-              if (deposit.default) this.depositSelectedId.push(deposit._id);
+              if (deposit.default && !this.depositSelectedId) {
+                this.depositSelectedId = deposit._id;
+                break;
+              }
             }
           },
           error: (error) => {
@@ -129,7 +132,24 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     });
   }
 
+  private areFiltersValid(): boolean {
+    if (!this.articleControl?.value?._id) {
+      this.articleControl?.markAsTouched();
+      this._toastService.showToast({ message: 'Debe seleccionar un artículo' });
+      return false;
+    }
+
+    if (!this.depositSelectedId) {
+      this._toastService.showToast({ message: 'Debe seleccionar un depósito' });
+      return false;
+    }
+
+    return true;
+  }
+
   public getReport(): void {
+    if (!this.areFiltersValid()) return;
+
     this.loading = true;
 
     this.subscription.add(
@@ -167,6 +187,8 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
   }
 
   public onExportExcel(event): void {
+    if (!this.areFiltersValid()) return;
+
     this.loading = true;
     const pathUrl = this._router.url.split('/');
     const entity = pathUrl[2];
@@ -200,17 +222,15 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
   }
 
   public onAdjust(event): void {
-    if (!this.articleControl?.value?._id) {
-      this._toastService.showToast({ message: 'Debe seleccionar un artículo para ajustar' });
-      return;
-    }
+    if (!this.areFiltersValid()) return;
 
     this.loading = true;
     const articleId = this.articleControl.value._id;
+    const depositId = this.depositSelectedId as string;
 
     this.subscription.add(
       this._service
-        .adjustByArticle(articleId, this.depositSelectedId[0])
+        .adjustByArticle(articleId, depositId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
