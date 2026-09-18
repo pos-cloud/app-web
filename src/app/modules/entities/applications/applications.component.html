@@ -61,7 +61,7 @@
                     <label class="control-label">{{ 'transaction-type' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('tiendaNube.transactionType')"
-                      [data]="transactionTypes"
+                      [service]="_transactionTypeService"
                       [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
@@ -71,7 +71,7 @@
                     <label class="control-label">{{ 'shipment-method' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('tiendaNube.shipmentMethod')"
-                      [data]="shipmentMethods"
+                      [service]="_shipmentMethodService"
                       [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
@@ -81,7 +81,7 @@
                     <label class="control-label">{{ 'paymentMethodEcommerce' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('tiendaNube.paymentMethod')"
-                      [data]="paymentMethods"
+                      [service]="_paymentMethodService"
                       [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
@@ -91,7 +91,7 @@
                     <label class="control-label">{{ 'client' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('tiendaNube.company')"
-                      [data]="companies"
+                      [service]="_companyService"
                       [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
@@ -101,7 +101,7 @@
                     <label class="control-label">{{ 'article' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('tiendaNube.article')"
-                      [data]="articles"
+                      [service]="_articleService"
                       [keyField]="'_id'"
                       [displayField]="'description'"
                     ></app-typeahead-dropdown>
@@ -110,8 +110,8 @@
                     <label class="control-label">{{ 'deposit' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('tiendaNube.deposit')"
-                      [data]="deposits"
-                      [keyField]="_id"
+                      [service]="_depositService"
+                      [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
                   </div>
@@ -441,7 +441,7 @@
                     <label class="control-label">{{ 'transaction-type' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('wooCommerce.transactionType')"
-                      [data]="transactionTypes"
+                      [service]="_transactionTypeService"
                       [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
@@ -451,7 +451,7 @@
                     <label class="control-label">{{ 'shipment-method' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('wooCommerce.shipmentMethod')"
-                      [data]="shipmentMethods"
+                      [service]="_shipmentMethodService"
                       [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
@@ -461,7 +461,7 @@
                     <label class="control-label">{{ 'paymentMethodEcommerce' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('wooCommerce.paymentMethod')"
-                      [data]="paymentMethods"
+                      [service]="_paymentMethodService"
                       [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
@@ -471,7 +471,7 @@
                     <label class="control-label">{{ 'client' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('wooCommerce.company')"
-                      [data]="companies"
+                      [service]="_companyService"
                       [keyField]="'_id'"
                       [displayField]="'name'"
                     ></app-typeahead-dropdown>
@@ -481,7 +481,7 @@
                     <label class="control-label">{{ 'article' | translate | capitalize }}:</label>
                     <app-typeahead-dropdown
                       [control]="integracionesForm.get('wooCommerce.article')"
-                      [data]="articles"
+                      [service]="_articleService"
                       [keyField]="'_id'"
                       [displayField]="'description'"
                     ></app-typeahead-dropdown>

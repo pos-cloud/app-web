@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationService } from '@core/services/application.service';
 import { AuthService } from '@core/services/auth.service';
@@ -13,23 +13,12 @@ import { ProgressbarModule } from '@shared/components/progressbar/progressbar.mo
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from '@shared/directives/focus.directive';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import {
-  ApiResponse,
-  Application,
-  Article,
-  Company,
-  Deposit,
-  FeArIntegrationEntry,
-  PaymentMethod,
-  PrintType,
-  ShipmentMethod,
-  TransactionType,
-} from '@types';
+import { ApiResponse, Application, Article, FeArIntegrationEntry, PrintType } from '@types';
 import { CompanyService } from 'app/core/services/company.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import * as printJS from 'print-js';
-import { combineLatest, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { ArticleService } from '../../../core/services/article.service';
 import { DepositService } from '../../../core/services/deposit.service';
 import { PaymentMethodService } from '../../../core/services/payment-method.service';
@@ -58,7 +47,7 @@ import { TranslateMePipe } from '../../../shared/pipes/translate-me';
   ],
   providers: [TranslateMePipe],
 })
-export class ListApplicationsComponent implements OnInit {
+export class ListApplicationsComponent implements OnInit, OnDestroy {
   public title: string = 'Listado de Aplicaciones';
   public application: Application;
   public integracionesForm: FormGroup;
@@ -67,12 +56,6 @@ export class ListApplicationsComponent implements OnInit {
   public feArCrtLoadingIndex: number | null = null;
   public feArSaveLoadingIndex: number | null = null;
   public scaleCsvLoading: boolean = false;
-  public transactionTypes: TransactionType[];
-  public shipmentMethods: ShipmentMethod[];
-  public paymentMethods: PaymentMethod[];
-  public companies: Company[];
-  public articles: Article[];
-  public deposits: Deposit[];
   public focusEvent = new EventEmitter<boolean>();
   public feArPendingCrtFiles: File[][] = [];
 
@@ -88,7 +71,7 @@ export class ListApplicationsComponent implements OnInit {
     public _shipmentMethodService: ShipmentMethodService,
     public _paymentMethodService: PaymentMethodService,
     public _companyService: CompanyService,
-    private _articleService: ArticleService,
+    public _articleService: ArticleService,
     public _configService: ConfigService,
     public _printService: PrintService,
     public _authService: AuthService,
@@ -162,34 +145,15 @@ export class ListApplicationsComponent implements OnInit {
     });
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.loading = true;
-    combineLatest({
-      transactionTypes: this._transactionTypeService.find({ query: { operationType: { $ne: 'D' } } }),
-      shipmentMethods: this._shipmentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
-      paymentMethods: this._paymentMethodService.find({ query: { operationType: { $ne: 'D' } } }),
-      companies: this._companyService.find({ query: { operationType: { $ne: 'D' } } }),
-      articles: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
-      deposits: this._depositService.find({ query: { operationType: { $ne: 'D' } } }),
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: ({ transactionTypes, shipmentMethods, paymentMethods, companies, articles, deposits }) => {
-          this.transactionTypes = transactionTypes ?? [];
-          this.shipmentMethods = shipmentMethods ?? [];
-          this.paymentMethods = paymentMethods ?? [];
-          this.companies = companies ?? [];
-          this.articles = articles ?? [];
-          this.deposits = deposits ?? [];
-          this.getAllApplication();
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    this.getApplication();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.focusEvent.complete();
   }
 
   get feArEntries(): FormArray {
@@ -276,14 +240,32 @@ export class ListApplicationsComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public getAllApplication() {
+  public getApplication() {
     this._applicationService
-      .find({})
-      .pipe(takeUntil(this.destroy$))
+      .find({ query: { operationType: { $ne: 'D' } } })
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((result) => {
+          const list = Array.isArray(result) ? result : (result?.result ?? []);
+          const application = list[0];
+          if (!application?._id) {
+            return of(null);
+          }
+          return this._applicationService.getById(application._id);
+        })
+      )
       .subscribe({
-        next: (result: ApiResponse) => {
-          this.application = result[0];
-          this.setValuesForm();
+        next: (result: ApiResponse | null) => {
+          if (!result) {
+            this.setValuesForm();
+            return;
+          }
+          if (result.status === 200) {
+            this.application = Array.isArray(result.result) ? result.result[0] : result.result;
+            this.setValuesForm();
+          } else {
+            this._toastService.showToast(result);
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -295,54 +277,30 @@ export class ListApplicationsComponent implements OnInit {
   }
 
   setValuesForm() {
-    const companyTn = this.companies?.find((item) => item._id === this.application?.tiendaNube?.company?.toString());
-    const companyWoo = this.companies?.find((item) => item._id === this.application?.wooCommerce?.company?.toString());
-
-    const paymentMethodTn = this.paymentMethods?.find(
-      (item) => item._id === this.application?.tiendaNube?.paymentMethod?.toString()
-    );
-    const paymentMethodWoo = this.paymentMethods?.find(
-      (item) => item._id === this.application?.wooCommerce?.paymentMethod?.toString()
-    );
-
-    const shipmentMethodTn = this.shipmentMethods?.find(
-      (item) => item._id === this.application?.tiendaNube?.shipmentMethod?.toString()
-    );
-    const shipmentMethodWoo = this.shipmentMethods?.find(
-      (item) => item._id === this.application?.wooCommerce?.shipmentMethod?.toString()
-    );
-    const transactionTypeTn = this.transactionTypes?.find(
-      (item) => item._id === this.application?.tiendaNube?.transactionType?.toString()
-    );
-    const transactionTypeWoo = this.transactionTypes?.find(
-      (item) => item._id === this.application?.wooCommerce?.transactionType?.toString()
-    );
-    const articleTn = this.articles?.find((item) => item._id === this.application?.tiendaNube?.article?.toString());
-    const articleWoo = this.articles?.find((item) => item._id === this.application?.wooCommerce?.article?.toString());
-
-    const depositTn = this.deposits?.find((item) => item._id === this.application?.tiendaNube?.deposit?.toString());
+    const tiendaNube = this.application?.tiendaNube;
+    const wooCommerce = this.application?.wooCommerce;
     let values = {
       _id: this.application?._id ?? '',
       tiendaNube: {
-        userId: this.application?.tiendaNube?.userId ?? 0,
-        token: this.application?.tiendaNube?.token ?? '',
-        transactionType: transactionTypeTn ?? null,
-        shipmentMethod: shipmentMethodTn ?? null,
-        paymentMethod: paymentMethodTn ?? null,
-        company: companyTn ?? null,
-        article: articleTn ?? null,
-        deposit: depositTn ?? null,
+        userId: tiendaNube?.userId ?? 0,
+        token: tiendaNube?.token ?? '',
+        transactionType: tiendaNube?.transactionType ?? null,
+        shipmentMethod: tiendaNube?.shipmentMethod ?? null,
+        paymentMethod: tiendaNube?.paymentMethod ?? null,
+        company: tiendaNube?.company ?? null,
+        article: tiendaNube?.article ?? null,
+        deposit: tiendaNube?.deposit ?? null,
       },
 
       wooCommerce: {
-        key: this.application?.wooCommerce?.key ?? '',
-        secret: this.application?.wooCommerce?.secret ?? '',
-        url: this.application?.wooCommerce?.url ?? '',
-        transactionType: transactionTypeWoo ?? null,
-        shipmentMethod: shipmentMethodWoo ?? null,
-        paymentMethod: paymentMethodWoo ?? null,
-        company: companyWoo ?? null,
-        article: articleWoo ?? null,
+        key: wooCommerce?.key ?? '',
+        secret: wooCommerce?.secret ?? '',
+        url: wooCommerce?.url ?? '',
+        transactionType: wooCommerce?.transactionType ?? null,
+        shipmentMethod: wooCommerce?.shipmentMethod ?? null,
+        paymentMethod: wooCommerce?.paymentMethod ?? null,
+        company: wooCommerce?.company ?? null,
+        article: wooCommerce?.article ?? null,
       },
 
       menu: {
