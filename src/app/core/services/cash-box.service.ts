@@ -5,7 +5,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
-import { CashBox } from '@types';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -167,75 +166,6 @@ export class CashBoxService extends ModelService {
           headers: headers,
         }
       )
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getClosingCashBox(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/get-closing-cash-box`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public saveCashBox(cashBox: CashBox): Observable<any> {
-    const URL = `${environment.api}/api/cash-box`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, cashBox, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public updateCashBox(cashBox: CashBox): Observable<any> {
-    const URL = `${environment.api}/api/cash-box`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', cashBox._id);
-
-    return this._http
-      .put(URL, cashBox, {
-        headers: headers,
-        params: params,
-      })
       .pipe(
         map((res) => {
           return res;

@@ -38,11 +38,6 @@ import { DeleteMovementOfCashComponent } from './components/movement-of-cash/del
 import { SelectChecksComponent } from './components/movement-of-cash/select-checks/select-checks.component';
 import { SelectMovementsOfCashesComponent } from './components/movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
-import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
-import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
-import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
-import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
-import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ExportExcelModule } from './shared/components/export-excel/export-excel.module';
 
 import { AddTransactionComponent } from './components/transaction/add-transaction/add-transaction.component';
@@ -92,11 +87,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddMovementOfArticleComponent,
     ApplyDiscountComponent,
     DeleteMovementOfCashComponent,
-    StatisticsComponent,
-    ReportBestSellingArticleComponent,
-    ReportSalesByPaymentMethodComponent,
-    ReportSalesByClientComponent,
-    ReportSalesByMakeComponent,
     MovementOfCancellationComponent,
     ListArticlesPosComponent,
     CancellationTypeAutomaticComponent,

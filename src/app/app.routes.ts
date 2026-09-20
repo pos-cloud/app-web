@@ -6,12 +6,6 @@ import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { ListHistoriesComponent } from './components/history/list-history/list-histories.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
-import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
-import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
-import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
-import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
-import { StatisticsComponent } from './components/statistics/statistics.component';
-
 import { ListTransactionsComponent } from './components/transaction/list-transactions/list-transactions.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
@@ -53,56 +47,6 @@ export const _routes: Routes = [
   {
     path: 'histories',
     component: ListHistoriesComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/venta/statistics',
-    component: StatisticsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/venta/productos-mas-vendidos',
-    component: ReportBestSellingArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/venta/ventas-por-metodo-de-pago',
-    component: ReportSalesByPaymentMethodComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/venta/marcas-mas-vendidas',
-    component: ReportSalesByMakeComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/venta/ventas-por-cliente',
-    component: ReportSalesByClientComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/compra/statistics',
-    component: StatisticsComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/compra/productos-mas-comprados',
-    component: ReportBestSellingArticleComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/compra/compras-por-metodo-de-pago',
-    component: ReportSalesByPaymentMethodComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/compra/marcas-mas-compradas',
-    component: ReportSalesByMakeComponent,
-    canActivate: [AuthGuard, LicenseGuard],
-  },
-  {
-    path: 'admin/compra/compras-por-proveedor',
-    component: ReportSalesByClientComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
   {
@@ -151,11 +95,6 @@ export const _routes: Routes = [
     component: AddSaleOrderComponent,
     canActivate: [AuthGuard, LicenseGuard],
   },
-  // {
-  //   path: 'report/current-account',
-  //   component: CurrentAccountDetailsComponent,
-  //   canActivate: [AuthGuard, LicenseGuard],
-  // },
   {
     path: 'pos',
     component: PointOfSaleComponent,

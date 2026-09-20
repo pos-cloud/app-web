@@ -204,30 +204,6 @@ export class CompanyService extends ModelService {
       );
   }
 
-  public getSalesByCompany(query: string): Observable<any> {
-    const URL = `${environment.api}/api/sales-by-company`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('query', query);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public getSummaryOfAccountsByCompanyV1(query: string): Observable<any> {
     const URL = `${environment.api}/api/summary-of-accounts-by-company`;
 

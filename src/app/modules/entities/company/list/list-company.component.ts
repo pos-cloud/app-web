@@ -10,7 +10,7 @@ import { CompanyType, IAttribute, IButton } from '@types';
 import { Config } from 'app/app.config';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
-import { CurrentAccountDetailsComponent } from 'app/components/print/current-account-details/current-account-details.component';
+import { CurrentAccountDetailsComponent } from '../current-account-details/current-account-details.component';
 import { BusinessModel } from 'app/core/enums/business-model.enum';
 import { Subject, takeUntil } from 'rxjs';
 

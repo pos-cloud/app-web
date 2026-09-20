@@ -8,9 +8,9 @@ import jsPDF from 'jspdf';
 import { Company, CompanyGroup, CompanyType } from '@types';
 import { EmployeeService } from 'app/core/services/employee.service';
 import { TransactionService } from 'app/core/services/transaction.service';
-import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
-import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
-import { Config } from './../../../app.config';
+import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
+import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
+import { Config } from 'app/app.config';
 
 import { NgbActiveModal, NgbAlertConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
