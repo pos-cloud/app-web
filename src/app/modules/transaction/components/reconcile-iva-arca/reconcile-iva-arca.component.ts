@@ -5,7 +5,7 @@ import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { FeArService, IvaReconcileItem, IvaReconcileResult } from '../../../../core/services/fe-ar.service';
+import { FeArService } from '../../../../core/services/fe-ar.service';
 
 @Component({
   selector: 'app-reconcile-iva-arca',
@@ -17,7 +17,6 @@ export class ReconcileIvaArcaComponent implements OnInit {
   public form!: UntypedFormGroup;
   public loading = false;
   public months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-  public result: IvaReconcileResult | null = null;
 
   constructor(
     public _fb: UntypedFormBuilder,
@@ -48,38 +47,33 @@ export class ReconcileIvaArcaComponent implements OnInit {
     const fileInput = document.getElementById('reconcileIvaFile') as HTMLInputElement;
     const file = fileInput?.files?.[0];
     if (!file) {
-      this._toastService.showToast({ message: 'Seleccioná el Excel de Mis Comprobantes Emitidos.' });
+      this._toastService.showToast(null, 'warning', '', 'Seleccioná el Excel de Mis Comprobantes Emitidos.');
       return;
     }
 
     this.loading = true;
-    this.result = null;
     const VATPeriod = this.form.value.year + this.form.value.month;
 
     this._feArService.reconcileIva(VATPeriod, file).subscribe({
       next: (response) => {
-        if (response?.status === 200 && response.result) {
-          this.result = response.result as IvaReconcileResult;
+        if (response?.status === 200) {
           this._toastService.showToast(
             null,
             'success',
             '',
-            `Reconciliación lista: ${this.result.updated.length} actualizadas, ${this.result.created.length} creadas, ${this.result.unchanged.length} sin cambios, ${this.result.errors.length} errores.`
+            response.message ||
+              'La reconciliación corre en segundo plano. Te avisamos por notificación cuando termine.'
           );
+          this.activeModal.close('queued');
         } else {
           this._toastService.showToast(response?.error || response);
+          this.loading = false;
         }
-        this.loading = false;
       },
       error: (error) => {
         this._toastService.showToast(error?.error || error);
         this.loading = false;
       },
     });
-  }
-
-  public labelFor(item: IvaReconcileItem): string {
-    const number = item.origin != null && item.letter && item.number != null ? `${item.origin}-${item.letter}-${item.number}` : '';
-    return [item.cae, number].filter(Boolean).join(' · ');
   }
 }
