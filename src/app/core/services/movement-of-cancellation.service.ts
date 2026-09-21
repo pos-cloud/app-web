@@ -82,7 +82,7 @@ export class MovementOfCancellationService extends ModelService {
   }
 
   public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Observable<any> {
-    const URL = `${environment.apiv2}/movements-of-cancellations/bulk`;
+    const URL = `${environment.api}/api/movements-of-cancellations`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -97,13 +97,7 @@ export class MovementOfCancellationService extends ModelService {
         }
       )
       .pipe(
-        map((res: any) => {
-          if (res?.result) {
-            return {
-              ...res,
-              movementsOfCancellations: res.result,
-            };
-          }
+        map((res) => {
           return res;
         }),
         catchError((err) => {
