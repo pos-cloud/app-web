@@ -5,8 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { ModelService } from 'app/core/services/model.service';
-import { AuthService } from './auth.service';
 import { environment } from 'environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -60,9 +60,7 @@ export class MovementOfCancellationService extends ModelService {
       );
   }
 
-  public saveMovementOfCancellation(
-    movementOfCancellation: MovementOfCancellation
-  ): Observable<any> {
+  public saveMovementOfCancellation(movementOfCancellation: MovementOfCancellation): Observable<any> {
     const URL = `${environment.api}/api/movement-of-cancellation`;
 
     const headers = new HttpHeaders()
@@ -83,10 +81,8 @@ export class MovementOfCancellationService extends ModelService {
       );
   }
 
-  public saveMovementsOfCancellations(
-    movementsOfCancellations: MovementOfCancellation[]
-  ): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-cancellations`;
+  public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Observable<any> {
+    const URL = `${environment.apiv2}/movements-of-cancellations/bulk`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -101,7 +97,13 @@ export class MovementOfCancellationService extends ModelService {
         }
       )
       .pipe(
-        map((res) => {
+        map((res: any) => {
+          if (res?.result) {
+            return {
+              ...res,
+              movementsOfCancellations: res.result,
+            };
+          }
           return res;
         }),
         catchError((err) => {
@@ -124,6 +126,31 @@ export class MovementOfCancellationService extends ModelService {
         headers: headers,
         params: params,
       })
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      );
+  }
+
+  public updateByDestination(transactionDestination: string, movements: MovementOfCancellation[]): Observable<any> {
+    const URL = `${environment.apiv2}/movements-of-cancellations/by-destination`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http
+      .put(
+        URL,
+        { transactionDestination, movements },
+        {
+          headers: headers,
+        }
+      )
       .pipe(
         map((res) => {
           return res;

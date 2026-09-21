@@ -1,0 +1,54 @@
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.balance-summary {
+  margin-right: 8px;
+  font-weight: 600;
+}
+
+.sortable {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.balance-input {
+  width: 110px;
+  min-width: 110px;
+}
+
+.actions {
+  white-space: nowrap;
+
+  .btn + .btn {
+    margin-left: 6px;
+  }
+}
+
+.empty-state {
+  padding: 24px 8px;
+  color: #6c757d;
+}
+
+.row-active {
+  background-color: #0275d8 !important;
+  color: #fff !important;
+}
+
+.row-inactive {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.progress-cell {
+  padding: 0;
+}
+
+.modal-body {
+  max-height: 65vh;
+  overflow: auto;
+  padding-top: 8px;
+}

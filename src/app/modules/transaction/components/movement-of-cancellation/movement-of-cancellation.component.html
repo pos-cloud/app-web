@@ -1,0 +1,254 @@
+<ng-template #colFilter let-field="field" let-placeholder="placeholder" let-autofocus="autofocus">
+  <input
+    type="text"
+    class="form-control"
+    [(ngModel)]="filters[field]"
+    (input)="getTransactions()"
+    [placeholder]="placeholder"
+    [focus]="autofocus ? focusEvent : null"
+  />
+</ng-template>
+
+<ng-container *ngIf="selectionView">
+  <div class="modal-header">
+    <h4 class="modal-title">Seleccionar transacciones a cancelar</h4>
+    <div class="header-actions">
+      <button type="button" class="btn btn-light btn-sm" (click)="selectAll()" [disabled]="loading">
+        <i class="fa fa-plus-square"></i>
+        Seleccionar todo
+      </button>
+      <button type="button" class="btn btn-light btn-sm" (click)="deleteAllMovements()" [disabled]="loading">
+        <i class="fa fa-minus-square"></i>
+        Deseleccionar todo
+      </button>
+      <button type="button" class="btn btn-light btn-sm" (click)="refresh()" [disabled]="loading">
+        <i class="fa fa-refresh" [class.fa-spin]="loading"></i>
+        Actualizar
+      </button>
+      <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-body">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="sortable" (click)="orderBy('endDate')">Fecha</th>
+            <th class="sortable" (click)="orderBy('type.name')">Nombre</th>
+            <th class="sortable" (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
+            <th class="sortable" (click)="orderBy('letter')">Letra</th>
+            <th class="sortable" (click)="orderBy('number')">Número</th>
+            <th class="sortable" *ngIf="!requestCompany" (click)="orderBy('company.name')">Cliente</th>
+            <th class="sortable" *ngIf="!requestCompany" (click)="orderBy('company.city')">Ciudad</th>
+            <th class="sortable" *ngIf="!requestCompany" (click)="orderBy('company.state.name')">Provincia</th>
+            <th class="sortable" *ngIf="!requestCompany" (click)="orderBy('company.group.description')">Grupo</th>
+            <th class="sortable text-right" (click)="orderBy('totalPrice')">Precio total</th>
+            <th class="sortable text-right" (click)="orderBy('balance')">Saldo</th>
+            <th>Acciones</th>
+          </tr>
+          <tr class="filters">
+            <th></th>
+            <th>
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'endDate', placeholder: 'Fecha...', autofocus: true }"
+              ></ng-container>
+            </th>
+            <th>
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'type.name', placeholder: 'Nombre...' }"
+              ></ng-container>
+            </th>
+            <th *ngIf="userCountry === 'AR'">
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'origin', placeholder: 'POS...' }"
+              ></ng-container>
+            </th>
+            <th>
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'letter', placeholder: 'Letra...' }"
+              ></ng-container>
+            </th>
+            <th>
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'number', placeholder: 'Número...' }"
+              ></ng-container>
+            </th>
+            <th *ngIf="!requestCompany">
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'company.name', placeholder: 'Cliente...' }"
+              ></ng-container>
+            </th>
+            <th *ngIf="!requestCompany">
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'company.city', placeholder: 'Ciudad...' }"
+              ></ng-container>
+            </th>
+            <th *ngIf="!requestCompany">
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'company.state.name', placeholder: 'Provincia...' }"
+              ></ng-container>
+            </th>
+            <th *ngIf="!requestCompany">
+              <ng-container
+                *ngTemplateOutlet="colFilter; context: { field: 'company.group.description', placeholder: 'Grupo...' }"
+              ></ng-container>
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="99" class="progress-cell">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
+          <tr
+            *ngFor="let transaction of transactions"
+            [hidden]="loading"
+            [class.row-active]="isTransactionSelected(transaction)"
+            [class.row-inactive]="!isTransactionSelected(transaction)"
+          >
+            <td>
+              <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', transaction)" title="Ver">
+                <i class="fa fa-eye"></i>
+              </button>
+            </td>
+            <td>{{ transaction.endDate }}</td>
+            <td>{{ transaction.type?.name }}</td>
+            <td *ngIf="userCountry === 'AR'">{{ transaction.origin }}</td>
+            <td>{{ transaction.letter }}</td>
+            <td>{{ transaction.number }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.name }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.city }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.state?.name }}</td>
+            <td *ngIf="!requestCompany">{{ transaction.company?.group?.description }}</td>
+            <td class="text-right">{{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+            <td>
+              <input
+                type="number"
+                class="form-control balance-input"
+                [(ngModel)]="transaction.balanceSelected"
+                (blur)="updateBalanceOrigin(transaction)"
+                [readonly]="transaction.isFinanced"
+              />
+            </td>
+            <td class="actions">
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                *ngIf="transaction.isFinanced"
+                (click)="openModal('select-movements-of-cashes', transaction)"
+              >
+                Parcial
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="selectTransaction(transaction, false)">
+                Total
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="totalItems === 0 && !loading">
+            <td colspan="16" class="text-center empty-state">No se encontraron transacciones para cancelar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <span class="mr-auto">
+      <b>Saldo seleccionado: {{ balanceSelected | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</b>
+    </span>
+    <button type="button" class="btn btn-light" (click)="activeModal.close()" [disabled]="loading">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="finish()" [disabled]="loading">Aceptar</button>
+  </div>
+</ng-container>
+
+<section class="container-fluid" *ngIf="!selectionView">
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="sortable" (click)="orderBy('endDate')">Fecha</th>
+          <th class="sortable" (click)="orderBy('state')">Estado</th>
+          <th class="sortable" (click)="orderBy('type.name')">Nombre</th>
+          <th class="sortable" (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
+          <th class="sortable" (click)="orderBy('letter')">Letra</th>
+          <th class="sortable" (click)="orderBy('number')">Número</th>
+          <th class="sortable text-right" (click)="orderBy('totalPrice')">Precio total</th>
+          <th class="sortable text-right" (click)="orderBy('balance')">Saldo cancelado</th>
+        </tr>
+        <tr class="filters">
+          <th></th>
+          <th>
+            <ng-container
+              *ngTemplateOutlet="colFilter; context: { field: 'endDate', placeholder: 'Fecha...' }"
+            ></ng-container>
+          </th>
+          <th>
+            <ng-container
+              *ngTemplateOutlet="colFilter; context: { field: 'state', placeholder: 'Estado...' }"
+            ></ng-container>
+          </th>
+          <th>
+            <ng-container
+              *ngTemplateOutlet="colFilter; context: { field: 'type.name', placeholder: 'Nombre...' }"
+            ></ng-container>
+          </th>
+          <th *ngIf="userCountry === 'AR'">
+            <ng-container
+              *ngTemplateOutlet="colFilter; context: { field: 'origin', placeholder: 'POS...' }"
+            ></ng-container>
+          </th>
+          <th>
+            <ng-container
+              *ngTemplateOutlet="colFilter; context: { field: 'letter', placeholder: 'Letra...' }"
+            ></ng-container>
+          </th>
+          <th>
+            <ng-container
+              *ngTemplateOutlet="colFilter; context: { field: 'number', placeholder: 'Número...' }"
+            ></ng-container>
+          </th>
+          <th>
+            <ng-container
+              *ngTemplateOutlet="colFilter; context: { field: 'totalPrice', placeholder: 'Precio total...' }"
+            ></ng-container>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="99" class="progress-cell">
+            <app-progressbar [loading]="loading"></app-progressbar>
+          </td>
+        </tr>
+        <tr *ngFor="let transaction of transactions" [hidden]="loading">
+          <td>
+            <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', transaction)" title="Ver">
+              <i class="fa fa-eye"></i>
+            </button>
+          </td>
+          <td>{{ transaction.endDate | dateFormat: 'DD/MM/YYYY' }}</td>
+          <td>{{ transaction.state }}</td>
+          <td>{{ transaction.type?.name }}</td>
+          <td *ngIf="userCountry === 'AR'">{{ transaction.origin }}</td>
+          <td>{{ transaction.letter }}</td>
+          <td>{{ transaction.number }}</td>
+          <td class="text-right">{{ transaction.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+          <td class="text-right">{{ transaction.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
+        </tr>
+        <tr *ngIf="transactions.length === 0 && !loading">
+          <td colspan="16" class="text-center empty-state">No se encontraron transacciones</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
