@@ -74,7 +74,14 @@
                 value="{{ transaction?.employeeClosing?.name }}"
                 readonly
               />
-              <input type="text" class="form-control" name="employeeClosing" *ngIf="!transaction?.employeeClosing" value="" readonly />
+              <input
+                type="text"
+                class="form-control"
+                name="employeeClosing"
+                *ngIf="!transaction?.employeeClosing"
+                value=""
+                readonly
+              />
             </div>
             <div class="form-group" [ngClass]="transaction?.type?.requestEmployee ? 'col-md-3' : 'col-md-6'">
               <label for="balanceAccount" class="control-label">{{ 'balanceAccount' | translate | capitalize }}:</label>
@@ -98,7 +105,10 @@
               <input type="text" class="form-control" name="state" value="{{ transaction?.state }}" readonly />
             </div>
           </div>
-          <div class="row" *ngIf="transaction?.type?.requestEmployee && transaction?.type?.transactionMovement?.toString() === 'Stock'">
+          <div
+            class="row"
+            *ngIf="transaction?.type?.requestEmployee && transaction?.type?.transactionMovement?.toString() === 'Stock'"
+          >
             <div class="form-group col-md-3">
               <label for="employeeClosing" class="control-label">{{
                 transaction?.type?.requestEmployee?.description | translate | capitalize
@@ -111,7 +121,14 @@
                 value="{{ transaction?.employeeClosing?.name }}"
                 readonly
               />
-              <input type="text" class="form-control" name="employeeClosing" *ngIf="!transaction?.employeeClosing" value="" readonly />
+              <input
+                type="text"
+                class="form-control"
+                name="employeeClosing"
+                *ngIf="!transaction?.employeeClosing"
+                value=""
+                readonly
+              />
             </div>
           </div>
           <div class="row">
@@ -668,7 +685,7 @@
                   <th>POS</th>
                   <th>Letra</th>
                   <th>Número</th>
-
+                  <th>Balance</th>
                   <th>Precio Total</th>
                 </tr>
               </thead>
@@ -693,10 +710,8 @@
                   </td>
                   <td>{{ transactionDestination?.letter }}</td>
                   <td>{{ transactionDestination?.number }}</td>
-
+                  <td>{{ transactionDestination?.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
                   <td>$ {{ transactionDestination?.totalPrice }}</td>
-
-                  <td></td>
                 </tr>
               </tbody>
               <tbody></tbody>
@@ -718,6 +733,7 @@
                   <th>POS</th>
                   <th>Letra</th>
                   <th>Número</th>
+                  <th>Balance</th>
 
                   <th>Precio Total</th>
                 </tr>
@@ -743,10 +759,8 @@
                   </td>
                   <td>{{ transactionOrigin?.letter }}</td>
                   <td>{{ transactionOrigin?.number }}</td>
-
+                  <td>{{ transactionOrigin?.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</td>
                   <td>$ {{ transactionOrigin?.totalPrice }}</td>
-
-                  <td></td>
                 </tr>
               </tbody>
               <tbody></tbody>
@@ -845,11 +859,7 @@
               </div>
               <div class="row" *ngIf="hasFeArObj()">
                 <div class="form-group col-md-12">
-                  <button
-                    class="btn btn-sm btn-primary"
-                    [disabled]="syncingFromArca"
-                    (click)="syncFromArcaDirect()"
-                  >
+                  <button class="btn btn-sm btn-primary" [disabled]="syncingFromArca" (click)="syncFromArcaDirect()">
                     <i *ngIf="syncingFromArca" class="fa fa-spinner fa-spin"></i>
                     Alinear con ARCA
                   </button>
@@ -879,12 +889,7 @@
   </div>
 
   <div class="modal-footer">
-    <button
-      *ngIf="isArcaModal"
-      class="btn btn-primary"
-      [disabled]="syncingFromArca"
-      (click)="syncFromArca(modal)"
-    >
+    <button *ngIf="isArcaModal" class="btn btn-primary" [disabled]="syncingFromArca" (click)="syncFromArca(modal)">
       <i *ngIf="syncingFromArca" class="fa fa-spinner fa-spin"></i>
       Alinear con ARCA
     </button>

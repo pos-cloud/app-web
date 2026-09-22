@@ -102,7 +102,7 @@
             <th></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody [class.is-loading]="loading">
           <tr>
             <td colspan="99" class="progress-cell">
               <app-progressbar [loading]="loading"></app-progressbar>
@@ -110,7 +110,6 @@
           </tr>
           <tr
             *ngFor="let transaction of transactions"
-            [hidden]="loading"
             [class.row-active]="isTransactionSelected(transaction)"
             [class.row-inactive]="!isTransactionSelected(transaction)"
           >
@@ -224,13 +223,13 @@
           <th></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody [class.is-loading]="loading">
         <tr>
           <td colspan="99" class="progress-cell">
             <app-progressbar [loading]="loading"></app-progressbar>
           </td>
         </tr>
-        <tr *ngFor="let transaction of transactions" [hidden]="loading">
+        <tr *ngFor="let transaction of transactions">
           <td>
             <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', transaction)" title="Ver">
               <i class="fa fa-eye"></i>

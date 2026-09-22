@@ -1,7 +1,15 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse, MovementOfCash, PaymentMethod, PrinterPrintIn, PrintType, Transaction, TransactionState } from '@types';
+import {
+  ApiResponse,
+  MovementOfCash,
+  PaymentMethod,
+  PrinterPrintIn,
+  PrintType,
+  Transaction,
+  TransactionState,
+} from '@types';
 import { Subject, Subscription } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
@@ -253,6 +261,7 @@ export class ViewTransactionComponent implements OnInit {
       .getAll({
         project: {
           _id: 1,
+          balance: 1,
           'transactionDestination.operationType': 1,
           'transactionDestination._id': 1,
           'transactionDestination.endDate': 1,
@@ -293,7 +302,10 @@ export class ViewTransactionComponent implements OnInit {
               if (originId === currentId && data.transactionDestination) {
                 const other = data.transactionDestination;
                 if (other.state !== TransactionState.Open && other.state !== TransactionState.Pending) {
-                  this.transactionOrigins.push(other);
+                  this.transactionOrigins.push({
+                    ...other,
+                    balance: this.roundNumber.transform(data.balance ?? 0),
+                  });
                 }
               }
               // Si la transacción que estoy viendo es la DESTINO del movimiento (la que cancela),
@@ -301,12 +313,16 @@ export class ViewTransactionComponent implements OnInit {
               if (destinationId === currentId && data.transactionOrigin) {
                 const other = data.transactionOrigin;
                 if (other.state !== TransactionState.Open && other.state !== TransactionState.Pending) {
-                  this.transactionDestinations.push(other);
+                  this.transactionDestinations.push({
+                    ...other,
+                    balance: this.roundNumber.transform(data.balance ?? 0),
+                  });
                 }
               }
             }
           }
         },
+
         error: (error) => {
           this._toastService.showToast(error);
           this.loading = false;

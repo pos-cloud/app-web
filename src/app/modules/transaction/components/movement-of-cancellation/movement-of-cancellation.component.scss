@@ -47,6 +47,12 @@
   padding: 0;
 }
 
+tbody.is-loading > tr:not(:first-child) {
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
 .modal-body {
   max-height: 65vh;
   overflow: auto;

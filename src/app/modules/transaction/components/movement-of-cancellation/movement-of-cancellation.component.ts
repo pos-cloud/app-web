@@ -263,7 +263,6 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
 
   async getTransactions() {
     this.loading = true;
-    this.transactions = [];
 
     let sortAux;
     if (this.orderTerm[0].charAt(0) === '-') {
