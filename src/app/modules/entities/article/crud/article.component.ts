@@ -44,8 +44,8 @@ import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { ArticlePrintIn } from 'app/components/article/article';
 import { Config as AppConfig } from 'app/app.config';
+import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { combineLatest, forkJoin, Subject } from 'rxjs';
@@ -77,7 +77,7 @@ import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
     FocusDirective,
     PipesModule,
     TranslateModule,
-    TypeaheadDropdownComponent,
+    SearchableDropdownComponent,
     HierarchicalMultiSelectComponent,
     UploadFileComponent,
     EditorModule,
@@ -146,26 +146,27 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   public hierarchicalCategories;
   public categoriesDisplayText;
+  public providerMatch: Record<string, unknown> = { type: 'Proveedor', operationType: { $ne: 'D' } };
 
   constructor(
     private _articleService: ArticleService,
-    private _categoryService: CategoryService,
-    private _makeService: MakeService,
+    public _categoryService: CategoryService,
+    public _makeService: MakeService,
     private _priceListService: PriceListService,
     private _priceListArticleService: PriceListArticleService,
-    private _unitOfMeasurementService: UnitOfMeasurementService,
+    public _unitOfMeasurementService: UnitOfMeasurementService,
     private _configService: ConfigService,
     private _taxesService: TaxService,
     private _router: Router,
     private _fb: UntypedFormBuilder,
     private _toastService: ToastService,
     public _fileService: FileService,
-    private _classificationService: ClassificationService,
-    private _companyService: CompanyService,
-    private _variantTypeService: VariantTypeService,
-    private _variantValueService: VariantValueService, //  private roundNumber: DecimalPipe
-    private _accountService: AccountService,
-    private _currencyService: CurrencyService
+    public _classificationService: ClassificationService,
+    public _companyService: CompanyService,
+    public _variantTypeService: VariantTypeService,
+    public _variantValueService: VariantValueService,
+    public _accountService: AccountService,
+    public _currencyService: CurrencyService
   ) {
     this.articleForm = this._fb.group({
       _id: ['', []],
@@ -326,8 +327,11 @@ export class ArticleComponent implements OnInit, OnDestroy {
           this.variantTypes = variantTypes || [];
           this.config = Array.isArray(config) ? config[0] : config;
           this.currencies = currencies || [];
-          this.variantValues = variantValues || [];
-          this.allVariantValues = variantValues || [];
+          const values = Array.isArray(variantValues)
+            ? variantValues
+            : ((extractApiResult(variantValues) as VariantValue[]) ?? []);
+          this.variantValues = values;
+          this.allVariantValues = values;
           this.code = code.code;
           this.accounts = accounts;
 
@@ -1282,9 +1286,11 @@ export class ArticleComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const allValues = Array.isArray(this.allVariantValues) ? this.allVariantValues : [];
+
     // Filtrar los valores de variantes que pertenecen al tipo seleccionado
     // desde todos los valores disponibles
-    this.variantValues = this.allVariantValues.filter((value) => {
+    this.variantValues = allValues.filter((value) => {
       let typeId = null;
 
       if (value.type) {

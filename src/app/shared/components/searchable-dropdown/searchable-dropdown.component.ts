@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, debounceTime, finalize, map, switchMap } from 'rxjs/operators';
@@ -12,6 +22,8 @@ import { catchError, debounceTime, finalize, map, switchMap } from 'rxjs/operato
   imports: [CommonModule, FormsModule],
 })
 export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges {
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
+
   @Input() placeholder: string = '';
   @Input() control: FormControl;
   @Input() data: any[] = [];
@@ -120,6 +132,7 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
       this.searchTerm = '';
       this.control.markAsTouched();
       this.requestSearch('');
+      this.focusSearchInput();
     }
   }
 
@@ -168,6 +181,12 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
     if (!target.closest(`#${this.uniqueId}`)) {
       this.closeDropdown();
     }
+  }
+
+  private focusSearchInput(): void {
+    setTimeout(() => {
+      this.searchInput?.nativeElement?.focus();
+    });
   }
 
   private requestSearch(term: string): void {

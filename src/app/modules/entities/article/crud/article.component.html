@@ -102,26 +102,26 @@
             <div class="row">
               <div class="col-md-6">
                 <label for="make"> {{ 'make' | translate | capitalize }}:</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   placeholder="{{ 'make' | translate | capitalize }}"
                   [control]="articleForm.get('make')"
-                  [data]="makes"
+                  [service]="_makeService"
                   [readonly]="readonly"
                   [keyField]="'_id'"
                   [displayField]="'description'"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
 
               <div class="col-md-6">
                 <label for="category">{{ 'category' | translate | capitalize }}:</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   placeholder="{{ 'category' | translate | capitalize }}"
                   [control]="articleForm.get('category')"
-                  [data]="categories"
+                  [service]="_categoryService"
                   [readonly]="readonly"
                   [keyField]="'_id'"
                   [displayField]="'description'"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
             </div>
             <div class="row">
@@ -200,14 +200,14 @@
         <div class="row">
           <div class="col-md-3">
             <label for="unitOfMeasurement">{{ 'unitOfMeasurement' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               placeholder="{{ 'unitOfMeasurement' | translate | capitalize }}"
               [control]="articleForm.get('unitOfMeasurement')"
-              [data]="unitOfMeasurements"
+              [service]="_unitOfMeasurementService"
               [readonly]="readonly"
               [keyField]="'_id'"
               [displayField]="'name'"
-            ></app-typeahead-dropdown>
+            ></app-searchable-dropdown>
           </div>
           <div class="col-md-3">
             <label for="printIn">{{ 'printIn' | translate | capitalize }}:</label>
@@ -270,14 +270,14 @@
         <div class="row" *ngIf="currencies?.length > 0">
           <div class="col-md-4">
             <label for="currency">{{ 'currency' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               placeholder="{{ 'currency' | translate | capitalize }}"
               [control]="articleForm.get('currency')"
-              [data]="currencies"
+              [service]="_currencyService"
               [readonly]="readonly"
               [keyField]="'_id'"
               [displayField]="'name'"
-            ></app-typeahead-dropdown>
+            ></app-searchable-dropdown>
           </div>
         </div>
 
@@ -618,23 +618,25 @@
             <div class="row">
               <div class="form-group col-md-5">
                 <label class="control-label">{{ 'type.variants' | translate | capitalize }}:</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   [control]="variantTypeControl"
-                  [data]="variantTypes"
+                  [service]="_variantTypeService"
                   [displayField]="'name'"
                   [placeholder]="'Seleccionar tipo...'"
                   [readonly]="readonly"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
               <div class="form-group col-md-5">
                 <label class="control-label">{{ 'value' | translate | capitalize }}:</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   [control]="variantValueControl"
                   [data]="variantValues"
                   [displayField]="'description'"
                   [placeholder]="'Seleccionar valor...'"
                   [readonly]="readonly || !variantTypeControl.value?._id"
-                ></app-typeahead-dropdown>
+                  [initialLimit]="50"
+                  [resultLimit]="50"
+                ></app-searchable-dropdown>
               </div>
               <div class="form-group col-md-2">
                 <div>{{ 'action' | translate | capitalize }}:</div>
@@ -1154,27 +1156,27 @@
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-4 typeahead-container">
+          <div class="form-group col-md-4">
             <label class="control-label">{{ 'salesAccount.description' | translate | capitalize }}</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               placeholder="{{ 'salesAccount.description' | translate | capitalize }}"
               [control]="articleForm.get('salesAccount')"
-              [data]="accounts"
+              [service]="_accountService"
               [readonly]="readonly"
               [keyField]="'_id'"
               [displayField]="'description'"
-            ></app-typeahead-dropdown>
+            ></app-searchable-dropdown>
           </div>
-          <div class="form-group col-md-4 typeahead-container">
+          <div class="form-group col-md-4">
             <label class="control-label">{{ 'purchaseAccount.description' | translate | capitalize }}</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               placeholder="{{ 'purchaseAccount.description' | translate | capitalize }}"
               [control]="articleForm.get('purchaseAccount')"
-              [data]="accounts"
+              [service]="_accountService"
               [readonly]="readonly"
               [keyField]="'_id'"
               [displayField]="'description'"
-            ></app-typeahead-dropdown>
+            ></app-searchable-dropdown>
           </div>
         </div>
         <hr />
@@ -1280,14 +1282,14 @@
               </div>
               <div class="form-group col-md-4">
                 <label class="control-label">{{ 'classification' | translate | capitalize }}</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   placeholder="{{ 'classification' | translate | capitalize }}"
                   [control]="articleForm.get('classification')"
-                  [data]="classifications"
+                  [service]="_classificationService"
                   [readonly]="readonly"
                   [keyField]="'_id'"
                   [displayField]="'name'"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
               <div class="form-group col-md-4">
                 <label for="updateVariants" class="control-label">{{
@@ -1304,16 +1306,17 @@
               </div>
             </div>
             <div class="row">
-              <div class="form-group col-md-4 typeahead-container">
+              <div class="form-group col-md-4">
                 <label class="control-label">{{ 'article.provider.name' | translate | capitalize }}</label>
-                <app-typeahead-dropdown
+                <app-searchable-dropdown
                   placeholder="{{ 'article.provider.name' | translate | capitalize }}"
                   [control]="articleForm.get('provider')"
-                  [data]="companies"
+                  [service]="_companyService"
+                  [match]="providerMatch"
                   [readonly]="readonly"
                   [keyField]="'_id'"
                   [displayField]="'name'"
-                ></app-typeahead-dropdown>
+                ></app-searchable-dropdown>
               </div>
               <div class="form-group col-md-4">
                 <label class="control-label">{{ 'article.codeProvider' | translate | capitalize }}:</label>
