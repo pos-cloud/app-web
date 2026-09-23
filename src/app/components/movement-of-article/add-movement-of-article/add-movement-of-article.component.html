@@ -203,6 +203,7 @@
       <div class="row" *ngIf="isStockVariantMatrixMode() && variantMatrixRows.length > 0">
         <div class="form-group col-md-12">
           <label class="control-label"><b>Cantidades por variante:</b></label>
+          <small class="text-muted d-block mb-2">Los casilleros vacíos no se cargan. Si la cantidad es 0, escribí 0.</small>
           <div class="table-responsive variant-matrix-wrapper">
             <table class="table table-bordered table-sm variant-matrix">
               <thead>

@@ -76,7 +76,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   auxPrice: number = 0;
   variantMatrixRows: VariantValue[] = [];
   variantMatrixColumns: VariantValue[] = [];
-  variantMatrixAmounts: { [key: string]: number } = {};
+  variantMatrixAmounts: { [key: string]: number | null } = {};
   variantMatrixArticles: { [key: string]: Article } = {};
 
   formErrors = { description: '', amount: '', unitPrice: '', notes: '' };
@@ -194,17 +194,29 @@ export class AddMovementOfArticleComponent implements OnInit {
     return colValue ? `${rowValue}|${colValue}` : rowValue;
   }
 
-  getVariantMatrixAmount(rowValue: string, colValue?: string): number {
-    return this.variantMatrixAmounts[this.getVariantMatrixKey(rowValue, colValue)] || 0;
+  getVariantMatrixAmount(rowValue: string, colValue?: string): number | null {
+    const amount = this.variantMatrixAmounts[this.getVariantMatrixKey(rowValue, colValue)];
+
+    return amount === undefined ? null : amount;
   }
 
   getVariantMatrixAmountClass(rowValue: string, colValue?: string): string {
-    return this.getVariantMatrixAmount(rowValue, colValue) > 0 ? 'variant-matrix-input--positive' : '';
+    const amount = this.getVariantMatrixAmount(rowValue, colValue);
+
+    return amount !== null && amount >= 0 ? 'variant-matrix-input--positive' : '';
   }
 
-  setVariantMatrixAmount(rowValue: string, colValue: string | undefined, amount: number): void {
-    const parsedAmount = amount >= 0 ? amount : 0;
-    this.variantMatrixAmounts[this.getVariantMatrixKey(rowValue, colValue)] = parsedAmount;
+  setVariantMatrixAmount(rowValue: string, colValue: string | undefined, amount: number | string | null): void {
+    const key = this.getVariantMatrixKey(rowValue, colValue);
+
+    if (amount === null || amount === undefined || amount === '') {
+      this.variantMatrixAmounts[key] = null;
+      return;
+    }
+
+    const parsedAmount = Number(amount);
+
+    this.variantMatrixAmounts[key] = !isNaN(parsedAmount) && parsedAmount >= 0 ? parsedAmount : null;
   }
 
   ngAfterViewInit() {
@@ -598,7 +610,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           });
           const key = this.getVariantMatrixKey(row.description, col.description);
 
-          this.variantMatrixAmounts[key] = 0;
+          this.variantMatrixAmounts[key] = null;
           if (article) {
             this.variantMatrixArticles[key] = article;
           }
@@ -611,7 +623,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         });
         const key = this.getVariantMatrixKey(row.description);
 
-        this.variantMatrixAmounts[key] = 0;
+        this.variantMatrixAmounts[key] = null;
         if (article) {
           this.variantMatrixArticles[key] = article;
         }
@@ -1250,7 +1262,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     for (const key of Object.keys(this.variantMatrixAmounts)) {
       const amount = this.variantMatrixAmounts[key];
 
-      if (amount <= 0) {
+      if (amount === null || amount === undefined || amount < 0) {
         continue;
       }
 
@@ -1269,7 +1281,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     if (movementsToSave.length === 0) {
       this.loading = false;
-      this.showMessage('Debe ingresar al menos una cantidad mayor a 0.', 'info', true);
+      this.showMessage('Debe ingresar al menos una cantidad.', 'info', true);
       return;
     }
 
