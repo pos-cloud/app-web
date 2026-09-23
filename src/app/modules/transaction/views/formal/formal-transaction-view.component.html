@@ -1,289 +1,168 @@
-<div class="px-4 py-2">
-  <!-- Loading Spinner -->
-  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 300px">
-    <div class="spinner-border text-primary" role="status">
-      <span class="sr-only">Cargando...</span>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div *ngIf="!loading">
-    <!-- Header Section -->
-    <div class="card mb-3">
-      <div class="card-header bg-white border-bottom">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center">
-            <img src="assets/img/logo.png" alt="Logo" style="height: 40px; width: auto; margin-right: 2rem" />
-            <h3 class="mb-0">
-              {{ transaction?.type?.name }}
-              <span class="text-muted small">
-                {{ transaction?.origin }}-{{ transaction?.letter || '—' }}-{{ transaction?.number }}
-              </span>
-            </h3>
-          </div>
-          <div class="d-flex align-items-center flex-wrap justify-content-end">
-            <span
-              *ngIf="canShowFinalizeTransactionButton"
-              class="d-inline-block"
-              [ngbTooltip]="
-                !requestPaymentMethods || paymentsCoverTransactionTotal
-                  ? 'Marcar la transacción como cerrada'
-                  : 'La suma de los pagos debe alcanzar el total de la transacción'
-              "
-              placement="bottom"
-            >
-              <button
-                type="button"
-                class="btn btn-sm btn-success ml-2 mt-1 mt-sm-0"
-                (click)="finalizeOpenTransaction()"
-                [disabled]="!paymentsCoverTransactionTotal"
-              >
-                <i class="fa fa-check mr-1" aria-hidden="true"></i>
-                Cerrar
-              </button>
-            </span>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-secondary ml-2 mt-1 mt-sm-0"
-              (click)="goBack()"
-              ngbTooltip="Volver a compras (mostrador)"
-            >
-              <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>
-              Volver
-            </button>
-          </div>
-        </div>
+<div class="formal-layout">
+  <div class="formal-busy-bar" *ngIf="loading && transaction" aria-hidden="true"></div>
+  <div class="formal-layout__body px-4 pt-2">
+    <!-- Loading Spinner: solo la primera carga, sin desmontar la vista después -->
+    <div *ngIf="loading && !transaction" class="d-flex justify-content-center align-items-center" style="height: 300px">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Cargando...</span>
       </div>
+    </div>
 
-      <div class="card-body bg-light py-2">
-        <div class="row">
-          <div class="col-md-3">
-            <small class="text-muted d-block mb-1">Proveedor</small>
-            <div class="d-flex align-items-center justify-content-between">
-              <div class="font-weight-bold">{{ transaction?.company?.name || 'Consumidor Final' }}</div>
-              <button
-                class="btn btn-sm btn-outline-secondary ml-2"
-                (click)="changeCompany()"
-                ngbTooltip="Cambiar cliente"
-              >
-                <i class="fa fa-pencil"></i>
-              </button>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <small class="text-muted d-block mb-1">Período IVA</small>
-            <input
-              type="text"
-              class="form-control form-control-sm"
-              [(ngModel)]="vatPeriodDraft"
-              name="vatPeriodDraft"
-              maxlength="6"
-              inputmode="numeric"
-              autocomplete="off"
-              placeholder="AAAAMM"
-              (blur)="onVatPeriodBlur()"
-            />
-          </div>
-          <div class="col-md-2">
-            <div class="form-group mb-0">
-              <small class="text-muted d-block mb-1">Fecha</small>
-              <app-date-time-picker
-                [(ngModel)]="transactionEndDateDraft"
-                name="transactionEndDate"
-                [deferEmitUntilClose]="true"
-                (ngModelChange)="onTransactionDatePickerChange($event)"
-              ></app-date-time-picker>
-            </div>
-          </div>
-          <div class="col-md-1">
-            <small class="text-muted d-block mb-1">Letra</small>
-            <div class="d-flex align-items-center justify-content-between">
-              <ng-container *ngIf="editingField !== 'letter'; else letterEditTpl">
-                <strong class="font-weight-bold text-uppercase">{{ transaction?.letter || '—' }}</strong>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-secondary ml-2"
-                  (click)="startEdit('letter')"
-                  [ngbTooltip]="'Letras: ' + letterOptions.join(', ')"
-                >
-                  <i class="fa fa-pencil"></i>
-                </button>
-              </ng-container>
-              <ng-template #letterEditTpl>
-                <div class="d-flex align-items-center w-100">
+    <!-- Main Content -->
+    <div *ngIf="transaction" class="formal-layout__content">
+      <!-- Header Section -->
+      <div class="card mb-3 formal-header-card">
+        <div class="card-header bg-white border-bottom py-2">
+          <div class="d-flex justify-content-between align-items-center flex-wrap formal-header-row">
+            <div class="d-flex align-items-center flex-wrap formal-header-main">
+              <img src="assets/img/logo.png" alt="Logo" class="formal-header-logo" />
+
+              <div class="d-flex align-items-center flex-wrap formal-header-doc">
+                <h3 class="mb-0 formal-header-title">{{ transaction?.type?.name }}</h3>
+
+                <div class="formal-doc-id" title="Punto de venta · Letra · Número">
                   <input
                     type="text"
-                    class="form-control form-control-sm text-uppercase text-center font-weight-bold"
-                    [(ngModel)]="letterDraft"
-                    maxlength="1"
-                    placeholder="—"
-                  />
-                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveEdit('letter')">
-                    <i class="fa fa-save"></i>
-                  </button>
-                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEdit()">
-                    <i class="fa fa-times"></i>
-                  </button>
-                </div>
-              </ng-template>
-            </div>
-          </div>
-
-          <div class="col-md-2">
-            <small class="text-muted d-block mb-1">Punto de venta</small>
-            <div class="d-flex align-items-center justify-content-between">
-              <ng-container *ngIf="editingField !== 'origin'; else originEditTpl">
-                <strong class="font-weight-bold" style="font-family: monospace">{{
-                  (transaction?.origin ?? 0).toString().padStart(4, '0')
-                }}</strong>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-secondary ml-2"
-                  (click)="startEdit('origin')"
-                  ngbTooltip="Editar punto de venta"
-                >
-                  <i class="fa fa-pencil"></i>
-                </button>
-              </ng-container>
-              <ng-template #originEditTpl>
-                <div class="d-flex align-items-center w-100">
-                  <input
-                    type="text"
-                    class="form-control form-control-sm"
-                    style="font-family: monospace"
+                    class="form-control form-control-sm formal-doc-id__input formal-doc-id__origin"
                     inputmode="numeric"
                     autocomplete="off"
                     numericText="integer"
                     [(ngModel)]="originDraft"
+                    name="originDraft"
+                    aria-label="Punto de venta"
+                    (blur)="onOriginBlur()"
                   />
-                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveEdit('origin')">
-                    <i class="fa fa-save"></i>
-                  </button>
-                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEdit()">
-                    <i class="fa fa-times"></i>
-                  </button>
-                </div>
-              </ng-template>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <small class="text-muted d-block mb-1">Número de factura</small>
-            <div class="d-flex align-items-center justify-content-between">
-              <ng-container *ngIf="editingField !== 'number'; else invoiceNumberEditTpl">
-                <strong class="font-weight-bold" style="font-family: monospace">{{
-                  (transaction?.number ?? 1).toString().padStart(8, '0')
-                }}</strong>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-secondary ml-2"
-                  (click)="startEdit('number')"
-                  ngbTooltip="Editar número de factura"
-                >
-                  <i class="fa fa-pencil"></i>
-                </button>
-              </ng-container>
-              <ng-template #invoiceNumberEditTpl>
-                <div class="d-flex align-items-center w-100">
+                  <span class="formal-doc-id__sep" aria-hidden="true">-</span>
                   <input
                     type="text"
-                    class="form-control form-control-sm"
-                    style="font-family: monospace"
+                    class="form-control form-control-sm formal-doc-id__input formal-doc-id__letter text-uppercase text-center font-weight-bold"
+                    [(ngModel)]="letterDraft"
+                    name="letterDraft"
+                    maxlength="1"
+                    autocomplete="off"
+                    placeholder="—"
+                    aria-label="Letra"
+                    [title]="'Letras: ' + letterOptions.join(', ')"
+                    (blur)="onLetterBlur()"
+                  />
+                  <span class="formal-doc-id__sep" aria-hidden="true">-</span>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm formal-doc-id__input formal-doc-id__number"
                     inputmode="numeric"
                     autocomplete="off"
                     numericText="integer"
                     [(ngModel)]="numberDraft"
+                    name="numberDraft"
+                    aria-label="Número de factura"
+                    (blur)="onInvoiceNumberBlur()"
                   />
-                  <button type="button" class="btn btn-sm btn-success ml-2" (click)="saveEdit('number')">
-                    <i class="fa fa-save"></i>
-                  </button>
-                  <button type="button" class="btn btn-sm btn-light ml-1" (click)="cancelEdit()">
-                    <i class="fa fa-times"></i>
-                  </button>
                 </div>
-              </ng-template>
+              </div>
+
+              <div class="formal-header-fields d-flex align-items-end flex-wrap">
+                <div class="formal-header-field formal-header-field--company">
+                  <small class="text-muted d-block mb-1">Proveedor</small>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    [value]="transaction?.company?.name || 'Consumidor Final'"
+                    readonly
+                    (click)="changeCompany()"
+                    (keydown.enter)="changeCompany()"
+                    style="cursor: pointer; background-color: #fff"
+                    title="Click para cambiar proveedor"
+                  />
+                </div>
+                <div class="formal-header-field formal-header-field--vat">
+                  <small class="text-muted d-block mb-1">Período IVA</small>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    [(ngModel)]="vatPeriodDraft"
+                    name="vatPeriodDraft"
+                    maxlength="6"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    placeholder="AAAAMM"
+                    (blur)="onVatPeriodBlur()"
+                  />
+                </div>
+                <div class="formal-header-field formal-header-field--date">
+                  <small class="text-muted d-block mb-1">Fecha</small>
+                  <app-date-time-picker
+                    [(ngModel)]="transactionEndDateDraft"
+                    name="transactionEndDate"
+                    [deferEmitUntilClose]="true"
+                    (ngModelChange)="onTransactionDatePickerChange($event)"
+                  ></app-date-time-picker>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center flex-wrap justify-content-end formal-header-actions">
+              <span
+                *ngIf="canShowFinalizeTransactionButton"
+                class="d-inline-block"
+                [ngbTooltip]="
+                  !requestPaymentMethods || paymentsCoverTransactionTotal
+                    ? 'Marcar la transacción como cerrada'
+                    : 'La suma de los pagos debe alcanzar el total de la transacción'
+                "
+                placement="bottom"
+              >
+                <button
+                  type="button"
+                  class="btn btn-sm btn-success ml-2 mt-1 mt-sm-0"
+                  (click)="finalizeOpenTransaction()"
+                  [disabled]="!paymentsCoverTransactionTotal"
+                >
+                  <i class="fa fa-check mr-1" aria-hidden="true"></i>
+                  Cerrar
+                </button>
+              </span>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary ml-2 mt-1 mt-sm-0"
+                (click)="goBack()"
+                ngbTooltip="Volver a compras (mostrador)"
+              >
+                <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>
+                Volver
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Body Section with Tabs: tabs dentro de .card-header para que card-header-tabs no rompa borde/fondo -->
-    <div class="card formal-tabs-card shadow-sm">
-      <div
-        class="card-header bg-white border-bottom py-0 px-0 d-flex flex-wrap align-items-end justify-content-between"
-      >
-        <ul
-          ngbNav
-          #nav="ngbNav"
-          [(activeId)]="activeTab"
-          class="nav nav-tabs card-header-tabs px-3 pt-3 mb-0 border-bottom-0 flex-shrink-0"
+      <!-- Body Section with Tabs: tabs dentro de .card-header para que card-header-tabs no rompa borde/fondo -->
+      <div class="card formal-tabs-card shadow-sm">
+        <div
+          class="card-header bg-white border-bottom py-0 px-0 d-flex flex-wrap align-items-end justify-content-between"
         >
-          <li [ngbNavItem]="'products'" class="nav-item">
-            <a
-              ngbNavLink
-              class="nav-link"
-              [class.formal-nav-tab--inactive]="!requestArticles"
-              [ngbTooltip]="!requestArticles ? 'Este tipo de comprobante no requiere productos' : null"
-              placement="top"
-            >
-              Productos
-              <span class="badge badge-primary ml-2">{{ totalQuantity }}</span>
-            </a>
-            <ng-template ngbNavContent>
-              <div [class.formal-section--inactive]="!requestArticles">
-                <form [formGroup]="addProductForm" (ngSubmit)="saveProduct()">
-                  <!-- Formulario fijo para agregar producto -->
-                  <div *ngIf="!editingProductId && requestArticles" class="formal-add-bar mb-3">
-                    <div class="row align-items-end">
-                      <div class="col-12 col-md-5 form-group mb-2 mb-md-0">
-                        <label class="mb-1" for="add-product-article">Artículo</label>
-                        <app-article-searchable-dropdown
-                          [control]="addProductForm.get('article')"
-                          placeholder="Código, proveedor o descripción…"
-                          searchPlaceholder="Buscar…"
-                        />
-                      </div>
-                      <div class="col-4 col-md-2 form-group mb-2 mb-md-0">
-                        <label class="mb-1" for="add-product-qty">Cantidad</label>
-                        <input
-                          id="add-product-qty"
-                          type="text"
-                          class="form-control form-control-sm"
-                          inputmode="decimal"
-                          autocomplete="off"
-                          numericText="decimal"
-                          formControlName="quantity"
-                        />
-                      </div>
-                      <div class="col-4 col-md-2 form-group mb-2 mb-md-0">
-                        <label class="mb-1" for="add-product-price">Precio base</label>
-                        <input
-                          id="add-product-price"
-                          type="text"
-                          class="form-control form-control-sm text-right"
-                          inputmode="decimal"
-                          autocomplete="off"
-                          numericText="decimal"
-                          formControlName="basePrice"
-                        />
-                      </div>
-                      <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0">
-                        <label class="mb-1 d-none d-md-block">&nbsp;</label>
-                        <button
-                          type="submit"
-                          class="btn btn-success formal-add-bar__submit"
-                          [disabled]="addProductForm.invalid"
-                        >
-                          Agregar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <h6 class="formal-section-subtitle mb-2">Productos cargados</h6>
-
-                  <div class="table-responsive">
-                    <table class="table table-hover">
+          <ul
+            ngbNav
+            #nav="ngbNav"
+            [(activeId)]="activeTab"
+            (navChange)="onNavChange($event)"
+            class="nav nav-tabs card-header-tabs px-3 pt-3 mb-0 border-bottom-0 flex-shrink-0"
+          >
+            <li [ngbNavItem]="'products'" class="nav-item">
+              <a
+                ngbNavLink
+                class="nav-link"
+                [class.formal-nav-tab--inactive]="!requestArticles"
+                [ngbTooltip]="!requestArticles ? 'Este tipo de comprobante no requiere productos' : null"
+                placement="top"
+              >
+                Productos
+                <span class="badge badge-primary ml-2">{{ totalQuantity }}</span>
+                <span class="badge badge-light border ml-1 text-muted">M3: {{ totalM3 }}</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="formal-products-panel" [class.formal-section--inactive]="!requestArticles">
+                  <div #productsTableWrap class="table-responsive formal-products-table-wrap">
+                    <table class="table table-hover formal-products-table">
                       <thead class="thead-light">
                         <tr>
                           <th style="width: 120px">Código</th>
@@ -298,23 +177,24 @@
                       </thead>
                       <tbody>
                         <tr
-                          *ngFor="let movement of movementsOfArticles; trackBy: trackByMovementId"
-                          class="table-row-hover"
+                          *ngFor="let movement of movementsOfArticles; let i = index; trackBy: trackByMovementId"
+                          class="table-row-hover formal-product-row--editing"
+                          [attr.data-product-row]="movement._id"
                         >
                           <td>
-                            <code class="text-muted">{{ movement.code }}</code>
+                            <code class="formal-product-code">{{ movement.code }}</code>
                           </td>
                           <td>
-                            <ng-container
-                              *ngIf="editingProductId === movement._id && requestArticles; else amountViewTpl"
-                            >
+                            <ng-container *ngIf="requestArticles; else amountViewTpl">
                               <input
                                 type="text"
                                 class="form-control form-control-sm"
                                 inputmode="decimal"
                                 autocomplete="off"
                                 numericText="decimal"
-                                formControlName="quantity"
+                                [formControl]="getProductEditControl(i, 'quantity')"
+                                (blur)="onProductRowBlur(i, $event)"
+                                (keydown.enter)="onProductRowEnter(i, $event)"
                               />
                             </ng-container>
                             <ng-template #amountViewTpl>
@@ -336,16 +216,16 @@
                             </div>
                           </td>
                           <td class="text-right">
-                            <ng-container
-                              *ngIf="editingProductId === movement._id && requestArticles; else priceViewTpl"
-                            >
+                            <ng-container *ngIf="requestArticles; else priceViewTpl">
                               <input
                                 type="text"
                                 class="form-control form-control-sm text-right"
                                 inputmode="decimal"
                                 autocomplete="off"
                                 numericText="decimal"
-                                formControlName="basePrice"
+                                [formControl]="getProductEditControl(i, 'basePrice')"
+                                (blur)="onProductRowBlur(i, $event)"
+                                (keydown.enter)="onProductRowEnter(i, $event)"
                               />
                             </ng-container>
                             <ng-template #priceViewTpl>
@@ -355,9 +235,7 @@
                             </ng-template>
                           </td>
                           <td class="text-right">
-                            <ng-container
-                              *ngIf="editingProductId === movement._id && requestArticles; else discountViewTpl"
-                            >
+                            <ng-container *ngIf="requestArticles; else discountViewTpl">
                               <div class="input-group input-group-sm" style="min-width: 7rem">
                                 <input
                                   type="text"
@@ -365,7 +243,9 @@
                                   inputmode="decimal"
                                   autocomplete="off"
                                   numericText="decimal"
-                                  formControlName="discountRate"
+                                  [formControl]="getProductEditControl(i, 'discountRate')"
+                                  (blur)="onProductRowBlur(i, $event)"
+                                  (keydown.enter)="onProductRowEnter(i, $event)"
                                 />
                                 <div class="input-group-append">
                                   <span class="input-group-text">%</span>
@@ -377,18 +257,18 @@
                             </ng-template>
                           </td>
                           <td *ngIf="requestTaxes" class="text-right small text-nowrap">
-                            <ng-container *ngIf="editingProductId === movement._id && requestArticles; else viewTaxes">
-                              <div *ngFor="let tax of selectedArticle?.taxes" class="mb-1">
-                                <span>Impuesto {{ tax.percentage }}%</span>
-                                <span class="text-muted d-block">
-                                  {{
-                                    (addProductForm.get('basePrice')?.value || 0) *
-                                      (1 - (addProductForm.get('discountRate')?.value || 0) / 100) *
-                                      (addProductForm.get('quantity')?.value || 0) *
-                                      (tax.percentage / 100) | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                                  }}
-                                </span>
-                              </div>
+                            <ng-container *ngIf="requestArticles; else viewTaxes">
+                              <ng-container *ngIf="getMovementTaxes(movement).length; else noTaxesCell">
+                                <div *ngFor="let tax of getMovementTaxes(movement)" class="mb-1">
+                                  <span>{{ formatMovementTaxLabel(tax) }}</span>
+                                  <span class="text-muted d-block">
+                                    {{
+                                      getEditedLineTaxAmount(i, movement, tax)
+                                        | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                                    }}
+                                  </span>
+                                </div>
+                              </ng-container>
                             </ng-container>
 
                             <ng-template #viewTaxes>
@@ -407,49 +287,25 @@
                             </ng-template>
                           </td>
                           <td class="text-right">
-                            <ng-container
-                              *ngIf="editingProductId === movement._id && requestArticles; else subtotalViewTpl"
-                            >
-                              <strong class="price">
-                                {{ addProductLineSalePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
-                              </strong>
-                            </ng-container>
-                            <ng-template #subtotalViewTpl>
-                              <strong class="price">{{
-                                movement.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                              }}</strong>
-                            </ng-template>
+                            <strong class="price">{{
+                              getEditedLineSalePrice(i, movement) | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                            }}</strong>
                           </td>
                           <td class="text-center">
                             <div class="btn-group" role="group">
-                              <ng-container
-                                *ngIf="editingProductId === movement._id && requestArticles; else productActionsViewTpl"
-                              >
-                                <button type="button" class="btn btn-sm btn-success" (click)="saveProduct()">
-                                  <i class="fa fa-save"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-secondary" (click)="cancelAddProduct()">
-                                  <i class="fa fa-times"></i>
+                              <ng-container *ngIf="requestArticles; else noProductActionsTpl">
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-danger"
+                                  tabindex="-1"
+                                  (click)="deleteProduct(movement)"
+                                  ngbTooltip="Eliminar producto"
+                                >
+                                  <i class="fa fa-trash"></i>
                                 </button>
                               </ng-container>
-                              <ng-template #productActionsViewTpl>
-                                <ng-container *ngIf="requestArticles">
-                                  <button
-                                    type="button"
-                                    class="btn btn-sm btn-outline-secondary"
-                                    (click)="editProduct(movement)"
-                                  >
-                                    <i class="fa fa-pencil"></i>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    class="btn btn-sm btn-outline-danger"
-                                    (click)="deleteProduct(movement)"
-                                  >
-                                    <i class="fa fa-trash"></i>
-                                  </button>
-                                </ng-container>
-                                <span *ngIf="!requestArticles" class="text-muted small">—</span>
+                              <ng-template #noProductActionsTpl>
+                                <span class="text-muted small">—</span>
                               </ng-template>
                             </div>
                           </td>
@@ -463,92 +319,180 @@
                       </tbody>
                     </table>
                   </div>
-                </form>
-              </div>
-            </ng-template>
-          </li>
-          <li [ngbNavItem]="'payments'" class="nav-item">
-            <a
-              ngbNavLink
-              class="nav-link"
-              [class.formal-nav-tab--inactive]="!requestPaymentMethods"
-              [ngbTooltip]="!requestPaymentMethods ? 'Este tipo de comprobante no requiere métodos de pago' : null"
-              placement="top"
-            >
-              Métodos de Pago
-              <span class="badge badge-success ml-2">{{ movementsOfCash.length }}</span>
-            </a>
-            <ng-template ngbNavContent>
-              <div [class.formal-section--inactive]="!requestPaymentMethods">
-                <!-- Formulario fijo para agregar pago -->
-                <div *ngIf="requestPaymentMethods" class="formal-add-bar mb-3">
-                  <form [formGroup]="addPaymentForm" (ngSubmit)="savePayment()">
-                    <div class="row align-items-end">
-                      <div class="col-12 col-md-5 form-group mb-2 mb-md-0">
-                        <label class="mb-1">Método de pago</label>
-                        <app-typeahead-dropdown
-                          [control]="addPaymentForm.controls.paymentMethod"
-                          [data]="paymentMethods"
-                          [keyField]="'_id'"
-                          [displayField]="'name'"
-                          [readonly]="!!editingPaymentId"
-                          placeholder="Buscar método de pago…"
-                        />
-                      </div>
-                      <div class="col-4 col-md-2 form-group mb-2 mb-md-0" *ngIf="!paymentUsesCheckWallet || editingPaymentId">
-                        <label class="mb-1">Monto</label>
-                        <input
-                          type="text"
-                          class="form-control form-control-sm text-right"
-                          inputmode="decimal"
-                          autocomplete="off"
-                          numericText="decimal"
-                          formControlName="amount"
-                        />
-                      </div>
-                      <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0" *ngIf="paymentUsesCheckWallet && !editingPaymentId">
-                        <label class="mb-1 d-none d-md-block">&nbsp;</label>
-                        <button
-                          type="button"
-                          class="btn btn-outline-primary formal-add-bar__submit"
-                          [disabled]="!selectedPaymentMethod"
-                          (click)="openSelectChecksModal()"
-                        >
-                          Buscar en Cartera
-                        </button>
-                      </div>
-                      <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0" *ngIf="!paymentUsesCheckWallet || editingPaymentId">
-                        <label class="mb-1 d-none d-md-block">&nbsp;</label>
-                        <button
-                          type="submit"
-                          class="btn btn-success formal-add-bar__submit"
-                          [disabled]="addPaymentForm.invalid"
-                        >
-                          {{ editingPaymentId ? 'Guardar' : 'Agregar' }}
-                        </button>
-                      </div>
-                    </div>
 
-                    <div *ngIf="paymentRequiresCheck || paymentRequiresBank" class="row mt-2 pt-2 border-top">
-                      <div *ngIf="paymentUsesCheckWallet && !editingPaymentId" class="col-12 form-group mb-0">
-                        <small class="text-muted">Seleccioná cheques disponibles en cartera para esta compra.</small>
-                      </div>
-                      <ng-container *ngIf="paymentShowsManualCheckFields">
-                        <div class="col-12 mb-2"><small class="text-muted">Datos del cheque</small></div>
-                        <div class="col-12 col-md-4 form-group mb-2">
-                          <label class="mb-1">Comprobante</label>
-                          <input type="text" class="form-control form-control-sm" formControlName="comprobante" />
-                        </div>
-                        <div class="col-12 col-md-4 form-group mb-2">
-                          <label class="mb-1">Fecha de vencimiento</label>
+                  <form [formGroup]="addProductForm" (ngSubmit)="saveProduct()" id="formal-add-product-form">
+                    <div *ngIf="requestArticles" class="formal-add-bar formal-add-bar--bottom">
+                      <div class="row align-items-end">
+                        <div class="col-4 col-md-2 form-group mb-2 mb-md-0">
+                          <label class="mb-1" for="add-product-qty">Cantidad</label>
                           <input
-                            type="date"
+                            id="add-product-qty"
+                            type="text"
                             class="form-control form-control-sm"
-                            formControlName="expirationDate"
-                            min="2000-01-01"
+                            inputmode="decimal"
+                            autocomplete="off"
+                            numericText="decimal"
+                            formControlName="quantity"
                           />
                         </div>
-                        <div class="col-12 col-md-4 form-group mb-2">
+                        <div class="col-12 col-md-5 form-group mb-2 mb-md-0">
+                          <label class="mb-1" for="add-product-article">Artículo</label>
+                          <app-article-searchable-dropdown
+                            #articleSearch
+                            inputId="add-product-article"
+                            [control]="addProductForm.get('article')"
+                            placeholder="Código, proveedor o descripción…"
+                            searchPlaceholder="Buscar…"
+                          />
+                        </div>
+                        <div class="col-4 col-md-2 form-group mb-2 mb-md-0">
+                          <label class="mb-1" for="add-product-price">Precio base</label>
+                          <input
+                            id="add-product-price"
+                            type="text"
+                            class="form-control form-control-sm text-right"
+                            inputmode="decimal"
+                            autocomplete="off"
+                            numericText="decimal"
+                            formControlName="basePrice"
+                          />
+                        </div>
+                        <div class="col-auto formal-add-bar__action form-group mb-2 mb-md-0">
+                          <label class="mb-1 d-none d-md-block">&nbsp;</label>
+                          <button
+                            type="submit"
+                            class="btn btn-success formal-add-bar__submit"
+                            [disabled]="addProductForm.invalid"
+                          >
+                            Agregar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="'payments'" class="nav-item">
+              <a
+                ngbNavLink
+                class="nav-link"
+                [class.formal-nav-tab--inactive]="!requestPaymentMethods"
+                [ngbTooltip]="!requestPaymentMethods ? 'Este tipo de comprobante no requiere métodos de pago' : null"
+                placement="top"
+              >
+                Métodos de Pago
+                <span class="badge badge-success ml-2">{{ movementsOfCash.length }}</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="formal-payments-panel" [class.formal-section--inactive]="!requestPaymentMethods">
+                  <!-- Formulario fijo para agregar pago -->
+                  <div *ngIf="requestPaymentMethods" class="formal-add-bar mb-3">
+                    <form [formGroup]="addPaymentForm" (ngSubmit)="savePayment()">
+                      <div class="row align-items-end">
+                        <div class="col-12 col-md-5 form-group mb-2 mb-md-0">
+                          <label class="mb-1">Método de pago</label>
+                          <app-typeahead-dropdown
+                            [control]="addPaymentForm.controls.paymentMethod"
+                            [data]="paymentMethods"
+                            [keyField]="'_id'"
+                            [displayField]="'name'"
+                            [readonly]="!!editingPaymentId"
+                            placeholder="Buscar método de pago…"
+                          />
+                        </div>
+                        <div
+                          class="col-4 col-md-2 form-group mb-2 mb-md-0"
+                          *ngIf="!paymentUsesCheckWallet || editingPaymentId"
+                        >
+                          <label class="mb-1">Monto</label>
+                          <input
+                            type="text"
+                            class="form-control form-control-sm text-right"
+                            inputmode="decimal"
+                            autocomplete="off"
+                            numericText="decimal"
+                            formControlName="amount"
+                          />
+                        </div>
+                        <div
+                          class="col-auto formal-add-bar__action form-group mb-2 mb-md-0"
+                          *ngIf="paymentUsesCheckWallet && !editingPaymentId"
+                        >
+                          <label class="mb-1 d-none d-md-block">&nbsp;</label>
+                          <button
+                            type="button"
+                            class="btn btn-outline-primary formal-add-bar__submit"
+                            [disabled]="!selectedPaymentMethod"
+                            (click)="openSelectChecksModal()"
+                          >
+                            Buscar en Cartera
+                          </button>
+                        </div>
+                        <div
+                          class="col-auto formal-add-bar__action form-group mb-2 mb-md-0"
+                          *ngIf="!paymentUsesCheckWallet || editingPaymentId"
+                        >
+                          <label class="mb-1 d-none d-md-block">&nbsp;</label>
+                          <button
+                            type="submit"
+                            class="btn btn-success formal-add-bar__submit"
+                            [disabled]="addPaymentForm.invalid"
+                          >
+                            {{ editingPaymentId ? 'Guardar' : 'Agregar' }}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div *ngIf="paymentRequiresCheck || paymentRequiresBank" class="row mt-2 pt-2 border-top">
+                        <div *ngIf="paymentUsesCheckWallet && !editingPaymentId" class="col-12 form-group mb-0">
+                          <small class="text-muted">Seleccioná cheques disponibles en cartera para esta compra.</small>
+                        </div>
+                        <ng-container *ngIf="paymentShowsManualCheckFields">
+                          <div class="col-12 mb-2"><small class="text-muted">Datos del cheque</small></div>
+                          <div class="col-12 col-md-4 form-group mb-2">
+                            <label class="mb-1">Comprobante</label>
+                            <input type="text" class="form-control form-control-sm" formControlName="comprobante" />
+                          </div>
+                          <div class="col-12 col-md-4 form-group mb-2">
+                            <label class="mb-1">Fecha de vencimiento</label>
+                            <input
+                              type="date"
+                              class="form-control form-control-sm"
+                              formControlName="expirationDate"
+                              min="2000-01-01"
+                            />
+                          </div>
+                          <div class="col-12 col-md-4 form-group mb-2">
+                            <label class="mb-1">Banco</label>
+                            <app-typeahead-dropdown
+                              [control]="addPaymentForm.controls.bank"
+                              [data]="banks"
+                              [keyField]="'_id'"
+                              [displayField]="'name'"
+                              placeholder="Buscar banco…"
+                            />
+                          </div>
+                          <div class="col-12 col-md-4 form-group mb-2">
+                            <label class="mb-1">Titular</label>
+                            <input type="text" class="form-control form-control-sm" formControlName="titular" />
+                          </div>
+                          <div class="col-12 col-md-4 form-group mb-2">
+                            <label class="mb-1">CUIT</label>
+                            <input
+                              type="text"
+                              class="form-control form-control-sm"
+                              formControlName="cuit"
+                              maxlength="11"
+                              inputmode="numeric"
+                              placeholder="11 dígitos"
+                            />
+                          </div>
+                        </ng-container>
+                        <div
+                          *ngIf="paymentRequiresBank && !paymentRequiresCheck"
+                          class="col-12 col-md-4 form-group mb-2"
+                        >
                           <label class="mb-1">Banco</label>
                           <app-typeahead-dropdown
                             [control]="addPaymentForm.controls.bank"
@@ -558,197 +502,143 @@
                             placeholder="Buscar banco…"
                           />
                         </div>
-                        <div class="col-12 col-md-4 form-group mb-2">
-                          <label class="mb-1">Titular</label>
-                          <input type="text" class="form-control form-control-sm" formControlName="titular" />
-                        </div>
-                        <div class="col-12 col-md-4 form-group mb-2">
-                          <label class="mb-1">CUIT</label>
-                          <input
-                            type="text"
-                            class="form-control form-control-sm"
-                            formControlName="cuit"
-                            maxlength="11"
-                            inputmode="numeric"
-                            placeholder="11 dígitos"
-                          />
-                        </div>
-                      </ng-container>
-                      <div *ngIf="paymentRequiresBank && !paymentRequiresCheck" class="col-12 col-md-4 form-group mb-2">
-                        <label class="mb-1">Banco</label>
-                        <app-typeahead-dropdown
-                          [control]="addPaymentForm.controls.bank"
-                          [data]="banks"
-                          [keyField]="'_id'"
-                          [displayField]="'name'"
-                          placeholder="Buscar banco…"
-                        />
                       </div>
-                    </div>
-                  </form>
-                </div>
+                    </form>
+                  </div>
 
-                <h6 class="formal-section-subtitle mb-2">Pagos registrados</h6>
+                  <h6 class="formal-section-subtitle mb-2">Pagos registrados</h6>
 
-                <div class="table-responsive">
-                  <table class="table table-hover">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>Método de Pago</th>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Método de Pago</th>
 
-                        <th style="width: 130px" class="text-right">Importe</th>
-                        <th style="width: 80px" class="text-center">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let movement of movementsOfCash; trackBy: trackByPaymentId" class="table-row-hover">
-                        <td>
-                          <div class="payment-method">
-                            <strong>{{ movement.type?.name }}</strong>
-                            <div *ngIf="movement.bank?.name" class="text-muted small">
-                              {{ movement.bank.name }}
+                          <th style="width: 130px" class="text-right">Importe</th>
+                          <th style="width: 80px" class="text-center">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let movement of movementsOfCash; trackBy: trackByPaymentId" class="table-row-hover">
+                          <td>
+                            <div class="payment-method">
+                              <strong>{{ movement.type?.name }}</strong>
+                              <div *ngIf="movement.bank?.name" class="text-muted small">
+                                {{ movement.bank.name }}
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td class="text-right">
-                          <ng-container
-                            *ngIf="editingPaymentId === movement._id && requestPaymentMethods; else amountPaidViewTpl"
-                          >
-                            <input
-                              type="text"
-                              class="form-control form-control-sm text-right"
-                              inputmode="decimal"
-                              autocomplete="off"
-                              numericText="decimal"
-                              [formControl]="addPaymentForm.controls.amount"
-                            />
-                          </ng-container>
-                          <ng-template #amountPaidViewTpl>
-                            <strong class="price text-success">{{
-                              movement.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2'
-                            }}</strong>
-                          </ng-template>
-                        </td>
-                        <td class="text-center">
-                          <div class="btn-group" role="group">
+                          </td>
+                          <td class="text-right">
                             <ng-container
-                              *ngIf="
-                                editingPaymentId === movement._id && requestPaymentMethods;
-                                else paymentActionsViewTpl
-                              "
+                              *ngIf="editingPaymentId === movement._id && requestPaymentMethods; else amountPaidViewTpl"
                             >
-                              <button
-                                class="btn btn-sm btn-success"
-                                (click)="savePayment()"
-                                ngbTooltip="Guardar cambios"
-                              >
-                                <i class="fa fa-save"></i>
-                              </button>
-                              <button
-                                class="btn btn-sm btn-secondary"
-                                (click)="cancelAddPayment()"
-                                ngbTooltip="Cancelar"
-                              >
-                                <i class="fa fa-times"></i>
-                              </button>
+                              <input
+                                type="text"
+                                class="form-control form-control-sm text-right"
+                                inputmode="decimal"
+                                autocomplete="off"
+                                numericText="decimal"
+                                [formControl]="addPaymentForm.controls.amount"
+                              />
                             </ng-container>
-                            <ng-template #paymentActionsViewTpl>
-                              <ng-container *ngIf="requestPaymentMethods">
+                            <ng-template #amountPaidViewTpl>
+                              <strong class="price text-success">{{
+                                movement.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                              }}</strong>
+                            </ng-template>
+                          </td>
+                          <td class="text-center">
+                            <div class="btn-group" role="group">
+                              <ng-container
+                                *ngIf="
+                                  editingPaymentId === movement._id && requestPaymentMethods;
+                                  else paymentActionsViewTpl
+                                "
+                              >
                                 <button
-                                  class="btn btn-sm btn-outline-secondary"
-                                  (click)="editPayment(movement)"
-                                  ngbTooltip="Editar pago"
+                                  class="btn btn-sm btn-success"
+                                  (click)="savePayment()"
+                                  ngbTooltip="Guardar cambios"
                                 >
-                                  <i class="fa fa-pencil"></i>
+                                  <i class="fa fa-save"></i>
                                 </button>
                                 <button
-                                  class="btn btn-sm btn-outline-danger"
-                                  (click)="deletePayment(movement)"
-                                  ngbTooltip="Eliminar pago"
+                                  class="btn btn-sm btn-secondary"
+                                  (click)="cancelAddPayment()"
+                                  ngbTooltip="Cancelar"
                                 >
-                                  <i class="fa fa-trash"></i>
+                                  <i class="fa fa-times"></i>
                                 </button>
                               </ng-container>
-                              <span *ngIf="!requestPaymentMethods" class="text-muted small">—</span>
-                            </ng-template>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr *ngIf="movementsOfCash.length === 0">
-                        <td colspan="3" class="text-center text-muted py-4">
-                          <div *ngIf="!requestPaymentMethods">Este tipo de comprobante no requiere métodos de pago</div>
-                          <div *ngIf="requestPaymentMethods">No hay pagos registrados</div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                              <ng-template #paymentActionsViewTpl>
+                                <ng-container *ngIf="requestPaymentMethods">
+                                  <button
+                                    class="btn btn-sm btn-outline-secondary"
+                                    (click)="editPayment(movement)"
+                                    ngbTooltip="Editar pago"
+                                  >
+                                    <i class="fa fa-pencil"></i>
+                                  </button>
+                                  <button
+                                    class="btn btn-sm btn-outline-danger"
+                                    (click)="deletePayment(movement)"
+                                    ngbTooltip="Eliminar pago"
+                                  >
+                                    <i class="fa fa-trash"></i>
+                                  </button>
+                                </ng-container>
+                                <span *ngIf="!requestPaymentMethods" class="text-muted small">—</span>
+                              </ng-template>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr *ngIf="movementsOfCash.length === 0">
+                          <td colspan="3" class="text-center text-muted py-4">
+                            <div *ngIf="!requestPaymentMethods">
+                              Este tipo de comprobante no requiere métodos de pago
+                            </div>
+                            <div *ngIf="requestPaymentMethods">No hay pagos registrados</div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-            </ng-template>
-          </li>
-        </ul>
-        <div class="formal-tab-actions">
-          <app-process-invoice-upload (invoiceUpload)="onInvoiceUpload($event)" />
-          <button type="button" class="formal-tab-action" *ngIf="isPurchase" (click)="openImportArticles()">
-            <i class="fa fa-upload formal-tab-action__icon" aria-hidden="true"></i>
-            <span>Importar artículos</span>
-          </button>
+              </ng-template>
+            </li>
+          </ul>
+          <div class="formal-tab-actions">
+            <app-process-invoice-upload (invoiceUpload)="onInvoiceUpload($event)" />
+            <button type="button" class="formal-tab-action" *ngIf="isPurchase" (click)="openImportArticles()">
+              <i class="fa fa-upload formal-tab-action__icon" aria-hidden="true"></i>
+              <span>Importar artículos</span>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="card-body formal-tabs-card-body pt-3">
-        <div [ngbNavOutlet]="nav"></div>
+        <div class="card-body formal-tabs-card-body pt-3">
+          <div [ngbNavOutlet]="nav" class="formal-nav-outlet"></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Footer Section - Totals -->
-  <div class="card mt-4 formal-totals-card">
+  <!-- Totales fijos al pie de la vista -->
+  <div *ngIf="transaction" class="card formal-totals-card">
     <div class="card-body">
       <div class="row formal-totals-row">
         <!-- Left Side - Summary -->
         <div class="col-lg-6 formal-totals-col">
-          <!-- <h6 class="text-muted mb-3">Resumen</h6> -->
-          <div class="d-flex mb-2">
-            <span>Cantidad de Productos:</span>
-            <strong>{{ totalQuantity }}</strong>
-          </div>
-          <div class="d-flex mb-2">
-            <span>M3:</span>
-            <strong>{{ 300 }}</strong>
-          </div>
-          <div class="mb-2">
-            <div class="d-flex align-items-center justify-content-between">
-              <span>Observaciones:</span>
-              <button
-                *ngIf="!isEditingObservation"
-                type="button"
-                class="btn btn-sm btn-outline-secondary ml-2"
-                (click)="startEditObservation()"
-              >
-                <i class="fa fa-pencil"></i>
-              </button>
-            </div>
-            <div *ngIf="!isEditingObservation" class="formal-observation-text font-weight-bold">
-              {{ transaction?.observation || 'Sin observaciones' }}
-            </div>
-
-            <div *ngIf="isEditingObservation" class="mt-2">
-              <textarea
-                class="form-control"
-                rows="3"
-                [(ngModel)]="observationDraft"
-                placeholder="Escribí una observación"
-              ></textarea>
-              <div class="d-flex justify-content-end mt-2">
-                <button type="button" class="btn btn-light btn-sm mr-2" (click)="cancelEdit()">
-                  <i class="fa fa-times"></i>
-                </button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="saveObservation()">
-                  <i class="fa fa-save"></i>
-                </button>
-              </div>
-            </div>
+          <div class="mb-0">
+            <small class="text-muted d-block mb-1">Observaciones</small>
+            <textarea
+              class="form-control form-control-sm"
+              rows="1"
+              [(ngModel)]="observationDraft"
+              name="observationDraft"
+              placeholder="Escribí una observación"
+              (blur)="onObservationBlur()"
+            ></textarea>
           </div>
         </div>
 
@@ -896,7 +786,7 @@
 
           <div class="d-flex justify-content-between align-items-center">
             <span class="h5 text-primary mb-0">TOTAL:</span>
-            <span class="h5 text-primary font-weight-bold d-flex align-items-center">
+            <span class="h5 text-primary font-weight-bold d-flex align-items-center mb-0">
               {{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
             </span>
           </div>

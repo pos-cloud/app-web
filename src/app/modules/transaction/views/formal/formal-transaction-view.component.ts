@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavChangeEvent, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
 import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
 import {
@@ -55,7 +55,7 @@ import { ProcessInvoiceUploadComponent } from './components/process-invoice-uplo
   styleUrls: ['./formal-transaction-view.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class FormalTransactionViewComponent implements OnInit {
+export class FormalTransactionViewComponent implements OnInit, OnDestroy {
   public transaction: Transaction;
   /** URL del último archivo subido desde el encabezado (imagen/PDF). */
   public formalDocumentUrl: string | null = null;
@@ -64,36 +64,39 @@ export class FormalTransactionViewComponent implements OnInit {
   public movementsOfCash: MovementOfCash[] = [];
   public loading: boolean = false;
   public activeTab: string = 'products';
+  private loadingCount = 0;
 
   // Propiedades para agregar producto
   public addProductForm: FormGroup;
   public selectedArticle: any = null;
-  public editingProductId: string | null = null;
+  public productsEditForm: FormArray;
   public addPaymentForm: FormGroup;
   public paymentMethods: PaymentMethod[] = [];
   public banks: Bank[] = [];
   public selectedPaymentMethod: PaymentMethod | null = null;
   public editingPaymentId: string | null = null;
   public vatPeriodDraft = '';
-  public isEditingObservation: boolean = false;
-  public observationDraft: string = '';
   public isEditingSubtotal: boolean = false;
   public subtotalDraft: number = 0;
   public isEditingDiscount: boolean = false;
   public discountPercentDraft: number = 0;
   public discountAmountDraft: number = 0;
-  public isEditingLetter: boolean = false;
-  public isEditingOrigin: boolean = false;
-  public isEditingInvoiceNumber: boolean = false;
+  public observationDraft: string = '';
   public letterDraft: string = '';
   public originDraft: number = 0;
   public numberDraft: number = 1;
   public letterOptions: string[] = ['A', 'B', 'C', 'M', 'R', 'E', 'X', 'Z', 'T', 'D'];
   public transactionEndDateDraft: string = new Date().toISOString();
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
-  public editingField: string | null = null;
+
+  @ViewChild('articleSearch') articleDropdown?: ArticleSearchableDropdownComponent;
+  @ViewChild('productsTableWrap') productsTableWrap?: ElementRef<HTMLElement>;
 
   private destroy$ = new Subject<void>();
+  private productEditSnapshots = new Map<string, { quantity: number; basePrice: number; discountRate: number }>();
+  private savingProductIds = new Set<string>();
+  private shouldFocusArticleInput = true;
+  private shouldScrollProductsToBottom = false;
 
   /** Tipo de transacción configurado para llevar impuestos por línea (maestro tipo comprobante). */
   public get requestTaxes(): boolean {
@@ -138,7 +141,17 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public get totalQuantity(): number {
+    if (this.productsEditForm?.length) {
+      return this.productsEditForm.controls.reduce((total, group) => {
+        return total + (Number(group.get('quantity')?.value) || 0);
+      }, 0);
+    }
     return this.movementsOfArticles.reduce((total, movement) => total + movement?.amount, 0);
+  }
+
+  /** Placeholder de m³ hasta que venga del backend. */
+  public get totalM3(): number {
+    return 300;
   }
 
   public get totalPaid(): number {
@@ -238,6 +251,7 @@ export class FormalTransactionViewComponent implements OnInit {
     this.initAddProductForm();
     this.initAddPaymentForm();
     this.resetAddProductForm();
+    this.productsEditForm = this.fb.array([]);
   }
 
   ngOnInit(): void {
@@ -260,6 +274,11 @@ export class FormalTransactionViewComponent implements OnInit {
           this._toastService.showToast(error);
         },
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initAddProductForm(): void {
@@ -403,8 +422,18 @@ export class FormalTransactionViewComponent implements OnInit {
     this.loadTransaction();
   }
 
-  private loadTransaction(): void {
+  private beginLoading(): void {
+    this.loadingCount++;
     this.loading = true;
+  }
+
+  private endLoading(): void {
+    this.loadingCount = Math.max(0, this.loadingCount - 1);
+    this.loading = this.loadingCount > 0;
+  }
+
+  private loadTransaction(): void {
+    this.beginLoading();
 
     this.transactionService
       .getById(this.transactionId)
@@ -416,19 +445,20 @@ export class FormalTransactionViewComponent implements OnInit {
             this.transactionEndDateDraft =
               this.transaction?.endDate || this.transaction?.startDate || this.transactionEndDateDraft;
             this.vatPeriodDraft = this.transaction?.VATPeriod || '';
+            this.syncHeaderDrafts();
             this.getMovementsOfArticlesByTransaction();
             this.getMovementsOfCashesByTransaction();
           } else {
-            this.loading = false;
             this.toastService.showToast({
               message: 'No se encontró la transacción',
               type: 'error',
             });
             this.router.navigate(['/']);
           }
+          this.endLoading();
         },
         error: () => {
-          this.loading = false;
+          this.endLoading();
           this.toastService.showToast({
             message: 'Error al cargar la transacción',
             type: 'error',
@@ -439,29 +469,38 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   private getMovementsOfArticlesByTransaction(): void {
-    this.loading = true;
+    this.beginLoading();
     this.movementOfArticleService
       .getMovementsOfArticlesByTransaction(this.transactionId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
           this.movementsOfArticles = result?.result || [];
+          this.buildProductsEditForm();
         },
         error: () => {
-          this.loading = false;
+          this.endLoading();
           this.toastService.showToast({
             message: 'Error al cargar movimientos de artículos',
             type: 'error',
           });
         },
         complete: () => {
-          this.loading = false;
+          this.endLoading();
+          if (this.shouldScrollProductsToBottom) {
+            this.shouldScrollProductsToBottom = false;
+            this.scrollProductsTableToBottom();
+          }
+          if (this.shouldFocusArticleInput) {
+            this.shouldFocusArticleInput = false;
+            this.focusArticleInputAtBottom();
+          }
         },
       });
   }
 
   private getMovementsOfCashesByTransaction(): void {
-    this.loading = true;
+    this.beginLoading();
     const data = {
       project: {
         transaction: 1,
@@ -487,14 +526,14 @@ export class FormalTransactionViewComponent implements OnInit {
           this.movementsOfCash = result?.result || [];
         },
         error: () => {
-          this.loading = false;
+          this.endLoading();
           this.toastService.showToast({
             message: 'Error al cargar movimientos de caja',
             type: 'error',
           });
         },
         complete: () => {
-          this.loading = false;
+          this.endLoading();
           if (!this.editingPaymentId) {
             this.resetAddPaymentForm();
           }
@@ -541,31 +580,30 @@ export class FormalTransactionViewComponent implements OnInit {
     this.updateTransaction();
   }
 
-  public startEdit(field: string): void {
-    this.editingField = field;
+  private syncHeaderDrafts(): void {
+    this.letterDraft = (this.transaction?.letter || '').toString();
+    this.originDraft = Number(this.transaction?.origin ?? 0);
+    this.numberDraft = Number(this.transaction?.number ?? 1);
+    this.observationDraft = this.transaction?.observation || '';
   }
 
   public cancelEdit(): void {
-    this.editingField = null;
     this.isEditingDiscount = false;
     this.isEditingSubtotal = false;
-    this.isEditingObservation = false;
   }
 
-  public saveEdit(field: string): void {
-    switch (field) {
-      case 'letter':
-        this.onLetterBlur();
-        break;
-      case 'origin':
-        this.onOriginBlur();
-        break;
-      case 'number':
-        this.onInvoiceNumberBlur();
-        break;
+  public onObservationBlur(): void {
+    if (!this.transaction) {
+      return;
     }
-
-    this.editingField = null;
+    const next = (this.observationDraft || '').trim();
+    const current = (this.transaction.observation || '').trim();
+    this.observationDraft = next;
+    if (next === current) {
+      return;
+    }
+    this.transaction.observation = next;
+    this.updateTransaction();
   }
 
   public onLetterBlur(): void {
@@ -592,7 +630,13 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   public onOriginBlur(): void {
-    this.transaction.origin = Math.max(0, Math.floor(Number(this.originDraft)));
+    const next = Math.max(0, Math.floor(Number(this.originDraft)));
+    const current = Math.max(0, Math.floor(Number(this.transaction?.origin ?? 0)));
+    this.originDraft = next;
+    if (next === current) {
+      return;
+    }
+    this.transaction.origin = next;
     this.updateTransaction();
   }
 
@@ -657,17 +701,6 @@ export class FormalTransactionViewComponent implements OnInit {
     );
   }
 
-  public startEditObservation(): void {
-    this.observationDraft = this.transaction?.observation || '';
-    this.isEditingObservation = true;
-  }
-
-  public saveObservation(): void {
-    this.transaction.observation = (this.observationDraft || '').trim();
-    this.updateTransaction();
-    this.isEditingObservation = false;
-  }
-
   public startEditDiscount(): void {
     this.isEditingSubtotal = false;
     this.discountPercentDraft = Number(this.transaction?.discountPercent ?? 0);
@@ -701,8 +734,6 @@ export class FormalTransactionViewComponent implements OnInit {
     modalRef.result.then(
       (taxes: Taxes[]) => {
         this.transaction.taxes = taxes || [];
-        this.loading = true;
-
         this.updateTransaction();
       },
       () => {}
@@ -795,7 +826,7 @@ export class FormalTransactionViewComponent implements OnInit {
   }
 
   private async updateTransaction(): Promise<void> {
-    this.loading = true;
+    this.beginLoading();
     this.transactionService
       .update(this.transaction)
       .pipe(takeUntil(this.destroy$))
@@ -825,7 +856,7 @@ export class FormalTransactionViewComponent implements OnInit {
           this.loadTransaction();
         },
         complete: () => {
-          this.loading = false;
+          this.endLoading();
           this.loadTransaction();
         },
       });
@@ -857,7 +888,7 @@ export class FormalTransactionViewComponent implements OnInit {
         return;
       }
 
-      this.loading = true;
+      this.beginLoading();
 
       try {
         const nextState = this.transaction.type?.finishState ?? TransactionState.Closed;
@@ -869,7 +900,7 @@ export class FormalTransactionViewComponent implements OnInit {
         this.goBack();
       } catch (error) {
       } finally {
-        this.loading = false;
+        this.endLoading();
       }
     });
   }
@@ -943,7 +974,260 @@ export class FormalTransactionViewComponent implements OnInit {
 
   public cancelAddProduct(): void {
     this.resetAddProductForm();
-    this.editingProductId = null;
+  }
+
+  public getProductEditGroup(index: number): FormGroup {
+    return this.productsEditForm.at(index) as FormGroup;
+  }
+
+  public getProductEditControl(index: number, name: 'quantity' | 'basePrice' | 'discountRate'): FormControl {
+    return this.getProductEditGroup(index)?.get(name) as FormControl;
+  }
+
+  public onNavChange(event: NgbNavChangeEvent): void {
+    if (event.nextId === 'products') {
+      this.focusArticleInput();
+    }
+  }
+
+  public focusArticleInput(): void {
+    this.focusArticleInputInternal();
+  }
+
+  /** Tras agregar un artículo: foco en el buscador. */
+  public focusArticleInputAtBottom(): void {
+    this.focusArticleInputInternal();
+  }
+
+  private scrollProductsTableToBottom(): void {
+    // Esperar a que Angular pinte la fila nueva antes de scrollear
+    setTimeout(() => {
+      const wrap = this.productsTableWrap?.nativeElement;
+      if (!wrap) {
+        return;
+      }
+      wrap.scrollTop = wrap.scrollHeight;
+    });
+  }
+
+  private focusArticleInputInternal(): void {
+    if (!this.requestArticles) {
+      return;
+    }
+
+    setTimeout(() => {
+      if (this.articleDropdown) {
+        this.articleDropdown.focusInput({ preventScroll: true });
+      } else {
+        const input = document.getElementById('add-product-article') as HTMLInputElement | null;
+        input?.focus({ preventScroll: true });
+        input?.select();
+      }
+    });
+  }
+
+  public onProductRowBlur(index: number, event: FocusEvent): void {
+    const rowEl = (event.target as HTMLElement | null)?.closest?.('[data-product-row]');
+    setTimeout(() => {
+      const active = document.activeElement as HTMLElement | null;
+      if (active && rowEl?.contains(active)) {
+        return;
+      }
+      this.saveProductRow(index);
+    });
+  }
+
+  /** Enter guarda de inmediato la fila editada. */
+  public onProductRowEnter(index: number, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.saveProductRow(index);
+  }
+
+  public getEditedLineSalePrice(index: number, movement: MovementOfArticle): number {
+    const group = this.getProductEditGroup(index);
+    if (!group) {
+      return Number(movement?.salePrice) || 0;
+    }
+    const quantity = Number(group.get('quantity')?.value) || 0;
+    const basePrice = Number(group.get('basePrice')?.value) || 0;
+    const rate = Math.min(100, Math.max(0, Number(group.get('discountRate')?.value) || 0));
+    const gross = this.roundNumber.transform(quantity * basePrice) as number;
+    const discountAmount = this.roundNumber.transform(gross * (rate / 100)) as number;
+    const taxesTotal = this.requestTaxes ? this.getEditedLineTaxesTotal(index, movement) : 0;
+    const price = this.roundNumber.transform(gross + taxesTotal) as number;
+    return this.roundNumber.transform(price - discountAmount) as number;
+  }
+
+  public getEditedLineTaxAmount(index: number, movement: MovementOfArticle, tax: Taxes): number {
+    const net = this.getEditedLineNetAmount(index, movement);
+    return (this.roundNumber.transform(net * ((Number(tax?.percentage) || 0) / 100)) as number) || 0;
+  }
+
+  private getEditedLineTaxesTotal(index: number, movement: MovementOfArticle): number {
+    const taxes = this.getMovementTaxes(movement);
+    return taxes.reduce((total, tax) => total + this.getEditedLineTaxAmount(index, movement, tax), 0);
+  }
+
+  private getEditedLineNetAmount(index: number, movement: MovementOfArticle): number {
+    const group = this.getProductEditGroup(index);
+    const quantity = Number(group?.get('quantity')?.value ?? movement.amount) || 0;
+    const basePrice = Number(group?.get('basePrice')?.value ?? this.getMovementBasePricePerUnit(movement)) || 0;
+    const discountRate = Number(group?.get('discountRate')?.value ?? movement.discountRate) || 0;
+    const gross = basePrice * quantity;
+    return gross - (gross * discountRate) / 100;
+  }
+
+  public getMovementTaxes(movement: MovementOfArticle): Taxes[] {
+    if (movement?.taxes?.length) {
+      return movement.taxes;
+    }
+    return (movement?.article as any)?.taxes || [];
+  }
+
+  private buildProductsEditForm(): void {
+    this.productsEditForm = this.fb.array(
+      this.movementsOfArticles.map((movement) => this.createProductEditGroup(movement))
+    );
+    this.productEditSnapshots.clear();
+    this.movementsOfArticles.forEach((movement) => {
+      this.productEditSnapshots.set(movement._id, this.getProductEditSnapshot(movement));
+    });
+  }
+
+  private createProductEditGroup(movement: MovementOfArticle): FormGroup {
+    return this.fb.group({
+      quantity: [movement.amount || 1, [Validators.required, Validators.min(0.01)]],
+      basePrice: [this.getMovementBasePricePerUnit(movement), [Validators.required, Validators.min(0)]],
+      discountRate: [movement.discountRate ?? 0, [Validators.min(0), Validators.max(100)]],
+    });
+  }
+
+  private getProductEditSnapshot(movement: MovementOfArticle): {
+    quantity: number;
+    basePrice: number;
+    discountRate: number;
+  } {
+    return {
+      quantity: Number(movement.amount) || 0,
+      basePrice: this.getMovementBasePricePerUnit(movement),
+      discountRate: Number(movement.discountRate) || 0,
+    };
+  }
+
+  private getProductEditValues(index: number): { quantity: number; basePrice: number; discountRate: number } | null {
+    const group = this.getProductEditGroup(index);
+    if (!group) {
+      return null;
+    }
+    return {
+      quantity: Number(group.get('quantity')?.value) || 0,
+      basePrice: Number(group.get('basePrice')?.value) || 0,
+      discountRate: Number(group.get('discountRate')?.value) || 0,
+    };
+  }
+
+  private isProductRowDirty(index: number): boolean {
+    const movement = this.movementsOfArticles[index];
+    const values = this.getProductEditValues(index);
+    if (!movement?._id || !values) {
+      return false;
+    }
+    const snap = this.productEditSnapshots.get(movement._id);
+    if (!snap) {
+      return true;
+    }
+    return (
+      snap.quantity !== values.quantity || snap.basePrice !== values.basePrice || snap.discountRate !== values.discountRate
+    );
+  }
+
+  private flushDirtyProductRows(): void {
+    this.movementsOfArticles.forEach((_movement, index) => {
+      if (this.isProductRowDirty(index)) {
+        this.saveProductRow(index);
+      }
+    });
+  }
+
+  public saveProductRow(index: number): void {
+    if (!this.requestArticles) {
+      return;
+    }
+    const movement = this.movementsOfArticles[index];
+    const group = this.getProductEditGroup(index);
+    const values = this.getProductEditValues(index);
+    const articleId = (movement?.article as any)?._id;
+    if (!movement?._id || !group || !values || !articleId) {
+      return;
+    }
+    if (group.invalid) {
+      group.markAllAsTouched();
+      return;
+    }
+    if (!this.isProductRowDirty(index) || this.savingProductIds.has(movement._id)) {
+      return;
+    }
+
+    this.savingProductIds.add(movement._id);
+    this.movementOfArticleService
+      .update({
+        _id: movement._id,
+        transactionId: this.transaction._id,
+        articleId,
+        quantity: values.quantity,
+        basePrice: values.basePrice,
+        discountRate: values.discountRate,
+      })
+      .pipe(takeUntil(this.destroy$), finalize(() => this.savingProductIds.delete(movement._id)))
+      .subscribe({
+        next: (result) => {
+          if (result?.status === 200 || result?.result) {
+            this.productEditSnapshots.set(movement._id, values);
+            const updated = result.result;
+            if (updated && typeof updated === 'object') {
+              this.movementsOfArticles[index] = {
+                ...movement,
+                ...updated,
+                article: updated.article || movement.article,
+                taxes: updated.taxes ?? movement.taxes,
+              };
+            }
+            this.reloadTransactionTotals();
+          } else {
+            this.toastService.showToast({
+              message: result?.message || 'Error al actualizar producto',
+              type: 'error',
+            });
+          }
+        },
+        error: () => {
+          this.toastService.showToast({
+            message: 'Error al actualizar producto',
+            type: 'error',
+          });
+        },
+      });
+  }
+
+  private reloadTransactionTotals(): void {
+    if (!this.transactionId) {
+      return;
+    }
+    this.transactionService
+      .getById(this.transactionId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          if (result?.status === 200) {
+            this.transaction = result.result;
+            this.transactionEndDateDraft =
+              this.transaction?.endDate || this.transaction?.startDate || this.transactionEndDateDraft;
+            this.vatPeriodDraft = this.transaction?.VATPeriod || '';
+            this.syncHeaderDrafts();
+          }
+        },
+      });
   }
 
   private resetAddProductForm(): void {
@@ -1142,49 +1426,11 @@ export class FormalTransactionViewComponent implements OnInit {
       : null;
 
     if (this.addProductForm.valid && this.selectedArticle) {
-      let basePrice = Number(this.addProductForm.get('basePrice')?.value);
-      let quantity = Number(this.addProductForm.get('quantity')?.value);
-      let discountRate = Number(this.addProductForm.get('discountRate')?.value);
+      const basePrice = Number(this.addProductForm.get('basePrice')?.value);
+      const quantity = Number(this.addProductForm.get('quantity')?.value);
 
-      if (this.editingProductId) {
-        const movementToUpdate = this.movementsOfArticles.find((movement) => movement._id === this.editingProductId);
-        if (!movementToUpdate) {
-          this.toastService.showToast({
-            message: 'No se encontró el producto para editar',
-            type: 'error',
-          });
-          return;
-        }
-
-        const updatedMovement = {
-          _id: movementToUpdate._id,
-          transactionId: this.transaction._id,
-          articleId: this.selectedArticle._id,
-          quantity: quantity ?? movementToUpdate.amount,
-          basePrice: basePrice ?? movementToUpdate.basePrice,
-          discountRate: discountRate ?? movementToUpdate.discountRate,
-        };
-
-        this.movementOfArticleService.update(updatedMovement).subscribe({
-          next: (result) => {
-            if (result?.status === 200 || result?.result) {
-              this.toastService.showToast({
-                message: 'Producto actualizado exitosamente',
-                type: 'success',
-              });
-              this.resetAddProductForm();
-              this.editingProductId = null;
-              this.refresh();
-            }
-          },
-          error: () => {
-            this.toastService.showToast({
-              message: 'Error al actualizar producto',
-              type: 'error',
-            });
-          },
-        });
-        return;
+      if (this.productsEditForm?.length) {
+        this.flushDirtyProductRows();
       }
 
       const movementData: Record<string, unknown> = {
@@ -1204,7 +1450,8 @@ export class FormalTransactionViewComponent implements OnInit {
               type: 'success',
             });
             this.resetAddProductForm();
-            this.editingProductId = null;
+            this.shouldFocusArticleInput = true;
+            this.shouldScrollProductsToBottom = true;
             this.refresh();
           }
         },
@@ -1227,22 +1474,6 @@ export class FormalTransactionViewComponent implements OnInit {
   public cancelAddPayment(): void {
     this.resetAddPaymentForm();
     this.editingPaymentId = null;
-  }
-
-  public editProduct(movement: MovementOfArticle): void {
-    if (!this.requestArticles) {
-      return;
-    }
-    this.editingProductId = movement._id;
-    this.selectedArticle = (movement.article as any)?._id ? movement.article : null;
-
-    this.addProductForm.patchValue({
-      article: this.selectedArticle || null,
-      quantity: movement.amount || 1,
-      unitPrice: this.roundNumber.transform(movement.unitPrice) as number,
-      basePrice: this.getMovementBasePricePerUnit(movement),
-      discountRate: movement.discountRate ?? 0,
-    });
   }
 
   public editPayment(movement: MovementOfCash): void {
