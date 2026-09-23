@@ -23,6 +23,7 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
   @Input() minSearchLength = 2;
   @Input() initialLimit = 10;
   @Input() resultLimit = 20;
+  @Input() inputId = 'add-product-article';
 
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
 
@@ -89,6 +90,20 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
 
   hasSelection(): boolean {
     return !!this.control?.value;
+  }
+
+  public focusInput(options?: { preventScroll?: boolean }): void {
+    if (this.disabled) {
+      return;
+    }
+
+    const input = this.searchInput?.nativeElement;
+    if (!input) {
+      return;
+    }
+
+    input.focus({ preventScroll: options?.preventScroll ?? false });
+    input.select();
   }
 
   onInputFocus(event: FocusEvent): void {

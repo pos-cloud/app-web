@@ -9,6 +9,7 @@
       #searchInput
       type="text"
       class="article-searchable-dropdown__input"
+      [id]="inputId"
       [(ngModel)]="searchTerm"
       [ngModelOptions]="{ standalone: true }"
       (ngModelChange)="onSearchChange()"
