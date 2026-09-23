@@ -102,26 +102,26 @@
             <div class="row">
               <div class="col-md-6">
                 <label for="make"> {{ 'make' | translate | capitalize }}:</label>
-                <app-searchable-dropdown
+                <app-typeahead-dropdown
                   placeholder="{{ 'make' | translate | capitalize }}"
                   [control]="articleForm.get('make')"
-                  [service]="_makeService"
+                  [data]="makes"
                   [readonly]="readonly"
                   [keyField]="'_id'"
                   [displayField]="'description'"
-                ></app-searchable-dropdown>
+                ></app-typeahead-dropdown>
               </div>
 
               <div class="col-md-6">
                 <label for="category">{{ 'category' | translate | capitalize }}:</label>
-                <app-searchable-dropdown
+                <app-typeahead-dropdown
                   placeholder="{{ 'category' | translate | capitalize }}"
                   [control]="articleForm.get('category')"
-                  [service]="_categoryService"
+                  [data]="categories"
                   [readonly]="readonly"
                   [keyField]="'_id'"
                   [displayField]="'description'"
-                ></app-searchable-dropdown>
+                ></app-typeahead-dropdown>
               </div>
             </div>
             <div class="row">

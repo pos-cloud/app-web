@@ -46,6 +46,7 @@ import { ArticlePrintIn } from 'app/components/article/article';
 import { Config as AppConfig } from 'app/app.config';
 import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { combineLatest, forkJoin, Subject } from 'rxjs';
@@ -77,6 +78,7 @@ import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
     FocusDirective,
     PipesModule,
     TranslateModule,
+    TypeaheadDropdownComponent,
     SearchableDropdownComponent,
     HierarchicalMultiSelectComponent,
     UploadFileComponent,
@@ -150,8 +152,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   constructor(
     private _articleService: ArticleService,
-    public _categoryService: CategoryService,
-    public _makeService: MakeService,
+    private _categoryService: CategoryService,
+    private _makeService: MakeService,
     private _priceListService: PriceListService,
     private _priceListArticleService: PriceListArticleService,
     public _unitOfMeasurementService: UnitOfMeasurementService,
