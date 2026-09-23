@@ -140,7 +140,36 @@ export class ImportComponent implements OnInit {
     // Aquí puedes implementar validaciones adicionales si las necesitas
   }
 
+  get canImport(): boolean {
+    if (!this.importForm?.valid || this.loading) {
+      return false;
+    }
+    if (this.model === 'articles-stock') {
+      return !!(
+        this.branchesSelected?.length &&
+        this.depositsSelected?.length &&
+        this.transactionTypesSelect?.length
+      );
+    }
+    if (this.model === 'purchase') {
+      return !!this.branchesSelected?.length;
+    }
+    if (this.model === 'price-list-articles') {
+      return !!(this.selectedPriceListId || this.priceListId);
+    }
+    return true;
+  }
+
   public import(): void {
+    if (!this.canImport) {
+      if (this.model === 'articles-stock') {
+        this._toastService.showToast({
+          message: 'Debe seleccionar sucursal, depósito y tipo de transacción.',
+        });
+      }
+      return;
+    }
+
     if (this.importForm.valid) {
       const inputElement: HTMLInputElement = document.getElementById('fileInput') as HTMLInputElement;
       const file: File = inputElement.files[0]; // Obtener el primer archivo seleccionado

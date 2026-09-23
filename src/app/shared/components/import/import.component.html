@@ -12,6 +12,7 @@
     <div class="col-md-3">
       <label for="branch" class="control-label">
         <b>{{ 'branch' | translate | capitalize }}</b>
+        <span class="text-danger">*</span>
       </label>
       <ng-multiselect-dropdown
         [placeholder]="'branch' | translate"
@@ -19,28 +20,33 @@
         [data]="branches"
         [(ngModel)]="branchesSelected"
         (onSelect)="onBranchSelect($event)"
+        required
       ></ng-multiselect-dropdown>
     </div>
     <div class="col-md-3">
       <label for="deposit" class="control-label">
         <b>{{ 'deposit' | translate | capitalize }}</b>
+        <span class="text-danger">*</span>
       </label>
       <ng-multiselect-dropdown
         [placeholder]="'deposit' | translate"
         [settings]="dropdownSettings"
         [data]="depositsData"
         [(ngModel)]="depositsSelected"
+        required
       ></ng-multiselect-dropdown>
     </div>
     <div class="col-md-3">
       <label for="updatePrice" class="control-label">
         <b>Tipo de transaccion</b>
+        <span class="text-danger">*</span>
       </label>
       <ng-multiselect-dropdown
         [placeholder]="'transaction-type' | translate"
         [settings]="dropdownSettings"
         [data]="transactionTypes"
         [(ngModel)]="transactionTypesSelect"
+        required
       ></ng-multiselect-dropdown>
     </div>
   </div>
@@ -105,7 +111,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!importForm.valid || loading">
+      <button type="submit" class="btn btn-primary" [disabled]="!canImport">
         <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
         <span *ngIf="!loading">Importar</span>
         <span *ngIf="loading">Espere por favor</span>
