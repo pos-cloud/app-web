@@ -22,10 +22,10 @@ import { Subject, takeUntil } from 'rxjs';
 export class ListMovementOfCashComponent implements OnInit, OnDestroy {
   public title: string = 'Movimientos de Caja';
   public loading: boolean = false;
-  public sort: any = { 'transaction.endDate': -1 };
+  public sort: any = { transactionEndDate: -1 };
   public columns: IAttribute[] = [
     {
-      name: 'transaction.endDate',
+      name: 'transactionEndDate',
       visible: true,
       disabled: false,
       filter: true,
@@ -34,7 +34,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
       required: true,
     },
     {
-      name: 'transaction.cashBox.number',
+      name: 'cashBox.number',
       visible: true,
       disabled: false,
       filter: true,
@@ -44,7 +44,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transaction.type.name',
+      name: 'transactionType.name',
       visible: true,
       disabled: false,
       filter: true,
@@ -54,7 +54,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transaction.company.identificationValue',
+      name: 'company.identificationValue',
       visible: false,
       disabled: false,
       filter: true,
@@ -203,7 +203,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transaction.company.name',
+      name: 'company.name',
       visible: false,
       disabled: false,
       filter: true,
@@ -255,7 +255,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
       required: true,
     },
     {
-      name: 'transaction.type.transactionMovement',
+      name: 'transactionType.transactionMovement',
       visible: false,
       disabled: true,
       filter: true,
@@ -280,7 +280,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
       disabled: true,
       filter: false,
       datatype: 'date',
-      project: `"$transaction.endDate"`,
+      project: `"$transactionEndDate"`,
       align: 'right',
       required: true,
     },
@@ -469,7 +469,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
   }
 
   private applyMovementFilter(): void {
-    const movementColumn = this.columns.find((column) => column.name === 'transaction.type.transactionMovement');
+    const movementColumn = this.columns.find((column) => column.name === 'transactionType.transactionMovement');
     if (!movementColumn || !this.transactionMovement) {
       return;
     }
@@ -477,7 +477,7 @@ export class ListMovementOfCashComponent implements OnInit, OnDestroy {
     const movementFilter = `"${this.transactionMovement}"`;
     movementColumn.defaultFilter = movementFilter;
     if (this.datatableComponent?.filters) {
-      this.datatableComponent.filters['transaction.type.transactionMovement'] = movementFilter;
+      this.datatableComponent.filters['transactionType.transactionMovement'] = movementFilter;
     }
   }
 

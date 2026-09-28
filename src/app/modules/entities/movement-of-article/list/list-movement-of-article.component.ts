@@ -23,10 +23,10 @@ import { Subject, takeUntil } from 'rxjs';
 export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
   public title: string = 'Movimientos de Artículos';
   public loading: boolean = false;
-  public sort: any = { 'transaction.endDate': -1 };
+  public sort: any = { transactionEndDate: -1 };
   public columns: IAttribute[] = [
     {
-      name: 'transaction.endDate',
+      name: 'transactionEndDate',
       visible: true,
       disabled: true,
       filter: true,
@@ -36,7 +36,7 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       required: true,
     },
     {
-      name: 'transaction.type.name',
+      name: 'transactionType.name',
       visible: true,
       disabled: false,
       filter: true,
@@ -76,7 +76,7 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transaction.company.name',
+      name: 'company.name',
       visible: false,
       disabled: false,
       filter: true,
@@ -86,7 +86,7 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transaction.company.state.name',
+      name: 'company.phones',
       visible: false,
       disabled: false,
       filter: true,
@@ -96,37 +96,17 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transaction.company.phones',
+      name: 'company.address',
       visible: false,
       disabled: false,
       filter: true,
       datatype: 'string',
-      project: null,
-      align: 'center',
-      required: false,
-    },
-    {
-      name: 'transaction.company.address',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: `{"$trim":{"input":{"$concat":[{"$ifNull":["$transaction.company.address",""]}," ",{"$ifNull":["$transaction.company.addressNumber",""]}]}}}`,
+      project: `{"$trim":{"input":{"$concat":[{"$ifNull":["$company.address",""]}," ",{"$ifNull":["$company.addressNumber",""]}]}}}`,
       align: 'left',
       required: false,
     },
     {
-      name: 'transaction.company.city',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'center',
-      required: false,
-    },
-    {
-      name: 'transaction.employeeClosing.name',
+      name: 'company.city',
       visible: false,
       disabled: false,
       filter: true,
@@ -217,16 +197,6 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
     },
     {
       name: 'make.description',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
-      name: 'article.provider.name',
       visible: false,
       disabled: false,
       filter: true,
@@ -443,16 +413,6 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'deposit.branch.name',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
       name: 'article.containsStructure',
       visible: false,
       disabled: false,
@@ -583,7 +543,7 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
-      name: 'transaction.type.transactionMovement',
+      name: 'transactionType.transactionMovement',
       visible: false,
       disabled: false,
       filter: true,
@@ -642,16 +602,7 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       align: 'left',
       required: true,
     },
-    {
-      name: 'category._id',
-      visible: false,
-      disabled: true,
-      filter: true,
-      datatype: 'string',
-      project: null,
-      align: 'left',
-      required: true,
-    },
+
     {
       name: 'operationType',
       visible: false,
@@ -680,12 +631,12 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       disabled: true,
       filter: false,
       datatype: 'date',
-      project: `"$transaction.endDate"`,
+      project: `"$transactionEndDate"`,
       align: 'right',
       required: true,
     },
     {
-      name: 'transaction.type._id',
+      name: 'transactionType._id',
       visible: false,
       disabled: true,
       filter: true,
@@ -850,7 +801,7 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
   }
 
   private applyMovementFilter(): void {
-    const movementColumn = this.columns.find((column) => column.name === 'transaction.type.transactionMovement');
+    const movementColumn = this.columns.find((column) => column.name === 'transactionType.transactionMovement');
     if (!movementColumn || !this.transactionMovement) {
       return;
     }
@@ -858,7 +809,7 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
     const movementFilter = `"${this.transactionMovement}"`;
     movementColumn.defaultFilter = movementFilter;
     if (this.datatableComponent?.filters) {
-      this.datatableComponent.filters['transaction.type.transactionMovement'] = movementFilter;
+      this.datatableComponent.filters['transactionType.transactionMovement'] = movementFilter;
     }
   }
 

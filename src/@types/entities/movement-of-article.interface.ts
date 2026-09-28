@@ -9,6 +9,7 @@ import {
   StockMovement,
   Taxes,
   Transaction,
+  TransactionType,
 } from '@types';
 
 export interface MovementOfArticle extends Activity {
@@ -53,6 +54,7 @@ export interface MovementOfArticle extends Activity {
   isGeneratedByPayment: boolean;
   account: Account;
   op: number;
+  transactionType: TransactionType;
 }
 
 export enum MovementOfArticleStatus {

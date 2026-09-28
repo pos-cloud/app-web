@@ -1,4 +1,14 @@
-import { Activity, Bank, CashBox, Company, CurrencyValue, Movements, PaymentMethod, Transaction } from '@types';
+import {
+  Activity,
+  Bank,
+  CashBox,
+  Company,
+  CurrencyValue,
+  Movements,
+  PaymentMethod,
+  Transaction,
+  TransactionType,
+} from '@types';
 
 export interface MovementOfCash extends Activity {
   _id: string;
@@ -37,6 +47,7 @@ export interface MovementOfCash extends Activity {
   transactionEndDate: string;
   company: Company;
   movement: Movements;
+  transactionType: TransactionType;
 }
 
 export enum StatusCheck {
