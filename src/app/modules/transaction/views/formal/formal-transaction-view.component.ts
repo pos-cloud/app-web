@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbNavChangeEvent, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ImportComponent } from '@shared/components/import/import.component';
@@ -95,7 +103,7 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private productEditSnapshots = new Map<string, { quantity: number; basePrice: number; discountRate: number }>();
   private savingProductIds = new Set<string>();
-  private shouldFocusArticleInput = true;
+  private shouldFocusQuantityInput = true;
   private shouldScrollProductsToBottom = false;
 
   /** Tipo de transacción configurado para llevar impuestos por línea (maestro tipo comprobante). */
@@ -130,8 +138,7 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
   public get paymentShowsManualCheckFields(): boolean {
     return (
       this.paymentRequiresCheck &&
-      (!this.selectedPaymentMethod?.inputAndOuput ||
-        this.transaction?.type?.movement?.toString() === Movements.Inflows)
+      (!this.selectedPaymentMethod?.inputAndOuput || this.transaction?.type?.movement?.toString() === Movements.Inflows)
     );
   }
 
@@ -491,9 +498,9 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
             this.shouldScrollProductsToBottom = false;
             this.scrollProductsTableToBottom();
           }
-          if (this.shouldFocusArticleInput) {
-            this.shouldFocusArticleInput = false;
-            this.focusArticleInputAtBottom();
+          if (this.shouldFocusQuantityInput) {
+            this.shouldFocusQuantityInput = false;
+            this.focusQuantityInput();
           }
         },
       });
@@ -986,21 +993,24 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
 
   public onNavChange(event: NgbNavChangeEvent): void {
     if (event.nextId === 'products') {
-      this.focusArticleInput();
+      this.focusQuantityInput();
     }
   }
 
-  public focusArticleInput(): void {
-    this.focusArticleInputInternal();
-  }
+  /** Tras agregar un artículo o al entrar al tab: foco en cantidad. */
+  public focusQuantityInput(): void {
+    if (!this.requestArticles) {
+      return;
+    }
 
-  /** Tras agregar un artículo: foco en el buscador. */
-  public focusArticleInputAtBottom(): void {
-    this.focusArticleInputInternal();
+    setTimeout(() => {
+      const input = document.getElementById('add-product-qty') as HTMLInputElement | null;
+      input?.focus({ preventScroll: true });
+      input?.select();
+    });
   }
 
   private scrollProductsTableToBottom(): void {
-    // Esperar a que Angular pinte la fila nueva antes de scrollear
     setTimeout(() => {
       const wrap = this.productsTableWrap?.nativeElement;
       if (!wrap) {
@@ -1010,38 +1020,27 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  private focusArticleInputInternal(): void {
-    if (!this.requestArticles) {
-      return;
-    }
-
-    setTimeout(() => {
-      if (this.articleDropdown) {
-        this.articleDropdown.focusInput({ preventScroll: true });
-      } else {
-        const input = document.getElementById('add-product-article') as HTMLInputElement | null;
-        input?.focus({ preventScroll: true });
-        input?.select();
-      }
-    });
+  public onProductRowBlur(index: number, _event: FocusEvent): void {
+    // Tab / click afuera: guardar al salir del campo
+    setTimeout(() => this.saveProductRow(index));
   }
 
-  public onProductRowBlur(index: number, event: FocusEvent): void {
-    const rowEl = (event.target as HTMLElement | null)?.closest?.('[data-product-row]');
-    setTimeout(() => {
-      const active = document.activeElement as HTMLElement | null;
-      if (active && rowEl?.contains(active)) {
-        return;
-      }
-      this.saveProductRow(index);
-    });
-  }
-
-  /** Enter guarda de inmediato la fila editada. */
-  public onProductRowEnter(index: number, event: Event): void {
+  /** Enter: guarda el movimiento de artículo y refresca la transacción. */
+  public onProductRowSaveKey(index: number, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     this.saveProductRow(index);
+  }
+
+  private resolveArticleId(movement: MovementOfArticle): string | null {
+    const article = movement?.article as any;
+    if (!article) {
+      return null;
+    }
+    if (typeof article === 'string') {
+      return article;
+    }
+    return article._id || null;
   }
 
   public getEditedLineSalePrice(index: number, movement: MovementOfArticle): number {
@@ -1138,7 +1137,9 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
       return true;
     }
     return (
-      snap.quantity !== values.quantity || snap.basePrice !== values.basePrice || snap.discountRate !== values.discountRate
+      snap.quantity !== values.quantity ||
+      snap.basePrice !== values.basePrice ||
+      snap.discountRate !== values.discountRate
     );
   }
 
@@ -1157,7 +1158,7 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
     const movement = this.movementsOfArticles[index];
     const group = this.getProductEditGroup(index);
     const values = this.getProductEditValues(index);
-    const articleId = (movement?.article as any)?._id;
+    const articleId = this.resolveArticleId(movement);
     if (!movement?._id || !group || !values || !articleId) {
       return;
     }
@@ -1179,17 +1180,24 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
         basePrice: values.basePrice,
         discountRate: values.discountRate,
       })
-      .pipe(takeUntil(this.destroy$), finalize(() => this.savingProductIds.delete(movement._id)))
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.savingProductIds.delete(movement._id))
+      )
       .subscribe({
         next: (result) => {
           if (result?.status === 200 || result?.result) {
-            this.productEditSnapshots.set(movement._id, values);
+            this.productEditSnapshots.set(movement._id, { ...values });
             const updated = result.result;
             if (updated && typeof updated === 'object') {
+              const nextArticle =
+                updated.article && typeof updated.article === 'object'
+                  ? updated.article
+                  : movement.article;
               this.movementsOfArticles[index] = {
                 ...movement,
                 ...updated,
-                article: updated.article || movement.article,
+                article: nextArticle,
                 taxes: updated.taxes ?? movement.taxes,
               };
             }
@@ -1450,7 +1458,7 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
               type: 'success',
             });
             this.resetAddProductForm();
-            this.shouldFocusArticleInput = true;
+            this.shouldFocusQuantityInput = true;
             this.shouldScrollProductsToBottom = true;
             this.refresh();
           }

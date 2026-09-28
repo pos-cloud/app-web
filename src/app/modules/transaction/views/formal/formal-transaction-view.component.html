@@ -194,7 +194,7 @@
                                 numericText="decimal"
                                 [formControl]="getProductEditControl(i, 'quantity')"
                                 (blur)="onProductRowBlur(i, $event)"
-                                (keydown.enter)="onProductRowEnter(i, $event)"
+                                (keydown.enter)="onProductRowSaveKey(i, $event)"
                               />
                             </ng-container>
                             <ng-template #amountViewTpl>
@@ -225,7 +225,7 @@
                                 numericText="decimal"
                                 [formControl]="getProductEditControl(i, 'basePrice')"
                                 (blur)="onProductRowBlur(i, $event)"
-                                (keydown.enter)="onProductRowEnter(i, $event)"
+                                (keydown.enter)="onProductRowSaveKey(i, $event)"
                               />
                             </ng-container>
                             <ng-template #priceViewTpl>
@@ -245,7 +245,7 @@
                                   numericText="decimal"
                                   [formControl]="getProductEditControl(i, 'discountRate')"
                                   (blur)="onProductRowBlur(i, $event)"
-                                  (keydown.enter)="onProductRowEnter(i, $event)"
+                                  (keydown.enter)="onProductRowSaveKey(i, $event)"
                                 />
                                 <div class="input-group-append">
                                   <span class="input-group-text">%</span>
