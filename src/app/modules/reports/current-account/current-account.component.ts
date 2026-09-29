@@ -8,14 +8,18 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { AuthService } from '@core/services/auth.service';
+import { CancellationTypeService } from '@core/services/cancellation-type.service';
 import { PrintService } from '@core/services/print.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
-import { ApiResponse, Company, PrintType, TransactionMovement } from '@types';
+import { ApiResponse, Company, PrintType, TransactionMovement, TransactionState, User } from '@types';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { AddTransactionComponent } from 'app/components/transaction/add-transaction/add-transaction.component';
 import { Transaction } from 'app/components/transaction/transaction';
 import { CompanyService } from 'app/core/services/company.service';
+import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
+import { MovementOfCancellationComponent } from 'app/modules/transaction/components/movement-of-cancellation/movement-of-cancellation.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -42,7 +46,9 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   public currentPage: number = 1;
   public transactionMovement: TransactionMovement;
   public data = {};
+  public user: User | null = null;
   private destroy$ = new Subject<void>();
+  private cancellableDestinationTypeIds: string[] = [];
 
   // Getter para obtener los items paginados (para ngb-pagination)
   get paginatedItems(): any[] {
@@ -57,7 +63,9 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _route: ActivatedRoute,
     private _modalService: NgbModal,
+    private _authService: AuthService,
     public _printService: PrintService,
+    private _cancellationTypeService: CancellationTypeService,
     private _toastService: ToastService,
     private _title: Title
   ) {}
@@ -76,6 +84,8 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
     }
 
     this._title.setTitle('Cuenta corriente');
+    this.getPermissions();
+    this.loadCancellableDestinationTypes();
   }
 
   public getCompany(companyId: string): void {
@@ -226,6 +236,9 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         modalRef.componentInstance.transactionId = transaction._id;
         break;
       case 'edit-transaction':
+        if (!this.canEdit({ transaction })) {
+          break;
+        }
         modalRef = this._modalService.open(AddTransactionComponent, {
           size: 'lg',
           backdrop: 'static',
@@ -234,11 +247,34 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         modalRef.result.then(
           (result) => {
             if (result.transaction) {
-              // this.refresh();
+              this.refresh();
             }
           },
-          (reason) => {}
+          () => {}
         );
+        break;
+      case 'delete-transaction':
+        if (!transaction || !this.canDelete({ transaction })) {
+          break;
+        }
+        modalRef = this._modalService.open(DeleteTransactionComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.transactionId = transaction._id;
+        modalRef.result.then(
+          (result) => {
+            if (result === 'delete_close') {
+              this.refresh();
+            }
+          },
+          () => {}
+        );
+        break;
+      case 'cancel':
+        if (transaction) {
+          this.openCancellation(transaction);
+        }
         break;
       case 'print':
         if (this.companySelected) {
@@ -270,6 +306,30 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         break;
       default:
     }
+  }
+
+  public canEdit(item: any): boolean {
+    return this.transactionPermission?.edit === true && !!item?.transaction?.type?.allowEdit;
+  }
+
+  public canDelete(item: any): boolean {
+    const transaction = item?.transaction;
+    const type = transaction?.type;
+    if (this.transactionPermission?.delete !== true || !type?.allowDelete) {
+      return false;
+    }
+
+    return !(type.electronics && String(transaction.state) === TransactionState.Closed);
+  }
+
+  public canCancel(item: any): boolean {
+    const transaction = item?.transaction;
+    const typeId = this.toObjectId(transaction?.type?._id);
+    if (!typeId || !this.cancellableDestinationTypeIds.includes(typeId)) {
+      return false;
+    }
+
+    return String(transaction.state) === TransactionState.Closed && Number(transaction.balance) > 0;
   }
 
   public padNumber(n, length): string {
@@ -319,5 +379,118 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private get transactionPermission() {
+    return this.user?.permission?.collections?.transactions;
+  }
+
+  private getPermissions(): void {
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
+      this.user = identity;
+    });
+  }
+
+  private openCancellation(transaction: Transaction): void {
+    const typeId = this.toObjectId(transaction?.type?._id);
+    if (!typeId || !this.cancellableDestinationTypeIds.includes(typeId)) {
+      this._toastService.showToast({
+        message: 'Solo se pueden cancelar transacciones que tengan un tipo de cancelación.',
+        type: 'info',
+      });
+      return;
+    }
+
+    if (String(transaction?.state) !== TransactionState.Closed) {
+      this._toastService.showToast({
+        message: 'Solo se pueden cancelar transacciones cerradas.',
+        type: 'info',
+      });
+      return;
+    }
+
+    if (Number(transaction?.balance) <= 0) {
+      this._toastService.showToast({
+        message: 'La transacción ya está cancelada. No queda saldo para cancelar.',
+        type: 'info',
+      });
+      return;
+    }
+
+    const modalRef = this._modalService.open(MovementOfCancellationComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.transactionDestinationId = transaction._id;
+    modalRef.componentInstance.totalPrice = Number(transaction.balance) || 0;
+    modalRef.componentInstance.selectionView = true;
+    modalRef.componentInstance.movementsOfCancellations = [];
+    modalRef.result.then(
+      (result) => {
+        if (result?.movementsOfCancellations?.length > 0 || result?.movementsOfCashes) {
+          this.refresh();
+        }
+      },
+      () => {}
+    );
+  }
+
+  private toObjectId(value: any): string | null {
+    if (!value) {
+      return null;
+    }
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (value.$oid) {
+      return String(value.$oid);
+    }
+    if (value._id) {
+      return this.toObjectId(value._id);
+    }
+    return String(value);
+  }
+
+  private loadCancellableDestinationTypes(): void {
+    this._cancellationTypeService
+      .getAll({
+        project: {
+          'destination._id': 1,
+          operationType: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          if (result?.status && result.status !== 200) {
+            this._toastService.showToast(result);
+            this.cancellableDestinationTypeIds = [];
+            return;
+          }
+
+          let raw = result?.result ?? result?.cancellationTypes ?? [];
+          if (Array.isArray(raw) && raw[0]?.items) {
+            raw = raw[0].items;
+          }
+          const cancellationTypes = Array.isArray(raw) ? raw : [];
+          const ids = new Set<string>();
+
+          cancellationTypes.forEach((cancellationType: any) => {
+            const destinationId = this.toObjectId(cancellationType?.destination?._id ?? cancellationType?.destination);
+            if (destinationId) {
+              ids.add(destinationId);
+            }
+          });
+
+          this.cancellableDestinationTypeIds = Array.from(ids);
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.cancellableDestinationTypeIds = [];
+        },
+      });
   }
 }

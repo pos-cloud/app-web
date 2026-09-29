@@ -81,12 +81,30 @@
                 </button>
                 <button
                   type="button"
-                  *ngIf="item.transactionTypeAllowEdit"
+                  *ngIf="canEdit(item)"
                   class="btn btn-primary btn-sm"
                   (click)="openModal('edit-transaction', item.transaction)"
                   title="Editar"
                 >
                   <i class="fa fa-pencil"></i>
+                </button>
+                <button
+                  type="button"
+                  *ngIf="canDelete(item)"
+                  class="btn btn-danger btn-sm"
+                  (click)="openModal('delete-transaction', item.transaction)"
+                  title="Eliminar"
+                >
+                  <i class="fa fa-trash-o"></i>
+                </button>
+                <button
+                  type="button"
+                  *ngIf="canCancel(item)"
+                  class="btn btn-warning btn-sm"
+                  (click)="openModal('cancel', item.transaction)"
+                  title="Cancelar"
+                >
+                  <i class="fa fa-exchange"></i>
                 </button>
                 <button
                   type="button"
