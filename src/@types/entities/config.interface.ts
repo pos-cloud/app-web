@@ -1,4 +1,4 @@
-import { Account, Activity, Currency, IdentificationType, VATCondition } from '@types';
+import { Account, Activity, Currency, VATCondition } from '@types';
 
 export interface Config extends Activity {
   numberCompany: string;
@@ -14,18 +14,6 @@ export interface Config extends Activity {
   emailPassword: string;
   emailHost: string;
   emailPort: number;
-  companyPicture: string;
-  companyName: string;
-  companyFantasyName: string;
-  companyCUIT: string;
-  companyIdentificationType: IdentificationType;
-  companyIdentificationValue: string;
-  companyVatCondition: VATCondition;
-  companyStartOfActivity: string;
-  companyGrossIncome: string;
-  companyAddress: string;
-  companyPhone: string;
-  companyPostalCode: string;
   footerInvoice: string;
   latitude: string;
   longitude: string;

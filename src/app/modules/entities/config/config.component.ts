@@ -229,13 +229,6 @@ export class ConfigsComponent implements OnInit {
       (item) => item._id === this.config?.article?.purchaseAccount?.default?.toString()
     );
 
-    let companyIdentificationTypeConfig = this.identificationTypes?.find(
-      (item) => item._id === this.config?.companyIdentificationType?.toString()
-    );
-    let companyVatConditionConfig = this.vatConditions.find(
-      (item) => item._id === this.config?.companyVatCondition?.toString()
-    );
-
     let vatConditionDefaultConfig = this.vatConditions.find(
       (item) => item._id === this.config?.company?.vatCondition?.default?.toString()
     );
@@ -249,17 +242,7 @@ export class ConfigsComponent implements OnInit {
 
     this.configForm.setValue({
       _id: this.config._id,
-      companyPicture: this.config?.companyPicture ?? '',
-      companyName: this.config?.companyName ?? '',
-      companyAddress: this.config?.companyAddress ?? '',
-      companyFantasyName: this.config?.companyFantasyName ?? '',
-      companyPhone: this.config?.companyPhone ?? '',
-      companyIdentificationType: companyIdentificationTypeConfig ?? null,
-      companyIdentificationValue: this.config?.companyIdentificationValue ?? '',
-      companyVatCondition: companyVatConditionConfig ?? null,
-      companyStartOfActivity: moment(this.config?.companyStartOfActivity, 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY'),
-      companyGrossIncome: this.config?.companyGrossIncome ?? '',
-      companyPostalCode: this.config?.companyPostalCode ?? '',
+
       footerInvoice: this.config?.footerInvoice ?? '',
       country: this.config?.country ?? null,
       latitude: this.config?.latitude ?? '',
