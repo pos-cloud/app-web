@@ -173,6 +173,13 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   public openView(transaction: Transaction): void {
+    this._router.navigate(['/transaction/view/stock', transaction._id], {
+      queryParams: { returnURL: this._router.url },
+    });
+  }
+
+  public preview(transaction: Transaction, event: Event): void {
+    event.stopPropagation();
     const modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.transactionId = transaction._id;
   }

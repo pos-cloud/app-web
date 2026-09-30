@@ -47,9 +47,9 @@
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="let transaction of transactions">
+          <tr class="stock-row" *ngFor="let transaction of transactions" (click)="openView(transaction)">
             <td align="left" width="80">
-              <button type="button" class="btn btn-success" (click)="openView(transaction)" title="Ver">
+              <button type="button" class="btn btn-success" (click)="preview(transaction, $event)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
             </td>

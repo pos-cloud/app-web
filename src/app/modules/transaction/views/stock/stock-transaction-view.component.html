@@ -1,0 +1,147 @@
+<section class="stock-view">
+  <div class="stock-view__busy" *ngIf="loading && transaction" aria-hidden="true"></div>
+
+  <div *ngIf="loading && !transaction" class="stock-view__loading">
+    <div class="spinner-border text-success" role="status">
+      <span class="sr-only">Cargando</span>
+    </div>
+  </div>
+
+  <ng-container *ngIf="transaction">
+    <header class="stock-view__header">
+      <button type="button" class="stock-view__back" (click)="goBack()" aria-label="Volver">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      </button>
+
+      <div class="stock-view__identity">
+        <span class="stock-view__kind" [ngClass]="kindClass">{{ kindLabel }}</span>
+        <strong>{{ transaction.type?.name }}</strong>
+        <span *ngIf="transaction.number">Nº {{ transaction.number }}</span>
+        <span>{{ transaction.startDate | date: 'dd/MM/yyyy HH:mm' }}</span>
+        <span class="stock-view__state" [class.is-open]="editable">{{ transaction.state }}</span>
+      </div>
+
+      <div class="stock-view__deposits" [class.is-transfer]="isTransfer">
+        <ng-container *ngFor="let card of depositCards; let last = last">
+          <span class="stock-deposit">
+            <span>{{ card.label }}</span>
+            <strong>{{ card.name }}</strong>
+          </span>
+          <i *ngIf="isTransfer && !last" class="fa fa-long-arrow-right stock-view__arrow" aria-hidden="true"></i>
+        </ng-container>
+      </div>
+
+      <label class="stock-view__note">
+        <input
+          type="text"
+          [(ngModel)]="observationDraft"
+          [readonly]="!editable"
+          placeholder="Nota"
+          aria-label="Nota"
+          (blur)="saveObservation()"
+        />
+      </label>
+    </header>
+
+    <div class="stock-view__body">
+      <div class="stock-sheet">
+        <div class="stock-sheet__head">
+          <h2>Artículos</h2>
+          <span>{{ movements.length }} {{ movements.length === 1 ? 'renglón' : 'renglones' }}</span>
+        </div>
+
+        <form class="stock-composer" *ngIf="editable" (ngSubmit)="onSearchSubmit()">
+          <input
+            #searchInput
+            type="text"
+            name="searchTerm"
+            autocomplete="off"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchInput()"
+            placeholder="Código, barra o descripción. *7 pone la cantidad al último"
+          />
+          <ul class="stock-matches" *ngIf="articleMatches.length">
+            <li *ngFor="let article of articleMatches">
+              <button type="button" (click)="addArticle(article)">
+                <code>{{ article.code }}</code>
+                <span>{{ article.description }}</span>
+              </button>
+            </li>
+          </ul>
+        </form>
+
+        <div class="stock-sheet__table" *ngIf="movements.length; else emptyLines">
+          <div class="stock-line stock-line--head">
+            <span>Código</span>
+            <span>Descripción</span>
+            <span>Cantidad</span>
+            <span></span>
+          </div>
+          <div class="stock-line" *ngFor="let movement of movements; trackBy: trackByMovementId">
+            <code>{{ movement.code }}</code>
+            <p>{{ movement.description }}</p>
+            <div class="stock-qty">
+              <button
+                type="button"
+                *ngIf="editable"
+                (mousedown)="$event.preventDefault()"
+                (click)="stepQuantity(movement, -1)"
+                aria-label="Restar cantidad"
+              >
+                <i class="fa fa-minus" aria-hidden="true"></i>
+              </button>
+              <input
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                numericText="decimal"
+                [(ngModel)]="quantityDrafts[movement._id]"
+                [readonly]="!editable"
+                [attr.aria-label]="'Cantidad de ' + movement.description"
+                (blur)="onQuantityBlur(movement)"
+              />
+              <button
+                type="button"
+                *ngIf="editable"
+                (mousedown)="$event.preventDefault()"
+                (click)="stepQuantity(movement, 1)"
+                aria-label="Sumar cantidad"
+              >
+                <i class="fa fa-plus" aria-hidden="true"></i>
+              </button>
+            </div>
+            <button
+              type="button"
+              class="stock-line__remove"
+              *ngIf="editable"
+              (click)="deleteLine(movement)"
+              ngbTooltip="Quitar"
+              aria-label="Quitar artículo"
+            >
+              <i class="fa fa-trash-o" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <ng-template #emptyLines>
+          <div class="stock-empty">
+            <i class="fa fa-cubes" aria-hidden="true"></i>
+            <p>Todavía no hay artículos.</p>
+            <span>Escribí el código y Enter. Si coincide, se carga.</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <footer class="stock-view__footer">
+      <div>
+        <strong>{{ totalUnits }}</strong>
+        <span>unidades</span>
+      </div>
+      <button type="button" class="stock-view__process" *ngIf="editable" (click)="process()" [disabled]="processing || loading">
+        <i class="fa" [ngClass]="processing ? 'fa-spinner fa-spin' : 'fa-check'" aria-hidden="true"></i>
+        {{ processing ? 'Procesando' : 'Procesar stock' }}
+      </button>
+    </footer>
+  </ng-container>
+</section>

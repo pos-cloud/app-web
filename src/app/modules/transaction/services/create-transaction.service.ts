@@ -347,13 +347,21 @@ export class CreateTransactionService {
   }
 
   /**
-   * Decide el destino del alta y devuelve el `_id` + las `commands`/`queryParams`.
-   * Salvo los comprobantes formales (que tienen su propia vista), todo se deriva al editor
-   * `add-sale-order`: ahí vive la lógica de edición/cobro/finalización, que no tocamos.
-   * El acto de navegar lo hace el listado que llamó al servicio.
+   * Decide el destino del alta.
+   * Stock abre su vista. Los formales abren la vista formal.
+   * El resto sigue en el editor de venta.
    */
   private redirect(tx: Transaction, ctx: PosContext): CreateTransactionResult {
     const returnURL = ctx.returnURL ?? this._router.url;
+
+    if (tx.type?.transactionMovement === TransactionMovement.Stock) {
+      return {
+        status: 'redirect',
+        transaction: tx,
+        commands: ['/transaction/view/stock', tx._id],
+        queryParams: { returnURL },
+      };
+    }
 
     if (tx.type.view === View.Formal) {
       return { status: 'redirect', transaction: tx, commands: ['/transaction/view/formal', tx._id] };
