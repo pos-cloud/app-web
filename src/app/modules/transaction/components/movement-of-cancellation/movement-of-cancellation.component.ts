@@ -568,31 +568,25 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
       } as MovementOfCancellation;
       if (this.modifyBalance(transactionSelected)) {
         let transBalance = 0;
-        if (
-          (transactionSelected.type.transactionMovement === TransactionMovement.Sale &&
-            transactionSelected.type.movement === Movements.Outflows) ||
-          (transactionSelected.type.transactionMovement === TransactionMovement.Purchase &&
-            transactionSelected.type.movement === Movements.Inflows) ||
-          transactionSelected.type._id === this.transactionDestination.type._id
-        ) {
+        if (this.isCreditBalanceType(transactionSelected)) {
           if (balanceSelected) {
             transBalance = balanceSelected * -1;
           } else {
             transBalance = transactionSelected.balance * -1;
           }
         } else {
-          if (transactionSelected.balance > this.totalPrice && this.totalPrice !== 0) {
-            if (balanceSelected) {
-              transBalance = balanceSelected;
-            } else {
-              transBalance = this.totalPrice;
-            }
+          // Cap against remaining destination amount, considering already selected
+          // balances (e.g. credit notes with negative sign).
+          if (balanceSelected) {
+            transBalance = balanceSelected;
+          } else if (this.totalPrice !== 0) {
+            const availableToSelect = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
+            transBalance =
+              availableToSelect <= 0
+                ? 0
+                : Math.min(transactionSelected.balance, availableToSelect);
           } else {
-            if (balanceSelected) {
-              transBalance = balanceSelected;
-            } else {
-              transBalance = transactionSelected.balance;
-            }
+            transBalance = transactionSelected.balance;
           }
         }
         if (automatic && this.totalPrice < transBalance + this.balanceSelected) {
@@ -638,6 +632,73 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
       }
     }
     this.recalculateBalanceSelected();
+    // Do not redistribute when the amount was chosen explicitly (e.g. financed quotas).
+    if (balanceSelected == null) {
+      this.topUpPositiveBalances();
+    }
+  }
+
+  private isCreditBalanceType(transaction: Transaction): boolean {
+    return (
+      (transaction.type.transactionMovement === TransactionMovement.Sale &&
+        transaction.type.movement === Movements.Outflows) ||
+      (transaction.type.transactionMovement === TransactionMovement.Purchase &&
+        transaction.type.movement === Movements.Inflows) ||
+      transaction.type._id === this.transactionDestination.type._id
+    );
+  }
+
+  /**
+   * Keep the net selected balance aligned with totalPrice when credit notes
+   * (negative) and invoices (positive) are combined.
+   * Example: cobro 20k + NC -30k + factura 50k => selected net 20k (not -10k).
+   */
+  private topUpPositiveBalances(): void {
+    if (!this.totalPrice) return;
+
+    this.recalculateBalanceSelected();
+    let remaining = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
+
+    if (remaining > 0) {
+      for (const mov of this.movementsOfCancellations) {
+        if (remaining <= 0) break;
+        if (this.isMovementClosed(mov.transactionOrigin)) continue;
+        if (mov.balance <= 0) continue;
+        if (!this.modifyBalance(mov.transactionOrigin)) continue;
+
+        const room = this.roundNumber.transform(mov.transactionOrigin.balance - mov.balance);
+        if (room <= 0) continue;
+
+        const add = Math.min(room, remaining);
+        mov.balance = this.roundNumber.transform(mov.balance + add);
+        this.syncTransactionBalanceSelected(mov.transactionOrigin._id, mov.balance);
+        remaining = this.roundNumber.transform(remaining - add);
+      }
+    } else if (remaining < 0) {
+      let excess = this.roundNumber.transform(-remaining);
+      for (let i = this.movementsOfCancellations.length - 1; i >= 0; i--) {
+        if (excess <= 0) break;
+        const mov = this.movementsOfCancellations[i];
+        if (this.isMovementClosed(mov.transactionOrigin)) continue;
+        if (mov.balance <= 0) continue;
+        if (!this.modifyBalance(mov.transactionOrigin)) continue;
+
+        const reduce = Math.min(mov.balance, excess);
+        mov.balance = this.roundNumber.transform(mov.balance - reduce);
+        this.syncTransactionBalanceSelected(mov.transactionOrigin._id, mov.balance);
+        excess = this.roundNumber.transform(excess - reduce);
+      }
+    }
+
+    this.recalculateBalanceSelected();
+  }
+
+  private syncTransactionBalanceSelected(transactionId: string, balance: number): void {
+    for (const t of this.transactions) {
+      if (t._id.toString() === transactionId.toString()) {
+        t.balanceSelected = balance;
+      }
+    }
   }
 
   async getMovementOfCashes(match: {}): Promise<MovementOfCash[]> {
