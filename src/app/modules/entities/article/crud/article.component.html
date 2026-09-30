@@ -832,10 +832,10 @@
             <div class="form-group col-md-2">
               <label for="visibleTN" class="control-label">Visible en la tienda online</label>
               <select class="form-control" formControlName="visibleTN">
-                <option [ngValue]="true" [disabled]="readonly">
+                <option [ngValue]="true" [disabled]="operation === 'view' || operation === 'delete'">
                   {{ 'true' | translate | capitalize }}
                 </option>
-                <option [ngValue]="false" [disabled]="readonly">
+                <option [ngValue]="false" [disabled]="operation === 'view' || operation === 'delete'">
                   {{ 'false' | translate | capitalize }}
                 </option>
               </select>
