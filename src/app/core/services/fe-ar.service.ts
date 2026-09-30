@@ -53,7 +53,7 @@ export class FeArService {
     // Agregar el archivo(s) al FormData
     if (files && files.length > 0) {
       for (let i: number = 0; i < files.length; i++) {
-        formData.append('file', files[i], files[i].name);
+        formData.append('file', files[i], 'poscloud.crt');
       }
     }
 

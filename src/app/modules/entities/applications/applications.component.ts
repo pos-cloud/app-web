@@ -483,7 +483,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
     const companyName = (group.get('companyName')?.value ?? '').toString().trim();
     const identificationValue = (group.get('identificationValue')?.value ?? '').toString().trim();
     if (!companyName || !identificationValue) {
-      this._toastService.showToast(null, 'warning', '', 'Ingrese nombre de empresa y valor de identificación.');
+      this._toastService.showToast(null, 'warning', '', 'Ingrese el CN y el CUIT.');
       return;
     }
 
@@ -497,13 +497,13 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
             const url = window.URL.createObjectURL(result);
             const a = document.createElement('a');
             a.href = url;
-            const savedName = (group.get('file')?.value ?? '').toString().trim();
             const safeId = identificationValue.replace(/[^\dA-Za-z_-]/g, '') || 'solicitud';
-            a.download = savedName || `${safeId}.csr`;
+            a.download = `${safeId}.csr`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
+            this.clearFeArCrtAfterNewCsr(index);
           } else {
             this._toastService.showToast(null, 'danger', '', 'No se pudo generar el certificado.');
           }
@@ -518,6 +518,42 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       });
   }
 
+  /** Un CSR nuevo invalida el CRT. Se limpia el nombre guardado para obligar a subir el certificado nuevo. */
+  private clearFeArCrtAfterNewCsr(index: number): void {
+    const group = this.feArEntries.at(index) as FormGroup;
+    const hadCrt = !!(group.get('file')?.value ?? '').toString().trim();
+    if (!hadCrt) {
+      return;
+    }
+
+    group.patchValue({ file: '' });
+    this.feArPendingCrtFiles[index] = [];
+    this.application = this.integracionesForm.value;
+    const request$ = this.application?._id
+      ? this._applicationService.update(this.application)
+      : this._applicationService.save(this.application);
+
+    request$.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (result) => {
+        if (result?.status >= 400) {
+          this._toastService.showToast(result);
+          return;
+        }
+        const savedId = result?.result?._id;
+        if (savedId) {
+          this.application._id = savedId;
+          this.integracionesForm.patchValue({ _id: savedId });
+        }
+        this._toastService.showToast(
+          null,
+          'warning',
+          '',
+          'Se generó un CSR nuevo. El CRT anterior quedó invalidado: subí el certificado nuevo.'
+        );
+      },
+    });
+  }
+
   public uploadFeArCrt(index: number) {
     const files = this.feArPendingCrtFiles[index];
     const group = this.feArEntries.at(index) as FormGroup;
@@ -526,8 +562,8 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       this._toastService.showToast(null, 'warning', '', 'Ingrese el CUIT para subir el certificado.');
       return;
     }
-    if (!files?.length) {
-      this._toastService.showToast(null, 'warning', '', 'Seleccione un archivo .crt o .csr.');
+    if (!files?.length || !files[0].name.toLowerCase().endsWith('.crt')) {
+      this._toastService.showToast(null, 'warning', '', 'Seleccione un archivo .crt.');
       return;
     }
     this.feArCrtLoadingIndex = index;
@@ -566,8 +602,14 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
     while (this.feArPendingCrtFiles.length <= index) {
       this.feArPendingCrtFiles.push([]);
     }
-    this.feArPendingCrtFiles[index] = Array.from(input.files);
-    group.patchValue({ file: input.files[0].name });
+    const selected = input.files[0];
+    if (!selected.name.toLowerCase().endsWith('.crt')) {
+      this._toastService.showToast(null, 'warning', '', 'Seleccione un archivo .crt.');
+      input.value = '';
+      return;
+    }
+    this.feArPendingCrtFiles[index] = [selected];
+    group.patchValue({ file: 'poscloud.crt' });
     this.uploadFeArCrt(index);
     input.value = '';
   }
