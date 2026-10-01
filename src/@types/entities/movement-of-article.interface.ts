@@ -3,6 +3,7 @@ import {
   Activity,
   Article,
   Category,
+  Company,
   Deposit,
   Make,
   PrintType,
@@ -54,6 +55,8 @@ export interface MovementOfArticle extends Activity {
   isGeneratedByPayment: boolean;
   account: Account;
   op: number;
+  transactionEndDate: string;
+  company: Company;
   transactionType: TransactionType;
 }
 

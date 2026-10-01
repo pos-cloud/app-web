@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { Account, Category, Deposit, Make } from '@types';
+import { Account, Category, Company, Deposit, Make, TransactionType } from '@types';
 import { Article, ArticlePrintIn } from '../article/article';
 import { Taxes } from '../tax/taxes';
 import { MovementOfArticleStatus, StockMovement } from '@types';
@@ -51,6 +51,9 @@ export class MovementOfArticle {
   isGeneratedByPayment: boolean = false;
   account: Account;
   op: number;
+  transactionEndDate: string;
+  company: Company;
+  transactionType: TransactionType;
   creationUser: User;
   creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   updateUser: User;
