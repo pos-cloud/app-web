@@ -513,48 +513,57 @@ export class CreateTransactionService {
     });
   }
 
-  private async setTransactionBranch(tx: Transaction, branchId: string): Promise<void> {
+  private setTransactionBranch(tx: Transaction, branchId: string): Promise<void> {
     if (!branchId) {
-      return;
+      return Promise.resolve();
     }
-    const branches = await this.getBranches(
-      {
-        _id: { $oid: branchId },
-        operationType: { $ne: 'D' },
-      },
-      {
-        number: 1,
-        name: 1,
-        default: 1,
-        legalName: 1,
-        fantasyName: 1,
-        identificationValue: 1,
-        'identificationType._id': 1,
-        'identificationType.code': 1,
-        'identificationType.name': 1,
-        'vatCondition._id': 1,
-        'vatCondition.code': 1,
-        'vatCondition.description': 1,
-        'vatCondition.discriminate': 1,
-        'vatCondition.transactionLetter': 1,
-        'vatCondition.observation': 1,
-        startOfActivity: 1,
-        grossIncome: 1,
-        address: 1,
-        image: 1,
-        phone: 1,
-        postalCode: 1,
-        latitude: 1,
-        longitude: 1,
-        operationType: 1,
-      }
-    );
-    tx.branch = branches?.[0];
+    return new Promise((resolve) => {
+      this._branchService
+        .getAll({
+          project: {
+            number: 1,
+            name: 1,
+            default: 1,
+            legalName: 1,
+            fantasyName: 1,
+            identificationValue: 1,
+            'identificationType._id': 1,
+            'identificationType.code': 1,
+            'identificationType.name': 1,
+            'vatCondition._id': 1,
+            'vatCondition.code': 1,
+            'vatCondition.description': 1,
+            'vatCondition.discriminate': 1,
+            'vatCondition.transactionLetter': 1,
+            'vatCondition.observation': 1,
+            startOfActivity: 1,
+            grossIncome: 1,
+            address: 1,
+            image: 1,
+            phone: 1,
+            postalCode: 1,
+            latitude: 1,
+            longitude: 1,
+            operationType: 1,
+          },
+          match: {
+            _id: { $oid: branchId },
+            operationType: { $ne: 'D' },
+          },
+        })
+        .subscribe(
+          (result) => {
+            tx.branch = result?.status === 200 ? result.result?.[0] : null;
+            resolve();
+          },
+          () => resolve()
+        );
+    });
   }
 
-  private getBranches(match: {} = {}, project: {} = {}): Promise<Branch[]> {
+  private getBranches(match: {} = {}): Promise<Branch[]> {
     return new Promise((resolve) => {
-      this._branchService.getBranches(project, match, { number: 1 }, {}, 0, 0).subscribe(
+      this._branchService.getBranches({}, match, { number: 1 }, {}, 0, 0).subscribe(
         (result) => resolve(result?.branches ?? null),
         (error) => {
           this._toastService.showToast(error);
