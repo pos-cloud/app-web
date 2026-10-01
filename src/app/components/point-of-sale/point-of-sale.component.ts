@@ -36,16 +36,7 @@ import { TransactionTypeService } from '../../core/services/transaction-type.ser
 import { TransactionService } from '../../core/services/transaction.service';
 
 import { ImportComponent } from '@shared/components/import/import.component';
-import {
-  ApiResponse,
-  Company,
-  CompanyType,
-  EmployeeType,
-  Table,
-  TableState,
-  User,
-  View,
-} from '@types';
+import { ApiResponse, Company, CompanyType, EmployeeType, Table, TableState, User, View } from '@types';
 import { SelectCompanyComponent } from 'app/modules/entities/company/select-company/select-company.component';
 import { DeleteTransactionComponent } from 'app/modules/transaction/components/delete-transaction/delete-transaction.component';
 import { FinishTransactionDialogComponent } from 'app/modules/transaction/components/finish-transaction-dialog/finish-transaction-dialog.component';
@@ -263,12 +254,51 @@ export class PointOfSaleComponent implements OnInit {
     });
   }
 
-  public getBranches(match: {} = {}): Promise<Branch[]> {
+  private async setTransactionBranch(branchId: string): Promise<void> {
+    if (!branchId) {
+      return;
+    }
+    const branches = await this.getBranches(
+      {
+        _id: { $oid: branchId },
+        operationType: { $ne: 'D' },
+      },
+      {
+        number: 1,
+        name: 1,
+        default: 1,
+        legalName: 1,
+        fantasyName: 1,
+        identificationValue: 1,
+        'identificationType._id': 1,
+        'identificationType.code': 1,
+        'identificationType.name': 1,
+        'vatCondition._id': 1,
+        'vatCondition.code': 1,
+        'vatCondition.description': 1,
+        'vatCondition.discriminate': 1,
+        'vatCondition.transactionLetter': 1,
+        'vatCondition.observation': 1,
+        startOfActivity: 1,
+        grossIncome: 1,
+        address: 1,
+        image: 1,
+        phone: 1,
+        postalCode: 1,
+        latitude: 1,
+        longitude: 1,
+        operationType: 1,
+      }
+    );
+    this.transaction.branch = branches?.[0];
+  }
+
+  public getBranches(match: {} = {}, project: {} = {}): Promise<Branch[]> {
     return new Promise<Branch[]>((resolve, reject) => {
       this.subscription.add(
         this._branchService
           .getBranches(
-            {}, // PROJECT
+            project, // PROJECT
             match, // MATCH
             { number: 1 }, // SORT
             {}, // GROUP
@@ -823,6 +853,7 @@ export class PointOfSaleComponent implements OnInit {
             this.transaction.branchOrigin = originBranch;
             this.transaction.branchDestination = originBranch;
           }
+          await this.setTransactionBranch(this.transaction.branchOrigin?._id);
           if (
             !this.transaction.type.fixedOrigin ||
             (this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0)
@@ -864,6 +895,7 @@ export class PointOfSaleComponent implements OnInit {
                   let defaultBranch = branches[0];
                   this.transaction.branchOrigin = defaultBranch;
                   this.transaction.branchDestination = defaultBranch;
+                  await this.setTransactionBranch(defaultBranch._id);
                   if (
                     !this.transaction.type.fixedOrigin ||
                     (this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0)
@@ -1443,10 +1475,11 @@ export class PointOfSaleComponent implements OnInit {
       case 'select-branch':
         modalRef = this._modalService.open(SelectBranchComponent);
         modalRef.result.then(
-          (result) => {
+          async (result) => {
             if (result && result.branch) {
               this.transaction.branchOrigin = result.branch;
               this.transaction.branchDestination = result.branch;
+              await this.setTransactionBranch(result.branch._id);
               this.nextStepTransaction();
             } else {
               this.hideMessage();
@@ -1531,6 +1564,7 @@ export class PointOfSaleComponent implements OnInit {
                 operationType: { $ne: 'D' },
               });
               this.transaction.branchOrigin = branchO[0];
+              await this.setTransactionBranch(branchO[0]?._id);
               let depositDestination = await this.getDeposits({
                 _id: { $oid: result.destination },
                 operationType: { $ne: 'D' },

@@ -69,6 +69,7 @@ export class Transaction {
   deliveryAddress: Address;
   branchOrigin: Branch;
   branchDestination: Branch;
+  branch: Branch;
   depositOrigin: Deposit;
   depositDestination: Deposit;
   transport: Transport;
