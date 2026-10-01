@@ -196,6 +196,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         transactionDestination = Object.assign(transactionDestination, this.transaction);
         transactionDestination._id = '';
         transactionDestination.type = transactionType;
+        transactionDestination.branch = this.transaction.branch;
+        transactionDestination.branchOrigin = this.transaction.branchOrigin;
+        transactionDestination.branchDestination = this.transaction.branchDestination;
         transactionDestination.state = TransactionState.Pending;
         transactionDestination.balance = 0;
         transactionDestination.transport = this.transaction.transport;
@@ -566,6 +569,8 @@ export class CancellationTypeAutomaticComponent implements OnInit {
             stockMovement: 1,
             requestTaxes: 1,
             transactionMovement: 1,
+            electronics: 1,
+            codes: 1,
             table: 1,
             operationType: 1,
           },
