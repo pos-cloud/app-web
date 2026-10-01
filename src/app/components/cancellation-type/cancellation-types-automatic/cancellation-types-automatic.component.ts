@@ -16,6 +16,7 @@ import { Transaction, TransactionState } from 'app/components/transaction/transa
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
+import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -52,6 +53,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     private _router: Router,
     public activeModal: NgbActiveModal,
     private _transactionTypeService: TransactionTypeService,
+    private _branchService: BranchService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _toastService: ToastService,
     public translatePipe: TranslateMePipe
@@ -196,9 +198,10 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         transactionDestination = Object.assign(transactionDestination, this.transaction);
         transactionDestination._id = '';
         transactionDestination.type = transactionType;
-        transactionDestination.branch = this.transaction.branch;
         transactionDestination.branchOrigin = this.transaction.branchOrigin;
         transactionDestination.branchDestination = this.transaction.branchDestination;
+        const branchId = this.transaction.branchOrigin?._id || this.transaction.branch?._id;
+        transactionDestination.branch = (await this.hydrateBranch(branchId)) || this.transaction.branch;
         transactionDestination.state = TransactionState.Pending;
         transactionDestination.balance = 0;
         transactionDestination.transport = this.transaction.transport;
@@ -532,6 +535,52 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         },
         (error) => reject(error)
       );
+    });
+  }
+
+  private hydrateBranch(branchId: string): Promise<any> {
+    if (!branchId) {
+      return Promise.resolve(null);
+    }
+    return new Promise((resolve) => {
+      this._branchService
+        .getAll({
+          project: {
+            _id: 1,
+            number: 1,
+            name: 1,
+            default: 1,
+            legalName: 1,
+            fantasyName: 1,
+            identificationValue: 1,
+            'identificationType._id': 1,
+            'identificationType.code': 1,
+            'identificationType.name': 1,
+            'vatCondition._id': 1,
+            'vatCondition.code': 1,
+            'vatCondition.description': 1,
+            'vatCondition.discriminate': 1,
+            'vatCondition.transactionLetter': 1,
+            'vatCondition.observation': 1,
+            startOfActivity: 1,
+            grossIncome: 1,
+            address: 1,
+            image: 1,
+            phone: 1,
+            postalCode: 1,
+            latitude: 1,
+            longitude: 1,
+            operationType: 1,
+          },
+          match: {
+            _id: { $oid: branchId },
+            operationType: { $ne: 'D' },
+          },
+        })
+        .subscribe(
+          (result) => resolve(result?.status === 200 ? result.result?.[0] : null),
+          () => resolve(null)
+        );
     });
   }
 
