@@ -3,7 +3,6 @@ export * from './account-seat.service';
 export * from './account.service';
 export * from './address.service';
 export * from './ai-chat.service';
-export * from './analytics.service';
 export * from './application.service';
 export * from './appointment.service';
 export * from './article-stock.service';

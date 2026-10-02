@@ -8,7 +8,6 @@ import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // SERVICES
 import { AuthService } from '../../core/services/auth.service';
-import { AnalyticsService } from '../../core/services/analytics.service';
 import { ToastService } from '../../shared/components/toast/toast.service';
 import { AuthUpdate, AuthUpdatesService } from '../auth-updates.service';
 
@@ -35,7 +34,6 @@ export class LoginComponent {
     private _router: Router,
     private _route: ActivatedRoute,
     private _toastService: ToastService,
-    private _analyticsService: AnalyticsService,
     private _authUpdatesService: AuthUpdatesService
   ) {
     const savedCompany = localStorage.getItem('company');
@@ -94,7 +92,6 @@ export class LoginComponent {
           });
 
           this._authService.loginStorage(u, this.company);
-          this._analyticsService.updateClient(this.company);
 
           this._route.queryParams.subscribe({
             next: (params) => {
