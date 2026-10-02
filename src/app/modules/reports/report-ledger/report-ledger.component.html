@@ -54,16 +54,16 @@
                         </td>
                         <td class="flat">{{ item.codigo }}</td>
                         <td class="flat">{{ item.description }}</td>
-                        <td class="align-right">{{ item.totalDebit | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                        <td class="align-right">{{ item.totalCredit | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-                        <td class="align-right">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+                        <td class="align-right">{{ item.totalDebit | currency:'USD':'symbol-narrow':'1.2-2':'es-Ar'}}</td>
+                        <td class="align-right">{{ item.totalCredit | currency:'USD':'symbol-narrow':'1.2-2':'es-Ar'}}</td>
+                        <td class="align-right">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2':'es-Ar'}}</td>
                     </tr>
                 </tbody>
                 <!--<tfoot>
             <tr>
               <th><strong>Total</strong></th>
               <th class="align-right"><strong>{{totalItem}}</strong></th>
-              <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</strong></th>
+              <th class="align-right"><strong>{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2':'es-Ar' }}</strong></th>
             </tr>
           </tfoot>-->
             </table>

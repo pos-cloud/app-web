@@ -1,4 +1,7 @@
+import { CurrencyPipe } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
+
+const currencyPipe = new CurrencyPipe('es-Ar');
 
 @Pipe({
   name: 'dynamicFormat',
@@ -6,9 +9,12 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class DynamicFormatPipe implements PipeTransform {
   transform(value: any, dataType: string): any {
     if (dataType === 'currency') {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+      return currencyPipe.transform(value, 'USD', 'symbol-narrow', '1.2-2');
     } else if (dataType === 'number') {
-      return value?.toLocaleString();
+      if (value === null || value === undefined || value === '') {
+        return value;
+      }
+      return Number(value).toLocaleString('es-AR');
     } else if (dataType === 'string') {
       return value?.toString();
     } else if (dataType === 'date') {

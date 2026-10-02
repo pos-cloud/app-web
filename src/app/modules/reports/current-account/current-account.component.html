@@ -145,13 +145,13 @@
                 {{ item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY' }}
               </td>
               <td class="align-right">
-                {{ item?.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item?.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2' : 'es-Ar' }}
               </td>
               <td class="align-right" [ngClass]="{ credit: item.debe > 0 }">
-                {{ item.debe | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.debe | currency: 'USD' : 'symbol-narrow' : '1.2-2' : 'es-Ar' }}
               </td>
               <td class="align-right" [ngClass]="{ debit: item.haber > 0 }">
-                {{ item.haber | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ item.haber | currency: 'USD' : 'symbol-narrow' : '1.2-2' : 'es-Ar' }}
               </td>
             </tr>
             <tr align="center" *ngIf="totalItems === 0 && !loading">
@@ -163,10 +163,10 @@
               <strong>SALDO TOTAL</strong>
             </td>
             <td *ngIf="totalPrice >= 0" class="align-right">
-              <strong>{{ totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+              <strong>{{ totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' : 'es-Ar' }}</strong>
             </td>
             <td *ngIf="totalPrice < 0" class="align-right">
-              <strong>{{ totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</strong>
+              <strong>{{ totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' : 'es-Ar' }}</strong>
             </td>
           </tfoot>
         </table>
