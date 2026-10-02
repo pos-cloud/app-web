@@ -1,6 +1,10 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import localeEsAr from '@angular/common/locales/es-AR';
+import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+
+registerLocaleData(localeEsAr);
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -132,6 +136,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     EditorModule,
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: 'es-AR' },
     /** Misma copia self-hosted que /tinymce en assets (evita CDN + base_url cruzados). */
     { provide: TINYMCE_SCRIPT_SRC, useValue: '/assets/tinymce/tinymce.min.js' },
     {
