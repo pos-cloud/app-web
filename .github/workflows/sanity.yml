@@ -1,4 +1,4 @@
-name: Build
+name: Sanity
 
 on:
   pull_request:
@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  sanity:
+    name: Sanity
     runs-on: ubuntu-latest
 
     steps:
@@ -23,11 +23,8 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli
-
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build
-        run: npm run ${{ github.base_ref == 'main' && 'build:prod' || 'build:dev' }}
+      - name: Sanity check (format + unused imports)
+        run: npm run sanity

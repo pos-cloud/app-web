@@ -8,8 +8,8 @@ on:
       - "services/**"
 
 jobs:
-  test:
-    name: Test
+  sanity:
+    name: Sanity
     runs-on: ubuntu-latest
 
     steps:
@@ -27,13 +27,29 @@ jobs:
       - name: Sanity check (format + unused imports)
         run: npm run sanity
 
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
       - name: Unit tests
         run: npm test -- --ci
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: test
+    needs: [sanity, test]
 
     steps:
       - name: Checkout repository
