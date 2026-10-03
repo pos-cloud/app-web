@@ -16,7 +16,7 @@
               class="btn btn-select"
               [ngClass]="{
                 'btn-primary': printer?._id === printerSelected?._id,
-                'btn-outline-primary': printer?._id !== printerSelected?._id
+                'btn-outline-primary': printer?._id !== printerSelected?._id,
               }"
               (click)="printerSelected = printer"
             >

@@ -581,10 +581,7 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
             transBalance = balanceSelected;
           } else if (this.totalPrice !== 0) {
             const availableToSelect = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
-            transBalance =
-              availableToSelect <= 0
-                ? 0
-                : Math.min(transactionSelected.balance, availableToSelect);
+            transBalance = availableToSelect <= 0 ? 0 : Math.min(transactionSelected.balance, availableToSelect);
           } else {
             transBalance = transactionSelected.balance;
           }

@@ -36,12 +36,12 @@ export class VatConditionComponent implements OnInit {
     private _toastService: ToastService
   ) {
     this.vatConditionForm = this._fb.group({
-      _id: ["", []],
-      code: ["", [Validators.required]],
-      description: ["", [Validators.required]],
-      transactionLetter: ["", [Validators.required]],
+      _id: ['', []],
+      code: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      transactionLetter: ['', [Validators.required]],
       discriminate: [false, [Validators.required]],
-      observation: ["", []],
+      observation: ['', []],
     });
   }
 
@@ -68,11 +68,11 @@ export class VatConditionComponent implements OnInit {
   public setValueForm(): void {
     const values = {
       _id: this.vatCondition?._id ?? '',
-      code:  this.vatCondition?.code ?? '',
-      description:  this.vatCondition?.description ?? '',
-      transactionLetter:  this.vatCondition?.transactionLetter ?? 'C',
-      discriminate:  this.vatCondition?.discriminate ?? false,
-      observation:  this.vatCondition?.observation ?? '',
+      code: this.vatCondition?.code ?? '',
+      description: this.vatCondition?.description ?? '',
+      transactionLetter: this.vatCondition?.transactionLetter ?? 'C',
+      discriminate: this.vatCondition?.discriminate ?? false,
+      observation: this.vatCondition?.observation ?? '',
     };
 
     this.vatConditionForm.setValue(values);

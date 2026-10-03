@@ -94,7 +94,7 @@
         <tr>
           <td *ngFor="let column of columns; let i = index">
             <strong *ngIf="i > 0 && totals?.[column.label]">
-              {{ totals[column.label] | dynamicFormat : column.dataType }}
+              {{ totals[column.label] | dynamicFormat: column.dataType }}
             </strong>
           </td>
         </tr>

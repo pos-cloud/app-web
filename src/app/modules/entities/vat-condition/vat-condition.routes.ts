@@ -11,14 +11,14 @@ export const VAT_CONDITION_ROUTES: Routes = [
   },
   {
     path: 'view/:id',
-loadComponent: () => import('./crud/vat-condition.component').then((m) => m.VatConditionComponent),
+    loadComponent: () => import('./crud/vat-condition.component').then((m) => m.VatConditionComponent),
   },
   {
     path: 'update/:id',
-loadComponent: () => import('./crud/vat-condition.component').then((m) => m.VatConditionComponent),
+    loadComponent: () => import('./crud/vat-condition.component').then((m) => m.VatConditionComponent),
   },
   {
     path: 'delete/:id',
-loadComponent: () => import('./crud/vat-condition.component').then((m) => m.VatConditionComponent),
+    loadComponent: () => import('./crud/vat-condition.component').then((m) => m.VatConditionComponent),
   },
 ];

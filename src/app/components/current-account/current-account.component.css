@@ -7,7 +7,7 @@
 }
 
 .debit {
-  background: #F6CECE;
+  background: #f6cece;
 }
 
 .container-filter {
@@ -19,15 +19,15 @@ th {
 }
 
 .transaction-data {
-  background-color: #5BA0D9;
+  background-color: #5ba0d9;
 }
 
 .payment-method-data {
-  background-color: #7CC3FF;
+  background-color: #7cc3ff;
 }
 
 .balance-data {
-  background-color: #0271CF;
+  background-color: #0271cf;
 }
 
 .align-right {

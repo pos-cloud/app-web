@@ -15,13 +15,7 @@ function pad2(n: number): string {
 /**
  * Instantáneo UTC correspondiente a una fecha/hora civil en Argentina (UTC−3).
  */
-export function argentinaWallTimeToUtc(
-  year: number,
-  month1: number,
-  day: number,
-  hour: number,
-  minute: number
-): Date {
+export function argentinaWallTimeToUtc(year: number, month1: number, day: number, hour: number, minute: number): Date {
   return new Date(Date.UTC(year, month1 - 1, day, hour + ARG_UTC_OFFSET_HOURS, minute, 0, 0));
 }
 

@@ -35,7 +35,7 @@
                 'btn-outline-primary':
                   !cancellationType ||
                   !cancellationTypeSelected ||
-                  cancellationType._id !== cancellationTypeSelected._id
+                  cancellationType._id !== cancellationTypeSelected._id,
               }"
               (click)="cancellationTypeSelected = cancellationType"
               [disabled]="loading"

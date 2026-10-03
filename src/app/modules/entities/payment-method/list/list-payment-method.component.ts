@@ -356,7 +356,10 @@ export class ListPaymentMethodComponent {
     },
   ];
 
-  constructor(public _service: PaymentMethodService, private _router: Router) {}
+  constructor(
+    public _service: PaymentMethodService,
+    private _router: Router
+  ) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);

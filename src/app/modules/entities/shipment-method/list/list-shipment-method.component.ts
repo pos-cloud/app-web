@@ -170,7 +170,11 @@ export class ListShipmentMethodsComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: ShipmentMethodService, private _router: Router, public _alertConfig: NgbAlertConfig) {}
+  constructor(
+    public _service: ShipmentMethodService,
+    private _router: Router,
+    public _alertConfig: NgbAlertConfig
+  ) {}
 
   public async emitEvent(event) {
     this.redirect(event.op, event.obj);

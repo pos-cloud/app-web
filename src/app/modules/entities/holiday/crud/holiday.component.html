@@ -56,8 +56,8 @@
               id="name"
               [focus]="focusEvent"
               [ngClass]="{
-                  'is-invalid': holidayForm.get('name')?.touched && holidayForm.get('name')?.invalid,
-                }"
+                'is-invalid': holidayForm.get('name')?.touched && holidayForm.get('name')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
@@ -75,8 +75,8 @@
               name="date"
               id="date"
               [ngClass]="{
-                    'is-invalid': holidayForm.get('date')?.touched && holidayForm.get('date')?.invalid,
-                  }"
+                'is-invalid': holidayForm.get('date')?.touched && holidayForm.get('date')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
@@ -104,7 +104,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ holiday?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ holiday?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -118,7 +118,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ holiday?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ holiday?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

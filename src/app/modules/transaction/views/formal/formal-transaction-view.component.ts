@@ -1191,9 +1191,7 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
             const updated = result.result;
             if (updated && typeof updated === 'object') {
               const nextArticle =
-                updated.article && typeof updated.article === 'object'
-                  ? updated.article
-                  : movement.article;
+                updated.article && typeof updated.article === 'object' ? updated.article : movement.article;
               this.movementsOfArticles[index] = {
                 ...movement,
                 ...updated,

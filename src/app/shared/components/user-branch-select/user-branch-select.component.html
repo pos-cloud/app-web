@@ -9,7 +9,5 @@
   [disabled]="formDisabled || !allowChangeBranch"
 >
   <option *ngIf="showAllOption" [ngValue]="null">{{ allOptionLabel }}</option>
-  <option *ngFor="let branch of branches" [ngValue]="branch._id">
-    {{ branch.number }} - {{ branch.name }}
-  </option>
+  <option *ngFor="let branch of branches" [ngValue]="branch._id">{{ branch.number }} - {{ branch.name }}</option>
 </select>

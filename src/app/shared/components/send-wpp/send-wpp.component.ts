@@ -23,7 +23,10 @@ export class SendWppComponent implements OnInit {
   @Input() message: string = '¡Hola! Te comparto el link de tu comprobante:';
   @Input() transactionId: string = '';
 
-  constructor(private _fb: UntypedFormBuilder, private activeModal: NgbActiveModal) {
+  constructor(
+    private _fb: UntypedFormBuilder,
+    private activeModal: NgbActiveModal
+  ) {
     this.sendWppForm = this._fb.group({
       phone: ['', [Validators.required]],
       message: ['', [Validators.required]],

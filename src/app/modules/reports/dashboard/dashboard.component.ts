@@ -72,7 +72,11 @@ export class DasboardComponent {
   private subscription: Subscription = new Subscription();
   private destroy$ = new Subject<void>();
 
-  constructor(private _service: ReportSystemService, private _toastService: ToastService, private _title: Title) {}
+  constructor(
+    private _service: ReportSystemService,
+    private _toastService: ToastService,
+    private _title: Title
+  ) {}
 
   ngOnInit(): void {
     this.getSalesTotal();

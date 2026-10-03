@@ -100,12 +100,7 @@
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="auth-submit"
-          [disabled]="!loginForm?.valid || loading"
-          [attr.aria-busy]="loading"
-        >
+        <button type="submit" class="auth-submit" [disabled]="!loginForm?.valid || loading" [attr.aria-busy]="loading">
           <i *ngIf="loading" class="fa fa-spinner fa-spin mr-1" aria-hidden="true"></i>
           <span *ngIf="!loading">Iniciar sesión</span>
           <span *ngIf="loading">Iniciando sesión…</span>

@@ -84,7 +84,9 @@
   border: 1px solid #eef2f7;
   border-radius: 10px;
   background: #fafbfc;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .product-item:hover {

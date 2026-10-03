@@ -36,8 +36,7 @@ export const POS_ROUTES: Routes = [
   },
   {
     path: 'app',
-    loadComponent: () =>
-      import('./app/list-transactions.component').then((m) => m.ListAppTransactionsComponent),
+    loadComponent: () => import('./app/list-transactions.component').then((m) => m.ListAppTransactionsComponent),
   },
   {
     path: 'subscription',

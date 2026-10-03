@@ -147,7 +147,7 @@ export class TransferCashBoxComponent implements OnInit, OnDestroy {
     const stillValid = !!current && this.paymentMethods.some((method) => method._id === current._id);
 
     this.transferForm.patchValue({
-      paymentMethod: stillValid ? current : this.paymentMethods[0] ?? null,
+      paymentMethod: stillValid ? current : (this.paymentMethods[0] ?? null),
       amount: null,
     });
   }
@@ -315,7 +315,9 @@ export class TransferCashBoxComponent implements OnInit, OnDestroy {
   private paymentMethodFromBalanceItem(item: CashBoxBalanceItem): PaymentMethod | null {
     const rawType: unknown = Array.isArray(item?.type) ? item.type[0] : item?.type;
     const id = this.paymentMethodId(rawType);
-    const name = (typeof rawType === 'object' && rawType && 'name' in rawType ? (rawType as PaymentMethod).name : '') || item?.name;
+    const name =
+      (typeof rawType === 'object' && rawType && 'name' in rawType ? (rawType as PaymentMethod).name : '') ||
+      item?.name;
     if (!id || id === '[object Object]') return null;
 
     const fromType = typeof rawType === 'object' && rawType ? (rawType as PaymentMethod) : ({} as PaymentMethod);

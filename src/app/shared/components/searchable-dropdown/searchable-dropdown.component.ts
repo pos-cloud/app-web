@@ -68,9 +68,7 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
     this.searchSubscription = this.searchTerm$
       .pipe(
         debounceTime(300),
-        switchMap((term) =>
-          this.runSearch(term).pipe(finalize(() => (this.searching = false)))
-        )
+        switchMap((term) => this.runSearch(term).pipe(finalize(() => (this.searching = false))))
       )
       .subscribe({
         next: (items) => {

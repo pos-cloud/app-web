@@ -1,106 +1,108 @@
 app-add-movement-of-article {
-      .center-content {
-            margin-top: 30px;
-      }
-      
-      img.mediana {
-            width: 200px; height: 150px;
-      }
+  .center-content {
+    margin-top: 30px;
+  }
 
-      .selectVariant {
-            height: 150px;
-      }
+  img.mediana {
+    width: 200px;
+    height: 150px;
+  }
 
-      .form-check {
-            margin-left: 40px;
-      }
+  .selectVariant {
+    height: 150px;
+  }
 
-      .btn {
-            cursor: pointer;
-      }
+  .form-check {
+    margin-left: 40px;
+  }
 
-      .btn-variant {
-            width: 150px;
-            margin-left: 20px;
-      }
+  .btn {
+    cursor: pointer;
+  }
 
-      .btn-note, .btn-variant {
-            width: auto;
-            margin-left: 20px;
-            margin-top: 10px;
-      }
+  .btn-variant {
+    width: 150px;
+    margin-left: 20px;
+  }
 
-      .btn-big {
-            font-size: 15px;
-            min-width: 50px;
-      }
+  .btn-note,
+  .btn-variant {
+    width: auto;
+    margin-left: 20px;
+    margin-top: 10px;
+  }
 
-      .variant-matrix-wrapper {
-            margin-top: 10px;
-            overflow-x: auto;
-      }
+  .btn-big {
+    font-size: 15px;
+    min-width: 50px;
+  }
 
-      .variant-matrix {
-            margin-bottom: 0;
-            table-layout: auto;
-            width: max-content;
-            min-width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-      }
+  .variant-matrix-wrapper {
+    margin-top: 10px;
+    overflow-x: auto;
+  }
 
-      .variant-matrix th,
-      .variant-matrix td {
-            padding: 4px 10px;
-            font-size: 12px;
-            text-align: center;
-            vertical-align: middle;
-            background-color: #fff;
-      }
+  .variant-matrix {
+    margin-bottom: 0;
+    table-layout: auto;
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
 
-      .variant-matrix-sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 2;
-            min-width: 72px;
-            background-color: #fff;
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.08);
-      }
+  .variant-matrix th,
+  .variant-matrix td {
+    padding: 4px 10px;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #fff;
+  }
 
-      .variant-matrix thead th.variant-matrix-sticky-col {
-            z-index: 3;
-      }
+  .variant-matrix-sticky-col {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    min-width: 72px;
+    background-color: #fff;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.08);
+  }
 
-      .variant-matrix th:first-child,
-      .variant-matrix td.variant-matrix-label {
-            text-align: left;
-            padding-left: 8px;
-            white-space: nowrap;
-      }
+  .variant-matrix thead th.variant-matrix-sticky-col {
+    z-index: 3;
+  }
 
-      .variant-matrix th:not(:first-child),
-      .variant-matrix td:not(.variant-matrix-label) {
-            min-width: 64px;
-            white-space: nowrap;
-      }
+  .variant-matrix th:first-child,
+  .variant-matrix td.variant-matrix-label {
+    text-align: left;
+    padding-left: 8px;
+    white-space: nowrap;
+  }
 
-      .variant-matrix-label {
-            font-weight: 600;
-      }
+  .variant-matrix th:not(:first-child),
+  .variant-matrix td:not(.variant-matrix-label) {
+    min-width: 64px;
+    white-space: nowrap;
+  }
 
-      .variant-matrix-input {
-            width: 72px;
-            min-width: 56px;
-            max-width: 120px;
-            margin: 0 auto;
-            padding: 3px 6px;
-            font-size: 13px;
-            text-align: center;
-      }
+  .variant-matrix-label {
+    font-weight: 600;
+  }
 
-      .variant-matrix-input--positive {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-      }
+  .variant-matrix-input {
+    width: 72px;
+    min-width: 56px;
+    max-width: 120px;
+    margin: 0 auto;
+    padding: 3px 6px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .variant-matrix-input--positive {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+  }
 }

@@ -34,7 +34,7 @@
                 style="min-width: 200px; text-align: left"
                 [ngClass]="{
                   'btn-primary': priceList._id === priceListSelected?._id,
-                  'btn-outline-primary': priceList._id !== priceListSelected?._id
+                  'btn-outline-primary': priceList._id !== priceListSelected?._id,
                 }"
                 (click)="priceListSelected = priceList; priceListForm.patchValue({ priceList: priceList._id })"
               >

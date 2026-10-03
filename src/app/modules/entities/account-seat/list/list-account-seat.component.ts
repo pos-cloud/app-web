@@ -22,7 +22,10 @@ export class ListAccountSeatComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: AccountSeatService, private _router: Router) {
+  constructor(
+    public _service: AccountSeatService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'date',

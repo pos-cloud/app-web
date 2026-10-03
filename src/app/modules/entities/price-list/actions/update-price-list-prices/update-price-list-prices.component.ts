@@ -22,12 +22,14 @@ const TYPE_OPTIONS = [
   {
     value: UPDATE_TYPE.FIXED_AMOUNT,
     label: 'Monto fijo',
-    valueExample: 'Ponés en Valor el precio nuevo. Ejemplo: si escribís 150, todos los precios fijos de la lista pasan a $150.',
+    valueExample:
+      'Ponés en Valor el precio nuevo. Ejemplo: si escribís 150, todos los precios fijos de la lista pasan a $150.',
   },
   {
     value: UPDATE_TYPE.INCREMENTAL_AMOUNT,
     label: 'Monto incremental',
-    valueExample: 'Ponés en Valor cuántos pesos sumar. Ejemplo: un precio fijo de $100, escribís 20 en Valor, y pasa a $120.',
+    valueExample:
+      'Ponés en Valor cuántos pesos sumar. Ejemplo: un precio fijo de $100, escribís 20 en Valor, y pasa a $120.',
   },
   {
     value: UPDATE_TYPE.INCREMENTAL_PERCENTAGE,

@@ -568,8 +568,7 @@ export class HistoryComponent implements OnInit {
       }
     }
 
-    if (match.charAt(match.length - 1) === ',')
-      match = match.substring(0, match.length - 1);
+    if (match.charAt(match.length - 1) === ',') match = match.substring(0, match.length - 1);
     match += `}`;
     match = JSON.parse(match);
 
@@ -726,11 +725,7 @@ export class HistoryComponent implements OnInit {
     this.getItems();
   }
 
-  public showMessage(
-    message: string,
-    type: string,
-    dismissible: boolean
-  ): void {
+  public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

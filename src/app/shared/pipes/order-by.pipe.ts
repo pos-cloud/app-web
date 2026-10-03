@@ -34,12 +34,7 @@ export class OrderByPipe implements PipeTransform {
     }
 
     try {
-      if (
-        isNaN(parseFloat(a)) ||
-        !isFinite(a) ||
-        isNaN(parseFloat(b)) ||
-        !isFinite(b)
-      ) {
+      if (isNaN(parseFloat(a)) || !isFinite(a) || isNaN(parseFloat(b)) || !isFinite(b)) {
         //Si no es un número convertimos en minúscula para comparar correctamente
         if (a.toLowerCase() < b.toLowerCase()) return -1;
         if (a.toLowerCase() > b.toLowerCase()) return 1;
@@ -62,24 +57,16 @@ export class OrderByPipe implements PipeTransform {
     //Si no existe mas de un elemento en la lista a ordenar
     if (!Array.isArray(input)) return input;
 
-    if (
-      !Array.isArray(config) ||
-      (Array.isArray(config) && config.length == 1)
-    ) {
+    if (!Array.isArray(config) || (Array.isArray(config) && config.length == 1)) {
       let propertyToCheck: string = !Array.isArray(config) ? config : config[0];
       let desc: boolean = propertyToCheck.substr(0, 1) == '-';
 
       //Array Básico
-      if (
-        !propertyToCheck ||
-        propertyToCheck == '-' ||
-        propertyToCheck == '+'
-      ) {
+      if (!propertyToCheck || propertyToCheck == '-' || propertyToCheck == '+') {
         return !desc ? input.sort() : input.sort().reverse();
       } else {
         let property: string =
-          propertyToCheck.substr(0, 1) == '+' ||
-          propertyToCheck.substr(0, 1) == '-'
+          propertyToCheck.substr(0, 1) == '+' || propertyToCheck.substr(0, 1) == '-'
             ? propertyToCheck.substr(1)
             : propertyToCheck;
 
@@ -101,15 +88,9 @@ export class OrderByPipe implements PipeTransform {
                 b[property] = new Array();
                 b[property][arg2] = '';
               }
-              response = OrderByPipe._orderByComparator(
-                a[property][arg2],
-                b[property][arg2]
-              );
+              response = OrderByPipe._orderByComparator(a[property][arg2], b[property][arg2]);
             } else {
-              response = OrderByPipe._orderByComparator(
-                a[property],
-                b[property]
-              );
+              response = OrderByPipe._orderByComparator(a[property], b[property]);
             }
           } else {
             if (arg2 !== undefined) {
@@ -121,10 +102,7 @@ export class OrderByPipe implements PipeTransform {
                 b[property] = new Array();
                 b[property][arg2] = '';
               }
-              response = -OrderByPipe._orderByComparator(
-                a[property][arg2],
-                b[property][arg2]
-              );
+              response = -OrderByPipe._orderByComparator(a[property][arg2], b[property][arg2]);
             } else {
               if (property.toLowerCase().includes('date')) {
                 let dateFormat: DateFormatPipe = new DateFormatPipe();
@@ -134,10 +112,7 @@ export class OrderByPipe implements PipeTransform {
                   dateFormat.transform(b[property], 'YYYY/MM/DD HH:mm:ss')
                 );
               } else {
-                response = -OrderByPipe._orderByComparator(
-                  a[property],
-                  b[property]
-                );
+                response = -OrderByPipe._orderByComparator(a[property], b[property]);
               }
             }
           }
@@ -151,9 +126,7 @@ export class OrderByPipe implements PipeTransform {
         for (let i: number = 0; i < config.length; i++) {
           let desc: boolean = config[i].substr(0, 1) == '-';
           let property: string =
-            config[i].substr(0, 1) == '+' || config[i].substr(0, 1) == '-'
-              ? config[i].substr(1)
-              : config[i];
+            config[i].substr(0, 1) == '+' || config[i].substr(0, 1) == '-' ? config[i].substr(1) : config[i];
 
           let comparison = !desc
             ? OrderByPipe._orderByComparator(a[property], b[property])

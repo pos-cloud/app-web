@@ -576,11 +576,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   public get currencySign(): string {
-    return (
-      this.articleForm?.get('currency')?.value?.sign ||
-      AppConfig.currency?.sign ||
-      '$'
-    );
+    return this.articleForm?.get('currency')?.value?.sign || AppConfig.currency?.sign || '$';
   }
 
   public changeTax(op: string): void {

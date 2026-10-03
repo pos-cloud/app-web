@@ -145,11 +145,7 @@ export class ImportComponent implements OnInit {
       return false;
     }
     if (this.model === 'articles-stock') {
-      return !!(
-        this.branchesSelected?.length &&
-        this.depositsSelected?.length &&
-        this.transactionTypesSelect?.length
-      );
+      return !!(this.branchesSelected?.length && this.depositsSelected?.length && this.transactionTypesSelect?.length);
     }
     if (this.model === 'purchase') {
       return !!this.branchesSelected?.length;

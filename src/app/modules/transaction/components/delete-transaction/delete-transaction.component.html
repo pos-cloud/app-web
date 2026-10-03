@@ -1,38 +1,19 @@
 <div class="modal-header">
   <h4 class="modal-title">Eliminar Transacción</h4>
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    (click)="activeModal.dismiss('Cross click')"
-  >
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body">
   <p>
     ¿Está seguro de eliminar la transacción
-    <b
-      >{{ transaction?.type?.name || 'Unknown' }} Nro.
-      {{ transaction?.number || 'N/A' }}</b
+    <b>{{ transaction?.type?.name || 'Unknown' }} Nro. {{ transaction?.number || 'N/A' }}</b
     >?
   </p>
 </div>
 <div class="modal-footer">
-  <button
-    type="button"
-    class="btn btn-light"
-    (click)="activeModal.close('close_click')"
-    [disabled]="loading"
-  >
+  <button type="button" class="btn btn-light" (click)="activeModal.close('close_click')" [disabled]="loading">
     Cancelar
   </button>
-  <button
-    type="button"
-    class="btn btn-danger"
-    (click)="deleteTransaction()"
-    [disabled]="loading"
-  >
-    Eliminar
-  </button>
+  <button type="button" class="btn btn-danger" (click)="deleteTransaction()" [disabled]="loading">Eliminar</button>
 </div>

@@ -1,11 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Cancelar pedido</h4>
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    (click)="activeModal.dismiss('close_click')"
-  >
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
@@ -22,9 +17,7 @@
         </select>
       </div>
       <div class="form-group col-md-3">
-        <label for="email" class="control-label"
-          >Notificación de envío de correo:</label
-        >
+        <label for="email" class="control-label">Notificación de envío de correo:</label>
         <select class="form-control" formControlName="email">
           <option [value]="true">Si</option>
           <option [value]="false">No</option>
@@ -39,13 +32,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button
-        type="button"
-        class="btn btn-light"
-        (click)="activeModal.dismiss('cancel')"
-      >
-        Cancelar
-      </button>
+      <button type="button" class="btn btn-light" (click)="activeModal.dismiss('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="loading">
         <i [ngClass]="{ save: !loading, 'spinner spin': loading }"></i>
         <span *ngIf="!loading">Enviar</span>

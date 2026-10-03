@@ -160,7 +160,7 @@ export class GalleryComponent implements OnInit {
 
   private getBackgroundId(background: any): string | null {
     if (!background) return null;
-    return typeof background === 'string' ? background : background._id ?? null;
+    return typeof background === 'string' ? background : (background._id ?? null);
   }
 
   returnTo() {

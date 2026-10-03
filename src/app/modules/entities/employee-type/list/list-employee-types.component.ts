@@ -123,7 +123,10 @@ export class ListEmployeeTypesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: EmployeeTypeService, private _router: Router) {}
+  constructor(
+    public _service: EmployeeTypeService,
+    private _router: Router
+  ) {}
 
   public async emitEvent(event) {
     this.redirect(event.op, event.obj);

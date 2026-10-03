@@ -1,4 +1,4 @@
-import { Account, Activity, Article, CompanyType } from '@types';
+import { Account, Activity, Article } from '@types';
 
 export interface PaymentMethod extends Activity {
   _id: string;

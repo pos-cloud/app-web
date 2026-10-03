@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ArticleService } from '@core/services/article.service';
 import { CancellationTypeService } from '@core/services/cancellation-type.service';
@@ -355,10 +347,7 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
         this.requestCompany = true;
       }
       return {
-        $and: [
-          { 'type._id': cancellationType.origin._id },
-          { state: cancellationType.requestStatusOrigin },
-        ],
+        $and: [{ 'type._id': cancellationType.origin._id }, { state: cancellationType.requestStatusOrigin }],
       };
     });
 
@@ -692,10 +681,7 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
             transBalance = balanceSelected;
           } else if (this.totalPrice !== 0) {
             const availableToSelect = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
-            transBalance =
-              availableToSelect <= 0
-                ? 0
-                : Math.min(transactionSelected.balance, availableToSelect);
+            transBalance = availableToSelect <= 0 ? 0 : Math.min(transactionSelected.balance, availableToSelect);
           } else {
             transBalance = transactionSelected.balance;
           }

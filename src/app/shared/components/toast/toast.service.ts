@@ -3,20 +3,17 @@ import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-  constructor(private _router: Router) { }
+  constructor(private _router: Router) {}
   toasts: any[] = [];
 
-  private show(
-    textOrTpl: string | TemplateRef<any>,
-    options: any = {}
-  ) {
+  private show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
     if (options.position) {
       options.classname = `${options.classname || ''} ${options.position}`;
     }
 
     this.toasts.push({
       textOrTpl,
-      ...options
+      ...options,
     });
   }
 
@@ -31,7 +28,7 @@ export class ToastService {
     }
   }
 
-  public calculateNotificationSettings(days: number): { type: 'danger' | 'warning' | 'info', delay: number } {
+  public calculateNotificationSettings(days: number): { type: 'danger' | 'warning' | 'info'; delay: number } {
     let type: 'danger' | 'warning' | 'info' = 'info';
     let delay = 0;
 
@@ -40,10 +37,10 @@ export class ToastService {
       delay = 86400000;
     } else if (days <= 5) {
       type = 'warning';
-      delay = (11 - days) * 60 * 1000; 
+      delay = (11 - days) * 60 * 1000;
     } else if (days <= 10) {
       type = 'info';
-      delay = (11 - days) * 60 * 1000; 
+      delay = (11 - days) * 60 * 1000;
     } else {
       type = 'info';
       delay = 5000;
@@ -52,67 +49,43 @@ export class ToastService {
     return { type, delay };
   }
 
-  private success(
-    message: string,
-    title: string,
-    redirect: string,
-    delay: number,
-    position: string
-  ) {
+  private success(message: string, title: string, redirect: string, delay: number, position: string) {
     this.show(message, {
       classname: 'bg-success text-light',
       header: title,
       redirect,
       delay,
-      position
+      position,
     });
   }
 
-  private error(
-    message: string,
-    title: string,
-    redirect: string,
-    delay: number,
-    position: string
-  ) {
+  private error(message: string, title: string, redirect: string, delay: number, position: string) {
     this.show(message, {
       classname: 'bg-danger text-light',
       header: title,
       redirect,
       delay,
-      position
+      position,
     });
   }
 
-  private warning(
-    message: string,
-    title: string,
-    redirect: string,
-    delay: number,
-    position: string
-  ) {
+  private warning(message: string, title: string, redirect: string, delay: number, position: string) {
     this.show(message, {
       classname: 'bg-warning text-light',
       header: title,
       redirect,
       delay,
-      position
+      position,
     });
   }
 
-  private info(
-    message: string,
-    title: string,
-    redirect: string,
-    delay: number,
-    position: string
-  ) {
+  private info(message: string, title: string, redirect: string, delay: number, position: string) {
     this.show(message, {
       classname: 'bg-info text-light',
       header: title,
       redirect,
       delay,
-      position
+      position,
     });
   }
 
@@ -146,7 +119,7 @@ export class ToastService {
         break;
       case 'warning':
         this.warning(message, title, redirect, delay, position);
-      break;
+        break;
       default:
         this.info(message, title, redirect, delay, position);
         break;

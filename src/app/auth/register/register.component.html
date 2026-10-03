@@ -15,8 +15,8 @@
       <p class="auth-aside-kicker">POS Cloud</p>
       <h1 class="auth-aside-title">Todo tu negocio, en un solo sistema</h1>
       <p class="auth-aside-lead">
-        Vendé, cobrá, controlá stock y facturá sin pasar de un programa a otro. Pensado para kioscos,
-        supermercados, restaurantes, indumentaria y el negocio que estás armando ahora.
+        Vendé, cobrá, controlá stock y facturá sin pasar de un programa a otro. Pensado para kioscos, supermercados,
+        restaurantes, indumentaria y el negocio que estás armando ahora.
       </p>
 
       <div class="auth-benefits">
@@ -213,8 +213,7 @@
               name="businessModel"
               id="businessModel"
               [ngClass]="{
-                'is-invalid':
-                  registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.invalid,
+                'is-invalid': registerForm.get('businessModel')?.touched && registerForm.get('businessModel')?.invalid,
               }"
             >
               <option value="">Seleccione un tipo de negocio</option>
@@ -262,9 +261,7 @@
         </button>
       </form>
 
-      <div class="auth-links">
-        ¿Ya tenés una cuenta? <a routerLink="/login">Iniciar sesión</a>
-      </div>
+      <div class="auth-links">¿Ya tenés una cuenta? <a routerLink="/login">Iniciar sesión</a></div>
     </div>
   </div>
 </section>

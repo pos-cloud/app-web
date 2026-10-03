@@ -21,7 +21,7 @@
               class="btn btn-branch"
               [ngClass]="{
                 'btn-primary': option.id === selectedOption.id,
-                'btn-outline-primary': option.id !== selectedOption.id
+                'btn-outline-primary': option.id !== selectedOption.id,
               }"
               (click)="selectOption(option)"
               [disabled]="loading"

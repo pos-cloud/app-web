@@ -61,9 +61,7 @@ export class AiChatWidgetComponent implements AfterViewChecked {
     this.addMessage('user', message);
     this.loading = true;
 
-    const history: ChatMessage[] = this.messages
-      .slice(0, -1)
-      .map(({ role, content }) => ({ role, content }));
+    const history: ChatMessage[] = this.messages.slice(0, -1).map(({ role, content }) => ({ role, content }));
 
     this._aiChatService
       .sendMessage(message, history)
@@ -74,9 +72,7 @@ export class AiChatWidgetComponent implements AfterViewChecked {
         },
         error: (error) => {
           const errorMessage =
-            error?.error?.message ||
-            error?.error?.error?.message ||
-            'No pude procesar tu consulta. Intentá de nuevo.';
+            error?.error?.message || error?.error?.error?.message || 'No pude procesar tu consulta. Intentá de nuevo.';
 
           this.addMessage('assistant', errorMessage);
           this._toastService.showToast(null, 'danger', 'Asistente IA', errorMessage);

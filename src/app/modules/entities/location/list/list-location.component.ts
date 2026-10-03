@@ -22,7 +22,10 @@ export class ListLocationComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: LocationService, private _router: Router) {
+  constructor(
+    public _service: LocationService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'description',

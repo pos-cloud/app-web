@@ -24,7 +24,16 @@ import { Subscription } from 'rxjs';
   standalone: true,
   providers: [TranslateService],
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, NgbModule, DatatableModule, PipesModule, TranslateModule, FormsModule, ProgressbarModule, TransactionStateComponent],
+  imports: [
+    CommonModule,
+    NgbModule,
+    DatatableModule,
+    PipesModule,
+    TranslateModule,
+    FormsModule,
+    ProgressbarModule,
+    TransactionStateComponent,
+  ],
 })
 export class ListAppTransactionsComponent implements OnInit {
   public loading: boolean = false;

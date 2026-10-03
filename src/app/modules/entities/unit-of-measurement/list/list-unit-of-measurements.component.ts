@@ -22,7 +22,10 @@ export class ListUnitOfMeasurementsComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: UnitOfMeasurementService, private _router: Router) {
+  constructor(
+    public _service: UnitOfMeasurementService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'code',

@@ -11,8 +11,7 @@ export const REPORTS_ROUTES: Routes = [
   },
   {
     path: 'active-members',
-    loadComponent: () =>
-      import('./active-members/active-members.component').then((m) => m.ActiveMembersComponent),
+    loadComponent: () => import('./active-members/active-members.component').then((m) => m.ActiveMembersComponent),
   },
   {
     path: 'subscription-history-by-client',
@@ -129,7 +128,6 @@ export const REPORTS_ROUTES: Routes = [
   },
   {
     path: 'open-cash-boxes',
-    loadComponent: () =>
-      import('./open-cash-boxes/open-cash-boxes.component').then((m) => m.OpenCashBoxesComponent),
+    loadComponent: () => import('./open-cash-boxes/open-cash-boxes.component').then((m) => m.OpenCashBoxesComponent),
   },
 ];

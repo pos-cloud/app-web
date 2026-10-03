@@ -24,7 +24,10 @@ export class ListCurrencyValueComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: CurrencyValueService, private _router: Router) {
+  constructor(
+    public _service: CurrencyValueService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'name',

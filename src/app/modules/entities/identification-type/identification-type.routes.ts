@@ -8,8 +8,7 @@ export const IDENTIFICATION_TYPE_ROUTE: Routes = [
   },
   {
     path: 'add',
-    loadComponent: () =>
-      import('./crud/identification-type.component').then((m) => m.IdentificationTypeComponent),
+    loadComponent: () => import('./crud/identification-type.component').then((m) => m.IdentificationTypeComponent),
   },
   {
     path: 'view/:id',

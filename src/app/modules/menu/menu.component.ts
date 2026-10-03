@@ -36,7 +36,10 @@ export class MenuComponent implements OnInit {
   coverImage = '';
   themeClass = '';
 
-  constructor(private route: ActivatedRoute, private _menu: MenuService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private _menu: MenuService
+  ) {}
 
   async ngOnInit() {
     this.route.params.subscribe((params) => {

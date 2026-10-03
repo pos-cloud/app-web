@@ -140,7 +140,10 @@ export class ListAccountPeriodsComponent {
   // EXCEL
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: AccountPeriodService, private _router: Router) {}
+  constructor(
+    public _service: AccountPeriodService,
+    private _router: Router
+  ) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);

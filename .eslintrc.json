@@ -1,0 +1,27 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "dist/**",
+    "node_modules/**",
+    "coverage/**",
+    ".angular/**",
+    "src/assets/**",
+    "services/**",
+    "e2e/**",
+    "**/*.d.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "plugins": ["unused-imports"],
+      "rules": {
+        "unused-imports/no-unused-imports": "error"
+      }
+    }
+  ]
+}

@@ -56,8 +56,9 @@
               id="code"
               [focus]="focusEvent"
               [ngClass]="{
-                  'is-invalid': identificationTypeForm.get('code')?.touched && identificationTypeForm.get('code')?.invalid,
-                }"
+                'is-invalid':
+                  identificationTypeForm.get('code')?.touched && identificationTypeForm.get('code')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
@@ -77,8 +78,9 @@
               name="name"
               id="name"
               [ngClass]="{
-                    'is-invalid': identificationTypeForm.get('name')?.touched && identificationTypeForm.get('name')?.invalid,
-                  }"
+                'is-invalid':
+                  identificationTypeForm.get('name')?.touched && identificationTypeForm.get('name')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
@@ -108,7 +110,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ identificationType?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ identificationType?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -122,7 +124,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ identificationType?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ identificationType?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

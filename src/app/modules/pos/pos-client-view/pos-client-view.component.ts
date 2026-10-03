@@ -2,10 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ApiResponse } from '@types';
-import {
-  Transaction,
-  TransactionState,
-} from 'app/components/transaction/transaction';
+import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
@@ -64,10 +61,8 @@ export class PosClientViewComponent {
   private processParams(): void {
     this._route.queryParams.subscribe((params) => {
       if (!this.loading) {
-        if (params['column'] && !isNaN(params['column']))
-          this.column = params['column'];
-        if (params['fontSize'] && !isNaN(params['fontSize']))
-          this.fontSize = params['fontSize'];
+        if (params['column'] && !isNaN(params['column'])) this.column = params['column'];
+        if (params['fontSize'] && !isNaN(params['fontSize'])) this.fontSize = params['fontSize'];
         if (params['limit'] && !isNaN(params['limit'])) {
           if (params['limit'] !== this.limit) {
             this.limit = params['limit'];
@@ -121,8 +116,7 @@ export class PosClientViewComponent {
     // CHANGE STATES PACKING TO PREPARING FOR VIEW
     if (this.transactions && this.transactions.length > 0) {
       for (let trans of this.transactions) {
-        if (trans.state === TransactionState.Packing)
-          trans.state = TransactionState.Preparing;
+        if (trans.state === TransactionState.Packing) trans.state = TransactionState.Preparing;
       }
     }
   }

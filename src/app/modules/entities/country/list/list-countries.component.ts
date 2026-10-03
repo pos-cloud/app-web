@@ -157,7 +157,10 @@ export class ListCountriesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: CountryService, private _router: Router) {}
+  constructor(
+    public _service: CountryService,
+    private _router: Router
+  ) {}
 
   public async emitEvent(event) {
     this.redirect(event.op, event.obj);

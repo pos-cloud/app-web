@@ -21,7 +21,9 @@
                       style="width: 100%"
                       [ngClass]="{
                         'btn-primary': shipmentMethodSelected && shipmentMethod._id === shipmentMethodSelected._id,
-                        'btn-outline-primary': !shipmentMethodSelected || (shipmentMethodSelected && shipmentMethod._id !== shipmentMethodSelected._id)
+                        'btn-outline-primary':
+                          !shipmentMethodSelected ||
+                          (shipmentMethodSelected && shipmentMethod._id !== shipmentMethodSelected._id),
                       }"
                       (click)="select(shipmentMethod)"
                     >
@@ -32,7 +34,11 @@
 
                 <div
                   class="card"
-                  *ngIf="shipmentMethodSelected && shipmentMethod._id === shipmentMethodSelected._id && shipmentMethod.requireAddress"
+                  *ngIf="
+                    shipmentMethodSelected &&
+                    shipmentMethod._id === shipmentMethodSelected._id &&
+                    shipmentMethod.requireAddress
+                  "
                 >
                   <div class="card-body">
                     <div class="row" *ngIf="!showFormAddress">
@@ -43,18 +49,19 @@
                           style="width: 100%"
                           [ngClass]="{
                             'btn-primary': addressSelected && address._id === addressSelected._id,
-                            'btn-outline-primary': !addressSelected || (addressSelected && address._id !== addressSelected._id)
+                            'btn-outline-primary':
+                              !addressSelected || (addressSelected && address._id !== addressSelected._id),
                           }"
                           (click)="selectAddress(address)"
                         >
                           <div>
-                            {{ address.name }} {{ (address.number) ? ' ' + address.number : '' }} {{ (address.flat ||
-                            address.floor) ? ' -' : '' }} {{ (address.floor) ? ' ' + address.floor : '' }} {{
-                            (address.flat) ? ' ' + address.flat : '' }}
+                            {{ address.name }} {{ address.number ? ' ' + address.number : '' }}
+                            {{ address.flat || address.floor ? ' -' : '' }}
+                            {{ address.floor ? ' ' + address.floor : '' }} {{ address.flat ? ' ' + address.flat : '' }}
                           </div>
                           <small>
-                            {{ (address.city) ? address.city + ', ' : '' }} {{ (address.state) ? address.state + ', ' :
-                            '' }} {{ (address.country) ? address.country : '' }}
+                            {{ address.city ? address.city + ', ' : '' }}
+                            {{ address.state ? address.state + ', ' : '' }} {{ address.country ? address.country : '' }}
                           </small>
                         </button>
                       </div>
@@ -93,12 +100,16 @@
                                         formControlName="name"
                                         name="name"
                                         [ngClass]="{
-                                          'is-invalid': addressForm.get('name')?.touched && addressForm.get('name')?.invalid
+                                          'is-invalid':
+                                            addressForm.get('name')?.touched && addressForm.get('name')?.invalid,
                                         }"
                                       />
                                       <div
                                         class="invalid-feedback"
-                                        *ngIf="addressForm.get('name')?.touched && addressForm.get('name')?.hasError('required')"
+                                        *ngIf="
+                                          addressForm.get('name')?.touched &&
+                                          addressForm.get('name')?.hasError('required')
+                                        "
                                       >
                                         {{ 'fieldRequired' | translate | capitalize }}
                                       </div>
@@ -112,12 +123,16 @@
                                         formControlName="state"
                                         name="state"
                                         [ngClass]="{
-                                          'is-invalid': addressForm.get('state')?.touched && addressForm.get('state')?.invalid
+                                          'is-invalid':
+                                            addressForm.get('state')?.touched && addressForm.get('state')?.invalid,
                                         }"
                                       />
                                       <div
                                         class="invalid-feedback"
-                                        *ngIf="addressForm.get('state')?.touched && addressForm.get('state')?.hasError('required')"
+                                        *ngIf="
+                                          addressForm.get('state')?.touched &&
+                                          addressForm.get('state')?.hasError('required')
+                                        "
                                       >
                                         {{ 'fieldRequired' | translate | capitalize }}
                                       </div>
@@ -131,12 +146,16 @@
                                         formControlName="city"
                                         name="city"
                                         [ngClass]="{
-                                          'is-invalid': addressForm.get('city')?.touched && addressForm.get('city')?.invalid
+                                          'is-invalid':
+                                            addressForm.get('city')?.touched && addressForm.get('city')?.invalid,
                                         }"
                                       />
                                       <div
                                         class="invalid-feedback"
-                                        *ngIf="addressForm.get('city')?.touched && addressForm.get('city')?.hasError('required')"
+                                        *ngIf="
+                                          addressForm.get('city')?.touched &&
+                                          addressForm.get('city')?.hasError('required')
+                                        "
                                       >
                                         {{ 'fieldRequired' | translate | capitalize }}
                                       </div>
@@ -150,12 +169,16 @@
                                         formControlName="street"
                                         name="street"
                                         [ngClass]="{
-                                          'is-invalid': addressForm.get('street')?.touched && addressForm.get('street')?.invalid
+                                          'is-invalid':
+                                            addressForm.get('street')?.touched && addressForm.get('street')?.invalid,
                                         }"
                                       />
                                       <div
                                         class="invalid-feedback"
-                                        *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.hasError('required')"
+                                        *ngIf="
+                                          addressForm.get('street')?.touched &&
+                                          addressForm.get('street')?.hasError('required')
+                                        "
                                       >
                                         {{ 'fieldRequired' | translate | capitalize }}
                                       </div>
@@ -172,12 +195,17 @@
                                         formControlName="streetNumber"
                                         name="streetNumber"
                                         [ngClass]="{
-                                          'is-invalid': addressForm.get('streetNumber')?.touched && addressForm.get('streetNumber')?.invalid
+                                          'is-invalid':
+                                            addressForm.get('streetNumber')?.touched &&
+                                            addressForm.get('streetNumber')?.invalid,
                                         }"
                                       />
                                       <div
                                         class="invalid-feedback"
-                                        *ngIf="addressForm.get('streetNumber')?.touched && addressForm.get('streetNumber')?.hasError('required')"
+                                        *ngIf="
+                                          addressForm.get('streetNumber')?.touched &&
+                                          addressForm.get('streetNumber')?.hasError('required')
+                                        "
                                       >
                                         {{ 'fieldRequired' | translate | capitalize }}
                                       </div>

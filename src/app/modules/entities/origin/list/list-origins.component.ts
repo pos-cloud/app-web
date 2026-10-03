@@ -22,7 +22,10 @@ export class ListOriginsComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: OriginService, private _router: Router) {
+  constructor(
+    public _service: OriginService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'number',

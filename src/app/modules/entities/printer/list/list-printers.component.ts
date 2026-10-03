@@ -240,7 +240,10 @@ export class ListPrintersComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: PrinterService, private _router: Router) {}
+  constructor(
+    public _service: PrinterService,
+    private _router: Router
+  ) {}
 
   public async emitEvent(event) {
     await this.openModal(event.op, event.obj);

@@ -55,7 +55,11 @@ export class ListResourcesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: ResourceService, private _router: Router, public _alertConfig: NgbAlertConfig) {
+  constructor(
+    public _service: ResourceService,
+    private _router: Router,
+    public _alertConfig: NgbAlertConfig
+  ) {
     this.columns = [
       {
         name: 'name',

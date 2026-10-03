@@ -10,7 +10,7 @@ import { PosCloudAgentService } from '@core/services/pos-cloud-agent.service';
 import { SendEmailComponent } from '@shared/components/send-email/send-email.component';
 import { SendWppComponent } from '@shared/components/send-wpp/send-wpp.component';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { ApiResponse, PrintType } from '@types';
+import { PrintType } from '@types';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as printJS from 'print-js';
 import { firstValueFrom } from 'rxjs';

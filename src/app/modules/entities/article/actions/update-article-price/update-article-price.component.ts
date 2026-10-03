@@ -29,8 +29,7 @@ const TYPE_OPTIONS = {
     {
       value: UPDATE_TYPE.FIXED_AMOUNT,
       label: 'Monto fijo',
-      valueExample:
-        'Ponés en Valor el precio nuevo que querés. Ejemplo: si escribís 150, todos pasan a costar $150.',
+      valueExample: 'Ponés en Valor el precio nuevo que querés. Ejemplo: si escribís 150, todos pasan a costar $150.',
     },
     {
       value: UPDATE_TYPE.INCREMENTAL_AMOUNT,
@@ -61,8 +60,7 @@ const TYPE_OPTIONS = {
     {
       value: UPDATE_TYPE.INCREMENTAL_PERCENTAGE,
       label: 'Porcentaje incremental',
-      valueExample:
-        'Ponés en Valor el % a sumar. Ejemplo: cuesta $200, escribís 15 en Valor, pasa a $230.',
+      valueExample: 'Ponés en Valor el % a sumar. Ejemplo: cuesta $200, escribís 15 en Valor, pasa a $230.',
     },
   ],
   markupPercentage: [

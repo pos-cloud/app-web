@@ -10,9 +10,6 @@
   (beforeGetItems)="syncAdvancedFilters()"
 >
   <div datatableFilters>
-    <app-user-branch-select
-      [(ngModel)]="branchSelectedId"
-      (branchChange)="onBranchChange()"
-    ></app-user-branch-select>
+    <app-user-branch-select [(ngModel)]="branchSelectedId" (branchChange)="onBranchChange()"></app-user-branch-select>
   </div>
 </app-datatable>

@@ -6,13 +6,13 @@ export interface AccountSeat extends Activity {
   period: AccountPeriod;
   date: Date;
   observation: string;
-  type: TypeAccountSeat,
+  type: TypeAccountSeat;
   items: [
     {
       account: Account;
       debit: Number;
       credit: Number;
-    }
+    },
   ];
 }
 

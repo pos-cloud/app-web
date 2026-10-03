@@ -1,9 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Tax, TaxBase, TaxClassification } from '@types';
@@ -35,9 +31,7 @@ export class AddArticleTaxComponent implements OnInit {
   @Input() filtersTaxClassification: TaxClassification[];
   @Input() transaction: Transaction;
   @Input() readonly: boolean;
-  @Output() eventAddArticleTax: EventEmitter<Taxes[]> = new EventEmitter<
-    Taxes[]
-  >();
+  @Output() eventAddArticleTax: EventEmitter<Taxes[]> = new EventEmitter<Taxes[]>();
 
   public formErrors = {
     tax: '',
@@ -68,20 +62,11 @@ export class AddArticleTaxComponent implements OnInit {
     this.buildForm();
     let query;
 
-    if (
-      this.filtersTaxClassification &&
-      this.filtersTaxClassification.length > 0
-    ) {
+    if (this.filtersTaxClassification && this.filtersTaxClassification.length > 0) {
       query = `where=`;
-      if (
-        this.filtersTaxClassification &&
-        this.filtersTaxClassification.length === 1
-      ) {
+      if (this.filtersTaxClassification && this.filtersTaxClassification.length === 1) {
         query += `"classification":"${this.filtersTaxClassification[0].toString()}"`;
-      } else if (
-        this.filtersTaxClassification &&
-        this.filtersTaxClassification.length > 1
-      ) {
+      } else if (this.filtersTaxClassification && this.filtersTaxClassification.length > 1) {
         let i: number = 0;
 
         query += `"$or":[`;
@@ -114,9 +99,7 @@ export class AddArticleTaxComponent implements OnInit {
       taxAmount: [this.articleTax.taxAmount, []],
     });
 
-    this.articleTaxForm.valueChanges.subscribe((data) =>
-      this.onValueChanged(data)
-    );
+    this.articleTaxForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
     this.onValueChanged();
     this.focusEvent.emit(true);

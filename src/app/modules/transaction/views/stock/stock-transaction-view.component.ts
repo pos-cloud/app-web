@@ -234,7 +234,7 @@ export class StockTransactionViewComponent implements OnInit, OnDestroy {
         limit: 8,
       })
       .pipe(
-        map((result) => (result?.status === 200 ? result.result ?? [] : [])),
+        map((result) => (result?.status === 200 ? (result.result ?? []) : [])),
         catchError(() => of([]))
       );
   }
@@ -376,7 +376,9 @@ export class StockTransactionViewComponent implements OnInit, OnDestroy {
         const stockResult = await firstValueFrom(this.articleStockService.updateStockByTransaction(this.transaction));
         if (stockResult?.status !== 200) {
           const message =
-            stockResult?.error?.message || stockResult?.message || 'No se pudo actualizar el stock. El movimiento sigue abierto.';
+            stockResult?.error?.message ||
+            stockResult?.message ||
+            'No se pudo actualizar el stock. El movimiento sigue abierto.';
           this.toastService.showToast(null, 'danger', '', message);
           return;
         }

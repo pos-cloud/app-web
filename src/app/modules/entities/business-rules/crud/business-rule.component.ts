@@ -233,9 +233,7 @@ export class BusinessRuleComponent implements OnInit {
           this.articleGroupArticlesArray.removeAt(0);
         }
         ag.articles.forEach((a: any) => {
-          this.articleGroupArticlesArray.push(
-            this._fb.control(findArticle(a))
-          );
+          this.articleGroupArticlesArray.push(this._fb.control(findArticle(a)));
         });
       }
       if (ag.quantity != null) {

@@ -68,12 +68,7 @@ const routes: Routes = [
     DatatableModule,
     ExportExcelModule,
   ],
-  declarations: [
-    ListReportsComponent,
-    ReportComponent,
-    ViewReportComponent,
-    ParamsReportComponent,
-  ],
+  declarations: [ListReportsComponent, ReportComponent, ViewReportComponent, ParamsReportComponent],
   exports: [ReportComponent, ViewReportComponent],
   providers: [ReportService],
 })

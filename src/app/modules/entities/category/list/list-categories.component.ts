@@ -250,7 +250,10 @@ export class ListCategoriesComponent {
   // EXCEL
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: CategoryService, private _router: Router) {}
+  constructor(
+    public _service: CategoryService,
+    private _router: Router
+  ) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);

@@ -10,7 +10,10 @@ import { map, take } from 'rxjs/operators';
 export class NotificationGuard implements CanActivate {
   public config: Config;
 
-  constructor(private _configService: ConfigService, private _toastService: ToastService) {}
+  constructor(
+    private _configService: ConfigService,
+    private _toastService: ToastService
+  ) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this._configService.getConfig.pipe(

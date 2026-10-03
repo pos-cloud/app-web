@@ -10,7 +10,7 @@
   <!-- Contenido cuando no está cargando -->
   <div class="row" *ngIf="areCategoriesVisible && !loading" class="categories-list">
     <!-- Mostrar categorías filtradas -->
-    <div *ngFor="let category of categoryFiltered | orderBy : orderTerm : propertyTerm">
+    <div *ngFor="let category of categoryFiltered | orderBy: orderTerm : propertyTerm">
       <div class="icategory" (click)="selectCategory(category)">
         <img
           *ngIf="category.picture == 'default.jpg' || category.picture == undefined"
@@ -27,7 +27,7 @@
           alt="{{ category.description }}"
           (error)="onImageError($event)"
         />
-        <div class="image-title">{{ category.description | slice : 0 : 20 }}</div>
+        <div class="image-title">{{ category.description | slice: 0 : 20 }}</div>
       </div>
     </div>
   </div>

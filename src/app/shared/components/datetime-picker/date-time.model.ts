@@ -58,9 +58,7 @@ export class DateTimeModel implements NgbDateTimeStruct {
       return null;
     }
 
-    const match = value
-      .trim()
-      .match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?$/);
+    const match = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?$/);
 
     if (!match) {
       return null;
@@ -78,11 +76,7 @@ export class DateTimeModel implements NgbDateTimeStruct {
     }
 
     const date = new Date(year, month - 1, day, hour, minute, second);
-    if (
-      date.getFullYear() !== year ||
-      date.getMonth() !== month - 1 ||
-      date.getDate() !== day
-    ) {
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
       return null;
     }
 

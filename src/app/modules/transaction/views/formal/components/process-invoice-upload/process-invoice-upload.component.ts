@@ -12,8 +12,7 @@ import { FileService } from 'app/core/services/file.service';
 export class ProcessInvoiceUploadComponent {
   uploading = false;
 
-  @Input() accept =
-    '.png,.jpg,.jpeg,.gif,.webp,.bmp,.pdf,image/png,image/jpeg,image/gif,image/webp,application/pdf';
+  @Input() accept = '.png,.jpg,.jpeg,.gif,.webp,.bmp,.pdf,image/png,image/jpeg,image/gif,image/webp,application/pdf';
   @Output() invoiceUpload = new EventEmitter<{ urls: string[]; invoice: unknown | null }>();
 
   constructor(private fileService: FileService) {}

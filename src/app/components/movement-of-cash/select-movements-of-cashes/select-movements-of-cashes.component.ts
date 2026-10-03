@@ -119,17 +119,13 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         balanceCanceled: 1,
       };
       this.subscription.add(
-        this._movementOfCashService
-          .getMovementsOfCashesV2(project, match, sortAux, {}, 0, 0)
-          .subscribe(
-            (res) => {
-              this.loading = false;
-              res.movementsOfCashes
-                ? resolve(res.movementsOfCashes)
-                : resolve([]);
-            },
-            (error) => reject(error)
-          )
+        this._movementOfCashService.getMovementsOfCashesV2(project, match, sortAux, {}, 0, 0).subscribe(
+          (res) => {
+            this.loading = false;
+            res.movementsOfCashes ? resolve(res.movementsOfCashes) : resolve([]);
+          },
+          (error) => reject(error)
+        )
       );
     });
   }
@@ -150,17 +146,14 @@ export class SelectMovementsOfCashesComponent implements OnInit {
 
   async selectMovementOfCash(movementOfCashSelected: MovementOfCash) {
     if (!this.isMovementOfCashSelected(movementOfCashSelected)) {
-      movementOfCashSelected.balanceCanceled =
-        movementOfCashSelected.amountPaid;
+      movementOfCashSelected.balanceCanceled = movementOfCashSelected.amountPaid;
     } else {
       movementOfCashSelected.balanceCanceled = 0;
     }
     this.recalculateBalanceSelected();
   }
 
-  public updateMovementOfCash(
-    movementOfCash: MovementOfCash
-  ): Promise<MovementOfCash> {
+  public updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
     return new Promise<MovementOfCash>((resolve, reject) => {
       this._movementOfCashService.update(movementOfCash).subscribe(
         async (result) => {
@@ -186,15 +179,13 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         balance: 1,
       };
       this.subscription.add(
-        this._transactionService
-          .getTransactionsV2(project, match, {}, {}, 1, 0)
-          .subscribe(
-            (result) => {
-              this.loading = false;
-              resolve(result.transactions[0]);
-            },
-            (error) => reject(error)
-          )
+        this._transactionService.getTransactionsV2(project, match, {}, {}, 1, 0).subscribe(
+          (result) => {
+            this.loading = false;
+            resolve(result.transactions[0]);
+          },
+          (error) => reject(error)
+        )
       );
     });
   }
@@ -226,10 +217,7 @@ export class SelectMovementsOfCashesComponent implements OnInit {
   }
 
   public calculateDaysUntilToday(endDate: string) {
-    return moment(moment(endDate).format('YYYY-MM-DD')).diff(
-      moment().format('YYYY-MM-DD'),
-      'days'
-    );
+    return moment(moment(endDate).format('YYYY-MM-DD')).diff(moment().format('YYYY-MM-DD'), 'days');
   }
 
   public async finish() {
@@ -245,14 +233,12 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         }
       }
 
-      await this.getTransaction({ _id: { $oid: this.transactionId } }).then(
-        async (transaction) => {
-          if (this.amountOfInterestCalculated > 0) {
-            transaction.totalPrice = totalAmount;
-            transaction = await this.updateTransaction(transaction);
-          }
+      await this.getTransaction({ _id: { $oid: this.transactionId } }).then(async (transaction) => {
+        if (this.amountOfInterestCalculated > 0) {
+          transaction.totalPrice = totalAmount;
+          transaction = await this.updateTransaction(transaction);
         }
-      );
+      });
 
       this.activeModal.close({
         movementsOfCashes: this.movementsOfCashes,

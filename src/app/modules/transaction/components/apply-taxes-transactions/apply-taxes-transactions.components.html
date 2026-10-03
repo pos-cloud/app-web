@@ -130,9 +130,9 @@
                 <span class="flat">{{ transactionTaxAux.tax?.name }}</span>
               </td>
               <td class="text-right text-nowrap">
-                <span class="flat d-inline-block w-100 text-right"
-                  >{{ transactionTaxAux.taxBase | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span
-                >
+                <span class="flat d-inline-block w-100 text-right">{{
+                  transactionTaxAux.taxBase | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                }}</span>
               </td>
               <td class="text-right text-nowrap">
                 <ng-container *ngIf="isEditingTax(i); else percentageView">
@@ -177,9 +177,9 @@
                   </div>
                 </ng-container>
                 <ng-template #taxAmountView>
-                  <span class="flat d-inline-block w-100 text-right"
-                    >{{ transactionTaxAux.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}</span
-                  >
+                  <span class="flat d-inline-block w-100 text-right">{{
+                    transactionTaxAux.taxAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                  }}</span>
                 </ng-template>
               </td>
             </tr>

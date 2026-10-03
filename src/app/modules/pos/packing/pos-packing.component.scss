@@ -10,9 +10,8 @@ app-pos-packing {
     }
   }
 
-  .card-text{
+  .card-text {
     margin-left: 15px;
-
   }
   .card-big {
     min-height: 94vh !important;
@@ -21,24 +20,24 @@ app-pos-packing {
   .card-transaction {
     float: left;
     padding: 10px;
-	margin-bottom: 20px;
-	.card-title {
-		border-radius: 3px 3px 0px 0px;
-		margin-bottom: 0px;
-	}
-	.card-body {
-		border-radius: 0px 0px 3px 3px;
-	}
+    margin-bottom: 20px;
+    .card-title {
+      border-radius: 3px 3px 0px 0px;
+      margin-bottom: 0px;
+    }
+    .card-body {
+      border-radius: 0px 0px 3px 3px;
+    }
   }
 
   .content-button-print {
     bottom: 20px;
     position: absolute;
-	width: 100%;
-	margin: 0px;
-	padding: 0px;
-	left: 0px;
-	right: 0px;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    left: 0px;
+    right: 0px;
   }
 
   .notes {

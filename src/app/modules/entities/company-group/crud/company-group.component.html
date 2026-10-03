@@ -56,8 +56,9 @@
               id="description"
               [focus]="focusEvent"
               [ngClass]="{
-                  'is-invalid': companyGroupForm.get('description')?.touched && companyGroupForm.get('description')?.invalid,
-                }"
+                'is-invalid':
+                  companyGroupForm.get('description')?.touched && companyGroupForm.get('description')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
@@ -78,8 +79,8 @@
               name="discount"
               id="discount"
               [ngClass]="{
-                    'is-invalid': companyGroupForm.get('discount')?.touched && companyGroupForm.get('discount')?.invalid,
-                  }"
+                'is-invalid': companyGroupForm.get('discount')?.touched && companyGroupForm.get('discount')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
@@ -109,7 +110,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ companyGroup?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ companyGroup?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -123,7 +124,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ companyGroup?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ companyGroup?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

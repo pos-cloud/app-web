@@ -14,10 +14,7 @@ if (environment.faro?.url) {
       version: environment.faro.version,
       environment: environment.faro.environment,
     },
-    instrumentations: [
-      ...getWebInstrumentations(),
-      new TracingInstrumentation(),
-    ],
+    instrumentations: [...getWebInstrumentations(), new TracingInstrumentation()],
   });
 }
 
@@ -28,4 +25,4 @@ if (environment.production) {
 platformBrowserDynamic()
   .bootstrapModule(AppModule)
   .then(() => console.log(`Bootstrap success`))
-  .catch(err => console.error(err));
+  .catch((err) => console.error(err));

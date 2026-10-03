@@ -1,8 +1,4 @@
-<div
-  class="gallery-view"
-  [class.layout-background]="isBackgroundLayout"
-  [class.layout-slideshow]="!isBackgroundLayout"
->
+<div class="gallery-view" [class.layout-background]="isBackgroundLayout" [class.layout-slideshow]="!isBackgroundLayout">
   <div class="fullscreen-btn" *ngIf="viewBotton">
     <button (click)="openFullscreen()" class="btn btn-primary w-100">Pantalla Completa</button>
   </div>
@@ -41,7 +37,7 @@
       <div class="col-md-7 d-flex align-items-center justify-content-center">
         <div class="text-center product-details">
           <h1 class="price">
-            {{ article?.salePrice ?? null | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+            {{ article?.salePrice ?? null | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
           </h1>
           <h2 class="description">{{ article?.description ?? '' }}</h2>
 

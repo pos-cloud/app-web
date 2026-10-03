@@ -54,7 +54,10 @@ export class ListIdentificationTypesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: IdentificationTypeService, private _router: Router) {
+  constructor(
+    public _service: IdentificationTypeService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'code',

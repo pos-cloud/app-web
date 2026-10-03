@@ -70,11 +70,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <label for="design" class="control-label">{{ 'design' | translate | capitalize }}:</label>
-            <editor
-              formControlName="design"
-              [init]="tinymceDesignInit"
-              class="email-template-design-editor"
-            ></editor>
+            <editor formControlName="design" [init]="tinymceDesignInit" class="email-template-design-editor"></editor>
             <div
               class="text-danger"
               *ngIf="emailTemplateForm.get('design')?.touched && emailTemplateForm.get('design')?.hasError('required')"
@@ -101,7 +97,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ emailTemplate?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ emailTemplate?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -115,7 +111,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ emailTemplate?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ emailTemplate?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

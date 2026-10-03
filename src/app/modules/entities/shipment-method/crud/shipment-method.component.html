@@ -38,7 +38,7 @@
         </button>
       </div>
     </div>
-        <app-progressbar [loading]="loading"></app-progressbar>
+    <app-progressbar [loading]="loading"></app-progressbar>
     <div class="card-body scroll">
       <form [formGroup]="shipmentMethodForm" autocomplete="off" (keydown.enter)="onEnter($event)" *ngIf="!loading">
         <div class="row">
@@ -121,7 +121,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ shipmentMethod?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ shipmentMethod?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -135,7 +135,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ shipmentMethod?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ shipmentMethod?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

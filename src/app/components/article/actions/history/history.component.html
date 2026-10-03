@@ -9,13 +9,21 @@
         </button>
 
         <div class="btn-group" ngbDropdown>
-          <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas"><i
-              class="fa fa-columns"></i><span>Columnas</span></button>
+          <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Columnas">
+            <i class="fa fa-columns"></i><span>Columnas</span>
+          </button>
           <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
             <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
               <div class="example-box" *ngFor="let column of columns" cdkDrag [cdkDragDisabled]="column.disabled">
-                <label for="column"><input type="checkbox" [id]="column.name" (change)="getItems()"
-                    [(ngModel)]="column.visible" [disabled]="column.disabled">{{ column.name | translate}}</label>
+                <label for="column"
+                  ><input
+                    type="checkbox"
+                    [id]="column.name"
+                    (change)="getItems()"
+                    [(ngModel)]="column.visible"
+                    [disabled]="column.disabled"
+                  />{{ column.name | translate }}</label
+                >
               </div>
             </div>
           </div>
@@ -23,7 +31,6 @@
         <!-- <app-export-excel #exportExcelComponent [title]="title" [loading]="loading"
         [columns]="columns" (eventExport)="exportItems($event)">
       </app-export-excel> -->
-
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -31,14 +38,20 @@
         <thead>
           <tr>
             <ng-container *ngFor="let column of columns">
-                <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
+              <th *ngIf="column.visible" (click)="orderBy(column.name)">{{ column.name | translate }}</th>
             </ng-container>
-        </tr>
+          </tr>
           <tr class="filters">
             <ng-container *ngFor="let column of columns">
               <th *ngIf="column.visible">
-                <input type="text" class="form-control" [(ngModel)]="filters[column.name]" (keydown.enter)="getItems()"
-                  placeholder="{{ column.name | translate }}" [disabled]="!column.filter">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filters[column.name]"
+                  (keydown.enter)="getItems()"
+                  placeholder="{{ column.name | translate }}"
+                  [disabled]="!column.filter"
+                />
               </th>
             </ng-container>
           </tr>
@@ -49,15 +62,17 @@
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="
-          let item of items
-            | paginate
-              : {
-                  itemsPerPage: itemsPerPage,
-                  currentPage: currentPage,
-                  totalItems: totalItems
-                }
-        ">
+          <tr
+            *ngFor="
+              let item of items
+                | paginate
+                  : {
+                      itemsPerPage: itemsPerPage,
+                      currentPage: currentPage,
+                      totalItems: totalItems,
+                    }
+            "
+          >
             <ng-container *ngFor="let column of columns">
               <td *ngIf="column.visible" [attr.align]="column.align">
                 {{ getValue(item, column) }}
@@ -65,9 +80,7 @@
             </ng-container>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td [attr.colspan]="getColumnsVisibles() + 1">
-              No se encontraron productos
-            </td>
+            <td [attr.colspan]="getColumnsVisibles() + 1">No se encontraron productos</td>
           </tr>
         </tbody>
         <tfoot></tfoot>
@@ -76,8 +89,14 @@
     <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls class="my-pagination" (pageChange)="pageChange($event)" #api previousLabel="Ant."
-            nextLabel="Sig." autoHide="true">
+          <pagination-controls
+            class="my-pagination"
+            (pageChange)="pageChange($event)"
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
+            autoHide="true"
+          >
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">

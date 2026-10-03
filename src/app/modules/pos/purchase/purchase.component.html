@@ -33,11 +33,43 @@
           </tr>
           <tr class="filters">
             <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterType" (keydown.enter)="addFilters()" placeholder="Tipo..." /></th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filterType"
+                (keydown.enter)="addFilters()"
+                placeholder="Tipo..."
+              />
+            </th>
             <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterNumber" (keydown.enter)="addFilters()" placeholder="Número..." /></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCompany" (keydown.enter)="addFilters()" placeholder="Proveedor..." /></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" (keydown.enter)="addFilters()" placeholder="Observación..." /></th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filterNumber"
+                (keydown.enter)="addFilters()"
+                placeholder="Número..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filterCompany"
+                (keydown.enter)="addFilters()"
+                placeholder="Proveedor..."
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filterObservation"
+                (keydown.enter)="addFilters()"
+                placeholder="Observación..."
+              />
+            </th>
             <th></th>
           </tr>
         </thead>

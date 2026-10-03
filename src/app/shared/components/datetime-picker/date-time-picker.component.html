@@ -4,7 +4,7 @@
     class="form-control datetime-picker__input"
     (blur)="inputBlur($event)"
     (change)="onInputChange($event)"
-    [ngModel]="dateString | date : inputDatetimeFormat"
+    [ngModel]="dateString | date: inputDatetimeFormat"
     [disabled]="disabled"
     tabindex="0"
   />

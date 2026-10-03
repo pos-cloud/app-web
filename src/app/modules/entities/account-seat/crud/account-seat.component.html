@@ -100,8 +100,8 @@
                 [keyField]="'_id'"
                 [displayField]="'description'"
                 [ngClass]="{
-                      'is-invalid': accountForm.get('account')?.touched && accountForm.get('account')?.invalid,
-                    }"
+                  'is-invalid': accountForm.get('account')?.touched && accountForm.get('account')?.invalid,
+                }"
               ></app-typeahead-dropdown>
               <div
                 class="invalid-feedback"
@@ -150,10 +150,10 @@
                     {{ field.value.account?.description }}
                   </td>
                   <td>
-                    {{ field.value.debit | currency : 'ARS' : 'symbol-narrow' : '1.2-2' }}
+                    {{ field.value.debit | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
-                    {{ field.value.credit | currency : 'ARS' : 'symbol-narrow' : '1.2-2' }}
+                    {{ field.value.credit | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td align="right" width="10">
                     <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(i)">
@@ -165,10 +165,10 @@
               <tfoot>
                 <td></td>
                 <td class="align-right">
-                  <strong>{{ totalDebit | currency : 'ARS' : 'symbol-narrow' : '1.2-2' }}</strong>
+                  <strong>{{ totalDebit | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</strong>
                 </td>
                 <td class="align-right">
-                  <strong>{{ totalHaber | currency : 'ARS' : 'symbol-narrow' : '1.2-2' }}</strong>
+                  <strong>{{ totalHaber | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</strong>
                 </td>
               </tfoot>
             </table>
@@ -195,7 +195,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ accountSeat?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ accountSeat?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -211,7 +211,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ accountSeat?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ accountSeat?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

@@ -23,7 +23,10 @@ export class ListVariantValuesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: VariantValueService, private _router: Router) {
+  constructor(
+    public _service: VariantValueService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'order',

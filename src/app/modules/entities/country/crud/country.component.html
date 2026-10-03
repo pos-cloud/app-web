@@ -56,7 +56,7 @@
               id="code"
               [focus]="focusEvent"
               [ngClass]="{
-                'is-invalid': countryForm.get('code')?.touched && countryForm.get('code')?.invalid
+                'is-invalid': countryForm.get('code')?.touched && countryForm.get('code')?.invalid,
               }"
             />
             <div
@@ -75,7 +75,7 @@
               name="name"
               id="name"
               [ngClass]="{
-                'is-invalid': countryForm.get('name')?.touched && countryForm.get('name')?.invalid
+                'is-invalid': countryForm.get('name')?.touched && countryForm.get('name')?.invalid,
               }"
             />
             <div
@@ -134,7 +134,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ country?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ country?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -148,7 +148,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ country?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ country?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

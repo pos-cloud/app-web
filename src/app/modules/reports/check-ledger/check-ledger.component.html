@@ -5,13 +5,7 @@
         <b>{{ 'checkNumber' | translate | capitalize }}</b></label
       >
       <form [formGroup]="checkForm" (ngSubmit)="getReport()">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="checkNumber"
-          id="checkNumber"
-          name="checkNumber"
-        />
+        <input type="text" class="form-control" formControlName="checkNumber" id="checkNumber" name="checkNumber" />
       </form>
     </div>
 

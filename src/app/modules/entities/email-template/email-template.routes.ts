@@ -3,8 +3,7 @@ import { Routes } from '@angular/router';
 export const EMAIL_TEMPLATE_ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./list/list-email-templates.component').then((m) => m.ListEmailTemplatesComponent),
+    loadComponent: () => import('./list/list-email-templates.component').then((m) => m.ListEmailTemplatesComponent),
   },
   {
     path: 'add',

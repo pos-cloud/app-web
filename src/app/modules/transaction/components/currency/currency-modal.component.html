@@ -13,7 +13,9 @@
       [class.active]="currentCurrencyId === c._id"
       (click)="selectCurrency(c)"
     >
-      <span><strong>{{ c.sign || c['symbol'] }}</strong> {{ c.name }}</span>
+      <span
+        ><strong>{{ c.sign || c['symbol'] }}</strong> {{ c.name }}</span
+      >
     </button>
   </div>
   <div *ngIf="currencies.length === 0" class="p-3 text-muted text-center small">No hay monedas disponibles</div>

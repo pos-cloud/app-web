@@ -26,9 +26,7 @@
     </div>
 
     <div class="items-container">
-      <div *ngIf="searching" class="no-results">
-        <i class="fa fa-spinner fa-spin"></i> Buscando...
-      </div>
+      <div *ngIf="searching" class="no-results"><i class="fa fa-spinner fa-spin"></i> Buscando...</div>
 
       <div *ngIf="!searching && filteredItems.length === 0" class="no-results">
         {{ emptyMessage }}

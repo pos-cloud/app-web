@@ -56,8 +56,8 @@
               id="name"
               [focus]="focusEvent"
               [ngClass]="{
-                  'is-invalid': classificationForm.get('name')?.touched && classificationForm.get('name')?.invalid,
-                }"
+                'is-invalid': classificationForm.get('name')?.touched && classificationForm.get('name')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
@@ -85,7 +85,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ classification?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ classification?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -99,7 +99,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ classification?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ classification?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

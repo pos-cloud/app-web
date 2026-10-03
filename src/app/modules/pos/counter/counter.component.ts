@@ -26,7 +26,15 @@ import { TransactionStateComponent } from 'app/shared/components/transaction-sta
   standalone: true,
   providers: [TranslateService],
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, NgbModule, FormsModule, TranslateModule, PipesModule, ProgressbarModule, TransactionStateComponent],
+  imports: [
+    CommonModule,
+    NgbModule,
+    FormsModule,
+    TranslateModule,
+    PipesModule,
+    ProgressbarModule,
+    TransactionStateComponent,
+  ],
 })
 export class CounterComponent implements OnInit, OnDestroy {
   public readonly movement = TransactionMovement.Sale;

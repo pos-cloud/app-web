@@ -67,7 +67,7 @@
                           [id]="field.name"
                           [readonly]="readonly"
                           [ngClass]="{
-                            'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
+                            'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name],
                           }"
                           (change)="onFileSelected($event, field.name)"
                           [accept]="field.format + '/*'"
@@ -142,7 +142,7 @@
                 [id]="field.name"
                 [readonly]="readonly"
                 [ngClass]="{
-                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
+                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name],
                 }"
                 (blur)="onValueChanged($event.target.id)"
               />
@@ -154,7 +154,7 @@
                 [formControlName]="field.name"
                 [id]="field.name"
                 [ngClass]="{
-                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
+                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name],
                 }"
                 (blur)="onValueChanged($event.target.id)"
               >
@@ -184,7 +184,7 @@
                   [resultTemplate]="result"
                   [inputFormatter]="field.format"
                   [ngClass]="{
-                    'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
+                    'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name],
                   }"
                   (focus)="focus$[field.name].next($any($event).target.value)"
                   (blur)="onValueChanged($event.target.id)"
@@ -201,7 +201,7 @@
                 [id]="field.name"
                 [readonly]="readonly"
                 [ngClass]="{
-                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name]
+                  'is-invalid': !objForm.get(field.name)?.valid && formErrors[field.name],
                 }"
                 (blur)="onValueChanged($event.target.id)"
               ></textarea>

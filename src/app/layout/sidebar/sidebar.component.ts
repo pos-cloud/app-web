@@ -118,9 +118,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     event?.stopPropagation();
 
     if (this.expandedKeys.has(key)) {
-      this.expandedKeys = new Set(
-        [...this.expandedKeys].filter((item) => item !== key && !item.startsWith(key + '/'))
-      );
+      this.expandedKeys = new Set([...this.expandedKeys].filter((item) => item !== key && !item.startsWith(key + '/')));
       return;
     }
 

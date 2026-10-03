@@ -25,7 +25,7 @@ export interface Printer extends Activity {
       positionEndX: number; //line
       positionEndY: number; //line
       position: PositionPrint;
-    }
+    },
   ];
 }
 

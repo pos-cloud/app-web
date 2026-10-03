@@ -54,7 +54,10 @@ export class ListRelationTypesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: RelationTypeService, private _router: Router) {
+  constructor(
+    public _service: RelationTypeService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'description',

@@ -23,7 +23,10 @@ export class ListVariantTypesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: VariantTypeService, private _router: Router) {
+  constructor(
+    public _service: VariantTypeService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'name',

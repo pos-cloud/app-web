@@ -61,8 +61,7 @@ export class ReconcileIvaArcaComponent implements OnInit {
             null,
             'success',
             '',
-            response.message ||
-              'La reconciliación corre en segundo plano. Te avisamos por notificación cuando termine.'
+            response.message || 'La reconciliación corre en segundo plano. Te avisamos por notificación cuando termine.'
           );
           this.activeModal.close('queued');
         } else {

@@ -54,7 +54,10 @@ export class CompanyGroupComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: CompanyGroupService, private _router: Router) {
+  constructor(
+    public _service: CompanyGroupService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'description',

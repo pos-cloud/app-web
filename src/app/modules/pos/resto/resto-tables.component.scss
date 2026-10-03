@@ -38,7 +38,9 @@
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
     margin-left: -1px;
 
     &:first-child {
@@ -104,7 +106,10 @@
     color: #fff;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
-    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease,
+      opacity 0.15s ease;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

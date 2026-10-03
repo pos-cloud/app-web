@@ -25,13 +25,7 @@
         {{ topNode.label }}
       </a>
     </li>
-    <li
-      *ngIf="topNode.children"
-      #dd="ngbDropdown"
-      class="nav-item dropdown"
-      ngbDropdown
-      [autoClose]="'outside'"
-    >
+    <li *ngIf="topNode.children" #dd="ngbDropdown" class="nav-item dropdown" ngbDropdown [autoClose]="'outside'">
       <a class="nav-link" href="javascript:void(0)" ngbDropdownToggle>
         <i *ngIf="topNode.icon" [class]="topNode.icon" aria-hidden="true"></i>
         {{ topNode.label }}

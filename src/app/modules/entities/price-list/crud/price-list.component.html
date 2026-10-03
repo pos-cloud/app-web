@@ -125,163 +125,163 @@
         </div>
 
         <ng-container *ngIf="!isManualMode">
-        <hr />
+          <hr />
 
-        <!-- Reglas especiales -->
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>{{ 'specialRules' | translate | capitalize }}</b>
-            <button
-              type="button"
-              class="btn btn-sm btn-primary ml-2"
-              *ngIf="operation !== 'view' && operation !== 'delete'"
-              (click)="addRule()"
-            >
-              <i class="fa fa-plus"></i> {{ 'add' | translate | capitalize }}
-            </button>
-          </label>
-        </div>
+          <!-- Reglas especiales -->
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>{{ 'specialRules' | translate | capitalize }}</b>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary ml-2"
+                *ngIf="operation !== 'view' && operation !== 'delete'"
+                (click)="addRule()"
+              >
+                <i class="fa fa-plus"></i> {{ 'add' | translate | capitalize }}
+              </button>
+            </label>
+          </div>
 
-        <div class="row">
-          <div class="col-md-12">
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-                <thead class="thead-light">
-                  <tr>
-                    <th style="width: 35%">{{ 'category' | translate | capitalize }}</th>
-                    <th style="width: 35%">{{ 'make' | translate | capitalize }}</th>
-                    <th style="width: 20%">{{ 'percentage' | translate | capitalize }}</th>
-                    <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
-                      {{ 'actions' | translate | capitalize }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody formArrayName="rules">
-                  <tr *ngFor="let rule of rulesArray.controls; let i = index" [formGroupName]="i">
-                    <td>
-                      <div class="dropdown-wrapper">
-                        <app-searchable-dropdown
-                          [control]="rule.get('category')"
-                          [service]="_categoryService"
-                          [keyField]="'_id'"
-                          [displayField]="'description'"
-                        ></app-searchable-dropdown>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="dropdown-wrapper">
-                        <app-searchable-dropdown
-                          [control]="rule.get('make')"
-                          [service]="_makeService"
-                          [keyField]="'_id'"
-                          [displayField]="'description'"
-                        ></app-searchable-dropdown>
-                      </div>
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        class="form-control"
-                        formControlName="percentage"
-                        step="0.01"
-                        [readonly]="operation === 'view' || operation === 'delete'"
-                        [ngClass]="{
-                          'is-invalid': rule.get('percentage')?.touched && rule.get('percentage')?.invalid,
-                        }"
-                      />
-                      <div
-                        class="invalid-feedback"
-                        *ngIf="rule.get('percentage')?.touched && rule.get('percentage')?.hasError('required')"
-                      >
-                        {{ 'fieldRequired' | translate | capitalize }}
-                      </div>
-                    </td>
-                    <td *ngIf="operation !== 'view' && operation !== 'delete'">
-                      <button type="button" class="btn btn-danger btn-sm" (click)="removeRule(i)">
-                        <i class="fa fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead class="thead-light">
+                    <tr>
+                      <th style="width: 35%">{{ 'category' | translate | capitalize }}</th>
+                      <th style="width: 35%">{{ 'make' | translate | capitalize }}</th>
+                      <th style="width: 20%">{{ 'percentage' | translate | capitalize }}</th>
+                      <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
+                        {{ 'actions' | translate | capitalize }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="rules">
+                    <tr *ngFor="let rule of rulesArray.controls; let i = index" [formGroupName]="i">
+                      <td>
+                        <div class="dropdown-wrapper">
+                          <app-searchable-dropdown
+                            [control]="rule.get('category')"
+                            [service]="_categoryService"
+                            [keyField]="'_id'"
+                            [displayField]="'description'"
+                          ></app-searchable-dropdown>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="dropdown-wrapper">
+                          <app-searchable-dropdown
+                            [control]="rule.get('make')"
+                            [service]="_makeService"
+                            [keyField]="'_id'"
+                            [displayField]="'description'"
+                          ></app-searchable-dropdown>
+                        </div>
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control"
+                          formControlName="percentage"
+                          step="0.01"
+                          [readonly]="operation === 'view' || operation === 'delete'"
+                          [ngClass]="{
+                            'is-invalid': rule.get('percentage')?.touched && rule.get('percentage')?.invalid,
+                          }"
+                        />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="rule.get('percentage')?.touched && rule.get('percentage')?.hasError('required')"
+                        >
+                          {{ 'fieldRequired' | translate | capitalize }}
+                        </div>
+                      </td>
+                      <td *ngIf="operation !== 'view' && operation !== 'delete'">
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removeRule(i)">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
 
-        <hr />
+          <hr />
 
-        <!-- Excepciones -->
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>{{ 'exceptions' | translate | capitalize }}</b>
-            <button
-              type="button"
-              class="btn btn-sm btn-primary ml-2"
-              *ngIf="operation !== 'view' && operation !== 'delete'"
-              (click)="addException()"
-            >
-              <i class="fa fa-plus"></i> {{ 'add' | translate | capitalize }}
-            </button>
-          </label>
-        </div>
+          <!-- Excepciones -->
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>{{ 'exceptions' | translate | capitalize }}</b>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary ml-2"
+                *ngIf="operation !== 'view' && operation !== 'delete'"
+                (click)="addException()"
+              >
+                <i class="fa fa-plus"></i> {{ 'add' | translate | capitalize }}
+              </button>
+            </label>
+          </div>
 
-        <div class="row">
-          <div class="col-md-12">
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-                <thead class="thead-light">
-                  <tr>
-                    <th style="width: 70%">{{ 'article' | translate | capitalize }}</th>
-                    <th style="width: 20%">{{ 'percentage' | translate | capitalize }}</th>
-                    <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
-                      {{ 'actions' | translate | capitalize }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody formArrayName="exceptions">
-                  <tr *ngFor="let exception of exceptionsArray.controls; let i = index" [formGroupName]="i">
-                    <td>
-                      <div class="dropdown-wrapper">
-                        <app-searchable-dropdown
-                          [control]="exception.get('article')"
-                          [service]="_articleService"
-                          [keyField]="'_id'"
-                          [displayField]="'description'"
-                          [searchFields]="['description', 'code', 'barcode']"
-                        ></app-searchable-dropdown>
-                      </div>
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        class="form-control"
-                        formControlName="percentage"
-                        step="0.01"
-                        [readonly]="operation === 'view' || operation === 'delete'"
-                        [ngClass]="{
-                          'is-invalid': exception.get('percentage')?.touched && exception.get('percentage')?.invalid,
-                        }"
-                      />
-                      <div
-                        class="invalid-feedback"
-                        *ngIf="
-                          exception.get('percentage')?.touched && exception.get('percentage')?.hasError('required')
-                        "
-                      >
-                        {{ 'fieldRequired' | translate | capitalize }}
-                      </div>
-                    </td>
-                    <td *ngIf="operation !== 'view' && operation !== 'delete'">
-                      <button type="button" class="btn btn-danger btn-sm" (click)="removeException(i)">
-                        <i class="fa fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead class="thead-light">
+                    <tr>
+                      <th style="width: 70%">{{ 'article' | translate | capitalize }}</th>
+                      <th style="width: 20%">{{ 'percentage' | translate | capitalize }}</th>
+                      <th *ngIf="operation !== 'view' && operation !== 'delete'" style="width: 10%">
+                        {{ 'actions' | translate | capitalize }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="exceptions">
+                    <tr *ngFor="let exception of exceptionsArray.controls; let i = index" [formGroupName]="i">
+                      <td>
+                        <div class="dropdown-wrapper">
+                          <app-searchable-dropdown
+                            [control]="exception.get('article')"
+                            [service]="_articleService"
+                            [keyField]="'_id'"
+                            [displayField]="'description'"
+                            [searchFields]="['description', 'code', 'barcode']"
+                          ></app-searchable-dropdown>
+                        </div>
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control"
+                          formControlName="percentage"
+                          step="0.01"
+                          [readonly]="operation === 'view' || operation === 'delete'"
+                          [ngClass]="{
+                            'is-invalid': exception.get('percentage')?.touched && exception.get('percentage')?.invalid,
+                          }"
+                        />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            exception.get('percentage')?.touched && exception.get('percentage')?.hasError('required')
+                          "
+                        >
+                          {{ 'fieldRequired' | translate | capitalize }}
+                        </div>
+                      </td>
+                      <td *ngIf="operation !== 'view' && operation !== 'delete'">
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removeException(i)">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
         </ng-container>
       </form>
     </div>

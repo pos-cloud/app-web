@@ -227,7 +227,7 @@
                       'btn-state-not-sent':
                         transaction?.deliveryAddress?.shippingStatus === 'Sin enviar' ||
                         transaction?.deliveryAddress?.shippingStatus === 'sin enviar' ||
-                        transaction?.deliveryAddress?.shippingStatus === 'Sin Enviar'
+                        transaction?.deliveryAddress?.shippingStatus === 'Sin Enviar',
                     }"
                   >
                     {{ transaction?.deliveryAddress?.shippingStatus ?? '' }}
@@ -249,7 +249,7 @@
                         'btn-state-open': transaction?.deliveryAddress?.shippingStatus === 'No enviado',
                         'btn-state-primary': transaction?.deliveryAddress?.shippingStatus === 'Retiro',
                         'btn-state-success': transaction?.deliveryAddress?.shippingStatus === 'Entregado',
-                        'btn-state-not-sent': transaction?.deliveryAddress?.shippingStatus === 'Sin Enviar'
+                        'btn-state-not-sent': transaction?.deliveryAddress?.shippingStatus === 'Sin Enviar',
                       }"
                     ></button>
                     <div class="dropdown-menu" ngbDropdownMenu>
@@ -299,10 +299,10 @@
                 {{ transaction?.observation }}
               </td>
               <td>
-                {{ transaction?.balance | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ transaction?.balance | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
               <td>
-                {{ transaction?.totalPrice | currency : 'USD' : 'symbol-narrow' : '1.2-2' }}
+                {{ transaction?.totalPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
               </td>
             </ng-container>
           </tr>

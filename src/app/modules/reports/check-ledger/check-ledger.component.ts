@@ -20,14 +20,7 @@ import { ViewTransactionComponent } from '../../transaction/components/view-tran
   styleUrls: ['./check-ledger.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    PipesModule,
-    DataTableReportsComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [CommonModule, FormsModule, TranslateModule, PipesModule, DataTableReportsComponent, ReactiveFormsModule],
 })
 export class ReportCheckLedgerComponent {
   public loading: boolean = false;

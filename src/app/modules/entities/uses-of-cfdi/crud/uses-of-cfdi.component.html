@@ -1,9 +1,9 @@
 <section class="container-fluid">
   <div class="card">
     <div class="card-header">
-      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'"
-        >{{ 'add-use-of-cfdi' | translate | capitalize }}</span
-      >
+      <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
+        'add-use-of-cfdi' | translate | capitalize
+      }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
         >{{ 'edit' | translate | capitalize }} {{ usesOfCfdi?.description ?? '' }}</span
       >
@@ -56,14 +56,13 @@
               id="description"
               [focus]="focusEvent"
               [ngClass]="{
-                  'is-invalid': usesOfCfdiForm.get('description')?.touched && usesOfCfdiForm.get('description')?.invalid,
-                }"
+                'is-invalid': usesOfCfdiForm.get('description')?.touched && usesOfCfdiForm.get('description')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
               *ngIf="
-                usesOfCfdiForm.get('description')?.touched &&
-                usesOfCfdiForm.get('description')?.hasError('required')
+                usesOfCfdiForm.get('description')?.touched && usesOfCfdiForm.get('description')?.hasError('required')
               "
             >
               {{ 'fieldRequired' | translate | capitalize }}
@@ -78,14 +77,12 @@
               name="code"
               id="code"
               [ngClass]="{
-                    'is-invalid': usesOfCfdiForm.get('code')?.touched && usesOfCfdiForm.get('code')?.invalid,
-                  }"
+                'is-invalid': usesOfCfdiForm.get('code')?.touched && usesOfCfdiForm.get('code')?.invalid,
+              }"
             />
             <div
               class="invalid-feedback"
-              *ngIf="
-                usesOfCfdiForm.get('code')?.touched && usesOfCfdiForm.get('code')?.hasError('required')
-              "
+              *ngIf="usesOfCfdiForm.get('code')?.touched && usesOfCfdiForm.get('code')?.hasError('required')"
             >
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
@@ -109,7 +106,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ usesOfCfdi?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ usesOfCfdi?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -123,7 +120,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ usesOfCfdi?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ usesOfCfdi?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

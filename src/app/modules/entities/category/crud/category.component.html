@@ -72,7 +72,7 @@
                   id="description"
                   [focus]="focusEvent"
                   [ngClass]="{
-                    'is-invalid': categoryForm.get('description')?.touched && categoryForm.get('description')?.invalid
+                    'is-invalid': categoryForm.get('description')?.touched && categoryForm.get('description')?.invalid,
                   }"
                   [readonly]="readonly"
                 />
@@ -241,7 +241,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ category?.creationDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ category?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>
@@ -255,7 +255,7 @@
               <div class="form-group col-md-6">
                 <label class="control-label">
                   {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ category?.updateDate ?? null | dateFormat : 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  <b>{{ category?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
                 </label>
               </div>
             </div>

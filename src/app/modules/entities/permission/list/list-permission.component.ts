@@ -125,7 +125,10 @@ export class ListPermissionComponent {
     },
   ];
 
-  constructor(public _service: PermissionService, private _router: Router) {}
+  constructor(
+    public _service: PermissionService,
+    private _router: Router
+  ) {}
 
   public async emitEvent(event) {
     this.openModal(event.op, event.obj);

@@ -22,7 +22,10 @@ export class ListDepositComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: DepositService, private _router: Router) {
+  constructor(
+    public _service: DepositService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'branch.name',

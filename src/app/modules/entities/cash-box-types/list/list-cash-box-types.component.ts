@@ -9,56 +9,55 @@ import { DatatableModule } from 'app/components/datatable/datatable.module';
   selector: 'app-list-cash-box-types',
   templateUrl: './list-cash-box-types.component.html',
   standalone: true,
-   imports: [DatatableModule],
+  imports: [DatatableModule],
 })
 export class ListCashBoxTypesComponent {
   public title: string = 'cash-box-types';
   public sort = { name: 1 };
-   public columns: IAttribute[] = [
-     
-      {
-        name: 'name',
-        visible: true,
-        disabled: false,
-        filter: true,
-        datatype: 'string',
-        project: null,
-        align: 'left',
-        required: true,
-      },
-      
-      {
-        name: 'creationDate',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'date',
-        project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'updateDate',
-        visible: false,
-        disabled: false,
-        filter: true,
-        datatype: 'date',
-        project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
-        align: 'left',
-        required: false,
-      },
-      {
-        name: 'operationType',
-        visible: false,
-        disabled: true,
-        filter: false,
-        datatype: 'string',
-        defaultFilter: `{ "$ne": "D" }`,
-        project: null,
-        align: 'left',
-        required: true,
-      },
-    ];
+  public columns: IAttribute[] = [
+    {
+      name: 'name',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: true,
+    },
+
+    {
+      name: 'creationDate',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'date',
+      project: `{ "$dateToString": { "date": "$creationDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'updateDate',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'date',
+      project: `{ "$dateToString": { "date": "$updateDate", "format": "%d/%m/%Y %H:%M", "timezone": "-03:00" } }`,
+      align: 'left',
+      required: false,
+    },
+    {
+      name: 'operationType',
+      visible: false,
+      disabled: true,
+      filter: false,
+      datatype: 'string',
+      defaultFilter: `{ "$ne": "D" }`,
+      project: null,
+      align: 'left',
+      required: true,
+    },
+  ];
   public rowButtons: IButton[] = [
     {
       title: 'view',
@@ -99,7 +98,7 @@ export class ListCashBoxTypesComponent {
 
   constructor(
     public _service: CashBoxTypeService,
-        private _router: Router,
+    private _router: Router
   ) {}
 
   public async emitEvent(event) {
@@ -108,7 +107,7 @@ export class ListCashBoxTypesComponent {
 
   public async openModal(op: string, obj: any) {
     switch (op) {
-       case 'view':
+      case 'view':
         this._router.navigateByUrl('entities/cash-box-types/view/' + obj._id);
         break;
       case 'add':

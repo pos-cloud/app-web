@@ -23,7 +23,10 @@ export class ListMakesComponent {
 
   @ViewChild(DatatableComponent) datatableComponent: DatatableComponent;
 
-  constructor(public _service: MakeService, private _router: Router) {
+  constructor(
+    public _service: MakeService,
+    private _router: Router
+  ) {
     this.columns = [
       {
         name: 'description',

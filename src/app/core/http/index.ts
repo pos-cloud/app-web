@@ -1,5 +1,1 @@
-export {
-  extractApiResult,
-  isApiSuccess,
-  normalizeApiResponse,
-} from './normalize-api-response';
+export { extractApiResult, isApiSuccess, normalizeApiResponse } from './normalize-api-response';

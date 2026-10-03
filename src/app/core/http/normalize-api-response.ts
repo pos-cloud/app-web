@@ -31,9 +31,7 @@ function toEnvelope(raw: unknown, httpStatus: number): ApiEnvelope {
 
   return {
     message:
-      (raw['message'] as string | null | undefined) ??
-      (nestedError?.['message'] as string | null | undefined) ??
-      null,
+      (raw['message'] as string | null | undefined) ?? (nestedError?.['message'] as string | null | undefined) ?? null,
     result: (raw['result'] as unknown) ?? null,
     code: (raw['code'] as string | null | undefined) ?? null,
   };

@@ -525,9 +525,7 @@ export class AddMovementOfCashComponent implements OnInit {
                 );
                 amountTotal = this.roundNumber.transform(amountTotal);
                 if (amountTotal !== expectedTotal) {
-                  mov.amountPaid = this.roundNumber.transform(
-                    mov.amountPaid - (amountTotal - expectedTotal)
-                  );
+                  mov.amountPaid = this.roundNumber.transform(mov.amountPaid - (amountTotal - expectedTotal));
                 }
               }
               break;
@@ -579,9 +577,7 @@ export class AddMovementOfCashComponent implements OnInit {
                 );
                 amountTotal = this.roundNumber.transform(amountTotal);
                 if (amountTotal !== expectedTotal) {
-                  mov.amountPaid = this.roundNumber.transform(
-                    mov.amountPaid - (amountTotal - expectedTotal)
-                  );
+                  mov.amountPaid = this.roundNumber.transform(mov.amountPaid - (amountTotal - expectedTotal));
                 }
               }
               break;

@@ -21,7 +21,17 @@ import { NgbActiveModal, NgbModal, NgbTypeahead, NgbTypeaheadConfig } from '@ng-
 import { Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
-import { Category, Classification, Company, Make, Tax, TaxClassification, UnitOfMeasurement, VariantType, VariantValue } from '@types';
+import {
+  Category,
+  Classification,
+  Company,
+  Make,
+  Tax,
+  TaxClassification,
+  UnitOfMeasurement,
+  VariantType,
+  VariantValue,
+} from '@types';
 import { Config } from '../../../app.config';
 import { ArticleService } from '../../../core/services/article.service';
 import { CategoryService } from '../../../core/services/category.service';
