@@ -44,7 +44,6 @@
     "font-awesome": "^4.7.0",
     "jspdf": "^2.5.0",
     "jsqr": "^1.2.0",
-    "lodash": "^4.17.21",
     "mercadopago": "^2.3.0",
     "moment": "^2.24.0",
     "ng-apexcharts": "1.7.6",
