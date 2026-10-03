@@ -29,5 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Sanity check (format + unused imports)
+        run: npm run sanity
+
       - name: Build
         run: npm run ${{ github.base_ref == 'main' && 'build:prod' || 'build:dev' }}
