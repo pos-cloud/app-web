@@ -27,7 +27,7 @@ export class BranchService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/branches`;
+    const URL = `${environment.api}/api/branches`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -40,30 +40,6 @@ export class BranchService extends ModelService {
       .set('group', JSON.stringify(group))
       .set('limit', limit.toString())
       .set('skip', skip.toString());
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getPicture(picture: string): Observable<any> {
-    const URL = `${environment.api}/api/get-image-base64-branch`;
-
-    const params = new HttpParams().set('picture', picture);
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
 
     return this._http
       .get(URL, {

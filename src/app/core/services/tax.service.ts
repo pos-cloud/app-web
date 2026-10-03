@@ -23,7 +23,7 @@ export class TaxService extends ModelService {
   }
 
   public getTax(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/tax`;
+    const URL = `${environment.api}/api/tax`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -47,7 +47,7 @@ export class TaxService extends ModelService {
   }
 
   public getTaxes(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/taxes`;
+    const URL = `${environment.api}/api/taxes`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -71,7 +71,7 @@ export class TaxService extends ModelService {
   }
 
   public saveTax(tax: Tax): Observable<any> {
-    const URL = `${environment.api}/api/tax`;
+    const URL = `${environment.api}/api/tax`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -92,7 +92,7 @@ export class TaxService extends ModelService {
   }
 
   public updateTax(tax: Tax): Observable<any> {
-    const URL = `${environment.api}/api/tax`;
+    const URL = `${environment.api}/api/tax`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -116,7 +116,7 @@ export class TaxService extends ModelService {
   }
 
   public deleteTax(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/tax`;
+    const URL = `${environment.api}/api/tax`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -24,7 +24,7 @@ export class OriginService extends ModelService {
   }
 
   public getOrigin(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/origin`;
+    const URL = `${environment.api}/api/origin`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -55,7 +55,7 @@ export class OriginService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/origins`;
+    const URL = `${environment.api}/api/origins`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -85,7 +85,7 @@ export class OriginService extends ModelService {
   }
 
   public saveOrigin(origin: Origin): Observable<any> {
-    const URL = `${environment.api}/api/origin`;
+    const URL = `${environment.api}/api/origin`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class OriginService extends ModelService {
   }
 
   public updateOrigin(origin: Origin): Observable<any> {
-    const URL = `${environment.api}/api/origin`;
+    const URL = `${environment.api}/api/origin`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -130,7 +130,7 @@ export class OriginService extends ModelService {
   }
 
   public deleteOrigin(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/origin`;
+    const URL = `${environment.api}/api/origin`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

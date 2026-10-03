@@ -22,7 +22,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   getMovementsOfArticles(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-articles`;
+    const URL = `${environment.api}/api/movements-of-articles`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -53,7 +53,7 @@ export class MovementOfArticleService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/v2/movements-of-articles`;
+    const URL = `${environment.api}/api/v2/movements-of-articles`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -118,7 +118,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   updateMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
-    const URL = `${environment.api}/api/movement-of-article`;
+    const URL = `${environment.api}/api/movement-of-article`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -142,7 +142,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Observable<any> {
-    const URL = `${environment.api}/api/movement-of-article-by-where`;
+    const URL = `${environment.api}/api/movement-of-article-by-where`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -169,7 +169,7 @@ export class MovementOfArticleService extends ModelService {
   }
 
   deleteMovementsOfArticles(query: string): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-articles`;
+    const URL = `${environment.api}/api/movements-of-articles`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

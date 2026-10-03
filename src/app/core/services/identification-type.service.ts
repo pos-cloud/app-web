@@ -21,7 +21,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public getIdentificationType(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/identification-type`;
+    const URL = `${environment.api}/api/identification-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,7 +45,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public getIdentificationTypes(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/identification-types`;
+    const URL = `${environment.api}/api/identification-types`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -69,7 +69,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public saveIdentificationType(identificationType: IdentificationType): Observable<any> {
-    const URL = `${environment.api}/api/identification-type`;
+    const URL = `${environment.api}/api/identification-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -90,7 +90,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public updateIdentificationType(identificationType: IdentificationType): Observable<any> {
-    const URL = `${environment.api}/api/identification-type`;
+    const URL = `${environment.api}/api/identification-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -114,7 +114,7 @@ export class IdentificationTypeService extends ModelService {
   }
 
   public deleteIdentificationType(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/identification-type`;
+    const URL = `${environment.api}/api/identification-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

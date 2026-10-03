@@ -24,7 +24,7 @@ export class MakeService extends ModelService {
   }
 
   public getMake(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/make`;
+    const URL = `${environment.api}/api/make`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class MakeService extends ModelService {
   }
 
   public getMakes(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/makes`;
+    const URL = `${environment.api}/api/makes`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

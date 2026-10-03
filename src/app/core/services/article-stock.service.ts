@@ -24,7 +24,7 @@ export class ArticleStockService extends ModelService {
   }
 
   public getArticleStocks(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/article-stocks`;
+    const URL = `${environment.api}/api/article-stocks`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

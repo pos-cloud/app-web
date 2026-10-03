@@ -24,7 +24,7 @@ export class EmployeeService extends ModelService {
   }
 
   public getEmployee(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/employee`;
+    const URL = `${environment.api}/api/employee`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class EmployeeService extends ModelService {
   }
 
   public getEmployees(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/employees`;
+    const URL = `${environment.api}/api/employees`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -72,7 +72,7 @@ export class EmployeeService extends ModelService {
   }
 
   public saveEmployee(employee: Employee): Observable<any> {
-    const URL = `${environment.api}/api/employee`;
+    const URL = `${environment.api}/api/employee`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -93,7 +93,7 @@ export class EmployeeService extends ModelService {
   }
 
   public updateEmployee(employee: Employee): Observable<any> {
-    const URL = `${environment.api}/api/employee`;
+    const URL = `${environment.api}/api/employee`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -117,7 +117,7 @@ export class EmployeeService extends ModelService {
   }
 
   public deleteEmployee(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/employee`;
+    const URL = `${environment.api}/api/employee`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -22,7 +22,7 @@ export class PrinterService extends ModelService {
   }
 
   public getPrinter(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/printer`;
+    const URL = `${environment.api}/api/printer`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -46,7 +46,7 @@ export class PrinterService extends ModelService {
   }
 
   public getPrinters(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/printers`;
+    const URL = `${environment.api}/api/printers`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -70,7 +70,7 @@ export class PrinterService extends ModelService {
   }
 
   public savePrinter(printer: Printer): Observable<any> {
-    const URL = `${environment.api}/api/printer`;
+    const URL = `${environment.api}/api/printer`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -91,7 +91,7 @@ export class PrinterService extends ModelService {
   }
 
   public updatePrinter(printer: Printer): Observable<any> {
-    const URL = `${environment.api}/api/printer`;
+    const URL = `${environment.api}/api/printer`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -115,7 +115,7 @@ export class PrinterService extends ModelService {
   }
 
   public deletePrinter(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/printer`;
+    const URL = `${environment.api}/api/printer`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

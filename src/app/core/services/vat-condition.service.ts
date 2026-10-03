@@ -20,7 +20,7 @@ export class VATConditionService extends ModelService {
   }
 
   public getVATConditions(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/vat-conditions`;
+    const URL = `${environment.api}/api/vat-conditions`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

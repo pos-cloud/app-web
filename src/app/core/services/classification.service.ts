@@ -20,7 +20,7 @@ export class ClassificationService extends ModelService {
   }
 
   public getClassification(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/classification`;
+    const URL = `${environment.api}/api/classification`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

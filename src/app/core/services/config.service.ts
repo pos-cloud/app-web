@@ -55,7 +55,7 @@ export class ConfigService extends ModelService {
   }
 
   public getConfigApi(): Observable<any> {
-    const URL = `${environment.api}/api/config`;
+    const URL = `${environment.api}/api/config`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -110,7 +110,7 @@ export class ConfigService extends ModelService {
   }
 
   public updateConfig(config: Config): Observable<any> {
-    const URL = `${environment.api}/api/config`;
+    const URL = `${environment.api}/api/config`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

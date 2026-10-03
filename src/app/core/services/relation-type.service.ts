@@ -21,7 +21,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public getRelationType(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/relation-type`;
+    const URL = `${environment.api}/api/relation-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,7 +45,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public getRelationTypes(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/relation-types`;
+    const URL = `${environment.api}/api/relation-types`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -69,7 +69,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public saveRelationType(relationType: RelationType): Observable<any> {
-    const URL = `${environment.api}/api/relation-type`;
+    const URL = `${environment.api}/api/relation-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -90,7 +90,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public updateRelationType(relationType: RelationType): Observable<any> {
-    const URL = `${environment.api}/api/relation-type`;
+    const URL = `${environment.api}/api/relation-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -114,7 +114,7 @@ export class RelationTypeService extends ModelService {
   }
 
   public deleteRelationType(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/relation-type`;
+    const URL = `${environment.api}/api/relation-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

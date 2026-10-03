@@ -21,7 +21,7 @@ export class StructureService extends ModelService {
   }
 
   public getStructure(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/structure`;
+    const URL = `${environment.api}/api/structure`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -52,7 +52,7 @@ export class StructureService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/structures`;
+    const URL = `${environment.api}/api/structures`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -82,7 +82,7 @@ export class StructureService extends ModelService {
   }
 
   public saveStructure(structure: Structure): Observable<any> {
-    const URL = `${environment.api}/api/structure`;
+    const URL = `${environment.api}/api/structure`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -103,7 +103,7 @@ export class StructureService extends ModelService {
   }
 
   public updateStructure(structure: Structure): Observable<any> {
-    const URL = `${environment.api}/api/structure`;
+    const URL = `${environment.api}/api/structure`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -127,7 +127,7 @@ export class StructureService extends ModelService {
   }
 
   public deleteStructure(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/structure`;
+    const URL = `${environment.api}/api/structure`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

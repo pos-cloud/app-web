@@ -23,7 +23,7 @@ export class CashBoxService extends ModelService {
   }
 
   public getCashBoxes(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/cash-boxes`;
+    const URL = `${environment.api}/api/cash-boxes`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

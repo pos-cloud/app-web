@@ -21,7 +21,7 @@ export class DepositService extends ModelService {
   }
 
   public getDeposit(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/deposit`;
+    const URL = `${environment.api}/api/deposit`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,7 +45,7 @@ export class DepositService extends ModelService {
   }
 
   public getDeposits(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/deposits`;
+    const URL = `${environment.api}/api/deposits`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -76,7 +76,7 @@ export class DepositService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/v2/deposits`;
+    const URL = `${environment.api}/api/v2/deposits`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class DepositService extends ModelService {
   }
 
   public saveDeposit(deposit: Deposit): Observable<any> {
-    const URL = `${environment.api}/api/deposit`;
+    const URL = `${environment.api}/api/deposit`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -127,7 +127,7 @@ export class DepositService extends ModelService {
   }
 
   public updateDeposit(deposit: Deposit): Observable<any> {
-    const URL = `${environment.api}/api/deposit`;
+    const URL = `${environment.api}/api/deposit`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -151,7 +151,7 @@ export class DepositService extends ModelService {
   }
 
   public deleteDeposit(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/deposit`;
+    const URL = `${environment.api}/api/deposit`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

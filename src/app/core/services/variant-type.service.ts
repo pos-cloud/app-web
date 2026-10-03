@@ -21,7 +21,7 @@ export class VariantTypeService extends ModelService {
   }
 
   public getVariantType(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/variant-type`;
+    const URL = `${environment.api}/api/variant-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,7 +45,7 @@ export class VariantTypeService extends ModelService {
   }
 
   public getVariantTypes(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/variant-types`;
+    const URL = `${environment.api}/api/variant-types`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -69,7 +69,7 @@ export class VariantTypeService extends ModelService {
   }
 
   public saveVariantType(variantType: VariantType): Observable<any> {
-    const URL = `${environment.api}/api/variant-type`;
+    const URL = `${environment.api}/api/variant-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -90,7 +90,7 @@ export class VariantTypeService extends ModelService {
   }
 
   public updateVariantType(variantType: VariantType): Observable<any> {
-    const URL = `${environment.api}/api/variant-type`;
+    const URL = `${environment.api}/api/variant-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -114,7 +114,7 @@ export class VariantTypeService extends ModelService {
   }
 
   public deleteVariantType(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/variant-type`;
+    const URL = `${environment.api}/api/variant-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -28,7 +28,7 @@ export class TransactionService extends ModelService {
   }
 
   public getTransaction(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/transaction`;
+    const URL = `${environment.api}/api/transaction`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -52,7 +52,7 @@ export class TransactionService extends ModelService {
   }
 
   public getTransactions(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/transactions`;
+    const URL = `${environment.api}/api/transactions`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -115,7 +115,7 @@ export class TransactionService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/v2/transactions`;
+    const URL = `${environment.api}/api/v2/transactions`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -145,7 +145,7 @@ export class TransactionService extends ModelService {
   }
 
   public getTransactionsV3(query): Observable<any> {
-    const URL = `${environment.api}/api/v3/transactions`;
+    const URL = `${environment.api}/api/v3/transactions`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

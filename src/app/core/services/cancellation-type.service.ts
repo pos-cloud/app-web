@@ -24,7 +24,7 @@ export class CancellationTypeService extends ModelService {
   }
 
   public getCancellationType(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/cancellation-type`;
+    const URL = `${environment.api}/api/cancellation-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -55,7 +55,7 @@ export class CancellationTypeService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/cancellation-types`;
+    const URL = `${environment.api}/api/cancellation-types`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -87,7 +87,7 @@ export class CancellationTypeService extends ModelService {
   public saveCancellationType(
     cancellationType: CancellationType
   ): Observable<any> {
-    const URL = `${environment.api}/api/cancellation-type`;
+    const URL = `${environment.api}/api/cancellation-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -110,7 +110,7 @@ export class CancellationTypeService extends ModelService {
   public updateCancellationType(
     cancellationType: CancellationType
   ): Observable<any> {
-    const URL = `${environment.api}/api/cancellation-type`;
+    const URL = `${environment.api}/api/cancellation-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -134,7 +134,7 @@ export class CancellationTypeService extends ModelService {
   }
 
   public deleteCancellationType(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/cancellation-type`;
+    const URL = `${environment.api}/api/cancellation-type`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -20,7 +20,7 @@ export class CategoryService extends ModelService {
   }
 
   public getCategories(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/categories`;
+    const URL = `${environment.api}/api/categories`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

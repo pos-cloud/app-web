@@ -31,7 +31,7 @@ export class MovementOfCancellationService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-cancellations`;
+    const URL = `${environment.api}/api/movements-of-cancellations`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -61,7 +61,7 @@ export class MovementOfCancellationService extends ModelService {
   }
 
   public saveMovementOfCancellation(movementOfCancellation: MovementOfCancellation): Observable<any> {
-    const URL = `${environment.api}/api/movement-of-cancellation`;
+    const URL = `${environment.api}/api/movement-of-cancellation`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -82,7 +82,7 @@ export class MovementOfCancellationService extends ModelService {
   }
 
   public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-cancellations`;
+    const URL = `${environment.api}/api/movements-of-cancellations`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -107,7 +107,7 @@ export class MovementOfCancellationService extends ModelService {
   }
 
   public deleteMovementsOfCancellations(query: string): Observable<any> {
-    const URL = `${environment.api}/api/movements-of-cancellations`;
+    const URL = `${environment.api}/api/movements-of-cancellations`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

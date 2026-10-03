@@ -22,7 +22,7 @@ export class ArticleService extends ModelService {
   }
 
   public getArticle(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/article`;
+    const URL = `${environment.api}/api/article`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -46,7 +46,7 @@ export class ArticleService extends ModelService {
   }
 
   public getArticles(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/articles`;
+    const URL = `${environment.api}/api/articles`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -98,7 +98,7 @@ export class ArticleService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/v2/articles`;
+    const URL = `${environment.api}/api/v2/articles`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -135,7 +135,7 @@ export class ArticleService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/v2/histories`;
+    const URL = `${environment.api}/api/v2/histories`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -262,7 +262,7 @@ export class ArticleService extends ModelService {
   }
 
   public deleteImage(picture: string): Observable<any> {
-    const URL = `${environment.api}/api/delete-image-article`;
+    const URL = `${environment.api}/api/delete-image-article`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -298,30 +298,6 @@ export class ArticleService extends ModelService {
         body: {
           origin: origin,
         },
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getPicture(picture: string): Observable<any> {
-    const URL = `${environment.api}/api/get-image-base64-article`;
-
-    const params = new HttpParams().set('picture', picture);
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
       })
       .pipe(
         map((res) => {

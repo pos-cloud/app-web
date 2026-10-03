@@ -21,7 +21,7 @@ export class LocationService extends ModelService {
   }
 
   public getLocation(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/location`;
+    const URL = `${environment.api}/api/location`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,7 +45,7 @@ export class LocationService extends ModelService {
   }
 
   public saveLocation(location: Location): Observable<any> {
-    const URL = `${environment.api}/api/location`;
+    const URL = `${environment.api}/api/location`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -66,7 +66,7 @@ export class LocationService extends ModelService {
   }
 
   public updateLocation(location: Location): Observable<any> {
-    const URL = `${environment.api}/api/location`;
+    const URL = `${environment.api}/api/location`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -90,7 +90,7 @@ export class LocationService extends ModelService {
   }
 
   public deleteLocation(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/location`;
+    const URL = `${environment.api}/api/location`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

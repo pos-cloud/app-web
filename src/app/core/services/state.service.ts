@@ -24,7 +24,7 @@ export class StateService extends ModelService {
   }
 
   public getState(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/state`;
+    const URL = `${environment.api}/api/state`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class StateService extends ModelService {
   }
 
   public saveState(state: State): Observable<any> {
-    const URL = `${environment.api}/api/state`;
+    const URL = `${environment.api}/api/state`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -69,7 +69,7 @@ export class StateService extends ModelService {
   }
 
   public updateState(state: State): Observable<any> {
-    const URL = `${environment.api}/api/state`;
+    const URL = `${environment.api}/api/state`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -93,7 +93,7 @@ export class StateService extends ModelService {
   }
 
   public deleteState(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/state`;
+    const URL = `${environment.api}/api/state`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -24,7 +24,7 @@ export class RoomService extends ModelService {
   }
 
   public getRoom(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/room`;
+    const URL = `${environment.api}/api/room`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class RoomService extends ModelService {
   }
 
   public getRooms(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/rooms`;
+    const URL = `${environment.api}/api/rooms`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -72,7 +72,7 @@ export class RoomService extends ModelService {
   }
 
   public saveRoom(room: Room): Observable<any> {
-    const URL = `${environment.api}/api/room`;
+    const URL = `${environment.api}/api/room`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -93,7 +93,7 @@ export class RoomService extends ModelService {
   }
 
   public updateRoom(room: Room): Observable<any> {
-    const URL = `${environment.api}/api/room`;
+    const URL = `${environment.api}/api/room`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -117,7 +117,7 @@ export class RoomService extends ModelService {
   }
 
   public deleteRoom(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/room`;
+    const URL = `${environment.api}/api/room`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -24,7 +24,7 @@ export class TableService extends ModelService {
   }
 
   public getTable(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/table`;
+    const URL = `${environment.api}/api/table`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class TableService extends ModelService {
   }
 
   public getTables(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/tables`;
+    const URL = `${environment.api}/api/tables`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -72,7 +72,7 @@ export class TableService extends ModelService {
   }
 
   public saveTable(table: Table): Observable<any> {
-    const URL = `${environment.api}/api/table`;
+    const URL = `${environment.api}/api/table`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -93,7 +93,7 @@ export class TableService extends ModelService {
   }
 
   public updateTable(table: Table): Observable<any> {
-    const URL = `${environment.api}/api/table`;
+    const URL = `${environment.api}/api/table`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -117,7 +117,7 @@ export class TableService extends ModelService {
   }
 
   public deleteTable(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/table`;
+    const URL = `${environment.api}/api/table`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

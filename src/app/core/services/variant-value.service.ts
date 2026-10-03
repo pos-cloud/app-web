@@ -21,7 +21,7 @@ export class VariantValueService extends ModelService {
   }
 
   public getVariantValue(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/variant-value`;
+    const URL = `${environment.api}/api/variant-value`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -45,7 +45,7 @@ export class VariantValueService extends ModelService {
   }
 
   public getVariantValues(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/variant-values`;
+    const URL = `${environment.api}/api/variant-values`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -69,7 +69,7 @@ export class VariantValueService extends ModelService {
   }
 
   public saveVariantValue(variantValue: VariantValue): Observable<any> {
-    const URL = `${environment.api}/api/variant-value`;
+    const URL = `${environment.api}/api/variant-value`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -90,7 +90,7 @@ export class VariantValueService extends ModelService {
   }
 
   public updateVariantValue(variantValue: VariantValue): Observable<any> {
-    const URL = `${environment.api}/api/variant-value`;
+    const URL = `${environment.api}/api/variant-value`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -114,7 +114,7 @@ export class VariantValueService extends ModelService {
   }
 
   public deleteVariantValue(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/variant-value`;
+    const URL = `${environment.api}/api/variant-value`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

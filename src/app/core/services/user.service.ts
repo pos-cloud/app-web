@@ -34,7 +34,7 @@ export class UserService extends ModelService {
   }
 
   public getUser(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/user`;
+    const URL = `${environment.api}/api/user`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -65,7 +65,7 @@ export class UserService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/v2/users`;
+    const URL = `${environment.api}/api/v2/users`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -95,7 +95,7 @@ export class UserService extends ModelService {
   }
 
   public saveUser(user: User): Observable<any> {
-    const URL = `${environment.api}/api/user`;
+    const URL = `${environment.api}/api/user`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -116,7 +116,7 @@ export class UserService extends ModelService {
   }
 
   public updateUser(user: User): Observable<any> {
-    const URL = `${environment.api}/api/user`;
+    const URL = `${environment.api}/api/user`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -140,7 +140,7 @@ export class UserService extends ModelService {
   }
 
   public deleteUser(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/user`;
+    const URL = `${environment.api}/api/user`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

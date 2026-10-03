@@ -24,7 +24,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public getPaymentMethod(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/payment-method`;
+    const URL = `${environment.api}/api/payment-method`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -48,7 +48,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public getPaymentMethods(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/payment-methods`;
+    const URL = `${environment.api}/api/payment-methods`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -72,7 +72,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public savePaymentMethod(paymentMethod: PaymentMethod): Observable<any> {
-    const URL = `${environment.api}/api/payment-method`;
+    const URL = `${environment.api}/api/payment-method`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -93,7 +93,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public updatePaymentMethod(paymentMethod: PaymentMethod): Observable<any> {
-    const URL = `${environment.api}/api/payment-method`;
+    const URL = `${environment.api}/api/payment-method`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -117,7 +117,7 @@ export class PaymentMethodService extends ModelService {
   }
 
   public deletePaymentMethod(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/payment-method`;
+    const URL = `${environment.api}/api/payment-method`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

@@ -51,7 +51,7 @@ export class CompanyService extends ModelService {
   }
 
   public getCompany(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/company`;
+    const URL = `${environment.api}/api/company`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -75,7 +75,7 @@ export class CompanyService extends ModelService {
   }
 
   public getCompanies(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/companies`;
+    const URL = `${environment.api}/api/companies`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -106,7 +106,7 @@ export class CompanyService extends ModelService {
     limit: number = 0,
     skip: number = 0
   ): Observable<any> {
-    const URL = `${environment.api}/api/v2/companies`;
+    const URL = `${environment.api}/api/v2/companies`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -136,7 +136,7 @@ export class CompanyService extends ModelService {
   }
 
   public saveCompany(company: Company): Observable<any> {
-    const URL = `${environment.api}/api/company`;
+    const URL = `${environment.api}/api/company`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -157,7 +157,7 @@ export class CompanyService extends ModelService {
   }
 
   public updateCompany(company: Company): Observable<any> {
-    const URL = `${environment.api}/api/company`;
+    const URL = `${environment.api}/api/company`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -181,7 +181,7 @@ export class CompanyService extends ModelService {
   }
 
   public deleteCompany(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/company`;
+    const URL = `${environment.api}/api/company`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
@@ -205,7 +205,7 @@ export class CompanyService extends ModelService {
   }
 
   public getSummaryOfAccountsByCompanyV1(query: string): Observable<any> {
-    const URL = `${environment.api}/api/summary-of-accounts-by-company`;
+    const URL = `${environment.api}/api/summary-of-accounts-by-company`; // TODO:Migrar
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
