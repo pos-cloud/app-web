@@ -10,15 +10,7 @@ import { NavLayout, NavNode } from './navigation.types';
 
 const SIDEBAR_COLLAPSED_KEY = 'nav.sidebarCollapsed';
 const NAV_LAYOUT_KEY = 'nav.layout';
-const TRACKED_MODULES = new Set([
-  'Ventas',
-  'Compras',
-  'Turnos',
-  'Suscripciones',
-  'Stock',
-  'Fondos',
-  'Producción',
-]);
+const TRACKED_MODULES = new Set(['Ventas', 'Compras', 'Turnos', 'Suscripciones', 'Stock', 'Fondos', 'Producción']);
 
 @Injectable({
   providedIn: 'root',
