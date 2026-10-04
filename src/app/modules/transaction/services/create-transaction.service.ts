@@ -126,17 +126,16 @@ export class CreateTransactionService {
       return 'ok';
     }
 
-    let query = `where="state":"${CashBoxState.Open}"`;
+    const match: any = { state: CashBoxState.Open };
     if (ctx.config?.cashBox?.perUser) {
-      query += `,"creationUser":"${ctx.user._id}"`;
+      match.creationUser = { $oid: ctx.user._id };
     } else if (ctx.user?.cashBoxType) {
-      query += `,"type":"${ctx.user.cashBoxType._id}"`;
+      match.type = { $oid: ctx.user.cashBoxType._id };
     } else {
-      query += `,"type":null`;
+      match.type = null;
     }
-    query += '&sort="number":-1&limit=1';
 
-    const cashBoxes = await this.getCashBoxes(query);
+    const cashBoxes = await this.getCashBoxes(match);
     if (cashBoxes && cashBoxes.length > 0) {
       tx.cashBox = cashBoxes[0];
       return 'ok';
@@ -352,20 +351,11 @@ export class CreateTransactionService {
 
   /**
    * Decide el destino del alta.
-   * Stock abre su vista. Los formales abren la vista formal.
+   * Los formales abren la vista formal.
    * El resto sigue en el editor de venta.
    */
   private redirect(tx: Transaction, ctx: PosContext): CreateTransactionResult {
     const returnURL = ctx.returnURL ?? this._router.url;
-
-    if (tx.type?.transactionMovement === TransactionMovement.Stock) {
-      return {
-        status: 'redirect',
-        transaction: tx,
-        commands: ['/transaction/view/stock', tx._id],
-        queryParams: { returnURL },
-      };
-    }
 
     if (tx.type.view === View.Formal) {
       return { status: 'redirect', transaction: tx, commands: ['/transaction/view/formal', tx._id] };
@@ -563,8 +553,8 @@ export class CreateTransactionService {
 
   private getBranches(match: {} = {}): Promise<Branch[]> {
     return new Promise((resolve) => {
-      this._branchService.getBranches({}, match, { number: 1 }, {}, 0, 0).subscribe(
-        (result) => resolve(result?.branches ?? null),
+      this._branchService.getAll({ match, sort: { number: 1 } }).subscribe(
+        (result) => resolve(result?.status === 200 ? result.result : null),
         (error) => {
           this._toastService.showToast(error);
           resolve(null);
@@ -575,8 +565,8 @@ export class CreateTransactionService {
 
   private getDeposits(match: {} = {}): Promise<Deposit[]> {
     return new Promise((resolve) => {
-      this._depositService.getDepositsV2({}, match, { name: 1 }, {}, 0, 0).subscribe(
-        (result) => resolve(result?.deposits ?? null),
+      this._depositService.getAll({ match, sort: { name: 1 } }).subscribe(
+        (result) => resolve(result?.status === 200 ? result.result : null),
         (error) => {
           this._toastService.showToast(error);
           resolve(null);
@@ -587,8 +577,8 @@ export class CreateTransactionService {
 
   private getOrigins(match: {} = {}): Promise<Origin[]> {
     return new Promise((resolve) => {
-      this._originService.getOrigins({}, match, { number: 1 }, {}, 0, 0).subscribe(
-        (result) => resolve(result?.origins ?? null),
+      this._originService.getAll({ match, sort: { number: 1 } }).subscribe(
+        (result) => resolve(result?.status === 200 ? result.result : null),
         (error) => {
           this._toastService.showToast(error);
           resolve(null);
@@ -597,10 +587,10 @@ export class CreateTransactionService {
     });
   }
 
-  private getCashBoxes(query?: string): Promise<CashBox[]> {
+  private getCashBoxes(match: {}): Promise<CashBox[]> {
     return new Promise((resolve) => {
-      this._cashBoxService.getCashBoxes(query).subscribe(
-        (result) => resolve(result?.cashBoxes ?? null),
+      this._cashBoxService.getAll({ match, sort: { number: -1 }, limit: 1 }).subscribe(
+        (result) => resolve(result?.status === 200 ? result.result : null),
         (error) => {
           this._toastService.showToast(error);
           resolve(null);

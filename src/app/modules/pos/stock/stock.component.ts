@@ -34,7 +34,8 @@ export class StockComponent implements OnInit, OnDestroy {
   public transactions: Transaction[] = [];
   public transactionTypes: TransactionType[] = [];
 
-  public sort: Record<string, number> = { startDate: -1 };
+  public sortField = 'startDate';
+  public sortOrder: 1 | -1 = -1;
   public currentPage = 1;
   public itemsPerPage = 10;
   public totalItems = 0;
@@ -73,50 +74,26 @@ export class StockComponent implements OnInit, OnDestroy {
   public getTransactions(): void {
     this.loading = true;
 
-    const project = {
-      _id: 1,
-      startDate: 1,
-      endDate: 1,
-      number: 1,
-      observation: 1,
-      state: 1,
-      madein: 1,
-      operationType: 1,
-      'type._id': 1,
-      'type.name': 1,
-      'type.transactionMovement': 1,
-      'type.stockMovement': 1,
-      'depositOrigin._id': 1,
-      'depositOrigin.name': 1,
-      'depositDestination._id': 1,
-      'depositDestination.name': 1,
-    };
-
-    const match: any = {
-      operationType: { $ne: 'D' },
-      madein: 'mostrador',
-      'type.transactionMovement': TransactionMovement.Stock,
-      state: { $in: ['Abierto', 'Pendiente'] },
-    };
-    if (this.filterType) match['type.name'] = { $regex: this.filterType, $options: 'i' };
-    if (this.filterNumber) match['number'] = { $regex: this.filterNumber, $options: 'i' };
-    if (this.filterDepositOrigin) match['depositOrigin.name'] = { $regex: this.filterDepositOrigin, $options: 'i' };
-    if (this.filterDepositDestination)
-      match['depositDestination.name'] = { $regex: this.filterDepositDestination, $options: 'i' };
-    if (this.filterObservation) match['observation'] = { $regex: this.filterObservation, $options: 'i' };
-
-    const group = { _id: null, count: { $sum: 1 }, items: { $push: '$$ROOT' } };
-    const skip = (this.currentPage > 0 ? this.currentPage - 1 : 0) * this.itemsPerPage;
-
     this.subscription.add(
       this._transactionService
-        .getAll({ project, match, sort: this.sort, group, limit: this.itemsPerPage, skip })
+        .getPendingStock({
+          page: this.currentPage,
+          limit: Number(this.itemsPerPage),
+          sort: this.sortField,
+          order: this.sortOrder,
+          type: this.filterType,
+          number: this.filterNumber,
+          depositOrigin: this.filterDepositOrigin,
+          depositDestination: this.filterDepositDestination,
+          observation: this.filterObservation,
+        })
         .subscribe(
           (result) => {
             this.loading = false;
-            if (result.status === 200) {
-              this.transactions = result.result[0]?.items ?? [];
-              this.totalItems = result.result[0]?.count ?? 0;
+            const page = result?.result;
+            if (Array.isArray(page?.items)) {
+              this.transactions = page.items;
+              this.totalItems = page.total ?? 0;
             } else {
               this._toastService.showToast(result);
             }
@@ -134,7 +111,12 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   public orderBy(term: string): void {
-    this.sort[term] = this.sort[term] ? this.sort[term] * -1 : 1;
+    if (this.sortField === term) {
+      this.sortOrder = this.sortOrder === 1 ? -1 : 1;
+    } else {
+      this.sortField = term;
+      this.sortOrder = 1;
+    }
     this.getTransactions();
   }
 
@@ -156,10 +138,10 @@ export class StockComponent implements OnInit, OnDestroy {
   public async onNew(type: TransactionType): Promise<void> {
     const result = await this._createTransactionService.create(type, this.buildContext());
     if (result.status === 'redirect') {
-      this._router.navigate(result.commands, { queryParams: result.queryParams });
-    } else {
-      this.refresh();
+      this.openView(result.transaction);
+      return;
     }
+    this.refresh();
   }
 
   private buildContext(): PosContext {
@@ -173,9 +155,12 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   public openView(transaction: Transaction): void {
-    this._router.navigate(['/transaction/view/stock', transaction._id], {
-      queryParams: { returnURL: this._router.url },
+    this._router.navigate(['/pos/mostrador/editar-transaccion'], {
+      queryParams: { transactionId: transaction._id, returnURL: this._router.url },
     });
+    // this._router.navigate(['/transaction/view/stock', transaction._id], {
+    //   queryParams: { returnURL: this._router.url },
+    // });
   }
 
   public preview(transaction: Transaction, event: Event): void {
