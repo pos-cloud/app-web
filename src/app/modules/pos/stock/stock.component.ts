@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -57,10 +58,12 @@ export class StockComponent implements OnInit, OnDestroy {
     private _configService: ConfigService,
     private _modalService: NgbModal,
     private _toastService: ToastService,
-    private _router: Router
+    private _router: Router,
+    private _title: Title
   ) {}
 
   async ngOnInit(): Promise<void> {
+    this._title.setTitle('Stock');
     this.subscription.add(this._authService.getIdentity.subscribe((identity) => (this.user = identity)));
     this.subscription.add(this._configService.getConfig.subscribe((config) => (this.config = config)));
     await this.loadTransactionTypes();
