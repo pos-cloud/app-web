@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
 import { Config } from './app.config';
+import { AnalyticsService } from './core/services/analytics.service';
 import { AuthService } from './core/services/auth.service';
 import { ConfigService } from './core/services/config.service';
 import { NavigationService } from './layout/navigation/navigation.service';
@@ -37,6 +38,7 @@ export class AppComponent {
     public _modalService: NgbModal,
     public _router: Router,
     private _translateService: TranslateService,
+    private _analyticsService: AnalyticsService,
     private _nav: NavigationService
   ) {
     this._translateService.setDefaultLang('es');
@@ -46,6 +48,8 @@ export class AppComponent {
   }
 
   async ngOnInit() {
+    this._analyticsService.initializeTracking();
+
     this._authService.getIdentity.subscribe(async (identity) => {
       if (identity) {
         await this.getConfigApi().then((config) => {
