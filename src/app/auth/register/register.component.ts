@@ -1,12 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 import { BusinessModel } from '../../core/enums/business-model.enum';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../shared/components/toast/toast.service';
 import { FocusDirective } from '../../shared/directives/focus.directive';
+
+const RESERVED_COMPANY_NAMES = ['admin', 'local', 'config', 'system', 'master'];
+
+function reservedCompanyName(control: AbstractControl): ValidationErrors | null {
+  const value = String(control.value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+
+  if (RESERVED_COMPANY_NAMES.includes(value)) {
+    return { reserved: true };
+  }
+
+  return null;
+}
 
 @Component({
   selector: 'app-register',
@@ -147,7 +168,7 @@ export class RegisterComponent implements OnInit {
 
     this.registerForm = this._fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
-      companyName: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z0-9]+$')]],
+      companyName: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z0-9]+$'), reservedCompanyName]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required]],
       country: ['', [Validators.required]],

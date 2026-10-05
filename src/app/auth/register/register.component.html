@@ -132,6 +132,12 @@
           >
             Solo se permiten letras y números (sin espacios).
           </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('companyName')?.touched && registerForm.get('companyName')?.hasError('reserved')"
+          >
+            Ese nombre está reservado. Elegí otro.
+          </div>
         </div>
 
         <div class="auth-field">

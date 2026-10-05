@@ -161,7 +161,7 @@ export class StockComponent implements OnInit, OnDestroy {
     this._router.navigate(['/pos/mostrador/editar-transaccion'], {
       queryParams: { transactionId: transaction._id, returnURL: this._router.url },
     });
-    // this._router.navigate(['/transaction/view/stock', transaction._id], {
+    //  this._router.navigate(['/transaction/view/stock', transaction._id], {
     //   queryParams: { returnURL: this._router.url },
     // });
   }
