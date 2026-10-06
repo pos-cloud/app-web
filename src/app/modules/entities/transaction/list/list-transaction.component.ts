@@ -120,6 +120,16 @@ export class ListTransactionComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
+      name: 'company.group.description',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'company.fantasyName',
       visible: false,
       disabled: false,
