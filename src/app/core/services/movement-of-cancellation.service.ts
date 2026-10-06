@@ -68,7 +68,7 @@ export class MovementOfCancellationService extends ModelService {
       .set('Authorization', this._authService.getToken());
 
     return this._http
-      .post(URL, movementOfCancellation, {
+      .post(URL, this.toMovementPayload(movementOfCancellation), {
         headers: headers,
       })
       .pipe(
@@ -91,7 +91,7 @@ export class MovementOfCancellationService extends ModelService {
     return this._http
       .post(
         URL,
-        { movementsOfCancellations: movementsOfCancellations },
+        { movementsOfCancellations: movementsOfCancellations.map((movement) => this.toMovementPayload(movement)) },
         {
           headers: headers,
         }
@@ -128,6 +128,23 @@ export class MovementOfCancellationService extends ModelService {
           return of(err);
         })
       );
+  }
+
+  private toMovementPayload(movement: MovementOfCancellation) {
+    return {
+      transactionOrigin: this.entityId(movement?.transactionOrigin),
+      transactionDestination: this.entityId(movement?.transactionDestination),
+      type: this.entityId(movement?.type),
+      balance: movement?.balance,
+      creationDate: movement?.creationDate,
+    };
+  }
+
+  private entityId(value: { _id?: string } | string): string | undefined {
+    if (value == null || value === '') {
+      return undefined;
+    }
+    return typeof value === 'string' ? value : value._id;
   }
 
   public updateByDestination(transactionDestination: string, movements: MovementOfCancellation[]): Observable<any> {

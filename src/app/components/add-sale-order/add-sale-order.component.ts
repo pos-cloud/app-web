@@ -568,15 +568,6 @@ export class AddSaleOrderComponent {
             (mov.transactionOrigin.totalPrice + mov.transactionOrigin.discountAmount)) *
           100;
       }
-
-      let transOrigin = new Transaction();
-
-      transOrigin._id = mov.transactionOrigin._id;
-      let transDestino = new Transaction();
-
-      transDestino._id = mov.transactionDestination._id;
-      mov.transactionOrigin = transOrigin;
-      mov.transactionDestination = transDestino;
     }
     return new Promise<MovementOfCancellation[]>((resolve) => {
       this.loading = true;
