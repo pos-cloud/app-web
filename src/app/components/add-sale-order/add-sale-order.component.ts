@@ -1127,7 +1127,6 @@ export class AddSaleOrderComponent {
 
         if (
           movementOfArticle.article &&
-          this.config['modules'].stock &&
           movementOfArticle.modifyStock &&
           (movementOfArticle.stockMovement === StockMovement.Outflows ||
             movementOfArticle.stockMovement === StockMovement.Transfer) &&
@@ -2545,8 +2544,8 @@ export class AddSaleOrderComponent {
       if (this.transaction.type.posKitchen) {
         await this.changeArticlesStatusToPending();
       }
-      // ACTUALIZACIÓN DE STOCK
-      if (this.config['modules'].stock && this.transaction.type.modifyStock) {
+      // ACTUALIZACIÓN DE STOCK (usa modifyStock del tipo; no depende de la licencia/modules.stock)
+      if (this.transaction.type.modifyStock) {
         if (await this.areValidMovementOfArticle()) {
           const stockUpdated = await this.updateStockByTransaction();
           if (!stockUpdated) {
