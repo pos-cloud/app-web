@@ -283,6 +283,16 @@ export class ListMovementOfArticleComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
+      name: 'salePriceWithoutTaxes',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'currency',
+      project: null,
+      align: 'right',
+      required: false,
+    },
+    {
       name: 'discountRate',
       visible: false,
       disabled: false,

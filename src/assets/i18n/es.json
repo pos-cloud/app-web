@@ -757,6 +757,7 @@
   "row": "Fila",
   "sale": "Venta",
   "salePrice": "Precio de Venta",
+  "salePriceWithoutTaxes": "Precio de Venta sin Impuestos",
   "salePriceTN": "Precio Tienda Nube",
   "salePriceWithoutVAT": "Precio de Venta sin Impuestos",
   "sales": "Ventas",

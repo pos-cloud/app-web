@@ -1170,25 +1170,27 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const payload = {
+      ...movement,
+      amount: values.quantity,
+      basePrice: values.basePrice,
+      discountRate: values.discountRate,
+      transaction: this.transaction,
+      article: movement.article,
+    } as unknown as Parameters<MovementOfArticleService['updateMovementOfArticle']>[0];
+
     this.savingProductIds.add(movement._id);
     this.movementOfArticleService
-      .update({
-        _id: movement._id,
-        transactionId: this.transaction._id,
-        articleId,
-        quantity: values.quantity,
-        basePrice: values.basePrice,
-        discountRate: values.discountRate,
-      })
+      .updateMovementOfArticle(payload)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => this.savingProductIds.delete(movement._id))
       )
       .subscribe({
         next: (result) => {
-          if (result?.status === 200 || result?.result) {
+          const updated = result?.movementOfArticle || result?.result;
+          if (result?.status === 200 || updated) {
             this.productEditSnapshots.set(movement._id, { ...values });
-            const updated = result.result;
             if (updated && typeof updated === 'object') {
               const nextArticle =
                 updated.article && typeof updated.article === 'object' ? updated.article : movement.article;
@@ -1434,21 +1436,44 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
     if (this.addProductForm.valid && this.selectedArticle) {
       const basePrice = Number(this.addProductForm.get('basePrice')?.value);
       const quantity = Number(this.addProductForm.get('quantity')?.value);
+      const discountRate = Number(this.addProductForm.get('discountRate')?.value) || 0;
+      const unitPrice = Number(this.addProductForm.get('unitPrice')?.value) || basePrice;
+      const article = this.selectedArticle;
 
       if (this.productsEditForm?.length) {
         this.flushDirtyProductRows();
       }
 
-      const movementData: Record<string, unknown> = {
-        transactionId: this.transaction?._id,
-        articleId: this.selectedArticle._id,
-        quantity: quantity,
-        salePrice: 0,
-        basePrice: basePrice,
+      const movement = {
+        code: article.code,
+        codeSAT: article.codeSAT,
+        description: article.description || article.posDescription,
+        observation: article.observation,
+        basePrice,
+        costPrice: Number(article.costPrice) || 0,
+        unitPrice,
+        markupPercentage: Number(article.markupPercentage) || 0,
+        markupPriceWithoutVAT: 0,
+        markupPrice: 0,
+        discountRate,
+        discountAmount: 0,
+        transactionDiscountAmount: 0,
+        salePrice: unitPrice,
+        amount: quantity,
+        status: 'Listo',
+        article,
+        transaction: this.transaction,
+        taxes: article.taxes || [],
+        make: article.make,
+        category: article.category,
+        modifyStock: !!this.transaction?.type?.modifyStock,
+        stockMovement: this.transaction?.type?.stockMovement,
+        deposit: this.transaction?.depositDestination || this.transaction?.depositOrigin,
         recalculateParent: false,
-      };
+        printed: 0,
+      } as unknown as Parameters<MovementOfArticleService['saveMovementOfArticle']>[0];
 
-      this.movementOfArticleService.createMovementOfArticle(movementData).subscribe({
+      this.movementOfArticleService.saveMovementOfArticle(movement).subscribe({
         next: (result) => {
           if (result?.result) {
             this.toastService.showToast({
