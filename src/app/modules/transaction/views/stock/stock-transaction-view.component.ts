@@ -170,22 +170,62 @@ export class StockTransactionViewComponent implements OnInit, OnDestroy {
   }
 
   public async addArticle(article: { _id: string }): Promise<void> {
-    if (!this.editable || this.savingLine || !article?._id) {
+    if (!this.editable || this.savingLine || !article?._id || !this.transaction) {
       return;
     }
     this.savingLine = true;
     try {
-      const result = await firstValueFrom(
-        this.movementOfArticleService.createMovementOfArticle({
-          transactionId: this.transaction._id,
-          articleId: article._id,
-          quantity: 1,
-          salePrice: 0,
-          basePrice: 0,
-          recalculateParent: false,
-        })
-      );
-      if (!result?.result) {
+      const articleResult = await firstValueFrom(this.articleService.getArticle(article._id));
+      const fullArticle = articleResult?.article;
+      if (!fullArticle) {
+        this.toastService.showToast(
+          null,
+          'danger',
+          '',
+          articleResult?.message || 'No se pudo obtener el artículo.'
+        );
+        return;
+      }
+
+      const stockMovement = this.transaction.type?.stockMovement;
+      const deposit =
+        stockMovement === StockMovement.Transfer
+          ? this.transaction.depositOrigin
+          : this.transaction.depositDestination || this.transaction.depositOrigin;
+
+      const movement = {
+        code: fullArticle.code,
+        codeSAT: fullArticle.codeSAT,
+        description: fullArticle.description || fullArticle.posDescription,
+        observation: fullArticle.observation,
+        barcode: fullArticle.barcode,
+        basePrice: 0,
+        costPrice: 0,
+        unitPrice: 0,
+        markupPercentage: 0,
+        markupPriceWithoutVAT: 0,
+        markupPrice: 0,
+        discountRate: 0,
+        discountAmount: 0,
+        transactionDiscountAmount: 0,
+        salePrice: 0,
+        amount: 1,
+        status: 'Listo',
+        article: fullArticle,
+        transaction: this.transaction,
+        taxes: fullArticle.taxes || [],
+        make: fullArticle.make,
+        category: fullArticle.category,
+        modifyStock: !!this.transaction.type?.modifyStock,
+        stockMovement,
+        deposit,
+        recalculateParent: false,
+        printed: 0,
+        read: 0,
+      } as unknown as Parameters<MovementOfArticleService['saveMovementOfArticle']>[0];
+
+      const result = await firstValueFrom(this.movementOfArticleService.saveMovementOfArticle(movement));
+      if (!result?.movementOfArticle && !result?.result) {
         this.toastService.showToast(null, 'danger', '', result?.message || 'No se pudo agregar el artículo.');
         return;
       }

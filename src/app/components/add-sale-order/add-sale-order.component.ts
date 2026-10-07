@@ -666,11 +666,9 @@ export class AddSaleOrderComponent {
 
     this.loading = true;
 
-    let query = 'where="transaction":"' + this.transaction._id + '"';
-
-    this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
+    this._movementOfArticleService.getMovementsOfArticlesByTransaction(this.transaction._id).subscribe(
       (result) => {
-        if (!result.movementsOfArticles) {
+        if (!result.result) {
           this.areMovementsOfArticlesEmpty = true;
           this.movementsOfArticles = new Array();
           this.lastMovementOfArticle = null;
@@ -678,7 +676,7 @@ export class AddSaleOrderComponent {
           this.updateQuantity();
         } else {
           this.areMovementsOfArticlesEmpty = false;
-          this.movementsOfArticles = result.movementsOfArticles;
+          this.movementsOfArticles = result.result;
           this.lastMovementOfArticle = this.movementsOfArticles[this.movementsOfArticles.length - 1];
           this.containerMovementsOfArticles.nativeElement.scrollTop =
             this.containerMovementsOfArticles.nativeElement.scrollHeight;

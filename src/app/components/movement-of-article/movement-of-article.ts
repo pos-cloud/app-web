@@ -1,11 +1,19 @@
 import * as moment from 'moment';
 
-import { Account, Category, Company, Deposit, Make, TransactionType } from '@types';
+import {
+  Account,
+  Category,
+  Company,
+  Deposit,
+  Make,
+  MovementOfArticleStatus,
+  StockMovement,
+  TransactionType,
+  User,
+} from '@types';
 import { Article, ArticlePrintIn } from '../article/article';
 import { Taxes } from '../tax/taxes';
-import { MovementOfArticleStatus, StockMovement } from '@types';
 import { Transaction } from '../transaction/transaction';
-import { User } from '@types';
 
 export { MovementOfArticleStatus } from '@types';
 
@@ -16,6 +24,7 @@ export class MovementOfArticle {
   description: string = '';
   observation: string;
   basePrice: number = 0.0;
+  salePriceWithoutTaxes: number = 0.0;
   taxes: Taxes[];
   costPrice: number = 0.0;
   unitPrice: number = 0.0;

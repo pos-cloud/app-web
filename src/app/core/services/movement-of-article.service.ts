@@ -118,27 +118,13 @@ export class MovementOfArticleService extends ModelService {
   }
 
   updateMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
-    const URL = `${environment.api}/api/movement-of-article`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', movementOfArticle._id);
-
-    return this._http
-      .put(URL, movementOfArticle, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
+    return this.update(movementOfArticle).pipe(
+      map((res: any) => ({
+        ...res,
+        movementOfArticle: res?.status === 200 ? res.result : null,
+        message: res?.status === 200 ? res?.message : (res?.error?.message ?? res?.message),
+      }))
+    );
   }
 
   updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Observable<any> {
@@ -191,6 +177,23 @@ export class MovementOfArticleService extends ModelService {
         })
       );
   }
+  
+  deleteMovementOfArticleByParent(parentId: string): Observable<any> {
+    const URL = `${environment.apiv2}/movements-of-articles/delete-by-parent/${parentId}`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.delete(URL, { headers: headers }).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
+  }
 
   public updateMovementOfArticles(transactionId: string): Observable<any> {
     const URL = `${environment.apiv2}/movements-of-articles/update-by-transaction/${transactionId}`;
@@ -217,16 +220,22 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  public getMovementsOfArticlesByTransaction(transactionId: string): Observable<any> {
+  public getMovementsOfArticlesByTransaction(transactionId: string, articleId?: string): Observable<any> {
     const URL = `${environment.apiv2}/movements-of-articles/by-transaction/${transactionId}`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
+    let params = new HttpParams();
+    if (articleId) {
+      params = params.set('article', articleId);
+    }
+
     return this._http
       .get(URL, {
         headers: headers,
+        params: params,
       })
       .pipe(
         map((res) => {
@@ -238,24 +247,5 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  public createMovementOfArticle(movementData: any): Observable<any> {
-    const URL = `${environment.apiv2}/movements-of-articles/create`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, movementData, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
+ 
 }

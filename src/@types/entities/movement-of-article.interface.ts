@@ -20,6 +20,7 @@ export interface MovementOfArticle extends Activity {
   description: string;
   observation: string;
   basePrice: number;
+  salePriceWithoutTaxes: number;
   taxes: Taxes[];
   costPrice: number;
   unitPrice: number;
