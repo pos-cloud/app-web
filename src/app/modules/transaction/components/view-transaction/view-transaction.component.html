@@ -357,6 +357,7 @@
                   <th>{{ 'unitPrice' | translate | capitalize }}</th>
                   <th>{{ 'discount' | translate | capitalize }} (%)</th>
                   <th>{{ 'discount' | translate | capitalize }} ($)</th>
+                  <th>{{ 'salePriceWithoutTaxes' | translate | capitalize }}</th>
                   <th>{{ 'totalPrice' | translate | capitalize }}</th>
                   <th>{{ 'deposit' | translate | capitalize }}</th>
                   <th>{{ 'quantityForStock' | translate | capitalize }}</th>
@@ -404,6 +405,9 @@
                   <td>{{ movementOfArticle?.discountRate + ' %' }}</td>
                   <td>
                     {{ movementOfArticle?.discountAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                  </td>
+                  <td>
+                    {{ movementOfArticle?.salePriceWithoutTaxes | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
                     {{ movementOfArticle?.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}

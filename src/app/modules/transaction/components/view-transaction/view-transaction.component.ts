@@ -165,6 +165,7 @@ export class ViewTransactionComponent implements OnInit {
         'article.posDescription': 1,
         'article._id': 1,
         'deposit.name': 1,
+        salePriceWithoutTaxes: 1,
         code: 1,
         description: 1,
         notes: 1,
