@@ -296,7 +296,10 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
 
     this.emptyMessage = 'No se encontraron resultados';
 
-    const match: Record<string, unknown> = { operationType: { $ne: 'D' } };
+    const match: Record<string, unknown> = {
+      operationType: { $ne: 'D' },
+      containsVariants: { $ne: true },
+    };
 
     if (trimmed.length >= this.minSearchLength) {
       match.$or = this.searchFields.map((field) => ({
@@ -315,6 +318,7 @@ export class ArticleSearchableDropdownComponent implements OnInit, OnDestroy {
       costPrice: 1,
       taxes: 1,
       operationType: 1,
+      containsVariants: 1,
     };
 
     return this.articleService
