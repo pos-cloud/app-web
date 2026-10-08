@@ -26,8 +26,8 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
 import * as printJS from 'print-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CompanyComponent } from '../../entities/company/crud/company.component';
 import { CompanyCurrentAccountService } from '../../../core/services/company-current-account.service';
+import { CompanyComponent } from '../../entities/company/crud/company.component';
 import { ViewTransactionComponent } from '../../transaction/components/view-transaction/view-transaction.component';
 @Component({
   selector: 'app-current-account',
@@ -130,6 +130,40 @@ export class CurrentAccountComponent implements OnInit, OnDestroy {
         title: 'Debe seleccionar una empresa.',
       });
     }
+  }
+
+  public onAdjust(): void {
+    if (!this.companySelected?._id) {
+      this._toastService.showToast({
+        message: 'Debe seleccionar una empresa.',
+        title: 'Cuenta Corriente',
+      });
+      return;
+    }
+
+    this.loading = true;
+
+    this._companyCurrentAccountService
+      .recalculate(this.companySelected?._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this._toastService.showToast({
+            status: result?.status || 200,
+            message:
+              result?.message ||
+              result?.result?.message ||
+              'Recálculo iniciado. Se enviará una notificación al finalizar.',
+          });
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public getTotalOfAccountsByCompany(): void {

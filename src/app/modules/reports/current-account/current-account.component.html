@@ -20,6 +20,16 @@
           <i class="fa fa-refresh"></i><span>{{ 'refresh' | translate | capitalize }}</span>
         </button>
         <button
+          type="button"
+          class="btn btn-light"
+          (click)="onAdjust()"
+          [disabled]="loading || !companySelected"
+          title="Ajustar cuenta corriente"
+        >
+          <i class="fa fa-adjust"></i>
+          <span>Ajustar</span>
+        </button>
+        <button
           [disabled]="loading"
           type="button"
           class="btn btn-light btn-sm"

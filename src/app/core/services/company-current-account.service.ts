@@ -18,21 +18,19 @@ export class CompanyCurrentAccountService extends ModelService {
     );
   }
 
-  public recalculate(): Observable<any> {
+  public recalculate(companyId?: string): Observable<any> {
     const URL = `${this.URL}/recalculate`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
+    const body = companyId ? { companyId: String(companyId) } : {};
+
     return this._http
-      .put(
-        URL,
-        {},
-        {
-          headers: headers,
-        }
-      )
+      .put(URL, body, {
+        headers: headers,
+      })
       .pipe(
         map((res) => {
           return res;
