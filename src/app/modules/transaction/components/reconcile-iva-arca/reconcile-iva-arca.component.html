@@ -8,7 +8,7 @@
   <form [formGroup]="form" (ngSubmit)="reconcile()" autocomplete="off">
     <div class="modal-body">
       <p class="text-muted">
-        Subí el Excel de Mis Comprobantes Emitidos. El proceso corre en segundo plano y el resultado llega por
+        Subí el CSV de Mis Comprobantes Emitidos. El proceso corre en segundo plano y el resultado llega por
         notificación (campanita).
       </p>
       <div class="row">
@@ -35,8 +35,8 @@
           />
         </div>
         <div class="form-group col-md-12">
-          <label for="reconcileIvaFile" class="control-label">Excel ARCA:</label>
-          <input type="file" class="form-control" id="reconcileIvaFile" accept=".xlsx,.xls" />
+          <label for="reconcileIvaFile" class="control-label">CSV ARCA:</label>
+          <input type="file" class="form-control" id="reconcileIvaFile" accept=".csv" />
         </div>
       </div>
     </div>

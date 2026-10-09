@@ -125,18 +125,36 @@ export class FeArService {
   }
 }
 
-export interface IvaReconcileItem {
-  cae: string;
-  origin?: number;
-  letter?: string;
-  number?: number;
-  reason?: string;
-  diffs?: Record<string, { from: unknown; to: unknown }>;
+export interface IvaReconcileTaxDraft {
+  percentage: number;
+  taxBase: number;
+  taxAmount: number;
+  tax: string | null;
+}
+
+export interface IvaReconcileDraft {
+  totalPrice: number;
+  basePrice: number;
+  exempt: number;
+  number: number;
+  CAE: string;
+  endDate: string;
+  expirationDate: string;
+  VATPeriod: string;
+  state: string;
+  origin: number;
+  letter: string;
+  type: string | null;
+  company: string | null;
+  taxes: IvaReconcileTaxDraft[];
+  branchOrigin: string | null;
+  branchDestination: string | null;
 }
 
 export interface IvaReconcileResult {
-  updated: IvaReconcileItem[];
-  created: IvaReconcileItem[];
-  unchanged: IvaReconcileItem[];
-  errors: IvaReconcileItem[];
+  total: number;
+  found: number;
+  created: IvaReconcileDraft[];
+  updated: IvaReconcileDraft[];
+  errors: { CAE: string; reason: string }[];
 }

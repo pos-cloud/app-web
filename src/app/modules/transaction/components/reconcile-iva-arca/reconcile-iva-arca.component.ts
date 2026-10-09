@@ -47,7 +47,7 @@ export class ReconcileIvaArcaComponent implements OnInit {
     const fileInput = document.getElementById('reconcileIvaFile') as HTMLInputElement;
     const file = fileInput?.files?.[0];
     if (!file) {
-      this._toastService.showToast(null, 'warning', '', 'Seleccioná el Excel de Mis Comprobantes Emitidos.');
+      this._toastService.showToast(null, 'warning', '', 'Seleccioná el CSV de Mis Comprobantes Emitidos.');
       return;
     }
 
