@@ -1013,7 +1013,7 @@ export class AddSaleOrderComponent {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
 
-      this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
+      this._movementOfArticleService.save(movementOfArticle).subscribe(
         (result) => {
           this.loading = false;
           if (!result.movementOfArticle) {
@@ -1588,7 +1588,7 @@ export class AddSaleOrderComponent {
       movementOfArticle.transaction._id = this.transaction._id;
       // FIN DE LIMPIADO
 
-      this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
+      this._movementOfArticleService.update(movementOfArticle).subscribe(
         (result) => {
           this.loading = false;
           if (!result.movementOfArticle) {
@@ -2854,7 +2854,7 @@ export class AddSaleOrderComponent {
     this.loading = true;
 
     this.barArticlesToPrint[this.barArticlesPrinted].printed = this.barArticlesToPrint[this.barArticlesPrinted].amount;
-    this._movementOfArticleService.updateMovementOfArticle(this.barArticlesToPrint[this.barArticlesPrinted]).subscribe(
+    this._movementOfArticleService.update(this.barArticlesToPrint[this.barArticlesPrinted]).subscribe(
       async (result) => {
         this.loading = false;
         if (!result.movementOfArticle) {
@@ -2889,31 +2889,29 @@ export class AddSaleOrderComponent {
 
     this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].printed =
       this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].amount;
-    this._movementOfArticleService
-      .updateMovementOfArticle(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted])
-      .subscribe(
-        async (result) => {
-          if (!result.movementOfArticle) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+    this._movementOfArticleService.update(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted]).subscribe(
+      async (result) => {
+        if (!result.movementOfArticle) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.kitchenArticlesPrinted++;
+          if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
+            this.updateMovementOfArticlePrintedKitchen();
           } else {
-            this.kitchenArticlesPrinted++;
-            if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
-              this.updateMovementOfArticlePrintedKitchen();
+            if (this.isCharge) {
+              this.finish();
             } else {
-              if (this.isCharge) {
-                this.finish();
-              } else {
-                this.backFinal();
-              }
+              this.backFinal();
             }
           }
-          this.loading = false;
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
         }
-      );
+        this.loading = false;
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   countPrinters(): number {

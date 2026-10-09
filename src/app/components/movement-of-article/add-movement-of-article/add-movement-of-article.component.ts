@@ -1879,7 +1879,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice, 4);
     this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
 
-    this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
+    this._movementOfArticleService.save(this.movementOfArticle).subscribe(
       async (result) => {
         if (!result.movementOfArticle) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -1971,7 +1971,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.costPrice);
     this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice, 4);
     this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
-    this._movementOfArticleService.updateMovementOfArticle(this.movementOfArticle).subscribe(
+    this._movementOfArticleService.update(this.movementOfArticle).subscribe(
       async (result) => {
         if (!result.movementOfArticle) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

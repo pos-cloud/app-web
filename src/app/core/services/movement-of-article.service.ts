@@ -82,16 +82,6 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  saveMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
-    return this.save(movementOfArticle).pipe(
-      map((res: any) => ({
-        ...res,
-        movementOfArticle: res?.status === 200 ? res.result : null,
-        message: res?.status === 200 ? res?.message : (res?.error?.message ?? res?.message),
-      }))
-    );
-  }
-
   saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Observable<any> {
     const URL = `${environment.apiv2}/movements-of-articles/bulk`;
 
@@ -115,16 +105,6 @@ export class MovementOfArticleService extends ModelService {
           return of(err);
         })
       );
-  }
-
-  updateMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
-    return this.update(movementOfArticle).pipe(
-      map((res: any) => ({
-        ...res,
-        movementOfArticle: res?.status === 200 ? res.result : null,
-        message: res?.status === 200 ? res?.message : (res?.error?.message ?? res?.message),
-      }))
-    );
   }
 
   updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Observable<any> {
@@ -246,6 +226,4 @@ export class MovementOfArticleService extends ModelService {
         })
       );
   }
-
- 
 }

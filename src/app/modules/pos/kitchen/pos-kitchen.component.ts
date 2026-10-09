@@ -404,7 +404,7 @@ export class PosKitchenComponent {
     return new Promise<MovementOfArticle>((resolve, reject) => {
       this.loading = true;
 
-      this._movementOfArticleService.updateMovementOfArticle(this.movementOfArticle).subscribe(
+      this._movementOfArticleService.update(this.movementOfArticle).subscribe(
         (result) => {
           this.loading = false;
           if (!result.movementOfArticle) {

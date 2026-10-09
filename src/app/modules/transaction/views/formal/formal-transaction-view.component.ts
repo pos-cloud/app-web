@@ -1177,11 +1177,11 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
       discountRate: values.discountRate,
       transaction: this.transaction,
       article: movement.article,
-    } as unknown as Parameters<MovementOfArticleService['updateMovementOfArticle']>[0];
+    } as unknown as Parameters<MovementOfArticleService['update']>[0];
 
     this.savingProductIds.add(movement._id);
     this.movementOfArticleService
-      .updateMovementOfArticle(payload)
+      .update(payload)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => this.savingProductIds.delete(movement._id))
@@ -1471,9 +1471,9 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
         deposit: this.transaction?.depositDestination || this.transaction?.depositOrigin,
         recalculateParent: false,
         printed: 0,
-      } as unknown as Parameters<MovementOfArticleService['saveMovementOfArticle']>[0];
+      } as unknown as Parameters<MovementOfArticleService['save']>[0];
 
-      this.movementOfArticleService.saveMovementOfArticle(movement).subscribe({
+      this.movementOfArticleService.save(movement).subscribe({
         next: (result) => {
           if (result?.result) {
             this.toastService.showToast({

@@ -25,7 +25,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs/operators';
 import Keyboard from 'simple-keyboard';
 
-import { Movements } from '@types';
+import { Movements, Tax } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { MovementOfCashService } from '../../../core/services/movement-of-cash.service';
@@ -35,7 +35,6 @@ import { TransactionService } from '../../../core/services/transaction.service';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { MovementOfArticle } from '../../movement-of-article/movement-of-article';
 import { PaymentMethod } from '../../payment-method/payment-method';
-import { Tax } from '@types';
 import { Taxes } from '../../tax/taxes';
 import { Transaction, TransactionState } from '../../transaction/transaction';
 import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
@@ -1962,7 +1961,7 @@ export class AddMovementOfCashComponent implements OnInit {
   saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
     return new Promise<MovementOfArticle>((resolve, reject) => {
       this._movementOfArticleService
-        .saveMovementOfArticle(movementOfArticle)
+        .save(movementOfArticle)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: ApiResponse) => {

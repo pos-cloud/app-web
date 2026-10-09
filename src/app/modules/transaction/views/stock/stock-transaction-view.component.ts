@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { MovementOfArticle, StockMovement, Transaction, TransactionMovement, TransactionState } from '@types';
-import { ArticleService } from 'app/core/services/article.service';
 import { ArticleStockService } from 'app/core/services/article-stock.service';
+import { ArticleService } from 'app/core/services/article.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { ConfirmationQuestionComponent } from 'app/shared/components/confirm/confirmation-question.component';
@@ -217,9 +217,9 @@ export class StockTransactionViewComponent implements OnInit, OnDestroy {
         recalculateParent: false,
         printed: 0,
         read: 0,
-      } as unknown as Parameters<MovementOfArticleService['saveMovementOfArticle']>[0];
+      } as unknown as Parameters<MovementOfArticleService['save']>[0];
 
-      const result = await firstValueFrom(this.movementOfArticleService.saveMovementOfArticle(movement));
+      const result = await firstValueFrom(this.movementOfArticleService.save(movement));
       if (!result?.movementOfArticle && !result?.result) {
         this.toastService.showToast(null, 'danger', '', result?.message || 'No se pudo agregar el artículo.');
         return;
@@ -318,10 +318,8 @@ export class StockTransactionViewComponent implements OnInit, OnDestroy {
 
     const previous = movement.amount;
     movement.amount = quantity;
-    const payload = { ...movement, amount: quantity } as unknown as Parameters<
-      MovementOfArticleService['updateMovementOfArticle']
-    >[0];
-    this.movementOfArticleService.updateMovementOfArticle(payload).subscribe({
+    const payload = { ...movement, amount: quantity } as unknown as Parameters<MovementOfArticleService['update']>[0];
+    this.movementOfArticleService.update(payload).subscribe({
       next: (response) => {
         const saved = response?.movementOfArticle || response?.status === 200;
         if (!saved) {
