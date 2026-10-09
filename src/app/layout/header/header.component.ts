@@ -16,8 +16,8 @@ import { AuthService } from 'app/core/services/auth.service';
 import { BranchService } from 'app/core/services/branch.service';
 import { PushNotificationsService } from 'app/core/services/notification.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { NavNode } from '../navigation/navigation.types';
 import { NavigationService } from '../navigation/navigation.service';
+import { NavNode } from '../navigation/navigation.types';
 
 @Component({
   selector: 'app-header',
@@ -144,17 +144,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private loadFirstBranch(): void {
     this._branchService
-      .getBranches(
-        { name: 1, fantasyName: 1, image: 1, number: 1 },
-        { operationType: { $ne: 'D' } },
-        { number: 1 },
-        {},
-        1,
-        0
-      )
+      .getAll({
+        project: { name: 1, fantasyName: 1, image: 1, number: 1 },
+        match: { operationType: { $ne: 'D' } },
+        sort: { number: 1 },
+        limit: 1,
+        skip: 0,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
-        this.branch = result?.branches?.[0] ?? null;
+        this.branch = result?.result?.[0] ?? null;
       });
   }
 
