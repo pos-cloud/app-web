@@ -84,11 +84,10 @@ app-web-transactions {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
   .dropdown-menu {
-    z-index: 1050; /* Asegura que esté por encima de otros elementos */
+    z-index: 1050;
   }
 
   .dropup .dropdown-menu {
-    top: auto !important; /* Desactiva el ajuste automático de posición */
-    //  bottom: 100%; /* Posiciona hacia arriba */
+    top: auto !important;
   }
 }
