@@ -5,14 +5,7 @@ import { MovementOfCashService, PrintService, TiendaNubeService, TransactionServ
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToastService } from '@shared/components/toast/toast.service';
-import {
-  ApiResponse,
-  IAttribute,
-  MovementOfCash,
-  PrintType,
-  Transaction,
-  TransactionState,
-} from '@types';
+import { ApiResponse, IAttribute, MovementOfCash, PrintType, Transaction, TransactionState } from '@types';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
 import { DatatableService } from 'app/core/services/datatable.service';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
