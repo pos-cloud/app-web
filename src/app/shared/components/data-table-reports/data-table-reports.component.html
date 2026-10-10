@@ -30,10 +30,11 @@
             <i class="fa fa-bars"></i>
           </th>
           <ng-container *ngFor="let column of columns">
-            <th (click)="changeSorting(column)" *ngIf="column.show !== false">
+            <th (click)="changeSorting(column)" [class.sortable]="!!sorting" *ngIf="column.show !== false">
               <b>
                 {{ column.label | translate | capitalize }}
                 <i
+                  *ngIf="sorting"
                   class="fa"
                   [ngClass]="{
                     'fa-sort': sorting.column !== column.label,

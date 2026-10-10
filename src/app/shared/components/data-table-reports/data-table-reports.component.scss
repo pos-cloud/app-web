@@ -9,7 +9,7 @@ app-data-table-reports {
     padding-right: 1.25rem;
   }
 
-  th {
+  th.sortable {
     cursor: pointer;
     user-select: none;
   }

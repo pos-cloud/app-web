@@ -54,6 +54,8 @@ export class DataTableReportsComponent implements OnInit {
   }
 
   changeSorting(column: any): void {
+    if (!this.sorting) return;
+
     if (this.sorting.column === column.label) {
       this.sorting.direction = this.sorting.direction === 'asc' ? 'desc' : 'asc';
     } else {
