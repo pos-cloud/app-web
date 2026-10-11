@@ -220,7 +220,7 @@ export class StockTransactionViewComponent implements OnInit, OnDestroy {
       } as unknown as Parameters<MovementOfArticleService['save']>[0];
 
       const result = await firstValueFrom(this.movementOfArticleService.save(movement));
-      if (!result?.movementOfArticle && !result?.result) {
+      if (result?.status !== 200 || !result?.result) {
         this.toastService.showToast(null, 'danger', '', result?.message || 'No se pudo agregar el artículo.');
         return;
       }
@@ -321,7 +321,7 @@ export class StockTransactionViewComponent implements OnInit, OnDestroy {
     const payload = { ...movement, amount: quantity } as unknown as Parameters<MovementOfArticleService['update']>[0];
     this.movementOfArticleService.update(payload).subscribe({
       next: (response) => {
-        const saved = response?.movementOfArticle || response?.status === 200;
+        const saved = response?.status === 200 && response?.result;
         if (!saved) {
           movement.amount = previous;
           this.quantityDrafts[movement._id] = this.formatQuantity(Number(previous) || 0);

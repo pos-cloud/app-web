@@ -407,11 +407,11 @@ export class PosKitchenComponent {
       this._movementOfArticleService.update(this.movementOfArticle).subscribe(
         (result) => {
           this.loading = false;
-          if (!result.movementOfArticle) {
+          if (result?.status !== 200 || !result.result) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
-            resolve(result.movementOfArticle);
+            resolve(result.result);
           }
         },
         (error) => {

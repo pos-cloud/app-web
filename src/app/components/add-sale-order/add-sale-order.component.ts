@@ -1016,12 +1016,12 @@ export class AddSaleOrderComponent {
       this._movementOfArticleService.save(movementOfArticle).subscribe(
         (result) => {
           this.loading = false;
-          if (!result.movementOfArticle) {
+          if (result?.status !== 200 || !result.result) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             this.hideMessage();
-            movementOfArticle = result.movementOfArticle;
+            movementOfArticle = result.result;
             resolve(movementOfArticle);
           }
         },
@@ -1591,13 +1591,13 @@ export class AddSaleOrderComponent {
       this._movementOfArticleService.update(movementOfArticle).subscribe(
         (result) => {
           this.loading = false;
-          if (!result.movementOfArticle) {
+          if (result?.status !== 200 || !result.result) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             reject(result.message);
           } else {
             this.containerMovementsOfArticles.nativeElement.scrollTop =
               this.containerMovementsOfArticles.nativeElement.scrollHeight;
-            resolve(result.movementOfArticle);
+            resolve(result.result);
           }
         },
         (error) => {
@@ -2857,7 +2857,7 @@ export class AddSaleOrderComponent {
     this._movementOfArticleService.update(this.barArticlesToPrint[this.barArticlesPrinted]).subscribe(
       async (result) => {
         this.loading = false;
-        if (!result.movementOfArticle) {
+        if (result?.status !== 200 || !result.result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.barArticlesPrinted++;
@@ -2891,7 +2891,7 @@ export class AddSaleOrderComponent {
       this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].amount;
     this._movementOfArticleService.update(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted]).subscribe(
       async (result) => {
-        if (!result.movementOfArticle) {
+        if (result?.status !== 200 || !result.result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.kitchenArticlesPrinted++;

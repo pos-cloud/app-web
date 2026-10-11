@@ -1881,7 +1881,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     this._movementOfArticleService.save(this.movementOfArticle).subscribe(
       async (result) => {
-        if (!result.movementOfArticle) {
+        if (!result.result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
@@ -1889,17 +1889,17 @@ export class AddMovementOfArticleComponent implements OnInit {
           if (this.movChild && this.movChild.length > 0) {
             //le meto a todos el movimiento del padre
             for (let index = 0; index < this.movChild.length; index++) {
-              this.movChild[index].movementParent = result.movementOfArticle;
+              this.movChild[index].movementParent = result.result;
               const structure = this.structures.find(
                 (data) =>
-                  data.parent._id === result.movementOfArticle.article._id &&
+                  data.parent._id === result.result.article._id &&
                   data.child._id === this.movChild[index].article._id
               );
               this.movChild[index].stockMovement =
                 structure.utilization == Utilization.Production &&
                 this.transaction?.type?.transactionMovement == TransactionMovement.Production
                   ? StockMovement.Outflows
-                  : result.movementOfArticle.stockMovement;
+                  : result.result.stockMovement;
             }
 
             //guardo todas las estrcturas
@@ -1973,23 +1973,23 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
     this._movementOfArticleService.update(this.movementOfArticle).subscribe(
       async (result) => {
-        if (!result.movementOfArticle) {
+        if (!result.result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           if (this.movChild && this.movChild.length > 0) {
             for (let index = 0; index < this.movChild.length; index++) {
-              this.movChild[index].movementParent = result.movementOfArticle;
+              this.movChild[index].movementParent = result.result;
 
               const structure = this.structures.find(
                 (data) =>
-                  data.parent._id === result.movementOfArticle.article._id &&
+                  data.parent._id === result.result.article._id &&
                   data.child._id === this.movChild[index].article._id
               );
               this.movChild[index].stockMovement =
                 structure.utilization == Utilization.Production &&
                 this.transaction?.type?.transactionMovement == TransactionMovement.Production
                   ? StockMovement.Outflows
-                  : result.movementOfArticle.stockMovement;
+                  : result.result.stockMovement;
             }
             if (await this.saveMovementsOfArticle(this.movChild)) {
               this.activeModal.close('update');
