@@ -2738,18 +2738,12 @@ export class AddSaleOrderComponent {
       this.typeOfOperationToPrint = 'item';
       if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
         for (let movementOfArticle of this.movementsOfArticles) {
-          if (
-            movementOfArticle.article &&
-            movementOfArticle.article.printIn === ArticlePrintIn.Bar &&
-            movementOfArticle.printed < movementOfArticle.amount
-          ) {
+          const pending = (movementOfArticle.amount || 0) - (movementOfArticle.printed || 0);
+          if (!movementOfArticle.article || pending === 0) continue;
+          if (movementOfArticle.article.printIn === ArticlePrintIn.Bar) {
             this.barArticlesToPrint.push(movementOfArticle);
           }
-          if (
-            movementOfArticle.article &&
-            movementOfArticle.article.printIn === ArticlePrintIn.Kitchen &&
-            movementOfArticle.printed < movementOfArticle.amount
-          ) {
+          if (movementOfArticle.article.printIn === ArticlePrintIn.Kitchen) {
             this.kitchenArticlesToPrint.push(movementOfArticle);
           }
         }
