@@ -1892,8 +1892,7 @@ export class AddMovementOfArticleComponent implements OnInit {
               this.movChild[index].movementParent = result.result;
               const structure = this.structures.find(
                 (data) =>
-                  data.parent._id === result.result.article._id &&
-                  data.child._id === this.movChild[index].article._id
+                  data.parent._id === result.result.article._id && data.child._id === this.movChild[index].article._id
               );
               this.movChild[index].stockMovement =
                 structure.utilization == Utilization.Production &&
@@ -1982,8 +1981,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
               const structure = this.structures.find(
                 (data) =>
-                  data.parent._id === result.result.article._id &&
-                  data.child._id === this.movChild[index].article._id
+                  data.parent._id === result.result.article._id && data.child._id === this.movChild[index].article._id
               );
               this.movChild[index].stockMovement =
                 structure.utilization == Utilization.Production &&
