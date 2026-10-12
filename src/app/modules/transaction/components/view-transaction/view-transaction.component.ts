@@ -13,8 +13,6 @@ import {
 import { Subject, Subscription } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
-import { MovementOfArticleService } from '@core/services/movement-of-article.service';
-import { MovementOfCancellationService } from '@core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from '@core/services/movement-of-cash.service';
 import { PaymentMethodService } from '@core/services/payment-method.service';
 import { PrintService } from '@core/services/print.service';
@@ -79,14 +77,12 @@ export class ViewTransactionComponent implements OnInit {
 
   constructor(
     public _transactionService: TransactionService,
-    public _movementOfArticleService: MovementOfArticleService,
     public _movementOfCashService: MovementOfCashService,
     public activeModal: NgbActiveModal,
     private _modalService: NgbModal,
     public _printService: PrintService,
     private _toast: ToastService,
     private _toastService: ToastService,
-    private _movementOfCancellation: MovementOfCancellationService,
     private _paymentMethodService: PaymentMethodService
   ) {}
 
@@ -135,15 +131,15 @@ export class ViewTransactionComponent implements OnInit {
     this.loading = true;
 
     this._transactionService
-      .getById(transactionId)
+      .getView(transactionId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this.transaction = result.result;
-          this.getMovementsOfArticlesByTransaction();
-          this.getMovementsOfCashesByTransaction();
-          this.getMovementsOfCancellations();
-
+          const view = result?.result ?? {};
+          this.transaction = view.transaction;
+          this.setMovementsOfArticles(view.movementsOfArticles ?? []);
+          this.setMovementsOfCashes(view.movementsOfCashes ?? []);
+          this.applyMovementsOfCancellations(view.movementsOfCancellations ?? []);
           this.loading = false;
         },
         error: (error) => {
@@ -152,57 +148,25 @@ export class ViewTransactionComponent implements OnInit {
         },
       });
   }
-  public getMovementsOfArticlesByTransaction(): void {
-    this.loading = true;
 
-    const data = {
-      project: {
-        transaction: 1,
-        amount: 1,
-        quantityForStock: 1,
-        'category.description': 1,
-        'make.description': 1,
-        'article.posDescription': 1,
-        'article._id': 1,
-        'deposit.name': 1,
-        salePriceWithoutTaxes: 1,
-        code: 1,
-        description: 1,
-        notes: 1,
-        unitPrice: 1,
-        discountRate: 1,
-        discountAmount: 1,
-        salePrice: 1,
-        op: 1,
-        read: 1,
-        operationType: 1,
-      },
-      match: {
-        transaction: { $oid: this.transaction._id },
-        operationType: { $ne: 'D' },
-      },
-    };
+  private setMovementsOfArticles(movements: MovementOfArticle[]): void {
+    if (movements?.length) {
+      this.areMovementsOfArticlesEmpty = false;
+      this.movementsOfArticles = movements;
+    } else {
+      this.areMovementsOfArticlesEmpty = true;
+      this.movementsOfArticles = [];
+    }
+  }
 
-    this._movementOfArticleService
-      .getAll(data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: ApiResponse) => {
-          if (result.result.length) {
-            this.areMovementsOfArticlesEmpty = false;
-            this.movementsOfArticles = result.result;
-          } else {
-            this.areMovementsOfArticlesEmpty = true;
-          }
-        },
-        error: (error) => {
-          this.areMovementsOfArticlesEmpty = true;
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+  private setMovementsOfCashes(movements: MovementOfCash[]): void {
+    if (movements?.length) {
+      this.areMovementsOfCashesEmpty = false;
+      this.movementsOfCashes = movements;
+    } else {
+      this.areMovementsOfCashesEmpty = true;
+      this.movementsOfCashes = [];
+    }
   }
 
   public getMovementsOfCashesByTransaction(): void {
@@ -237,12 +201,7 @@ export class ViewTransactionComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          if (result.result.length) {
-            this.areMovementsOfCashesEmpty = false;
-            this.movementsOfCashes = result.result;
-          } else {
-            this.areMovementsOfCashesEmpty = true;
-          }
+          this.setMovementsOfCashes(result?.result ?? []);
         },
         error: (error) => {
           this.areMovementsOfCashesEmpty = true;
@@ -254,84 +213,38 @@ export class ViewTransactionComponent implements OnInit {
       });
   }
 
-  public getMovementsOfCancellations(): void {
-    this.loading = true;
+  private applyMovementsOfCancellations(cancellations: any[]): void {
     this.transactionOrigins = [];
     this.transactionDestinations = [];
-    this._movementOfCancellation
-      .getAll({
-        project: {
-          _id: 1,
-          balance: 1,
-          'transactionDestination.operationType': 1,
-          'transactionDestination._id': 1,
-          'transactionDestination.endDate': 1,
-          'transactionDestination.type.name': 1,
-          'transactionDestination.origin': 1,
-          'transactionDestination.letter': 1,
-          'transactionDestination.number': 1,
-          'transactionDestination.totalPrice': 1,
-          'transactionDestination.state': 1,
-          'transactionOrigin.operationType': 1,
-          'transactionOrigin._id': 1,
-          'transactionOrigin.endDate': 1,
-          'transactionOrigin.type.name': 1,
-          'transactionOrigin.origin': 1,
-          'transactionOrigin.letter': 1,
-          'transactionOrigin.number': 1,
-          'transactionOrigin.totalPrice': 1,
-          'transactionOrigin.state': 1,
-        },
-        match: {
-          $or: [
-            { 'transactionDestination._id': { $oid: this.transactionId } },
-            { 'transactionOrigin._id': { $oid: this.transactionId } },
-          ],
-          operationType: { $ne: 'D' },
-        },
-      })
-      .subscribe({
-        next: (result: ApiResponse) => {
-          if (result.result.length) {
-            for (let data of result.result) {
-              const originId = data.transactionOrigin?._id;
-              const destinationId = data.transactionDestination?._id;
-              const currentId = this.transactionId;
 
-              // Si la transacción que estoy viendo es la ORIGEN del movimiento (la cancelada),
-              // la "otra" (destination) es la que cancela → mostrarla en Cancelatorias
-              if (originId === currentId && data.transactionDestination) {
-                const other = data.transactionDestination;
-                if (other.state !== TransactionState.Open && other.state !== TransactionState.Pending) {
-                  this.transactionOrigins.push({
-                    ...other,
-                    balance: this.roundNumber.transform(data.balance ?? 0),
-                  });
-                }
-              }
-              // Si la transacción que estoy viendo es la DESTINO del movimiento (la que cancela),
-              // la "otra" (origin) es la cancelada → mostrarla en Transacciones canceladas
-              if (destinationId === currentId && data.transactionOrigin) {
-                const other = data.transactionOrigin;
-                if (other.state !== TransactionState.Open && other.state !== TransactionState.Pending) {
-                  this.transactionDestinations.push({
-                    ...other,
-                    balance: this.roundNumber.transform(data.balance ?? 0),
-                  });
-                }
-              }
-            }
-          }
-        },
+    for (const data of cancellations ?? []) {
+      const originId = data.transactionOrigin?._id;
+      const destinationId = data.transactionDestination?._id;
+      const currentId = this.transactionId;
 
-        error: (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+      // Si la transacción que estoy viendo es la ORIGEN del movimiento (la cancelada),
+      // la "otra" (destination) es la que cancela → mostrarla en Cancelatorias
+      if (originId === currentId && data.transactionDestination) {
+        const other = data.transactionDestination;
+        if (other.state !== TransactionState.Open && other.state !== TransactionState.Pending) {
+          this.transactionOrigins.push({
+            ...other,
+            balance: this.roundNumber.transform(data.balance ?? 0),
+          });
+        }
+      }
+      // Si la transacción que estoy viendo es la DESTINO del movimiento (la que cancela),
+      // la "otra" (origin) es la cancelada → mostrarla en Transacciones canceladas
+      if (destinationId === currentId && data.transactionOrigin) {
+        const other = data.transactionOrigin;
+        if (other.state !== TransactionState.Open && other.state !== TransactionState.Pending) {
+          this.transactionDestinations.push({
+            ...other,
+            balance: this.roundNumber.transform(data.balance ?? 0),
+          });
+        }
+      }
+    }
   }
 
   public startEditPayment(movementOfCash: MovementOfCash): void {
