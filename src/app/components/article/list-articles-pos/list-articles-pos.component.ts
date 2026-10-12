@@ -876,7 +876,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     } else if (this.filterArticle && this.filterArticle !== '') {
       this.filteredArticles = this.filterPipe.transform(this.articles, this.filterArticle);
 
-      if (this.filteredArticles && this.filteredArticles.length > 0 && this.articles && this.articles.length >= 2) {
+      if (this.filteredArticles && this.filteredArticles.length > 0 && this.articles && this.articles.length >= 1) {
         this.hideMessage();
 
         let count = 1;
