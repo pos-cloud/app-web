@@ -105,6 +105,10 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
   private savingProductIds = new Set<string>();
   private shouldFocusQuantityInput = true;
   private shouldScrollProductsToBottom = false;
+  /** Evita loop al aplicar draft desde servidor (p. ej. después de leer factura). */
+  private applyingServerState = false;
+  private syncingFromTextract = false;
+  private loadingTransaction = false;
 
   /** Tipo de transacción configurado para llevar impuestos por línea (maestro tipo comprobante). */
   public get requestTaxes(): boolean {
@@ -440,6 +444,10 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
   }
 
   private loadTransaction(): void {
+    if (this.loadingTransaction || !this.transactionId) {
+      return;
+    }
+    this.loadingTransaction = true;
     this.beginLoading();
 
     this.transactionService
@@ -449,10 +457,15 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
         next: (result) => {
           if (result && result && result.status === 200) {
             this.transaction = result.result;
+            this.applyingServerState = true;
             this.transactionEndDateDraft =
               this.transaction?.endDate || this.transaction?.startDate || this.transactionEndDateDraft;
             this.vatPeriodDraft = this.transaction?.VATPeriod || '';
             this.syncHeaderDrafts();
+            // Liberar el flag después del ciclo de change detection del date picker / ngModel.
+            setTimeout(() => {
+              this.applyingServerState = false;
+            });
             this.getMovementsOfArticlesByTransaction();
             this.getMovementsOfCashesByTransaction();
           } else {
@@ -462,9 +475,11 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
             });
             this.router.navigate(['/']);
           }
+          this.loadingTransaction = false;
           this.endLoading();
         },
         error: () => {
+          this.loadingTransaction = false;
           this.endLoading();
           this.toastService.showToast({
             message: 'Error al cargar la transacción',
@@ -582,8 +597,15 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
   }
 
   public onTransactionDatePickerChange(value: string): void {
+    if (this.applyingServerState || this.syncingFromTextract || !this.transaction || !value) {
+      return;
+    }
+    const current = this.transaction.endDate || this.transaction.startDate || '';
+    if (String(current) === String(value)) {
+      return;
+    }
     this.transaction.endDate = value;
-    this.transaction.expirationDate = this.transaction.endDate;
+    this.transaction.expirationDate = value;
     this.updateTransaction();
   }
 
@@ -833,6 +855,9 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
   }
 
   private async updateTransaction(): Promise<void> {
+    if (this.applyingServerState || this.syncingFromTextract) {
+      return;
+    }
     this.beginLoading();
     this.transactionService
       .update(this.transaction)
@@ -840,13 +865,16 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.status === 200) {
-            if (this.transaction.type.requestTaxes) {
-              this.recalculateTaxes();
-            }
             this.toastService.showToast({
               message: response.message || 'Transacción actualizada correctamente',
               type: 'success',
             });
+            if (this.transaction.type?.requestTaxes) {
+              // recalculateTaxes ya hace loadTransaction al completar
+              this.recalculateTaxes();
+            } else {
+              this.loadTransaction();
+            }
           } else {
             this.toastService.showToast({
               message: response.message || 'Error al actualizar la transacción',
@@ -864,7 +892,6 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.endLoading();
-          this.loadTransaction();
         },
       });
   }
@@ -957,16 +984,22 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
   }
 
   private syncTransactionFromTextract(textract: unknown): void {
-    const transactionId = this.transaction._id;
-    if (!transactionId) {
+    const transactionId = this.transaction?._id;
+    if (!transactionId || this.syncingFromTextract) {
       return;
     }
 
+    this.syncingFromTextract = true;
+    this.beginLoading();
     this.transactionService
       .transactionByTextract(textract, transactionId)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.loadTransaction())
+        finalize(() => {
+          this.syncingFromTextract = false;
+          this.endLoading();
+          this.loadTransaction();
+        })
       )
       .subscribe({
         next: (res) => {

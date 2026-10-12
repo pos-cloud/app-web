@@ -205,17 +205,22 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit, Af
   setDateStringModel(fromWriteValue = false) {
     this.dateString = this.datetime.toString();
 
+    if (fromWriteValue) {
+      // Nunca emitir hacia el padre cuando el valor lo setea el CVA/ngModel.
+      if (this.dateString !== null) {
+        this.firstTimeAssign = false;
+      }
+      return;
+    }
+
     if (!this.firstTimeAssign) {
-      if (this.deferEmitUntilClose && !fromWriteValue) {
+      if (this.deferEmitUntilClose) {
         this.pendingDirty = true;
       } else {
         this.onChange(this.dateString);
       }
-    } else {
-      // Skip very first assignment to null done by Angular
-      if (this.dateString !== null) {
-        this.firstTimeAssign = false;
-      }
+    } else if (this.dateString !== null) {
+      this.firstTimeAssign = false;
     }
   }
 
