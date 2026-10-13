@@ -1,0 +1,86 @@
+.vt-shell {
+  position: relative;
+}
+
+.vt-busy {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 5;
+  overflow: hidden;
+  background: rgba(2, 117, 216, 0.15);
+
+  &::after {
+    content: '';
+    display: block;
+    width: 40%;
+    height: 100%;
+    background: #0275d8;
+    animation: vt-slide 1.1s ease-in-out infinite;
+  }
+}
+
+.vt-title-bone,
+.vt-bone {
+  position: relative;
+  overflow: hidden;
+  background: #e9ecef;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+    animation: vt-slide 1.35s ease-in-out infinite;
+  }
+}
+
+.vt-title-bone {
+  display: inline-block;
+  width: 16rem;
+  max-width: 70%;
+  height: 1.05rem;
+  border-radius: 0.3rem;
+  vertical-align: middle;
+}
+
+.vt-bone {
+  height: calc(1.5em + 0.75rem + 2px);
+  border-radius: 0.25rem;
+}
+
+.vt-bone--area {
+  height: 3.6rem;
+}
+
+.vt-tabs {
+  pointer-events: none;
+  flex-wrap: nowrap;
+  overflow: hidden;
+
+  .nav-link {
+    color: #adb5bd;
+    white-space: nowrap;
+  }
+
+  .active {
+    color: #495057;
+    background: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
+}
+
+.vt-form {
+  padding-top: 1rem;
+}
+
+@keyframes vt-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

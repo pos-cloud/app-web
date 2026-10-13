@@ -32,6 +32,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-view-transaction',
   templateUrl: './view-transaction.component.html',
+  styleUrls: ['./view-transaction.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -49,7 +50,7 @@ export class ViewTransactionComponent implements OnInit {
   @Input() readonly: boolean = false;
   private subscription: Subscription = new Subscription();
   transaction: Transaction;
-  loading = false;
+  loading = true;
   movementsOfArticles: MovementOfArticle[];
   areMovementsOfArticlesEmpty = true;
   movementsOfCashes: MovementOfCash[];
@@ -65,6 +66,22 @@ export class ViewTransactionComponent implements OnInit {
   transactionOrigins: Transaction[] = [];
   roundNumber = new RoundNumberPipe();
   public activeTab: string = 'datos';
+  loadingTabs = ['data', 'articles', 'taxes', 'paymentMethodEcommerce', 'delivery'];
+  loadingFields: { label: string; col: string; area?: boolean }[] = [
+    { label: 'client', col: 'col-md-4' },
+    { label: 'balanceAccount', col: 'col-md-6' },
+    { label: 'state', col: 'col-md-2' },
+    { label: 'date', col: 'col-md-2' },
+    { label: 'fixedOrigin', col: 'col-md-2' },
+    { label: 'letter', col: 'col-md-1' },
+    { label: 'number', col: 'col-md-3' },
+    { label: 'transaction.cashBox.number', col: 'col-md-2' },
+    { label: 'table.description', col: 'col-md-2' },
+    { label: 'exemptImport', col: 'col-md-4' },
+    { label: 'discount', col: 'col-md-4' },
+    { label: 'importTotal', col: 'col-md-4' },
+    { label: 'observation', col: 'col-md-12', area: true },
+  ];
 
   // Edición inline del medio de pago de un movimiento de caja
   public paymentMethods: PaymentMethod[] = [];
@@ -87,10 +104,10 @@ export class ViewTransactionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loading = true;
-
     if (this.transactionId) {
       this.getTransaction(this.transactionId);
+    } else {
+      this.loading = false;
     }
 
     this.loadPaymentMethods();

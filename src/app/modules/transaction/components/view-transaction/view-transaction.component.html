@@ -1,13 +1,33 @@
 <div class="modal-header">
   <h4 class="modal-title">
-    {{ transaction?.type?.name }} {{ transaction?.origin }}-{{ transaction?.letter }}-{{ transaction?.number }}
+    <span *ngIf="transaction; else loadingTitle">
+      {{ transaction?.type?.name }} {{ transaction?.origin }}-{{ transaction?.letter }}-{{ transaction?.number }}
+    </span>
+    <ng-template #loadingTitle>
+      <span class="vt-title-bone" role="status" aria-label="Cargando transacción"></span>
+    </ng-template>
   </h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<section class="container-fluid">
+<section class="container-fluid vt-shell">
+  <div class="vt-busy" *ngIf="loading" aria-hidden="true"></div>
   <div class="modal-body">
+    <div *ngIf="loading && !transaction" class="vt-loading" role="status" aria-label="Cargando transacción">
+      <ul class="nav nav-tabs vt-tabs">
+        <li class="nav-item" *ngFor="let tab of loadingTabs; let first = first">
+          <span class="nav-link" [class.active]="first">{{ tab | translate | capitalize }}</span>
+        </li>
+      </ul>
+      <div class="row vt-form">
+        <div class="form-group" *ngFor="let field of loadingFields" [ngClass]="field.col">
+          <label class="control-label">{{ field.label | translate | capitalize }}</label>
+          <div class="vt-bone" [class.vt-bone--area]="field.area"></div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="transaction">
     <ul ngbNav #nav="ngbNav" class="nav-tabs">
       <li ngbNavItem>
         <a ngbNavLink>{{ 'data' | translate | capitalize }}</a>
@@ -875,6 +895,7 @@
       </li>
     </ul>
     <div [ngbNavOutlet]="nav" class="mt-2"></div>
+    </div>
   </div>
   <div class="modal-footer"></div>
 </section>
