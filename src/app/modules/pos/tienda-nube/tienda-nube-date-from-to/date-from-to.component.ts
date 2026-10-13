@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 import { TiendaNubeService } from 'app/core/services/tienda-nube.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
@@ -12,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-date-from-to',
   templateUrl: './date-from-to.component.html',
   standalone: true,
-  imports: [CommonModule, PipesModule, ReactiveFormsModule],
+  imports: [CommonModule, PipesModule, ReactiveFormsModule, TranslateModule],
 })
 export class DateFromToComponent {
   loading = false;
@@ -24,9 +25,7 @@ export class DateFromToComponent {
     private _tiendaNubeService: TiendaNubeService,
     public activeModal: NgbActiveModal,
     private _toastService: ToastService
-  ) {}
-
-  async ngOnInit() {
+  ) {
     this.buildForm();
   }
 
@@ -36,20 +35,28 @@ export class DateFromToComponent {
   }
 
   buildForm(): void {
-    this.syncForm = this.fb.group({
-      desde: [''],
-      hasta: [''],
-    });
+    this.syncForm = this.fb.group(
+      {
+        desde: ['', Validators.required],
+        hasta: ['', Validators.required],
+      },
+      { validators: this.dateRangeValidator }
+    );
   }
 
   syncTiendaNube() {
+    this.syncForm.markAllAsTouched();
+    if (this.syncForm.invalid || this.loading) {
+      return;
+    }
+
     this.loading = true;
     const formData = this.syncForm.value;
     this._tiendaNubeService
       .syncTiendaNube(formData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result) => {
+        next: () => {
           this._toastService.showToast({
             message: 'Operacion realizada con exito',
           });
@@ -62,5 +69,14 @@ export class DateFromToComponent {
           this.activeModal.close();
         },
       });
+  }
+
+  private dateRangeValidator(group: AbstractControl): ValidationErrors | null {
+    const desde = group.get('desde')?.value;
+    const hasta = group.get('hasta')?.value;
+    if (!desde || !hasta) {
+      return null;
+    }
+    return desde > hasta ? { dateRange: true } : null;
   }
 }

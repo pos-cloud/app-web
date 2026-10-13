@@ -9,11 +9,46 @@
     <div class="row">
       <div class="form-group col-md-3">
         <label class="control-label">Desde:</label>
-        <input class="form-control" type="date" name="desde" formControlName="desde" />
+        <input
+          class="form-control"
+          type="date"
+          name="desde"
+          formControlName="desde"
+          [max]="syncForm.get('hasta')?.value || null"
+          [ngClass]="{
+            'is-invalid': syncForm.get('desde')?.touched && syncForm.get('desde')?.invalid,
+          }"
+        />
+        <div
+          class="invalid-feedback"
+          *ngIf="syncForm.get('desde')?.touched && syncForm.get('desde')?.hasError('required')"
+        >
+          {{ 'fieldRequired' | translate | capitalize }}
+        </div>
       </div>
       <div class="form-group col-md-3">
         <label class="control-label">Hasta:</label>
-        <input class="form-control" type="date" name="hasta" formControlName="hasta" />
+        <input
+          class="form-control"
+          type="date"
+          name="hasta"
+          formControlName="hasta"
+          [min]="syncForm.get('desde')?.value || null"
+          [ngClass]="{
+            'is-invalid':
+              (syncForm.get('hasta')?.touched && syncForm.get('hasta')?.invalid) ||
+              (syncForm.touched && syncForm.hasError('dateRange')),
+          }"
+        />
+        <div
+          class="invalid-feedback"
+          *ngIf="syncForm.get('hasta')?.touched && syncForm.get('hasta')?.hasError('required')"
+        >
+          {{ 'fieldRequired' | translate | capitalize }}
+        </div>
+        <div class="invalid-feedback d-block" *ngIf="syncForm.touched && syncForm.hasError('dateRange')">
+          La fecha desde no puede ser posterior a la fecha hasta.
+        </div>
       </div>
     </div>
     <div class="modal-footer">
