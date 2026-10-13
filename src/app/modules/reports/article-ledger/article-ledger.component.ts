@@ -55,13 +55,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     operationType: { $ne: 'D' },
     containsVariants: { $ne: true },
   };
-
-  // sort
-  public sort = {
-    column: 'endDate',
-    direction: 'desc',
-  };
-
   constructor(
     private _service: ReportSystemService,
     private _depositService: DepositService,
@@ -95,7 +88,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
         page: 1,
         pageSize: 10,
       },
-      sorting: this.sort,
     };
   }
 
@@ -176,14 +168,6 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
           },
         })
     );
-  }
-
-  public onSortingChange(event: { column: string; direction: string }): void {
-    this.sort = {
-      column: event.column,
-      direction: event.direction,
-    };
-    this.getReport();
   }
 
   public onExportExcel(event): void {
