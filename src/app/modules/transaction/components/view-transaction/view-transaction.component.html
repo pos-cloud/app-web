@@ -443,7 +443,7 @@
               <tbody>
                 <tr *ngFor="let tax of transaction?.taxes">
                   <td>{{ tax?.tax?.name }}</td>
-                  <td>{{ tax.percentage }}</td>
+                  <td>{{ tax?.percentage }}</td>
                   <td>
                     {{ tax?.taxBase | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
@@ -483,7 +483,7 @@
               <tbody>
                 <tr *ngFor="let movementOfCash of movementsOfCashes">
                   <td align="left" width="90" *ngIf="!readonly">
-                    <ng-container *ngIf="editingPaymentId !== movementOfCash._id">
+                    <ng-container *ngIf="editingPaymentId !== movementOfCash?._id">
                       <button
                         type="button"
                         class="btn btn-primary btn-sm"
@@ -493,7 +493,7 @@
                         <i class="fa fa-pencil"></i>
                       </button>
                     </ng-container>
-                    <ng-container *ngIf="editingPaymentId === movementOfCash._id">
+                    <ng-container *ngIf="editingPaymentId === movementOfCash?._id">
                       <button
                         type="button"
                         class="btn btn-success btn-sm"
@@ -514,17 +514,17 @@
                       </button>
                     </ng-container>
                   </td>
-                  <td [style.min-width.px]="editingPaymentId === movementOfCash._id ? 200 : null">
-                    <span *ngIf="editingPaymentId !== movementOfCash._id">{{ movementOfCash?.type?.name }}</span>
+                  <td [style.min-width.px]="editingPaymentId === movementOfCash?._id ? 200 : null">
+                    <span *ngIf="editingPaymentId !== movementOfCash?._id">{{ movementOfCash?.type?.name }}</span>
                     <select
-                      *ngIf="editingPaymentId === movementOfCash._id"
+                      *ngIf="editingPaymentId === movementOfCash?._id"
                       class="form-control form-control-sm"
                       style="min-width: 180px"
                       [(ngModel)]="selectedPaymentMethodId"
                       [disabled]="savingPayment"
                     >
-                      <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod._id">
-                        {{ paymentMethod.name }}
+                      <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod?._id">
+                        {{ paymentMethod?.name }}
                       </option>
                     </select>
                   </td>
@@ -532,11 +532,11 @@
                   <td>{{ movementOfCash?.number }}</td>
                   <td>{{ movementOfCash?.quota }}</td>
                   <td>
-                    {{ movementOfCash.expirationDate | dateFormat: 'DD/MM/YYYY' }}
+                    {{ movementOfCash?.expirationDate | dateFormat: 'DD/MM/YYYY' }}
                   </td>
                   <td>{{ movementOfCash?.bank?.name }}</td>
                   <td>
-                    {{ movementOfCash.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    {{ movementOfCash?.amountPaid | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                   </td>
                   <td>
                     {{
@@ -565,7 +565,7 @@
                 </tr>
               </tbody>
             </table>
-            <table class="table table-striped" *ngIf="showDetails && currencyValue && currencyValue.length > 0">
+            <table class="table table-striped" *ngIf="showDetails && currencyValue?.length > 0">
               <thead>
                 <th>{{ 'quantity' | translate | capitalize }}</th>
                 <th>{{ 'value' | translate | capitalize }}</th>
@@ -654,7 +654,7 @@
         </ng-template>
       </li>
 
-      <li ngbNavItem [disabled]="!transactionDestinations.length">
+      <li ngbNavItem [disabled]="!transactionDestinations?.length">
         <a ngbNavLink>{{ 'cancelledTransactions' | translate | capitalize }}</a>
         <ng-template ngbNavContent>
           <div class="p-3" *ngIf="transaction?.canceledTransactions?.typeId">
@@ -724,7 +724,7 @@
         </ng-template>
       </li>
 
-      <li ngbNavItem [disabled]="!transactionOrigins.length">
+      <li ngbNavItem [disabled]="!transactionOrigins?.length">
         <a ngbNavLink>Transacciones Cancelatorias</a>
         <ng-template ngbNavContent>
           <div class="table-responsive">
@@ -803,7 +803,7 @@
                 <div class="form-group col-md-6">
                   <label class="control-label">El día:</label>
                   <label class="control-label"
-                    ><b>{{ transaction.updateDate | dateFormat: 'DD/MM/YYYY hh:mm:ss' }}</b></label
+                    ><b>{{ transaction?.updateDate | dateFormat: 'DD/MM/YYYY hh:mm:ss' }}</b></label
                   >
                 </div>
               </div>
@@ -815,7 +815,7 @@
                   >
                 </div>
               </div>
-              <div class="row" *ngIf="transaction.meliId">
+              <div class="row" *ngIf="transaction?.meliId">
                 <div class="form-group col-md-6">
                   <label class="control-label">Id de Mercadolibre:</label>
                   <label class="control-label"
@@ -824,7 +824,7 @@
                 </div>
               </div>
 
-              <div class="row" *ngIf="transaction.wooId">
+              <div class="row" *ngIf="transaction?.wooId">
                 <div class="form-group col-md-6">
                   <label class="control-label">Id de Woocommerce:</label>
                   <label class="control-label">
@@ -834,7 +834,7 @@
                   </label>
                 </div>
               </div>
-              <div class="row" *ngIf="transaction.tiendaNubeId">
+              <div class="row" *ngIf="transaction?.tiendaNubeId">
                 <div class="form-group col-md-6">
                   <label class="control-label">Id de Tienda Nube:</label>
                   <label class="control-label">
@@ -845,7 +845,7 @@
                 </div>
               </div>
 
-              <div class="row" *ngIf="transaction.CAE">
+              <div class="row" *ngIf="transaction?.CAE">
                 <div class="form-group col-md-6">
                   <label class="control-label">ARCA CAE:</label>
                   <label class="control-label">
@@ -857,7 +857,7 @@
                 <div class="form-group col-md-6">
                   <label class="control-label">Fecha Vencimiento ARCA CAE:</label>
                   <label class="control-label"
-                    ><b> {{ transaction.CAEExpirationDate | dateFormat: 'DD/MM/YYYY' }}</b></label
+                    ><b> {{ transaction?.CAEExpirationDate | dateFormat: 'DD/MM/YYYY' }}</b></label
                   >
                 </div>
               </div>
