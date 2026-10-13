@@ -58,7 +58,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
 
   // sort
   public sort = {
-    column: 'transaction.endDate',
+    column: 'endDate',
     direction: 'desc',
   };
 
@@ -176,6 +176,14 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
           },
         })
     );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+    this.getReport();
   }
 
   public onExportExcel(event): void {
