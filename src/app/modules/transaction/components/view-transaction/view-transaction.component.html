@@ -427,7 +427,7 @@
           </div>
         </ng-template>
       </li>
-      <li ngbNavItem [disabled]="transaction?.taxes?.length === 0">
+      <li ngbNavItem [disabled]="!transaction?.taxes?.length">
         <a ngbNavLink>{{ 'taxes' | translate | capitalize }}</a>
         <ng-template ngbNavContent>
           <div class="table-responsive">
@@ -441,7 +441,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let tax of transaction.taxes">
+                <tr *ngFor="let tax of transaction?.taxes">
                   <td>{{ tax?.tax?.name }}</td>
                   <td>{{ tax.percentage }}</td>
                   <td>
