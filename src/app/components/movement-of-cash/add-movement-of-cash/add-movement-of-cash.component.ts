@@ -820,9 +820,7 @@ export class AddMovementOfCashComponent implements OnInit {
                 ) {
                   const removed = await this.clearPaymentAdjustments();
                   if (removed) {
-                    this.transaction.totalPrice = this.roundNumber.transform(
-                      this.transaction.totalPrice - removed
-                    );
+                    this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice - removed);
                     this.transaction = await this.updateTransaction();
                     if (this.keyboard) this.keyboard.setInput('');
                   }
@@ -1077,9 +1075,7 @@ export class AddMovementOfCashComponent implements OnInit {
       (await this.getMovementsOfArticles(
         `where="transaction":"${this.transaction._id}","isGeneratedByPayment":true`
       )) || [];
-    this.paymentAdjustmentsTotal = this.roundNumber.transform(
-      movs.reduce((acc, mov) => acc + (mov.salePrice || 0), 0)
-    );
+    this.paymentAdjustmentsTotal = this.roundNumber.transform(movs.reduce((acc, mov) => acc + (mov.salePrice || 0), 0));
   }
 
   /** Borra ajustes previos por forma de pago. Devuelve cuánto se descontó. */
@@ -1295,8 +1291,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (
           this.movementOfCash.discount &&
           this.movementOfCash.discount > 0 &&
-          amountToPayForm >
-            this.roundNumber.transform((base * this.movementOfCash.discount) / 100 + base) &&
+          amountToPayForm > this.roundNumber.transform((base * this.movementOfCash.discount) / 100 + base) &&
           !this.paymentMethodSelected.acceptReturned
         ) {
           throw new Error(
@@ -1309,8 +1304,7 @@ export class AddMovementOfCashComponent implements OnInit {
         if (
           this.movementOfCash.surcharge &&
           this.movementOfCash.surcharge > 0 &&
-          amountToPayForm - 0.01 >
-            this.roundNumber.transform((base * this.movementOfCash.surcharge) / 100 + base) &&
+          amountToPayForm - 0.01 > this.roundNumber.transform((base * this.movementOfCash.surcharge) / 100 + base) &&
           !this.paymentMethodSelected.acceptReturned
         ) {
           throw new Error(
