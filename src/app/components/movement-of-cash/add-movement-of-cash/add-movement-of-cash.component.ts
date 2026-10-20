@@ -69,6 +69,8 @@ export class AddMovementOfCashComponent implements OnInit {
   amountToPay: number = 0.0;
   amountPaid: number = 0.0;
   amountDiscount: number = 0.0;
+  /** Suma de movimientos isGeneratedByPayment (para no recalcular el recargo encima) */
+  paymentAdjustmentsTotal: number = 0.0;
   private subscription: Subscription = new Subscription();
   percentageCommission: number = 0.0;
   percentageAdministrativeExpense: number = 0.0;
@@ -816,32 +818,15 @@ export class AddMovementOfCashComponent implements OnInit {
                   (movement.discount && movement.discount !== 0) ||
                   (movement.surcharge && movement.surcharge !== 0)
                 ) {
-                  let salePrice = 0;
-
-                  if (movement.discount && movement.discount !== 0) {
-                    salePrice = -(movement.amountPaid * movement.discount) / 100;
-                  } else if (movement.surcharge && movement.surcharge !== 0) {
-                    salePrice = (movement.amountPaid * movement.surcharge) / 100;
-                  }
-
-                  let query = 'where="transaction":"' + this.transaction._id + '","salePrice":' + salePrice + '';
-
-                  let movementsOfArticles: MovementOfArticle[] = await this.getMovementsOfArticles(query);
-
-                  if (movementsOfArticles && movementsOfArticles.length > 0) {
-                    let movementOfArticle: MovementOfArticle = await this.deleteMovementOfArticle(
-                      movementsOfArticles[0]
-                    );
-
+                  const removed = await this.clearPaymentAdjustments();
+                  if (removed) {
                     this.transaction.totalPrice = this.roundNumber.transform(
-                      this.transaction.totalPrice - movementOfArticle.salePrice
+                      this.transaction.totalPrice - removed
                     );
                     this.transaction = await this.updateTransaction();
                     if (this.keyboard) this.keyboard.setInput('');
-                    this.getMovementOfCashesByTransaction('delete');
-                  } else {
-                    this.getMovementOfCashesByTransaction('delete');
                   }
+                  this.getMovementOfCashesByTransaction('delete');
                 } else {
                   this.getMovementOfCashesByTransaction('delete');
                 }
@@ -1086,6 +1071,32 @@ export class AddMovementOfCashComponent implements OnInit {
     });
   }
 
+  /** Trae la suma de ajustes "Pago con ..." de la transacción */
+  async loadPaymentAdjustmentsTotal(): Promise<void> {
+    const movs =
+      (await this.getMovementsOfArticles(
+        `where="transaction":"${this.transaction._id}","isGeneratedByPayment":true`
+      )) || [];
+    this.paymentAdjustmentsTotal = this.roundNumber.transform(
+      movs.reduce((acc, mov) => acc + (mov.salePrice || 0), 0)
+    );
+  }
+
+  /** Borra ajustes previos por forma de pago. Devuelve cuánto se descontó. */
+  async clearPaymentAdjustments(): Promise<number> {
+    const movs =
+      (await this.getMovementsOfArticles(
+        `where="transaction":"${this.transaction._id}","isGeneratedByPayment":true`
+      )) || [];
+    let removed = 0;
+    for (const mov of movs) {
+      removed += mov.salePrice || 0;
+      await this.deleteMovementOfArticle(mov);
+    }
+    this.paymentAdjustmentsTotal = 0;
+    return this.roundNumber.transform(removed);
+  }
+
   async getPaymentMethods() {
     this.loading = true;
 
@@ -1136,6 +1147,7 @@ export class AddMovementOfCashComponent implements OnInit {
               this.movementOfCash.discount = this.paymentMethodSelected.discount || 0;
               this.movementOfCash.surcharge = this.paymentMethodSelected.surcharge || 0;
               this.percentageCommission = this.paymentMethodSelected.commission || 0;
+              await this.loadPaymentAdjustmentsTotal();
               this.getMovementOfCashesByTransaction();
             } else {
               this._toastService.showToast(result.result);
@@ -1182,18 +1194,21 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
-    if (op !== 'amountToPay' && this.transaction.totalPrice !== 0) {
-      this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
-      if (this.keyboard) this.keyboard.setInput('');
-    }
-
     this.movementOfCash.discount = this.paymentMethodSelected.discount;
     this.movementOfCash.surcharge = this.paymentMethodSelected.surcharge;
 
+    // Total de productos (sin "Pago con ...") para no acumular el recargo
+    const base = this.roundNumber.transform(this.transaction.totalPrice - this.paymentAdjustmentsTotal);
+
+    if (op !== 'amountToPay' && this.transaction.totalPrice !== 0) {
+      this.amountToPay = this.roundNumber.transform(base - this.amountPaid);
+      if (this.keyboard) this.keyboard.setInput('');
+    }
+
     if (this.movementOfCash.discount && this.movementOfCash.discount !== 0) {
-      this.transactionAmount = this.transaction.totalPrice - (this.amountToPay * this.movementOfCash.discount) / 100;
+      this.transactionAmount = base - (this.amountToPay * this.movementOfCash.discount) / 100;
     } else if (this.movementOfCash.surcharge && this.movementOfCash.surcharge !== 0) {
-      this.transactionAmount = this.transaction.totalPrice + (this.amountToPay * this.movementOfCash.surcharge) / 100;
+      this.transactionAmount = base + (this.amountToPay * this.movementOfCash.surcharge) / 100;
     } else {
       this.transactionAmount = this.transaction.totalPrice;
     }
@@ -1209,7 +1224,7 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
-    this.amountDiscount = this.transactionAmount - this.transaction.totalPrice;
+    this.amountDiscount = this.roundNumber.transform(this.transactionAmount - base);
 
     if (this.paymentMethodSelected.allowToFinance) {
       this.calculateQuotas('quota');
@@ -1275,18 +1290,18 @@ export class AddMovementOfCashComponent implements OnInit {
           );
         }
 
+        const base = this.roundNumber.transform(this.transaction.totalPrice - this.paymentAdjustmentsTotal);
+
         if (
           this.movementOfCash.discount &&
           this.movementOfCash.discount > 0 &&
           amountToPayForm >
-            this.roundNumber.transform(
-              (this.transaction.totalPrice * this.movementOfCash.discount) / 100 + this.transaction.totalPrice
-            ) &&
+            this.roundNumber.transform((base * this.movementOfCash.discount) / 100 + base) &&
           !this.paymentMethodSelected.acceptReturned
         ) {
           throw new Error(
             'El monto ingresado no puede ser mayor a ' +
-              this.roundNumber.transform((this.transaction.totalPrice * this.movementOfCash.discount) / 100) +
+              this.roundNumber.transform((base * this.movementOfCash.discount) / 100) +
               '.'
           );
         }
@@ -1295,16 +1310,12 @@ export class AddMovementOfCashComponent implements OnInit {
           this.movementOfCash.surcharge &&
           this.movementOfCash.surcharge > 0 &&
           amountToPayForm - 0.01 >
-            this.roundNumber.transform(
-              (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100 + this.transaction.totalPrice
-            ) &&
+            this.roundNumber.transform((base * this.movementOfCash.surcharge) / 100 + base) &&
           !this.paymentMethodSelected.acceptReturned
         ) {
           throw new Error(
             'El monto ingresado no puede ser mayor a ' +
-              this.roundNumber.transform(
-                (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100 + this.transaction.totalPrice
-              ) +
+              this.roundNumber.transform((base * this.movementOfCash.surcharge) / 100 + base) +
               '.'
           );
         }
@@ -1667,7 +1678,7 @@ export class AddMovementOfCashComponent implements OnInit {
               if (this.transactionAmount !== this.transaction.totalPrice) {
                 this.transaction.totalPrice = this.transactionAmount;
                 if (this.transaction.type.requestArticles) {
-                  this.addMovementOfArticle();
+                  await this.addMovementOfArticle();
                 } else {
                   this.transaction = await this.updateTransaction();
                   if (this.keyboard) this.keyboard.setInput('');
@@ -1680,7 +1691,7 @@ export class AddMovementOfCashComponent implements OnInit {
                   this.getMovementOfCashesByTransaction();
                 } else {
                   if (this.amountDiscount && this.amountDiscount !== 0) {
-                    this.addMovementOfArticle();
+                    await this.addMovementOfArticle();
                   } else {
                     this.getMovementOfCashesByTransaction();
                   }
@@ -1694,10 +1705,10 @@ export class AddMovementOfCashComponent implements OnInit {
               }
 
               paid = this.roundNumber.transform(paid);
-              const originalTotalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-              const amountDifference = this.roundNumber.transform(paid - originalTotalPrice);
+              const base = this.roundNumber.transform(this.transaction.totalPrice - this.paymentAdjustmentsTotal);
+              const amountDifference = this.roundNumber.transform(paid - base);
 
-              if (amountDifference !== 0 && originalTotalPrice !== 0) {
+              if (amountDifference !== 0 && base !== 0) {
                 this.amountDiscount = amountDifference;
                 this.transaction.totalPrice = paid;
                 this.transaction = await this.updateTransaction();
@@ -1732,16 +1743,13 @@ export class AddMovementOfCashComponent implements OnInit {
           if (this.fastPayment.observation) {
             this.movementOfCash.observation = this.fastPayment.observation;
           }
+          const base = this.roundNumber.transform(this.transaction.totalPrice - this.paymentAdjustmentsTotal);
           if (this.movementOfCash.discount && this.movementOfCash.discount !== 0) {
-            this.amountDiscount = -this.roundNumber.transform(
-              (this.transaction.totalPrice * this.movementOfCash.discount) / 100
-            );
+            this.amountDiscount = -this.roundNumber.transform((base * this.movementOfCash.discount) / 100);
           } else if (this.movementOfCash.surcharge && this.movementOfCash.surcharge !== 0) {
-            this.amountDiscount = this.roundNumber.transform(
-              (this.transaction.totalPrice * this.movementOfCash.surcharge) / 100
-            );
+            this.amountDiscount = this.roundNumber.transform((base * this.movementOfCash.surcharge) / 100);
           }
-          this.transaction.totalPrice = this.transaction.totalPrice + this.amountDiscount;
+          this.transaction.totalPrice = this.roundNumber.transform(base + this.amountDiscount);
           this.transactionAmount = this.transaction.totalPrice;
           this.movementOfCash.amountPaid = this.transactionAmount;
 
@@ -1750,7 +1758,7 @@ export class AddMovementOfCashComponent implements OnInit {
             if (this.transactionAmount !== this.transaction.totalPrice) {
               this.transaction.totalPrice = this.transactionAmount;
               if (this.transaction.type.requestArticles) {
-                this.addMovementOfArticle();
+                await this.addMovementOfArticle();
               } else {
                 this.transaction = await this.updateTransaction();
                 this.getMovementOfCashesByTransaction();
@@ -1762,7 +1770,7 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.getMovementOfCashesByTransaction();
               } else {
                 if (this.amountDiscount && this.amountDiscount !== 0) {
-                  this.addMovementOfArticle();
+                  await this.addMovementOfArticle();
                 } else {
                   this.getMovementOfCashesByTransaction();
                 }
@@ -1832,6 +1840,8 @@ export class AddMovementOfCashComponent implements OnInit {
 
   async addMovementOfArticle() {
     try {
+      await this.clearPaymentAdjustments(); // un solo ajuste, no acumular
+
       let movementOfArticle = new MovementOfArticle();
 
       if (
@@ -1899,6 +1909,7 @@ export class AddMovementOfCashComponent implements OnInit {
           }
         }
         this.transaction = await this.updateTransaction();
+        await this.loadPaymentAdjustmentsTotal();
         this.getMovementOfCashesByTransaction();
       }
     } catch (error) {
