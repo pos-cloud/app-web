@@ -1890,12 +1890,15 @@ export class AddMovementOfArticleComponent implements OnInit {
             //le meto a todos el movimiento del padre
             for (let index = 0; index < this.movChild.length; index++) {
               this.movChild[index].movementParent = result.result;
-              const structure = this.structures.find(
+              const parentArticleId = String(result.result.article?._id || result.result.article);
+              const childArticleId = String(this.movChild[index].article?._id || this.movChild[index].article);
+              const structure = this.structures?.find(
                 (data) =>
-                  data.parent._id === result.result.article._id && data.child._id === this.movChild[index].article._id
+                  String(data.parent?._id || data.parent) === parentArticleId &&
+                  String(data.child?._id || data.child) === childArticleId
               );
               this.movChild[index].stockMovement =
-                structure.utilization == Utilization.Production &&
+                structure?.utilization == Utilization.Production &&
                 this.transaction?.type?.transactionMovement == TransactionMovement.Production
                   ? StockMovement.Outflows
                   : result.result.stockMovement;
@@ -1979,12 +1982,15 @@ export class AddMovementOfArticleComponent implements OnInit {
             for (let index = 0; index < this.movChild.length; index++) {
               this.movChild[index].movementParent = result.result;
 
-              const structure = this.structures.find(
+              const parentArticleId = String(result.result.article?._id || result.result.article);
+              const childArticleId = String(this.movChild[index].article?._id || this.movChild[index].article);
+              const structure = this.structures?.find(
                 (data) =>
-                  data.parent._id === result.result.article._id && data.child._id === this.movChild[index].article._id
+                  String(data.parent?._id || data.parent) === parentArticleId &&
+                  String(data.child?._id || data.child) === childArticleId
               );
               this.movChild[index].stockMovement =
-                structure.utilization == Utilization.Production &&
+                structure?.utilization == Utilization.Production &&
                 this.transaction?.type?.transactionMovement == TransactionMovement.Production
                   ? StockMovement.Outflows
                   : result.result.stockMovement;
