@@ -375,86 +375,106 @@
         <li ngbNavItem [disabled]="areMovementsOfArticlesEmpty">
           <a ngbNavLink>{{ 'articles' | translate | capitalize }}</a>
           <ng-template ngbNavContent>
-            <div class="table-responsive">
-              <table class="table table-striped">
+            <div class="table-responsive vt-articles">
+              <table class="table table-striped table-hover vt-articles-table mb-0">
                 <thead>
                   <tr>
-                    <th></th>
-                    <th>{{ 'quantity' | translate | capitalize }}</th>
-                    <th>{{ 'category' | translate | capitalize }}</th>
-                    <th>{{ 'make' | translate | capitalize }}</th>
+                    <th class="vt-articles-actions"></th>
+                    <th class="vt-qty">{{ 'quantity' | translate | capitalize }}</th>
                     <th>{{ 'code' | translate | capitalize }}</th>
                     <th>{{ 'article.description' | translate | capitalize }}</th>
-                    <th>{{ 'article.posDescription' | translate | capitalize }}</th>
-                    <th>{{ 'unitPrice' | translate | capitalize }}</th>
-                    <th>{{ 'discount' | translate | capitalize }} (%)</th>
-                    <th>{{ 'discount' | translate | capitalize }} ($)</th>
-                    <th>{{ 'salePriceWithoutTaxes' | translate | capitalize }}</th>
-                    <th>{{ 'totalPrice' | translate | capitalize }}</th>
+                    <th class="text-right">{{ 'unitPrice' | translate | capitalize }}</th>
+                    <th class="text-right">{{ 'discount' | translate | capitalize }}</th>
+                    <th class="text-right" [title]="'salePriceWithoutTaxes' | translate">S/ imp.</th>
+                    <th class="text-right">{{ 'totalPrice' | translate | capitalize }}</th>
                     <th>{{ 'deposit' | translate | capitalize }}</th>
-                    <th>{{ 'quantityForStock' | translate | capitalize }}</th>
+                    <th class="text-right" [title]="'quantityForStock' | translate">Stock</th>
                     <th>OP</th>
                     <th>{{ 'reading' | translate | capitalize }}</th>
-                    <th>_Id</th>
+                    <th *ngIf="isSupport">_Id</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let movementOfArticle of movementsOfArticles">
-                    <td align="left" width="100">
-                      <button
-                        type="button"
-                        class="btn btn-success btn-sm"
-                        *ngIf="movementOfArticle?.article?._id"
-                        (click)="openModal('view-article', movementOfArticle)"
-                        title="Ver"
-                      >
-                        <i class="fa fa-eye"></i>
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-light btn-sm"
-                        (click)="openModal('print-label', movementOfArticle)"
-                        title="Imprimir Etiqueta"
-                      >
-                        <i class="fa fa-barcode"></i>
-                      </button>
+                    <td class="vt-articles-actions">
+                      <div class="btn-group">
+                        <button
+                          type="button"
+                          class="btn btn-success btn-sm"
+                          *ngIf="movementOfArticle?.article?._id"
+                          (click)="openModal('view-article', movementOfArticle)"
+                          title="Ver"
+                        >
+                          <i class="fa fa-eye"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-light btn-sm"
+                          (click)="openModal('print-label', movementOfArticle)"
+                          title="Imprimir Etiqueta"
+                        >
+                          <i class="fa fa-barcode"></i>
+                        </button>
+                      </div>
                     </td>
-                    <td>{{ movementOfArticle?.amount }}</td>
-                    <td>{{ movementOfArticle?.category?.description }}</td>
-                    <td>{{ movementOfArticle?.make?.description }}</td>
-                    <td>{{ movementOfArticle?.code }}</td>
-                    <td>
+                    <td class="vt-qty">{{ movementOfArticle?.amount || 0 }}</td>
+                    <td class="text-nowrap">{{ movementOfArticle?.code }}</td>
+                    <td class="vt-article-name" [title]="movementOfArticle?.description">
                       {{ movementOfArticle?.description }}
-                      <strong>
-                        <br />
-                        {{ movementOfArticle?.notes }}
-                      </strong>
+                      <span class="vt-article-notes" *ngIf="movementOfArticle?.notes">
+                        · {{ movementOfArticle.notes }}
+                      </span>
                     </td>
-                    <td>{{ movementOfArticle?.article?.posDescription }}</td>
-                    <td>
-                      {{ movementOfArticle?.unitPrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    <td class="text-right text-nowrap">
+                      {{ movementOfArticle?.unitPrice || 0 | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                     </td>
-                    <td>{{ movementOfArticle?.discountRate + ' %' }}</td>
-                    <td>
-                      {{ movementOfArticle?.discountAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    <td class="text-right text-nowrap">
+                      <span *ngIf="movementOfArticle?.discountRate">{{ movementOfArticle.discountRate }}% </span>
+                      {{ movementOfArticle?.discountAmount || 0 | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                     </td>
-                    <td>
-                      {{ movementOfArticle?.salePriceWithoutTaxes | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    <td class="text-right text-nowrap">
+                      {{ movementOfArticle?.salePriceWithoutTaxes || 0 | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
                     </td>
-                    <td>
-                      {{ movementOfArticle?.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    <td class="text-right text-nowrap">
+                      <strong>{{
+                        movementOfArticle?.salePrice || 0 | currency: 'USD' : 'symbol-narrow' : '1.2-2'
+                      }}</strong>
                     </td>
                     <td>{{ movementOfArticle?.deposit?.name }}</td>
-                    <td>{{ movementOfArticle?.quantityForStock }}</td>
+                    <td class="text-right">{{ movementOfArticle?.quantityForStock }}</td>
                     <td>{{ movementOfArticle?.op }}</td>
                     <td>{{ movementOfArticle?.read }}</td>
-                    <td>{{ movementOfArticle?._id }}</td>
+                    <td *ngIf="isSupport">{{ movementOfArticle?._id }}</td>
                   </tr>
-                  <tr align="center " *ngIf="areMovementsOfArticlesEmpty">
-                    <td colspan="10 ">No existen productos en la transacción</td>
+                  <tr *ngIf="areMovementsOfArticlesEmpty">
+                    <td [attr.colspan]="isSupport ? 13 : 12" class="text-center text-muted py-3">
+                      No existen productos en la transacción
+                    </td>
                   </tr>
                 </tbody>
-                <tbody></tbody>
+                <tfoot *ngIf="!areMovementsOfArticlesEmpty">
+                  <tr class="vt-articles-total">
+                    <td></td>
+                    <td class="vt-qty">{{ articlesTotals.amount }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right text-nowrap">
+                      {{ articlesTotals.discountAmount | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    </td>
+                    <td class="text-right text-nowrap">
+                      {{ articlesTotals.salePriceWithoutTaxes | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    </td>
+                    <td class="text-right text-nowrap">
+                      {{ articlesTotals.salePrice | currency: 'USD' : 'symbol-narrow' : '1.2-2' }}
+                    </td>
+                    <td></td>
+                    <td class="text-right">{{ articlesTotals.quantityForStock }}</td>
+                    <td></td>
+                    <td></td>
+                    <td *ngIf="isSupport"></td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </ng-template>
@@ -495,7 +515,6 @@
               <table class="table table-striped">
                 <thead>
                   <tr>
-                    <th *ngIf="!readonly"></th>
                     <th>{{ 'method' | translate | capitalize }}</th>
                     <th>{{ 'transaction.cashBox.number' | translate | capitalize }}</th>
                     <th>Comprobante</th>
@@ -514,52 +533,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let movementOfCash of movementsOfCashes">
-                    <td align="left" width="90" *ngIf="!readonly">
-                      <ng-container *ngIf="editingPaymentId !== movementOfCash?._id">
-                        <button
-                          type="button"
-                          class="btn btn-primary btn-sm"
-                          (click)="startEditPayment(movementOfCash)"
-                          title="Cambiar medio de pago"
-                        >
-                          <i class="fa fa-pencil"></i>
-                        </button>
-                      </ng-container>
-                      <ng-container *ngIf="editingPaymentId === movementOfCash?._id">
-                        <button
-                          type="button"
-                          class="btn btn-success btn-sm"
-                          (click)="savePaymentMethod(movementOfCash)"
-                          [disabled]="savingPayment"
-                          title="Guardar"
-                        >
-                          <i class="fa" [ngClass]="savingPayment ? 'fa-refresh fa-spin' : 'fa-check'"></i>
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-light btn-sm"
-                          (click)="cancelEditPayment()"
-                          [disabled]="savingPayment"
-                          title="Cancelar"
-                        >
-                          <i class="fa fa-times"></i>
-                        </button>
-                      </ng-container>
-                    </td>
-                    <td [style.min-width.px]="editingPaymentId === movementOfCash?._id ? 200 : null">
-                      <span *ngIf="editingPaymentId !== movementOfCash?._id">{{ movementOfCash?.type?.name }}</span>
-                      <select
-                        *ngIf="editingPaymentId === movementOfCash?._id"
-                        class="form-control form-control-sm"
-                        style="min-width: 180px"
-                        [(ngModel)]="selectedPaymentMethodId"
-                        [disabled]="savingPayment"
-                      >
-                        <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod?._id">
-                          {{ paymentMethod?.name }}
-                        </option>
-                      </select>
-                    </td>
+                    <td>{{ movementOfCash?.type?.name }}</td>
                     <td>{{ movementOfCash?.cashBox?.number }}</td>
                     <td>{{ movementOfCash?.number }}</td>
                     <td>{{ movementOfCash?.quota }}</td>
@@ -593,7 +567,7 @@
                   </tr>
 
                   <tr align="center " *ngIf="movementsOfCashes?.length === 0">
-                    <td [attr.colspan]="readonly ? 13 : 14">No existen método de pagos en la transacción</td>
+                    <td colspan="13">No existen método de pagos en la transacción</td>
                   </tr>
                 </tbody>
               </table>

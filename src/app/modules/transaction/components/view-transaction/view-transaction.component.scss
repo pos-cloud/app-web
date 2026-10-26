@@ -76,6 +76,66 @@
   padding-top: 1rem;
 }
 
+.vt-articles {
+  max-height: 60vh;
+}
+
+.vt-articles-table {
+  font-size: 1rem;
+
+  th,
+  td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    line-height: 1.25;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+  }
+
+  tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .vt-articles-actions {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  .vt-qty {
+    text-align: left;
+  }
+
+  .vt-article-name {
+    width: 22rem;
+    min-width: 22rem;
+    max-width: 22rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .vt-article-notes {
+    font-weight: 600;
+    color: #495057;
+  }
+}
+
+.vt-articles-total {
+  font-weight: 600;
+
+  td {
+    background: #f8f9fa;
+    border-top: 2px solid #dee2e6;
+  }
+}
+
 @keyframes vt-slide {
   from {
     transform: translateX(-100%);
