@@ -4,7 +4,8 @@ import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from 
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TransactionType } from '@types';
+import { Deposit, TransactionType } from '@types';
+import { DepositService } from 'app/core/services/deposit.service';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
@@ -46,6 +47,8 @@ export class InventoryValuedComponent {
 
   transactionTypes: TransactionType[];
   transactionTypesSelect: string[] = [];
+  deposits: Deposit[];
+  depositSelectedId: string[] = [];
 
   public form: FormGroup;
   // sort
@@ -56,6 +59,7 @@ export class InventoryValuedComponent {
 
   constructor(
     private _service: ReportSystemService,
+    private _depositService: DepositService,
     private _transactionTypeService: TransactionTypeService,
     private _toastService: ToastService,
     private cdRef: ChangeDetectorRef,
@@ -69,6 +73,7 @@ export class InventoryValuedComponent {
   }
 
   async ngOnInit() {
+    this.getDeposits();
     this.getTransactionTypes();
     this.getReport();
   }
@@ -83,6 +88,7 @@ export class InventoryValuedComponent {
       filters: {
         number: Number(this.form.value.number),
         transactionTypes: this.transactionTypesSelect ?? [],
+        deposits: this.depositSelectedId ?? [],
       },
       pagination: {
         page: 1,
@@ -90,6 +96,23 @@ export class InventoryValuedComponent {
       },
       sorting: this.sort,
     };
+  }
+
+  private getDeposits(): void {
+    this._depositService
+      .getAll({
+        project: { _id: 1, operationType: 1, name: 1 },
+        match: { operationType: { $ne: 'D' } },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.deposits = result.result;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
   }
 
   private getTransactionTypes() {

@@ -1,10 +1,97 @@
+body.nav-sidebar-visible .app-main:has(app-data-table-reports),
+body.nav-horizontal-visible .app-main:has(app-data-table-reports) {
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main:has(app-data-table-reports) > :not(router-outlet) {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-main:has(app-data-table-reports) .container-fluid:has(app-data-table-reports) {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-main:has(app-data-table-reports) .container-fluid:has(app-data-table-reports) > * {
+  flex-shrink: 0;
+}
+
+.app-main:has(app-data-table-reports) .container-fluid:has(app-data-table-reports) > app-data-table-reports,
+.app-main:has(app-data-table-reports) .container-fluid:has(app-data-table-reports) > :has(app-data-table-reports) {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 app-data-table-reports {
-  .card {
-    min-height: calc(100vh - 225px);
-    max-height: calc(100vh - 225px);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+
+  .card,
+  .card-large {
+    flex: 1;
+    min-height: 0 !important;
+    max-height: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-header {
+    flex-shrink: 0;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  thead th {
+    background-color: #fff;
+  }
+
+  tfoot {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.15);
+  }
+
+  tfoot td {
+    background-color: #fff;
+    border-top: 2px solid #dee2e6;
   }
 
   .table-responsive {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    overflow: auto;
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }

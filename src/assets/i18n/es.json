@@ -858,6 +858,8 @@
   "totalDebe": "Total Debe",
   "totalPrice": "Precio Total",
   "totalStock": "Stock Total",
+  "totalCost": "Costo Total",
+  "totalSale": "Precio de Venta",
   "totalTaxAmount": "Impuesto",
   "transaction": "Transacción",
   "transactionName": "Transacción",
