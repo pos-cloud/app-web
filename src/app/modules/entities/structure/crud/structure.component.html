@@ -5,10 +5,10 @@
         'add-structure' | translate | capitalize
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
-        >{{ 'edit' | translate | capitalize }} {{ structure?.name ?? '' }}</span
+        >{{ 'edit' | translate | capitalize }} {{ structure?.name ?? 'structure' | translate | capitalize }}</span
       >
       <span style="color: #607d8b" *ngIf="operation === 'view' || operation === 'delete'">
-        {{ structure?.name ?? '' }}</span
+        {{ structure?.name ?? 'structure' | translate | capitalize }}</span
       >
       <div class="pull-right">
         <button type="button" class="btn" (click)="returnTo()">
@@ -49,12 +49,13 @@
         <div class="row">
           <div class="form-group col-md-4">
             <label for="parent" class="control-label">{{ 'parent.description' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               [control]="structureForm.get('parent')"
-              [data]="articles"
+              [service]="_articleService"
               [keyField]="'_id'"
               [displayField]="'description'"
-            ></app-typeahead-dropdown>
+              [searchFields]="['description', 'code', 'barcode']"
+            ></app-searchable-dropdown>
             <div
               class="invalid-feedback"
               *ngIf="structureForm.get('parent')?.touched && structureForm.get('parent')?.hasError('required')"
@@ -64,12 +65,13 @@
           </div>
           <div class="form-group col-md-4">
             <label for="child" class="control-label">{{ 'child.description' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
+            <app-searchable-dropdown
               [control]="structureForm.get('child')"
-              [data]="articles"
+              [service]="_articleService"
               [keyField]="'_id'"
               [displayField]="'description'"
-            ></app-typeahead-dropdown>
+              [searchFields]="['description', 'code', 'barcode']"
+            ></app-searchable-dropdown>
             <div
               class="invalid-feedback"
               *ngIf="structureForm.get('child')?.touched && structureForm.get('child')?.hasError('required')"
@@ -109,7 +111,7 @@
               </option>
             </select>
           </div>
-          <div class="form-group col-md-2" *ngIf="structureForm.get('utilization')?.value === utilization.Sale">
+          <!-- <div class="form-group col-md-2" *ngIf="structureForm.get('utilization')?.value === utilization.Sale">
             <label for="optional" class="control-label"> {{ 'isOptional' | translate | capitalize }} </label>
             <select class="form-control" formControlName="optional">
               <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
@@ -139,7 +141,7 @@
                 <b>?</b>
               </button>
             </div>
-          </div>
+          </div> -->
         </div>
         <hr />
         <div class="row">

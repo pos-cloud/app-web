@@ -2,17 +2,17 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ApiResponse, Article, Structure, Utilization } from '@types';
+import { ApiResponse, Structure, Utilization } from '@types';
 
 import { CommonModule } from '@angular/common';
 import { ArticleService } from '@core/services/article.service';
 import { StructureService } from '@core/services/structure.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
-import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
+import { SearchableDropdownComponent } from '@shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
-import { combineLatest, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -24,7 +24,7 @@ import { takeUntil } from 'rxjs/operators';
     ReactiveFormsModule,
     PipesModule,
     TranslateModule,
-    TypeaheadDropdownComponent,
+    SearchableDropdownComponent,
     ProgressbarModule,
   ],
 })
@@ -35,7 +35,6 @@ export class StructureComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public structureForm: UntypedFormGroup;
   private destroy$ = new Subject<void>();
-  public articles: Article[];
   public utilization = Utilization;
 
   constructor(
@@ -63,29 +62,12 @@ export class StructureComponent implements OnInit {
     this.operation = pathUrl[3];
 
     if (pathUrl[3] === 'view' || pathUrl[3] === 'delete') this.structureForm.disable();
-    this.loading = true;
 
-    combineLatest({
-      articles: this._articleService.find({ query: { operationType: { $ne: 'D' } } }),
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: ({ articles }) => {
-          this.articles = articles ?? [];
-
-          if (structureId) {
-            if (structureId) this.getStructure(structureId);
-          } else {
-            this.setValueForm();
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    if (structureId) {
+      this.getStructure(structureId);
+    } else {
+      this.setValueForm();
+    }
   }
 
   ngAfterViewInit() {
@@ -99,13 +81,10 @@ export class StructureComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    const articleParent = this.articles?.find((item) => item._id === this.structure?.parent?.toString());
-    const articleChild = this.articles?.find((item) => item._id === this.structure?.child?.toString());
-
     const values = {
       _id: this.structure?._id ?? '',
-      parent: articleParent ?? null,
-      child: articleChild ?? null,
+      parent: this.structure?.parent ?? null,
+      child: this.structure?.child ?? null,
       quantity: this.structure?.quantity ?? 0,
       utilization: this.structure?.utilization ?? this.utilization.Sale,
       optional: this.structure?.optional ?? false,
