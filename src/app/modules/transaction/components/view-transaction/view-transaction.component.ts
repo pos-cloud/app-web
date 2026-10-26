@@ -1,14 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbActiveModal, NgbModal, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import {
-  ApiResponse,
-  MovementOfCash,
-  PrinterPrintIn,
-  PrintType,
-  Transaction,
-  TransactionState,
-  User,
-} from '@types';
+import { ApiResponse, MovementOfCash, PrinterPrintIn, PrintType, Transaction, TransactionState, User } from '@types';
 import { Subject, Subscription } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
@@ -32,14 +24,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './view-transaction.component.html',
   styleUrls: ['./view-transaction.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FocusDirective,
-    PipesModule,
-    TranslateModule,
-    NgbModule,
-    NgbNavModule,
-  ],
+  imports: [CommonModule, FocusDirective, PipesModule, TranslateModule, NgbModule, NgbNavModule],
 })
 export class ViewTransactionComponent implements OnInit, AfterViewInit {
   @Input() transactionId: string;
@@ -109,12 +94,9 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
       this.loading = false;
     }
 
-    this._authService
-      .getIdentity.pipe(takeUntil(this.destroy$))
-      .subscribe((user: User | null) => {
-        this.isSupport = user?.name?.toLowerCase() === 'soporte';
-      });
-
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((user: User | null) => {
+      this.isSupport = user?.name?.toLowerCase() === 'soporte';
+    });
   }
 
   public ngOnDestroy(): void {
