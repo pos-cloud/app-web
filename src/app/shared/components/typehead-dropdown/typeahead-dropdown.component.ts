@@ -164,9 +164,7 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   private getLocalResults(term: string): any[] {
     const list = Array.isArray(this.data) ? this.data : [];
     const query = term.toLowerCase();
-    const filtered = query
-      ? list.filter((item) => this.resultFormatter(item).toLowerCase().includes(query))
-      : list;
+    const filtered = query ? list.filter((item) => this.resultFormatter(item).toLowerCase().includes(query)) : list;
     const max = Number(this.limit) > 0 ? Number(this.limit) : 10;
     return filtered.slice(0, max);
   }
