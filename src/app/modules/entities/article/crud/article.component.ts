@@ -119,7 +119,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   public code: string;
   public accounts: Account[];
 
-  public categories: Category[] = [];
+  public categories: (Category & { path: string })[] = [];
   public categoriesTN: Category[] = [];
   public classifications: Classification[] = [];
   public makes: Make[] = [];
@@ -317,7 +317,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
           code,
           accounts,
         }) => {
-          this.categories = categories || [];
+          this.categories = this.withCategoryPaths(categories);
 
           this.makes = makes || [];
           this.priceLists = priceLists || [];
@@ -433,7 +433,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     }
 
     // Buscar objetos relacionados
-    const category = this.categories?.find((item) => item._id === this.article?.category?.toString());
+    const categoryId = this.categoryParentId(this.article?.category);
+    const category = this.categories?.find((item) => String(item._id) === String(categoryId));
     const classification = this.classifications?.find((item) => item._id === this.article?.classification?.toString());
     const make = this.makes?.find((item) => item._id === this.article?.make?.toString());
     const unitOfMeasurement = this.unitOfMeasurements?.find(
@@ -1315,6 +1316,48 @@ export class ArticleComponent implements OnInit, OnDestroy {
     return n;
   }
 
+  private categoryParentId(parent: unknown): string | null {
+    if (parent == null || parent === '') {
+      return null;
+    }
+    if (typeof parent === 'string') {
+      return parent;
+    }
+    if (typeof parent === 'object' && '_id' in parent && (parent as { _id?: unknown })._id != null) {
+      return String((parent as { _id: unknown })._id);
+    }
+    return String(parent);
+  }
+
+  private withCategoryPaths(categories: Category[] | null | undefined): (Category & { path: string })[] {
+    const list = Array.isArray(categories) ? categories : [];
+    const byId = new Map(list.map((category) => [String(category._id), category]));
+
+    return list
+      .map((category) => ({
+        ...category,
+        path: this.buildCategoryPath(category, byId),
+      }))
+      .sort((a, b) => a.path.localeCompare(b.path, 'es', { sensitivity: 'base' }));
+  }
+
+  private buildCategoryPath(category: Category, byId: Map<string, Category>): string {
+    const names: string[] = [];
+    const seen = new Set<string>();
+    let current: Category | undefined = category;
+
+    while (current && !seen.has(String(current._id))) {
+      seen.add(String(current._id));
+      if (current.description) {
+        names.unshift(current.description);
+      }
+      const parentId = this.categoryParentId(current.parent);
+      current = parentId ? byId.get(parentId) : undefined;
+    }
+
+    return names.join(' - ') || category.description || '';
+  }
+
   public processHierarchicalCategories(): void {
     // Crear lista plana con niveles jerárquicos
     const hierarchicalItems: HierarchicalItem[] = [];
@@ -1326,7 +1369,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       .forEach((category) => {
         hierarchicalItems.push({
           _id: category.tiendaNubeId.toString(),
-          name: category.description,
+          name: category.path || category.description,
           level: 0,
         });
       });
@@ -1338,7 +1381,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       .forEach((category) => {
         hierarchicalItems.push({
           _id: category.tiendaNubeId.toString(),
-          name: category.description,
+          name: category.path || category.description,
           level: 1,
         });
       });
