@@ -122,27 +122,7 @@ export class ListStructureComponent {
       align: 'left',
       required: false,
     },
-    {
-      name: 'optional',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'boolean',
-      project: null,
-      align: 'left',
-      required: false,
-    },
 
-    {
-      name: 'increasePrice',
-      visible: true,
-      disabled: false,
-      filter: true,
-      datatype: 'number',
-      project: null,
-      align: 'left',
-      required: false,
-    },
     {
       name: 'creationDate',
       visible: false,
