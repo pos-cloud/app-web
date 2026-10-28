@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { Room, Table, TableState } from '@types';
+import { Table, TableState } from '@types';
 import { RoomService } from 'app/core/services/room.service';
 import { TableService } from 'app/core/services/table.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -30,7 +30,6 @@ import { takeUntil } from 'rxjs/operators';
 export class TableComponent implements OnInit {
   public operation: string;
   public table: Table;
-  public rooms: Room[] = new Array();
   public tableForm: UntypedFormGroup;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -39,7 +38,7 @@ export class TableComponent implements OnInit {
 
   constructor(
     private _tableService: TableService,
-    private _roomService: RoomService,
+    public _roomService: RoomService,
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _toastService: ToastService
@@ -59,8 +58,6 @@ export class TableComponent implements OnInit {
     this.operation = pathUrl[3];
     if (this.operation === 'view' || this.operation === 'delete') this.tableForm.disable();
 
-    this.getRooms();
-
     if (tableId) {
       this.getTable(tableId);
     }
@@ -76,28 +73,6 @@ export class TableComponent implements OnInit {
     this.focusEvent.complete();
   }
 
-  public getRooms(): Promise<void> {
-    this.loading = true;
-
-    return new Promise(() => {
-      this._roomService
-        .find({ query: { operationType: { $ne: 'D' } } })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (result) => {
-            this.rooms = result;
-          },
-          error: (error) => {
-            this._toastService.showToast(error);
-          },
-          complete: () => {
-            this.loading = false;
-            this.setValueForm();
-          },
-        });
-    });
-  }
-
   returnTo() {
     return this._router.navigate(['/entities/tables']);
   }
@@ -106,12 +81,16 @@ export class TableComponent implements OnInit {
     this.loading = true;
 
     this._tableService
-      .getById(tableId)
+      .getTableObjById(tableId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          this.table = result.result;
-          this.setValueForm();
+          if (result.status == 200) {
+            this.table = result.result;
+            this.setValueForm();
+          } else {
+            this._toastService.showToast(result);
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -123,12 +102,10 @@ export class TableComponent implements OnInit {
   }
 
   public setValueForm() {
-    const room = this.rooms?.find((item) => item._id == this.table?.room?.toString());
-
     this.tableForm.setValue({
       _id: this.table?._id ?? '',
       description: this.table?.description ?? '',
-      room: room ?? null,
+      room: this.table?.room ?? null,
       chair: this.table?.chair ?? 1,
       state: this.table?.state ?? TableState.Available,
     });
@@ -177,13 +154,14 @@ export class TableComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this._toastService.showToast(result);
+          if (result.status == 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
@@ -196,14 +174,17 @@ export class TableComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this._toastService.showToast(result);
-          this.table = result.result;
+          if (result.status == 200) {
+            this.table = result.result;
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
@@ -214,13 +195,14 @@ export class TableComponent implements OnInit {
     this._tableService.delete(this.table._id).subscribe({
       next: (result) => {
         this._toastService.showToast(result);
+        if (result.status == 200) this.returnTo();
       },
       error: (error) => {
         this._toastService.showToast(error);
+        this.loading = false;
       },
       complete: () => {
         this.loading = false;
-        this.returnTo();
       },
     });
   }

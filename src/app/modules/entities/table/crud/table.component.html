@@ -76,9 +76,11 @@
             <label class="control-label">{{ 'room' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="tableForm.get('room')"
-              [data]="rooms"
+              [service]="_roomService"
               [keyField]="'_id'"
               [displayField]="'description'"
+              [searchFields]="['description']"
+              [readonly]="operation === 'view' || operation === 'delete'"
             ></app-typeahead-dropdown>
             <div
               class="text-danger"
