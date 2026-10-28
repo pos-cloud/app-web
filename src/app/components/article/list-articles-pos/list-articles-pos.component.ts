@@ -21,6 +21,7 @@ import { Article, Type } from '../article';
 
 import { ArticleService } from '../../../core/services/article.service';
 
+import { extractApiResult } from '@core/http';
 import {
   ApiResponse,
   Category,
@@ -28,12 +29,11 @@ import {
   PriceList,
   StockMovement,
   Structure,
+  Tax,
   TransactionMovement,
   User,
   Utilization,
 } from '@types';
-import { Tax } from '@types';
-import { extractApiResult } from '@core/http';
 import { AuthService } from 'app/core/services/auth.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PriceListArticleService } from 'app/core/services/price-list-article.service';
@@ -331,35 +331,25 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     if (userMakeIds.length > 0) {
       match['make._id'] = { $in: userMakeIds.map((id) => ({ $oid: id })) };
     }
-
-    this._articleService
-      .getArticlesV2(
-        project, // PROJECT
-        match, // MATCH
-        { order: 1, posDescription: 1, description: 1, favourite: -1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
-      .subscribe(
-        (result) => {
-          this.loading = false;
-          if (result && result && result.articles) {
-            this.articles = result.articles;
-          } else {
-            this.articles = new Array();
-          }
-
-          // Si ya estamos mostrando artículos, re-aplicar último contexto (categoría/filtro)
-          if (this.areArticlesVisible) {
-            this.filterItem(null, this.lastCategory);
-          }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+    this._articleService.getAll({ project, match }).subscribe(
+      (result) => {
+        this.loading = false;
+        if (result && result.result && result.result.length > 0) {
+          this.articles = result.result;
+        } else {
+          this.articles = new Array();
         }
-      );
+
+        // Si ya estamos mostrando artículos, re-aplicar último contexto (categoría/filtro)
+        if (this.areArticlesVisible) {
+          this.filterItem(null, this.lastCategory);
+        }
+      },
+      (error) => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getRealPrice(article: Article): number {
@@ -801,13 +791,14 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
 
   public getArticle(articleId: string): Promise<Article> {
     return new Promise<Article>((resolve, reject) => {
-      this._articleService.getArticle(articleId).subscribe(
+      this._articleService.getById(articleId).subscribe(
         (result) => {
-          if (!result.article) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (!result.result) {
+            if (result && result.result && !result.result.length)
+              this.showMessage(result.error.message, 'danger', false);
             resolve(null);
           } else {
-            resolve(result.article);
+            resolve(result.result);
           }
         },
         (error) => {
