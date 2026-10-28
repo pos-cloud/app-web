@@ -54,6 +54,7 @@
               [service]="_articleService"
               [keyField]="'_id'"
               [displayField]="'description'"
+              [match]="{ operationType: { $ne: 'D' }, containsVariants: false }"
               [searchFields]="['description', 'code', 'barcode']"
             ></app-searchable-dropdown>
             <div
@@ -70,6 +71,7 @@
               [service]="_articleService"
               [keyField]="'_id'"
               [displayField]="'description'"
+              [match]="{ operationType: { $ne: 'D' }, containsVariants: false }"
               [searchFields]="['description', 'code', 'barcode']"
             ></app-searchable-dropdown>
             <div

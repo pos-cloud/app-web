@@ -107,7 +107,7 @@ export class StructureComponent implements OnInit {
     this.loading = true;
 
     this._structureService
-      .getById(id)
+      .getStructureObjById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
