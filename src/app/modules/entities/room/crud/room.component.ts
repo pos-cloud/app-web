@@ -123,13 +123,14 @@ export class RoomComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this._toastService.showToast(result);
+          if (result.status == 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
@@ -142,13 +143,14 @@ export class RoomComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this._toastService.showToast(result);
+          if (result.status == 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
@@ -162,13 +164,14 @@ export class RoomComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this._toastService.showToast(result);
+          if (result.status == 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
