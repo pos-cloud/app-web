@@ -791,7 +791,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
 
   public getArticle(articleId: string): Promise<Article> {
     return new Promise<Article>((resolve, reject) => {
-      this._articleService.getById(articleId).subscribe(
+      this._articleService.getArticleObjById(articleId).subscribe(
         (result) => {
           if (!result.result) {
             if (result && result.result && !result.result.length)
