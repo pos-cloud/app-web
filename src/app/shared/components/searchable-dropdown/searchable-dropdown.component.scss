@@ -2,6 +2,10 @@
   position: relative;
   width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  &.open {
+    z-index: 1050;
+  }
 }
 
 .input-container {
@@ -15,6 +19,7 @@
   cursor: pointer;
   transition: border-color 0.2s ease;
   min-height: 38px;
+  outline: none;
 
   &:hover {
     border-color: #999;
@@ -136,6 +141,11 @@
 
   &:hover {
     background-color: #f8f9fa;
+  }
+
+  &.active {
+    background-color: #cfe8fc;
+    border-left-color: #2196f3;
   }
 
   &.selected {

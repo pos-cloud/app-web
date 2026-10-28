@@ -10,7 +10,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormsModule } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, debounceTime, finalize, map, switchMap } from 'rxjs/operators';
 
@@ -19,10 +19,10 @@ import { catchError, debounceTime, finalize, map, switchMap } from 'rxjs/operato
   templateUrl: './searchable-dropdown.component.html',
   styleUrls: ['./searchable-dropdown.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
 })
 export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges {
-  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('trigger') trigger?: ElementRef<HTMLElement>;
 
   @Input() placeholder: string = '';
   @Input() control: FormControl;
@@ -46,12 +46,14 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
   searching = false;
   searchTerm = '';
   filteredItems: any[] = [];
+  activeIndex = -1;
   emptyMessage = 'No se encontraron resultados';
   uniqueId = 'searchable-dropdown-' + Math.random().toString(36).substr(2, 9);
 
   private controlSubscription: Subscription;
   private searchSubscription: Subscription;
   private readonly searchTerm$ = new Subject<string>();
+  private skipFocus = false;
 
   get isRemote(): boolean {
     return !!this.service;
@@ -72,10 +74,10 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
       )
       .subscribe({
         next: (items) => {
-          this.filteredItems = items;
+          this.setResults(items);
         },
         error: () => {
-          this.filteredItems = [];
+          this.setResults([]);
           this.searching = false;
         },
       });
@@ -121,23 +123,86 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
     return !!this.control?.value;
   }
 
+  onTriggerPointerDown(): void {
+    this.skipFocus = true;
+  }
+
+  onTriggerFocus(): void {
+    if (this.skipFocus) {
+      this.skipFocus = false;
+      return;
+    }
+    if (!this.disabled && !this.isOpen) {
+      this.openDropdown();
+    }
+  }
+
+  onTriggerClick(): void {
+    this.skipFocus = false;
+    this.toggleDropdown();
+  }
+
   toggleDropdown(): void {
     if (this.disabled) {
       return;
     }
-    this.isOpen = !this.isOpen;
     if (this.isOpen) {
-      this.searchTerm = '';
-      this.control.markAsTouched();
-      this.requestSearch('');
-      this.focusSearchInput();
+      this.closeDropdown();
+      return;
     }
+    this.openDropdown();
   }
 
   closeDropdown(): void {
     this.isOpen = false;
     this.searchTerm = '';
     this.searching = false;
+    this.activeIndex = -1;
+  }
+
+  onTriggerKeydown(event: KeyboardEvent): void {
+    if (this.disabled) {
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      this.closeDropdown();
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeDropdown();
+      return;
+    }
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (!this.isOpen) this.openDropdown();
+      else this.moveActive(event.key === 'ArrowDown' ? 1 : -1);
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      const item = this.isOpen ? this.filteredItems[this.activeIndex] : null;
+      if (item) this.selectItem(item);
+      else this.openDropdown();
+      return;
+    }
+
+    if (event.key === 'Backspace') {
+      event.preventDefault();
+      this.openDropdown(this.searchTerm.slice(0, -1));
+      return;
+    }
+
+    if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.openDropdown(this.searchTerm + event.key);
+    }
   }
 
   onSearchChange(): void {
@@ -181,10 +246,34 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
     }
   }
 
-  private focusSearchInput(): void {
+  private openDropdown(initialTerm = ''): void {
+    if (this.disabled) {
+      return;
+    }
+    this.isOpen = true;
+    this.searchTerm = initialTerm;
+    this.control.markAsTouched();
+    this.requestSearch(initialTerm);
+  }
+
+  private moveActive(direction: number): void {
+    const total = this.filteredItems.length;
+    if (!total) {
+      return;
+    }
+    const next = this.activeIndex + direction;
+    this.activeIndex = next < 0 ? total - 1 : next % total;
     setTimeout(() => {
-      this.searchInput?.nativeElement?.focus();
+      document
+        .getElementById(this.uniqueId)
+        ?.querySelector('.dropdown-item.active')
+        ?.scrollIntoView({ block: 'nearest' });
     });
+  }
+
+  private setResults(items: any[]): void {
+    this.filteredItems = items;
+    this.activeIndex = this.isOpen && items.length ? 0 : -1;
   }
 
   private requestSearch(term: string): void {
@@ -249,13 +338,13 @@ export class SearchableDropdownComponent implements OnInit, OnDestroy, OnChanges
 
   private refreshLocalItems(): void {
     if (!this.isRemote) {
-      this.filteredItems = this.filterLocalItems(this.searchTerm.trim());
+      this.setResults(this.filterLocalItems(this.searchTerm.trim()));
     }
   }
 
   private applyLocalSearch(term: string): void {
     this.emptyMessage = 'No se encontraron resultados';
-    this.filteredItems = this.filterLocalItems(term.trim());
+    this.setResults(this.filterLocalItems(term.trim()));
   }
 
   private filterLocalItems(term: string): any[] {

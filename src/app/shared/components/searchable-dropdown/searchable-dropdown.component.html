@@ -1,5 +1,21 @@
-<div class="searchable-dropdown-container" [id]="uniqueId">
-  <div class="input-container" (click)="toggleDropdown()" [class.disabled]="disabled" [class.is-invalid]="isInvalid">
+<div
+  class="searchable-dropdown-container"
+  [id]="uniqueId"
+  [class.open]="isOpen"
+  (keydown)="onTriggerKeydown($event)"
+>
+  <div
+    #trigger
+    class="input-container"
+    role="combobox"
+    [attr.tabindex]="disabled ? -1 : 0"
+    [attr.aria-expanded]="isOpen"
+    (mousedown)="onTriggerPointerDown()"
+    (focus)="onTriggerFocus()"
+    (click)="onTriggerClick()"
+    [class.disabled]="disabled"
+    [class.is-invalid]="isInvalid"
+  >
     <div class="selected-items-display">
       <div class="selected-text" [class.placeholder]="!hasSelection()">
         {{ getSelectedDisplayText() }}
@@ -14,29 +30,29 @@
     <div class="search-container">
       <i class="fa fa-search search-icon"></i>
       <input
-        #searchInput
         type="text"
         class="search-input"
-        [(ngModel)]="searchTerm"
-        [ngModelOptions]="{ standalone: true }"
-        (ngModelChange)="onSearchChange()"
+        tabindex="-1"
+        readonly
+        [value]="searchTerm"
         [placeholder]="searchPlaceholder"
-        (click)="$event.stopPropagation()"
+        (mousedown)="$event.preventDefault()"
       />
     </div>
 
-    <div class="items-container">
+    <div class="items-container" role="listbox">
       <div *ngIf="searching" class="no-results"><i class="fa fa-spinner fa-spin"></i> Buscando...</div>
 
       <div *ngIf="!searching && filteredItems.length === 0" class="no-results">
         {{ emptyMessage }}
       </div>
 
-      <div *ngFor="let item of filteredItems; trackBy: trackByItem" class="item-wrapper">
+      <div *ngFor="let item of filteredItems; let i = index; trackBy: trackByItem" class="item-wrapper">
         <div
           class="dropdown-item"
           [style.padding-left]="getItemPadding(item.level || 0)"
           [class.selected]="isSelected(item)"
+          [class.active]="activeIndex === i"
           (click)="selectItem(item); $event.stopPropagation()"
         >
           <div class="item-content">
