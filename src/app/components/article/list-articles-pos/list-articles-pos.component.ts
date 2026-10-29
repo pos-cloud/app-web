@@ -331,7 +331,9 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     if (userMakeIds.length > 0) {
       match['make._id'] = { $in: userMakeIds.map((id) => ({ $oid: id })) };
     }
-    this._articleService.getAll({ project, match }).subscribe(
+
+    const sort = { order: 1, posDescription: 1, description: 1, favourite: -1 };
+    this._articleService.getAll({ project, match, sort }).subscribe(
       (result) => {
         this.loading = false;
         if (result && result.result && result.result.length > 0) {
