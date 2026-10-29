@@ -9,7 +9,6 @@ import { ArticleService } from 'app/core/services/article.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { StructureService } from 'app/core/services/structure.service';
-import { OrderByPipe } from 'app/shared/pipes/order-by.pipe';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
@@ -52,7 +51,6 @@ export class AddMovementOfArticleComponent implements OnInit {
   roundNumber: RoundNumberPipe;
   errVariant: string;
   config$: any;
-  orderByPipe: OrderByPipe = new OrderByPipe();
   stock: number = 0;
   position: string = '';
   notes: string[];
@@ -546,8 +544,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         } else {
           this.variants = result.result.variants;
           this.variantTypes = this.getUniqueValues('type', this.variants);
-          this.variantTypes = this.orderByPipe.transform(this.variantTypes, ['name']);
-          this.variantTypes = this.orderByPipe.transform(this.variantTypes, ['order']);
+          this.variantTypes.sort((a, b) => this.compareByOrder(a?.order, b?.order, a?.name, b?.name));
           this.initializeSelectedVariants();
           this.areVariantsEmpty = false;
         }
@@ -638,10 +635,28 @@ export class AddMovementOfArticleComponent implements OnInit {
       }
     }
     variantsToReturn = this.getUniqueVariants(variantsToReturn);
-    variantsToReturn = this.orderByPipe.transform(variantsToReturn, ['value'], 'description');
-    variantsToReturn = this.orderByPipe.transform(variantsToReturn, ['value'], 'order');
+    variantsToReturn.sort((a, b) =>
+      this.compareByOrder(a?.value?.order, b?.value?.order, a?.value?.description, b?.value?.description)
+    );
 
     return variantsToReturn;
+  }
+
+  private compareByOrder(aOrder: unknown, bOrder: unknown, aLabel?: string, bLabel?: string): number {
+    const orderA = Number(aOrder);
+    const orderB = Number(bOrder);
+    const aHasOrder = Number.isFinite(orderA);
+    const bHasOrder = Number.isFinite(orderB);
+
+    if (aHasOrder && bHasOrder && orderA !== orderB) {
+      return orderA - orderB;
+    }
+
+    if (aHasOrder !== bHasOrder) {
+      return aHasOrder ? -1 : 1;
+    }
+
+    return (aLabel || '').localeCompare(bLabel || '', 'es', { sensitivity: 'base' });
   }
 
   getUniqueValues(property: string, array: Array<any>): Array<any> {
