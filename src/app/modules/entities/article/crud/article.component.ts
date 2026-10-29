@@ -172,7 +172,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   ) {
     this.articleForm = this._fb.group({
       _id: ['', []],
-      order: [1, []],
+      order: [99, []],
       type: [Type.Final, []],
       code: ['', [Validators.required]],
       make: [null, []],
@@ -457,7 +457,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     const values = {
       _id: this.article?._id ?? '',
       type: this.article?.type ?? Type.Final,
-      order: this.article?.order ?? 1,
+      order: this.article?.order ?? 99,
       code: codeArticle,
       barcode: this.article?.barcode ?? '',
       make: make ?? null,
