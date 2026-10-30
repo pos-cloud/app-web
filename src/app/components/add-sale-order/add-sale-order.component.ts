@@ -6,7 +6,6 @@ import { ImportComponent } from '@shared/components/import/import.component';
 
 import { PaymentMethod, PrintType, User } from '@types';
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
-import { ArticleService } from 'app/core/services/article.service';
 import { CancellationTypeService } from 'app/core/services/cancellation-type.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
@@ -78,7 +77,6 @@ import { SelectTableComponent } from 'app/modules/transaction/components/select-
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import * as printJS from 'print-js';
 import { Subject, takeUntil } from 'rxjs';
-import { VariantService } from '../../core/services/variant.service';
 import { ApplyBusinessRuleComponent } from '../../modules/transaction/components/apply-business-rule/apply-business-rule.component';
 import { ChangeDateComponent } from '../../modules/transaction/components/change-date/change-date.component';
 import { Config } from './../../app.config';
@@ -177,13 +175,11 @@ export class AddSaleOrderComponent {
     private _movementOfArticleService: MovementOfArticleService,
     private _articleStockService: ArticleStockService,
     private _tableService: TableService,
-    private _articleService: ArticleService,
     private _router: Router,
     private _route: ActivatedRoute,
     private _modalService: NgbModal,
     private _printerService: PrinterService,
     private _userService: UserService,
-    private _variantService: VariantService,
     private _relationTypeService: RelationTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,

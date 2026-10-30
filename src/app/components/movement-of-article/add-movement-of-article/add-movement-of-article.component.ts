@@ -238,15 +238,12 @@ export class AddMovementOfArticleComponent implements OnInit {
       let match = {
         operationType: { $ne: 'D' },
         'parent._id': { $oid: this.movementOfArticle.article._id },
-        'child.operationType': { $ne: 'D' },
       };
 
       let project = {
         _id: 1,
         'parent._id': 1,
-        'parent.description': 1,
         'child._id': 1,
-        'child.operationType': 1,
         'child.category.description': 1,
         'child.category.isRequiredOptional': 1,
         'child.description': 1,
@@ -264,19 +261,17 @@ export class AddMovementOfArticleComponent implements OnInit {
       };
 
       this._structureService
-        .getStructures(
-          project, // PROJECT
-          match, // MATCH
-          { 'child.category': 1 }, // SORT
-          group, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
+        .getAll({
+          project,
+          match,
+          sort: { 'child.category': 1 },
+          group,
+        })
         .subscribe(
           async (result) => {
             this.loading = false;
-            if (result && result[0] && result[0].structures) {
-              this.structures = result[0].structures;
+            if (result && result.result && result.result.length > 0) {
+              this.structures = result.result;
               this.structures.forEach((structure: Structure) => {
                 const groupIndex = this.grouped.findIndex((item: { name: string; names: [{}] }) => {
                   return item.name === structure.child.category.description;
