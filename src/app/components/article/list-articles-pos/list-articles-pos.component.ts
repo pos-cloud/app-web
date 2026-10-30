@@ -714,7 +714,7 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         structures: { $push: '$$ROOT' },
       };
 
-      this._structureService.getAll({ project, match,{},group }).subscribe(
+      this._structureService.getAll({ project, match, sort: {}, group }).subscribe(
         async (result) => {
           this.loading = false;
 
