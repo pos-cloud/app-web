@@ -1,12 +1,8 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 
-import { Location } from '@types';
 import { ModelService } from 'app/core/services/model.service';
 import { AuthService } from './auth.service';
-import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -18,98 +14,5 @@ export class LocationService extends ModelService {
       _http,
       _authService
     );
-  }
-
-  public getLocation(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/location`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public saveLocation(location: Location): Observable<any> {
-    const URL = `${environment.api}/api/location`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, location, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public updateLocation(location: Location): Observable<any> {
-    const URL = `${environment.api}/api/location`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', location._id);
-
-    return this._http
-      .put(URL, location, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public deleteLocation(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/location`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .delete(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
   }
 }

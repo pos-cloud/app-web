@@ -10,7 +10,6 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { ProgressbarModule } from '../../shared/components/progressbar/progressbar.module';
 import { DatatableModule } from '../datatable/datatable.module';
-import { HistoryComponent } from './actions/history/history.component';
 import { AddArticleTaxComponent } from './add-article-tax/add-article-tax.component';
 
 @NgModule({
@@ -29,8 +28,8 @@ import { AddArticleTaxComponent } from './add-article-tax/add-article-tax.compon
     DatatableModule,
     EditorModule,
   ],
-  declarations: [AddArticleTaxComponent, HistoryComponent],
-  exports: [AddArticleTaxComponent, HistoryComponent],
+  declarations: [AddArticleTaxComponent],
+  exports: [AddArticleTaxComponent],
   providers: [],
 })
 export class ArticleModule {}
