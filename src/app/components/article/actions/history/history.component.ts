@@ -618,7 +618,7 @@ export class HistoryComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
     let limit = this.itemsPerPage;
 
-    this.subscription.add(
+    /*  this.subscription.add(
       this._articleService
         .getHArticles(
           {
@@ -656,7 +656,7 @@ export class HistoryComponent implements OnInit {
             this.totalItems = 0;
           }
         )
-    );
+    ); */
   }
 
   public return() {

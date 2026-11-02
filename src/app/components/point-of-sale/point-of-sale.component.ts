@@ -393,18 +393,18 @@ export class PointOfSaleComponent implements OnInit {
     return new Promise<Origin[]>((resolve, reject) => {
       this.subscription.add(
         this._originService
-          .getOrigins(
-            {}, // PROJECT
+          .getAll({
+            project: { _id: 1, number: 1, branch: 1, operationType: 1 }, // PROJECT
             match, // MATCH
-            { number: 1 }, // SORT
-            {}, // GROUP
-            0, // LIMIT
-            0 // SKIP
-          )
+            sort: { number: 1 }, // SORT
+            group: {}, // GROUP
+            limit: 0, // LIMIT
+            skip: 0, // SKIP
+          })
           .subscribe(
             (result) => {
-              if (result.origins) {
-                resolve(result.origins);
+              if (result.result) {
+                resolve(result.result);
               } else {
                 resolve(null);
               }
@@ -789,17 +789,26 @@ export class PointOfSaleComponent implements OnInit {
     } else if (type.movement === Movements.Transfer && type.transactionMovement === TransactionMovement.Money) {
       this.openModal('cash-transfer');
     } else if (this.transaction.type.cashBoxImpact) {
-      let query = 'where="state":"' + CashBoxState.Open + '"';
+      let match: {
+        state: CashBoxState;
+        creationUser?: { $oid: string };
+        type?: { $oid: string } | null;
+        operationType: { $ne: string };
+      } = {
+        state: CashBoxState.Open,
+        operationType: { $ne: 'D' },
+      };
+
       if (this.config.cashBox.perUser) {
-        query += ',"creationUser":"' + this.identity._id + '"';
+        match.creationUser = { $oid: this.identity._id };
       } else if (this.identity.cashBoxType) {
-        query += ',"type":"' + this.identity.cashBoxType._id + '"';
+        match.type = { $oid: this.identity.cashBoxType._id };
       } else {
-        query += ',"type":null';
+        match.type = null;
       }
-      query += '&sort="number":-1&limit=1';
-      await this.getCashBoxes(query).then(async (cashBoxes) => {
-        if (cashBoxes) {
+
+      await this.getCashBoxes(match).then(async (cashBoxes) => {
+        if (cashBoxes && cashBoxes.length > 0) {
           this.transaction.cashBox = cashBoxes[0];
           this.nextStepTransaction();
         } else {
@@ -825,21 +834,28 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public getCashBoxes(query?: string): Promise<CashBox[]> {
+  public getCashBoxes(match?: {}): Promise<CashBox[]> {
     return new Promise<CashBox[]>((resolve, reject) => {
-      this._cashBoxService.getCashBoxes(query).subscribe(
-        (result) => {
-          if (!result.cashBoxes) {
+      this._cashBoxService
+        .getAll({
+          project: { _id: 1, creationUser: 1, state: 1, type: 1, operationType: 1 },
+          match,
+          sort: { number: -1 },
+          limit: 1,
+        })
+        .subscribe(
+          (result) => {
+            if (!result.result) {
+              resolve(null);
+            } else {
+              resolve(result.result);
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
-          } else {
-            resolve(result.cashBoxes);
           }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 
@@ -1756,10 +1772,10 @@ export class PointOfSaleComponent implements OnInit {
 
   public updateTable(): Promise<Table> {
     return new Promise<Table>((resolve, reject) => {
-      this._tableService.updateTable(this.tableSelected).subscribe(
+      this._tableService.update(this.tableSelected).subscribe(
         (result) => {
-          if (result.table) {
-            resolve(result.table);
+          if (result.result) {
+            resolve(result.result);
           } else reject(result);
         },
         (error) => reject(error)
@@ -2117,6 +2133,9 @@ export class PointOfSaleComponent implements OnInit {
   async selectTable(table: Table) {
     this.loading = true;
     this.tableSelected = await this.getTable(table._id);
+    if (!this.tableSelected) {
+      return;
+    }
     if (this.tableSelected.state !== TableState.Disabled && this.tableSelected.state !== TableState.Reserved) {
       if (this.tableSelected.state === TableState.Busy || this.tableSelected.state === TableState.Pending) {
         if (this.tableSelected.lastTransaction) {
@@ -2161,13 +2180,12 @@ export class PointOfSaleComponent implements OnInit {
 
   public getTable(tableId: string) {
     return new Promise<Table>((resolve, reject) => {
-      this._tableService.getTable(tableId).subscribe(
+      this._tableService.getTableObjById(tableId).subscribe(
         (result) => {
-          if (!result.table) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (!result.result || result.result.length === 0) {
             resolve(null);
           } else {
-            resolve(result.table);
+            resolve(result.result);
           }
         },
         (error) => {

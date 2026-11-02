@@ -12,13 +12,12 @@ import { environment } from 'environments/environment';
 import { Config } from './../../app.config';
 
 import { AuthService } from 'app/core/services/auth.service';
-import { IdentificationTypeService } from 'app/core/services/identification-type.service';
 import { ConfigService } from '../../core/services/config.service';
 import { UserService } from '../../core/services/user.service';
 import { VATConditionService } from '../../core/services/vat-condition.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 
-import { Account, Currency, IdentificationType, MediaCategory, VATCondition } from '@types';
+import { Account, Currency, MediaCategory, VATCondition } from '@types';
 import { CurrencyService } from 'app/core/services/currency.service';
 import { FileService } from 'app/core/services/file.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -36,7 +35,6 @@ export class ConfigComponent implements OnInit {
   public identity: User;
   public routeFile: string;
   public filesToUpload: Array<File>;
-  public identificationTypes: IdentificationType[];
   public vatConditions: VATCondition[];
   public currencies: Currency[];
   public config: Config;
@@ -100,7 +98,6 @@ export class ConfigComponent implements OnInit {
     public _router: Router,
     public _configService: ConfigService,
     public _vatCondition: VATConditionService,
-    public _identificationTypeService: IdentificationTypeService,
     public _currencyService: CurrencyService,
     public _accountService: AccountService,
     public _userService: UserService,
@@ -355,20 +352,21 @@ export class ConfigComponent implements OnInit {
   public getVatConditions(): void {
     this.loadingCompany = true;
 
-    this._vatCondition.getVATConditions().subscribe(
-      (result) => {
-        if (!result.vatConditions) {
-        } else {
-          this.vatConditions = result.vatConditions;
+    this._vatCondition
+      .getAll({ project: { _id: 1, description: 1 }, match: { operationType: { $ne: 'D' } }, sort: { name: 1 } })
+      .subscribe(
+        (result) => {
+          if (!result.result) {
+          } else {
+            this.vatConditions = result.result;
+          }
+          this.loadingCompany = false;
+        },
+        (error) => {
+          this._toastService.showToast({ message: error._body, type: 'danger' });
+          this.loadingCompany = false;
         }
-        this.getIdentificationTypes();
-        this.loadingCompany = false;
-      },
-      (error) => {
-        this._toastService.showToast({ message: error._body, type: 'danger' });
-        this.loadingCompany = false;
-      }
-    );
+      );
   }
 
   public getCurrencies(): void {
@@ -384,23 +382,6 @@ export class ConfigComponent implements OnInit {
       (error) => {
         this._toastService.showToast({ message: error._body, type: 'danger' });
         this.loadingCompany = false;
-      }
-    );
-  }
-
-  public getIdentificationTypes(): void {
-    let query = 'sort="name":1';
-
-    this._identificationTypeService.getIdentificationTypes(query).subscribe(
-      (result) => {
-        if (!result.identificationTypes) {
-        } else {
-          this.identificationTypes = result.identificationTypes;
-        }
-        this.getConfig();
-      },
-      (error) => {
-        this._toastService.showToast({ message: error._body, type: 'danger' });
       }
     );
   }

@@ -12,7 +12,6 @@ import { ProgressbarModule } from '../../shared/components/progressbar/progressb
 import { DatatableModule } from '../datatable/datatable.module';
 import { HistoryComponent } from './actions/history/history.component';
 import { AddArticleTaxComponent } from './add-article-tax/add-article-tax.component';
-import { ArticleComponent } from './crud/article.component';
 
 @NgModule({
   imports: [
@@ -30,8 +29,8 @@ import { ArticleComponent } from './crud/article.component';
     DatatableModule,
     EditorModule,
   ],
-  declarations: [ArticleComponent, AddArticleTaxComponent, HistoryComponent],
-  exports: [ArticleComponent, AddArticleTaxComponent, HistoryComponent],
+  declarations: [AddArticleTaxComponent, HistoryComponent],
+  exports: [AddArticleTaxComponent, HistoryComponent],
   providers: [],
 })
 export class ArticleModule {}

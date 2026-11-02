@@ -175,8 +175,8 @@ export class StockTransactionViewComponent implements OnInit, OnDestroy {
     }
     this.savingLine = true;
     try {
-      const articleResult = await firstValueFrom(this.articleService.getArticle(article._id));
-      const fullArticle = articleResult?.article;
+      const articleResult = await firstValueFrom(this.articleService.getById(article._id));
+      const fullArticle = articleResult?.result;
       if (!fullArticle) {
         this.toastService.showToast(null, 'danger', '', articleResult?.message || 'No se pudo obtener el artículo.');
         return;

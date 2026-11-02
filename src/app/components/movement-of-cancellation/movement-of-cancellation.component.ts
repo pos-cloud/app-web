@@ -10,9 +10,8 @@ import { MovementOfArticleService } from '../../core/services/movement-of-articl
 import { TransactionService } from '../../core/services/transaction.service';
 
 import { Router } from '@angular/router';
-import { ApiResponse } from '@types';
+import { ApiResponse, CancellationType, TaxBase } from '@types';
 import { Config } from 'app/app.config';
-import { CancellationType } from '@types';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
 import { Taxes } from 'app/components/tax/taxes';
@@ -27,7 +26,6 @@ import { ViewTransactionComponent } from '../../modules/transaction/components/v
 import { Article } from '../article/article';
 import { MovementOfCash } from '../movement-of-cash/movement-of-cash';
 import { SelectMovementsOfCashesComponent } from '../movement-of-cash/select-movements-of-cashes/select-movements-of-cashes.component';
-import { TaxBase } from '@types';
 
 @Component({
   selector: 'app-movement-of-cancellation',
@@ -1026,7 +1024,7 @@ export class MovementOfCancellationComponent implements OnInit {
 
   public getArticle(articleId: string): Promise<Article> {
     return new Promise<Article>((resolve, reject) => {
-      this._articleService.getArticle(articleId).subscribe(
+      this._articleService.getArticleObjById(articleId).subscribe(
         (result) => {
           if (!result.article) {
             if (result.message && result.message !== '')

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { Observable, of } from 'rxjs';
@@ -7,7 +7,6 @@ import { catchError, map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 import { ModelService } from 'app/core/services/model.service';
-import { Article } from '../../components/article/article';
 
 @Injectable({
   providedIn: 'root',
@@ -21,54 +20,6 @@ export class ArticleService extends ModelService {
     );
   }
 
-  public getArticle(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/article`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getArticles(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/articles`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('query', query);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public getLasCode(): Observable<any> {
     const URL = `${environment.apiv2}/articles/last-code`;
 
@@ -78,122 +29,6 @@ export class ArticleService extends ModelService {
 
     return this._http
       .get(URL, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getArticlesV2(
-    project: {},
-    match: {},
-    sort: {},
-    group: {},
-    limit: number = 0,
-    skip: number = 0
-  ): Observable<any> {
-    const URL = `${environment.api}/api/v2/articles`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('project', JSON.stringify(project))
-      .set('match', JSON.stringify(match))
-      .set('sort', JSON.stringify(sort))
-      .set('group', JSON.stringify(group))
-      .set('limit', limit.toString())
-      .set('skip', skip.toString());
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getHArticles(
-    project: {},
-    match: {},
-    sort: {},
-    group: {},
-    limit: number = 0,
-    skip: number = 0
-  ): Observable<any> {
-    const URL = `${environment.api}/api/v2/histories`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('project', JSON.stringify(project))
-      .set('match', JSON.stringify(match))
-      .set('sort', JSON.stringify(sort))
-      .set('group', JSON.stringify(group))
-      .set('limit', limit.toString())
-      .set('skip', skip.toString());
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public saveArticle(article: Article): Observable<any> {
-    const URL = `${environment.apiv2}/articles`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, article, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public updateArticle(article: Article): Observable<any> {
-    const URL = `${environment.apiv2}/articles`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .put(`${URL}/${article._id}`, article, {
         headers: headers,
       })
       .pipe(
@@ -261,29 +96,6 @@ export class ArticleService extends ModelService {
     });
   }
 
-  public deleteImage(picture: string): Observable<any> {
-    const URL = `${environment.api}/api/delete-image-article`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('picture', picture);
-
-    return this._http
-      .delete(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
 
   public deleteImageGoogle(origin: string): Observable<any> {
     const URL = `${environment.apiStorage}/upload`;

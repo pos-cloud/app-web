@@ -20,9 +20,9 @@ import { Config } from '../../../app.config';
 import { ArticleStockService } from '../../../core/services/article-stock.service';
 import { MovementOfArticleService } from '../../../core/services/movement-of-article.service';
 import { VariantService } from '../../../core/services/variant.service';
+import { ArticleComponent } from '../../../modules/entities/article/crud/article.component';
 import { RoundNumberPipe } from '../../../shared/pipes/round-number.pipe';
 import { Article } from '../../article/article';
-import { ArticleComponent } from '../../article/crud/article.component';
 import { Taxes } from '../../tax/taxes';
 import { MovementOfArticle, MovementOfArticleStatus } from '../movement-of-article';
 
@@ -1422,6 +1422,7 @@ export class AddMovementOfArticleComponent implements OnInit {
               'info',
               true
             );
+            this.loading = false;
             resolve(false);
           } else {
             resolve(true);
@@ -1453,16 +1454,30 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   getArticleStock(movArticle: MovementOfArticle): Promise<ArticleStock> {
     return new Promise<ArticleStock>((resolve, reject) => {
-      const query = `where= "article": "${movArticle.article._id}",
-                          "branch": "${this.transaction.branchOrigin._id}",
-                          "deposit": "${this.transaction.depositOrigin._id}"`;
+      let project = {
+        _id: 1,
+        article: 1,
+        branch: 1,
+        deposit: 1,
+        realStock: 1,
+        minStock: 1,
+        maxStock: 1,
+        operationType: 1,
+      };
 
-      this._articleStockService.getArticleStocks(query).subscribe(
+      let match = {
+        article: { $oid: movArticle.article._id },
+        branch: { $oid: this.transaction.branchOrigin._id },
+        deposit: { $oid: this.transaction.depositOrigin._id },
+        operationType: { $ne: 'D' },
+      };
+
+      this._articleStockService.getAll({ project, match }).subscribe(
         (result) => {
-          if (!result.articleStocks || result.articleStocks.length <= 0) {
+          if (!result.result || result.result.length === 0) {
             resolve(null);
           } else {
-            resolve(result.articleStocks[0]);
+            resolve(result.result[0]);
           }
         },
         (error) => {
@@ -1588,16 +1603,16 @@ export class AddMovementOfArticleComponent implements OnInit {
     isOptional: boolean = false
   ) {
     return new Promise<boolean>((resolve, reject) => {
-      this._articleService.getArticle(articleId).subscribe(
+      this._articleService.getArticleObjById(articleId).subscribe(
         async (result) => {
-          if (result.article) {
+          const article: Article = result?.result;
+
+          if (article?._id) {
             let movArticle = new MovementOfArticle();
 
             //traigo todo lo del padre transaccion etc...
             //movArticle = this.movementOfArticle;
             movArticle = Object.assign(movArticle, this.movementOfArticle);
-
-            let article: Article = result.article;
 
             movArticle._id = null;
 
@@ -1675,24 +1690,6 @@ export class AddMovementOfArticleComponent implements OnInit {
         (error) => {
           this.showMessage(error._body, 'danger', false);
           resolve(null);
-        }
-      );
-    });
-  }
-
-  async getArticle(articleId: string): Promise<Article> {
-    return new Promise<Article>((resolve, reject) => {
-      this._articleService.getArticle(articleId).subscribe(
-        (result) => {
-          if (result.article) {
-            resolve(result.article);
-          } else {
-            resolve(null);
-          }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
         }
       );
     });

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -38,12 +38,13 @@ import { MakeService } from '@core/services/make.service';
 import { PriceListArticleService } from '@core/services/price-list-article.service';
 import { PriceListService } from '@core/services/price-list.service';
 import { UnitOfMeasurementService } from '@core/services/unit-of-measurement.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { UploadFileComponent } from '@shared/components/upload-file/upload-file.component';
 import { mergeTinymceInit } from '@shared/rich-text/tinymce-wysiwyg.config';
 import { EditorModule } from '@tinymce/tinymce-angular';
-import { ArticlePrintIn } from 'app/components/article/article';
 import { Config as AppConfig } from 'app/app.config';
+import { ArticlePrintIn } from 'app/components/article/article';
 import { SearchableDropdownComponent } from 'app/shared/components/searchable-dropdown/searchable-dropdown.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { TypeaheadDropdownComponent } from 'app/shared/components/typehead-dropdown/typeahead-dropdown.component';
@@ -90,6 +91,10 @@ import { RoundNumberPipe } from '@shared/pipes/round-number.pipe';
 })
 export class ArticleComponent implements OnInit, OnDestroy {
   @ViewChild(UploadFileComponent) uploadFileComponent: UploadFileComponent;
+  @Input() property: {
+    articleId: string;
+    operation: string;
+  };
 
   public operation: string;
   public readonly: boolean = false;
@@ -168,7 +173,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     public _variantTypeService: VariantTypeService,
     public _variantValueService: VariantValueService,
     public _accountService: AccountService,
-    public _currencyService: CurrencyService
+    public _currencyService: CurrencyService,
+    public activeModal: NgbActiveModal
   ) {
     this.articleForm = this._fb.group({
       _id: ['', []],
@@ -255,21 +261,29 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const pathUrl = this._router.url.split('?')[0].split('/').filter(Boolean);
-    const articlesIndex = pathUrl.indexOf('articles');
-    const isVariant = pathUrl[articlesIndex + 1] === 'variants';
     let articleId: string;
 
-    if (isVariant) {
-      this.articleType = 'Variante';
-      this.readonly = true;
-      this.operation = pathUrl[articlesIndex + 2];
-      articleId = pathUrl[articlesIndex + 3];
-    } else {
+    if (this.property) {
       this.articleType = 'Producto';
-      this.operation = pathUrl[articlesIndex + 1];
-      articleId = pathUrl[articlesIndex + 2];
+      this.operation = this.property.operation;
+      articleId = this.property.articleId;
       this.readonly = this.operation === 'view' || this.operation === 'delete';
+    } else {
+      const pathUrl = this._router.url.split('?')[0].split('/').filter(Boolean);
+      const articlesIndex = pathUrl.indexOf('articles');
+      const isVariant = pathUrl[articlesIndex + 1] === 'variants';
+
+      if (isVariant) {
+        this.articleType = 'Variante';
+        this.readonly = true;
+        this.operation = pathUrl[articlesIndex + 2];
+        articleId = pathUrl[articlesIndex + 3];
+      } else {
+        this.articleType = 'Producto';
+        this.operation = pathUrl[articlesIndex + 1];
+        articleId = pathUrl[articlesIndex + 2];
+        this.readonly = this.operation === 'view' || this.operation === 'delete';
+      }
     }
 
     if (this.operation === 'view' || this.operation === 'delete') this.articleForm.disable();
@@ -687,6 +701,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   returnTo() {
+    if (this.property) {
+      this.activeModal.close();
+      return;
+    }
     if (this.articleType === 'Variante') {
       return this._router.navigate(['/entities/articles/variants']);
     }

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -6,7 +6,6 @@ import { catchError, map } from 'rxjs/operators';
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
 import { AuthService } from './auth.service';
-import { Structure } from '@types';
 
 @Injectable({
   providedIn: 'root',
@@ -18,136 +17,6 @@ export class StructureService extends ModelService {
       _http,
       _authService
     );
-  }
-
-  public getStructure(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/structure`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getStructures(
-    project: {},
-    match: {},
-    sort: {},
-    group: {},
-    limit: number = 0,
-    skip: number = 0
-  ): Observable<any> {
-    const URL = `${environment.api}/api/structures`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('project', JSON.stringify(project))
-      .set('match', JSON.stringify(match))
-      .set('sort', JSON.stringify(sort))
-      .set('group', JSON.stringify(group))
-      .set('limit', limit.toString())
-      .set('skip', skip.toString());
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public saveStructure(structure: Structure): Observable<any> {
-    const URL = `${environment.api}/api/structure`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, structure, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public updateStructure(structure: Structure): Observable<any> {
-    const URL = `${environment.api}/api/structure`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', structure._id);
-
-    return this._http
-      .put(URL, structure, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public deleteStructure(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/structure`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .delete(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
   }
 
   public updateBasePriceByStruct(): Observable<any> {

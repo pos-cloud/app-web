@@ -45,13 +45,13 @@ import { PrinterService } from '../../core/services/printer.service';
 import { TableService } from '../../core/services/table.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { UserService } from '../../core/services/user.service';
+import { ArticleComponent } from '../../modules/entities/article/crud/article.component';
 import { SelectTransportComponent } from '../../modules/transaction/components/select-transport/select-transport.component';
 import { SelectEmployeeComponent } from '../../shared/components/select-employee/select-employee.component';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from '../../shared/pipes/round-number.pipe';
 import { ApplyDiscountComponent } from '../apply-discount/apply-discount.component';
 import { Article, ArticlePrintIn } from '../article/article';
-import { ArticleComponent } from '../article/crud/article.component';
 import { ListArticlesPosComponent } from '../article/list-articles-pos/list-articles-pos.component';
 import { CancellationTypeAutomaticComponent } from '../cancellation-type/cancellation-types-automatic/cancellation-types-automatic.component';
 import { ListCategoriesPosComponent } from '../category/list-categories-pos/list-categories-pos.component';
@@ -490,29 +490,6 @@ export class AddSaleOrderComponent {
     this.transaction = await this.updateTransaction();
   }
 
-  getRelationTypes(): Promise<RelationType[]> {
-    return new Promise<RelationType[]>((resolve) => {
-      this.loading = true;
-      let query = 'sort="description":1';
-
-      this._relationTypeService.getRelationTypes(query).subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.relationTypes) {
-            resolve(null);
-          } else {
-            resolve(result.relationTypes);
-          }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
   getTransaction(): Promise<Transaction> {
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.getTransaction(this.transactionId).subscribe(
@@ -638,14 +615,13 @@ export class AddSaleOrderComponent {
     return new Promise<Table>((resolve, reject) => {
       this.loading = true;
 
-      this._tableService.updateTable(table).subscribe(
+      this._tableService.update(table).subscribe(
         (result) => {
           this.loading = false;
-          if (!result.table) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (!result.result) {
             resolve(null);
           } else {
-            resolve(result.table);
+            resolve(result.result);
           }
         },
         (error) => {
@@ -867,22 +843,15 @@ export class AddSaleOrderComponent {
     return new Promise<boolean>((resolve) => {
       this.loading = true;
 
-      let match = `{
-			"operationType": { "$ne": "D" },
-			"parent._id": { "$oid" : "${articleId}"},
-			"optional" : true,
-			"child.operationType": { "$ne": "D" }
-		  }`;
-
-      match = JSON.parse(match);
+      let match = {
+        operationType: { $ne: 'D' },
+        parent: { $oid: articleId },
+        optional: true,
+      };
 
       let project = {
         _id: 1,
-        'parent._id': 1,
-        'parent.description': 1,
-        'child._id': 1,
-        'child.description': 1,
-        'child.operationType': 1,
+        parent: 1,
         optional: 1,
         utilization: 1,
         operationType: 1,
@@ -895,18 +864,16 @@ export class AddSaleOrderComponent {
       };
 
       this._structureService
-        .getStructures(
+        .getAll({
           project, // PROJECT
           match, // MATCH
-          {}, // SORT
+          sort: {}, // SORT
           group, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
+        })
         .subscribe(
           (result) => {
             this.loading = false;
-            if (result && result[0] && result[0].structures) {
+            if (result && result.result && result.result.length > 0) {
               resolve(true);
             } else {
               resolve(false);
@@ -953,30 +920,21 @@ export class AddSaleOrderComponent {
         structures: { $push: '$$ROOT' },
       };
 
-      this._structureService
-        .getStructures(
-          project, // PROJECT
-          match, // MATCH
-          {}, // SORT
-          group, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (result && result[0] && result[0].structures) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            this.loading = false;
+      this._structureService.getAll({ project, match, sort: {}, group, limit: 0, skip: 0 }).subscribe(
+        (result) => {
+          this.loading = false;
+          if (result && result[0] && result[0].structures) {
+            resolve(true);
+          } else {
             resolve(false);
           }
-        );
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+          resolve(false);
+        }
+      );
     });
   }
 
@@ -1163,13 +1121,27 @@ export class AddSaleOrderComponent {
 
   getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock[]> {
     return new Promise<ArticleStock[]>((resolve, reject) => {
-      const query = `where= "article": "${movementOfArticle.article._id}",
-                        "branch": "${this.transaction.branchOrigin._id}",
-                        "deposit": "${this.transaction.depositOrigin._id}"`;
+      let project = {
+        _id: 1,
+        article: 1,
+        branch: 1,
+        deposit: 1,
+        realStock: 1,
+        minStock: 1,
+        maxStock: 1,
+        operationType: 1,
+      };
 
-      this._articleStockService.getArticleStocks(query).subscribe(
+      let match = {
+        article: { $oid: movementOfArticle.article._id },
+        branch: { $oid: this.transaction.branchOrigin._id },
+        deposit: { $oid: this.transaction.depositOrigin._id },
+        operationType: { $ne: 'D' },
+      };
+
+      this._articleStockService.getAll({ project, match }).subscribe(
         (result) => {
-          if (result.articleStocks) resolve(result.articleStocks);
+          if (result.result) resolve(result.result);
           else reject(result);
         },
         (error) => reject(error)
@@ -2820,15 +2792,14 @@ export class AddSaleOrderComponent {
   getTable(tableId: string): Promise<Table> {
     return new Promise<Table>((resolve) => {
       this.loading = true;
-      this._tableService.getTable(tableId).subscribe(
+      this._tableService.getTableObjById(tableId).subscribe(
         (result) => {
           this.loading = false;
-          if (!result.table) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (!result.result) {
             resolve(null);
           } else {
             this.hideMessage();
-            resolve(result.table);
+            resolve(result.result);
           }
         },
         (error) => {

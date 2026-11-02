@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { User } from '@types';
-import { BehaviorSubject, merge, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 import { AnalyticsService } from 'app/core/services/analytics.service';
 import { AuthService } from 'app/core/services/auth.service';
-import { environment } from 'environments/environment';
+import { BehaviorSubject, merge, Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { NavLayout, NavNode } from './navigation.types';
 
 const SIDEBAR_COLLAPSED_KEY = 'nav.sidebarCollapsed';
@@ -314,7 +313,8 @@ export class NavigationService {
       menu.push({
         label: 'Stock',
         icon: 'fa fa-dropbox',
-        link: environment.production ? 'pos/mostrador/stock' : 'pos/stock',
+        //   link: environment.production ? 'pos/mostrador/stock' : 'pos/stock',
+        link: 'pos/mostrador/stock',
       });
     }
 

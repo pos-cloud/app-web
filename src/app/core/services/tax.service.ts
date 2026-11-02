@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Tax } from '@types';
 import { AuthService } from 'app/core/services/auth.service';
 import { ModelService } from 'app/core/services/model.service';
+import { environment } from 'environments/environment';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Tax } from '@types';
-import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
