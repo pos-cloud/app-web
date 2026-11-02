@@ -354,6 +354,12 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     );
   }
 
+  public appendArticle(article: Article): void {
+    if (!article?._id) return;
+    this.articles.push(article);
+    this.filteredArticles.push(article);
+  }
+
   public getRealPrice(article: Article): number {
     const quotation = this.transaction?.quotation ?? 1;
 

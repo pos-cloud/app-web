@@ -179,7 +179,6 @@ export class AddSaleOrderComponent {
     private _modalService: NgbModal,
     private _printerService: PrinterService,
     private _userService: UserService,
-    private _relationTypeService: RelationTypeService,
     private _movementOfCancellationService: MovementOfCancellationService,
     private _cancellationTypeService: CancellationTypeService,
     private _priceListService: PriceListService,
@@ -1922,6 +1921,10 @@ export class AddSaleOrderComponent {
           articleId: null,
           operation: 'add',
         };
+        modalRef.result.then((article) => {
+          if (!article) return;
+          this.listArticlesComponent?.appendArticle(article);
+        });
         break;
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, {

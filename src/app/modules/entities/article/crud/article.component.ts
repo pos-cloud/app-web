@@ -700,9 +700,9 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.setVariantByType(variantsArray.value);
   }
 
-  returnTo() {
+  returnTo(article?: Article) {
     if (this.property) {
-      this.activeModal.close();
+      this.activeModal.close(article);
       return;
     }
     if (this.articleType === 'Variante') {
@@ -839,11 +839,16 @@ export class ArticleComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result: ApiResponse) => {
           this._toastService.showToast(result);
-          if (result.status == 200 && result.result?.result?._id) {
-            this.loadManualPricesForArticle(result.result.result._id);
-            this.saveManualPricesForArticle(result.result.result._id);
+          const savedArticle: Article = result.result?.result?._id
+            ? result.result.result
+            : result.result?._id
+              ? result.result
+              : null;
+          if (result.status == 200 && savedArticle?._id) {
+            this.loadManualPricesForArticle(savedArticle._id);
+            this.saveManualPricesForArticle(savedArticle._id);
           }
-          if (result.status == 200) this.returnTo();
+          if (result.status == 200) this.returnTo(savedArticle);
         },
         error: (error) => {
           this._toastService.showToast(error);
