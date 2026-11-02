@@ -11,7 +11,6 @@ import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { PriceListArticleService } from 'app/core/services/price-list-article.service';
 import { PriceListService } from 'app/core/services/price-list.service';
-import { RelationTypeService } from 'app/core/services/relation-type.service';
 import { StructureService } from 'app/core/services/structure.service';
 import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
@@ -857,18 +856,11 @@ export class AddSaleOrderComponent {
         operationType: 1,
       };
 
-      let group = {
-        _id: null,
-        count: { $sum: 1 },
-        structures: { $push: '$$ROOT' },
-      };
-
       this._structureService
         .getAll({
           project, // PROJECT
           match, // MATCH
-          sort: {}, // SORT
-          group, // GROUP
+          sort: {},
         })
         .subscribe(
           (result) => {

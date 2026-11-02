@@ -707,21 +707,14 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
         operationType: 1,
       };
 
-      // AGRUPAMOS EL RESULTADO
-      let group = {
-        _id: null,
-        count: { $sum: 1 },
-        structures: { $push: '$$ROOT' },
-      };
-
-      this._structureService.getAll({ project, match, sort: {}, group }).subscribe(
+      this._structureService.getAll({ project, match, sort: {} }).subscribe(
         async (result) => {
           this.loading = false;
 
           let parent: MovementOfArticle;
           let child: MovementOfArticle[] = new Array();
-          if (result && result[0] && result[0].structures) {
-            let structures: Structure[] = result[0].structures;
+          if (result && result.result.length > 0) {
+            let structures: Structure[] = result.result;
             parent = await this.addItem(articleSelected, amount, salePrice);
             if (structures.length > 0) {
               for (const struct of structures) {

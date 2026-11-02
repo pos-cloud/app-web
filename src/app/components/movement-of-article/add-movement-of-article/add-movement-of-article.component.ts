@@ -254,18 +254,11 @@ export class AddMovementOfArticleComponent implements OnInit {
         operationType: 1,
       };
 
-      let group = {
-        _id: null,
-        count: { $sum: 1 },
-        structures: { $push: '$$ROOT' },
-      };
-
       this._structureService
         .getAll({
           project,
           match,
           sort: { 'child.category': 1 },
-          group,
         })
         .subscribe(
           async (result) => {
