@@ -43,7 +43,9 @@ export class CategoryComponent implements OnInit {
   public categoryForm: UntypedFormGroup;
   private destroy$ = new Subject<void>();
   public imageURL: string;
-
+  public match: any = {
+    operationType: { $ne: 'D' },
+  };
   constructor(
     public _categoryService: CategoryService,
     public _router: Router,

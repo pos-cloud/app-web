@@ -164,9 +164,43 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   private getLocalResults(term: string): any[] {
     const list = Array.isArray(this.data) ? this.data : [];
     const query = term.toLowerCase();
-    const filtered = query ? list.filter((item) => this.resultFormatter(item).toLowerCase().includes(query)) : list;
+    const matched = list.filter((item) => this.itemMatches(item, this.match));
+    const filtered = query
+      ? matched.filter((item) => this.resultFormatter(item).toLowerCase().includes(query))
+      : matched;
     const max = Number(this.limit) > 0 ? Number(this.limit) : 10;
     return filtered.slice(0, max);
+  }
+
+  private itemMatches(item: any, match: Record<string, unknown> | null | undefined): boolean {
+    if (!match) {
+      return true;
+    }
+
+    return Object.entries(match).every(([field, expected]) => {
+      if (field.startsWith('$')) {
+        return true;
+      }
+      return this.valueMatches(item?.[field], expected);
+    });
+  }
+
+  private valueMatches(value: unknown, expected: unknown): boolean {
+    if (expected && typeof expected === 'object' && !Array.isArray(expected)) {
+      const condition = expected as Record<string, unknown>;
+      if ('$ne' in condition) {
+        return value !== condition.$ne;
+      }
+      if ('$in' in condition && Array.isArray(condition.$in)) {
+        return condition.$in.includes(value);
+      }
+      if ('$nin' in condition && Array.isArray(condition.$nin)) {
+        return !condition.$nin.includes(value);
+      }
+      return true;
+    }
+
+    return value === expected;
   }
 
   private unwrapResult(result: any): any[] {

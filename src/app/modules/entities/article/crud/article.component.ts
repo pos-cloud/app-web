@@ -1378,36 +1378,59 @@ export class ArticleComponent implements OnInit, OnDestroy {
       current = parentId ? byId.get(parentId) : undefined;
     }
 
-    return names.join(' - ') || category.description || '';
+    return names.join(' -> ') || category.description || '';
   }
 
   public processHierarchicalCategories(): void {
-    // Crear lista plana con niveles jerárquicos
     const hierarchicalItems: HierarchicalItem[] = [];
-    let categoriesTN = this.categories.filter((category) => category.tiendaNubeId) || [];
-    // Primero agregar categorías raíz (level 0)
-    categoriesTN
-      .filter((category) => !category.parent)
-      .sort((a, b) => (a.order || 0) - (b.order || 0))
-      .forEach((category) => {
-        hierarchicalItems.push({
-          _id: category.tiendaNubeId.toString(),
-          name: category.path || category.description,
-          level: 0,
-        });
+    const categoriesTN = (this.categories || []).filter((category) => category.tiendaNubeId);
+    const byId = new Map(categoriesTN.map((category) => [String(category._id), category]));
+    const childrenByParentId = new Map<string, typeof categoriesTN>();
+
+    for (const category of categoriesTN) {
+      const parentId = this.categoryParentId(category.parent);
+      if (!parentId || !byId.has(parentId)) {
+        continue;
+      }
+      const children = childrenByParentId.get(parentId) ?? [];
+      children.push(category);
+      childrenByParentId.set(parentId, children);
+    }
+
+    const byOrder = (a: { order?: number; description?: string }, b: { order?: number; description?: string }) =>
+      (a.order || 0) - (b.order || 0) || (a.description || '').localeCompare(b.description || '', 'es');
+
+    const roots = categoriesTN.filter((category) => {
+      const parentId = this.categoryParentId(category.parent);
+      return !parentId || !byId.has(parentId);
+    });
+
+    const seen = new Set<string>();
+    const appendBranch = (category: (typeof categoriesTN)[number], level: number) => {
+      const id = String(category._id);
+      if (seen.has(id)) {
+        return;
+      }
+      seen.add(id);
+
+      hierarchicalItems.push({
+        _id: category.tiendaNubeId.toString(),
+        name: category.description,
+        level,
       });
 
-    // Luego agregar categorías hijas (level 1)
+      const children = [...(childrenByParentId.get(id) ?? [])].sort(byOrder);
+      for (const child of children) {
+        appendBranch(child, level + 1);
+      }
+    };
+
+    [...roots].sort(byOrder).forEach((category) => appendBranch(category, 0));
     categoriesTN
-      .filter((category) => category.parent)
-      .sort((a, b) => (a.order || 0) - (b.order || 0))
-      .forEach((category) => {
-        hierarchicalItems.push({
-          _id: category.tiendaNubeId.toString(),
-          name: category.path || category.description,
-          level: 1,
-        });
-      });
+      .filter((category) => !seen.has(String(category._id)))
+      .sort(byOrder)
+      .forEach((category) => appendBranch(category, 0));
+
     this.hierarchicalCategories = hierarchicalItems;
     this.updateCategoriesDisplayText();
   }
