@@ -13,4 +13,5 @@ export interface CancellationType extends Activity {
   requestStatusOrigin: TransactionState;
   stateOrigin: TransactionState;
   updatePrices: boolean;
+  addTaxes?: boolean;
 }

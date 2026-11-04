@@ -58,6 +58,7 @@ export class CancellationTypeComponent implements OnInit, OnDestroy {
       stateOrigin: [TransactionState.Closed, [Validators.required]],
       requestStatusOrigin: [TransactionState.Closed, [Validators.required]],
       updatePrices: [false, [Validators.required]],
+      addTaxes: [true, [Validators.required]],
     });
   }
 
@@ -143,6 +144,7 @@ export class CancellationTypeComponent implements OnInit, OnDestroy {
       requestStatusOrigin: this.cancellationType?.requestStatusOrigin ?? TransactionState.Closed,
       stateOrigin: this.cancellationType?.stateOrigin ?? TransactionState.Closed,
       updatePrices: this.cancellationType?.updatePrices ?? false,
+      addTaxes: this.cancellationType?.addTaxes !== false,
     });
   }
 
