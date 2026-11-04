@@ -152,6 +152,16 @@ export class ListAccountSeatComponent {
         required: false,
       },
       {
+        name: 'type',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
         name: 'operationType',
         visible: false,
         disabled: true,

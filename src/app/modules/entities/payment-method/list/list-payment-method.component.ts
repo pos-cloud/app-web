@@ -308,6 +308,16 @@ export class ListPaymentMethodComponent {
       required: false,
     },
     {
+      name: 'order',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'number',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,

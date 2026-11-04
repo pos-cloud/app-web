@@ -107,6 +107,16 @@ export class ListMakesComponent {
         required: false,
       },
       {
+        name: 'ecommerceEnabled',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'boolean',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
         name: 'operationType',
         visible: false,
         disabled: true,

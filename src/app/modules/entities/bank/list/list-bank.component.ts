@@ -96,6 +96,16 @@ export class ListBankComponent {
       required: false,
     },
     {
+      name: '_id',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'string',
+      project: `{ "$toString": "$_id" }`,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,

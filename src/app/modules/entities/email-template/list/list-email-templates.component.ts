@@ -88,6 +88,16 @@ export class ListEmailTemplatesComponent {
         required: false,
       },
       {
+        name: 'design',
+        visible: false,
+        disabled: false,
+        filter: true,
+        datatype: 'string',
+        project: null,
+        align: 'left',
+        required: false,
+      },
+      {
         name: 'operationType',
         visible: false,
         disabled: true,

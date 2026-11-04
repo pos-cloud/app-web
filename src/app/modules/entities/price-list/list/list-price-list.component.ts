@@ -127,6 +127,16 @@ export class ListPriceListComponent {
       required: false,
     },
     {
+      name: 'allowSpecialRules',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'operationType',
       visible: false,
       disabled: true,
