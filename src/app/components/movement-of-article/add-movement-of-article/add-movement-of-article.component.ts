@@ -223,11 +223,15 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   loadLocationAndStock(): void {
+    const articleId = this.movementOfArticle?.article?._id;
+
     this.getArticleStock(this.movementOfArticle).then((articleStock) => {
-      if (articleStock) {
-        this.stock = articleStock.realStock;
-        this.movementOfArticleForm.patchValue({ stock: this.stock });
+      if (this.movementOfArticle?.article?._id !== articleId) {
+        return;
       }
+
+      this.stock = articleStock?.realStock ?? 0;
+      this.movementOfArticleForm?.patchValue({ stock: this.stock });
     });
   }
 
@@ -1097,6 +1101,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     this.movementOfArticle = this.buildMovementFromArticle(articleSelected, this.movementOfArticleForm.value.amount);
     this.setValueForm();
+    this.loadLocationAndStock();
   }
 
   buildMovementFromArticle(articleSelected: Article, amount: number): MovementOfArticle {
