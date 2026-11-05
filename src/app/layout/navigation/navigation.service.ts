@@ -586,7 +586,6 @@ export class NavigationService {
               { label: 'Periodos contable', link: 'entities/account-periods' },
               { label: 'Asientos contable', link: 'entities/account-seat' },
               { label: 'Impuestos', link: 'entities/taxes' },
-              { label: 'Tipos de cajas', link: 'entities/cash-box-types' },
               { label: 'Usos de CFDI', link: 'admin/usos-de-cfdi' },
               { label: 'Feriados', link: 'entities/holidays' },
             ],
@@ -607,8 +606,9 @@ export class NavigationService {
             ],
           },
           {
-            label: 'Monedas y Bancos',
+            label: 'Caja y Banco',
             children: [
+              { label: 'Tipos de cajas', link: 'entities/cash-box-types' },
               { label: 'Bancos', link: 'entities/banks' },
               { label: 'Monedas', link: 'entities/currencies' },
               { label: 'Tipos de Monedas', link: 'entities/currency-values' },
