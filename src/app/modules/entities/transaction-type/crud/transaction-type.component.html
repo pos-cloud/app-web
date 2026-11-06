@@ -262,15 +262,6 @@
           </div>
         </div>
         <div class="row">
-          <div class="form-group col-md-3">
-            <label class="control-label">{{ 'cashBoxType' | translate | capitalize }}:</label>
-            <app-typeahead-dropdown
-              [control]="transactionTypeForm.get('cashBoxType')"
-              [service]="_cashBoxTypeService"
-              [keyField]="'_id'"
-              [displayField]="'name'"
-            ></app-typeahead-dropdown>
-          </div>
           <div class="form-group col-md-2">
             <label class="control-label">{{ 'defectUseOfCFDI' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
@@ -560,6 +551,15 @@
               <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
               <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
             </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label class="control-label">{{ 'cashBoxType' | translate | capitalize }}:</label>
+            <app-typeahead-dropdown
+              [control]="transactionTypeForm.get('cashBoxType')"
+              [service]="_cashBoxTypeService"
+              [keyField]="'_id'"
+              [displayField]="'name'"
+            ></app-typeahead-dropdown>
           </div>
         </div>
 
