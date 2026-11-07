@@ -214,6 +214,7 @@ export class NavigationService {
 
     if (
       fullPath.includes('/menu') ||
+      fullPath.includes('/armar') ||
       fullPath.includes('galleries/view') ||
       fullPath.includes('politicas-de-privacidad')
     ) {

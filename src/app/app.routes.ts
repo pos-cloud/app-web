@@ -174,6 +174,10 @@ export const _routes: Routes = [
     path: 'menu/:database',
     loadComponent: () => import('./modules/menu/menu.component').then((m) => m.MenuComponent),
   },
+  {
+    path: 'armar/:database',
+    loadComponent: () => import('./modules/armar/armar.component').then((m) => m.ArmarComponent),
+  },
   // MODULES ROUTES
   {
     path: 'entities',

@@ -1,0 +1,93 @@
+<div *ngIf="config" class="armar" [ngClass]="config.themeClass">
+  <ng-container *ngIf="!summaryOpen; else summary">
+    <header class="armar-hero">
+      <p class="armar-brand">Las Cañitas</p>
+      <h1>{{ config.title }}</h1>
+      <p class="armar-subtitle">{{ config.subtitle }}</p>
+    </header>
+
+    <label class="armar-name">
+      <span>Nombre o apodo</span>
+      <input
+        type="text"
+        maxlength="40"
+        placeholder="Cómo te llamamos"
+        [value]="customerName"
+        (input)="onNameInput($event)"
+      />
+    </label>
+
+    <section *ngFor="let group of config.groups" class="armar-group">
+      <div class="armar-group-head">
+        <h2>{{ group.title }}</h2>
+        <p *ngIf="group.hint">{{ group.hint }}</p>
+      </div>
+
+      <div class="armar-options">
+        <div
+          *ngFor="let option of group.options"
+          class="armar-option"
+          [class.is-selected]="isSelected(group, option.id)"
+          [class.is-separated]="option.separated"
+        >
+          <button
+            type="button"
+            class="armar-option-main"
+            [attr.aria-pressed]="isSelected(group, option.id)"
+            (click)="toggle(group, option.id)"
+          >
+            <span class="armar-mark" aria-hidden="true"></span>
+            <span class="armar-option-name">{{ option.name }}</span>
+            <span class="armar-option-price">{{ formatPrice(displayPrice(group, option.id, option.price)) }}</span>
+          </button>
+
+          <div *ngIf="isSelected(group, option.id) && group.portions?.length" class="armar-portions">
+            <button
+              *ngFor="let portion of group.portions"
+              type="button"
+              class="armar-portion"
+              [class.is-active]="portionOf(group, option.id) === portion.id"
+              (click)="setPortion(group, option.id, portion.id)"
+            >
+              {{ portion.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-template #summary>
+    <header class="armar-hero">
+      <p class="armar-brand">Las Cañitas</p>
+      <h1>Tu pedido</h1>
+      <p class="armar-subtitle">{{ customerName.trim() || 'Sin nombre' }}</p>
+    </header>
+
+    <ul class="armar-summary">
+      <li *ngFor="let line of summaryLines">
+        <div>
+          <p class="armar-summary-group">{{ line.group }}</p>
+          <p class="armar-summary-name">
+            {{ line.name }}
+            <span *ngIf="line.portion">· {{ line.portion }}</span>
+          </p>
+        </div>
+        <span class="armar-option-price">{{ formatPrice(line.price) }}</span>
+      </li>
+    </ul>
+
+    <p class="armar-note">Vista previa. Todavía no se envía al local.</p>
+  </ng-template>
+
+  <footer class="armar-bar">
+    <div>
+      <p class="armar-bar-count">{{ selectionLabel }}</p>
+      <p class="armar-bar-total">{{ formatAmount(total) }}</p>
+    </div>
+    <button *ngIf="!summaryOpen" type="button" class="armar-ready" [disabled]="!selectionCount" (click)="openSummary()">
+      Listo
+    </button>
+    <button *ngIf="summaryOpen" type="button" class="armar-ready" (click)="closeSummary()">Volver a editar</button>
+  </footer>
+</div>

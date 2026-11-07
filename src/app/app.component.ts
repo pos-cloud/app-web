@@ -71,6 +71,7 @@ export class AppComponent {
         const currentUrl = event.url;
         if (
           currentUrl.includes('menu') ||
+          currentUrl.includes('/armar') ||
           currentUrl.includes('galleries/view') ||
           currentUrl.includes('politicas-de-privacidad') ||
           currentUrl.includes('/login') ||
@@ -142,6 +143,7 @@ export class AppComponent {
       url.includes('/register') ||
       url.includes('politicas-de-privacidad') ||
       url.includes('menu') ||
+      url.includes('/armar') ||
       url.includes('galleries/view');
 
     const hasAiChatPermission = this.currentUser?.permission?.aiChat === true;
