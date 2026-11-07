@@ -4,12 +4,13 @@ import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-boots
 import { TranslateService } from '@ngx-translate/core';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
+import { User } from '@types';
 import { Config } from './app.config';
 import { AnalyticsService } from './core/services/analytics.service';
 import { AuthService } from './core/services/auth.service';
 import { ConfigService } from './core/services/config.service';
 import { NavigationService } from './layout/navigation/navigation.service';
-import { User } from '@types';
+import { isPublicExperienceUrl } from './public/public.routes';
 
 import 'moment/locale/es';
 
@@ -70,8 +71,7 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         const currentUrl = event.url;
         if (
-          currentUrl.includes('menu') ||
-          currentUrl.includes('/armar') ||
+          isPublicExperienceUrl(currentUrl) ||
           currentUrl.includes('galleries/view') ||
           currentUrl.includes('politicas-de-privacidad') ||
           currentUrl.includes('/login') ||
@@ -139,11 +139,10 @@ export class AppComponent {
 
   private updateChatWidgetVisibility(url: string, isLoggedIn: boolean): void {
     const isPublicRoute =
+      isPublicExperienceUrl(url) ||
       url.includes('/login') ||
       url.includes('/register') ||
       url.includes('politicas-de-privacidad') ||
-      url.includes('menu') ||
-      url.includes('/armar') ||
       url.includes('galleries/view');
 
     const hasAiChatPermission = this.currentUser?.permission?.aiChat === true;

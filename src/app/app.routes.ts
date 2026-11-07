@@ -10,6 +10,7 @@ import { ListTransactionsComponent } from './components/transaction/list-transac
 import { AuthGuard } from './core/guards/auth.guard';
 import { LicenseGuard } from './core/guards/license.guard';
 import { HomeComponent } from './layout/home/home.component';
+import { PUBLIC_ROUTES } from './public/public.routes';
 
 export const _routes: Routes = [
   {
@@ -170,14 +171,7 @@ export const _routes: Routes = [
   //   component: PosKitchenComponent,
   //   canActivate: [AuthGuard, LicenseGuard],
   // },
-  {
-    path: 'menu/:database',
-    loadComponent: () => import('./modules/menu/menu.component').then((m) => m.MenuComponent),
-  },
-  {
-    path: 'armar/:database',
-    loadComponent: () => import('./modules/armar/armar.component').then((m) => m.ArmarComponent),
-  },
+  ...PUBLIC_ROUTES,
   // MODULES ROUTES
   {
     path: 'entities',

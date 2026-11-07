@@ -3,6 +3,7 @@ import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { User } from '@types';
 import { AnalyticsService } from 'app/core/services/analytics.service';
 import { AuthService } from 'app/core/services/auth.service';
+import { isPublicExperienceUrl } from 'app/public/public.routes';
 import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NavLayout, NavNode } from './navigation.types';
@@ -213,8 +214,7 @@ export class NavigationService {
     const fullPath = url.split('?')[0];
 
     if (
-      fullPath.includes('/menu') ||
-      fullPath.includes('/armar') ||
+      isPublicExperienceUrl(fullPath) ||
       fullPath.includes('galleries/view') ||
       fullPath.includes('politicas-de-privacidad')
     ) {
