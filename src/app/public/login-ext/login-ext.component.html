@@ -1,0 +1,87 @@
+<section class="login-ext">
+  <header class="login-ext-hero">
+    <p>Acceso de socios</p>
+    <h1>{{ database }}</h1>
+  </header>
+
+  <form *ngIf="!session" class="login-ext-card" [formGroup]="form" (ngSubmit)="login()">
+    <label>
+      <span>Usuario</span>
+      <input type="text" formControlName="user" autocomplete="username" placeholder="Email o usuario" />
+    </label>
+    <label>
+      <span>Contraseña</span>
+      <input type="password" formControlName="password" autocomplete="current-password" />
+    </label>
+    <p class="login-ext-error" *ngIf="error">{{ error }}</p>
+    <button type="submit" [disabled]="form.invalid || loading">
+      {{ loading ? 'Ingresando…' : 'Ingresar' }}
+    </button>
+  </form>
+
+  <div *ngIf="session" class="login-ext-account">
+    <div class="login-ext-card">
+      <div class="login-ext-member">
+        <div>
+          <h2>{{ account?.member?.name || session.name }}</h2>
+          <p>{{ account?.company?.name || 'Tu cuenta' }}</p>
+        </div>
+        <button type="button" class="login-ext-text" (click)="logout()">Salir</button>
+      </div>
+
+      <p class="login-ext-error" *ngIf="error">{{ error }}</p>
+      <p class="login-ext-muted" *ngIf="loading && !account">Cargando tu situación…</p>
+
+      <ng-container *ngIf="account">
+        <div class="login-ext-status" [class.is-due]="account.totalDue > 0">
+          <span>{{ situation }}</span>
+          <strong>{{ formatAmount(account.totalDue) }}</strong>
+        </div>
+
+        <dl class="login-ext-meta" *ngIf="account.company">
+          <div>
+            <dt>Plan</dt>
+            <dd>{{ account.company.plan || 'Sin plan' }}</dd>
+          </div>
+          <div>
+            <dt>Documento</dt>
+            <dd>{{ account.company.identificationValue || '—' }}</dd>
+          </div>
+        </dl>
+
+        <p class="login-ext-muted" *ngIf="!account.company">
+          Tu usuario todavía no está vinculado a un cliente. Pedile a la administración que lo asocie.
+        </p>
+
+        <ul class="login-ext-installments" *ngIf="account.installments.length">
+          <li *ngFor="let item of account.installments">
+            <div>
+              <strong>{{ item.period || item.type }}</strong>
+              <span
+                >{{ item.type }} <ng-container *ngIf="item.number">· {{ item.number }}</ng-container></span
+              >
+            </div>
+            <div class="login-ext-amount">
+              <b [class.is-due]="item.status !== 'Pagado'">{{ item.status }}</b>
+              <span>{{ formatAmount(item.status === 'Pagado' ? item.totalPrice : item.due) }}</span>
+            </div>
+          </li>
+        </ul>
+        <p class="login-ext-muted" *ngIf="account.company && !account.installments.length">
+          No hay cuotas para mostrar.
+        </p>
+      </ng-container>
+    </div>
+
+    <div class="login-ext-card" *ngIf="account?.company">
+      <button type="button" class="login-ext-access" [disabled]="accessLoading" (click)="requestAccess()">
+        {{ access ? 'Generar otro código' : 'Solicitar acceso' }}
+      </button>
+      <div class="login-ext-qr" *ngIf="access">
+        <img [src]="access.qr" alt="Código QR de acceso" />
+        <p>{{ access.code }}</p>
+        <small>Código de prueba. Todavía no abre el lector.</small>
+      </div>
+    </div>
+  </div>
+</section>

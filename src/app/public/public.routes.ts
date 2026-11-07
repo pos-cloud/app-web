@@ -11,6 +11,11 @@ export const PUBLIC_ROUTES: Routes = [
     data: { public: true },
     loadComponent: () => import('./armar/armar.component').then((m) => m.ArmarComponent),
   },
+  {
+    path: 'login-ext/:database',
+    data: { public: true },
+    loadComponent: () => import('./login-ext/login-ext.component').then((m) => m.LoginExtComponent),
+  },
 ];
 
 export function isPublicExperienceUrl(url: string): boolean {

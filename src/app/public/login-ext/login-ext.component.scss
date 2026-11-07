@@ -1,0 +1,196 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #e7ece8;
+  color: #1c2b24;
+}
+
+.login-ext {
+  width: min(32rem, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2.5rem;
+}
+
+.login-ext-hero p {
+  margin: 0;
+  color: #3d6b54;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.login-ext-hero h1 {
+  margin: 0.2rem 0 1.25rem;
+  font-size: 2rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.login-ext-card {
+  margin-bottom: 0.9rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: #f7faf8;
+  box-shadow: 0 10px 24px rgba(28, 43, 36, 0.06);
+}
+
+.login-ext-card label {
+  display: block;
+  margin-bottom: 0.9rem;
+}
+
+.login-ext-card label span {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.login-ext-card input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #c5d2cb;
+  background: transparent;
+  padding: 0.55rem 0.1rem;
+  font-size: 1.05rem;
+  color: inherit;
+}
+
+.login-ext-card input:focus {
+  outline: none;
+  border-bottom-color: #1f4d3a;
+}
+
+.login-ext-card button[type='submit'],
+.login-ext-access {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  background: #1f4d3a;
+  color: #f7faf8;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.login-ext-card button:disabled {
+  opacity: 0.55;
+}
+
+.login-ext-error {
+  margin: 0 0 0.8rem;
+  color: #9a3412;
+  font-weight: 600;
+}
+
+.login-ext-member {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.login-ext-member h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.login-ext-member p,
+.login-ext-muted {
+  margin: 0.2rem 0 0;
+  color: #5d6f65;
+}
+
+.login-ext-text {
+  border: 0;
+  background: transparent;
+  color: #1f4d3a;
+  font-weight: 700;
+}
+
+.login-ext-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: #e5f3eb;
+}
+
+.login-ext-status.is-due {
+  background: #fde8dc;
+}
+
+.login-ext-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 0.9rem 0 0;
+}
+
+.login-ext-meta dt {
+  color: #5d6f65;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.login-ext-meta dd {
+  margin: 0.15rem 0 0;
+}
+
+.login-ext-installments {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.login-ext-installments li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid #e1e8e4;
+}
+
+.login-ext-installments span,
+.login-ext-amount span {
+  display: block;
+  color: #5d6f65;
+  font-size: 0.85rem;
+}
+
+.login-ext-amount {
+  text-align: right;
+}
+
+.login-ext-amount b.is-due {
+  color: #9a3412;
+}
+
+.login-ext-qr {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.login-ext-qr img {
+  width: 220px;
+  height: 220px;
+  background: white;
+}
+
+.login-ext-qr p {
+  margin: 0.4rem 0 0;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.login-ext-qr small {
+  color: #5d6f65;
+}

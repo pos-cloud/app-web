@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-header">
       <span style="color: #607d8b" *ngIf="operation === 'add' || operation === 'copy'">{{
-        'add-user' | translate | capitalize
+        isExternal ? 'Usuario externo' : ('add-user' | translate | capitalize)
       }}</span>
       <span style="color: #607d8b" *ngIf="operation === 'update'"
         >{{ 'edit' | translate | capitalize }} {{ user?.description }}</span
@@ -45,7 +45,7 @@
           </label>
         </div>
         <div class="row">
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-2" *ngIf="!isExternal">
             <label for="branch" class="control-label">Sucursal</label>
             <div class="d-flex align-items-start">
               <div class="flex-grow-1">
@@ -117,7 +117,7 @@
               {{ 'fieldRequired' | translate | capitalize }}
             </div>
           </div>
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-2" *ngIf="!isExternal">
             <label for="level" class="control-label">Nivel:</label>
             <div class="input-group">
               <input
@@ -189,7 +189,7 @@
               La contraseña debe tener al menos 6 caracteres
             </div>
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-4" *ngIf="!isExternal">
             <label for="tokenExpiration" class="control-label">Expiración de sesión:</label>
             <input
               type="number"
@@ -202,7 +202,21 @@
           </div>
         </div>
 
-        <div class="row">
+        <div class="row" *ngIf="isExternal">
+          <div class="form-group col-md-6">
+            <label for="company" class="control-label">Cliente</label>
+            <app-typeahead-dropdown
+              [control]="userForm.get('company')"
+              [service]="companyService"
+              [searchFields]="['name', 'fantasyName']"
+              [displayField]="'name'"
+              [match]="{ operationType: { $ne: 'D' }, type: 'Cliente' }"
+              [readonly]="readonly"
+            ></app-typeahead-dropdown>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="!isExternal">
           <div class="form-group col-md-6">
             <label for="employee" class="control-label">Empleado Asociado</label>
             <app-typeahead-dropdown
@@ -241,207 +255,210 @@
           </div>
         </div>
 
-        <hr />
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>Makes</b>
-          </label>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="d-flex flex-wrap">
-              <div class="form-check mr-4 mb-2" *ngFor="let make of makes">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  [id]="'make-' + make._id"
-                  [formControlName]="make._id"
-                  (change)="onMakeChange($event, make._id)"
-                />
-                <label class="form-check-label" [for]="'make-' + make._id">{{ make.description }}</label>
+        <ng-container *ngIf="!isExternal">
+          <hr />
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>Makes</b>
+            </label>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <div class="d-flex flex-wrap">
+                <div class="form-check mr-4 mb-2" *ngFor="let make of makes">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [id]="'make-' + make._id"
+                    [formControlName]="make._id"
+                    (change)="onMakeChange($event, make._id)"
+                  />
+                  <label class="form-check-label" [for]="'make-' + make._id">{{ make.description }}</label>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <hr />
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>{{ 'shortcut' | translate | capitalize }}</b>
-          </label>
-        </div>
-        <form #shortcutsForm="ngForm">
+          <hr />
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>{{ 'shortcut' | translate | capitalize }}</b>
+            </label>
+          </div>
+          <form #shortcutsForm="ngForm">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>URL</th>
+                  <th width="50"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Fila para agregar nuevo shortcut -->
+                <tr>
+                  <td class="flat">
+                    <input
+                      class="form-control"
+                      placeholder="Name"
+                      [(ngModel)]="shortcut.name"
+                      name="shortcutName"
+                      [ngModelOptions]="{ standalone: true }"
+                      [readonly]="readonly"
+                      [focus]="focusEvent"
+                    />
+                  </td>
+                  <td class="flat">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">{{ dominio }}</span>
+                      </div>
+                      <input
+                        class="form-control"
+                        placeholder="URL"
+                        [(ngModel)]="shortcut.url"
+                        name="shortcutUrl"
+                        [ngModelOptions]="{ standalone: true }"
+                        [readonly]="readonly"
+                      />
+                    </div>
+                  </td>
+                  <td align="left">
+                    <button
+                      type="button"
+                      class="btn btn-success btn-sm"
+                      (click)="addShortcut()"
+                      title="Agregar"
+                      [disabled]="readonly"
+                    >
+                      <i class="fa fa-plus"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Fila para cada shortcut existente -->
+                <tr *ngFor="let shortcut of shortcuts; let i = index">
+                  <td class="flat">
+                    <pre>{{ shortcut.name }}</pre>
+                  </td>
+                  <td class="flat">
+                    <pre>{{ dominio }}{{ shortcut.url }}</pre>
+                  </td>
+                  <td align="left">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      (click)="deleteShortcut(shortcut)"
+                      title="Eliminar"
+                      [disabled]="readonly"
+                    >
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+          <hr />
+          <div class="row">
+            <label class="form-group col-md-12">
+              <b>{{ 'print' | translate | capitalize }}</b>
+            </label>
+          </div>
+          <form #printerForm="ngForm" (ngSubmit)="addPrinter(printerForm)">
+            <div class="row align-items-end">
+              <div class="form-group col-md-8">
+                <label for="printer" class="control-label">Impresora</label>
+                <select class="form-control" ngModel name="printer">
+                  <option *ngFor="let printer of printers" [ngValue]="printer?._id" [disabled]="readonly">
+                    {{ printer?.name }} - {{ printer?.printIn }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-2 d-flex justify-content-start">
+                <button type="submit" class="btn btn-success btn-sm mt-4">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
           <table class="table table-striped">
             <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>URL</th>
-                <th width="50"></th>
+              <tr class="separation">
+                <th>Impresoras Disponibles</th>
               </tr>
             </thead>
             <tbody>
-              <!-- Fila para agregar nuevo shortcut -->
-              <tr>
-                <td class="flat">
-                  <input
-                    class="form-control"
-                    placeholder="Name"
-                    [(ngModel)]="shortcut.name"
-                    name="shortcutName"
-                    [ngModelOptions]="{ standalone: true }"
-                    [readonly]="readonly"
-                    [focus]="focusEvent"
-                  />
-                </td>
-                <td class="flat">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">{{ dominio }}</span>
-                    </div>
-                    <input
-                      class="form-control"
-                      placeholder="URL"
-                      [(ngModel)]="shortcut.url"
-                      name="shortcutUrl"
-                      [ngModelOptions]="{ standalone: true }"
-                      [readonly]="readonly"
-                    />
-                  </div>
-                </td>
-                <td align="left">
-                  <button
-                    type="button"
-                    class="btn btn-success btn-sm"
-                    (click)="addShortcut()"
-                    title="Agregar"
-                    [disabled]="readonly"
+              <tr class="separation" *ngFor="let printerAux of userForm.get('printers').controls; let i = index">
+                <div *ngFor="let printer of printers; let i = index">
+                  <td
+                    *ngIf="
+                      printerAux &&
+                      printerAux.value &&
+                      printerAux.value.printer &&
+                      printerAux.value.printer === printer._id
+                    "
                   >
-                    <i class="fa fa-plus"></i>
-                  </button>
-                </td>
-              </tr>
-
-              <!-- Fila para cada shortcut existente -->
-              <tr *ngFor="let shortcut of shortcuts; let i = index">
-                <td class="flat">
-                  <pre>{{ shortcut.name }}</pre>
-                </td>
-                <td class="flat">
-                  <pre>{{ dominio }}{{ shortcut.url }}</pre>
-                </td>
-                <td align="left">
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    (click)="deleteShortcut(shortcut)"
-                    title="Eliminar"
-                    [disabled]="readonly"
-                  >
+                    {{ printer.name }} - {{ printer.printIn }}
+                  </td>
+                </div>
+                <td align="right" width="10">
+                  <button type="button" class="btn btn-danger btn-sm" (click)="deletePrinter(i)">
                     <i class="fa fa-trash-o"></i>
                   </button>
                 </td>
               </tr>
             </tbody>
+            <tfoot></tfoot>
           </table>
-        </form>
-        <hr />
-        <div class="row">
-          <label class="form-group col-md-12">
-            <b>{{ 'print' | translate | capitalize }}</b>
-          </label>
-        </div>
-        <form #printerForm="ngForm" (ngSubmit)="addPrinter(printerForm)">
-          <div class="row align-items-end">
-            <div class="form-group col-md-8">
-              <label for="printer" class="control-label">Impresora</label>
-              <select class="form-control" ngModel name="printer">
-                <option *ngFor="let printer of printers" [ngValue]="printer?._id" [disabled]="readonly">
-                  {{ printer?.name }} - {{ printer?.printIn }}
-                </option>
-              </select>
-            </div>
-            <div class="form-group col-md-2 d-flex justify-content-start">
-              <button type="submit" class="btn btn-success btn-sm mt-4">
-                <i class="fa fa-plus"></i>
-              </button>
-            </div>
+        </ng-container>
+        <ng-container *ngIf="!isExternal || operation !== 'add'">
+          <hr />
+          <div class="row">
+            <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
+              <b>{{ 'audit' | translate | capitalize }}</b>
+            </label>
           </div>
-        </form>
-
-        <table class="table table-striped">
-          <thead>
-            <tr class="separation">
-              <th>Impresoras Disponibles</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="separation" *ngFor="let printerAux of userForm.get('printers').controls; let i = index">
-              <div *ngFor="let printer of printers; let i = index">
-                <td
-                  *ngIf="
-                    printerAux &&
-                    printerAux.value &&
-                    printerAux.value.printer &&
-                    printerAux.value.printer === printer._id
-                  "
-                >
-                  {{ printer.name }} - {{ printer.printIn }}
-                </td>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">
+                    {{ 'creationUser.name' | translate | capitalize }}:
+                    <b>{{ user?.creationUser?.name || '' }}</b>
+                  </label>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="control-label">
+                    {{ 'theDay' | translate | capitalize }}:
+                    <b>{{ user?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  </label>
+                </div>
               </div>
-              <td align="right" width="10">
-                <button type="button" class="btn btn-danger btn-sm" (click)="deletePrinter(i)">
-                  <i class="fa fa-trash-o"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-          <tfoot></tfoot>
-        </table>
-
-        <hr />
-        <div class="row">
-          <label *ngIf="this.operation !== 'add'" class="form-group col-md-12">
-            <b>{{ 'audit' | translate | capitalize }}</b>
-          </label>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">
-                  {{ 'creationUser.name' | translate | capitalize }}:
-                  <b>{{ user?.creationUser?.name || '' }}</b>
-                </label>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">
+                    {{ 'updateUser.name' | translate | capitalize }}:
+                    <b>{{ user?.updateUser?.name || '' }}</b>
+                  </label>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="control-label">
+                    {{ 'theDay' | translate | capitalize }}:
+                    <b>{{ user?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
+                  </label>
+                </div>
               </div>
-              <div class="form-group col-md-6">
-                <label class="control-label">
-                  {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ user?.creationDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">
-                  {{ 'updateUser.name' | translate | capitalize }}:
-                  <b>{{ user?.updateUser?.name || '' }}</b>
-                </label>
-              </div>
-              <div class="form-group col-md-6">
-                <label class="control-label">
-                  {{ 'theDay' | translate | capitalize }}:
-                  <b>{{ user?.updateDate ?? null | dateFormat: 'DD/MM/YYYY HH:mm:ss' }}</b>
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">
-                  ID:<b>{{ user?._id || '' }}</b>
-                </label>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="control-label">
+                    ID:<b>{{ user?._id || '' }}</b>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </ng-container>
       </form>
     </div>
   </div>

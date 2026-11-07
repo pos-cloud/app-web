@@ -15,7 +15,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401) {
+        const isExternalPortal = req.url.includes('/auth/login-ext');
+        if (err.status === 401 && !isExternalPortal) {
           if (err.error.message === 'expired license') {
             return throwError(err);
           } else {

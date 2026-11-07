@@ -49,6 +49,7 @@ export class AppComponent {
   }
 
   async ngOnInit() {
+    this.applyPublicShell(this._router.url);
     this._analyticsService.initializeTracking();
 
     this._authService.getIdentity.subscribe(async (identity) => {
@@ -69,19 +70,8 @@ export class AppComponent {
 
     this._router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        const currentUrl = event.url;
-        if (
-          isPublicExperienceUrl(currentUrl) ||
-          currentUrl.includes('galleries/view') ||
-          currentUrl.includes('politicas-de-privacidad') ||
-          currentUrl.includes('/login') ||
-          currentUrl.includes('/register')
-        ) {
-          this.showHeader = false;
-        } else {
-          this.showHeader = true;
-        }
-        this.updateChatWidgetVisibility(currentUrl, this.isLoggedIn);
+        this.applyPublicShell(event.url);
+        this.updateChatWidgetVisibility(event.url, this.isLoggedIn);
       }
     });
   }
@@ -135,6 +125,16 @@ export class AppComponent {
 
   public hideMessage(): void {
     this.alertMessage = '';
+  }
+
+  private applyPublicShell(currentUrl: string): void {
+    this.showHeader = !(
+      isPublicExperienceUrl(currentUrl) ||
+      currentUrl.includes('galleries/view') ||
+      currentUrl.includes('politicas-de-privacidad') ||
+      currentUrl.includes('/login') ||
+      currentUrl.includes('/register')
+    );
   }
 
   private updateChatWidgetVisibility(url: string, isLoggedIn: boolean): void {

@@ -18,6 +18,8 @@ export interface User extends Activity {
   printers: { _id: string; printer: Printer }[];
   level: number;
   makes?: (string | Make)[];
+  profile?: 'Interno' | 'Externo';
+  company?: string | { _id: string; name?: string } | null;
 }
 
 export enum UserState {

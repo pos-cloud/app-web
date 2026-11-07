@@ -583,7 +583,8 @@ export class NavigationService {
           {
             label: 'Gestión de Usuarios',
             children: [
-              { label: 'Usuarios Sistema', link: 'entities/users' },
+              { label: 'Usuarios Sistema', link: 'entities/users/system' },
+              { label: 'Usuarios externos', link: 'entities/users/external' },
               { label: 'Empleados', link: 'entities/employees' },
               { label: 'Tipos de Empleado', link: 'entities/employee-types' },
               { label: 'Permisos', link: 'entities/permissions' },

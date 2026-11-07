@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { BranchService } from '@core/services/branch.service';
+import { CompanyService } from '@core/services/company.service';
 import { CashBoxTypeService } from '@core/services/cash-box-type.service';
 import { EmployeeService } from '@core/services/employee.service';
 import { MakeService } from '@core/services/make.service';
@@ -68,6 +69,8 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   public dominio: string;
   public shortcut = { name: '', url: '' };
   public shortcuts: { name: string; url: string }[] = [];
+  public profile: 'Interno' | 'Externo' = 'Interno';
+  public profileSlug: 'system' | 'external' = 'system';
 
   constructor(
     private _userService: UserService,
@@ -81,7 +84,8 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
     private _permissionService: PermissionService,
     private _printerService: PrinterService,
     private _makeService: MakeService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    public companyService: CompanyService
   ) {
     this.userForm = this._fb.group({
       _id: ['', []],
@@ -98,22 +102,42 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
       branch: [null, []],
       permission: [null, []],
       level: [99, []],
+      company: [null, []],
       tokenExpiration: [9999, []],
       makes: [[] as string[]],
     });
   }
 
+  get isExternal(): boolean {
+    return this.profile === 'Externo';
+  }
+
   async ngOnInit() {
-    const pathUrl = this._router.url.split('/');
-    const userId = pathUrl[4];
+    const pathUrl = this._router.url.split('?')[0].split('/');
     this.operation = pathUrl[3];
+    this.profileSlug = pathUrl[4] === 'external' ? 'external' : 'system';
+    this.profile = this.profileSlug === 'external' ? 'Externo' : 'Interno';
+    const userId = pathUrl[5];
     this.readonly = this.operation === 'view' || this.operation === 'delete';
     this.dominio = window.location.origin + '/';
+    if (this.isExternal) {
+      this.userForm.get('company')?.setValidators([Validators.required]);
+      this.userForm.get('company')?.updateValueAndValidity();
+    }
     if (this.readonly) this.userForm.disable();
 
     this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((identity) => {
       this.identity = identity;
     });
+
+    if (this.isExternal) {
+      if (userId) {
+        this.getUser(userId);
+      } else {
+        this.setValueForm();
+      }
+      return;
+    }
 
     this.loading = true;
     combineLatest({
@@ -173,7 +197,7 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
     this.focusEvent.complete();
   }
   returnTo() {
-    return this._router.navigate(['/entities/users']);
+    return this._router.navigate([`/entities/users/${this.profileSlug}`]);
   }
 
   public getUser(userId: string) {
@@ -198,11 +222,11 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public setValueForm() {
-    const employee = this.employees.find((item) => item._id == this.user?.employee?.toString());
-    const cashBoxType = this.cashBoxTypes.find((item) => item._id == this.user?.cashBoxType?.toString());
-    const origin = this.origins.find((item) => item._id == this.user?.origin?.toString());
-    const branch = this.branches.find((item) => item._id == this.user?.branch?.toString());
-    const permission = this.permissions.find((item) => item._id == this.user?.permission?.toString());
+    const employee = this.employees?.find((item) => item._id == this.user?.employee?.toString());
+    const cashBoxType = this.cashBoxTypes?.find((item) => item._id == this.user?.cashBoxType?.toString());
+    const origin = this.origins?.find((item) => item._id == this.user?.origin?.toString());
+    const branch = this.branches?.find((item) => item._id == this.user?.branch?.toString());
+    const permission = this.permissions?.find((item) => item._id == this.user?.permission?.toString());
     const selectedMakes = ((this.user as any)?.makes ?? [])
       .map((m: any) => (typeof m === 'string' ? m : m?._id))
       .filter(Boolean);
@@ -220,6 +244,7 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
       branch: branch ?? null,
       permission: permission ?? null,
       level: this.user?.level ?? 99,
+      company: this.isExternal ? this.companySelection(this.user?.company) : null,
       makes: selectedMakes,
     };
 
@@ -249,6 +274,18 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.userForm.patchValue(values);
+    const linkedCompanyId = this.companyId(this.user?.company);
+    if (!values.company && linkedCompanyId) {
+      this.companyService
+        .getById(linkedCompanyId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((result) => {
+          const company = result?.result;
+          if (company?._id) {
+            this.userForm.patchValue({ company: { _id: company._id, name: company.name } });
+          }
+        });
+    }
 
     if (this.makes && this.makes.length > 0) {
       this.makes.forEach((make) => {
@@ -273,6 +310,11 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   public addUser(): void {
     this.loading = true;
     this.userForm.markAllAsTouched();
+    if (this.isExternal && this.operation !== 'delete' && !this.userForm.getRawValue().company) {
+      this.loading = false;
+      this._toastService.showToast({ message: 'Un usuario externo tiene que estar vinculado a un cliente.' });
+      return;
+    }
     if (this.userForm.invalid) {
       this.loading = false;
       return;
@@ -461,7 +503,28 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private buildUserPayload(): User {
-    const v = this.userForm.value ?? {};
+    const v = this.userForm.getRawValue() ?? {};
+    if (this.isExternal) {
+      return {
+        _id: v._id,
+        name: v.name,
+        email: v.email,
+        password: v.password,
+        state: v.state,
+        profile: this.profile,
+        company: v.company?._id || v.company || null,
+        employee: null,
+        cashBoxType: null,
+        origin: null,
+        branch: null,
+        permission: null,
+        shortcuts: [],
+        printers: [],
+        makes: [],
+        level: 99,
+        tokenExpiration: 1440,
+      } as any;
+    }
     return {
       _id: v._id,
       name: v.name,
@@ -479,7 +542,21 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
       permission: v.permission,
       printers: v.printers,
       level: v.level,
+      profile: this.profile,
+      company: this.isExternal ? v.company?._id || v.company || null : null,
       ...(v.makes ? { makes: v.makes } : {}),
     } as any;
+  }
+
+  private companySelection(company: User['company']): { _id: string; name?: string } | null {
+    if (company && typeof company === 'object' && company._id && company.name) {
+      return { _id: company._id, name: company.name };
+    }
+    return null;
+  }
+
+  private companyId(company: User['company']): string | null {
+    if (!company) return null;
+    return typeof company === 'string' ? company : company._id;
   }
 }
