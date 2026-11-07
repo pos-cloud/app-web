@@ -132,7 +132,8 @@ export const REPORTS_ROUTES: Routes = [
   },
   {
     path: 'accounting-ledger',
-    loadComponent: () => import('./accounting-ledger/accounting-ledger.component').then((m) => m.AccountingLedgerComponent),
+    loadComponent: () =>
+      import('./accounting-ledger/accounting-ledger.component').then((m) => m.AccountingLedgerComponent),
   },
   {
     path: 'accounting-trial-balance',

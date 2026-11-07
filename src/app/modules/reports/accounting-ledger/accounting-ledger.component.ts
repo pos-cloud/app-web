@@ -54,10 +54,27 @@ export class AccountingLedgerComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  public get ledgers(): { code: string; description: string; lines: any[]; debit: number; credit: number; balance: number }[] {
-    const books = new Map<string, { code: string; description: string; lines: any[]; debit: number; credit: number; balance: number }>();
+  public get ledgers(): {
+    code: string;
+    description: string;
+    lines: any[];
+    debit: number;
+    credit: number;
+    balance: number;
+  }[] {
+    const books = new Map<
+      string,
+      { code: string; description: string; lines: any[]; debit: number; credit: number; balance: number }
+    >();
     this.data.forEach((line) => {
-      const current = books.get(line.code) || { code: line.code, description: line.description, lines: [], debit: 0, credit: 0, balance: 0 };
+      const current = books.get(line.code) || {
+        code: line.code,
+        description: line.description,
+        lines: [],
+        debit: 0,
+        credit: 0,
+        balance: 0,
+      };
       current.lines.push(line);
       current.debit += Number(line.debit) || 0;
       current.credit += Number(line.credit) || 0;

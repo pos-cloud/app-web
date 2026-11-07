@@ -29,12 +29,18 @@
       <section>
         <table class="acct-table">
           <tbody>
-            <tr class="section"><td colspan="2">Activo</td></tr>
+            <tr class="section">
+              <td colspan="2">Activo</td>
+            </tr>
             <tr *ngFor="let row of assets">
-              <td class="indent"><span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}</td>
+              <td class="indent">
+                <span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}
+              </td>
               <td class="num">{{ money(row.importe) }}</td>
             </tr>
-            <tr *ngIf="!assets.length"><td class="indent" colspan="2">Sin saldo</td></tr>
+            <tr *ngIf="!assets.length">
+              <td class="indent" colspan="2">Sin saldo</td>
+            </tr>
           </tbody>
           <tfoot>
             <tr>
@@ -48,12 +54,18 @@
       <div>
         <table class="acct-table">
           <tbody>
-            <tr class="section"><td colspan="2">Pasivo</td></tr>
+            <tr class="section">
+              <td colspan="2">Pasivo</td>
+            </tr>
             <tr *ngFor="let row of liabilities">
-              <td class="indent"><span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}</td>
+              <td class="indent">
+                <span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}
+              </td>
               <td class="num">{{ money(row.importe) }}</td>
             </tr>
-            <tr *ngIf="!liabilities.length"><td class="indent" colspan="2">Sin saldo</td></tr>
+            <tr *ngIf="!liabilities.length">
+              <td class="indent" colspan="2">Sin saldo</td>
+            </tr>
           </tbody>
           <tfoot>
             <tr>
@@ -65,12 +77,18 @@
 
         <table class="acct-table">
           <tbody>
-            <tr class="section"><td colspan="2">Patrimonio neto</td></tr>
+            <tr class="section">
+              <td colspan="2">Patrimonio neto</td>
+            </tr>
             <tr *ngFor="let row of equity">
-              <td class="indent"><span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}</td>
+              <td class="indent">
+                <span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}
+              </td>
               <td class="num">{{ money(row.importe) }}</td>
             </tr>
-            <tr *ngIf="!equity.length"><td class="indent" colspan="2">Sin saldo</td></tr>
+            <tr *ngIf="!equity.length">
+              <td class="indent" colspan="2">Sin saldo</td>
+            </tr>
           </tbody>
           <tfoot>
             <tr>

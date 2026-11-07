@@ -69,10 +69,7 @@ export class ArmarComponent implements OnInit {
       return;
     }
 
-    this.picks.set(
-      group.id,
-      exists ? current.filter((pick) => pick.optionId !== optionId) : [...current, nextPick]
-    );
+    this.picks.set(group.id, exists ? current.filter((pick) => pick.optionId !== optionId) : [...current, nextPick]);
   }
 
   setPortion(group: ArmarGroup, optionId: string, portionId: string): void {

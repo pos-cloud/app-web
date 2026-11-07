@@ -28,12 +28,16 @@
     <ng-container *ngIf="data.length">
       <table class="acct-table">
         <tbody>
-          <tr class="section"><td colspan="2">Ingresos</td></tr>
+          <tr class="section">
+            <td colspan="2">Ingresos</td>
+          </tr>
           <tr *ngFor="let row of linesOf('Ingresos')">
             <td class="indent">{{ row.code }} {{ row.description }}</td>
             <td class="num">{{ money(row.importe) }}</td>
           </tr>
-          <tr *ngIf="!linesOf('Ingresos').length"><td class="indent" colspan="2">Sin ingresos</td></tr>
+          <tr *ngIf="!linesOf('Ingresos').length">
+            <td class="indent" colspan="2">Sin ingresos</td>
+          </tr>
         </tbody>
         <tfoot>
           <tr>
@@ -45,12 +49,16 @@
 
       <table class="acct-table">
         <tbody>
-          <tr class="section"><td colspan="2">Egresos</td></tr>
+          <tr class="section">
+            <td colspan="2">Egresos</td>
+          </tr>
           <tr *ngFor="let row of linesOf('Egresos')">
             <td class="indent">{{ row.code }} {{ row.description }}</td>
             <td class="num">{{ money(row.importe) }}</td>
           </tr>
-          <tr *ngIf="!linesOf('Egresos').length"><td class="indent" colspan="2">Sin egresos</td></tr>
+          <tr *ngIf="!linesOf('Egresos').length">
+            <td class="indent" colspan="2">Sin egresos</td>
+          </tr>
         </tbody>
         <tfoot>
           <tr>

@@ -99,8 +99,7 @@ export class CategoryComponent implements OnInit {
       return;
     }
 
-    const parentId =
-      typeof this.category?.parent === 'string' ? this.category.parent : this.category?.parent?._id;
+    const parentId = typeof this.category?.parent === 'string' ? this.category.parent : this.category?.parent?._id;
     const parent = this.categories?.find((item) => item._id === parentId?.toString()) ?? null;
 
     const values = {
