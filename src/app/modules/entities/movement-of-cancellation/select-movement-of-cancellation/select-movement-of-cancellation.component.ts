@@ -242,6 +242,7 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
       requestCompany: 1,
       stateOrigin: 1,
       updatePrices: 1,
+      addTaxes: 1,
       requestStatusOrigin: 1,
     };
 
@@ -917,7 +918,10 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
             mov.transactionDestination.type &&
             mov.transactionDestination.type.requestArticles
           ) {
-            let movementsOfArticles: MovementOfArticle[] = await this.getMovementOfArticles(mov.transactionOrigin);
+            let movementsOfArticles: MovementOfArticle[] = await this.getMovementOfArticles(
+              mov.transactionOrigin,
+              mov.type?.addTaxes !== false
+            );
             for (let movementOfArticle of movementsOfArticles) {
               if (this.transactionDestination?.type?.groupsArticles) {
                 let movement = this.existsMovementOfArticle(movementOfArticle);
@@ -1208,7 +1212,10 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
     });
   }
 
-  async getMovementOfArticles(transaction: Transaction): Promise<MovementOfArticle[]> {
+  async getMovementOfArticles(
+    transaction: Transaction,
+    addTaxes = true
+  ): Promise<MovementOfArticle[]> {
     return new Promise<MovementOfArticle[]>(async (resolve, reject) => {
       try {
         let movements: MovementOfArticle[] = new Array();
@@ -1254,7 +1261,11 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
 
                 movementOfArticle.basePrice = mov.basePrice;
 
-                if (this.transactionDestination.type.requestTaxes && !transaction.type.requestTaxes) {
+                if (
+                  addTaxes &&
+                  this.transactionDestination.type.requestTaxes &&
+                  !transaction.type.requestTaxes
+                ) {
                   movementOfArticle.costPrice = mov.costPrice;
                   movementOfArticle.salePrice = mov.salePrice;
                   let taxes: Taxes[] = new Array();

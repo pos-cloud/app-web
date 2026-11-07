@@ -233,6 +233,7 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
           requestCompany: 1,
           stateOrigin: 1,
           updatePrices: 1,
+          addTaxes: 1,
           requestStatusOrigin: 1,
         },
         match: {
@@ -838,7 +839,10 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
             mov.transactionDestination.type &&
             mov.transactionDestination.type.requestArticles
           ) {
-            const movementsOfArticles: MovementOfArticle[] = await this.getMovementOfArticles(mov.transactionOrigin);
+            const movementsOfArticles: MovementOfArticle[] = await this.getMovementOfArticles(
+              mov.transactionOrigin,
+              mov.type?.addTaxes !== false
+            );
             for (const movementOfArticle of movementsOfArticles) {
               if (this.transactionDestination?.type?.groupsArticles) {
                 let movement = this.existsMovementOfArticle(movementOfArticle);
@@ -1110,7 +1114,10 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
     return movement;
   }
 
-  async getMovementOfArticles(transaction: Transaction): Promise<MovementOfArticle[]> {
+  async getMovementOfArticles(
+    transaction: Transaction,
+    addTaxes = true
+  ): Promise<MovementOfArticle[]> {
     const result: ApiResponse = await firstValueFrom(
       this._movementOfArticleService.getAll({
         match: {
@@ -1160,7 +1167,11 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
 
       movementOfArticle.basePrice = mov.basePrice;
 
-      if (this.transactionDestination.type.requestTaxes && !transaction.type.requestTaxes) {
+      if (
+        addTaxes &&
+        this.transactionDestination.type.requestTaxes &&
+        !transaction.type.requestTaxes
+      ) {
         movementOfArticle.costPrice = mov.costPrice;
         movementOfArticle.salePrice = mov.salePrice;
         const taxes: Taxes[] = [];
