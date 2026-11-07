@@ -1,0 +1,69 @@
+<section class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
+      <label class="control-label"><b>Período contable</b></label>
+      <select class="form-control" [(ngModel)]="periodId" name="accountingPeriod">
+        <option value="">Seleccionar</option>
+        <option *ngFor="let period of periods" [value]="period._id">
+          {{ period.description }} ({{ period.status }})
+        </option>
+      </select>
+    </div>
+    <div class="form-group ml-auto">
+      <label class="control-label"></label>
+      <div class="acct-actions">
+        <button class="btn btn-light" (click)="onExportExcel()" [disabled]="loading">
+          <i class="fa fa-download"></i> Exportar
+        </button>
+        <button class="btn btn-primary" (click)="getReport()">
+          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <article class="acct-sheet">
+    <h2 class="acct-title">Estado de Resultados</h2>
+    <p class="empty" *ngIf="loading && !data.length">Cargando…</p>
+    <ng-container *ngIf="data.length">
+      <table class="acct-table">
+        <tbody>
+          <tr class="section"><td colspan="2">Ingresos</td></tr>
+          <tr *ngFor="let row of linesOf('Ingresos')">
+            <td class="indent">{{ row.code }} {{ row.description }}</td>
+            <td class="num">{{ money(row.importe) }}</td>
+          </tr>
+          <tr *ngIf="!linesOf('Ingresos').length"><td class="indent" colspan="2">Sin ingresos</td></tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Total ingresos</td>
+            <td class="num">{{ money(totalOf('Total ingresos')) }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <table class="acct-table">
+        <tbody>
+          <tr class="section"><td colspan="2">Egresos</td></tr>
+          <tr *ngFor="let row of linesOf('Egresos')">
+            <td class="indent">{{ row.code }} {{ row.description }}</td>
+            <td class="num">{{ money(row.importe) }}</td>
+          </tr>
+          <tr *ngIf="!linesOf('Egresos').length"><td class="indent" colspan="2">Sin egresos</td></tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Total egresos</td>
+            <td class="num">{{ money(totalOf('Total egresos')) }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="result" [class.loss]="totalOf('Resultado del ejercicio') < 0">
+        <span>Resultado del ejercicio</span>
+        <span class="num">{{ money(totalOf('Resultado del ejercicio')) }}</span>
+      </div>
+    </ng-container>
+  </article>
+</section>

@@ -1,0 +1,61 @@
+<section class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
+      <label class="control-label"><b>Período contable</b></label>
+      <select class="form-control" [(ngModel)]="periodId" name="accountingPeriod">
+        <option value="">Seleccionar</option>
+        <option *ngFor="let period of periods" [value]="period._id">
+          {{ period.description }} ({{ period.status }})
+        </option>
+      </select>
+    </div>
+    <div class="form-group ml-auto">
+      <label class="control-label"></label>
+      <div class="acct-actions">
+        <button class="btn btn-light" (click)="onExportExcel()" [disabled]="loading">
+          <i class="fa fa-download"></i> Exportar
+        </button>
+        <button class="btn btn-primary" (click)="getReport()">
+          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <article class="acct-sheet">
+    <h2 class="acct-title">Balance de Sumas y Saldos</h2>
+    <p class="empty" *ngIf="loading && !data.length">Cargando…</p>
+    <p class="empty" *ngIf="!loading && !data.length">No hay movimientos en el período.</p>
+    <table class="acct-table" *ngIf="data.length">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Cuenta</th>
+          <th class="num">Sumas debe</th>
+          <th class="num">Sumas haber</th>
+          <th class="num">Saldo deudor</th>
+          <th class="num">Saldo acreedor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of data">
+          <td>{{ row.code }}</td>
+          <td>{{ row.description }}</td>
+          <td class="num">{{ money(row.debit, true) }}</td>
+          <td class="num">{{ money(row.credit, true) }}</td>
+          <td class="num">{{ money(row.saldoDeudor, true) }}</td>
+          <td class="num">{{ money(row.saldoAcreedor, true) }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">Totales</td>
+          <td class="num">{{ money(totals?.debit) }}</td>
+          <td class="num">{{ money(totals?.credit) }}</td>
+          <td class="num">{{ money(totals?.saldoDeudor) }}</td>
+          <td class="num">{{ money(totals?.saldoAcreedor) }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </article>
+</section>

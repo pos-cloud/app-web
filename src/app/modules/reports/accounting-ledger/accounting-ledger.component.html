@@ -1,0 +1,78 @@
+<section class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
+      <label class="control-label"><b>Período contable</b></label>
+      <select class="form-control" [(ngModel)]="periodId" name="accountingPeriod">
+        <option value="">Seleccionar</option>
+        <option *ngFor="let period of periods" [value]="period._id">
+          {{ period.description }} ({{ period.status }})
+        </option>
+      </select>
+    </div>
+    <div class="form-group mr-2">
+      <label class="control-label"><b>{{ 'account' | translate | capitalize }}</b></label>
+      <select class="form-control" [(ngModel)]="accountId" name="accountingAccount">
+        <option value="">Todas</option>
+        <option *ngFor="let account of accounts" [value]="account._id">{{ account.code }} {{ account.description }}</option>
+      </select>
+    </div>
+    <div class="form-group ml-auto">
+      <label class="control-label"></label>
+      <div class="acct-actions">
+        <button class="btn btn-light" (click)="onExportExcel()" [disabled]="loading">
+          <i class="fa fa-download"></i> Exportar
+        </button>
+        <button class="btn btn-primary" (click)="getReport()">
+          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="acct-sheet" *ngIf="loading && !data.length">
+    <p class="empty">Cargando…</p>
+  </div>
+
+  <div class="acct-sheet" *ngIf="!loading && !ledgers.length">
+    <h2 class="acct-title">Libro Mayor</h2>
+    <p class="empty">No hay movimientos en el período.</p>
+  </div>
+
+  <article class="acct-sheet" *ngFor="let book of ledgers">
+    <header class="account-head">
+      <div>
+        <span class="code">{{ book.code }}</span>
+        <span class="name">{{ book.description }}</span>
+      </div>
+      <div class="num">{{ money(book.balance) }}</div>
+    </header>
+    <table class="acct-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Detalle</th>
+          <th class="num">Debe</th>
+          <th class="num">Haber</th>
+          <th class="num">Saldo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let line of book.lines" [class.opening]="line.detail === 'Saldo inicial'">
+          <td>{{ day(line.date) }}</td>
+          <td>{{ line.detail }}</td>
+          <td class="num">{{ money(line.debit, true) }}</td>
+          <td class="num">{{ money(line.credit, true) }}</td>
+          <td class="num">{{ money(line.balance) }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">Totales</td>
+          <td class="num">{{ money(book.debit) }}</td>
+          <td class="num">{{ money(book.credit) }}</td>
+          <td class="num">{{ money(book.balance) }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </article>
+</section>

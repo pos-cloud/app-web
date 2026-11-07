@@ -1,0 +1,96 @@
+<section class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <div class="form-group mr-2">
+      <label class="control-label"><b>Período contable</b></label>
+      <select class="form-control" [(ngModel)]="periodId" name="accountingPeriod">
+        <option value="">Seleccionar</option>
+        <option *ngFor="let period of periods" [value]="period._id">
+          {{ period.description }} ({{ period.status }})
+        </option>
+      </select>
+    </div>
+    <div class="form-group ml-auto">
+      <label class="control-label"></label>
+      <div class="acct-actions">
+        <button class="btn btn-light" (click)="onExportExcel()" [disabled]="loading">
+          <i class="fa fa-download"></i> Exportar
+        </button>
+        <button class="btn btn-primary" (click)="getReport()">
+          <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <article class="acct-sheet">
+    <h2 class="acct-title">Estado de Situación Patrimonial</h2>
+    <p class="empty" *ngIf="loading && !data.length">Cargando…</p>
+    <div class="bs" *ngIf="data.length">
+      <section>
+        <table class="acct-table">
+          <tbody>
+            <tr class="section"><td colspan="2">Activo</td></tr>
+            <tr *ngFor="let row of assets">
+              <td class="indent"><span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}</td>
+              <td class="num">{{ money(row.importe) }}</td>
+            </tr>
+            <tr *ngIf="!assets.length"><td class="indent" colspan="2">Sin saldo</td></tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total activo</td>
+              <td class="num">{{ money(totalOf('Total activo')) }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+
+      <div>
+        <table class="acct-table">
+          <tbody>
+            <tr class="section"><td colspan="2">Pasivo</td></tr>
+            <tr *ngFor="let row of liabilities">
+              <td class="indent"><span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}</td>
+              <td class="num">{{ money(row.importe) }}</td>
+            </tr>
+            <tr *ngIf="!liabilities.length"><td class="indent" colspan="2">Sin saldo</td></tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total pasivo</td>
+              <td class="num">{{ money(totalOf('Total pasivo')) }}</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <table class="acct-table">
+          <tbody>
+            <tr class="section"><td colspan="2">Patrimonio neto</td></tr>
+            <tr *ngFor="let row of equity">
+              <td class="indent"><span *ngIf="row.code">{{ row.code }} </span>{{ row.description }}</td>
+              <td class="num">{{ money(row.importe) }}</td>
+            </tr>
+            <tr *ngIf="!equity.length"><td class="indent" colspan="2">Sin saldo</td></tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total patrimonio neto</td>
+              <td class="num">{{ money(totalOf('Total patrimonio neto')) }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <section class="bs-foot">
+        <div class="equation total">
+          <span>Total pasivo y patrimonio neto</span>
+          <span class="num">{{ money(totalOf('Total pasivo y patrimonio neto')) }}</span>
+        </div>
+        <div class="equation" [class.warn]="totalOf('Diferencia') !== 0">
+          <span>Diferencia</span>
+          <span class="num">{{ money(totalOf('Diferencia')) }}</span>
+        </div>
+      </section>
+    </div>
+  </article>
+</section>

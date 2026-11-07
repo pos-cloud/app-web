@@ -528,6 +528,15 @@ export class NavigationService {
             ],
           },
           {
+            label: 'Contabilidad',
+            children: [
+              { label: 'Libro Mayor', link: 'reports/accounting-ledger' },
+              { label: 'Balance de Sumas y Saldos', link: 'reports/accounting-trial-balance' },
+              { label: 'Estado de Situación Patrimonial', link: 'reports/accounting-balance-sheet' },
+              { label: 'Estado de Resultados', link: 'reports/accounting-income-statement' },
+            ],
+          },
+          {
             label: 'Suscripción',
             children: [
               { label: 'Dashboard', link: 'reports/subscription' },
