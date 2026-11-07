@@ -75,9 +75,13 @@ export class CategoryComponent implements OnInit {
     const pathUrl = this._router.url.split('/');
     const categoryId = pathUrl[4];
     this.operation = pathUrl[3];
-    this.getCategories();
 
-    if (categoryId) this.getCategory(categoryId);
+    if (categoryId) {
+      this.getCategory(categoryId);
+      return;
+    }
+
+    this.getCategories();
   }
 
   ngAfterViewInit() {
@@ -91,23 +95,29 @@ export class CategoryComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    const parent = this.categories?.find((item) => item._id === this.category?.parent?.toString());
+    if (this.operation !== 'add' && !this.category?._id) {
+      return;
+    }
+
+    const parentId =
+      typeof this.category?.parent === 'string' ? this.category.parent : this.category?.parent?._id;
+    const parent = this.categories?.find((item) => item._id === parentId?.toString()) ?? null;
 
     const values = {
       _id: this.category?._id ?? '',
       order: this.category?.order ?? 0,
       description: this.category?.description ?? '',
       picture: this.category?.picture ?? '',
-      parent: parent ?? null,
-      favourite: this.category?.favourite ?? false,
-      isRequiredOptional: this.category?.isRequiredOptional ?? false,
+      parent,
+      favourite: !!this.category?.favourite,
+      isRequiredOptional: !!this.category?.isRequiredOptional,
       observation: this.category?.observation ?? '',
-      publishWooCommerce: this.category?.publishWooCommerce ?? false,
-      publishTiendaNube: this.category?.publishTiendaNube ?? false,
-      visibleInvoice: this.category?.visibleInvoice ?? false,
+      publishWooCommerce: !!this.category?.publishWooCommerce,
+      publishTiendaNube: !!this.category?.publishTiendaNube,
+      visibleInvoice: !!this.category?.visibleInvoice,
       visibleOnSale: this.category?.visibleOnSale ?? true,
       visibleOnPurchase: this.category?.visibleOnPurchase ?? true,
-      showMenu: this.category?.showMenu ?? false,
+      showMenu: !!this.category?.showMenu,
       tiendaNubeId: this.category?.tiendaNubeId ?? null,
     };
     this.categoryForm.setValue(values);
@@ -125,7 +135,7 @@ export class CategoryComponent implements OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result: any) => {
-            this.categories = result;
+            this.categories = Array.isArray(result) ? result : [];
           },
           error: (error) => {
             this._toastService.showToast(error);
@@ -146,14 +156,17 @@ export class CategoryComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result: ApiResponse) => {
-          this.category = result.result;
-          if (result.status == 200) this.setValueForm();
+          if (result?.status == 200 && result.result) {
+            this.category = result.result;
+            this.getCategories();
+            return;
+          }
+          this.loading = false;
+          this._toastService.showToast(result);
         },
         error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
           this.loading = false;
+          this._toastService.showToast(error);
         },
       });
   }
