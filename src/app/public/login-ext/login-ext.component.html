@@ -1,7 +1,8 @@
 <section class="login-ext">
-  <header class="login-ext-hero">
+  <header class="login-ext-hero" [class.has-logo]="logo">
+    <img *ngIf="logo" class="login-ext-logo" [src]="logo" alt="TyG" />
     <p>Acceso de socios</p>
-    <h1>{{ database }}</h1>
+    <h1 *ngIf="!logo">{{ database }}</h1>
   </header>
 
   <form *ngIf="!session" class="login-ext-card" [formGroup]="form" (ngSubmit)="login()">
@@ -20,16 +21,29 @@
   </form>
 
   <div *ngIf="session" class="login-ext-account">
-    <div class="login-ext-card">
-      <div class="login-ext-member">
-        <div>
-          <h2>{{ account?.member?.name || session.name }}</h2>
-          <p>{{ account?.company?.name || 'Tu cuenta' }}</p>
-        </div>
-        <button type="button" class="login-ext-text" (click)="logout()">Salir</button>
-      </div>
+    <button
+      *ngIf="account?.company"
+      type="button"
+      class="login-ext-access"
+      [disabled]="accessLoading"
+      (click)="openAccess()"
+    >
+      {{ accessLoading && !access ? 'Generando código…' : access ? 'Ver código de acceso' : 'Solicitar acceso' }}
+    </button>
 
-      <p class="login-ext-error" *ngIf="error">{{ error }}</p>
+    <div class="login-ext-member">
+      <div>
+        <h2>{{ account?.member?.name || session.name }}</h2>
+        <p>{{ account?.company?.name || 'Tu cuenta' }}</p>
+      </div>
+      <button type="button" class="login-ext-text" (click)="logout()">
+        <i class="fa fa-sign-out" aria-hidden="true"></i>
+        Salir
+      </button>
+    </div>
+    <p class="login-ext-error" *ngIf="error">{{ error }}</p>
+
+    <div class="login-ext-card">
       <p class="login-ext-muted" *ngIf="loading && !account">Cargando tu situación…</p>
 
       <ng-container *ngIf="account">
@@ -72,16 +86,30 @@
         </p>
       </ng-container>
     </div>
+  </div>
 
-    <div class="login-ext-card" *ngIf="account?.company">
-      <button type="button" class="login-ext-access" [disabled]="accessLoading" (click)="requestAccess()">
-        {{ access ? 'Generar otro código' : 'Solicitar acceso' }}
+  <div class="login-ext-modal" *ngIf="qrOpen" (click)="closeQr()">
+    <div
+      class="login-ext-modal-card"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Código de acceso"
+      (click)="$event.stopPropagation()"
+    >
+      <button type="button" class="login-ext-modal-close" (click)="closeQr()" aria-label="Cerrar">
+        <i class="fa fa-times" aria-hidden="true"></i>
       </button>
+      <h2>Mostrá este código</h2>
+      <p class="login-ext-muted" *ngIf="accessLoading && !access">Generando código…</p>
       <div class="login-ext-qr" *ngIf="access">
         <img [src]="access.qr" alt="Código QR de acceso" />
         <p>{{ access.code }}</p>
         <small>Código de prueba. Todavía no abre el lector.</small>
       </div>
+      <button type="button" class="login-ext-access" [disabled]="accessLoading" (click)="requestAccess()">
+        {{ accessLoading ? 'Generando…' : 'Generar otro código' }}
+      </button>
+      <button type="button" class="login-ext-text login-ext-modal-dismiss" (click)="closeQr()">Cerrar</button>
     </div>
   </div>
 </section>

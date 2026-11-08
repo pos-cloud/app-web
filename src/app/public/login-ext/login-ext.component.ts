@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -11,6 +11,7 @@ import { AccessQr, ExternalSession, LoginExtService, MemberAccount } from './log
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login-ext.component.html',
   styleUrls: ['./login-ext.component.scss'],
+  host: { '[class.qr-open]': 'qrOpen' },
 })
 export class LoginExtComponent implements OnInit {
   database = '';
@@ -19,6 +20,7 @@ export class LoginExtComponent implements OnInit {
   access: AccessQr | null = null;
   loading = false;
   accessLoading = false;
+  qrOpen = false;
   error = '';
   form: FormGroup;
 
@@ -60,14 +62,31 @@ export class LoginExtComponent implements OnInit {
     });
   }
 
+  openAccess(): void {
+    if (!this.session || this.accessLoading) return;
+    this.qrOpen = true;
+    if (!this.access) this.requestAccess();
+  }
+
+  closeQr(): void {
+    this.qrOpen = false;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.qrOpen) this.closeQr();
+  }
+
   requestAccess(): void {
     if (!this.session || this.accessLoading) return;
     this.accessLoading = true;
     this.error = '';
+    this.qrOpen = true;
     this.loginExt.requestAccess(this.session).subscribe((result) => {
       this.accessLoading = false;
       if (!result.access?.qr) {
         this.error = result.message || 'No se pudo generar el acceso.';
+        if (!this.access) this.qrOpen = false;
         return;
       }
       this.access = result.access;
@@ -79,12 +98,17 @@ export class LoginExtComponent implements OnInit {
     this.session = null;
     this.account = null;
     this.access = null;
+    this.qrOpen = false;
     this.error = '';
     this.form.reset();
   }
 
   formatAmount(value: number): string {
     return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(value || 0);
+  }
+
+  get logo(): string | null {
+    return this.database.toLowerCase() === 'tyg' ? 'assets/login/tyg.png' : null;
   }
 
   get situation(): string {

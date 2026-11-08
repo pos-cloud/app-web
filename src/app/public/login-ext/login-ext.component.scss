@@ -5,11 +5,27 @@
   color: #1c2b24;
 }
 
+:host.qr-open {
+  overflow: hidden;
+  height: 100vh;
+}
+
 .login-ext {
   width: min(32rem, 100%);
   min-height: 100vh;
   margin: 0 auto;
   padding: 1.5rem 1rem 2.5rem;
+}
+
+.login-ext-hero.has-logo {
+  text-align: center;
+}
+
+.login-ext-logo {
+  display: block;
+  width: 7.5rem;
+  height: auto;
+  margin: 0.25rem auto 0.85rem;
 }
 
 .login-ext-hero p {
@@ -77,7 +93,12 @@
   font-weight: 700;
 }
 
-.login-ext-card button:disabled {
+.login-ext-account > .login-ext-access {
+  margin-bottom: 0.9rem;
+}
+
+.login-ext-card button:disabled,
+.login-ext-access:disabled {
   opacity: 0.55;
 }
 
@@ -92,6 +113,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 0.9rem;
 }
 
 .login-ext-member h2 {
@@ -106,6 +128,10 @@
 }
 
 .login-ext-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: none;
   border: 0;
   background: transparent;
   color: #1f4d3a;
@@ -175,14 +201,63 @@
 }
 
 .login-ext-qr {
-  margin-top: 1rem;
+  margin: 0.75rem 0 1rem;
   text-align: center;
 }
 
 .login-ext-qr img {
-  width: 220px;
-  height: 220px;
+  width: min(72vw, 280px);
+  height: min(72vw, 280px);
+  object-fit: fill;
   background: white;
+  border-radius: 12px;
+}
+
+.login-ext-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(28, 43, 36, 0.62);
+}
+
+.login-ext-modal-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1.25rem 1rem 1rem;
+  border-radius: 20px;
+  background: #f7faf8;
+  text-align: center;
+}
+
+.login-ext-modal-card h2 {
+  margin: 0 1.5rem 0.25rem;
+  font-size: 1.25rem;
+}
+
+.login-ext-modal-close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: #e7ece8;
+  color: #1c2b24;
+  font-size: 1.1rem;
+}
+
+.login-ext-modal-dismiss {
+  margin-top: 0.75rem;
+}
+
+.login-ext-modal .login-ext-access {
+  margin-top: 0.35rem;
 }
 
 .login-ext-qr p {
