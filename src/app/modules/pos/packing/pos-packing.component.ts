@@ -1,425 +1,194 @@
-import { Component, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse, Printer, User } from '@types';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { PrintType } from '@types';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
-import { PrinterService } from 'app/core/services/printer.service';
+import { PrintService } from 'app/core/services/print.service';
 import { TransactionService } from 'app/core/services/transaction.service';
-import { UserService } from 'app/core/services/user.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
-import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
-import { TranslateMePipe } from 'app/shared/pipes/translate-me';
+import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-pos-packing',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './pos-packing.component.html',
   styleUrls: ['./pos-packing.component.scss'],
-  providers: [NgbAlertConfig, TranslateMePipe],
-  encapsulation: ViewEncapsulation.None,
 })
-export class PosPackingComponent {
-  public alertMessage: string = '';
-  public loading: boolean = false;
-  public transactionsToPacking: Transaction[];
-  public printers: Printer[];
+export class PosPackingComponent implements OnInit, OnDestroy {
+  public loading = false;
+  public printingId = '';
+  public transactionsToPacking: Transaction[] = [];
 
-  // DISEÑO
-  public colors: string[] = ['teal:white', 'midnightblue:white', 'black:white', 'black:white', 'chocolate:white'];
-  public colorNumber: number = 0;
-  public positionNumber: number = 0;
-  public limit: number = 3;
-  public fontSize: number = 30;
-  public column: number = 4;
+  private readonly colors = ['#0f766e', '#1d4ed8', '#b45309', '#be123c', '#6d28d9', '#047857'];
+  private readonly limit = 12;
+  private refreshInterval?: ReturnType<typeof setInterval>;
 
   constructor(
-    public alertConfig: NgbAlertConfig,
-    private _route: ActivatedRoute,
     private _transactionService: TransactionService,
     private _movementOfArticleService: MovementOfArticleService,
-    private _printerService: PrinterService,
-    private _userService: UserService,
-    private _jsonDiffPipe: JsonDiffPipe,
-    public translatePipe: TranslateMePipe,
+    private _printService: PrintService,
     private _toastService: ToastService
-  ) {
-    this.transactionsToPacking = new Array();
-    this.processParams();
-  }
+  ) {}
 
-  private processParams(): void {
-    this._route.queryParams.subscribe((params) => {
-      if (params['column'] && !isNaN(params['column'])) this.column = params['column'];
-      if (params['fontSize'] && !isNaN(params['fontSize'])) this.fontSize = params['fontSize'];
-      if (params['limit'] && !isNaN(params['limit'])) {
-        if (params['limit'] !== this.limit) {
-          this.limit = params['limit'];
-          this.loadPacking();
-        } else {
-          this.limit = params['limit'];
-        }
-      }
-      if (params['colors']) {
-        this.colors = new Array();
-        for (const color of params['colors'].split(',')) {
-          this.colors.push(color);
-        }
-      }
-    });
-  }
-
-  public async ngOnInit() {
-    await this.getPrinters().then((printers) => {
-      this.printers = printers;
-    });
+  public ngOnInit(): void {
     this.loadPacking();
-    this.initInterval();
-  }
-
-  private async loadPacking() {
-    this.loading = true;
-    let transactions: Transaction[] = await this.getTransactions({
-      state: TransactionState.Packing,
-      operationType: { $ne: 'D' },
-    });
-    let count = 0;
-    let change: boolean = false;
-    for (const transactionToPacking of this.transactionsToPacking) {
-      if (transactionToPacking && transactionToPacking._id && transactionToPacking._id !== '') {
-        if (transactions && transactions.length > 0) {
-          for (const transaction of transactions) {
-            if (transaction._id && transactionToPacking._id) {
-              count++;
-              if (this._jsonDiffPipe.transform(transaction, transactionToPacking)) {
-                change = true;
-              }
-            }
-          }
-        } else {
-          change = true;
-        }
-      }
-    }
-    if (count != transactions.length || change) {
-      let packingTransactions = [];
-      this.transactionsToPacking = transactions;
-      if (this.transactionsToPacking.length < this.limit) {
-        let toCreate = this.limit - this.transactionsToPacking.length;
-        for (let i = 0; i < toCreate; i++) {
-          this.transactionsToPacking.push(new Transaction());
-        }
-      }
-      let i = 0;
-      for (let transaction of this.transactionsToPacking) {
-        transaction['movementsOfArticles'] = await this.getMovementsOfArticles({
-          transaction: { $oid: transaction._id },
-          operationType: { $ne: 'D' },
-          $or: [
-            {
-              $and: [
-                {
-                  movementParent: { $exists: true, $ne: null },
-                  isOptional: true,
-                },
-              ],
-            },
-            {
-              $and: [
-                {
-                  movementParent: { $exists: false, $eq: null },
-                  isOptional: false,
-                },
-              ],
-            },
-          ],
-        });
-        let color: string = this.getColor(transaction._id);
-        if (color) {
-          this.colorNumber = this.colors.indexOf(color);
-        }
-        transaction['color'] = this.colors[this.colorNumber];
-        transaction['position'] = this.getPosition(transaction._id);
-        this.positionNumber = transaction['position'];
-        if (transaction && transaction._id && transaction._id !== '') {
-          packingTransactions.push({
-            transactionId: transaction._id,
-            color: transaction['color'],
-            position: transaction['position'],
-          });
-        }
-        this.colorNumber === this.colors.length - 1 ? (this.colorNumber = 0) : this.colorNumber++;
-        i++;
-      }
-      this.transactionsToPacking.sort((a, b) => {
-        let comparison = 0;
-        if (a['position'] > b['position']) {
-          comparison = 1;
-        } else if (a['position'] < b['position']) {
-          comparison = -1;
-        }
-        return comparison;
-      });
-      localStorage.setItem('packingTransactions', JSON.stringify(packingTransactions));
-    }
-    this.loading = false;
-  }
-
-  private getColor(transactionId: string): string {
-    let color: string = null;
-    let packingColors = localStorage.getItem('packingTransactions');
-    if (packingColors) {
-      try {
-        packingColors = JSON.parse(packingColors);
-        for (let pack of packingColors) {
-          if (pack['transactionId'] === transactionId) {
-            color = pack['color'];
-          }
-        }
-      } catch (err) {}
-    }
-    return color;
-  }
-
-  private getPosition(transactionId: string): number {
-    let position: number = null;
-    let packingPositions = localStorage.getItem('packingTransactions');
-    if (packingPositions) {
-      try {
-        packingPositions = JSON.parse(packingPositions);
-        for (let pack of packingPositions) {
-          if (pack['transactionId'] === transactionId) {
-            position = pack['position'];
-          }
-        }
-      } catch (err) {}
-    }
-    if (position === null) position = this.getFreePosition();
-    return position;
-  }
-
-  private getFreePosition(): number {
-    let position: number = null;
-    if (localStorage.getItem('packingTransactions')) {
-      try {
-        this.transactionsToPacking.sort((a, b) => {
-          let comparison = 0;
-          if (a['position'] > b['position']) {
-            comparison = 1;
-          } else if (a['position'] < b['position']) {
-            comparison = -1;
-          }
-          return comparison;
-        });
-        for (let i = 1; i <= this.limit; i++) {
-          if (position === null) {
-            let exists: boolean = false;
-            for (let pack of this.transactionsToPacking) {
-              if (pack['position'] === i) {
-                exists = true;
-              }
-            }
-            if (!exists) position = i;
-          }
-        }
-      } catch (err) {}
-    } else {
-      position = 1;
-    }
-    if (position === null) position = this.positionNumber + 1;
-    return position;
-  }
-
-  public async initInterval() {
-    setInterval(async () => {
+    this.refreshInterval = setInterval(() => {
       if (!this.loading) {
-        let count = 0;
-        for (const transaction of this.transactionsToPacking) {
-          if (transaction && transaction._id && transaction._id !== '') {
-            count++;
-          }
-        }
-        if (count < this.limit) {
-          this.loadPacking();
-        }
+        this.loadPacking();
       }
     }, 5000);
   }
 
-  public getTransactions(match: {}): Promise<Transaction[]> {
-    return new Promise<Transaction[]>((resolve, reject) => {
-      this.loading = true;
-
-      let project = {
-        endDate: 1,
-        number: 1,
-        orderNumber: 1,
-        'shipmentMethod.name': 1,
-        state: 1,
-        operationType: 1,
-      };
-
-      this._transactionService
-        .getTransactionsV2(
-          project, // PROJECT
-          match, // MATCH
-          { endDate: 1 }, // SORT
-          {}, // GROUP
-          this.limit, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            resolve(result.transactions);
-          },
-          (error) => {
-            this.loading = false;
-            resolve([]);
-          }
-        );
-    });
+  public ngOnDestroy(): void {
+    clearInterval(this.refreshInterval);
   }
 
-  public getMovementsOfArticles(match: {}): Promise<MovementOfArticle[]> {
-    return new Promise<MovementOfArticle[]>((resolve, reject) => {
-      this.loading = true;
+  private async loadPacking(): Promise<void> {
+    this.loading = true;
+    try {
+      const transactions = await this.getTransactions({
+        state: TransactionState.Packing,
+        operationType: { $ne: 'D' },
+      });
 
-      let project = {
-        _id: 1,
-        description: 1,
-        amount: 1,
-        notes: 1,
-        transaction: 1,
-        operationType: 1,
-        isOptional: 1,
-        movementParent: 1,
-        'category.order': 1,
-      };
+      for (let index = 0; index < transactions.length; index++) {
+        const transaction = transactions[index];
+        transaction['color'] = this.colors[index % this.colors.length];
+        transaction['movementsOfArticles'] = await this.getMovementsOfArticles({
+          transaction: { $oid: transaction._id },
+          operationType: { $ne: 'D' },
+          $or: [
+            { movementParent: { $exists: true, $ne: null }, isOptional: true },
+            { movementParent: { $exists: false, $eq: null }, isOptional: false },
+          ],
+        });
+      }
 
-      this._movementOfArticleService
-        .getMovementsOfArticlesV2(
-          project, // PROJECT
-          match, // MATCH
-          { 'category.order': 1, movementParent: -1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (!result.movementsOfArticles) {
-              if (result.message && result.message !== '') {
-                this.showMessage(result.message, 'info', true);
-              }
-              resolve([]);
-            } else {
-              resolve(result.movementsOfArticles);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this.showMessage(error._body, 'danger', false);
-            resolve([]);
-          }
-        );
-    });
-  }
-
-  async openModal(op: string, _transaction: Transaction) {
-    switch (op) {
-      case 'print':
-        break;
-      default:
-        break;
+      this.transactionsToPacking = transactions;
+    } finally {
+      this.loading = false;
     }
   }
 
-  public getPrinters(): Promise<Printer[]> {
-    return new Promise<Printer[]>(async (resolve, reject) => {
-      this._printerService.getPrinters().subscribe(
-        (result) => {
-          if (!result.printers) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.printers);
-          }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+  private getTransactions(match: {}): Promise<Transaction[]> {
+    return new Promise<Transaction[]>((resolve) => {
+      this._transactionService
+        .getTransactionsV2(
+          {
+            endDate: 1,
+            number: 1,
+            orderNumber: 1,
+            'shipmentMethod.name': 1,
+            state: 1,
+            operationType: 1,
+          },
+          match,
+          { endDate: 1 },
+          {},
+          this.limit,
+          0
+        )
+        .subscribe(
+          (result) => resolve(result.transactions || []),
+          () => resolve([])
+        );
     });
   }
 
-  public getTransaction(transactionId: string): Promise<Transaction> {
-    return new Promise<Transaction>((resolve, reject) => {
-      this._transactionService.getTransaction(transactionId).subscribe(
-        async (result) => {
-          if (!result.transaction) {
-            this.showMessage(result.message, 'danger', false);
-            resolve(null);
-          } else {
-            resolve(result.transaction);
-          }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
-  public updateTransaction(transaction: Transaction): Promise<Transaction> {
-    return new Promise<Transaction>((resolve, reject) => {
-      this._transactionService.update(transaction).subscribe(
-        (result: ApiResponse) => {
-          if (result.status === 200) {
-            resolve(result.result);
-          } else {
-            this._toastService.showToast(result);
-            reject(result);
-          }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          reject(error);
-        }
-      );
-    });
-  }
-
-  public getUser(): Promise<User> {
-    return new Promise<User>((resolve, reject) => {
-      let identity: User = JSON.parse(sessionStorage.getItem('user'));
-      if (identity) {
-        this._userService.getUser(identity._id).subscribe(
+  private getMovementsOfArticles(match: {}): Promise<MovementOfArticle[]> {
+    return new Promise<MovementOfArticle[]>((resolve) => {
+      this._movementOfArticleService
+        .getMovementsOfArticlesV2(
+          {
+            _id: 1,
+            description: 1,
+            amount: 1,
+            notes: 1,
+            transaction: 1,
+            operationType: 1,
+            isOptional: 1,
+            movementParent: 1,
+          },
+          match,
+          {},
+          {},
+          0,
+          0
+        )
+        .subscribe(
           (result) => {
-            if (result && result.user) {
-              resolve(result.user);
-            } else {
-              this.showMessage('Debe volver a iniciar session', 'danger', false);
+            if (!result.movementsOfArticles) {
+              if (result.message) {
+                this._toastService.showToast(null, 'info', '', result.message);
+              }
+              resolve([]);
+              return;
             }
+            resolve(result.movementsOfArticles);
           },
           (error) => {
-            this.showMessage(error._body, 'danger', false);
+            this._toastService.showToast(null, 'danger', '', error?._body || 'No se pudieron cargar los productos');
+            resolve([]);
           }
         );
-      }
     });
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
+  public printOrder(transaction: Transaction): void {
+    if (!transaction?._id || this.printingId) {
+      return;
+    }
+    this.printingId = transaction._id;
+    this._printService.toPrint(PrintType.Packing, { transactionId: transaction._id }).subscribe({
+      next: (result) => {
+        this.printingId = '';
+        if (!(result instanceof Blob)) {
+          this._toastService.showToast({ message: 'Error al generar el PDF' });
+          return;
+        }
+        printJS({
+          printable: URL.createObjectURL(result),
+          type: 'pdf',
+        });
+      },
+      error: (error) => {
+        this.printingId = '';
+        this._toastService.showToast({ message: error?.message || 'Error al generar el PDF' });
+      },
+    });
   }
 
-  public hideMessage(): void {
-    this.alertMessage = '';
+  public orderLabel(transaction: Transaction): string {
+    if (transaction?.orderNumber > 0) {
+      return String(transaction.orderNumber);
+    }
+    return transaction?.number ? String(transaction.number) : '';
+  }
+
+  public parentLines(transaction: Transaction): MovementOfArticle[] {
+    const lines = transaction?.['movementsOfArticles'] || [];
+    return lines.filter((line) => !line.movementParent);
+  }
+
+  public childLines(transaction: Transaction, parent: MovementOfArticle): MovementOfArticle[] {
+    const lines = transaction?.['movementsOfArticles'] || [];
+    return lines.filter((line) => this.sameId(line.movementParent, parent?._id));
+  }
+
+  public noteList(notes: string): string[] {
+    if (!notes) {
+      return [];
+    }
+    return notes
+      .split('; ')
+      .map((note) => note.trim())
+      .filter((note) => note !== '');
+  }
+
+  private sameId(value: any, id: string): boolean {
+    const current = value && value._id ? value._id : value;
+    return !!current && !!id && String(current) === String(id);
   }
 }

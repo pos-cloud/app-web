@@ -42,4 +42,8 @@ export const POS_ROUTES: Routes = [
     path: 'subscription',
     loadComponent: () => import('./subscription/subscription.component').then((m) => m.SubscriptionComponent),
   },
+  {
+    path: 'armado-de-pedidos',
+    loadComponent: () => import('./packing/pos-packing.component').then((m) => m.PosPackingComponent),
+  },
 ];

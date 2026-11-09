@@ -6,6 +6,7 @@ export enum PrintType {
   Transaction = 'transaction',
   Bar = 'bar',
   Kitchen = 'kitchen',
+  Packing = 'packing',
   Inventory = 'inventory',
   Qr = 'qr',
   CashBox = 'cash-box',

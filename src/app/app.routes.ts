@@ -141,11 +141,6 @@ export const _routes: Routes = [
   //   component: PosClientViewComponent,
   //   canActivate: [AuthGuard, LicenseGuard],
   // },
-  // {
-  //   path: 'pos/armado-de-pedidos',
-  //   component: PosPackingComponent,
-  //   canActivate: [AuthGuard, LicenseGuard],
-  // },
   {
     path: 'pos/delivery/editar-transaccion',
     component: AddSaleOrderComponent,
