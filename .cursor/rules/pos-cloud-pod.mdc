@@ -1,0 +1,21 @@
+---
+description: Alcance del pod POS Cloud, roles y prohibición de merge.
+alwaysApply: true
+---
+
+# Pod POS Cloud
+
+El trabajo de esta sesión es POS Cloud. Repos habilitados:
+
+- `api-core` — Express y Mongo. GitHub `pos-cloud/apiv2`.
+- `app-web` — Angular. GitHub `pos-cloud/app-web`.
+- `app_pos` — Flutter. GitHub `pos-cloud/app-mobile`.
+- `api-tienda-nube` — NestJS. GitHub `pos-cloud/api-tiendanube`.
+- `e2e` — Playwright. GitHub `pos-cloud/e2e`.
+- `ops` — scripts de Mongo y servidores. GitHub `pos-cloud/ops`.
+
+No leas ni modifiques otras carpetas de `/Users/francoandroetto/Projects`.
+
+El humano aprueba en GitHub. Abrí la pull request en el repo que cambiaste y detente. No hagas merge ni pushees a `main`.
+
+Delegá en los subagentes de `.cursor/agents/` de este repo. Si el rol no está definido acá, el cambio pertenece a otro repo.
