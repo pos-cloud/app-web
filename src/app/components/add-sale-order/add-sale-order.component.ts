@@ -667,6 +667,19 @@ export class AddSaleOrderComponent {
     );
   }
 
+  private shouldRefreshMovementsAfterSave(): boolean {
+    if ((this.transaction?.discountPercent || 0) > 0 || (this.discountApply || 0) > 0) {
+      return true;
+    }
+    if (
+      this.transaction?.type?.allowCompanyDiscount &&
+      ((this.transaction.company?.discount || 0) > 0 || (this.transaction.company?.group?.discount || 0) > 0)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   private async applySavedMovementLocally(saved: MovementOfArticle): Promise<void> {
     if (!this.movementsOfArticles) {
       this.movementsOfArticles = [];
@@ -678,7 +691,12 @@ export class AddSaleOrderComponent {
       this.containerMovementsOfArticles.nativeElement.scrollHeight;
     this.updateQuantity();
     if (this.transaction.type.requestTaxes) {
-      await this.updateTaxes();
+      try {
+        await this.updateTaxes();
+      } catch {
+        this.hideMessage();
+        this.getMovementsOfTransaction();
+      }
     } else {
       this.transaction.totalPrice = this.roundNumber.transform(
         (this.transaction.totalPrice || 0) + (saved.salePrice || 0)
@@ -792,7 +810,7 @@ export class AddSaleOrderComponent {
               if (await this.isValidMovementOfArticle(movementOfArticle)) {
                 await this.saveMovementOfArticle(movementOfArticle).then(async (movementOfArticle) => {
                   if (movementOfArticle) {
-                    if ((this.transaction?.discountPercent || 0) > 0 || (this.discountApply || 0) > 0) {
+                    if (this.shouldRefreshMovementsAfterSave()) {
                       this.getMovementsOfTransaction();
                     } else {
                       await this.applySavedMovementLocally(movementOfArticle);
