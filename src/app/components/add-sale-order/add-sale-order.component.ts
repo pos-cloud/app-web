@@ -667,6 +667,42 @@ export class AddSaleOrderComponent {
     );
   }
 
+  private async applySavedMovementLocally(saved: MovementOfArticle): Promise<void> {
+    if (!this.movementsOfArticles) {
+      this.movementsOfArticles = [];
+    }
+    this.movementsOfArticles = [...this.movementsOfArticles, saved];
+    this.areMovementsOfArticlesEmpty = false;
+    this.lastMovementOfArticle = saved;
+    this.containerMovementsOfArticles.nativeElement.scrollTop =
+      this.containerMovementsOfArticles.nativeElement.scrollHeight;
+    this.updateQuantity();
+    if (this.transaction.type.requestTaxes) {
+      await this.updateTaxes();
+    } else {
+      this.transaction.totalPrice = this.roundNumber.transform(
+        (this.transaction.totalPrice || 0) + (saved.salePrice || 0)
+      );
+      this.transaction.exempt = this.transaction.totalPrice;
+      this.loading = true;
+      try {
+        const transaction = await this.updateTransaction();
+
+        if (transaction) {
+          this.transaction = transaction;
+          this.lastQuotation = this.transaction.quotation;
+          if (this.isCancellationAutomatic) {
+            this.openModal('charge');
+          }
+        } else {
+          this.hideMessage();
+        }
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
+
   updateQuantity(): void {
     this.quantity = 0;
     this.m3 = 0;
@@ -749,9 +785,9 @@ export class AddSaleOrderComponent {
             movementOfArticle.read = 0;
             if (child && child.length === 0) {
               if (await this.isValidMovementOfArticle(movementOfArticle)) {
-                await this.saveMovementOfArticle(movementOfArticle).then((movementOfArticle) => {
+                await this.saveMovementOfArticle(movementOfArticle).then(async (movementOfArticle) => {
                   if (movementOfArticle) {
-                    this.getMovementsOfTransaction();
+                    await this.applySavedMovementLocally(movementOfArticle);
                   }
                 });
               }
@@ -3110,7 +3146,11 @@ export class AddSaleOrderComponent {
     this.listArticlesComponent.areArticlesVisible = false;
     this.listArticlesComponent.filterArticle = this.filterArticle;
     if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      this.listCategoriesComponent.ngOnInit();
+      if (!this.listCategoriesComponent.categories?.length) {
+        this.listCategoriesComponent.ngOnInit();
+      } else {
+        this.listCategoriesComponent.resetToMainCategories();
+      }
       this.focusEvent.emit(true);
     }
   }
