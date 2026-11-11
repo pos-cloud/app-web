@@ -2459,25 +2459,37 @@ export class AddSaleOrderComponent {
   }
 
   getPrinters(): Promise<Printer[]> {
-    return new Promise<Printer[]>(async (resolve) => {
+    return new Promise<Printer[]>((resolve) => {
       this.loading = true;
 
-      this._printerService.getPrinters().subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.printers) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+      this._printerService
+        .getAll({
+          project: {
+            _id: 1,
+            name: 1,
+            printIn: 1,
+            operationType: 1,
+          },
+          match: {
+            operationType: { $ne: 'D' },
+          },
+        })
+        .subscribe(
+          (result) => {
+            this.loading = false;
+            if (!result.result || result.result.length === 0) {
+              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+              resolve(null);
+            } else {
+              resolve(result.result);
+            }
+          },
+          (error) => {
+            this.loading = false;
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
-          } else {
-            resolve(result.printers);
           }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 

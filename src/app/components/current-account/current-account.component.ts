@@ -21,7 +21,7 @@ import { TransactionService } from '../../core/services/transaction.service';
 //Componentes
 import { PrintService } from '@core/services/print.service';
 import { ToastService } from '@shared/components/toast/toast.service';
-import { Printer, TransactionMovement, TransactionType, User } from '@types';
+import { TransactionMovement, TransactionType, User } from '@types';
 import { Config } from 'app/app.config';
 import { CompanyType } from 'app/components/payment-method/payment-method';
 import { ConfigService } from 'app/core/services/config.service';
@@ -586,23 +586,6 @@ export class CurrentAccountComponent implements OnInit {
         },
         (error) => {
           this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
-  public getPrinters(): Promise<Printer[]> {
-    return new Promise<Printer[]>(async (resolve, reject) => {
-      this._printerService.getPrinters().subscribe(
-        (result) => {
-          if (!result.printers) {
-            resolve(null);
-          } else {
-            resolve(result.printers);
-          }
-        },
-        (error) => {
           resolve(null);
         }
       );
