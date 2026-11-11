@@ -1,12 +1,8 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
-import { PaymentMethod } from '../../components/payment-method/payment-method';
 import { AuthService } from './auth.service';
-import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -23,120 +19,4 @@ export class PaymentMethodService extends ModelService {
     );
   }
 
-  public getPaymentMethod(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/payment-method`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public getPaymentMethods(query?: string): Observable<any> {
-    const URL = `${environment.api}/api/payment-methods`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('query', query);
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public savePaymentMethod(paymentMethod: PaymentMethod): Observable<any> {
-    const URL = `${environment.api}/api/payment-method`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, paymentMethod, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public updatePaymentMethod(paymentMethod: PaymentMethod): Observable<any> {
-    const URL = `${environment.api}/api/payment-method`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', paymentMethod._id);
-
-    return this._http
-      .put(URL, paymentMethod, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
-  public deletePaymentMethod(_id: string): Observable<any> {
-    const URL = `${environment.api}/api/payment-method`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams().set('id', _id);
-
-    return this._http
-      .delete(URL, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
 }
