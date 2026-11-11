@@ -352,14 +352,19 @@ export class ImportComponent implements OnInit {
   }
 
   getBranches(): void {
-    this._branchService.getAll({ match: { operationType: { $ne: 'D' } } }).subscribe({
-      next: (result) => {
-        this.branches = result.result;
-      },
-      error: (error) => {
-        this._toastService.showToast(error);
-      },
-    });
+    this._branchService
+      .getAll({
+        project: { _id: 1, name: 1, operationType: 1 },
+        match: { operationType: { $ne: 'D' } },
+      })
+      .subscribe({
+        next: (result) => {
+          this.branches = result.result;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
   }
 
   getDeposits(): void {

@@ -46,20 +46,22 @@ export class SelectBranchComponent implements OnInit {
   }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
+    return new Promise<Branch[]>((resolve) => {
       this._branchService
-        .getBranches(
-          {}, // PROJECT
-          match, // MATCH
-          { number: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
+        .getAll({
+          project: {
+            _id: 1,
+            number: 1,
+            name: 1,
+            operationType: 1,
+          },
+          match,
+          sort: { number: 1 },
+        })
         .subscribe(
           (result) => {
-            if (result.branches) {
-              resolve(result.branches);
+            if (result.result.length > 0) {
+              resolve(result.result);
             } else {
               resolve(null);
             }

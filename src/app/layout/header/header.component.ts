@@ -145,7 +145,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private loadFirstBranch(): void {
     this._branchService
       .getAll({
-        project: { name: 1, fantasyName: 1, image: 1, number: 1 },
+        project: { name: 1, fantasyName: 1, image: 1, number: 1, operationType: 1 },
         match: { operationType: { $ne: 'D' } },
         sort: { number: 1 },
         limit: 1,

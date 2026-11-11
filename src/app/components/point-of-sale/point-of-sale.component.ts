@@ -262,6 +262,7 @@ export class PointOfSaleComponent implements OnInit {
       this._branchService
         .getAll({
           project: {
+            _id: 1,
             number: 1,
             name: 1,
             default: 1,
@@ -303,21 +304,23 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
-    return new Promise<Branch[]>((resolve, reject) => {
+    return new Promise<Branch[]>((resolve) => {
       this.subscription.add(
         this._branchService
-          .getBranches(
-            {}, // PROJECT
-            match, // MATCH
-            { number: 1 }, // SORT
-            {}, // GROUP
-            0, // LIMIT
-            0 // SKIP
-          )
+          .getAll({
+            project: {
+              _id: 1,
+              number: 1,
+              name: 1,
+              operationType: 1,
+            },
+            match,
+            sort: { number: 1 },
+          })
           .subscribe(
             (result) => {
-              if (result && result.branches) {
-                resolve(result.branches);
+              if (result?.result.length > 0) {
+                resolve(result.result);
               } else {
                 resolve(null);
               }
@@ -439,22 +442,34 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public getPrinters(): Promise<Printer[]> {
-    return new Promise<Printer[]>(async (resolve, reject) => {
+    return new Promise<Printer[]>((resolve) => {
       this.subscription.add(
-        this._printerService.getPrinters().subscribe(
-          (result) => {
-            if (!result.printers) {
-              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        this._printerService
+          .getAll({
+            project: {
+              _id: 1,
+              name: 1,
+              printIn: 1,
+              operationType: 1,
+            },
+            match: {
+              operationType: { $ne: 'D' },
+            },
+          })
+          .subscribe(
+            (result) => {
+              if (!result.result || result.result.length === 0) {
+                this.showMessage(result, 'info', true);
+                resolve(null);
+              } else {
+                resolve(result.result);
+              }
+            },
+            (error) => {
+              this.showMessage(error._body, 'danger', false);
               resolve(null);
-            } else {
-              resolve(result.printers);
             }
-          },
-          (error) => {
-            this.showMessage(error._body, 'danger', false);
-            resolve(null);
-          }
-        )
+          )
       );
     });
   }

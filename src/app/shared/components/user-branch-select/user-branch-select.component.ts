@@ -82,11 +82,19 @@ export class UserBranchSelectComponent implements OnInit, OnDestroy, ControlValu
 
   private loadBranches(): void {
     this._branchService
-      .getBranches({}, { operationType: { $ne: 'D' } }, { number: 1 }, {}, 0, 0)
+      .getAll({
+        project: {
+          _id: 1,
+          number: 1,
+          name: 1,
+          operationType: 1,
+        },
+        match: { operationType: { $ne: 'D' } },
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          this.branches = result?.branches ?? [];
+          this.branches = result?.result ?? [];
         },
       });
   }

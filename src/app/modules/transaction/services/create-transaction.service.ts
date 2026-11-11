@@ -511,6 +511,7 @@ export class CreateTransactionService {
       this._branchService
         .getAll({
           project: {
+            _id: 1,
             number: 1,
             name: 1,
             default: 1,
@@ -553,13 +554,24 @@ export class CreateTransactionService {
 
   private getBranches(match: {} = {}): Promise<Branch[]> {
     return new Promise((resolve) => {
-      this._branchService.getAll({ match, sort: { number: 1 } }).subscribe(
-        (result) => resolve(result?.status === 200 ? result.result : null),
-        (error) => {
-          this._toastService.showToast(error);
-          resolve(null);
-        }
-      );
+      this._branchService
+        .getAll({
+          project: {
+            _id: 1,
+            number: 1,
+            name: 1,
+            operationType: 1,
+          },
+          match,
+          sort: { number: 1 },
+        })
+        .subscribe(
+          (result) => resolve(result?.result.length > 0 ? result.result : null),
+          (error) => {
+            this._toastService.showToast(error);
+            resolve(null);
+          }
+        );
     });
   }
 
