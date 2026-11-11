@@ -667,6 +667,65 @@ export class AddSaleOrderComponent {
     );
   }
 
+  private shouldRefreshMovementsAfterSave(): boolean {
+    if ((this.transaction?.discountPercent || 0) > 0 || (this.discountApply || 0) > 0) {
+      return true;
+    }
+    if (
+      this.transaction?.type?.allowCompanyDiscount &&
+      ((this.transaction.company?.discount || 0) > 0 || (this.transaction.company?.group?.discount || 0) > 0)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private async applySavedMovementLocally(saved: MovementOfArticle): Promise<void> {
+    if (!this.movementsOfArticles) {
+      this.movementsOfArticles = [];
+    }
+    this.movementsOfArticles = [...this.movementsOfArticles, saved];
+    this.areMovementsOfArticlesEmpty = false;
+    this.lastMovementOfArticle = saved;
+    this.containerMovementsOfArticles.nativeElement.scrollTop =
+      this.containerMovementsOfArticles.nativeElement.scrollHeight;
+    this.updateQuantity();
+    if (this.transaction.type.requestTaxes) {
+      try {
+        await this.updateTaxes();
+      } catch {
+        this.hideMessage();
+        this.getMovementsOfTransaction();
+      }
+    } else {
+      this.transaction.totalPrice = this.roundNumber.transform(
+        (this.transaction.totalPrice || 0) + (saved.salePrice || 0)
+      );
+      this.transaction.exempt = this.transaction.totalPrice;
+      this.loading = true;
+      try {
+        const transaction = await this.updateTransaction();
+
+        if (transaction) {
+          this.loading = false;
+          this.transaction = transaction;
+          this.lastQuotation = this.transaction.quotation;
+          if (this.isCancellationAutomatic) {
+            this.openModal('charge');
+          }
+        } else {
+          this.loading = false;
+          this.hideMessage();
+          this.getMovementsOfTransaction();
+        }
+      } catch {
+        this.loading = false;
+        this.hideMessage();
+        this.getMovementsOfTransaction();
+      }
+    }
+  }
+
   updateQuantity(): void {
     this.quantity = 0;
     this.m3 = 0;
@@ -749,9 +808,13 @@ export class AddSaleOrderComponent {
             movementOfArticle.read = 0;
             if (child && child.length === 0) {
               if (await this.isValidMovementOfArticle(movementOfArticle)) {
-                await this.saveMovementOfArticle(movementOfArticle).then((movementOfArticle) => {
+                await this.saveMovementOfArticle(movementOfArticle).then(async (movementOfArticle) => {
                   if (movementOfArticle) {
-                    this.getMovementsOfTransaction();
+                    if (this.shouldRefreshMovementsAfterSave()) {
+                      this.getMovementsOfTransaction();
+                    } else {
+                      await this.applySavedMovementLocally(movementOfArticle);
+                    }
                   }
                 });
               }
@@ -3110,7 +3173,11 @@ export class AddSaleOrderComponent {
     this.listArticlesComponent.areArticlesVisible = false;
     this.listArticlesComponent.filterArticle = this.filterArticle;
     if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      this.listCategoriesComponent.ngOnInit();
+      if (!this.listCategoriesComponent.categories?.length) {
+        this.listCategoriesComponent.ngOnInit();
+      } else {
+        this.listCategoriesComponent.resetToMainCategories();
+      }
       this.focusEvent.emit(true);
     }
   }
