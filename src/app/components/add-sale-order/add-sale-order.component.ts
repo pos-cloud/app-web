@@ -668,6 +668,11 @@ export class AddSaleOrderComponent {
   }
 
   private shouldRefreshMovementsAfterSave(): boolean {
+    // El camino incremental es solo para venta en mostrador. Inventario/compra/etc.
+    // siguen con refetch: el `*` y el article populado dependen de getMovementsOfTransaction.
+    if (this.transaction?.type?.transactionMovement !== TransactionMovement.Sale) {
+      return true;
+    }
     if ((this.transaction?.discountPercent || 0) > 0 || (this.discountApply || 0) > 0) {
       return true;
     }
@@ -680,7 +685,19 @@ export class AddSaleOrderComponent {
     return false;
   }
 
-  private async applySavedMovementLocally(saved: MovementOfArticle): Promise<void> {
+  private async applySavedMovementLocally(
+    saved: MovementOfArticle,
+    articleFromClient?: Article
+  ): Promise<void> {
+    // El POST a veces devuelve article como id; el `*` del filtro necesita el objeto.
+    if (articleFromClient?._id) {
+      const populated =
+        saved.article && typeof saved.article === 'object' && (saved.article as Article)._id;
+      if (!populated) {
+        saved.article = articleFromClient;
+      }
+    }
+
     if (!this.movementsOfArticles) {
       this.movementsOfArticles = [];
     }
@@ -808,12 +825,12 @@ export class AddSaleOrderComponent {
             movementOfArticle.read = 0;
             if (child && child.length === 0) {
               if (await this.isValidMovementOfArticle(movementOfArticle)) {
-                await this.saveMovementOfArticle(movementOfArticle).then(async (movementOfArticle) => {
-                  if (movementOfArticle) {
+                await this.saveMovementOfArticle(movementOfArticle).then(async (savedMovement) => {
+                  if (savedMovement) {
                     if (this.shouldRefreshMovementsAfterSave()) {
                       this.getMovementsOfTransaction();
                     } else {
-                      await this.applySavedMovementLocally(movementOfArticle);
+                      await this.applySavedMovementLocally(savedMovement, itemData.article);
                     }
                   }
                 });
