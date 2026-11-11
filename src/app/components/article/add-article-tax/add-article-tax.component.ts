@@ -60,28 +60,20 @@ export class AddArticleTaxComponent implements OnInit {
 
   async ngOnInit() {
     this.buildForm();
-    let query;
 
-    if (this.filtersTaxClassification && this.filtersTaxClassification.length > 0) {
-      query = `where=`;
-      if (this.filtersTaxClassification && this.filtersTaxClassification.length === 1) {
-        query += `"classification":"${this.filtersTaxClassification[0].toString()}"`;
-      } else if (this.filtersTaxClassification && this.filtersTaxClassification.length > 1) {
-        let i: number = 0;
+    const match: Record<string, unknown> = {
+      operationType: { $ne: 'D' },
+    };
 
-        query += `"$or":[`;
-        for (let filterTaxClassification of this.filtersTaxClassification) {
-          if (i > 0) {
-            query += `,`;
-          }
-          query += `{"classification":"${filterTaxClassification.toString()}"}`;
-          i++;
-        }
-        query += `]`;
-      }
+    if (this.filtersTaxClassification && this.filtersTaxClassification.length === 1) {
+      match.classification = this.filtersTaxClassification[0].toString();
+    } else if (this.filtersTaxClassification && this.filtersTaxClassification.length > 1) {
+      match.$or = this.filtersTaxClassification.map((filterTaxClassification) => ({
+        classification: filterTaxClassification.toString(),
+      }));
     }
 
-    await this.getTaxes(query).then((taxes) => {
+    await this.getTaxes(match).then((taxes) => {
       if (taxes) {
         this.taxes = taxes;
       }
@@ -139,21 +131,35 @@ export class AddArticleTaxComponent implements OnInit {
     this.articleTaxForm.setValue(values);
   }
 
-  public getTaxes(query?: string): Promise<Tax[]> {
-    return new Promise<Tax[]>((resolve, reject) => {
-      this._taxService.getTaxes(query).subscribe(
-        (result) => {
-          if (!result.taxes) {
+  public getTaxes(match: {} = {}): Promise<Tax[]> {
+    return new Promise<Tax[]>((resolve) => {
+      this._taxService
+        .getAll({
+          project: {
+            _id: 1,
+            name: 1,
+            percentage: 1,
+            amount: 1,
+            taxBase: 1,
+            classification: 1,
+            operationType: 1,
+          },
+          match,
+          sort: { name: 1 },
+        })
+        .subscribe(
+          (result) => {
+            if (!result.result) {
+              resolve(null);
+            } else {
+              resolve(result.result);
+            }
+          },
+          (error) => {
+            this._toastService.showToast(error);
             resolve(null);
-          } else {
-            resolve(result.taxes);
           }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 

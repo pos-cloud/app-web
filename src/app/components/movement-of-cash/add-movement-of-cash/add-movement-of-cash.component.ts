@@ -1877,8 +1877,10 @@ export class AddMovementOfCashComponent implements OnInit {
 
       movementOfArticle.basePrice = movementOfArticle.salePrice - tax.taxAmount;
 
-      let query = `where="percentage":"${tax.percentage}"`;
-      let taxesAux: Tax[] = await this.getTaxes(query);
+      let taxesAux: Tax[] = await this.getTaxes({
+        operationType: { $ne: 'D' },
+        percentage: tax.percentage,
+      });
 
       if (taxesAux) {
         tax.tax = taxesAux[0];
@@ -1939,27 +1941,36 @@ export class AddMovementOfCashComponent implements OnInit {
     this.buildForm();
   }
 
-  async getTaxes(query: string): Promise<Tax[]> {
-    return new Promise<Tax[]>((resolve, reject) => {
-      this._taxService.getTaxes(query).subscribe(
-        async (result) => {
-          if (!result.taxes) {
-            this._toastService.showToast({
-              type: 'info',
-              message:
-                'Debe configurar el impuesto IVA para el realizar el descuento/recargo con ' +
-                this.paymentMethodSelected.name,
-            });
-            resolve(null);
-          } else {
-            resolve(result.taxes);
+  async getTaxes(match: {} = {}): Promise<Tax[]> {
+    return new Promise<Tax[]>((resolve) => {
+      this._taxService
+        .getAll({
+          project: {
+            _id: 1,
+            percentage: 1,
+            operationType: 1,
+          },
+          match,
+        })
+        .subscribe(
+          (result) => {
+            if (!result.result || result.result.length === 0) {
+              this._toastService.showToast({
+                type: 'info',
+                message:
+                  'Debe configurar el impuesto IVA para el realizar el descuento/recargo con ' +
+                  this.paymentMethodSelected.name,
+              });
+              resolve(null);
+            } else {
+              resolve(result.result);
+            }
+          },
+          (error) => {
+            this._toastService.showToast(error);
+            this.loading = false;
           }
-        },
-        (error) => {
-          this._toastService.showToast(error);
-          this.loading = false;
-        }
-      );
+        );
     });
   }
 

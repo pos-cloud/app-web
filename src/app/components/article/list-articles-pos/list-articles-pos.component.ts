@@ -621,8 +621,10 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
                   if (taxAux.tax && taxAux.tax._id) {
                     tax.tax = taxAux.tax;
                   } else if (taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
-                    let query = `where="_id":"${taxAux.tax}"`;
-                    await this.getTaxes(query).then((taxes) => {
+                    await this.getTaxes({
+                      _id: { $oid: taxAux.tax },
+                      operationType: { $ne: 'D' },
+                    }).then((taxes) => {
                       if (taxes && taxes.length > 0) {
                         tax.tax = taxes[0];
                       } else {
@@ -656,8 +658,10 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
                   if (taxAux.tax && taxAux.tax._id) {
                     taxAux.tax = taxAux.tax;
                   } else if (taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
-                    let query = `where="_id":"${taxAux.tax}"`;
-                    await this.getTaxes(query).then((taxes) => {
+                    await this.getTaxes({
+                      _id: { $oid: taxAux.tax },
+                      operationType: { $ne: 'D' },
+                    }).then((taxes) => {
                       if (taxes && taxes.length > 0) {
                         taxAux.tax = taxes[0];
                       } else {
@@ -756,22 +760,30 @@ export class ListArticlesPosComponent implements OnInit, OnChanges {
     }
   }
 
-  public getTaxes(query?: string): Promise<Tax[]> {
-    return new Promise<Tax[]>((resolve, reject) => {
-      this._taxService.getTaxes(query).subscribe(
-        (result) => {
-          if (!result.taxes) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+  public getTaxes(match: {} = {}): Promise<Tax[]> {
+    return new Promise<Tax[]>((resolve) => {
+      this._taxService
+        .getAll({
+          project: {
+            _id: 1,
+            operationType: 1,
+          },
+          match,
+        })
+        .subscribe(
+          (result) => {
+            if (!result.result || result.result.length === 0) {
+              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+              resolve(null);
+            } else {
+              resolve(result.result);
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
-          } else {
-            resolve(result.taxes);
           }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 
