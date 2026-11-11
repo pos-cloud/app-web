@@ -298,14 +298,21 @@
           </div>
         </div>
         <div class="row">
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-3">
             <label for="cashBoxImpact" class="control-label">{{ 'cashBoxImpact' | translate | capitalize }}:</label>
             <select class="form-control" formControlName="cashBoxImpact">
               <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
               <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
             </select>
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-3">
+            <label for="printSign" class="control-label">{{ 'printSign' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="printSign">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
             <label for="allowCurrencyValue" class="control-label"
               >{{ 'allowCurrencyValue' | translate | capitalize }}:</label
             >
@@ -314,7 +321,7 @@
               <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
             </select>
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-3">
             <label for="account">{{ 'account.description' | translate | capitalize }}:</label>
             <app-typeahead-dropdown
               [control]="paymentMethodForm.get('account')"

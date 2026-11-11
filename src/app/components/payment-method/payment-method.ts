@@ -29,6 +29,7 @@ export class PaymentMethod {
   public allowToFinance: boolean;
   public payFirstQuota: boolean;
   public cashBoxImpact: boolean;
+  public printSign: boolean;
   public bankReconciliation: boolean;
   public company: CompanyType;
   public currency: Currency;

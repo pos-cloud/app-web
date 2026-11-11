@@ -139,6 +139,16 @@ export class ListPaymentMethodComponent {
       required: false,
     },
     {
+      name: 'printSign',
+      visible: true,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'allowCurrencyValue',
       visible: true,
       disabled: false,

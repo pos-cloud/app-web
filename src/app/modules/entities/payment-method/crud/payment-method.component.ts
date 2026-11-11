@@ -76,6 +76,7 @@ export class PaymentMethodComponent implements OnInit {
       cashBoxImpact: ['', []],
       allowCurrencyValue: ['', []],
       allowBank: ['', []],
+      printSign: [false, []],
       account: ['', []],
       expirationDays: ['', []],
     });
@@ -185,6 +186,7 @@ export class PaymentMethodComponent implements OnInit {
 
       allowCurrencyValue: this.paymentMethod?.allowCurrencyValue ?? false,
       allowBank: this.paymentMethod?.allowBank ?? false,
+      printSign: this.paymentMethod?.printSign ?? false,
     };
     this.paymentMethodForm.setValue(values);
     this.toggleArticleRequired('discountArticle', values.discount);
