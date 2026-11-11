@@ -364,21 +364,24 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public getDeposits(match: {} = {}): Promise<Deposit[]> {
-    return new Promise<Deposit[]>((resolve, reject) => {
+    return new Promise<Deposit[]>((resolve) => {
       this.subscription.add(
         this._depositService
-          .getDepositsV2(
-            {}, // PROJECT
-            match, // MATCH
-            { name: 1 }, // SORT
-            {}, // GROUP
-            0, // LIMIT
-            0 // SKIP
-          )
+          .getAll({
+            project: {
+              _id: 1,
+              name: 1,
+              branch: 1,
+              default: 1,
+              operationType: 1,
+            },
+            match,
+            sort: { name: 1 },
+          })
           .subscribe(
             (result) => {
-              if (result.deposits) {
-                resolve(result.deposits);
+              if (result.result.length > 0) {
+                resolve(result.result);
               } else {
                 resolve(null);
               }

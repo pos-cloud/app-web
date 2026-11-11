@@ -39,18 +39,29 @@ export class SelectDepositComponent implements OnInit {
   }
 
   public getDeposits(): void {
-    this._depositService.getDeposits().subscribe(
-      (result) => {
-        if (result && result.deposits) {
-          this.deposits = result.deposits;
-        } else {
-          this.showMessage('No se encontraron depósitos.', 'info', false);
+    this._depositService
+      .getAll({
+        project: {
+          _id: 1,
+          name: 1,
+          'branch.name': 1,
+          operationType: 1,
+        },
+        match: { operationType: { $ne: 'D' } },
+        sort: { name: 1 },
+      })
+      .subscribe(
+        (result) => {
+          if (result.result.length > 0) {
+            this.deposits = result.result;
+          } else {
+            this.showMessage('No se encontraron depósitos.', 'info', false);
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
         }
-      },
-      (error) => {
-        this.showMessage(error._body, 'danger', false);
-      }
-    );
+      );
   }
 
   public selectTransfer(): void {
