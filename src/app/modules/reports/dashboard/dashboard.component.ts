@@ -1,10 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { TransactionTypeService } from '@core/services/transaction-type.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
+import { PipesModule } from '@shared/pipes/pipes.module';
+import { TransactionType } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
+import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -52,13 +58,28 @@ export type TopProduct = {
   totalFormatted: string;
 };
 
+type ChartFilters = {
+  branches: string[];
+  transactionTypes: string[];
+};
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, NgbModule, ReactiveFormsModule, NgApexchartsModule],
+  imports: [
+    CommonModule,
+    NgbModule,
+    ReactiveFormsModule,
+    NgApexchartsModule,
+    FormsModule,
+    TranslateModule,
+    PipesModule,
+    MultiSelectDropdownComponent,
+    UserBranchSelectComponent,
+  ],
 })
 export class DasboardComponent {
   salesTotal: Partial<ChartOptions>;
@@ -69,16 +90,26 @@ export class DasboardComponent {
   salesByCategory: Partial<ChartOptions>;
   topProducts: TopProduct[] = [];
 
+  loading = false;
+  branchSelectedId: string | null = null;
+  transactionTypes: TransactionType[] = [];
+  transactionTypesSelect: string[] = [];
+
   private subscription: Subscription = new Subscription();
   private destroy$ = new Subject<void>();
+  private lastInventoryBranchId: string | null = null;
+  private refreshInProgress = false;
+  private pendingCharts = 0;
 
   constructor(
     private _service: ReportSystemService,
     private _toastService: ToastService,
-    private _title: Title
+    private _title: Title,
+    private _transactionTypeService: TransactionTypeService
   ) {}
 
   ngOnInit(): void {
+    this.getTransactionTypes();
     this.getSalesTotal();
     this.getPurchaseTotal();
     this.getInventoryTotal();
@@ -89,10 +120,97 @@ export class DasboardComponent {
     this._title.setTitle('Dashboard');
   }
 
-  private getSalesTotal(): void {
-    const requestPayload = {
-      type: 'sales-totals',
+  public refresh(): void {
+    this.loading = true;
+    this.refreshInProgress = true;
+    this.pendingCharts = 0;
+
+    const filters = this.currentFilters();
+    this.getSalesTotal(filters);
+    this.getPurchaseTotal(filters);
+    this.getSalesByCategory(filters);
+    this.getTopSellingProducts(filters);
+    this.getSalesByMonth(filters);
+
+    const branchId = this.branchSelectedId ?? null;
+    if (branchId !== this.lastInventoryBranchId) {
+      this.getInventoryTotal(filters.branches);
+    }
+
+    if (this.pendingCharts === 0) {
+      this.loading = false;
+      this.refreshInProgress = false;
+    }
+  }
+
+  private getTransactionTypes(): void {
+    this._transactionTypeService
+      .getAll({
+        project: {
+          _id: 1,
+          name: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.transactionTypes = result.result;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
+  }
+
+  private currentFilters(): ChartFilters {
+    return {
+      branches: this.branchSelectedId ? [this.branchSelectedId] : [],
+      transactionTypes: this.transactionTypesSelect ?? [],
     };
+  }
+
+  private chartPayload(type: string, filters?: ChartFilters): { type: string; filters?: ChartFilters } {
+    if (!filters) {
+      return { type };
+    }
+
+    return {
+      type,
+      filters: {
+        branches: filters.branches,
+        transactionTypes: filters.transactionTypes ?? [],
+      },
+    };
+  }
+
+  private beginChart(): boolean {
+    if (!this.refreshInProgress) {
+      return false;
+    }
+
+    this.pendingCharts++;
+    return true;
+  }
+
+  private endChart(track: boolean): void {
+    if (!track) {
+      return;
+    }
+
+    this.pendingCharts--;
+    if (this.pendingCharts <= 0) {
+      this.pendingCharts = 0;
+      this.loading = false;
+      this.refreshInProgress = false;
+    }
+  }
+
+  private getSalesTotal(filters?: ChartFilters): void {
+    const requestPayload = this.chartPayload('sales-totals', filters);
+    const track = this.beginChart();
 
     this.subscription.add(
       this._service
@@ -106,16 +224,18 @@ export class DasboardComponent {
           },
           error: (error) => {
             this._toastService.showToast(error);
+            this.endChart(track);
           },
-          complete: () => {},
+          complete: () => {
+            this.endChart(track);
+          },
         })
     );
   }
 
-  private getPurchaseTotal(): void {
-    const requestPayload = {
-      type: 'purchase-totals',
-    };
+  private getPurchaseTotal(filters?: ChartFilters): void {
+    const requestPayload = this.chartPayload('purchase-totals', filters);
+    const track = this.beginChart();
 
     this.subscription.add(
       this._service
@@ -129,16 +249,29 @@ export class DasboardComponent {
           },
           error: (error) => {
             this._toastService.showToast(error);
+            this.endChart(track);
           },
-          complete: () => {},
+          complete: () => {
+            this.endChart(track);
+          },
         })
     );
   }
 
-  private getInventoryTotal(): void {
-    const requestPayload = {
-      type: 'inventory-totals',
-    };
+  private getInventoryTotal(branches?: string[]): void {
+    const requestPayload =
+      branches === undefined
+        ? {
+            type: 'inventory-totals',
+          }
+        : {
+            type: 'inventory-totals',
+            filters: {
+              branches,
+            },
+          };
+    this.lastInventoryBranchId = this.branchSelectedId ?? null;
+    const track = this.beginChart();
 
     this.subscription.add(
       this._service
@@ -152,8 +285,11 @@ export class DasboardComponent {
           },
           error: (error) => {
             this._toastService.showToast(error);
+            this.endChart(track);
           },
-          complete: () => {},
+          complete: () => {
+            this.endChart(track);
+          },
         })
     );
   }
@@ -181,10 +317,9 @@ export class DasboardComponent {
     );
   }
 
-  private getSalesByMonth(): void {
-    const requestPayload = {
-      type: 'sales-by-month',
-    };
+  private getSalesByMonth(filters?: ChartFilters): void {
+    const requestPayload = this.chartPayload('sales-by-month', filters);
+    const track = this.beginChart();
 
     this.subscription.add(
       this._service
@@ -230,8 +365,11 @@ export class DasboardComponent {
           },
           error: (error) => {
             this._toastService.showToast(error);
+            this.endChart(track);
           },
-          complete: () => {},
+          complete: () => {
+            this.endChart(track);
+          },
         })
     );
   }
@@ -244,10 +382,9 @@ export class DasboardComponent {
     });
   }
 
-  private getSalesByCategory(): void {
-    const requestPayload = {
-      type: 'sales-by-category',
-    };
+  private getSalesByCategory(filters?: ChartFilters): void {
+    const requestPayload = this.chartPayload('sales-by-category', filters);
+    const track = this.beginChart();
 
     this.subscription.add(
       this._service
@@ -261,16 +398,18 @@ export class DasboardComponent {
           },
           error: (error) => {
             this._toastService.showToast(error);
+            this.endChart(track);
           },
-          complete: () => {},
+          complete: () => {
+            this.endChart(track);
+          },
         })
     );
   }
 
-  private getTopSellingProducts(): void {
-    const requestPayload = {
-      type: 'top-selling-products',
-    };
+  private getTopSellingProducts(filters?: ChartFilters): void {
+    const requestPayload = this.chartPayload('top-selling-products', filters);
+    const track = this.beginChart();
 
     this.subscription.add(
       this._service
@@ -284,8 +423,11 @@ export class DasboardComponent {
           },
           error: (error) => {
             this._toastService.showToast(error);
+            this.endChart(track);
           },
-          complete: () => {},
+          complete: () => {
+            this.endChart(track);
+          },
         })
     );
   }
