@@ -689,16 +689,21 @@ export class AddSaleOrderComponent {
         const transaction = await this.updateTransaction();
 
         if (transaction) {
+          this.loading = false;
           this.transaction = transaction;
           this.lastQuotation = this.transaction.quotation;
           if (this.isCancellationAutomatic) {
             this.openModal('charge');
           }
         } else {
+          this.loading = false;
           this.hideMessage();
+          this.getMovementsOfTransaction();
         }
-      } finally {
+      } catch {
         this.loading = false;
+        this.hideMessage();
+        this.getMovementsOfTransaction();
       }
     }
   }
@@ -787,7 +792,11 @@ export class AddSaleOrderComponent {
               if (await this.isValidMovementOfArticle(movementOfArticle)) {
                 await this.saveMovementOfArticle(movementOfArticle).then(async (movementOfArticle) => {
                   if (movementOfArticle) {
-                    await this.applySavedMovementLocally(movementOfArticle);
+                    if ((this.transaction?.discountPercent || 0) > 0 || (this.discountApply || 0) > 0) {
+                      this.getMovementsOfTransaction();
+                    } else {
+                      await this.applySavedMovementLocally(movementOfArticle);
+                    }
                   }
                 });
               }
