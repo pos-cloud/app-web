@@ -344,12 +344,12 @@ export class CurrentAccountComponent implements OnInit {
   public getCompany(companyId: string): void {
     this.loading = true;
 
-    this._companyService.getCompany(companyId).subscribe(
+    this._companyService.getCompanyObjById(companyId).subscribe(
       async (result) => {
-        if (!result.company) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        if (!result.result) {
+          this.showMessage('No se encontró la empresa.', 'info', true);
         } else {
-          this.companySelected = result.company;
+          this.companySelected = result.result[0];
           if (this.companySelected.type === CompanyType.Client) {
             this.transactionMovement = TransactionMovement.Sale;
           } else {

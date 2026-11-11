@@ -6,14 +6,13 @@ import { Router } from '@angular/router';
 import jsPDF from 'jspdf';
 
 import { Company, CompanyGroup, CompanyType } from '@types';
+import { Config } from 'app/app.config';
 import { EmployeeService } from 'app/core/services/employee.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { DateFormatPipe } from 'app/shared/pipes/date-format.pipe';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
-import { Config } from 'app/app.config';
 
 import { NgbActiveModal, NgbAlertConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Employee, TransactionType } from '@types';
 import { Transaction } from 'app/components/transaction/transaction';
 import { CompanyGroupService } from 'app/core/services/company-group.service';
@@ -21,8 +20,7 @@ import { CompanyService } from 'app/core/services/company.service';
 import { ConfigService } from 'app/core/services/config.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 let splitRegex = /\r\n|\r|\n/g;
 jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string, vAlign?: string) {
@@ -73,21 +71,6 @@ jsPDF.API['textEx'] = function (text: any, x: number, y: number, hAlign?: string
 export class CurrentAccountDetailsComponent implements OnInit {
   @Input() companyType: CompanyType;
   @Input() filterCompanyType;
-
-  public searchCompanies = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => (this.loading = true)),
-      switchMap((term) =>
-        this.getCompanies(term).then((makes) => {
-          return makes;
-        })
-      ),
-      tap(() => (this.loading = false))
-    );
-
-  public formatterCompanies = (x: { name: string }) => x.name;
 
   public companyForm: UntypedFormGroup;
   public alertMessage: string = '';
@@ -2140,38 +2123,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  public getCompanies(term: string) {
-    let project = {
-      name: 1,
-      type: 1,
-      operationType: 1,
-    };
-
-    let match = `{
-            "name" : { "$regex": "${term}", "$options": "i" },
-            "type" : "${this.companyType}",
-            "operationType" : { "$ne": "D" }
-        }`;
-
-    match = JSON.parse(match);
-
-    return new Promise((resolve, reject) => {
-      this._companyService.getCompaniesV2(project, match, { name: 1 }, {}, 10).subscribe(
-        (result) => {
-          if (result.companies) {
-            resolve(result.companies);
-          } else {
-            resolve(null);
-          }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
-      );
-    });
   }
 
   public getGroups() {

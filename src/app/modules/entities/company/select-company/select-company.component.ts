@@ -303,12 +303,12 @@ export class SelectCompanyComponent implements OnInit, OnDestroy {
   public selectCompany(companySelected: Company): void {
     if (companySelected) {
       this._service
-        .getCompany(companySelected._id)
+        .getCompanyObjById(companySelected._id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            if (result && result.company) {
-              this.activeModal.close({ company: result.company });
+            if (result && result.result) {
+              this.activeModal.close({ company: result.result[0] });
             }
           },
           error: (error) => {
