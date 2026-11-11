@@ -195,7 +195,10 @@ export class AddTransactionComponent implements OnInit {
           }
           this.setValuesForm();
           if (this.transaction.type.requestEmployee) {
-            this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
+            this.getEmployees({
+              type: { $oid: this.transaction.type.requestEmployee._id },
+              operationType: { $ne: 'D' },
+            });
           }
           this.getCancellationsOfMovements();
         }
@@ -519,26 +522,37 @@ export class AddTransactionComponent implements OnInit {
     }
   }
 
-  public getEmployees(query: string): void {
+  public getEmployees(match: {} = {}): void {
     this.loading = true;
 
-    this._employeeService.getEmployees(query).subscribe(
-      (result) => {
-        if (!result.employees) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+    this._employeeService
+      .getAll({
+        project: {
+          _id: 1,
+          name: 1,
+          type: 1,
+          operationType: 1,
+        },
+        match,
+        sort: { name: 1 },
+      })
+      .subscribe(
+        (result) => {
+          if (!result?.result || result.result.length === 0) {
+            if (result?.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
+          } else {
+            this.hideMessage();
+            this.loading = false;
+            this.employees = result.result;
+            this.setValuesForm();
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.employees = result.employees;
-          this.setValuesForm();
         }
-      },
-      (error) => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
   async getTransactions(): Promise<boolean> {
     let match = {

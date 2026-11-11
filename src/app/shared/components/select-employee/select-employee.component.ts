@@ -44,11 +44,15 @@ export class SelectEmployeeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    const match: Record<string, unknown> = {
+      operationType: { $ne: 'D' },
+    };
+
     if (this.typeEmployee) {
-      this.getEmployees('where="type":"' + this.typeEmployee._id + '"');
-    } else {
-      this.getEmployees('');
+      match.type = { $oid: this.typeEmployee._id };
     }
+
+    this.getEmployees(match);
 
     if (this.table) {
       this.chair = this.table.chair;
@@ -59,28 +63,36 @@ export class SelectEmployeeComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public getEmployees(query: string): void {
+  public getEmployees(match: {} = {}): void {
     this.employees = new Array();
     this.loading = true;
 
-    this._employeeService.getEmployees(query).subscribe(
-      (result) => {
-        if (!result.employees) {
-          if (result.message && result.message !== '') this._toast.showToast(result.message, 'info');
+    this._employeeService
+      .getAll({
+        project: {
+          _id: 1,
+          name: 1,
+          type: 1,
+          operationType: 1,
+        },
+        match,
+        sort: { name: 1 },
+      })
+      .subscribe(
+        (result) => {
           this.loading = false;
-        } else {
-          this.loading = false;
-          this.employees = result.employees;
-          if (this.employees && this.employees.length > 0) {
+          if (!result?.result || result.result.length === 0) {
+            if (result?.message && result.message !== '') this._toast.showToast(result.message, 'info');
+          } else {
+            this.employees = result.result;
             this.employeeSelected = this.employees[0];
           }
+        },
+        (error) => {
+          this._toast.showToast(error._body);
+          this.loading = false;
         }
-      },
-      (error) => {
-        this._toast.showToast(error._body);
-        this.loading = false;
-      }
-    );
+      );
   }
 
   public selectEmployee(): void {

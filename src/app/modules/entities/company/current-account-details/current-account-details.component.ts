@@ -2112,17 +2112,29 @@ export class CurrentAccountDetailsComponent implements OnInit {
   }
 
   public getEmployees(): void {
-    this._employeeService.getEmployees().subscribe(
-      (result) => {
-        if (result && result.employees) {
-          this.employees = result.employees;
+    this._employeeService
+      .getAll({
+        project: {
+          _id: 1,
+          name: 1,
+          operationType: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+        },
+        sort: { name: 1 },
+      })
+      .subscribe(
+        (result) => {
+          if (result?.result) {
+            this.employees = result.result;
+          }
+        },
+        (error) => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-      },
-      (error) => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
   }
 
   public getGroups() {
