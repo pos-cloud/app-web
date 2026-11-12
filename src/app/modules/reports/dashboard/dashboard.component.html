@@ -4,14 +4,28 @@
       <app-user-branch-select [(ngModel)]="branchSelectedId"></app-user-branch-select>
     </div>
 
-    <div class="form-group mr-2">
-      <label for="transactionType" class="control-label">
-        <b>Tipo de Transacción</b>
+    <div class="form-group mr-2 dashboard-type-filter">
+      <label for="saleTransactionType" class="control-label">
+        <b>Tipos de venta</b>
       </label>
       <app-multi-select-dropdown
-        [data]="transactionTypes"
-        [(ngModel)]="transactionTypesSelect"
-        placeholder="Tipo de Transacción"
+        [data]="saleTransactionTypes"
+        [ngModel]="saleTransactionTypesSelect"
+        (ngModelChange)="onSaleTypesChange($event)"
+        placeholder="Tipos de venta"
+      >
+      </app-multi-select-dropdown>
+    </div>
+
+    <div class="form-group mr-2 dashboard-type-filter">
+      <label for="purchaseTransactionType" class="control-label">
+        <b>Tipos de compra</b>
+      </label>
+      <app-multi-select-dropdown
+        [data]="purchaseTransactionTypes"
+        [ngModel]="purchaseTransactionTypesSelect"
+        (ngModelChange)="onPurchaseTypesChange($event)"
+        placeholder="Tipos de compra"
       >
       </app-multi-select-dropdown>
     </div>

@@ -7,7 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { TransactionType } from '@types';
+import { StockMovement, TransactionMovement, TransactionType } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
@@ -60,8 +60,16 @@ export type TopProduct = {
 
 type ChartFilters = {
   branches: string[];
-  transactionTypes: string[];
+  saleTransactionTypes?: string[];
+  purchaseTransactionTypes?: string[];
 };
+
+type StoredTypeFilters = {
+  saleTransactionTypes: string[];
+  purchaseTransactionTypes: string[];
+};
+
+const TYPE_FILTERS_KEY = 'dashboard.typeFilters';
 
 @Component({
   selector: 'app-dashboard',
@@ -92,14 +100,17 @@ export class DasboardComponent {
 
   loading = false;
   branchSelectedId: string | null = null;
-  transactionTypes: TransactionType[] = [];
-  transactionTypesSelect: string[] = [];
+  saleTransactionTypes: TransactionType[] = [];
+  purchaseTransactionTypes: TransactionType[] = [];
+  saleTransactionTypesSelect: string[] = [];
+  purchaseTransactionTypesSelect: string[] = [];
 
   private subscription: Subscription = new Subscription();
   private destroy$ = new Subject<void>();
   private lastInventoryBranchId: string | null = null;
   private refreshInProgress = false;
   private pendingCharts = 0;
+  private typesLoaded = false;
 
   constructor(
     private _service: ReportSystemService,
@@ -109,14 +120,9 @@ export class DasboardComponent {
   ) {}
 
   ngOnInit(): void {
-    this.getTransactionTypes();
-    this.getSalesTotal();
-    this.getPurchaseTotal();
     this.getInventoryTotal();
     this.getAccountReveivable();
-    this.getSalesByMonth();
-    this.getSalesByCategory();
-    this.getTopSellingProducts();
+    this.getTransactionTypes();
     this._title.setTitle('Dashboard');
   }
 
@@ -126,11 +132,7 @@ export class DasboardComponent {
     this.pendingCharts = 0;
 
     const filters = this.currentFilters();
-    this.getSalesTotal(filters);
-    this.getPurchaseTotal(filters);
-    this.getSalesByCategory(filters);
-    this.getTopSellingProducts(filters);
-    this.getSalesByMonth(filters);
+    this.loadFilteredCharts(filters);
 
     const branchId = this.branchSelectedId ?? null;
     if (branchId !== this.lastInventoryBranchId) {
@@ -143,12 +145,37 @@ export class DasboardComponent {
     }
   }
 
+  public persistTypeFilters(): void {
+    if (!this.typesLoaded) {
+      return;
+    }
+
+    const payload: StoredTypeFilters = {
+      saleTransactionTypes: this.saleTransactionTypesSelect ?? [],
+      purchaseTransactionTypes: this.purchaseTransactionTypesSelect ?? [],
+    };
+    localStorage.setItem(this.typeFiltersKey(), JSON.stringify(payload));
+  }
+
+  public onSaleTypesChange(ids: string[]): void {
+    this.saleTransactionTypesSelect = ids ?? [];
+    this.persistTypeFilters();
+  }
+
+  public onPurchaseTypesChange(ids: string[]): void {
+    this.purchaseTransactionTypesSelect = ids ?? [];
+    this.persistTypeFilters();
+  }
+
   private getTransactionTypes(): void {
     this._transactionTypeService
       .getAll({
         project: {
           _id: 1,
           name: 1,
+          transactionMovement: 1,
+          modifyStock: 1,
+          stockMovement: 1,
         },
         match: {
           operationType: { $ne: 'D' },
@@ -157,19 +184,87 @@ export class DasboardComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          this.transactionTypes = result.result;
+          this.applyTypeSelection(result?.result ?? []);
+          this.loadFilteredCharts(this.currentFilters());
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loadFilteredCharts(this.currentFilters());
         },
       });
   }
 
+  private applyTypeSelection(types: TransactionType[]): void {
+    const sales = types.filter((type) => type.transactionMovement === TransactionMovement.Sale);
+    const purchases = types.filter((type) => type.transactionMovement === TransactionMovement.Purchase);
+    this.saleTransactionTypes = sales;
+    this.purchaseTransactionTypes = purchases;
+
+    const stored = this.readStoredTypeFilters();
+    if (stored) {
+      const saleIds = new Set(sales.map((type) => type._id));
+      const purchaseIds = new Set(purchases.map((type) => type._id));
+      this.saleTransactionTypesSelect = stored.saleTransactionTypes.filter((id) => saleIds.has(id));
+      this.purchaseTransactionTypesSelect = stored.purchaseTransactionTypes.filter((id) =>
+        purchaseIds.has(id)
+      );
+    } else {
+      this.saleTransactionTypesSelect = sales
+        .filter((type) => type.modifyStock && type.stockMovement === StockMovement.Outflows)
+        .map((type) => type._id);
+      this.purchaseTransactionTypesSelect = purchases
+        .filter((type) => type.modifyStock && type.stockMovement === StockMovement.Inflows)
+        .map((type) => type._id);
+    }
+
+    this.typesLoaded = true;
+  }
+
+  private readStoredTypeFilters(): StoredTypeFilters | null {
+    try {
+      const raw = localStorage.getItem(this.typeFiltersKey());
+      if (!raw) {
+        return null;
+      }
+
+      const parsed = JSON.parse(raw) as StoredTypeFilters;
+      if (!Array.isArray(parsed?.saleTransactionTypes) || !Array.isArray(parsed?.purchaseTransactionTypes)) {
+        return null;
+      }
+
+      return {
+        saleTransactionTypes: parsed.saleTransactionTypes.filter((id) => typeof id === 'string'),
+        purchaseTransactionTypes: parsed.purchaseTransactionTypes.filter((id) => typeof id === 'string'),
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private typeFiltersKey(): string {
+    const company = (localStorage.getItem('company') ?? '').trim();
+    return company ? `${TYPE_FILTERS_KEY}:${company}` : TYPE_FILTERS_KEY;
+  }
+
+  private loadFilteredCharts(filters?: ChartFilters): void {
+    this.getSalesTotal(filters);
+    this.getPurchaseTotal(filters);
+    this.getSalesByCategory(filters);
+    this.getTopSellingProducts(filters);
+    this.getSalesByMonth(filters);
+  }
+
   private currentFilters(): ChartFilters {
-    return {
+    const filters: ChartFilters = {
       branches: this.branchSelectedId ? [this.branchSelectedId] : [],
-      transactionTypes: this.transactionTypesSelect ?? [],
     };
+
+    if (this.typesLoaded) {
+      filters.saleTransactionTypes = this.saleTransactionTypesSelect ?? [];
+      filters.purchaseTransactionTypes = this.purchaseTransactionTypesSelect ?? [];
+    }
+
+    return filters;
   }
 
   private chartPayload(type: string, filters?: ChartFilters): { type: string; filters?: ChartFilters } {
@@ -177,13 +272,7 @@ export class DasboardComponent {
       return { type };
     }
 
-    return {
-      type,
-      filters: {
-        branches: filters.branches,
-        transactionTypes: filters.transactionTypes ?? [],
-      },
-    };
+    return { type, filters };
   }
 
   private beginChart(): boolean {
