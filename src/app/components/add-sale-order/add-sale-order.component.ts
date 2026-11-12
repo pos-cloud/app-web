@@ -12,7 +12,6 @@ import { MovementOfCancellationService } from 'app/core/services/movement-of-can
 import { PriceListArticleService } from 'app/core/services/price-list-article.service';
 import { PriceListService } from 'app/core/services/price-list.service';
 import { StructureService } from 'app/core/services/structure.service';
-import { JsonDiffPipe } from 'app/shared/pipes/json-diff';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -185,7 +184,6 @@ export class AddSaleOrderComponent {
     private _priceListArticleService: PriceListArticleService,
     private _configService: ConfigService,
     private _structureService: StructureService,
-    private _jsonDiffPipe: JsonDiffPipe,
     private _toastService: ToastService,
     public translatePipe: TranslateMePipe,
     public activeModal: NgbActiveModal,
@@ -1573,6 +1571,28 @@ export class AddSaleOrderComponent {
     this.updatePrices();
   }
 
+  /** Solo los importes que recalculateSalePrice / recalculateCostPrice pueden cambiar. */
+  private priceNumbers(movementOfArticle: MovementOfArticle): string {
+    const taxes = (movementOfArticle.taxes || [])
+      .map(
+        (tax) =>
+          `${this.roundNumber.transform(tax?.percentage)}:${this.roundNumber.transform(tax?.taxBase, 4)}:${this.roundNumber.transform(tax?.taxAmount, 4)}`
+      )
+      .join('|');
+
+    return [
+      this.roundNumber.transform(movementOfArticle.unitPrice),
+      this.roundNumber.transform(movementOfArticle.salePrice),
+      this.roundNumber.transform(movementOfArticle.basePrice),
+      this.roundNumber.transform(movementOfArticle.costPrice),
+      this.roundNumber.transform(movementOfArticle.discountAmount),
+      this.roundNumber.transform(movementOfArticle.transactionDiscountAmount, 6),
+      this.roundNumber.transform(movementOfArticle.markupPrice),
+      this.roundNumber.transform(movementOfArticle.markupPercentage, 3),
+      taxes,
+    ].join(';');
+  }
+
   async updatePrices(discountPercent?: number) {
     this.loading = true;
 
@@ -1616,14 +1636,8 @@ export class AddSaleOrderComponent {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        // BORRAMOS TAXES ID PARA COMPARAR
-        for (let taxes of movementOfArticle.taxes) {
-          delete taxes._id;
-        }
-        let oldMovementOfArticle: {} = {};
-
-        oldMovementOfArticle = Object.assign(oldMovementOfArticle, movementOfArticle);
         if (!movementOfArticle.movementParent || (movementOfArticle.movementParent && movementOfArticle.isOptional)) {
+          const priceBefore = this.priceNumbers(movementOfArticle);
           this.transaction.discountPercent = this.roundNumber.transform(this.transaction.discountPercent, 6);
           if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
             movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
@@ -1635,15 +1649,7 @@ export class AddSaleOrderComponent {
             movementOfArticle.transactionDiscountAmount * movementOfArticle.amount,
             6
           );
-          // COMPARAMOS JSON -- SI CAMBIO ACTUALIZAMOS
-          if (
-            this._jsonDiffPipe.transform(oldMovementOfArticle, movementOfArticle) ||
-            (oldMovementOfArticle['taxes'] &&
-              oldMovementOfArticle['taxes'].length > 0 &&
-              movementOfArticle['taxes'] &&
-              movementOfArticle['taxes'].length > 0 &&
-              oldMovementOfArticle['taxes'][0].taxAmount !== movementOfArticle['taxes'][0].taxAmount)
-          ) {
+          if (priceBefore !== this.priceNumbers(movementOfArticle)) {
             try {
               let result = await this.updateMovementOfArticle(movementOfArticle);
 
