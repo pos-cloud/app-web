@@ -90,11 +90,12 @@ export class UserBranchSelectComponent implements OnInit, OnDestroy, ControlValu
           operationType: 1,
         },
         match: { operationType: { $ne: 'D' } },
+        sort: { number: 1 },
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          this.branches = result?.result ?? [];
+          this.branches = result?.status === 200 && Array.isArray(result.result) ? result.result : [];
         },
       });
   }

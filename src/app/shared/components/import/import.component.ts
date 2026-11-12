@@ -359,7 +359,8 @@ export class ImportComponent implements OnInit {
       })
       .subscribe({
         next: (result) => {
-          this.branches = result.result;
+          this.branches = result?.status === 200 && Array.isArray(result.result) ? result.result : [];
+          if (result?.status !== 200) this._toastService.showToast(result);
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -368,13 +369,24 @@ export class ImportComponent implements OnInit {
   }
 
   getDeposits(): void {
-    this._depositService.getAll({ match: { operationType: { $ne: 'D' } } }).subscribe({
-      next: (result) => {
-        this.deposits = result.result;
-      },
-      error: (error) => {
-        this._toastService.showToast(error);
-      },
-    });
+    this._depositService
+      .getAll({
+        project: {
+          _id: 1,
+          name: 1,
+          branch: 1,
+          operationType: 1,
+        },
+        match: { operationType: { $ne: 'D' } },
+      })
+      .subscribe({
+        next: (result) => {
+          this.deposits = result?.status === 200 && Array.isArray(result.result) ? result.result : [];
+          if (result?.status !== 200) this._toastService.showToast(result);
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
   }
 }

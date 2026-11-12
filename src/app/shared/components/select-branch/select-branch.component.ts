@@ -60,9 +60,10 @@ export class SelectBranchComponent implements OnInit {
         })
         .subscribe(
           (result) => {
-            if (result.result.length > 0) {
+            if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
               resolve(result.result);
             } else {
+              if (result?.status !== 200) this.showMessage('No se pudieron cargar las sucursales.', 'danger', false);
               resolve(null);
             }
           },

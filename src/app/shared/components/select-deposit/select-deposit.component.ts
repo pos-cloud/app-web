@@ -52,10 +52,12 @@ export class SelectDepositComponent implements OnInit {
       })
       .subscribe(
         (result) => {
-          if (result.result.length > 0) {
+          if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
             this.deposits = result.result;
-          } else {
+          } else if (result?.status === 200) {
             this.showMessage('No se encontraron depósitos.', 'info', false);
+          } else {
+            this.showMessage('No se pudieron cargar los depósitos.', 'danger', false);
           }
         },
         (error) => {
