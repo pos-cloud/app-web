@@ -3006,10 +3006,12 @@ export class AddSaleOrderComponent {
       let identity: User = JSON.parse(sessionStorage.getItem('user'));
 
       if (identity) {
-        this._userService.getUser(identity._id).subscribe(
+        this._userService.getUserObjById(identity._id).subscribe(
           (result) => {
-            if (result && result.user) {
-              resolve(result.user);
+            const user = result?.status === 200 && result?.result?._id ? result.result : null;
+
+            if (user) {
+              resolve(user);
             } else {
               this.showMessage('Debe volver a iniciar sesión', 'danger', false);
             }

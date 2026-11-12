@@ -344,13 +344,14 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe({
         next: (result) => {
           this._toastService.showToast(result);
+          if (result?.status === 200) this.returnTo();
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
@@ -363,14 +364,17 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe({
         next: (result) => {
           this._toastService.showToast(result);
-          this.user = result.result;
+          if (result?.status === 200) {
+            this.user = result.result;
+            this.returnTo();
+          }
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;
-          this.returnTo();
         },
       });
   }
@@ -378,18 +382,22 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   public deleteUser() {
     this.loading = true;
 
-    this._userService.delete(this.user._id).subscribe({
-      next: (result) => {
-        this._toastService.showToast(result);
-      },
-      error: (error) => {
-        this._toastService.showToast(error);
-      },
-      complete: () => {
-        this.loading = false;
-        this.returnTo();
-      },
-    });
+    this._userService
+      .delete(this.user._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this._toastService.showToast(result);
+          if (result?.status === 200) this.returnTo();
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   public addShortcut() {

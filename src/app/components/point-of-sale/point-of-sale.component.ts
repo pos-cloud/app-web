@@ -337,35 +337,6 @@ export class PointOfSaleComponent implements OnInit {
     });
   }
 
-  public getUsers(match: {} = {}): Promise<User[]> {
-    return new Promise<User[]>((resolve, reject) => {
-      this.subscription.add(
-        this._userService
-          .getUsersV2(
-            {}, // PROJECT
-            match, // MATCH
-            { name: 1 }, // SORT
-            {}, // GROUP
-            0, // LIMIT
-            0 // SKIP
-          )
-          .subscribe(
-            (result) => {
-              if (result && result.users) {
-                resolve(result.users);
-              } else {
-                resolve(null);
-              }
-            },
-            (error) => {
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          )
-      );
-    });
-  }
-
   public getDeposits(match: {} = {}): Promise<Deposit[]> {
     return new Promise<Deposit[]>((resolve) => {
       this.subscription.add(
