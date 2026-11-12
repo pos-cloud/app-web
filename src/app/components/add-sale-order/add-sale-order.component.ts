@@ -1588,7 +1588,7 @@ export class AddSaleOrderComponent {
       this.roundNumber.transform(movementOfArticle.discountAmount),
       this.roundNumber.transform(movementOfArticle.transactionDiscountAmount, 6),
       this.roundNumber.transform(movementOfArticle.markupPrice),
-      this.roundNumber.transform(movementOfArticle.markupPercentage, 3),
+      // markupPercentage no viene en el listado y se recalcula siempre; si se compara, cada renglón se graba.
       taxes,
     ].join(';');
   }
