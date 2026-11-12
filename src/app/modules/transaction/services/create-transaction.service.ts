@@ -271,21 +271,33 @@ export class CreateTransactionService {
       return false;
     }
     const depositOrigin = await this.getDeposits({ _id: { $oid: result.origin }, operationType: { $ne: 'D' } });
+    if (!depositOrigin?.[0]?.branch) {
+      return false;
+    }
     tx.depositOrigin = depositOrigin[0];
     const branchOrigin = await this.getBranches({
       _id: { $oid: depositOrigin[0].branch },
       operationType: { $ne: 'D' },
     });
+    if (!branchOrigin?.[0]?._id) {
+      return false;
+    }
     tx.branchOrigin = branchOrigin[0];
-    await this.setTransactionBranch(tx, branchOrigin[0]?._id);
+    await this.setTransactionBranch(tx, branchOrigin[0]._id);
     const depositDestination = await this.getDeposits({
       _id: { $oid: result.destination },
       operationType: { $ne: 'D' },
     });
+    if (!depositDestination?.[0]?.branch) {
+      return false;
+    }
     const branchDestination = await this.getBranches({
       _id: { $oid: depositDestination[0].branch },
       operationType: { $ne: 'D' },
     });
+    if (!branchDestination?.[0]?._id) {
+      return false;
+    }
     tx.branchDestination = branchDestination[0];
     tx.depositDestination = depositDestination[0];
     return true;
@@ -566,7 +578,14 @@ export class CreateTransactionService {
           sort: { number: 1 },
         })
         .subscribe(
-          (result) => resolve(result?.result.length > 0 ? result.result : null),
+          (result) => {
+            if (result?.status !== 200) {
+              this._toastService.showToast(result);
+              resolve(null);
+              return;
+            }
+            resolve(Array.isArray(result.result) && result.result.length > 0 ? result.result : null);
+          },
           (error) => {
             this._toastService.showToast(error);
             resolve(null);
@@ -577,13 +596,32 @@ export class CreateTransactionService {
 
   private getDeposits(match: {} = {}): Promise<Deposit[]> {
     return new Promise((resolve) => {
-      this._depositService.getAll({ match, sort: { name: 1 } }).subscribe(
-        (result) => resolve(result?.status === 200 ? result.result : null),
-        (error) => {
-          this._toastService.showToast(error);
-          resolve(null);
-        }
-      );
+      this._depositService
+        .getAll({
+          project: {
+            _id: 1,
+            name: 1,
+            default: 1,
+            branch: 1,
+            operationType: 1,
+          },
+          match,
+          sort: { name: 1 },
+        })
+        .subscribe(
+          (result) => {
+            if (result?.status !== 200 || !Array.isArray(result.result)) {
+              if (result?.status !== 200) this._toastService.showToast(result);
+              resolve(null);
+              return;
+            }
+            resolve(result.result.length > 0 ? result.result : null);
+          },
+          (error) => {
+            this._toastService.showToast(error);
+            resolve(null);
+          }
+        );
     });
   }
 

@@ -17,7 +17,6 @@ import { Config } from 'app/app.config';
 
 import { ApiResponse, Bank, Currency, Holiday } from '@types';
 import { BankService } from 'app/core/services/bank.service';
-import { CurrencyService } from 'app/core/services/currency.service';
 import { HolidayService } from 'app/core/services/holiday.service';
 import { TranslateMePipe } from 'app/shared/pipes/translate-me';
 import * as moment from 'moment';
@@ -136,7 +135,6 @@ export class AddMovementOfCashComponent implements OnInit {
     private _taxService: TaxService,
     private _movementOfArticleService: MovementOfArticleService,
     private _toastService: ToastService,
-    private _currencyService: CurrencyService,
     public activeModal: NgbActiveModal,
     public _fb: UntypedFormBuilder,
     public alertConfig: NgbAlertConfig,
@@ -1115,29 +1113,37 @@ export class AddMovementOfCashComponent implements OnInit {
     this.subscription.add(
       this._paymentMethodService
         .getAll({
-          project: {},
+          project: {
+            _id: 1,
+            name: 1,
+            discount: 1,
+            surcharge: 1,
+            commission: 1,
+            administrativeExpense: 1,
+            otherExpense: 1,
+            allowToFinance: 1,
+            checkDetail: 1,
+            checkPerson: 1,
+            acceptReturned: 1,
+            inputAndOuput: 1,
+            isCurrentAccount: 1,
+            allowBank: 1,
+            observation: 1,
+            discountArticle: 1,
+            surchargeArticle: 1,
+            operationType: 1,
+            'currency._id': 1,
+            'currency.sign': 1,
+            'currency.quotation': 1,
+          },
           match: match,
           sort: { order: 1 },
         })
         .subscribe(
           async (result) => {
             this.loading = false;
-            if (result.status === 200) {
+            if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
               this.paymentMethods = result.result;
-              for (let p of this.paymentMethods) {
-                if (p.currency) {
-                  await this._currencyService
-                    .getAll({
-                      match: {
-                        _id: { $oid: p.currency },
-                      },
-                    })
-                    .toPromise()
-                    .then((result: ApiResponse) => {
-                      p.currency = result.result[0];
-                    });
-                }
-              }
               this.movementOfCash.type = this.paymentMethods[0];
               this.paymentMethodSelected = this.movementOfCash.type;
               this.movementOfCash.discount = this.paymentMethodSelected.discount || 0;
@@ -1145,8 +1151,13 @@ export class AddMovementOfCashComponent implements OnInit {
               this.percentageCommission = this.paymentMethodSelected.commission || 0;
               await this.loadPaymentAdjustmentsTotal();
               this.getMovementOfCashesByTransaction();
+            } else if (result?.status === 200) {
+              this._toastService.showToast({
+                type: 'info',
+                message: 'No hay medios de pago disponibles.',
+              });
             } else {
-              this._toastService.showToast(result.result);
+              this._toastService.showToast(result);
             }
           },
           (error) => {
@@ -1954,13 +1965,17 @@ export class AddMovementOfCashComponent implements OnInit {
         })
         .subscribe(
           (result) => {
-            if (!result.result || result.result.length === 0) {
-              this._toastService.showToast({
-                type: 'info',
-                message:
-                  'Debe configurar el impuesto IVA para el realizar el descuento/recargo con ' +
-                  this.paymentMethodSelected.name,
-              });
+            if (result?.status !== 200 || !Array.isArray(result.result) || result.result.length === 0) {
+              this._toastService.showToast(
+                result?.status === 200
+                  ? {
+                      type: 'info',
+                      message:
+                        'Debe configurar el impuesto IVA para el realizar el descuento/recargo con ' +
+                        this.paymentMethodSelected.name,
+                    }
+                  : result
+              );
               resolve(null);
             } else {
               resolve(result.result);

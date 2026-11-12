@@ -319,9 +319,12 @@ export class PointOfSaleComponent implements OnInit {
           })
           .subscribe(
             (result) => {
-              if (result?.result.length > 0) {
+              if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
                 resolve(result.result);
               } else {
+                if (result?.status !== 200) {
+                  this.showMessage('No se pudieron cargar las sucursales.', 'danger', false);
+                }
                 resolve(null);
               }
             },
@@ -380,9 +383,12 @@ export class PointOfSaleComponent implements OnInit {
           })
           .subscribe(
             (result) => {
-              if (result.result.length > 0) {
+              if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
                 resolve(result.result);
               } else {
+                if (result?.status !== 200) {
+                  this.showMessage('No se pudieron cargar los depósitos.', 'danger', false);
+                }
                 resolve(null);
               }
             },
@@ -461,11 +467,17 @@ export class PointOfSaleComponent implements OnInit {
           })
           .subscribe(
             (result) => {
-              if (!result.result || result.result.length === 0) {
-                this.showMessage(result, 'info', true);
-                resolve(null);
-              } else {
+              if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
                 resolve(result.result);
+              } else {
+                const message =
+                  result?.status === 200 && typeof result?.message === 'string' && result.message !== ''
+                    ? result.message
+                    : result?.status === 200
+                      ? 'No se encontraron impresoras.'
+                      : 'No se pudieron cargar las impresoras.';
+                this.showMessage(message, result?.status === 200 ? 'info' : 'danger', true);
+                resolve(null);
               }
             },
             (error) => {
@@ -1601,21 +1613,37 @@ export class PointOfSaleComponent implements OnInit {
                 _id: { $oid: result.origin },
                 operationType: { $ne: 'D' },
               });
+              if (!depositOrigin?.[0]?.branch) {
+                this.showMessage('No se pudo cargar el depósito de origen.', 'danger', false);
+                return;
+              }
               this.transaction.depositOrigin = depositOrigin[0];
               let branchO = await this.getBranches({
                 _id: { $oid: depositOrigin[0].branch },
                 operationType: { $ne: 'D' },
               });
+              if (!branchO?.[0]?._id) {
+                this.showMessage('No se pudo cargar la sucursal de origen.', 'danger', false);
+                return;
+              }
               this.transaction.branchOrigin = branchO[0];
-              await this.setTransactionBranch(branchO[0]?._id);
+              await this.setTransactionBranch(branchO[0]._id);
               let depositDestination = await this.getDeposits({
                 _id: { $oid: result.destination },
                 operationType: { $ne: 'D' },
               });
+              if (!depositDestination?.[0]?.branch) {
+                this.showMessage('No se pudo cargar el depósito de destino.', 'danger', false);
+                return;
+              }
               let branchD = await this.getBranches({
                 _id: { $oid: depositDestination[0].branch },
                 operationType: { $ne: 'D' },
               });
+              if (!branchD?.[0]?._id) {
+                this.showMessage('No se pudo cargar la sucursal de destino.', 'danger', false);
+                return;
+              }
               this.transaction.branchDestination = branchD[0];
               this.transaction.depositDestination = depositDestination[0];
               this.nextStepTransaction();
