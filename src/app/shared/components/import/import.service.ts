@@ -82,6 +82,20 @@ export class ImportService {
       );
   }
 
+  public importAccount(file: File) {
+    const URL = `${environment.apiv2}/accounts/import-excel`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const headers = new HttpHeaders().set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, formData, { headers }).pipe(
+      map((res) => res),
+      catchError((err) => of(err))
+    );
+  }
+
   public importMovementsOfArticles(file: File, transactionId: string, includeIva: boolean) {
     const URL = `${environment.apiv2}/movements-of-articles/import-excel`;
 

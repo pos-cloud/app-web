@@ -121,9 +121,17 @@
   <div class="container" *ngIf="notUpdate?.length > 0 || update?.length > 0">
     <p>
       <span class="font-weight-bold"
-        >{{ countUpdate }} {{ model === 'company' ? 'empresa' : model === 'purchase' ? 'compra' : 'artículo'
+        >{{ countUpdate }}
+        {{
+          model === 'company'
+            ? 'empresa'
+            : model === 'purchase'
+              ? 'compra'
+              : model === 'account'
+                ? 'cuenta'
+                : 'artículo'
         }}<span *ngIf="countUpdate !== 1">s</span>
-        {{ model === 'company' ? 'actualizada' : model === 'purchase' ? 'actualizada' : 'actualizado'
+        {{ model === 'company' || model === 'purchase' || model === 'account' ? 'actualizada' : 'actualizado'
         }}<span *ngIf="countUpdate !== 1">s</span>:
       </span>
 
@@ -134,8 +142,17 @@
     </p>
     <p>
       <span class="font-weight-bold"
-        >{{ countNotUpdate }} {{ model === 'company' ? 'empresa' : model === 'purchase' ? 'compra' : 'artículo'
-        }}<span *ngIf="countNotUpdate !== 1">s</span> no {{ model === 'company' ? 'actualizada' : 'actualizado'
+        >{{ countNotUpdate }}
+        {{
+          model === 'company'
+            ? 'empresa'
+            : model === 'purchase'
+              ? 'compra'
+              : model === 'account'
+                ? 'cuenta'
+                : 'artículo'
+        }}<span *ngIf="countNotUpdate !== 1">s</span> no
+        {{ model === 'company' || model === 'account' ? 'actualizada' : 'actualizado'
         }}<span *ngIf="countNotUpdate !== 1">s</span>:
       </span>
       <ng-container *ngFor="let article of notUpdate; let last = last">

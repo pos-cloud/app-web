@@ -220,6 +220,19 @@ export class ImportComponent implements OnInit {
             this.loading = false;
           }
         });
+      } else if (this.model === 'account') {
+        this._excelUpdateService.importAccount(file).subscribe((response) => {
+          if (response?.status === 200) {
+            this.countNotUpdate = response.result.countNotUpdate;
+            this.countUpdate = response.result.countUpdate;
+            this.notUpdate = response.result.notUpdateAccount;
+            this.update = response.result.updateAccount;
+            this.loading = false;
+          } else {
+            this._toastService.showToast(response);
+            this.loading = false;
+          }
+        });
       } else if (this.model === 'movements-of-articles') {
         this._excelUpdateService
           .importMovementsOfArticles(file, this.transactionId, this.selectedIncludeIva)
@@ -296,6 +309,7 @@ export class ImportComponent implements OnInit {
       'price-list-articles':
         'https://docs.google.com/spreadsheets/d/1hZPD54yW3_HaW9EBexGgqiEP0k-ujtO-AHxVqOzNu2w/edit?gid=0#gid=0',
       purchase: '',
+      account: '',
     };
 
     const url = urls[this.model];

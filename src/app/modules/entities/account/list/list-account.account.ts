@@ -1,9 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountService } from '@core/services/account.service';
 import { IAttribute, IButton } from '@types';
 import { DatatableComponent } from 'app/components/datatable/datatable.component';
 import { DatatableModule } from 'app/components/datatable/datatable.module';
+import { ImportComponent } from '@shared/components/import/import.component';
 
 @Component({
   selector: 'app-list-accounts',
@@ -122,6 +124,12 @@ export class ListAccountComponent {
       icon: 'fa fa-refresh',
       click: `this.refresh()`,
     },
+    {
+      title: 'import',
+      class: 'btn btn-light',
+      icon: 'fa fa-upload',
+      click: `this.emitEvent('uploadFile', null)`,
+    },
   ];
 
   public rowButtons: IButton[] = [
@@ -149,7 +157,8 @@ export class ListAccountComponent {
 
   constructor(
     public _service: AccountService,
-    private _router: Router
+    private _router: Router,
+    private _modalService: NgbModal
   ) {}
 
   public async emitEvent(event) {
@@ -170,6 +179,23 @@ export class ListAccountComponent {
       case 'delete':
         this._router.navigateByUrl('entities/accounts/delete/' + obj._id);
         break;
+      case 'uploadFile': {
+        const modalRef = this._modalService.open(ImportComponent, {
+          size: 'lg',
+          backdrop: 'static',
+        });
+        modalRef.componentInstance.model = 'account';
+        modalRef.componentInstance.title = 'Importar cuentas';
+        modalRef.result.then(
+          (result) => {
+            if (result === 'save_close') {
+              this.refresh();
+            }
+          },
+          () => {}
+        );
+        break;
+      }
       default:
     }
   }
