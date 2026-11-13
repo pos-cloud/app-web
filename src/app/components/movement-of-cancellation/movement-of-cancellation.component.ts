@@ -223,6 +223,7 @@ export class MovementOfCancellationComponent implements OnInit {
 
     // CAMPOS A TRAER
     let project = {
+      _id: 1,
       'origin._id': 1,
       'origin.type': 1,
       'destination._id': 1,
@@ -236,22 +237,22 @@ export class MovementOfCancellationComponent implements OnInit {
     };
 
     this._cancellationTypeService
-      .getCancellationTypes(
-        project, // PROJECT
-        {
+      .getAll({
+        project,
+        match: {
           'destination._id': { $oid: this.transactionDestination.type._id },
           origin: { $exists: true },
           operationType: { $ne: 'D' },
-        }, // MATCH
-        {}, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
+        },
+        sort: {},
+        group: {},
+        limit: 0,
+        skip: 0,
+      })
       .subscribe(
         (result) => {
-          if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
-            this.cancellationTypes = result.cancellationTypes;
+          if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
+            this.cancellationTypes = result.result;
             this.getTransactions();
           } else {
             this.totalItems = 0;

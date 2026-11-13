@@ -13,10 +13,10 @@ import { MovementOfCancellation } from 'app/components/movement-of-cancellation/
 import { MovementOfCash } from 'app/components/movement-of-cash/movement-of-cash';
 import { Taxes } from 'app/components/tax/taxes';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
+import { BranchService } from 'app/core/services/branch.service';
 import { MovementOfArticleService } from 'app/core/services/movement-of-article.service';
 import { MovementOfCancellationService } from 'app/core/services/movement-of-cancellation.service';
 import { MovementOfCashService } from 'app/core/services/movement-of-cash.service';
-import { BranchService } from 'app/core/services/branch.service';
 import { TransactionTypeService } from 'app/core/services/transaction-type.service';
 import { TransactionService } from 'app/core/services/transaction.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -141,8 +141,9 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     this.loading = true;
 
     this._cancellationTypeService
-      .getCancellationTypes(
-        {
+      .getAll({
+        project: {
+          _id: 1,
           'origin._id': 1,
           'origin.operationType': 1,
           'destination._id': 1,
@@ -155,23 +156,23 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           requestStatusOrigin: 1,
           stateOrigin: 1,
           updatePrices: 1,
-        }, // PROJECT
-        {
+        },
+        match: {
           'origin._id': { $oid: this.transaction.type._id },
           requestAutomatic: true,
           operationType: { $ne: 'D' },
           'destination.operationType': { $ne: 'D' },
           'origin.operationType': { $ne: 'D' },
-        }, // MATCH
-        {}, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
+        },
+        sort: {},
+        group: {},
+        limit: 0,
+        skip: 0,
+      })
       .subscribe(
         (result) => {
-          if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
-            this.cancellationTypes = result.cancellationTypes;
+          if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
+            this.cancellationTypes = result.result;
           }
           this.loading = false;
         },

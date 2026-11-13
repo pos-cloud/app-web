@@ -416,27 +416,28 @@ export class AddSaleOrderComponent {
   getCancellationTypes(): Promise<CancellationType[]> {
     return new Promise<CancellationType[]>((resolve) => {
       this._cancellationTypeService
-        .getCancellationTypes(
-          {
+        .getAll({
+          project: {
+            _id: 1,
             'destination._id': 1,
             'destination.name': 1,
             'origin._id': 1,
             'origin.name': 1,
             operationType: 1,
-          }, // PROJECT
-          {
+          },
+          match: {
             'destination._id': { $oid: this.transaction.type._id },
             operationType: { $ne: 'D' },
-          }, // MATCH
-          { order: 1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
+          },
+          sort: { order: 1 },
+          group: {},
+          limit: 0,
+          skip: 0,
+        })
         .subscribe(
           (result) => {
-            if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
-              resolve(result.cancellationTypes);
+            if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
+              resolve(result.result);
             } else {
               resolve(null);
             }
@@ -2668,8 +2669,8 @@ export class AddSaleOrderComponent {
       this.loading = true;
 
       this._cancellationTypeService
-        .getCancellationTypes(
-          {
+        .getAll({
+          project: {
             'origin._id': 1,
             'origin.operationType': 1,
             'destination._id': 1,
@@ -2677,24 +2678,24 @@ export class AddSaleOrderComponent {
             'destination.operationType': 1,
             operationType: 1,
             requestAutomatic: 1,
-          }, // PROJECT
-          {
+          },
+          match: {
             'origin._id': { $oid: this.transaction.type._id },
             requestAutomatic: true,
             operationType: { $ne: 'D' },
             'destination.operationType': { $ne: 'D' },
             'origin.operationType': { $ne: 'D' },
-          }, // MATCH
-          {}, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
+          },
+          sort: {},
+          group: {},
+          limit: 0,
+          skip: 0,
+        })
         .subscribe(
           (result) => {
             this.loading = false;
-            if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
-              resolve(result.cancellationTypes);
+            if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
+              resolve(result.result);
             } else {
               resolve(null);
             }

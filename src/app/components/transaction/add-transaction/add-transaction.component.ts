@@ -9,8 +9,8 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import { Taxes } from '../../tax/taxes';
 import { Movements, TransactionMovement } from '@types';
+import { Taxes } from '../../tax/taxes';
 import { Transaction, TransactionState } from '../transaction';
 
 //Services
@@ -307,20 +307,24 @@ export class AddTransactionComponent implements OnInit {
     this.loading = true;
 
     this._cancellationTypeService
-      .getCancellationTypes(
-        { 'destination._id': 1, operationType: 1 }, // PROJECT
-        {
+      .getAll({
+        project: {
+          _id: 1,
+          'destination._id': 1,
+          operationType: 1,
+        },
+        match: {
           'destination._id': { $oid: this.transaction.type._id },
           operationType: { $ne: 'D' },
-        }, // MATCH
-        { order: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
+        },
+        sort: { order: 1 },
+        group: {},
+        limit: 0,
+        skip: 0,
+      })
       .subscribe(
         (result) => {
-          if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
+          if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
             if (!this.transaction.type.requestArticles) {
               this.showButtonCancelation = true;
             }

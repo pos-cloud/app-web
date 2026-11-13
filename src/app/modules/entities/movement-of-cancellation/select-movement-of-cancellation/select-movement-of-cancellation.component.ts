@@ -9,9 +9,9 @@ import { MovementOfCashService } from '@core/services/movement-of-cash.service';
 import { TransactionService } from '@core/services/transaction.service';
 import { NgbActiveModal, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { ApiResponse, Movements, TransactionMovement } from '@types';
+import { ToastService } from '@shared/components/toast/toast.service';
+import { ApiResponse, CancellationType, Movements, TaxBase, TransactionMovement } from '@types';
 import { Config } from 'app/app.config';
-import { CancellationType, TaxBase } from '@types';
 import { Article } from 'app/components/article/article';
 import { MovementOfArticle } from 'app/components/movement-of-article/movement-of-article';
 import { MovementOfCancellation } from 'app/components/movement-of-cancellation/movement-of-cancellation';
@@ -21,7 +21,6 @@ import { Taxes } from 'app/components/tax/taxes';
 import { Transaction, TransactionState } from 'app/components/transaction/transaction';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
-import { ToastService } from '@shared/components/toast/toast.service';
 import { FocusDirective } from 'app/shared/directives/focus.directive';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 import { RoundNumberPipe } from 'app/shared/pipes/round-number.pipe';
@@ -233,6 +232,7 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
 
     // CAMPOS A TRAER
     let project = {
+      _id: 1,
       'origin._id': 1,
       'origin.type': 1,
       'destination._id': 1,
@@ -246,23 +246,23 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
     };
 
     this._cancellationTypeService
-      .getCancellationTypes(
-        project, // PROJECT
-        {
+      .getAll({
+        project,
+        match: {
           'destination._id': { $oid: this.transactionDestination.type._id },
           origin: { $exists: true },
           operationType: { $ne: 'D' },
-        }, // MATCH
-        {}, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
+        },
+        sort: {},
+        group: {},
+        limit: 0,
+        skip: 0,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          if (result?.cancellationTypes?.length > 0) {
-            this.cancellationTypes = result.cancellationTypes;
+          if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
+            this.cancellationTypes = result.result;
             this.getTransactions();
           } else {
             this.totalItems = 0;
