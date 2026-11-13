@@ -50,8 +50,8 @@ export class CompanyService extends ModelService {
   }
 
 
-  public getSummaryOfAccountsByCompanyV1(query: string): Observable<any> {
-    const URL = `${environment.api}/api/summary-of-accounts-by-company`; // TODO:Migrar
+  public getSummaryOfAccountsByCompany(query: string): Observable<any> {
+    const URL = `${environment.apiv2}/company-current-accounts/summary-of-accounts-by-company`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
