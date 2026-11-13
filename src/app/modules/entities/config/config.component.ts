@@ -379,6 +379,7 @@ export class ConfigsComponent implements OnInit {
         },
         error: (error) => {
           this._toastService.showToast(error);
+          this.loading = false;
         },
         complete: () => {
           this.loading = false;

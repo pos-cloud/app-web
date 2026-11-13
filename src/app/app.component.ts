@@ -78,13 +78,10 @@ export class AppComponent {
 
   public getConfigApi(): Promise<Config> {
     return new Promise<Config>((resolve, reject) => {
-      this._configService.getConfigApi().subscribe(
+      this._configService.getConfigObj().subscribe(
         (result) => {
-          if (!result.configs) {
-            resolve(null);
-          } else {
-            resolve(result.configs[0]);
-          }
+          const config = result?.status === 200 && result?.result?._id ? result.result : null;
+          resolve(config);
         },
         (error) => {
           resolve(null);

@@ -5,7 +5,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ModelService } from 'app/core/services/model.service';
 import { environment } from 'environments/environment';
-import { Config } from '../../app.config';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -54,27 +53,6 @@ export class ConfigService extends ModelService {
       );
   }
 
-  public getConfigApi(): Observable<any> {
-    const URL = `${environment.api}/api/config`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .get(URL, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public getCompanyPicture(picture: string): Observable<any> {
     const URL = `${environment.apiv2}/to-print/get-img`;
 
@@ -109,28 +87,20 @@ export class ConfigService extends ModelService {
     return this._http.get('https://restcountries.com/v3.1/name/' + country);
   }
 
-  public updateConfig(config: Config): Observable<any> {
-    const URL = `${environment.api}/api/config`; // TODO:Migrar
+  public getConfigObj(): Observable<any> {
+    const URL = `${environment.apiv2}/configs/object`;
 
     const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
+    .set('Content-Type', 'application/json')
+    .set('Authorization', this._authService.getToken());
 
-    const params = new HttpParams().set('id', config._id);
-
-    return this._http
-      .put(URL, config, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
+  return this._http.get(URL, { headers: headers }).pipe(
+    map((res) => {
+      return res;
+    }),
+    catchError((err) => {
+      return of(err);
+    })
+  );
   }
-
 }

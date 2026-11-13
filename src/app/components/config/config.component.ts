@@ -387,17 +387,18 @@ export class ConfigComponent implements OnInit {
   }
 
   public getConfig(): void {
-    this._configService.getConfigApi().subscribe(
+    this._configService.getConfigObj().subscribe(
       (result) => {
-        if (!result.configs) {
-          if (result.message && result.message !== '')
+        const config = result?.status === 200 && result?.result?._id ? result.result : null;
+
+        if (!config) {
+          if (result?.message && result?.message !== '')
             this._toastService.showToast({
-              message: result.message,
+              message: result?.message,
               type: 'info',
             });
         } else {
-          //let config = result.configs[0];
-          this.config = result.configs[0];
+          this.config = config;
           this.imageURL = this.config['companyPicture'];
 
           this.setConfigurationSettings(this.config);
@@ -495,7 +496,7 @@ export class ConfigComponent implements OnInit {
 
   public updateConfig(): Promise<Config> {
     return new Promise<Config>((resolve, reject) => {
-      this._configService.updateConfig(this.config).subscribe(
+      this._configService.update(this.config).subscribe(
         (result) => {
           if (!result.configs) {
             if (result.message && result.message !== '')
