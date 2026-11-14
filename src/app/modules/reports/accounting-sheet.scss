@@ -54,6 +54,27 @@
   white-space: nowrap;
 }
 
+.acct-table.money-cols {
+  table-layout: fixed;
+}
+
+.acct-table.money-cols col.col-date {
+  width: 7.5rem;
+}
+
+.acct-table.money-cols col.col-code {
+  width: 8rem;
+}
+
+.acct-table.money-cols col.col-money {
+  width: 11rem;
+}
+
+.acct-table.money-cols th.num,
+.acct-table.money-cols td.num {
+  text-align: center;
+}
+
 .acct-table tfoot td {
   border-top: 1px solid #0f172a;
   border-bottom: 3px double #0f172a;
@@ -77,6 +98,14 @@
 .account-head .name {
   font-weight: 700;
   color: #0f172a;
+}
+
+.account-head .num {
+  box-sizing: border-box;
+  flex: 0 0 11rem;
+  width: 11rem;
+  padding: 0 10px;
+  text-align: center;
 }
 
 .opening td {

@@ -26,7 +26,15 @@
     <h2 class="acct-title">Balance de Sumas y Saldos</h2>
     <p class="empty" *ngIf="loading && !data.length">Cargando…</p>
     <p class="empty" *ngIf="!loading && !data.length">No hay movimientos en el período.</p>
-    <table class="acct-table" *ngIf="data.length">
+    <table class="acct-table money-cols" *ngIf="data.length">
+      <colgroup>
+        <col class="col-code" />
+        <col />
+        <col class="col-money" />
+        <col class="col-money" />
+        <col class="col-money" />
+        <col class="col-money" />
+      </colgroup>
       <thead>
         <tr>
           <th>Código</th>

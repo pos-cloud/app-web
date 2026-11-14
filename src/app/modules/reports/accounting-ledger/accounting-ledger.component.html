@@ -50,7 +50,14 @@
       </div>
       <div class="num">{{ money(book.balance) }}</div>
     </header>
-    <table class="acct-table">
+    <table class="acct-table money-cols">
+      <colgroup>
+        <col class="col-date" />
+        <col />
+        <col class="col-money" />
+        <col class="col-money" />
+        <col class="col-money" />
+      </colgroup>
       <thead>
         <tr>
           <th>Fecha</th>
