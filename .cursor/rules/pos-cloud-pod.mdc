@@ -13,9 +13,12 @@ El trabajo de esta sesión es POS Cloud. Repos habilitados:
 - `api-tienda-nube` — NestJS. GitHub `pos-cloud/api-tiendanube`.
 - `e2e` — Playwright. GitHub `pos-cloud/e2e`.
 - `ops` — scripts de Mongo y servidores. GitHub `pos-cloud/ops`.
+- `docs` — guía de uso para quien opera el sistema. GitHub `pos-cloud/docs`.
 
 No leas ni modifiques otras carpetas de `/Users/francoandroetto/Projects`.
 
 El humano aprueba en GitHub. Abrí la pull request en el repo que cambiaste y detente. No hagas merge ni pushees a `main`.
 
 Delegá en los subagentes de `.cursor/agents/` de este repo. Si el rol no está definido acá, el cambio pertenece a otro repo.
+
+Si el cambio se nota en el sistema que usa el cliente, el rol `documentador` de `docs` actualiza la guía. Ese rol no toca el código de producto.

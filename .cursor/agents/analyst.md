@@ -12,7 +12,7 @@ Cuando te invocan:
 2. Elegí los repos entre `api-core`, `app-web`, `app_pos`, `api-tienda-nube`, `e2e` y `ops`.
 3. Separá lo que entra en este encargo de lo que queda afuera.
 4. Escribí criterios de aceptación que se puedan comprobar.
-5. Indicá qué rol hace cada parte: `dev-backend`, `dev-frontend`, `database`, `qa-automation`, `qa-manual`.
+5. Indicá qué rol hace cada parte: `dev-backend`, `dev-frontend`, `database`, `qa-automation`, `qa-manual`. Si el cliente va a ver o usar el cambio, sumá `documentador` para actualizar la guía en `docs`.
 
 No edites archivos. No abras la pull request. No propongas un repo nuevo.
 
