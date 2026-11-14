@@ -11,7 +11,8 @@ type ChartRequest = {
   type: string;
   filters?: {
     branches?: string[];
-    transactionTypes?: string[];
+    saleTransactionTypes?: string[];
+    purchaseTransactionTypes?: string[];
   };
 };
 
@@ -19,27 +20,36 @@ const CHARTS_ON_LOAD = [
   'sales-totals',
   'purchase-totals',
   'inventory-totals',
-  'account-receivable',
-  'sales-by-month',
   'sales-by-category',
+  'sales-by-make',
   'top-selling-products',
+  'sales-by-month',
+  'sales-collections',
 ];
 
 const CHARTS_ON_REFRESH = [
   'sales-totals',
   'purchase-totals',
   'sales-by-category',
+  'sales-by-make',
   'top-selling-products',
   'sales-by-month',
+  'sales-collections',
 ];
 
 describe('DasboardComponent', () => {
   let getChart: jest.Mock;
   let getAll: jest.Mock;
+  let showToast: jest.Mock;
+
+  beforeEach(() => {
+    localStorage.clear();
+  });
 
   async function createComponent(): Promise<DasboardComponent> {
     getChart = jest.fn().mockReturnValue(of({}));
     getAll = jest.fn().mockReturnValue(of({ result: [] }));
+    showToast = jest.fn();
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -47,7 +57,7 @@ describe('DasboardComponent', () => {
       providers: [
         { provide: ReportSystemService, useValue: { getChart } },
         { provide: TransactionTypeService, useValue: { getAll } },
-        { provide: ToastService, useValue: { showToast: jest.fn() } },
+        { provide: ToastService, useValue: { showToast } },
         { provide: Title, useValue: { setTitle: jest.fn() } },
       ],
     })
@@ -69,50 +79,102 @@ describe('DasboardComponent', () => {
     return getChart.mock.calls.map((call) => call[0] as ChartRequest);
   }
 
-  it('al crearse pide los siete charts sin filters y los tipos distintos de D', async () => {
-    await createComponent();
+  function saveFilters(filters: {
+    branchId: string | null;
+    saleTransactionTypes: string[];
+    purchaseTransactionTypes: string[];
+  }): void {
+    localStorage.setItem('company', 'acme');
+    localStorage.setItem('dashboardFilters:acme', JSON.stringify(filters));
+  }
+
+  it('al crearse no pide charts y sí pide los tipos de venta y compra', async () => {
+    const component = await createComponent();
 
     expect(getAll).toHaveBeenCalledWith({
-      project: { _id: 1, name: 1 },
+      project: { _id: 1, name: 1, transactionMovement: 1 },
       match: { operationType: { $ne: 'D' } },
     });
-    expect(chartRequests()).toEqual(CHARTS_ON_LOAD.map((type) => ({ type })));
+    expect(getChart).not.toHaveBeenCalled();
+    expect(component.filtersOpen).toBe(true);
+    expect(component.hasQueried).toBe(false);
   });
 
-  it('refresh con sucursal y tipos vuelve a pedir los cinco charts con esos filters', async () => {
+  it('con una elección guardada pide los charts al entrar y deja los filtros cerrados', async () => {
+    saveFilters({
+      branchId: 'sucursal-1',
+      saleTransactionTypes: ['venta'],
+      purchaseTransactionTypes: ['compra'],
+    });
+
+    const component = await createComponent();
+
+    const filters = {
+      branches: ['sucursal-1'],
+      saleTransactionTypes: ['venta'],
+      purchaseTransactionTypes: ['compra'],
+    };
+
+    expect(component.filtersOpen).toBe(false);
+    expect(chartRequests().filter((request) => CHARTS_ON_LOAD.includes(request.type))).toEqual([
+      { type: 'sales-totals', filters },
+      { type: 'purchase-totals', filters },
+      { type: 'sales-by-category', filters },
+      { type: 'sales-by-make', filters },
+      { type: 'top-selling-products', filters },
+      { type: 'sales-by-month', filters },
+      { type: 'sales-collections', filters },
+      { type: 'inventory-totals', filters: { branches: ['sucursal-1'] } },
+    ]);
+    expect(chartRequests().map((request) => request.type)).toContain('account-receivable');
+  });
+
+  it('refresh sin tipos no consulta la api', async () => {
+    const component = await createComponent();
+
+    component.refresh();
+
+    expect(getChart).not.toHaveBeenCalled();
+    expect(showToast).toHaveBeenCalled();
+  });
+
+  it('refresh con sucursal y tipos pide los charts, guarda la elección y no repite deudas', async () => {
     const component = await createComponent();
     component.branchSelectedId = 'sucursal-1';
-    component.transactionTypesSelect = ['venta', 'pedido'];
-    getChart.mockClear();
+    component.saleTransactionTypesSelect = ['venta'];
+    component.purchaseTransactionTypesSelect = ['compra'];
+    localStorage.setItem('company', 'acme');
 
     component.refresh();
 
     const filters = {
       branches: ['sucursal-1'],
-      transactionTypes: ['venta', 'pedido'],
+      saleTransactionTypes: ['venta'],
+      purchaseTransactionTypes: ['compra'],
     };
     const refreshed = chartRequests().filter((request) => CHARTS_ON_REFRESH.includes(request.type));
 
     expect(refreshed).toEqual(CHARTS_ON_REFRESH.map((type) => ({ type, filters })));
-  });
+    expect(JSON.parse(localStorage.getItem('dashboardFilters:acme') || '{}')).toEqual({
+      branchId: 'sucursal-1',
+      saleTransactionTypes: ['venta'],
+      purchaseTransactionTypes: ['compra'],
+    });
+    expect(component.filtersOpen).toBe(false);
 
-  it('refresh no pide account-receivable', async () => {
-    const component = await createComponent();
-    component.branchSelectedId = 'sucursal-1';
-    component.transactionTypesSelect = ['venta'];
     getChart.mockClear();
-
     component.refresh();
 
     expect(chartRequests().map((request) => request.type)).not.toContain('account-receivable');
     expect(getChart).toHaveBeenCalled();
   });
 
-  it('refresh no pide inventory-totals si la sucursal no cambió desde la carga', async () => {
+  it('refresh no pide inventory-totals si la sucursal no cambió desde la primera consulta', async () => {
     const component = await createComponent();
-    component.transactionTypesSelect = ['venta'];
-    getChart.mockClear();
+    component.saleTransactionTypesSelect = ['venta'];
 
+    component.refresh();
+    getChart.mockClear();
     component.refresh();
 
     expect(chartRequests().map((request) => request.type)).not.toContain('inventory-totals');
@@ -122,8 +184,7 @@ describe('DasboardComponent', () => {
   it('refresh pide inventory-totals con la sucursal y sin tipos cuando la sucursal cambia, incluso al volver a null', async () => {
     const component = await createComponent();
     component.branchSelectedId = 'sucursal-1';
-    component.transactionTypesSelect = ['venta'];
-    getChart.mockClear();
+    component.saleTransactionTypesSelect = ['venta'];
 
     component.refresh();
 

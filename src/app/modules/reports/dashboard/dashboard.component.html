@@ -1,30 +1,49 @@
 <section class="container-fluid dashboard">
-  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
-    <div class="form-group mr-2">
-      <app-user-branch-select [(ngModel)]="branchSelectedId"></app-user-branch-select>
-    </div>
-
-    <div class="form-group mr-2">
-      <label for="transactionType" class="control-label">
-        <b>Tipo de Transacción</b>
-      </label>
-      <app-multi-select-dropdown
-        [data]="transactionTypes"
-        [(ngModel)]="transactionTypesSelect"
-        placeholder="Tipo de Transacción"
-      >
-      </app-multi-select-dropdown>
-    </div>
-
-    <div class="form-group ml-auto">
-      <label class="control-label"> </label>
-      <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
-        <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
-      </button>
-    </div>
+  <div class="dashboard-toolbar">
+    <button
+      type="button"
+      class="dashboard-filter-toggle"
+      (click)="filtersOpen = !filtersOpen"
+      [class.is-open]="filtersOpen"
+    >
+      <i class="fa fa-filter"></i>
+      <span>Filtros</span>
+      <i class="fa" [ngClass]="filtersOpen ? 'fa-angle-up' : 'fa-angle-down'"></i>
+    </button>
   </div>
 
-  <div class="row kpi-row">
+  <div class="dashboard-filter-bar" *ngIf="filtersOpen">
+    <div class="form-group">
+      <app-user-branch-select [(ngModel)]="branchSelectedId"></app-user-branch-select>
+    </div>
+    <div class="form-group">
+      <label class="control-label"><b>Ventas</b></label>
+      <app-multi-select-dropdown
+        [data]="saleTypes"
+        [(ngModel)]="saleTransactionTypesSelect"
+        placeholder="Tipos de venta"
+      ></app-multi-select-dropdown>
+    </div>
+    <div class="form-group">
+      <label class="control-label"><b>Compras</b></label>
+      <app-multi-select-dropdown
+        [data]="purchaseTypes"
+        [(ngModel)]="purchaseTransactionTypesSelect"
+        placeholder="Tipos de compra"
+      ></app-multi-select-dropdown>
+    </div>
+    <button class="btn btn-primary" (click)="refresh()" [disabled]="loading || !hasTypeSelection()">
+      <i [ngClass]="{ 'fa fa-refresh fa-spin': loading }"></i> {{ 'refresh' | translate | capitalize }}
+    </button>
+    <p class="dashboard-filter-hint" *ngIf="!hasQueried">
+      Elegí al menos un tipo de venta o de compra. El dashboard no consulta hasta entonces, y la próxima vez usa esta
+      misma elección.
+    </p>
+  </div>
+
+  <p class="empty-state" *ngIf="!hasQueried">Todavía no hay datos. Abrí Filtros y elegí los tipos.</p>
+
+  <div class="row kpi-row" *ngIf="hasQueried">
     <div class="col-md-3">
       <div class="chart kpi">
         <div class="kpi-value">{{ salesTotal?.title?.text }}</div>
@@ -51,63 +70,126 @@
     </div>
   </div>
 
-  <div class="row chart-row">
-    <div class="col-12">
-      <div class="chart chart-panel">
+  <div class="dashboard-board" *ngIf="hasQueried">
+    <div class="chart chart-panel dashboard-board-month">
+      <div class="chart-heading">
         <span class="chart-title">Últimos 12 meses</span>
-        <apx-chart
-          *ngIf="salesByMonth?.series"
-          [series]="salesByMonth?.series"
-          [chart]="salesByMonth?.chart"
-          [dataLabels]="salesByMonth?.dataLabels"
-          [yaxis]="salesByMonth?.yaxis"
-          [legend]="salesByMonth?.legend"
-          [stroke]="salesByMonth?.stroke"
-          [markers]="salesByMonth?.markers"
-          [colors]="salesByMonth?.colors"
-          [grid]="salesByMonth?.grid"
-          [tooltip]="salesByMonth?.tooltip"
-          [xaxis]="salesByMonth?.xaxis"
-        ></apx-chart>
+        <span class="chart-note">Ventas y compras</span>
       </div>
+      <apx-chart
+        *ngIf="salesByMonth?.series"
+        [series]="salesByMonth?.series"
+        [chart]="salesByMonth?.chart"
+        [dataLabels]="salesByMonth?.dataLabels"
+        [yaxis]="salesByMonth?.yaxis"
+        [legend]="salesByMonth?.legend"
+        [stroke]="salesByMonth?.stroke"
+        [markers]="salesByMonth?.markers"
+        [colors]="salesByMonth?.colors"
+        [grid]="salesByMonth?.grid"
+        [tooltip]="salesByMonth?.tooltip"
+        [xaxis]="salesByMonth?.xaxis"
+      ></apx-chart>
+    </div>
+    <div class="chart chart-panel dashboard-board-category">
+      <div class="chart-heading">
+        <span class="chart-title">Ventas por categoría</span>
+        <span class="chart-note">Del mes en curso</span>
+      </div>
+      <apx-chart
+        *ngIf="salesByCategory?.series"
+        [series]="salesByCategory?.series"
+        [chart]="salesByCategory?.chart"
+        [labels]="salesByCategory?.labels"
+        [legend]="salesByCategory?.legend"
+        [dataLabels]="salesByCategory?.dataLabels"
+        [responsive]="salesByCategory?.responsive"
+      ></apx-chart>
+    </div>
+    <div class="chart chart-panel dashboard-board-make">
+      <div class="chart-heading">
+        <span class="chart-title">Marcas más vendidas</span>
+        <span class="chart-note">Del mes en curso</span>
+      </div>
+      <apx-chart
+        *ngIf="salesByMake?.series"
+        [series]="salesByMake?.series"
+        [chart]="salesByMake?.chart"
+        [plotOptions]="salesByMake?.plotOptions"
+        [dataLabels]="salesByMake?.dataLabels"
+        [xaxis]="salesByMake?.xaxis"
+        [colors]="salesByMake?.colors"
+        [grid]="salesByMake?.grid"
+        [legend]="salesByMake?.legend"
+      ></apx-chart>
+    </div>
+    <div class="chart chart-panel dashboard-board-products">
+      <div class="chart-heading">
+        <span class="chart-title">Productos más vendidos</span>
+        <span class="chart-note">Del mes en curso</span>
+      </div>
+      <div class="products-list" *ngIf="topProducts?.length; else emptyProducts">
+        <div class="product-item" *ngFor="let product of topProducts">
+          <div class="product-rank">{{ product.rank }}</div>
+          <div class="product-info">
+            <div class="product-name">{{ product.description }}</div>
+            <div class="product-meta" *ngIf="product.code">Código: {{ product.code }}</div>
+          </div>
+          <div class="product-stats">
+            <div class="product-qty">{{ product.quantity }} u.</div>
+            <div class="product-total">{{ product.totalFormatted }}</div>
+          </div>
+        </div>
+      </div>
+      <ng-template #emptyProducts>
+        <div class="empty-state">No hay productos vendidos en el mes actual.</div>
+      </ng-template>
     </div>
   </div>
 
-  <div class="row bottom-charts-row">
-    <div class="col-md-6">
-      <div class="chart chart-panel">
-        <span class="chart-title">Ventas por categoría</span>
-        <apx-chart
-          *ngIf="salesByCategory?.series"
-          [series]="salesByCategory?.series"
-          [chart]="salesByCategory?.chart"
-          [labels]="salesByCategory?.labels"
-          [legend]="salesByCategory?.legend"
-          [dataLabels]="salesByCategory?.dataLabels"
-          [responsive]="salesByCategory?.responsive"
-        ></apx-chart>
+  <div class="dashboard-bottom" *ngIf="hasQueried">
+    <div class="chart chart-panel debtors-panel">
+      <div class="chart-heading">
+        <span class="chart-title">Cuentas corrientes que más deben</span>
+        <span class="chart-note">Los 10 clientes con mayor saldo</span>
       </div>
+      <table class="debtors-table" *ngIf="topDebtors.length; else emptyDebtors">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Cliente</th>
+            <th class="num">Saldo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let debtor of topDebtors">
+            <td class="rank">{{ debtor.rank }}</td>
+            <td>{{ debtor.name }}</td>
+            <td class="num">{{ debtor.balanceFormatted }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyDebtors>
+        <div class="empty-state">No hay clientes con saldo deudor.</div>
+      </ng-template>
     </div>
-    <div class="col-md-6">
-      <div class="chart chart-panel">
-        <span class="chart-title">Productos más vendidos</span>
-        <div class="products-list" *ngIf="topProducts?.length; else emptyProducts">
-          <div class="product-item" *ngFor="let product of topProducts">
-            <div class="product-rank">{{ product.rank }}</div>
-            <div class="product-info">
-              <div class="product-name">{{ product.description }}</div>
-              <div class="product-meta" *ngIf="product.code">Código: {{ product.code }}</div>
-            </div>
-            <div class="product-stats">
-              <div class="product-qty">{{ product.quantity }} u.</div>
-              <div class="product-total">{{ product.totalFormatted }}</div>
-            </div>
-          </div>
-        </div>
-        <ng-template #emptyProducts>
-          <div class="empty-state">No hay productos vendidos en el mes actual.</div>
-        </ng-template>
+    <div class="chart chart-panel">
+      <div class="chart-heading">
+        <span class="chart-title">Cobranzas del mes</span>
+        <span class="chart-note">Ventas, por medio de pago</span>
       </div>
+      <apx-chart
+        *ngIf="salesCollections?.series"
+        [series]="salesCollections?.series"
+        [chart]="salesCollections?.chart"
+        [plotOptions]="salesCollections?.plotOptions"
+        [dataLabels]="salesCollections?.dataLabels"
+        [xaxis]="salesCollections?.xaxis"
+        [colors]="salesCollections?.colors"
+        [grid]="salesCollections?.grid"
+        [legend]="salesCollections?.legend"
+        [tooltip]="salesCollections?.tooltip"
+      ></apx-chart>
     </div>
   </div>
 </section>

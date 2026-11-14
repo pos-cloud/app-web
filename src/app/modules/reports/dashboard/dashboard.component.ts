@@ -7,7 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectDropdownComponent } from '@shared/components/multi-select-dropdown/multi-select-dropdown.component';
 import { PipesModule } from '@shared/pipes/pipes.module';
-import { TransactionType } from '@types';
+import { TransactionMovement, TransactionType } from '@types';
 import { ReportSystemService } from 'app/core/services/report-system.service';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
@@ -60,7 +60,14 @@ export type TopProduct = {
 
 type ChartFilters = {
   branches: string[];
-  transactionTypes: string[];
+  saleTransactionTypes: string[];
+  purchaseTransactionTypes: string[];
+};
+
+type StoredDashboardFilters = {
+  branchId: string | null;
+  saleTransactionTypes: string[];
+  purchaseTransactionTypes: string[];
 };
 
 @Component({
@@ -86,18 +93,26 @@ export class DasboardComponent {
   purchaseTotal: Partial<ChartOptions>;
   inventoryTotal: string;
   accountReveivable: string;
+  topDebtors: { rank: number; name: string; balance: number; balanceFormatted: string }[] = [];
   salesByMonth: Partial<ChartOptions>;
   salesByCategory: Partial<ChartOptions>;
+  salesByMake: Partial<ChartOptions>;
+  salesCollections: Partial<ChartOptions>;
   topProducts: TopProduct[] = [];
 
   loading = false;
+  filtersOpen = false;
+  hasQueried = false;
   branchSelectedId: string | null = null;
   transactionTypes: TransactionType[] = [];
-  transactionTypesSelect: string[] = [];
+  saleTransactionTypesSelect: string[] = [];
+  purchaseTransactionTypesSelect: string[] = [];
 
   private subscription: Subscription = new Subscription();
   private destroy$ = new Subject<void>();
   private lastInventoryBranchId: string | null = null;
+  private inventoryLoaded = false;
+  private receivableLoaded = false;
   private refreshInProgress = false;
   private pendingCharts = 0;
 
@@ -110,31 +125,63 @@ export class DasboardComponent {
 
   ngOnInit(): void {
     this.getTransactionTypes();
-    this.getSalesTotal();
-    this.getPurchaseTotal();
-    this.getInventoryTotal();
-    this.getAccountReveivable();
-    this.getSalesByMonth();
-    this.getSalesByCategory();
-    this.getTopSellingProducts();
+    this.restoreFilters();
     this._title.setTitle('Dashboard');
+    if (this.hasTypeSelection()) {
+      this.filtersOpen = false;
+      this.loadCharts();
+    } else {
+      this.filtersOpen = true;
+    }
+  }
+
+  public get saleTypes(): TransactionType[] {
+    return this.transactionTypes.filter((type) => type.transactionMovement === TransactionMovement.Sale);
+  }
+
+  public get purchaseTypes(): TransactionType[] {
+    return this.transactionTypes.filter((type) => type.transactionMovement === TransactionMovement.Purchase);
+  }
+
+  public hasTypeSelection(): boolean {
+    return this.saleTransactionTypesSelect.length > 0 || this.purchaseTransactionTypesSelect.length > 0;
   }
 
   public refresh(): void {
+    if (!this.hasTypeSelection()) {
+      this._toastService.showToast({ message: 'Elegí al menos un tipo de venta o de compra.' });
+      return;
+    }
+
+    this.persistFilters();
+    this.filtersOpen = false;
+    this.loadCharts();
+  }
+
+  private loadCharts(): void {
     this.loading = true;
     this.refreshInProgress = true;
     this.pendingCharts = 0;
+    this.hasQueried = true;
 
     const filters = this.currentFilters();
     this.getSalesTotal(filters);
     this.getPurchaseTotal(filters);
     this.getSalesByCategory(filters);
+    this.getSalesByMake(filters);
     this.getTopSellingProducts(filters);
     this.getSalesByMonth(filters);
+    this.getSalesCollections(filters);
 
     const branchId = this.branchSelectedId ?? null;
-    if (branchId !== this.lastInventoryBranchId) {
+    if (!this.inventoryLoaded || branchId !== this.lastInventoryBranchId) {
       this.getInventoryTotal(filters.branches);
+      this.inventoryLoaded = true;
+    }
+
+    if (!this.receivableLoaded) {
+      this.getAccountReveivable();
+      this.receivableLoaded = true;
     }
 
     if (this.pendingCharts === 0) {
@@ -143,12 +190,43 @@ export class DasboardComponent {
     }
   }
 
+  private filtersStorageKey(): string {
+    const company = localStorage.getItem('company') || '';
+    return `dashboardFilters:${company}`;
+  }
+
+  private restoreFilters(): void {
+    const raw = localStorage.getItem(this.filtersStorageKey());
+    if (!raw) return;
+
+    try {
+      const stored = JSON.parse(raw) as StoredDashboardFilters;
+      this.branchSelectedId = stored?.branchId ?? null;
+      this.saleTransactionTypesSelect = Array.isArray(stored?.saleTransactionTypes) ? stored.saleTransactionTypes : [];
+      this.purchaseTransactionTypesSelect = Array.isArray(stored?.purchaseTransactionTypes)
+        ? stored.purchaseTransactionTypes
+        : [];
+    } catch {
+      localStorage.removeItem(this.filtersStorageKey());
+    }
+  }
+
+  private persistFilters(): void {
+    const stored: StoredDashboardFilters = {
+      branchId: this.branchSelectedId ?? null,
+      saleTransactionTypes: this.saleTransactionTypesSelect,
+      purchaseTransactionTypes: this.purchaseTransactionTypesSelect,
+    };
+    localStorage.setItem(this.filtersStorageKey(), JSON.stringify(stored));
+  }
+
   private getTransactionTypes(): void {
     this._transactionTypeService
       .getAll({
         project: {
           _id: 1,
           name: 1,
+          transactionMovement: 1,
         },
         match: {
           operationType: { $ne: 'D' },
@@ -168,7 +246,8 @@ export class DasboardComponent {
   private currentFilters(): ChartFilters {
     return {
       branches: this.branchSelectedId ? [this.branchSelectedId] : [],
-      transactionTypes: this.transactionTypesSelect ?? [],
+      saleTransactionTypes: this.saleTransactionTypesSelect ?? [],
+      purchaseTransactionTypes: this.purchaseTransactionTypesSelect ?? [],
     };
   }
 
@@ -181,7 +260,8 @@ export class DasboardComponent {
       type,
       filters: {
         branches: filters.branches,
-        transactionTypes: filters.transactionTypes ?? [],
+        saleTransactionTypes: filters.saleTransactionTypes ?? [],
+        purchaseTransactionTypes: filters.purchaseTransactionTypes ?? [],
       },
     };
   }
@@ -305,9 +385,14 @@ export class DasboardComponent {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            if (result) {
-              this.accountReveivable = result.result;
+            const payload = result?.result;
+            if (payload && typeof payload === 'object') {
+              this.accountReveivable = payload.total;
+              this.topDebtors = payload.debtors || [];
+              return;
             }
+            this.accountReveivable = payload;
+            this.topDebtors = [];
           },
           error: (error) => {
             this._toastService.showToast(error);
@@ -333,7 +418,8 @@ export class DasboardComponent {
                 chart: {
                   ...(result.chart || {}),
                   type: 'line',
-                  height: result.chart?.height || 360,
+                  height: 260,
+                  width: '100%',
                   toolbar: { show: false },
                   zoom: { enabled: false },
                 },
@@ -393,7 +479,83 @@ export class DasboardComponent {
         .subscribe({
           next: (result) => {
             if (result) {
-              this.salesByCategory = result;
+              this.salesByCategory = {
+                ...result,
+                chart: {
+                  ...(result.chart || {}),
+                  height: 280,
+                },
+              };
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+            this.endChart(track);
+          },
+          complete: () => {
+            this.endChart(track);
+          },
+        })
+    );
+  }
+
+  private getSalesByMake(filters?: ChartFilters): void {
+    const requestPayload = this.chartPayload('sales-by-make', filters);
+    const track = this.beginChart();
+
+    this.subscription.add(
+      this._service
+        .getChart(requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            if (result) {
+              this.salesByMake = {
+                ...result,
+                chart: {
+                  ...(result.chart || {}),
+                  height: 280,
+                },
+              };
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+            this.endChart(track);
+          },
+          complete: () => {
+            this.endChart(track);
+          },
+        })
+    );
+  }
+
+  private getSalesCollections(filters?: ChartFilters): void {
+    const requestPayload = this.chartPayload('sales-collections', filters);
+    const track = this.beginChart();
+
+    this.subscription.add(
+      this._service
+        .getChart(requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            if (result) {
+              this.salesCollections = {
+                ...result,
+                chart: {
+                  ...(result.chart || {}),
+                  type: 'bar',
+                  height: 280,
+                  toolbar: { show: false },
+                },
+                tooltip: {
+                  ...(result.tooltip || {}),
+                  y: {
+                    formatter: (val: number) => `$ ${this.formatMoney(val)}`,
+                  },
+                },
+              };
             }
           },
           error: (error) => {
