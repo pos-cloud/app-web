@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { FileService } from 'app/core/services/file.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-upload-file',
@@ -21,7 +22,10 @@ export class UploadFileComponent {
       this.imageUrl = url;
     }
   }
-  constructor(private uploadService: FileService) {}
+  constructor(
+    private uploadService: FileService,
+    private toast: ToastService
+  ) {}
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -43,13 +47,22 @@ export class UploadFileComponent {
       return;
     }
 
+    let failed = false;
     for (const file of this.selectedFiles) {
       try {
         const url = await this.uploadService.uploadImage(this.folder, [file]);
         urls.push(url.toString());
       } catch (error) {
+        failed = true;
         console.error('Error uploading file:', error);
       }
+    }
+
+    if (failed) {
+      this.toast.showToast(null, 'danger', '', 'No se pudo subir la imagen.');
+    }
+    if (failed && urls.length === 0) {
+      return;
     }
     this.uploadedUrls.emit(urls);
   }
