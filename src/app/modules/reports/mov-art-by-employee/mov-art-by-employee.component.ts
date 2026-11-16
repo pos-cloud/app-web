@@ -173,7 +173,8 @@ export class ReportMovArtByEmployeeComponent implements OnInit {
             this.data = result?.result?.data ?? [];
             this.columns = result?.result?.columns ?? [];
             this.totals = result?.result?.totals ?? {};
-            this.title = result?.result?.title ?? `Movimientos de Productos por Empleado de ${this.transactionMovement}`;
+            this.title =
+              result?.result?.title ?? `Movimientos de Productos por Empleado de ${this.transactionMovement}`;
             this._title.setTitle(this.title);
             this.cdRef.detectChanges();
           },
