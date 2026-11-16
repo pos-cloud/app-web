@@ -222,9 +222,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           transactionDestination.origin = transactionDestination.type.fixedOrigin;
         }
 
-        if (transactionDestination.type.fixedLetter && transactionDestination.type.fixedLetter !== '') {
-          transactionDestination.letter = transactionDestination.type.fixedLetter;
-        }
+        transactionDestination.letter = this.resolveDestinationLetter(transactionDestination);
 
         // CONSULTAR ULTIMA TRANSACCIÓN PARA ENUMARAR LA SIGUIENTE
         transactionDestination.number = await this.getNextTransactionNumber(
@@ -602,6 +600,26 @@ export class CancellationTypeAutomaticComponent implements OnInit {
         }
       );
     });
+  }
+
+  private resolveDestinationLetter(transaction: Transaction): string {
+    const fixedLetter = transaction.type?.fixedLetter;
+    if (fixedLetter && fixedLetter !== '') {
+      return fixedLetter.toUpperCase();
+    }
+
+    if (Config.country !== 'AR') {
+      return transaction.letter || '';
+    }
+
+    const description = Config.companyVatCondition?.description;
+    if (description === 'Responsable Inscripto' || description === 'Resp.Insc.') {
+      return transaction.company?.vatCondition?.transactionLetter || 'B';
+    }
+    if (description === 'Monotributista' || description === 'Monotributo') {
+      return 'C';
+    }
+    return 'X';
   }
 
   public getTransactionType(match): Promise<TransactionType> {
