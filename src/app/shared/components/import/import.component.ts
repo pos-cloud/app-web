@@ -309,7 +309,8 @@ export class ImportComponent implements OnInit {
       'price-list-articles':
         'https://docs.google.com/spreadsheets/d/1hZPD54yW3_HaW9EBexGgqiEP0k-ujtO-AHxVqOzNu2w/edit?gid=0#gid=0',
       purchase: '',
-      account: '',
+      account:
+        'https://docs.google.com/spreadsheets/d/1XgSHJ6PahJSyC-eocwbQpQK749GmtoeU/edit?gid=873631571#gid=873631571',
     };
 
     const url = urls[this.model];
