@@ -1,0 +1,232 @@
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
+import { EmployeeService } from '@core/services/employee.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { Employee, TransactionType } from '@types';
+import { ReportSystemService } from 'app/core/services/report-system.service';
+import { TransactionTypeService } from 'app/core/services/transaction-type.service';
+import { DataTableReportsComponent } from 'app/shared/components/data-table-reports/data-table-reports.component';
+import { DateTimePickerComponent } from 'app/shared/components/datetime-picker/date-time-picker.component';
+import { MultiSelectDropdownComponent } from 'app/shared/components/multi-select-dropdown/multi-select-dropdown.component';
+import { ToastService } from 'app/shared/components/toast/toast.service';
+import { UserBranchSelectComponent } from 'app/shared/components/user-branch-select/user-branch-select.component';
+import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+@Component({
+  standalone: true,
+  selector: 'app-mov-cash-by-employee',
+  templateUrl: './mov-cash-by-employee.component.html',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    PipesModule,
+    DateTimePickerComponent,
+    MultiSelectDropdownComponent,
+    UserBranchSelectComponent,
+    DataTableReportsComponent,
+  ],
+})
+export class ReportMovCashByEmployeeComponent implements OnInit {
+  public data: any[] = [];
+  public columns: any[] = [];
+  public totals: any = {};
+  public title: string = '';
+
+  public transactionMovement: string;
+  public loading: boolean = false;
+  private destroy$ = new Subject<void>();
+  private subscription: Subscription = new Subscription();
+
+  branchSelectedId: string | null = null;
+
+  transactionTypes: TransactionType[];
+  transactionTypesSelect: string[] = [];
+
+  startDate: string = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+  endDate: string = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
+
+  employees: Employee[];
+  employeesSelect: string[] = [];
+
+  sort = {
+    column: 'total',
+    direction: 'desc',
+  };
+
+  constructor(
+    public _service: ReportSystemService,
+    public _router: Router,
+    public _transactionTypeService: TransactionTypeService,
+    private _toastService: ToastService,
+    private _activatedRoute: ActivatedRoute,
+    private _title: Title,
+    private cdRef: ChangeDetectorRef,
+    private _employeeService: EmployeeService
+  ) {}
+
+  async ngOnInit() {
+    this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      this.getTransactionTypes();
+      this.getEmployees();
+    });
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  private get requestPayload() {
+    return {
+      reportType: 'mov-cash-by-employee',
+      filters: {
+        branches: this.branchSelectedId ? [this.branchSelectedId] : [],
+        transactionMovement: this.transactionMovement,
+        transactionTypes: this.transactionTypesSelect ?? [],
+        startDate: this.startDate,
+        endDate: this.endDate,
+        employees: this.employeesSelect,
+      },
+      pagination: {
+        page: 1,
+        pageSize: 10,
+      },
+      sorting: this.sort,
+    };
+  }
+
+  private getEmployees() {
+    this._employeeService
+      .getAll({
+        project: {
+          _id: 1,
+          name: 1,
+          operationType: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+        },
+        sort: { name: 1 },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.employees = result.result.map((employee) => {
+            return {
+              _id: employee._id,
+              name: employee.name,
+              operationType: employee.operationType,
+            };
+          });
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
+  }
+
+  private getTransactionTypes() {
+    this._transactionTypeService
+      .getAll({
+        project: {
+          _id: 1,
+          transactionMovement: 1,
+          requestPaymentMethods: 1,
+          operationType: 1,
+          name: 1,
+          branch: 1,
+        },
+        match: {
+          transactionMovement: this.transactionMovement,
+          operationType: { $ne: 'D' },
+          requestPaymentMethods: true,
+        },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.transactionTypes = result.result;
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+      });
+  }
+
+  public getReport(): void {
+    this.loading = true;
+    this.subscription.add(
+      this._service
+        .getReport(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            this._toastService.showToast(result);
+            this.data = result?.result?.data ?? [];
+            this.columns = result?.result?.columns ?? [];
+            this.totals = result?.result?.totals ?? {};
+            this.title = result?.result?.title ?? `Movimientos de caja por empleado de ${this.transactionMovement}`;
+            this._title.setTitle(this.title);
+            this.cdRef.detectChanges();
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
+  }
+
+  public onSortingChange(event: { column: string; direction: string }): void {
+    this.sort = {
+      column: event.column,
+      direction: event.direction,
+    };
+
+    this.getReport();
+  }
+
+  public onExportExcel(event): void {
+    this.loading = true;
+    const pathUrl = this._router.url.split('/');
+    const entity = pathUrl[2];
+
+    this.subscription.add(
+      this._service
+        .downloadXlsx(this.requestPayload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (result) => {
+            try {
+              const blobUrl = URL.createObjectURL(result);
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = `${entity}.xlsx`;
+              a.click();
+              URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+              this._toastService.showToast({ message: 'Error al generar el Excel' });
+            }
+          },
+          error: (error) => {
+            this._toastService.showToast(error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.cdRef.detectChanges();
+          },
+        })
+    );
+  }
+}
