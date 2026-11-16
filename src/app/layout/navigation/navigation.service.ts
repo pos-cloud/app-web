@@ -422,6 +422,7 @@ export class NavigationService {
                 children: [
                   { label: 'Por productos', link: 'reports/mov-art-by-article/venta' },
                   { label: 'Por marcas', link: 'reports/mov-art-by-make/venta' },
+                  { label: 'Productos por empleado', link: 'reports/mov-art-by-employee/venta' },
                   { label: 'Por categorias', link: 'reports/mov-art-by-category/venta' },
                   { label: 'Por método de pago', link: 'reports/mov-cash-by-type/venta' },
                   { label: 'Por cliente', link: 'reports/transactions-by-company/cliente' },
@@ -451,6 +452,7 @@ export class NavigationService {
                 children: [
                   { label: 'Por productos', link: 'reports/mov-art-by-article/compra' },
                   { label: 'Por marcas', link: 'reports/mov-art-by-make/compra' },
+                  { label: 'Productos por empleado', link: 'reports/mov-art-by-employee/compra' },
                   { label: 'Por categorias', link: 'reports/mov-art-by-category/compra' },
                   { label: 'Por método de pago', link: 'reports/mov-cash-by-type/compra' },
                   { label: 'Por proveedor', link: 'reports/transactions-by-company/proveedor' },
@@ -500,6 +502,7 @@ export class NavigationService {
                 children: [
                   { label: 'Por productos', link: 'reports/mov-art-by-article/producción' },
                   { label: 'Por marcas', link: 'reports/mov-art-by-make/producción' },
+                  { label: 'Productos por empleado', link: 'reports/mov-art-by-employee/producción' },
                   { label: 'Por categorias', link: 'reports/mov-art-by-category/producción' },
                   { label: 'Por empleado', link: 'reports/transactions-by-employee/producción' },
                   { label: 'Por tipo de transacción', link: 'reports/transactions-by-type/producción' },

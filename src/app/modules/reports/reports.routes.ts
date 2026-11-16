@@ -31,6 +31,11 @@ export const REPORTS_ROUTES: Routes = [
       import('./mov-art-by-make/mov-art-by-make.component').then((m) => m.ReportMovArtByMakeComponent),
   },
   {
+    path: 'mov-art-by-employee/:module',
+    loadComponent: () =>
+      import('./mov-art-by-employee/mov-art-by-employee.component').then((m) => m.ReportMovArtByEmployeeComponent),
+  },
+  {
     path: 'mov-art-by-category/:module',
     loadComponent: () =>
       import('./mov-art-by-category/mov-art-by-category.component').then((m) => m.ReportMovArtByCategoryComponent),
