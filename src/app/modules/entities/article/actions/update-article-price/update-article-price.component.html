@@ -15,11 +15,19 @@
             id="optionUpdate"
             class="form-control"
             formControlName="optionUpdate"
-            ngbTooltip="Todos: aplica a todos los artículos. Filtrados: solo los seleccionados en la lista."
+            [ngClass]="{ 'is-invalid': form.get('optionUpdate')?.touched && form.get('optionUpdate')?.invalid }"
+            ngbTooltip="Todos: aplica a todos los artículos. Filtrados: solo los de la lista que está en pantalla."
           >
+            <option [ngValue]="null" disabled>Seleccionar...</option>
             <option value="all">Todos los productos</option>
             <option value="filter">Productos filtrados</option>
           </select>
+          <div
+            *ngIf="form.get('optionUpdate')?.touched && form.get('optionUpdate')?.hasError('required')"
+            class="invalid-feedback"
+          >
+            {{ 'fieldRequired' | translate | capitalize }}
+          </div>
         </div>
       </div>
 
