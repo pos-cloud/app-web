@@ -75,9 +75,20 @@ export class ReportMovArtByMakeComponent implements OnInit {
 
   async ngOnInit() {
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      this.transactionMovement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      const movement = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      const changed = !!this.transactionMovement && this.transactionMovement !== movement;
+      this.transactionMovement = movement;
+      if (changed) {
+        this.transactionTypesSelect = [];
+        this.data = [];
+        this.columns = [];
+        this.totals = {};
+      }
       this.getTransactionTypes();
       this.getMakes();
+      if (changed) {
+        this.getReport();
+      }
     });
   }
 

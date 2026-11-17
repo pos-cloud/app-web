@@ -71,8 +71,19 @@ export class ReportTransactionsByCompanyComponent implements OnInit {
 
   async ngOnInit() {
     this._activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      this.companyType = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      const companyType = params['module'].charAt(0).toUpperCase() + params['module'].slice(1);
+      const changed = !!this.companyType && this.companyType !== companyType;
+      this.companyType = companyType;
+      if (changed) {
+        this.transactionTypesSelect = [];
+        this.data = [];
+        this.columns = [];
+        this.totals = {};
+      }
       this.getTransactionTypes();
+      if (changed) {
+        this.getReport();
+      }
     });
   }
 
