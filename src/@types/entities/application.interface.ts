@@ -65,4 +65,10 @@ export interface Application extends Activity {
     authToken: string;
   };
   feAr?: FeArIntegrationEntry[];
+  catalogo?: {
+    color1: string;
+    color2: string;
+    color3: string;
+    transactionType: TransactionType;
+  };
 }

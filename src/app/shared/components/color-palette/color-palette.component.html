@@ -1,0 +1,53 @@
+<button
+  #trigger
+  type="button"
+  class="palette-trigger"
+  [id]="inputId || null"
+  [disabled]="disabled"
+  (click)="toggle($event)"
+>
+  <span class="palette-trigger__dot" [style.background]="hex"></span>
+    <span class="palette-trigger__hex">{{ hexDraft }}</span>
+</button>
+
+<div
+  #panel
+  class="palette-pop"
+  [class.is-open]="open"
+  [style.top.px]="top"
+  [style.left.px]="left"
+  (click)="onPanelClick($event)"
+>
+  <div
+    #sv
+    class="palette-sv"
+    [style.background]="svBackground"
+    (pointerdown)="onSvPointer($event, sv)"
+    (pointermove)="onSvMove($event, sv)"
+  >
+    <span class="palette-cursor" [style.left.%]="saturation * 100" [style.top.%]="(1 - value) * 100"></span>
+  </div>
+  <div
+    #hue
+    class="palette-hue"
+    (pointerdown)="onHuePointer($event, hue)"
+    (pointermove)="onHueMove($event, hue)"
+  >
+    <span class="palette-cursor palette-cursor--hue" [style.left.%]="(hue / 360) * 100"></span>
+  </div>
+  <div class="palette-hex">
+    <span class="palette-hex__dot" [style.background]="hex"></span>
+    <input
+      type="text"
+      [ngModel]="hexDraft"
+      [ngModelOptions]="{ standalone: true }"
+      maxlength="7"
+      spellcheck="false"
+      (click)="$event.stopPropagation()"
+      (ngModelChange)="onHexInput($event)"
+    />
+    <button type="button" class="palette-copy" title="Copiar" (click)="copy($event)">
+      <i class="fa fa-files-o" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>

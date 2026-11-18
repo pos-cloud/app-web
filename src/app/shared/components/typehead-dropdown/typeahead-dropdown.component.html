@@ -4,6 +4,8 @@
     [formControl]="control"
     class="form-control custom-typeahead"
     [ngbTypeahead]="searchFn"
+    [container]="container"
+    [popupClass]="popupClass"
     autocomplete="nope"
     [editable]="false"
     [resultFormatter]="resultFormatter"

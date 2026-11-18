@@ -51,6 +51,17 @@ export class ListShipmentMethodsComponent {
       required: false,
     },
     {
+      name: 'publishCatalog',
+      visible: true,
+      disabled: false,
+      filter: true,
+      defaultFilter: null,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'article.description',
       visible: true,
       disabled: false,

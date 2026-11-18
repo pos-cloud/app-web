@@ -104,6 +104,7 @@ export interface Article extends Activity {
   variantValue2: VariantValue;
   publishTiendaNube: boolean;
   publishWooCommerce: boolean;
+  publishCatalog: boolean;
   typeTN: boolean;
   categoryTN: number[];
   videoUrlTN: string;

@@ -627,6 +627,16 @@ export class ListVariantsComponent implements OnInit {
       required: false,
     },
     {
+      name: 'publishCatalog',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'publishWooCommerce',
       visible: false,
       disabled: false,

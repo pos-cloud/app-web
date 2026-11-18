@@ -27,6 +27,7 @@ export interface PaymentMethod extends Activity {
   cashBoxImpact: boolean;
   allowCurrencyValue: boolean;
   allowBank: boolean;
+  publishCatalog: boolean;
   printSign: boolean;
   account: Account;
 }

@@ -390,6 +390,13 @@
               <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
             </select>
           </div>
+          <div class="form-group col-md-3">
+            <label for="publishCatalog" class="control-label">{{ 'publishCatalog' | translate | capitalize }}:</label>
+            <select class="form-control" formControlName="publishCatalog">
+              <option [ngValue]="true">{{ 'true' | translate | capitalize }}</option>
+              <option [ngValue]="false">{{ 'false' | translate | capitalize }}</option>
+            </select>
+          </div>
         </div>
 
         <!-- 5. Auditoría -->

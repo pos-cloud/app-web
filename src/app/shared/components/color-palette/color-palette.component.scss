@@ -1,0 +1,134 @@
+:host {
+  display: block;
+}
+
+.palette-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  &__dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+  }
+
+  &__hex {
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: #212529;
+  }
+}
+
+.palette-pop {
+  display: none;
+  position: fixed;
+  z-index: 1080;
+  width: 188px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+
+  &.is-open {
+    display: block;
+  }
+}
+
+.palette-sv,
+.palette-hue {
+  position: relative;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.palette-sv {
+  height: 104px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.palette-hue {
+  height: 10px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+}
+
+.palette-cursor {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+
+  &--hue {
+    top: 50%;
+    background: #fff;
+  }
+}
+
+.palette-hex {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 2px 4px 2px 6px;
+  border: 1px solid #e6e8eb;
+  border-radius: 6px;
+
+  &__dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+  }
+
+  input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    padding: 2px 0;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    outline: none;
+  }
+}
+
+.palette-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #6c757d;
+  cursor: pointer;
+
+  &:hover {
+    background: #f1f3f5;
+    color: #212529;
+  }
+}

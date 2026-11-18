@@ -241,6 +241,16 @@ export class ListArticleStockComponent implements OnInit, OnDestroy {
       required: false,
     },
     {
+      name: 'article.publishCatalog',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'article.publishWooCommerce',
       visible: false,
       disabled: false,

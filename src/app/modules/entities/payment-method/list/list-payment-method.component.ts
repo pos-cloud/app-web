@@ -259,6 +259,16 @@ export class ListPaymentMethodComponent {
       required: false,
     },
     {
+      name: 'publishCatalog',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'account.description',
       visible: false,
       disabled: false,

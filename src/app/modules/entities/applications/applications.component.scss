@@ -1,3 +1,10 @@
+.catalogo-typeahead-menu {
+  min-width: 220px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 1060;
+}
+
 app-applications {
   .card {
     min-height: unset !important;

@@ -51,6 +51,7 @@ export class ShipmentMethodComponent implements OnInit {
       name: ['', [Validators.required]],
       requireAddress: ['', []],
       requireTable: ['', []],
+      publishCatalog: [false, []],
       article: ['', []],
     });
   }
@@ -126,6 +127,7 @@ export class ShipmentMethodComponent implements OnInit {
       name: this.shipmentMethod?.name ?? '',
       requireAddress: this.shipmentMethod?.requireAddress ?? false,
       requireTable: this.shipmentMethod?.requireTable ?? false,
+      publishCatalog: this.shipmentMethod?.publishCatalog ?? false,
       article: article ?? null,
     });
   }

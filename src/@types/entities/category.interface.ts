@@ -11,6 +11,7 @@ export interface Category extends Activity {
   observation: string;
   publishWooCommerce: boolean;
   publishTiendaNube: boolean;
+  publishCatalog: boolean;
   showMenu: boolean;
   wooId: string;
   tiendaNubeId: number;

@@ -34,6 +34,8 @@ export class TypeaheadDropdownComponent implements OnInit, OnDestroy {
   @Input() match: Record<string, unknown> = { operationType: { $ne: 'D' } };
   @Input() projectFields?: string[];
   @Input() minSearchLength: number = 1;
+  @Input() container?: string;
+  @Input() popupClass?: string;
 
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;
   @ViewChild('typeaheadInput', { static: true }) typeaheadInput: ElementRef<HTMLInputElement>;

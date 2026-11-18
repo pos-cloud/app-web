@@ -484,6 +484,16 @@ export class ListArticlesComponent implements OnInit {
       required: false,
     },
     {
+      name: 'publishCatalog',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'tiendaNubeId',
       visible: false,
       disabled: false,

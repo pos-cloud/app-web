@@ -529,6 +529,46 @@
             </ng-template>
           </ngb-panel>
 
+          <ngb-panel id="Catalogo">
+            <ng-template ngbPanelTitle>
+              <div class="row align-items-center">
+                <div class="col-auto pr-0">
+                  <i class="fa fa-book text-dark" style="font-size: 1.5rem" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <p class="mb-0 h5 text-dark">Catálogo</p>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div formGroupName="catalogo" class="row">
+                <div class="form-group col-md-3">
+                  <label for="catalogoColor1" class="control-label">Color 1:</label>
+                  <app-color-palette inputId="catalogoColor1" formControlName="color1"></app-color-palette>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="catalogoColor2" class="control-label">Color 2:</label>
+                  <app-color-palette inputId="catalogoColor2" formControlName="color2"></app-color-palette>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="catalogoColor3" class="control-label">Color 3:</label>
+                  <app-color-palette inputId="catalogoColor3" formControlName="color3"></app-color-palette>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="control-label">{{ 'transaction-type' | translate | capitalize }}:</label>
+                  <app-typeahead-dropdown
+                    [control]="integracionesForm.get('catalogo.transactionType')"
+                    [service]="_transactionTypeService"
+                    [keyField]="'_id'"
+                    [displayField]="'name'"
+                    container="body"
+                    popupClass="catalogo-typeahead-menu"
+                  ></app-typeahead-dropdown>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel>
+
           <ngb-panel id="FeAr">
             <ng-template ngbPanelTitle>
               <div class="row align-items-center">

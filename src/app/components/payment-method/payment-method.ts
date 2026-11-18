@@ -35,6 +35,7 @@ export class PaymentMethod {
   public currency: Currency;
   public allowCurrencyValue: boolean;
   public allowBank: boolean;
+  public publishCatalog: boolean = false;
   public mercadopagoAPIKey: string;
   public mercadopagoClientId: string;
   public mercadopagoAccessToken: string;

@@ -107,6 +107,16 @@ export class ListCategoriesComponent {
       required: false,
     },
     {
+      name: 'publishCatalog',
+      visible: false,
+      disabled: false,
+      filter: true,
+      datatype: 'boolean',
+      project: null,
+      align: 'left',
+      required: false,
+    },
+    {
       name: 'visibleInvoice',
       visible: false,
       disabled: false,

@@ -10,6 +10,7 @@ import { TiendaNubeService } from '@core/services/tienda-nube.service';
 import { NgbAccordionModule, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
+import { ColorPaletteComponent } from '@shared/components/color-palette/color-palette.component';
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
 import { FocusDirective } from '@shared/directives/focus.directive';
 import { PipesModule } from '@shared/pipes/pipes.module';
@@ -44,6 +45,7 @@ import { TranslateMePipe } from '../../../shared/pipes/translate-me';
     CommonModule,
     NgbDropdownModule,
     TypeaheadDropdownComponent,
+    ColorPaletteComponent,
   ],
   providers: [TranslateMePipe],
 })
@@ -99,6 +101,12 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         paymentMethod: [null],
         company: [null],
         article: [null],
+      }),
+      catalogo: this.fb.group({
+        color1: ['#000000'],
+        color2: ['#ffffff'],
+        color3: ['#6c757d'],
+        transactionType: [null],
       }),
       menu: this.fb.group({
         portain: [''],
@@ -301,6 +309,13 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         paymentMethod: wooCommerce?.paymentMethod ?? null,
         company: wooCommerce?.company ?? null,
         article: wooCommerce?.article ?? null,
+      },
+
+      catalogo: {
+        color1: this.application?.catalogo?.color1 || '#000000',
+        color2: this.application?.catalogo?.color2 || '#ffffff',
+        color3: this.application?.catalogo?.color3 || '#6c757d',
+        transactionType: this.application?.catalogo?.transactionType ?? null,
       },
 
       menu: {

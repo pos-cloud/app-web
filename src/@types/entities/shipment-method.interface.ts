@@ -5,6 +5,7 @@ export interface ShipmentMethod extends Activity {
   applications: Application[];
   requireAddress: boolean; // default: true
   requireTable: boolean; // default: false
+  publishCatalog: boolean;
   article: Article;
   zones: {
     name: string;
