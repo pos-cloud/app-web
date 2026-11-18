@@ -103,7 +103,7 @@ export class UpdateArticlePriceComponent {
     private toastService: ToastService
   ) {
     this.form = this.fb.group({
-      optionUpdate: ['all', Validators.required],
+      optionUpdate: [null, Validators.required],
       field: [null, Validators.required],
       type: [null, Validators.required],
       decimal: [2, Validators.required],
@@ -164,11 +164,16 @@ export class UpdateArticlePriceComponent {
   updatePrice(): void {
     if (this.form.invalid) return;
 
-    this.loading = true;
     const { optionUpdate, field, type, decimal, amount } = this.form.value;
-
     const articlesCode: string[] =
-      optionUpdate === 'filter' && this.articles?.length ? this.articles.map((a) => a.code) : [];
+      optionUpdate === 'filter' ? (this.articles ?? []).map((article) => article.code).filter((code) => !!code) : [];
+
+    if (optionUpdate === 'filter' && !articlesCode.length) {
+      this.toastService.showToast(null, 'danger', '', 'No hay productos filtrados para actualizar.');
+      return;
+    }
+
+    this.loading = true;
 
     const payload = { articlesCode, field, type, decimal, amount };
 
