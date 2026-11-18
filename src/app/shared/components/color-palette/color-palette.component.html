@@ -7,7 +7,7 @@
   (click)="toggle($event)"
 >
   <span class="palette-trigger__dot" [style.background]="hex"></span>
-    <span class="palette-trigger__hex">{{ hexDraft }}</span>
+  <span class="palette-trigger__hex">{{ hexDraft }}</span>
 </button>
 
 <div
@@ -27,12 +27,7 @@
   >
     <span class="palette-cursor" [style.left.%]="saturation * 100" [style.top.%]="(1 - value) * 100"></span>
   </div>
-  <div
-    #hue
-    class="palette-hue"
-    (pointerdown)="onHuePointer($event, hue)"
-    (pointermove)="onHueMove($event, hue)"
-  >
+  <div #hue class="palette-hue" (pointerdown)="onHuePointer($event, hue)" (pointermove)="onHueMove($event, hue)">
     <span class="palette-cursor palette-cursor--hue" [style.left.%]="(hue / 360) * 100"></span>
   </div>
   <div class="palette-hex">

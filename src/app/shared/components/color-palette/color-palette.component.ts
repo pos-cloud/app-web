@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  OnDestroy,
-  ViewChild,
-  forwardRef,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, ViewChild, forwardRef } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -223,7 +215,13 @@ export class ColorPaletteComponent implements ControlValueAccessor, OnDestroy {
     if (!/^[\da-fA-F]{6}$/.test(raw) && !/^[\da-fA-F]{3}$/.test(raw)) {
       return null;
     }
-    const full = raw.length === 3 ? raw.split('').map((char) => char + char).join('') : raw;
+    const full =
+      raw.length === 3
+        ? raw
+            .split('')
+            .map((char) => char + char)
+            .join('')
+        : raw;
     return `#${full.toLowerCase()}`;
   }
 }
