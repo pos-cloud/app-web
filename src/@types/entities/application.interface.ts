@@ -71,4 +71,9 @@ export interface Application extends Activity {
     color3: string;
     transactionType: TransactionType;
   };
+  claude?: {
+    token: string;
+    database: string;
+    issuedAt?: string;
+  };
 }

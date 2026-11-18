@@ -707,6 +707,73 @@
               </div>
             </ng-template>
           </ngb-panel>
+
+          <ngb-panel id="Claude">
+            <ng-template ngbPanelTitle>
+              <div class="row align-items-center">
+                <div class="col-auto pr-0">
+                  <i class="fa fa-comments text-dark" style="font-size: 1.5rem" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <p class="mb-0 h5 text-dark">Claude</p>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="alert alert-info mb-3" role="alert">
+                    Este token identifica a este negocio para consultar sus datos desde Claude. No vence. Si generás
+                    otro, el anterior sigue activo.
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="claudeDatabase" class="control-label">Base:</label>
+                  <input
+                    id="claudeDatabase"
+                    type="text"
+                    class="form-control"
+                    [value]="application?.claude?.database || ''"
+                    readonly
+                  />
+                </div>
+                <div class="form-group col-md-12">
+                  <label for="claudeToken" class="control-label">Token:</label>
+                  <textarea
+                    id="claudeToken"
+                    class="form-control"
+                    rows="4"
+                    [value]="application?.claude?.token || ''"
+                    readonly
+                  ></textarea>
+                </div>
+                <div class="form-group col-md-12">
+                  <button
+                    type="button"
+                    class="btn btn-primary mr-2"
+                    [disabled]="claudeTokenLoading"
+                    (click)="generateClaudeToken()"
+                  >
+                    <i
+                      class="fa mr-1"
+                      [ngClass]="{ 'fa-key': !claudeTokenLoading, 'fa-spinner fa-spin': claudeTokenLoading }"
+                      aria-hidden="true"
+                    ></i>
+                    <span *ngIf="!claudeTokenLoading">Generar token</span>
+                    <span *ngIf="claudeTokenLoading">Generando…</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    [disabled]="!application?.claude?.token"
+                    (click)="copyClaudeToken()"
+                  >
+                    Copiar
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel>
         </ngb-accordion>
       </form>
     </div>
