@@ -58,6 +58,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
   public feArCrtLoadingIndex: number | null = null;
   public feArSaveLoadingIndex: number | null = null;
   public scaleCsvLoading: boolean = false;
+  public claudeTokenLoading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public feArPendingCrtFiles: File[][] = [];
 
@@ -398,6 +399,48 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       });
   }
 
+  public generateClaudeToken(): void {
+    this.claudeTokenLoading = true;
+    this._applicationService
+      .generateClaudeToken()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          if (result?.status === 200 && result.result?.token) {
+            const current = this.application ?? ({} as Application);
+            this.application = {
+              ...current,
+              claude: result.result,
+            };
+            this._toastService.showToast(result);
+            if (!this.integracionesForm.value._id) {
+              this.getApplication();
+            }
+          } else {
+            this._toastService.showToast(result);
+          }
+        },
+        error: (error) => {
+          this._toastService.showToast(error);
+        },
+        complete: () => {
+          this.claudeTokenLoading = false;
+        },
+      });
+  }
+
+  public copyClaudeToken(): void {
+    const token = this.application?.claude?.token;
+    if (!token) {
+      return;
+    }
+
+    navigator.clipboard.writeText(token).then(
+      () => this._toastService.showToast(null, 'success', '', 'Token copiado.'),
+      () => this._toastService.showToast(null, 'danger', '', 'No se pudo copiar el token.')
+    );
+  }
+
   public generateWebhook() {
     this.loading = true;
     this._tiendaNubeService
@@ -636,7 +679,11 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       this.loading = true;
     }
 
+    const claude = this.application?.claude;
     this.application = this.integracionesForm.value;
+    if (claude) {
+      this.application.claude = claude;
+    }
 
     if (!this.application._id) {
       return this.saveApplication(feArRowIndex);
@@ -663,7 +710,11 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
   }
 
   updateApplication(feArRowIndex?: number) {
+    const claude = this.application?.claude;
     this.application = this.integracionesForm.value;
+    if (claude) {
+      this.application.claude = claude;
+    }
 
     this._applicationService
       .update(this.application)
