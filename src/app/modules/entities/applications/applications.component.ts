@@ -111,6 +111,13 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         color3: ['#6c757d'],
         transactionType: [null],
         picture: [''],
+        imagen: [''],
+        cover: [''],
+        nombre: [''],
+        descripcion: [''],
+        whatsapp: [''],
+        instagram: [''],
+        facebook: [''],
       }),
       menu: this.fb.group({
         portain: [''],
@@ -321,6 +328,13 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         color3: this.application?.catalogo?.color3 || '#6c757d',
         transactionType: this.application?.catalogo?.transactionType ?? null,
         picture: this.application?.catalogo?.picture ?? '',
+        imagen: this.application?.catalogo?.imagen ?? '',
+        cover: this.application?.catalogo?.cover ?? '',
+        nombre: this.application?.catalogo?.nombre ?? '',
+        descripcion: this.application?.catalogo?.descripcion ?? '',
+        whatsapp: this.application?.catalogo?.whatsapp ?? '',
+        instagram: this.application?.catalogo?.instagram ?? '',
+        facebook: this.application?.catalogo?.facebook ?? '',
       },
 
       menu: {
@@ -615,8 +629,8 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
     );
   }
 
-  public onCatalogImageUploaded(urls: string[]): void {
-    this.integracionesForm.get('catalogo.picture')?.setValue(urls?.length ? urls[0] : '');
+  public onCatalogImageUploaded(field: 'picture' | 'imagen' | 'cover', urls: string[]): void {
+    this.integracionesForm.get(`catalogo.${field}`)?.setValue(urls?.length ? urls[0] : '');
   }
 
   public feArCrtFileChange(event: Event, index: number) {

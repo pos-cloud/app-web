@@ -71,6 +71,13 @@ export interface Application extends Activity {
     color3: string;
     transactionType: TransactionType;
     picture: string;
+    imagen: string;
+    cover: string;
+    nombre: string;
+    descripcion: string;
+    whatsapp: string;
+    instagram: string;
+    facebook: string;
   };
   claude?: {
     token: string;

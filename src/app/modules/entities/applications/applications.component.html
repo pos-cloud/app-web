@@ -571,13 +571,55 @@
                     popupClass="catalogo-typeahead-menu"
                   ></app-typeahead-dropdown>
                 </div>
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-6">
+                  <label class="control-label" for="catalogoNombre">Nombre:</label>
+                  <input id="catalogoNombre" class="form-control" type="text" formControlName="nombre" />
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="control-label" for="catalogoDescripcion">Descripción:</label>
+                  <input id="catalogoDescripcion" class="form-control" type="text" formControlName="descripcion" />
+                </div>
+                <div class="form-group col-md-4">
                   <label class="control-label">{{ 'picture' | translate | capitalize }}:</label>
                   <app-upload-file
-                    (uploadedUrls)="onCatalogImageUploaded($event)"
+                    (uploadedUrls)="onCatalogImageUploaded('picture', $event)"
                     [folder]="'catalog'"
                     [existingImageUrl]="integracionesForm.get('catalogo.picture')?.value"
                   ></app-upload-file>
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="control-label">Imagen:</label>
+                  <app-upload-file
+                    (uploadedUrls)="onCatalogImageUploaded('imagen', $event)"
+                    [folder]="'catalog'"
+                    [existingImageUrl]="integracionesForm.get('catalogo.imagen')?.value"
+                  ></app-upload-file>
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="control-label">Cover:</label>
+                  <app-upload-file
+                    (uploadedUrls)="onCatalogImageUploaded('cover', $event)"
+                    [folder]="'catalog'"
+                    [existingImageUrl]="integracionesForm.get('catalogo.cover')?.value"
+                  ></app-upload-file>
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="control-label" for="catalogoWhatsapp">
+                    <i class="fa fa-whatsapp" aria-hidden="true"></i> WhatsApp
+                  </label>
+                  <input id="catalogoWhatsapp" class="form-control" type="text" formControlName="whatsapp" />
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="control-label" for="catalogoInstagram">
+                    <i class="fa fa-instagram" aria-hidden="true"></i> Instagram
+                  </label>
+                  <input id="catalogoInstagram" class="form-control" type="text" formControlName="instagram" />
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="control-label" for="catalogoFacebook">
+                    <i class="fa fa-facebook" aria-hidden="true"></i> Facebook
+                  </label>
+                  <input id="catalogoFacebook" class="form-control" type="text" formControlName="facebook" />
                 </div>
               </div>
             </ng-template>
