@@ -1,10 +1,22 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbActiveModal, NgbModal, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { ApiResponse, MovementOfCash, PrinterPrintIn, PrintType, Transaction, TransactionState, User } from '@types';
+import {
+  ApiResponse,
+  MovementOfCash,
+  PaymentMethod,
+  PrinterPrintIn,
+  PrintType,
+  Transaction,
+  TransactionState,
+  User,
+} from '@types';
 import { Subject, Subscription } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@core/services/auth.service';
+import { MovementOfCashService } from '@core/services/movement-of-cash.service';
+import { PaymentMethodService } from '@core/services/payment-method.service';
 import { PrintService } from '@core/services/print.service';
 import { TransactionService } from '@core/services/transaction.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,7 +36,7 @@ import { ArticleComponent } from '../../../entities/article/crud/article.compone
   templateUrl: './view-transaction.component.html',
   styleUrls: ['./view-transaction.component.scss'],
   standalone: true,
-  imports: [CommonModule, FocusDirective, PipesModule, TranslateModule, NgbModule, NgbNavModule],
+  imports: [CommonModule, FormsModule, FocusDirective, PipesModule, TranslateModule, NgbModule, NgbNavModule],
 })
 export class ViewTransactionComponent implements OnInit, AfterViewInit {
   @Input() transactionId: string;
@@ -66,17 +78,24 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
 
   public isSupport = false;
 
+  public paymentMethods: PaymentMethod[] = [];
+  public editingPaymentId: string | null = null;
+  public selectedPaymentMethodId: string | null = null;
+  public savingPayment = false;
+
   private destroy$ = new Subject<void>();
   @ViewChild('modalObj') modalObj!: TemplateRef<any>;
 
   constructor(
     public _transactionService: TransactionService,
+    public _movementOfCashService: MovementOfCashService,
     public activeModal: NgbActiveModal,
     private _modalService: NgbModal,
     public _printService: PrintService,
     private _toast: ToastService,
     private _toastService: ToastService,
     private _authService: AuthService,
+    private _paymentMethodService: PaymentMethodService,
     private elementRef: ElementRef<HTMLElement>
   ) {}
 
@@ -97,6 +116,44 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
     this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((user: User | null) => {
       this.isSupport = user?.name?.toLowerCase() === 'soporte';
     });
+
+    if (!this.readonly) {
+      this.loadPaymentMethods();
+    }
+  }
+
+  private loadPaymentMethods(): void {
+    this._paymentMethodService
+      .getAll({
+        project: {
+          _id: 1,
+          name: 1,
+          order: 1,
+          isCurrentAccount: 1,
+          allowBank: 1,
+          checkDetail: 1,
+          checkPerson: 1,
+          allowToFinance: 1,
+          allowCurrencyValue: 1,
+          operationType: 1,
+        },
+        match: {
+          operationType: { $ne: 'D' },
+          allowBank: false,
+          checkDetail: false,
+          checkPerson: false,
+          allowToFinance: false,
+          allowCurrencyValue: false,
+        },
+        sort: { order: 1 },
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result: ApiResponse) => {
+          this.paymentMethods = result?.status === 200 ? result.result : [];
+        },
+        error: (error) => this._toastService.showToast(error),
+      });
   }
 
   public ngOnDestroy(): void {
@@ -200,6 +257,47 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
         }
       }
     }
+  }
+
+  public startEditPayment(movementOfCash: MovementOfCash): void {
+    this.editingPaymentId = movementOfCash._id;
+    this.selectedPaymentMethodId = movementOfCash.type?._id ?? null;
+  }
+
+  public cancelEditPayment(): void {
+    this.editingPaymentId = null;
+    this.selectedPaymentMethodId = null;
+  }
+
+  public savePaymentMethod(movementOfCash: MovementOfCash): void {
+    const newMethod = this.paymentMethods.find((pm) => pm._id === this.selectedPaymentMethodId);
+
+    if (!newMethod || newMethod._id === movementOfCash.type?._id) {
+      this.cancelEditPayment();
+      return;
+    }
+
+    this.savingPayment = true;
+
+    this._movementOfCashService
+      .update({ _id: movementOfCash._id, type: newMethod })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updateResult: ApiResponse) => {
+          this.savingPayment = false;
+          if (updateResult?.status === 200) {
+            movementOfCash.type = newMethod;
+            this._toastService.showToast({ message: 'Medio de pago actualizado', type: 'success' });
+            this.cancelEditPayment();
+          } else {
+            this._toastService.showToast(updateResult);
+          }
+        },
+        error: (error) => {
+          this.savingPayment = false;
+          this._toastService.showToast(error);
+        },
+      });
   }
 
   async openModal(op: string, movement?: MovementOfArticle, transactionId?: string, objData?: any) {
