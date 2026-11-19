@@ -162,8 +162,8 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
     this.destroy$.complete();
   }
 
-  public getTransaction(transactionId: string, silent = false): void {
-    if (!silent) this.loading = true;
+  public getTransaction(transactionId: string): void {
+    this.loading = true;
 
     this._transactionService
       .getView(transactionId)
@@ -286,9 +286,9 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
         next: (updateResult: ApiResponse) => {
           this.savingPayment = false;
           if (updateResult?.status === 200) {
+            movementOfCash.type = newMethod;
             this._toastService.showToast({ message: 'Medio de pago actualizado', type: 'success' });
             this.cancelEditPayment();
-            this.getTransaction(this.transactionId, true);
           } else {
             this._toastService.showToast(updateResult);
           }
