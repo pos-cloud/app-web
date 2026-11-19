@@ -35,7 +35,7 @@
                   [ngClass]="{
                     disabled: loading,
                     enabled: !loading,
-                    'has-data': filters[column.name]
+                    'has-data': filters[column.name],
                   }"
                   [(ngModel)]="filters[column.name]"
                   (keydown.enter)="addFilters()"
