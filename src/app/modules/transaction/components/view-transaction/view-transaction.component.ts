@@ -280,7 +280,7 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
     this.savingPayment = true;
 
     this._movementOfCashService
-      .update({ _id: movementOfCash._id, type: newMethod, fromEye: true })
+      .update({ _id: movementOfCash._id, type: newMethod })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (updateResult: ApiResponse) => {
