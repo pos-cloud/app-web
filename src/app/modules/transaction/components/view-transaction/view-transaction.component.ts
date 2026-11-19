@@ -280,39 +280,18 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
     this.savingPayment = true;
 
     this._movementOfCashService
-      .getById(movementOfCash._id)
+      .update({ _id: movementOfCash._id, type: newMethod, fromEye: true })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result: ApiResponse) => {
-          if (result?.status !== 200 || !result.result) {
-            this.savingPayment = false;
-            this._toastService.showToast(result);
-            return;
+        next: (updateResult: ApiResponse) => {
+          this.savingPayment = false;
+          if (updateResult?.status === 200) {
+            this._toastService.showToast({ message: 'Medio de pago actualizado', type: 'success' });
+            this.cancelEditPayment();
+            this.getTransaction(this.transactionId, true);
+          } else {
+            this._toastService.showToast(updateResult);
           }
-
-          const fullMovement: MovementOfCash & { fromEye?: boolean } = result.result;
-          fullMovement.type = newMethod;
-          fullMovement.fromEye = true;
-
-          this._movementOfCashService
-            .update(fullMovement)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (updateResult: ApiResponse) => {
-                this.savingPayment = false;
-                if (updateResult?.status === 200) {
-                  this._toastService.showToast({ message: 'Medio de pago actualizado', type: 'success' });
-                  this.cancelEditPayment();
-                  this.getTransaction(this.transactionId, true);
-                } else {
-                  this._toastService.showToast(updateResult);
-                }
-              },
-              error: (error) => {
-                this.savingPayment = false;
-                this._toastService.showToast(error);
-              },
-            });
         },
         error: (error) => {
           this.savingPayment = false;
