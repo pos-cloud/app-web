@@ -35,6 +35,12 @@ export const _routes: Routes = [
     component: LoginComponent,
   },
   {
+    path: 'claude/autorizar',
+    loadComponent: () =>
+      import('./auth/claude-autorizar/claude-autorizar.component').then((m) => m.ClaudeAutorizarComponent),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'politicas-de-privacidad',
     loadComponent: () =>
       import('./auth/politicas-de-privacidad/politicas-de-privacidad.component').then(
