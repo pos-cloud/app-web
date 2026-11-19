@@ -272,12 +272,7 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
   public savePaymentMethod(movementOfCash: MovementOfCash): void {
     const newMethod = this.paymentMethods.find((pm) => pm._id === this.selectedPaymentMethodId);
 
-    if (!newMethod) {
-      this._toastService.showToast({ message: 'Seleccioná un medio de pago válido' });
-      return;
-    }
-
-    if (newMethod._id === movementOfCash.type?._id) {
+    if (!newMethod || newMethod._id === movementOfCash.type?._id) {
       this.cancelEditPayment();
       return;
     }
@@ -298,7 +293,6 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
           const fullMovement: MovementOfCash & { fromEye?: boolean } = result.result;
           fullMovement.type = newMethod;
           fullMovement.fromEye = true;
-          this.applyPaymentMethodConstraints(fullMovement, newMethod);
 
           this._movementOfCashService
             .update(fullMovement)
@@ -325,25 +319,6 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
           this._toastService.showToast(error);
         },
       });
-  }
-
-  private applyPaymentMethodConstraints(movementOfCash: MovementOfCash, paymentMethod: PaymentMethod): void {
-    if (!paymentMethod.allowBank) {
-      movementOfCash.bank = null;
-    }
-    if (!paymentMethod.checkDetail) {
-      movementOfCash.statusCheck = null;
-    }
-    if (!paymentMethod.checkPerson) {
-      movementOfCash.titular = '';
-      movementOfCash.CUIT = '';
-    }
-    if (!paymentMethod.allowToFinance) {
-      movementOfCash.quota = 1;
-    }
-    if (!paymentMethod.allowCurrencyValue) {
-      movementOfCash.currencyValues = [];
-    }
   }
 
   async openModal(op: string, movement?: MovementOfArticle, transactionId?: string, objData?: any) {
