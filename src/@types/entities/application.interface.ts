@@ -70,6 +70,7 @@ export interface Application extends Activity {
     color2: string;
     color3: string;
     transactionType: TransactionType;
+    picture: string;
   };
   claude?: {
     token: string;

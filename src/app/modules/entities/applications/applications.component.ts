@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationService } from '@core/services/application.service';
 import { AuthService } from '@core/services/auth.service';
@@ -9,9 +9,10 @@ import { PrintService } from '@core/services/print.service';
 import { TiendaNubeService } from '@core/services/tienda-nube.service';
 import { NgbAccordionModule, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { ColorPaletteComponent } from '@shared/components/color-palette/color-palette.component';
+import { ProgressbarModule } from '@shared/components/progressbar/progressbar.module';
 import { TypeaheadDropdownComponent } from '@shared/components/typehead-dropdown/typeahead-dropdown.component';
+import { UploadFileComponent } from '@shared/components/upload-file/upload-file.component';
 import { FocusDirective } from '@shared/directives/focus.directive';
 import { PipesModule } from '@shared/pipes/pipes.module';
 import { ApiResponse, Application, Article, FeArIntegrationEntry, PrintType } from '@types';
@@ -46,10 +47,12 @@ import { TranslateMePipe } from '../../../shared/pipes/translate-me';
     NgbDropdownModule,
     TypeaheadDropdownComponent,
     ColorPaletteComponent,
+    UploadFileComponent,
   ],
   providers: [TranslateMePipe],
 })
 export class ListApplicationsComponent implements OnInit, OnDestroy {
+  @ViewChild(UploadFileComponent) catalogImage: UploadFileComponent;
   public title: string = 'Listado de Aplicaciones';
   public application: Application;
   public integracionesForm: FormGroup;
@@ -107,6 +110,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         color2: ['#ffffff'],
         color3: ['#6c757d'],
         transactionType: [null],
+        picture: [''],
       }),
       menu: this.fb.group({
         portain: [''],
@@ -316,6 +320,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         color2: this.application?.catalogo?.color2 || '#ffffff',
         color3: this.application?.catalogo?.color3 || '#6c757d',
         transactionType: this.application?.catalogo?.transactionType ?? null,
+        picture: this.application?.catalogo?.picture ?? '',
       },
 
       menu: {
@@ -610,6 +615,10 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
     );
   }
 
+  public onCatalogImageUploaded(urls: string[]): void {
+    this.integracionesForm.get('catalogo.picture')?.setValue(urls?.length ? urls[0] : '');
+  }
+
   public feArCrtFileChange(event: Event, index: number) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) {
@@ -637,7 +646,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
     input.value = '';
   }
 
-  public handleApplicationOperation(feArRowIndex?: number) {
+  public async handleApplicationOperation(feArRowIndex?: number) {
     if (feArRowIndex != null) {
       this.feArSaveLoadingIndex = feArRowIndex;
     } else {
@@ -650,6 +659,9 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       this.application.claude = claude;
     }
 
+    if (this.catalogImage) {
+      await this.catalogImage.uploadImages();
+    }
     if (!this.application._id) {
       return this.saveApplication(feArRowIndex);
     }

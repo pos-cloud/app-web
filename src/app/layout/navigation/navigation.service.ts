@@ -277,6 +277,8 @@ export class NavigationService {
         child.push({ label: 'App', link: 'pos/app' });
       }
 
+      child.push({ label: 'Catálogo', link: 'pos/catalog' });
+
       if (child.length) {
         menu.push({
           label: 'Ventas',

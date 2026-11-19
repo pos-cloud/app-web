@@ -13,7 +13,13 @@
 
     <div class="card-body scroll">
       <form [formGroup]="integracionesForm" autocomplete="off">
-        <ngb-accordion class="app-accordion" [closeOthers]="true" #acc="ngbAccordion" activeIds="ngb-panel-0">
+        <ngb-accordion
+          class="app-accordion"
+          [closeOthers]="true"
+          [destroyOnHide]="false"
+          #acc="ngbAccordion"
+          activeIds="ngb-panel-0"
+        >
           <!-- Panel Tienda Nube -->
           <ngb-panel id="Tienda Nube">
             <ng-template ngbPanelTitle>
@@ -564,6 +570,14 @@
                     container="body"
                     popupClass="catalogo-typeahead-menu"
                   ></app-typeahead-dropdown>
+                </div>
+                <div class="form-group col-md-12">
+                  <label class="control-label">{{ 'picture' | translate | capitalize }}:</label>
+                  <app-upload-file
+                    (uploadedUrls)="onCatalogImageUploaded($event)"
+                    [folder]="'catalog'"
+                    [existingImageUrl]="integracionesForm.get('catalogo.picture')?.value"
+                  ></app-upload-file>
                 </div>
               </div>
             </ng-template>
