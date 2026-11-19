@@ -130,14 +130,16 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
           name: 1,
           order: 1,
           isCurrentAccount: 1,
-          allowBank: 1,
-          checkDetail: 1,
-          checkPerson: 1,
-          allowToFinance: 1,
-          allowCurrencyValue: 1,
           operationType: 1,
         },
-        match: { operationType: { $ne: 'D' } },
+        match: {
+          operationType: { $ne: 'D' },
+          allowBank: { $ne: true },
+          checkDetail: { $ne: true },
+          checkPerson: { $ne: true },
+          allowToFinance: { $ne: true },
+          allowCurrencyValue: { $ne: true },
+        },
         sort: { order: 1 },
       })
       .pipe(takeUntil(this.destroy$))
@@ -288,8 +290,9 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
             return;
           }
 
-          const fullMovement: MovementOfCash = result.result;
+          const fullMovement: MovementOfCash & { fromEye?: boolean } = result.result;
           fullMovement.type = newMethod;
+          fullMovement.fromEye = true;
           this.applyPaymentMethodConstraints(fullMovement, newMethod);
 
           this._movementOfCashService
