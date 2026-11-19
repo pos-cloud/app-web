@@ -58,7 +58,6 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
   public feArCrtLoadingIndex: number | null = null;
   public feArSaveLoadingIndex: number | null = null;
   public scaleCsvLoading: boolean = false;
-  public claudeTokenLoading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public feArPendingCrtFiles: File[][] = [];
 
@@ -399,45 +398,11 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       });
   }
 
-  public generateClaudeToken(): void {
-    this.claudeTokenLoading = true;
-    this._applicationService
-      .generateClaudeToken()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result: ApiResponse) => {
-          if (result?.status === 200 && result.result?.token) {
-            const current = this.application ?? ({} as Application);
-            this.application = {
-              ...current,
-              claude: result.result,
-            };
-            this._toastService.showToast(result);
-            if (!this.integracionesForm.value._id) {
-              this.getApplication();
-            }
-          } else {
-            this._toastService.showToast(result);
-          }
-        },
-        error: (error) => {
-          this._toastService.showToast(error);
-        },
-        complete: () => {
-          this.claudeTokenLoading = false;
-        },
-      });
-  }
-
-  public copyClaudeToken(): void {
-    const token = this.application?.claude?.token;
-    if (!token) {
-      return;
-    }
-
-    navigator.clipboard.writeText(token).then(
-      () => this._toastService.showToast(null, 'success', '', 'Token copiado.'),
-      () => this._toastService.showToast(null, 'danger', '', 'No se pudo copiar el token.')
+  public connectClaude(): void {
+    window.open(
+      'https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=POS%20Cloud&connectorUrl=https%3A%2F%2Fmcp.poscloud.ar%2Fmcp',
+      '_blank',
+      'noopener'
     );
   }
 
