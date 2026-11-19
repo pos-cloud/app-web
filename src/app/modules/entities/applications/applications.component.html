@@ -567,6 +567,7 @@
                     [service]="_transactionTypeService"
                     [keyField]="'_id'"
                     [displayField]="'name'"
+                    [match]="{ operationType: { $ne: 'D' }, transactionMovement: 'Venta' }"
                     container="body"
                     popupClass="catalogo-typeahead-menu"
                   ></app-typeahead-dropdown>
@@ -579,15 +580,7 @@
                   <label class="control-label" for="catalogoDescripcion">Descripción:</label>
                   <input id="catalogoDescripcion" class="form-control" type="text" formControlName="descripcion" />
                 </div>
-                <div class="form-group col-md-4">
-                  <label class="control-label">{{ 'picture' | translate | capitalize }}:</label>
-                  <app-upload-file
-                    (uploadedUrls)="onCatalogImageUploaded('picture', $event)"
-                    [folder]="'catalog'"
-                    [existingImageUrl]="integracionesForm.get('catalogo.picture')?.value"
-                  ></app-upload-file>
-                </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                   <label class="control-label">Imagen:</label>
                   <app-upload-file
                     (uploadedUrls)="onCatalogImageUploaded('imagen', $event)"
@@ -595,7 +588,7 @@
                     [existingImageUrl]="integracionesForm.get('catalogo.imagen')?.value"
                   ></app-upload-file>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                   <label class="control-label">Cover:</label>
                   <app-upload-file
                     (uploadedUrls)="onCatalogImageUploaded('cover', $event)"

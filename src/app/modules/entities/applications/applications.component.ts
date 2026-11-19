@@ -110,7 +110,6 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         color2: ['#ffffff'],
         color3: ['#6c757d'],
         transactionType: [null],
-        picture: [''],
         imagen: [''],
         cover: [''],
         nombre: [''],
@@ -327,8 +326,10 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         color2: this.application?.catalogo?.color2 || '#ffffff',
         color3: this.application?.catalogo?.color3 || '#6c757d',
         transactionType: this.application?.catalogo?.transactionType ?? null,
-        picture: this.application?.catalogo?.picture ?? '',
-        imagen: this.application?.catalogo?.imagen ?? '',
+        imagen:
+          this.application?.catalogo?.imagen ||
+          (this.application?.catalogo as { picture?: string } | undefined)?.picture ||
+          '',
         cover: this.application?.catalogo?.cover ?? '',
         nombre: this.application?.catalogo?.nombre ?? '',
         descripcion: this.application?.catalogo?.descripcion ?? '',
@@ -629,7 +630,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
     );
   }
 
-  public onCatalogImageUploaded(field: 'picture' | 'imagen' | 'cover', urls: string[]): void {
+  public onCatalogImageUploaded(field: 'imagen' | 'cover', urls: string[]): void {
     this.integracionesForm.get(`catalogo.${field}`)?.setValue(urls?.length ? urls[0] : '');
   }
 

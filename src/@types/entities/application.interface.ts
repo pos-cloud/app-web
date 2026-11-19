@@ -70,7 +70,6 @@ export interface Application extends Activity {
     color2: string;
     color3: string;
     transactionType: TransactionType;
-    picture: string;
     imagen: string;
     cover: string;
     nombre: string;
