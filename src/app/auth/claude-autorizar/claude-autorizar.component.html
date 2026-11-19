@@ -1,0 +1,18 @@
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <img src="../../../assets/img/claude.svg" alt="Claude" style="height: 36px" />
+          <h1 class="h4 mt-3">Permitir que Claude consulte este negocio</h1>
+          <p *ngIf="businessName" class="mb-2">{{ businessName }}</p>
+          <p>Claude va a poder leer las ventas, los productos y el resto de los datos. No va a poder modificarlos.</p>
+          <p *ngIf="error" class="text-danger">{{ error }}</p>
+          <button type="button" class="btn btn-primary" [disabled]="loading || !ready" (click)="permitir()">
+            {{ loading ? 'Conectando…' : 'Permitir' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
