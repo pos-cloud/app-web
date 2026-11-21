@@ -70,33 +70,6 @@ export class MovementOfArticleService extends ModelService {
       );
   }
 
-  updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Observable<any> {
-    const URL = `${environment.api}/api/movement-of-article-by-where`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    const params = new HttpParams()
-      .set('where', JSON.stringify(where))
-      .set('set', JSON.stringify(set))
-      .set('sort', JSON.stringify(sort));
-
-    return this._http
-      .put(URL, null, {
-        headers: headers,
-        params: params,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   deleteMovementOfArticleByParent(parentId: string): Observable<any> {
     const URL = `${environment.apiv2}/movements-of-articles/delete-by-parent/${parentId}`;
 

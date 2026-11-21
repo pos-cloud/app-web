@@ -290,26 +290,61 @@ export class PosKitchenComponent {
     return time;
   }
 
-  public updateMovementOfArticleByWhere(where: {}, set: {}, sort: {}): Promise<MovementOfArticle> {
-    return new Promise<MovementOfArticle>((resolve, reject) => {
+  public updateMovementOfArticleByWhere(where: any, set: any, sort: any): Promise<MovementOfArticle> {
+    return new Promise<MovementOfArticle>((resolve) => {
       this.loading = true;
 
-      this._movementOfArticleService.updateMovementOfArticleByWhere(where, set, sort).subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.movementOfArticle) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+      const byId = where && Object.keys(where).length === 1 && typeof where._id === 'string';
+      const match = byId ? { _id: { $oid: where._id } } : where;
+
+      this._movementOfArticleService
+        .getAll({
+          project: {},
+          match,
+          sort: sort || {},
+          group: {},
+          limit: 1,
+          skip: 0,
+        })
+        .subscribe(
+          (found) => {
+            const movement = found?.status === 200 && Array.isArray(found.result) ? found.result[0] : null;
+
+            if (!movement) {
+              this.loading = false;
+              if (found?.message) this.showMessage(found.message, 'info', true);
+              resolve(null);
+              return;
+            }
+
+            if (set?.status) movement.status = set.status;
+            if (set?.$inc?.printed) {
+              movement.printed = Number(movement.printed || 0) + Number(set.$inc.printed);
+            }
+
+            this._movementOfArticleService.update(movement).subscribe(
+              (result) => {
+                this.loading = false;
+                if (result?.status !== 200 || !result.result) {
+                  if (result?.message) this.showMessage(result.message, 'info', true);
+                  resolve(null);
+                } else {
+                  resolve(result.result);
+                }
+              },
+              (error) => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
+                resolve(null);
+              }
+            );
+          },
+          (error) => {
+            this.loading = false;
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
-          } else {
-            resolve(result.movementOfArticle);
           }
-        },
-        (error) => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 
