@@ -157,27 +157,6 @@ export class TransactionService extends ModelService {
       );
   }
 
-  public getTransactionsV3(query): Observable<any> {
-    const URL = `${environment.api}/api/v3/transactions`; // TODO:Migrar
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
-
-    return this._http
-      .post(URL, query, {
-        headers: headers,
-      })
-      .pipe(
-        map((res) => {
-          return res;
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      );
-  }
-
   public validateElectronicTransactionAR(transaction: Transaction, canceledTransactions): Observable<any> {
     const URL = `${environment.apiv2}/transactions/validate-electronic/${transaction._id}`;
 

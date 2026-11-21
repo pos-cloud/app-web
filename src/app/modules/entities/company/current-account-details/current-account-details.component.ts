@@ -757,10 +757,10 @@ export class CurrentAccountDetailsComponent implements OnInit {
       }
     );
 
-    this._transactionService.getTransactionsV3(query).subscribe(
+    this._transactionService.getFullQuery(query).subscribe(
       (result) => {
-        if (result) {
-          this.items = result;
+        if (result?.status === 200 && Array.isArray(result.result)) {
+          this.items = result.result;
           this.print();
         }
         this.loading = false;
@@ -1841,10 +1841,10 @@ export class CurrentAccountDetailsComponent implements OnInit {
         }
       );
 
-      this._movementOfCashService.getMovementsOfCashesV3(fullQuery).subscribe(
+      this._movementOfCashService.getFullQuery(fullQuery).subscribe(
         (result) => {
-          if (result && result.length > 0) {
-            resolve(result);
+          if (result?.status === 200 && Array.isArray(result.result) && result.result.length > 0) {
+            resolve(result.result);
             this.loading = false;
           } else {
             this.showMessage('No se encontraron transacciones', 'info', true);
