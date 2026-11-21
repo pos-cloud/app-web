@@ -33,6 +33,7 @@ export class ProductionComponent implements OnInit, OnDestroy {
   public loading = false;
   public transactions: Transaction[] = [];
   public transactionTypes: TransactionType[] = [];
+  private allTransactions: Transaction[] = [];
 
   public sort: Record<string, number> = { startDate: -1 };
   public currentPage = 1;
@@ -41,8 +42,6 @@ export class ProductionComponent implements OnInit, OnDestroy {
 
   public filterType = '';
   public filterNumber = '';
-  public filterDepositOrigin = '';
-  public filterDepositDestination = '';
   public filterObservation = '';
 
   private user: User;
@@ -73,59 +72,64 @@ export class ProductionComponent implements OnInit, OnDestroy {
   public getTransactions(): void {
     this.loading = true;
 
-    const project = {
-      _id: 1,
-      startDate: 1,
-      endDate: 1,
-      number: 1,
-      observation: 1,
-      state: 1,
-      madein: 1,
-      operationType: 1,
-      'type._id': 1,
-      'type.name': 1,
-      'type.transactionMovement': 1,
-      'depositOrigin._id': 1,
-      'depositOrigin.name': 1,
-      'depositDestination._id': 1,
-      'depositDestination.name': 1,
-    };
-
-    const match: any = {
-      operationType: { $ne: 'D' },
-      madein: 'mostrador',
-      'type.transactionMovement': TransactionMovement.Production,
-      state: { $in: ['Abierto', 'Pendiente'] },
-    };
-    if (this.filterType) match['type.name'] = { $regex: this.filterType, $options: 'i' };
-    if (this.filterNumber) match['number'] = { $regex: this.filterNumber, $options: 'i' };
-    if (this.filterDepositOrigin) match['depositOrigin.name'] = { $regex: this.filterDepositOrigin, $options: 'i' };
-    if (this.filterDepositDestination)
-      match['depositDestination.name'] = { $regex: this.filterDepositDestination, $options: 'i' };
-    if (this.filterObservation) match['observation'] = { $regex: this.filterObservation, $options: 'i' };
-
-    const group = { _id: null, count: { $sum: 1 }, items: { $push: '$$ROOT' } };
-    const skip = (this.currentPage > 0 ? this.currentPage - 1 : 0) * this.itemsPerPage;
-
     this.subscription.add(
-      this._transactionService
-        .getAll({ project, match, sort: this.sort, group, limit: this.itemsPerPage, skip })
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            if (result.status === 200) {
-              this.transactions = result.result[0]?.items ?? [];
-              this.totalItems = result.result[0]?.count ?? 0;
-            } else {
-              this._toastService.showToast(result);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this._toastService.showToast(error);
+      this._transactionService.getPendingProduction().subscribe(
+        (result) => {
+          this.loading = false;
+          if (Array.isArray(result?.result)) {
+            this.allTransactions = result.result;
+            this.applyList();
+          } else {
+            this._toastService.showToast(result);
           }
-        )
+        },
+        (error) => {
+          this.loading = false;
+          this._toastService.showToast(error);
+        }
+      )
     );
+  }
+
+  public applyList(): void {
+    const type = this.filterType.trim().toLowerCase();
+    const number = this.filterNumber.trim().toLowerCase();
+    const observation = this.filterObservation.trim().toLowerCase();
+
+    const rows = this.allTransactions.filter((transaction) => {
+      if (type && !(transaction.type?.name ?? '').toLowerCase().includes(type)) return false;
+      if (number && !String(transaction.number ?? '').toLowerCase().includes(number)) return false;
+      if (observation && !(transaction.observation ?? '').toLowerCase().includes(observation)) return false;
+      return true;
+    });
+
+    rows.sort((a, b) => {
+      for (const term of Object.keys(this.sort)) {
+        const order = this.sort[term];
+        const left = this.sortValue(a, term);
+        const right = this.sortValue(b, term);
+        if (left < right) return -order;
+        if (left > right) return order;
+      }
+      return 0;
+    });
+
+    this.totalItems = rows.length;
+    const pageSize = Number(this.itemsPerPage) || 10;
+    let start = (this.currentPage > 0 ? this.currentPage - 1 : 0) * pageSize;
+    if (start >= rows.length && this.currentPage > 1) {
+      this.currentPage = 1;
+      start = 0;
+    }
+    this.transactions = rows.slice(start, start + pageSize);
+  }
+
+  private sortValue(transaction: Transaction, term: string): string | number {
+    if (term === 'type.name') return (transaction.type?.name ?? '').toLowerCase();
+    if (term === 'number') return Number(transaction.number) || 0;
+    if (term === 'startDate') return transaction.startDate ? new Date(transaction.startDate).getTime() : 0;
+    const value = (transaction as unknown as Record<string, unknown>)[term];
+    return typeof value === 'string' ? value.toLowerCase() : ((value as number) ?? '');
   }
 
   public refresh(): void {
@@ -134,17 +138,23 @@ export class ProductionComponent implements OnInit, OnDestroy {
 
   public orderBy(term: string): void {
     this.sort[term] = this.sort[term] ? this.sort[term] * -1 : 1;
-    this.getTransactions();
+    this.applyList();
   }
 
   public addFilters(): void {
     this.currentPage = 1;
-    this.getTransactions();
+    this.applyList();
   }
 
   public pageChange(page: number): void {
     this.currentPage = page;
-    this.getTransactions();
+    this.applyList();
+  }
+
+  public onPageSizeChange(): void {
+    this.itemsPerPage = Number(this.itemsPerPage) || 10;
+    this.currentPage = 1;
+    this.applyList();
   }
 
   private async loadTransactionTypes(): Promise<void> {
@@ -172,6 +182,13 @@ export class ProductionComponent implements OnInit, OnDestroy {
   }
 
   public openView(transaction: Transaction): void {
+    this._router.navigate(['/pos/mostrador/editar-transaccion'], {
+      queryParams: { transactionId: transaction._id, returnURL: this._router.url },
+    });
+  }
+
+  public preview(transaction: Transaction, event: Event): void {
+    event.stopPropagation();
     const modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.transactionId = transaction._id;
   }

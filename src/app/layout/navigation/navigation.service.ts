@@ -333,7 +333,7 @@ export class NavigationService {
       menu.push({
         label: 'Producción',
         icon: 'fa fa-paste',
-        link: 'pos/mostrador/production',
+        link: 'pos/production',
       });
     }
 

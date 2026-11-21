@@ -27,8 +27,6 @@
             <th (click)="orderBy('type.name')">Tipo</th>
             <th (click)="orderBy('startDate')">Fecha</th>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('depositOrigin.name')">Depósito Origen</th>
-            <th (click)="orderBy('depositDestination.name')">Depósito Destino</th>
             <th (click)="orderBy('observation')">Observación</th>
           </tr>
           <tr class="filters">
@@ -56,24 +54,6 @@
               <input
                 type="text"
                 class="form-control"
-                [(ngModel)]="filterDepositOrigin"
-                (keydown.enter)="addFilters()"
-                placeholder="Origen..."
-              />
-            </th>
-            <th>
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="filterDepositDestination"
-                (keydown.enter)="addFilters()"
-                placeholder="Destino..."
-              />
-            </th>
-            <th>
-              <input
-                type="text"
-                class="form-control"
                 [(ngModel)]="filterObservation"
                 (keydown.enter)="addFilters()"
                 placeholder="Observación..."
@@ -87,9 +67,9 @@
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="let transaction of transactions">
+          <tr class="production-row" *ngFor="let transaction of transactions" (click)="openView(transaction)">
             <td align="left" width="80">
-              <button type="button" class="btn btn-success" (click)="openView(transaction)" title="Ver">
+              <button type="button" class="btn btn-success" (click)="preview(transaction, $event)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
             </td>
@@ -98,8 +78,6 @@
             <td>
               <b>{{ transaction.number }}</b>
             </td>
-            <td>{{ transaction.depositOrigin?.name }}</td>
-            <td>{{ transaction.depositDestination?.name }}</td>
             <td style="white-space: normal">{{ transaction.observation }}</td>
           </tr>
           <tr align="center" *ngIf="(!transactions || transactions.length === 0) && loading === false">
@@ -123,7 +101,7 @@
           ></ngb-pagination>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="onPageSizeChange()">
             <option [value]="5">Mostrar 5 Registros</option>
             <option [value]="10">Mostrar 10 Registros</option>
             <option [value]="20">Mostrar 20 Registros</option>

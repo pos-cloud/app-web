@@ -125,6 +125,20 @@ export class TransactionService extends ModelService {
     );
   }
 
+  /** Pendientes de producción. El listado completo llega junto; la página la arma el front. */
+  public getPendingProduction(): Observable<any> {
+    const URL = `${environment.apiv2}/transactions/pos/production`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.get(URL, { headers }).pipe(
+      map((res) => res),
+      catchError((err) => of(err))
+    );
+  }
+
   /** Próximo número de comprobante (api-v2). Cuando migremos a contadores no hay que tocar el front. */
   public getNextNumber(type: string, origin: number, letter: string, excludeId?: string): Observable<any> {
     const URL = `${environment.apiv2}/transactions/next-number`;
