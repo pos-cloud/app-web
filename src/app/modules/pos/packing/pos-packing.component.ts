@@ -75,8 +75,8 @@ export class PosPackingComponent implements OnInit, OnDestroy {
   private getTransactions(match: {}): Promise<Transaction[]> {
     return new Promise<Transaction[]>((resolve) => {
       this._transactionService
-        .getTransactionsV2(
-          {
+        .getAll({
+          project: {
             endDate: 1,
             number: 1,
             orderNumber: 1,
@@ -85,13 +85,13 @@ export class PosPackingComponent implements OnInit, OnDestroy {
             operationType: 1,
           },
           match,
-          { endDate: 1 },
-          {},
-          this.limit,
-          0
-        )
+          sort: { endDate: 1 },
+          group: {},
+          limit: this.limit,
+          skip: 0,
+        })
         .subscribe(
-          (result) => resolve(result.transactions || []),
+          (result) => resolve(Array.isArray(result?.result) ? result.result : []),
           () => resolve([])
         );
     });

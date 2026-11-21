@@ -380,17 +380,17 @@ export class AddTransactionComponent implements OnInit {
     };
 
     this._movementOfCancellationService
-      .getMovementsOfCancellations(
-        project, // PROJECT
-        match, // MATCH
-        { order: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
+      .getAll({
+        project,
+        match,
+        sort: { order: 1 },
+        group: {},
+        limit: 0,
+        skip: 0,
+      })
       .subscribe(
         async (result) => {
-          if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+          if (Array.isArray(result?.result) && result.result.length > 0) {
             this.existsCancellations = true;
           }
           this.loading = false;
@@ -578,13 +578,15 @@ export class AddTransactionComponent implements OnInit {
       'company.name': 1,
     };
     return new Promise((resolve, reject) => {
-      this._transactionService.getTransactionsV2(project, match, {}, {}, 1, 0).subscribe(async (r) => {
-        if (r.transactions.length > 0) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      });
+      this._transactionService
+        .getAll({ project, match, sort: {}, group: {}, limit: 1, skip: 0 })
+        .subscribe(async (r) => {
+          if (Array.isArray(r?.result) && r.result.length > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        });
     });
   }
   async addTransaction() {

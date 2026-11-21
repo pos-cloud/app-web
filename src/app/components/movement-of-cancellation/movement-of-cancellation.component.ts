@@ -148,30 +148,31 @@ export class MovementOfCancellationComponent implements OnInit {
     };
 
     this._movementOfCancellation
-      .getMovementsOfCancellations(
-        project, // PROJECT
-        match, // MATCH
-        { order: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
+      .getAll({
+        project,
+        match,
+        sort: { order: 1 },
+        group: {},
+        limit: 0,
+        skip: 0,
+      })
       .subscribe(
         async (result) => {
-          if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
-            for (let index = 0; index < result.movementsOfCancellations.length; index++) {
+          const movements = Array.isArray(result?.result) ? result.result : [];
+          if (movements.length > 0) {
+            for (let index = 0; index < movements.length; index++) {
               let transaction = new Transaction();
               if (this.transactionOriginViewId) {
-                transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionDestination);
+                transaction = await this.getTransaction(movements[index].transactionDestination);
               } else {
-                transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionOrigin);
+                transaction = await this.getTransaction(movements[index].transactionOrigin);
               }
               if (
                 transaction &&
                 transaction.state !== TransactionState.Open &&
                 transaction.state !== TransactionState.Pending
               ) {
-                transaction.balance = this.roundNumber.transform(result.movementsOfCancellations[index].balance);
+                transaction.balance = this.roundNumber.transform(movements[index].balance);
                 this.transactions.push(transaction);
               } else {
                 this.totalItems = 0;
@@ -349,24 +350,25 @@ export class MovementOfCancellationComponent implements OnInit {
     };
 
     this._transactionService
-      .getTransactionsV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        {
+      .getAll({
+        project,
+        match,
+        sort: sortAux,
+        group: {
           _id: null,
           count: { $sum: 1 },
           transactions: { $push: '$$ROOT' },
-        }, // GROUP
-        0, // LIMIT
-        0 // SKIP
-      )
+        },
+        limit: 0,
+        skip: 0,
+      })
       .subscribe(
         async (result) => {
           this.loading = false;
-          if (result && result.length > 0 && result[0].transactions) {
-            this.transactions = result[0].transactions;
-            this.totalItems = result[0].count;
+          const grouped = Array.isArray(result?.result) ? result.result : [];
+          if (grouped.length > 0 && grouped[0].transactions) {
+            this.transactions = grouped[0].transactions;
+            this.totalItems = grouped[0].count;
             if (this.transactions.length > 0) {
               for (let transaction of this.transactions) {
                 if (!transaction.type.requestArticles && transaction.type.requestPaymentMethods) {
@@ -450,8 +452,8 @@ export class MovementOfCancellationComponent implements OnInit {
   getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
     return new Promise<MovementOfCancellation[]>((resolve, reject) => {
       this._movementOfCancellationService
-        .getMovementsOfCancellations(
-          {
+        .getAll({
+          project: {
             _id: 0,
             'transactionOrigin._id': 1,
             'transactionDestination._id': 1,
@@ -465,23 +467,23 @@ export class MovementOfCancellationComponent implements OnInit {
             'transactionOrigin.number': 1,
             'transactionOrigin.operationType': 1,
             'transactionOrigin.balance': 1,
-          }, // PROJECT
-          {
+          },
+          match: {
             'transactionDestination._id': {
               $oid: this.transactionDestination._id,
             },
             operationType: { $ne: 'D' },
             'transactionOrigin.operationType': { $ne: 'D' },
-          }, // MATCH
-          {}, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
+          },
+          sort: {},
+          group: {},
+          limit: 0,
+          skip: 0,
+        })
         .subscribe(
           (result) => {
-            if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
-              resolve(result.movementsOfCancellations);
+            if (Array.isArray(result?.result) && result.result.length > 0) {
+              resolve(result.result);
             } else {
               resolve(null);
             }
@@ -695,10 +697,10 @@ export class MovementOfCancellationComponent implements OnInit {
         operationType: 1,
         balanceCanceled: 1,
       };
-      this._movementOfCashService.getMovementsOfCashesV2(project, match, sortAux, {}, 0, 0).subscribe(
+      this._movementOfCashService.getAll({ project, match, sort: sortAux, group: {}, limit: 0, skip: 0 }).subscribe(
         (res) => {
           this.loading = false;
-          res.movementsOfCashes ? resolve(res.movementsOfCashes) : resolve([]);
+          Array.isArray(res?.result) ? resolve(res.result) : resolve([]);
         },
         (error) => reject(error)
       );

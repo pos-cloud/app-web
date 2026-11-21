@@ -169,12 +169,13 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
     };
 
     this._movementOfCancellationService
-      .getMovementsOfCancellations(project, match, { order: 1 }, {}, 0, 0)
+      .getAll({ project, match, sort: { order: 1 }, group: {}, limit: 0, skip: 0 })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: async (result) => {
-          if (result?.movementsOfCancellations?.length > 0) {
-            for (const movement of result.movementsOfCancellations) {
+          const movements = Array.isArray(result?.result) ? result.result : [];
+          if (movements.length > 0) {
+            for (const movement of movements) {
               const transaction = this.transactionOriginViewId
                 ? await this.getTransaction(movement.transactionDestination)
                 : await this.getTransaction(movement.transactionOrigin);
@@ -285,22 +286,22 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
     const project = this.getCancellationTransactionsProject();
 
     this._transactionService
-      .getTransactionsV2(
+      .getAll({
         project,
         match,
-        sortAux,
-        {
+        sort: sortAux,
+        group: {
           _id: null,
           count: { $sum: 1 },
           transactions: { $push: '$$ROOT' },
         },
-        0,
-        0
-      )
+        limit: 0,
+        skip: 0,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: async (result) => {
-          await this.handleCancellationTransactionsResult(result);
+          await this.handleCancellationTransactionsResult(Array.isArray(result?.result) ? result.result : []);
         },
         error: (error) => {
           this._toastService.showToast(error);
@@ -409,23 +410,24 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
   private queryCancellationTransactions(overdueOnly = false): Promise<CancellationTransaction[]> {
     return new Promise((resolve, reject) => {
       this._transactionService
-        .getTransactionsV2(
-          this.getCancellationTransactionsProject(),
-          this.buildCancellationTransactionsMatch(overdueOnly),
-          this.getCancellationTransactionsSort(),
-          {
+        .getAll({
+          project: this.getCancellationTransactionsProject(),
+          match: this.buildCancellationTransactionsMatch(overdueOnly),
+          sort: this.getCancellationTransactionsSort(),
+          group: {
             _id: null,
             count: { $sum: 1 },
             transactions: { $push: '$$ROOT' },
           },
-          0,
-          0
-        )
+          limit: 0,
+          skip: 0,
+        })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (result) => {
-            if (result?.length > 0 && result[0].transactions) {
-              resolve(result[0].transactions);
+            const grouped = Array.isArray(result?.result) ? result.result : [];
+            if (grouped.length > 0 && grouped[0].transactions) {
+              resolve(grouped[0].transactions);
             } else {
               resolve([]);
             }
@@ -513,8 +515,8 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
   getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
     return new Promise<MovementOfCancellation[]>((resolve, reject) => {
       this._movementOfCancellationService
-        .getMovementsOfCancellations(
-          {
+        .getAll({
+          project: {
             _id: 0,
             'transactionOrigin._id': 1,
             'transactionDestination._id': 1,
@@ -528,23 +530,23 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
             'transactionOrigin.number': 1,
             'transactionOrigin.operationType': 1,
             'transactionOrigin.balance': 1,
-          }, // PROJECT
-          {
+          },
+          match: {
             'transactionDestination._id': {
               $oid: this.transactionDestination._id,
             },
             operationType: { $ne: 'D' },
             'transactionOrigin.operationType': { $ne: 'D' },
-          }, // MATCH
-          {}, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
+          },
+          sort: {},
+          group: {},
+          limit: 0,
+          skip: 0,
+        })
         .subscribe(
           (result) => {
-            if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
-              resolve(result.movementsOfCancellations);
+            if (Array.isArray(result?.result) && result.result.length > 0) {
+              resolve(result.result);
             } else {
               resolve(null);
             }
@@ -822,10 +824,10 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
         operationType: 1,
         balanceCanceled: 1,
       };
-      this._movementOfCashService.getMovementsOfCashesV2(project, match, sortAux, {}, 0, 0).subscribe(
+      this._movementOfCashService.getAll({ project, match, sort: sortAux, group: {}, limit: 0, skip: 0 }).subscribe(
         (res) => {
           this.loading = false;
-          res.movementsOfCashes ? resolve(res.movementsOfCashes) : resolve([]);
+          Array.isArray(res?.result) ? resolve(res.result) : resolve([]);
         },
         (error) => reject(error)
       );

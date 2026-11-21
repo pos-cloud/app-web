@@ -119,10 +119,10 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         balanceCanceled: 1,
       };
       this.subscription.add(
-        this._movementOfCashService.getMovementsOfCashesV2(project, match, sortAux, {}, 0, 0).subscribe(
+        this._movementOfCashService.getAll({ project, match, sort: sortAux, group: {}, limit: 0, skip: 0 }).subscribe(
           (res) => {
             this.loading = false;
-            res.movementsOfCashes ? resolve(res.movementsOfCashes) : resolve([]);
+            Array.isArray(res?.result) ? resolve(res.result) : resolve([]);
           },
           (error) => reject(error)
         )
@@ -179,10 +179,10 @@ export class SelectMovementsOfCashesComponent implements OnInit {
         balance: 1,
       };
       this.subscription.add(
-        this._transactionService.getTransactionsV2(project, match, {}, {}, 1, 0).subscribe(
+        this._transactionService.getAll({ project, match, sort: {}, group: {}, limit: 1, skip: 0 }).subscribe(
           (result) => {
             this.loading = false;
-            resolve(result.transactions[0]);
+            resolve(Array.isArray(result?.result) ? result.result[0] : null);
           },
           (error) => reject(error)
         )

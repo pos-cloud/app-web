@@ -2043,19 +2043,19 @@ export class PointOfSaleComponent implements OnInit {
 
       this.subscription.add(
         this._transactionService
-          .getTransactionsV2(
-            project, // PROJECT
-            match, // MATCH
-            sort, // SORT
-            {}, // GROUP
-            0, // LIMIT
-            0 // SKIP
-          )
+          .getAll({
+            project,
+            match,
+            sort,
+            group: {},
+            limit: 0,
+            skip: 0,
+          })
           .subscribe(
             (result) => {
               this.loading = false;
               this.hideMessage();
-              resolve(result.transactions);
+              resolve(Array.isArray(result?.result) ? result.result : []);
             },
             (error) => {
               this.showMessage(error._body, 'danger', false);

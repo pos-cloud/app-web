@@ -390,26 +390,27 @@ export class ListTransactionsComponent implements OnInit {
 
     this.subscription.add(
       this._transactionService
-        .getTransactionsV2(
-          project, // PROJECT
-          match, // MATCH
-          this.sort, // SORT
-          group, // GROUP
-          limit, // LIMIT
-          skip // SKIP
-        )
+        .getAll({
+          project,
+          match,
+          sort: this.sort,
+          group,
+          limit,
+          skip,
+        })
         .subscribe(
           (result) => {
             this.loading = false;
-            if (result && result[0] && result[0].items) {
+            const page = Array.isArray(result?.result) ? result.result[0] : null;
+            if (page && page.items) {
               if (this.itemsPerPage === 0) {
-                this.exportExcelComponent.items = result[0].items;
+                this.exportExcelComponent.items = page.items;
                 this.exportExcelComponent.export();
                 this.itemsPerPage = 10;
                 this.getItems();
               } else {
-                this.items = result[0].items;
-                this.totalItems = result[0].count;
+                this.items = page.items;
+                this.totalItems = page.count;
               }
             } else {
               this.items = new Array();

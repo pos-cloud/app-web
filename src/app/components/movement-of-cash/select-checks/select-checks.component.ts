@@ -169,20 +169,21 @@ export class SelectChecksComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ? page * this.itemsPerPage : 0; // SKIP
 
     this._movementOfCashService
-      .getMovementsOfCashesV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
-      )
+      .getAll({
+        project,
+        match,
+        sort: sortAux,
+        group,
+        limit,
+        skip,
+      })
       .subscribe(
         (result) => {
           this.loading = false;
-          if (result && result[0] && result[0].movementsOfCashes) {
-            this.movementsOfCashes = result[0].movementsOfCashes;
-            this.totalItems = result[0].count;
+          const page = Array.isArray(result?.result) ? result.result[0] : null;
+          if (page && page.movementsOfCashes) {
+            this.movementsOfCashes = page.movementsOfCashes;
+            this.totalItems = page.count;
             this.areMovementOfCashesEmpty = false;
             this.calculateTotal();
           } else {

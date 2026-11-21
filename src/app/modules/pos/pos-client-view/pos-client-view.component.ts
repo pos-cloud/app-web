@@ -193,18 +193,18 @@ export class PosClientViewComponent {
       };
 
       this._transactionService
-        .getTransactionsV2(
-          project, // PROJECT
-          match, // MATCH
-          { startDate: 1 }, // SORT
-          {}, // GROUP
-          this.limit, // LIMIT
-          0 // SKIP
-        )
+        .getAll({
+          project,
+          match,
+          sort: { startDate: 1 },
+          group: {},
+          limit: this.limit,
+          skip: 0,
+        })
         .subscribe(
           (result) => {
             this.loading = false;
-            resolve(result.transactions);
+            resolve(Array.isArray(result?.result) ? result.result : []);
           },
           (error) => {
             this.loading = false;
