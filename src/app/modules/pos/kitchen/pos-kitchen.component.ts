@@ -253,24 +253,24 @@ export class PosKitchenComponent {
       };
 
       this._movementOfArticleService
-        .getMovementsOfArticlesV2(
-          project, // PROJECT
-          match, // MATCH
-          { 'transaction.endDate': -1 }, // SORT
-          {}, // GROUP
-          0, // LIMIT
-          0 // SKIP
-        )
+        .getAll({
+          project,
+          match,
+          sort: { 'transaction.endDate': -1 },
+          group: {},
+          limit: 0,
+          skip: 0,
+        })
         .subscribe(
           (result) => {
             this.loading = false;
-            if (!result.movementsOfArticles) {
-              if (result.message && result.message !== '') {
+            if (result?.status !== 200 || !Array.isArray(result.result)) {
+              if (result?.message && result.message !== '') {
                 this.showMessage(result.message, 'info', true);
               }
               resolve([]);
             } else {
-              resolve(result.movementsOfArticles);
+              resolve(result.result);
             }
           },
           (error) => {

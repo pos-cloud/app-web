@@ -100,8 +100,8 @@ export class PosPackingComponent implements OnInit, OnDestroy {
   private getMovementsOfArticles(match: {}): Promise<MovementOfArticle[]> {
     return new Promise<MovementOfArticle[]>((resolve) => {
       this._movementOfArticleService
-        .getMovementsOfArticlesV2(
-          {
+        .getAll({
+          project: {
             _id: 1,
             description: 1,
             amount: 1,
@@ -112,21 +112,21 @@ export class PosPackingComponent implements OnInit, OnDestroy {
             movementParent: 1,
           },
           match,
-          {},
-          {},
-          0,
-          0
-        )
+          sort: {},
+          group: {},
+          limit: 0,
+          skip: 0,
+        })
         .subscribe(
           (result) => {
-            if (!result.movementsOfArticles) {
-              if (result.message) {
+            if (result?.status !== 200 || !Array.isArray(result.result)) {
+              if (result?.message) {
                 this._toastService.showToast(null, 'info', '', result.message);
               }
               resolve([]);
               return;
             }
-            resolve(result.movementsOfArticles);
+            resolve(result.result);
           },
           (error) => {
             this._toastService.showToast(null, 'danger', '', error?._body || 'No se pudieron cargar los productos');
