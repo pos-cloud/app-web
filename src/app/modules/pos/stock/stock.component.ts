@@ -34,9 +34,9 @@ export class StockComponent implements OnInit, OnDestroy {
   public loading = false;
   public transactions: Transaction[] = [];
   public transactionTypes: TransactionType[] = [];
+  private allTransactions: Transaction[] = [];
 
-  public sortField = 'startDate';
-  public sortOrder: 1 | -1 = -1;
+  public sort: Record<string, number> = { startDate: -1 };
   public currentPage = 1;
   public itemsPerPage = 10;
   public totalItems = 0;
@@ -78,35 +78,79 @@ export class StockComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     this.subscription.add(
-      this._transactionService
-        .getPendingStock({
-          page: this.currentPage,
-          limit: Number(this.itemsPerPage),
-          sort: this.sortField,
-          order: this.sortOrder,
-          type: this.filterType,
-          number: this.filterNumber,
-          depositOrigin: this.filterDepositOrigin,
-          depositDestination: this.filterDepositDestination,
-          observation: this.filterObservation,
-        })
-        .subscribe(
-          (result) => {
-            this.loading = false;
-            const page = result?.result;
-            if (Array.isArray(page?.items)) {
-              this.transactions = page.items;
-              this.totalItems = page.total ?? 0;
-            } else {
-              this._toastService.showToast(result);
-            }
-          },
-          (error) => {
-            this.loading = false;
-            this._toastService.showToast(error);
+      this._transactionService.getPendingStock().subscribe(
+        (result) => {
+          this.loading = false;
+          if (Array.isArray(result?.result)) {
+            this.allTransactions = result.result;
+            this.applyList();
+          } else {
+            this._toastService.showToast(result);
           }
-        )
+        },
+        (error) => {
+          this.loading = false;
+          this._toastService.showToast(error);
+        }
+      )
     );
+  }
+
+  public applyList(): void {
+    const type = this.filterType.trim().toLowerCase();
+    const number = this.filterNumber.trim().toLowerCase();
+    const depositOrigin = this.filterDepositOrigin.trim().toLowerCase();
+    const depositDestination = this.filterDepositDestination.trim().toLowerCase();
+    const observation = this.filterObservation.trim().toLowerCase();
+
+    const rows = this.allTransactions.filter((transaction) => {
+      if (type && !(transaction.type?.name ?? '').toLowerCase().includes(type)) return false;
+      if (
+        number &&
+        !String(transaction.number ?? '')
+          .toLowerCase()
+          .includes(number)
+      )
+        return false;
+      if (depositOrigin && !(transaction.depositOrigin?.name ?? '').toLowerCase().includes(depositOrigin)) return false;
+      if (
+        depositDestination &&
+        !(transaction.depositDestination?.name ?? '').toLowerCase().includes(depositDestination)
+      )
+        return false;
+      if (observation && !(transaction.observation ?? '').toLowerCase().includes(observation)) return false;
+      return true;
+    });
+
+    rows.sort((a, b) => {
+      for (const term of Object.keys(this.sort)) {
+        const order = this.sort[term];
+        const left = this.sortValue(a, term);
+        const right = this.sortValue(b, term);
+        if (left < right) return -order;
+        if (left > right) return order;
+      }
+      return 0;
+    });
+
+    this.totalItems = rows.length;
+    const pageSize = Number(this.itemsPerPage) || 10;
+    let start = (this.currentPage > 0 ? this.currentPage - 1 : 0) * pageSize;
+    if (start >= rows.length && this.currentPage > 1) {
+      this.currentPage = 1;
+      start = 0;
+    }
+    this.transactions = rows.slice(start, start + pageSize);
+  }
+
+  private sortValue(transaction: Transaction, term: string): string | number {
+    if (term === 'type.name') return (transaction.type?.name ?? '').toLowerCase();
+    if (term === 'depositOrigin.name') return (transaction.depositOrigin?.name ?? '').toLowerCase();
+    if (term === 'depositDestination.name') return (transaction.depositDestination?.name ?? '').toLowerCase();
+    if (term === 'number') return Number(transaction.number) || 0;
+    if (term === 'startDate') return transaction.startDate ? new Date(transaction.startDate).getTime() : 0;
+    const value = (transaction as unknown as Record<string, unknown>)[term];
+    return typeof value === 'string' ? value.toLowerCase() : ((value as number) ?? '');
   }
 
   public refresh(): void {
@@ -114,23 +158,24 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   public orderBy(term: string): void {
-    if (this.sortField === term) {
-      this.sortOrder = this.sortOrder === 1 ? -1 : 1;
-    } else {
-      this.sortField = term;
-      this.sortOrder = 1;
-    }
-    this.getTransactions();
+    this.sort[term] = this.sort[term] ? this.sort[term] * -1 : 1;
+    this.applyList();
   }
 
   public addFilters(): void {
     this.currentPage = 1;
-    this.getTransactions();
+    this.applyList();
   }
 
   public pageChange(page: number): void {
     this.currentPage = page;
-    this.getTransactions();
+    this.applyList();
+  }
+
+  public onPageSizeChange(): void {
+    this.itemsPerPage = Number(this.itemsPerPage) || 10;
+    this.currentPage = 1;
+    this.applyList();
   }
 
   private async loadTransactionTypes(): Promise<void> {

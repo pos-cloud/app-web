@@ -89,37 +89,15 @@ export class TransactionService extends ModelService {
     );
   }
 
-  /** Página de movimientos de stock pendientes. El filtrado y el corte los resuelve la API. */
-  public getPendingStock(query: {
-    page: number;
-    limit: number;
-    sort: string;
-    order: number;
-    type?: string;
-    number?: string;
-    depositOrigin?: string;
-    depositDestination?: string;
-    observation?: string;
-  }): Observable<any> {
+  /** Pendientes de stock. El listado completo llega junto; la página la arma el front. */
+  public getPendingStock(): Observable<any> {
     const URL = `${environment.apiv2}/transactions/pos/stock`;
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._authService.getToken());
 
-    let params = new HttpParams()
-      .set('page', String(query.page))
-      .set('limit', String(query.limit))
-      .set('sort', query.sort)
-      .set('order', String(query.order));
-
-    if (query.type) params = params.set('type', query.type);
-    if (query.number) params = params.set('number', query.number);
-    if (query.depositOrigin) params = params.set('depositOrigin', query.depositOrigin);
-    if (query.depositDestination) params = params.set('depositDestination', query.depositDestination);
-    if (query.observation) params = params.set('observation', query.observation);
-
-    return this._http.get(URL, { headers, params }).pipe(
+    return this._http.get(URL, { headers }).pipe(
       map((res) => res),
       catchError((err) => of(err))
     );
