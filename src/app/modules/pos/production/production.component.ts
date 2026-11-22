@@ -164,11 +164,19 @@ export class ProductionComponent implements OnInit, OnDestroy {
 
   public async onNew(type: TransactionType): Promise<void> {
     const result = await this._createTransactionService.create(type, this.buildContext());
-    if (result.status === 'redirect') {
-      this._router.navigate(result.commands, { queryParams: result.queryParams });
-    } else {
-      this.refresh();
+    if (result.status !== 'redirect') {
+      if (result.status !== 'cancelled') {
+        this.refresh();
+      }
+      return;
     }
+    if (this.isCloseProduction(type)) {
+      this._router.navigate(['/transaction/view/close-production-order', result.transaction._id], {
+        queryParams: { returnURL: this._router.url },
+      });
+      return;
+    }
+    this._router.navigate(result.commands, { queryParams: result.queryParams });
   }
 
   private buildContext(): PosContext {
@@ -182,9 +190,19 @@ export class ProductionComponent implements OnInit, OnDestroy {
   }
 
   public openView(transaction: Transaction): void {
+    if (this.isCloseProduction(transaction.type)) {
+      this._router.navigate(['/transaction/view/close-production-order', transaction._id], {
+        queryParams: { returnURL: this._router.url },
+      });
+      return;
+    }
     this._router.navigate(['/pos/mostrador/editar-transaccion'], {
       queryParams: { transactionId: transaction._id, returnURL: this._router.url },
     });
+  }
+
+  private isCloseProduction(type?: TransactionType): boolean {
+    return type?.abbreviation === 'COP';
   }
 
   public preview(transaction: Transaction, event: Event): void {

@@ -483,6 +483,7 @@ export class CreateTransactionService {
         readLayout: 1,
         defectPrinter: 1,
         name: 1,
+        abbreviation: 1,
         labelPrint: 1,
         electronics: 1,
         printable: 1,

@@ -1,0 +1,42 @@
+.close-production {
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .pull-right {
+      margin-left: auto;
+    }
+
+    .btn.btn-success {
+      color: #fff !important;
+      background-color: #28a745 !important;
+      border-color: #28a745 !important;
+
+      &:hover:not(:disabled) {
+        color: #fff !important;
+        background-color: #218838 !important;
+        border-color: #1e7e34 !important;
+      }
+
+      &:disabled {
+        color: #fff !important;
+        opacity: 0.65;
+      }
+    }
+  }
+
+  .close-production__state {
+    font-weight: 600;
+  }
+
+  .close-production__loading {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+  }
+
+  .close-production__body {
+    padding: 16px;
+  }
+}

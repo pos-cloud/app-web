@@ -1,0 +1,67 @@
+<section class="container-fluid close-production">
+  <div class="card card-large">
+    <div class="card-header">
+      <button type="button" class="btn" (click)="goBack()" title="Volver">
+        <i class="fa fa-arrow-left"></i>
+      </button>
+      <span>Cierre de producción</span>
+      <span *ngIf="transaction?.number">Nº {{ transaction.number }}</span>
+      <span *ngIf="transaction?.state" class="close-production__state">{{ transaction.state }}</span>
+      <div class="pull-right">
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="finish()"
+          [disabled]="finishing || readingLine"
+        >
+          <i class="fa fa-check"></i>{{ finishing ? 'Finalizando...' : 'Finalizar' }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="loading && !transaction" class="close-production__loading">
+      <div class="spinner-border text-success" role="status">
+        <span class="sr-only">Cargando</span>
+      </div>
+    </div>
+
+    <div class="row close-production__body" *ngIf="transaction">
+      <div class="col-md-4">
+        <label class="control-label">Lectura</label>
+        <input
+          #readingInput
+          type="text"
+          class="form-control"
+          [(ngModel)]="reading"
+          (keydown.enter)="read()"
+          [disabled]="!editable || readingLine || finishing"
+          placeholder="Pasar la lectura y presionar Enter"
+          autocomplete="off"
+        />
+      </div>
+      <div class="col-md-8">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Lectura</th>
+                <th>Artículo</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let movement of movements">
+                <td>{{ movement.notes || movement.op }}</td>
+                <td>{{ movement.description || movement.article?.description }}</td>
+                <td>{{ movement.amount }}</td>
+              </tr>
+              <tr *ngIf="movements.length === 0">
+                <td colspan="3">Todavía no hay lecturas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

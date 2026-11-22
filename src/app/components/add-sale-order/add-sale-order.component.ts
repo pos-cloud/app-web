@@ -2536,12 +2536,6 @@ export class AddSaleOrderComponent {
         }
       }
 
-      // ACTUALIZACION DE ORDENES DE PRODUCCION
-      // esto es solo para actualizar el estado de la orden cuando todos los movimientos de articulos fueron leidos
-      if (this.transaction.type.transactionMovement === TransactionMovement.Production) {
-        await this.updateOrdenOfProduction(this.transaction._id);
-      }
-
       let result: ApiResponse = await this._transactionService.updateBalance(this.transaction).toPromise();
       if (result.status !== 200) throw result;
       this.transaction.balance = result.result.balance;
@@ -3085,30 +3079,9 @@ export class AddSaleOrderComponent {
 
   async filterArticles() {
     this.listArticlesComponent.filterArticle = this.filterArticle;
-    let article: Article = null;
-    if (this.transaction.type.transactionMovement == TransactionMovement.Production && this.database !== 'ajonjoli') {
-      let query = 'where="op":"' + this.filterArticle + '"';
-      const mov = await this.getMovementsOfArticles(query);
-
-      //validate read
-      if (mov.length === 0 || mov[0].read >= mov[0].amount) {
-        this._toastService.showToast({
-          type: 'danger',
-          message: `El producto ya fue cerrado`,
-        });
-        return;
-      }
-
-      if (mov?.[0]?.article) {
-        article = mov[0].article;
-        this.listArticlesComponent.movementOfArticleOrigin = mov[0];
-      }
-    }
 
     if (this.filterArticle && this.filterArticle !== '' && this.filterArticle.slice(0, 1) === '*') {
       this.listArticlesComponent.filterItem(this.lastMovementOfArticle.article, this.categorySelected);
-    } else if (article) {
-      this.listArticlesComponent.filterItem(article, this.categorySelected);
     } else {
       this.listArticlesComponent.filterItem(null, this.categorySelected);
     }
@@ -3166,28 +3139,6 @@ export class AddSaleOrderComponent {
     while (n.length < length) n = '0' + n;
 
     return n;
-  }
-
-  updateOrdenOfProduction(id): Promise<boolean> {
-    return new Promise<boolean>((resolve) => {
-      this.loading = true;
-      this._movementOfArticleService.updateMovementOfArticles(id).subscribe(
-        (result) => {
-          this.loading = false;
-          if (result.status === 200) {
-            resolve(true);
-          } else {
-            this._toastService.showToast(result);
-            resolve(false);
-          }
-        },
-        (error) => {
-          this.loading = false;
-          this._toastService.showToast(error);
-          resolve(false);
-        }
-      );
-    });
   }
 
   private getIncreasePercentage(priceList: PriceList, movementOfArticle: MovementOfArticle): number {
