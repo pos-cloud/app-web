@@ -406,6 +406,82 @@ body.nav-sidebar-visible .container-fluid {
 
 /* LISTADOS */
 
+body.nav-sidebar-visible .app-main:has(app-pos-counter),
+body.nav-sidebar-visible .app-main:has(app-pos-purchase),
+body.nav-sidebar-visible .app-main:has(app-pos-stock),
+body.nav-sidebar-visible .app-main:has(app-pos-money),
+body.nav-sidebar-visible .app-main:has(app-pos-production),
+body.nav-horizontal-visible .app-main:has(app-pos-counter),
+body.nav-horizontal-visible .app-main:has(app-pos-purchase),
+body.nav-horizontal-visible .app-main:has(app-pos-stock),
+body.nav-horizontal-visible .app-main:has(app-pos-money),
+body.nav-horizontal-visible .app-main:has(app-pos-production) {
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+app-pos-counter,
+app-pos-purchase,
+app-pos-stock,
+app-pos-money,
+app-pos-production {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+app-pos-counter .pos-list,
+app-pos-purchase .pos-list,
+app-pos-stock .pos-list,
+app-pos-money .pos-list,
+app-pos-production .pos-list {
+  margin-top: 0 !important;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+app-pos-counter .pos-list .card-large,
+app-pos-purchase .pos-list .card-large,
+app-pos-stock .pos-list .card-large,
+app-pos-money .pos-list .card-large,
+app-pos-production .pos-list .card-large {
+  flex: 1;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+app-pos-counter .pos-list .card-header,
+app-pos-purchase .pos-list .card-header,
+app-pos-stock .pos-list .card-header,
+app-pos-money .pos-list .card-header,
+app-pos-production .pos-list .card-header,
+app-pos-counter .pos-list .card-footer,
+app-pos-purchase .pos-list .card-footer,
+app-pos-stock .pos-list .card-footer,
+app-pos-money .pos-list .card-footer,
+app-pos-production .pos-list .card-footer {
+  flex-shrink: 0;
+}
+
+app-pos-counter .pos-list .table-responsive,
+app-pos-purchase .pos-list .table-responsive,
+app-pos-stock .pos-list .table-responsive,
+app-pos-money .pos-list .table-responsive,
+app-pos-production .pos-list .table-responsive {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  overflow: auto;
+}
+
 .card {
   min-height: calc(100vh - 120px);
   max-height: calc(100vh - 120px);
