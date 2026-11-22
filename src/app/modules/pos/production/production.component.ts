@@ -98,7 +98,13 @@ export class ProductionComponent implements OnInit, OnDestroy {
 
     const rows = this.allTransactions.filter((transaction) => {
       if (type && !(transaction.type?.name ?? '').toLowerCase().includes(type)) return false;
-      if (number && !String(transaction.number ?? '').toLowerCase().includes(number)) return false;
+      if (
+        number &&
+        !String(transaction.number ?? '')
+          .toLowerCase()
+          .includes(number)
+      )
+        return false;
       if (observation && !(transaction.observation ?? '').toLowerCase().includes(observation)) return false;
       return true;
     });

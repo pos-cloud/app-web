@@ -8,12 +8,7 @@
       <span *ngIf="transaction?.number">Nº {{ transaction.number }}</span>
       <span *ngIf="transaction?.state" class="close-production__state">{{ transaction.state }}</span>
       <div class="pull-right">
-        <button
-          type="button"
-          class="btn btn-success"
-          (click)="finish()"
-          [disabled]="finishing || readingLine"
-        >
+        <button type="button" class="btn btn-success" (click)="finish()" [disabled]="finishing || readingLine">
           <i class="fa fa-check"></i>{{ finishing ? 'Finalizando...' : 'Finalizar' }}
         </button>
       </div>
