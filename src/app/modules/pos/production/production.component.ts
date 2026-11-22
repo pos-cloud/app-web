@@ -15,6 +15,7 @@ import { TransactionService } from 'app/core/services/transaction.service';
 import { ViewTransactionComponent } from 'app/modules/transaction/components/view-transaction/view-transaction.component';
 import { CreateTransactionService, PosContext } from 'app/modules/transaction/services/create-transaction.service';
 import { ProgressbarModule } from 'app/shared/components/progressbar/progressbar.module';
+import { TransactionStateComponent } from 'app/shared/components/transaction-state/transaction-state.component';
 import { ToastService } from 'app/shared/components/toast/toast.service';
 import { PipesModule } from 'app/shared/pipes/pipes.module';
 
@@ -25,7 +26,15 @@ import { PipesModule } from 'app/shared/pipes/pipes.module';
   standalone: true,
   providers: [TranslateService],
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, NgbModule, FormsModule, TranslateModule, PipesModule, ProgressbarModule],
+  imports: [
+    CommonModule,
+    NgbModule,
+    FormsModule,
+    TranslateModule,
+    PipesModule,
+    ProgressbarModule,
+    TransactionStateComponent,
+  ],
 })
 export class ProductionComponent implements OnInit, OnDestroy {
   public readonly movement = TransactionMovement.Production;
@@ -42,6 +51,7 @@ export class ProductionComponent implements OnInit, OnDestroy {
 
   public filterType = '';
   public filterNumber = '';
+  public filterState = '';
   public filterObservation = '';
 
   private user: User;
@@ -94,6 +104,7 @@ export class ProductionComponent implements OnInit, OnDestroy {
   public applyList(): void {
     const type = this.filterType.trim().toLowerCase();
     const number = this.filterNumber.trim().toLowerCase();
+    const state = this.filterState.trim().toLowerCase();
     const observation = this.filterObservation.trim().toLowerCase();
 
     const rows = this.allTransactions.filter((transaction) => {
@@ -103,6 +114,13 @@ export class ProductionComponent implements OnInit, OnDestroy {
         !String(transaction.number ?? '')
           .toLowerCase()
           .includes(number)
+      )
+        return false;
+      if (
+        state &&
+        !String(transaction.state ?? '')
+          .toLowerCase()
+          .includes(state)
       )
         return false;
       if (observation && !(transaction.observation ?? '').toLowerCase().includes(observation)) return false;
