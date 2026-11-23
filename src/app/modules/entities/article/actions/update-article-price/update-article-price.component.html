@@ -145,9 +145,7 @@
 </form>
 <section *ngIf="confirming && confirmation" class="container-fluid">
   <div class="modal-body price-confirm">
-    <p class="text-muted small mb-2">{{ confirmation.subtitle }}</p>
     <p class="price-confirm-sentence">{{ confirmation.sentence }}</p>
-    <p class="text-muted mb-3">{{ confirmation.detail }}</p>
 
     <div class="price-confirm-summary">
       <div class="price-confirm-row" *ngFor="let row of confirmation.rows">

@@ -931,7 +931,6 @@ export class ListArticlesComponent implements OnInit {
       case 'update-prices':
         modalRef = this._modalService.open(UpdateArticlePriceComponent);
         modalRef.componentInstance.articles = items;
-        modalRef.componentInstance.filteredTotal = this.datatableComponent?.totalItems ?? 0;
         modalRef.result.then(
           (result) => {
             this.refresh();

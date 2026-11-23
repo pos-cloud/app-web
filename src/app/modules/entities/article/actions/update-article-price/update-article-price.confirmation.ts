@@ -1,9 +1,14 @@
 /** Textos del cartel de confirmación. Los tipos coinciden con UPDATE_TYPE del formulario. */
-const FIELD_PHRASE: Record<string, string> = {
-  basePrice: 'el precio base',
-  salePrice: 'el precio de venta',
-  markupPercentage: 'el margen',
+const FIELD_LABELS: Record<string, string> = {
+  basePrice: 'Precio base',
+  salePrice: 'Precio de venta',
+  markupPercentage: 'Margen',
 };
+
+const SCOPE_LABELS = {
+  all: 'Todos los productos',
+  filter: 'Productos filtrados',
+} as const;
 
 const TYPE_LABELS: Record<number, string> = {
   1: 'Monto fijo',
@@ -20,10 +25,8 @@ export interface PriceUpdateConfirmationRow {
 }
 
 export interface PriceUpdateConfirmation {
-  subtitle: string;
   title: string;
   sentence: string;
-  detail: string;
   rows: PriceUpdateConfirmationRow[];
   warningTitle: string;
   warningText: string;
@@ -35,23 +38,25 @@ export interface PriceUpdateConfirmationInput {
   type: number;
   amount: number | string;
   decimal: number | string;
-  /** Artículos con código: la misma lista que se envía. */
+  /** Artículos con código: la misma lista que se envía. En «todos» no hay un total del catálogo. */
   articleCount: number;
-  /** Total del filtro del listado. Solo aporta contexto si el alcance es filter y es mayor que articleCount. */
-  filteredTotal?: number | null;
 }
 
 export function buildPriceUpdateConfirmation(input: PriceUpdateConfirmationInput): PriceUpdateConfirmation {
-  const phrase = FIELD_PHRASE[input.field] ?? input.field;
-  const scope = scopeCopy(input, phrase);
   const type = Number(input.type);
+  const scope = input.optionUpdate === 'all' ? SCOPE_LABELS.all : SCOPE_LABELS.filter;
+  const products =
+    input.optionUpdate === 'all'
+      ? 'los productos'
+      : input.articleCount === 1
+        ? '1 producto'
+        : `${input.articleCount} productos`;
 
   return {
-    subtitle: 'Revisá antes de continuar',
-    title: 'Confirmá la actualización',
-    sentence: scope.sentence,
-    detail: scope.detail,
+    title: 'Confirmación de actualización',
+    sentence: `Vas a actualizar ${products} (${scope}).`,
     rows: [
+      { label: 'Campo', value: FIELD_LABELS[input.field] ?? input.field },
       { label: 'Forma', value: TYPE_LABELS[type] ?? '' },
       { label: 'Valor', value: formatAmount(type, input.amount) },
       { label: 'Decimales', value: String(input.decimal) },
@@ -59,26 +64,6 @@ export function buildPriceUpdateConfirmation(input: PriceUpdateConfirmationInput
     warningTitle: 'No se puede volver atrás',
     warningText:
       'Los precios quedan como los dejes. No hay forma de deshacer este cambio. Si no estás seguro, cancelá.',
-  };
-}
-
-function scopeCopy(input: PriceUpdateConfirmationInput, phrase: string): { sentence: string; detail: string } {
-  if (input.optionUpdate === 'all') {
-    return {
-      sentence: `Vas a actualizar ${phrase} de todos los productos del sistema.`,
-      detail: 'No respeta los filtros del listado. Entran todos, también los que no estás viendo.',
-    };
-  }
-
-  const products = input.articleCount === 1 ? '1 producto' : `${input.articleCount} productos`;
-  const filteredTotal = input.filteredTotal ?? 0;
-
-  return {
-    sentence: `Vas a actualizar ${phrase} de ${products} de esta página.`,
-    detail:
-      filteredTotal > input.articleCount
-        ? `El filtro tiene ${filteredTotal} productos. Las otras páginas no entran.`
-        : 'No incluye otras páginas del filtro.',
   };
 }
 
