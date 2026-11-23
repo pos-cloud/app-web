@@ -136,6 +136,7 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
           allowToFinance: 1,
           allowCurrencyValue: 1,
           operationType: 1,
+          cashBoxImpact: 1,
         },
         match: {
           operationType: { $ne: 'D' },
@@ -278,9 +279,13 @@ export class ViewTransactionComponent implements OnInit, AfterViewInit {
     }
 
     this.savingPayment = true;
-
     this._movementOfCashService
-      .update({ _id: movementOfCash._id, type: newMethod })
+      .update({
+        ...movementOfCash,
+        type: newMethod,
+        company: this.transaction?.company?._id,
+        recalculateBalances: true,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (updateResult: ApiResponse) => {
