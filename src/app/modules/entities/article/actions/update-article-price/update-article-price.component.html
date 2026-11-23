@@ -4,7 +4,7 @@
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<form *ngIf="!confirming" [formGroup]="form" (ngSubmit)="requestConfirmation()" autocomplete="off">
+<form *ngIf="!confirming" [formGroup]="form" (ngSubmit)="$event.preventDefault()" autocomplete="off">
   <section class="container-fluid">
     <div class="modal-body">
       <!-- Productos a actualizar -->
@@ -136,7 +136,12 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="form.invalid || loading"
+        (click)="requestConfirmation()"
+      >
         <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
         <span class="ml-2">{{ loading ? 'Actualizando...' : 'Actualizar' }}</span>
       </button>

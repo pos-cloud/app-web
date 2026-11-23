@@ -13,7 +13,7 @@ describe('buildPriceUpdateConfirmation', () => {
     });
 
     expect(copy.title).toBe('Confirmación de actualización');
-    expect(copy.sentence).toBe('Vas a actualizar 10 productos (Productos filtrados).');
+    expect(copy.sentence).toBe('Vas a actualizar 10 productos de esta página (Productos filtrados).');
     expect(copy.detail).toBe('Son los de esta página. El filtro tiene 433 productos; las otras páginas no entran.');
     expect(copy.effect).toBe(
       'Se suma ese monto al valor actual de cada producto. Campo: Precio de venta. Valor: $ 20.'
@@ -43,7 +43,7 @@ describe('buildPriceUpdateConfirmation', () => {
       filteredTotal: 10,
     });
 
-    expect(copy.sentence).toBe('Vas a actualizar 10 productos (Productos filtrados).');
+    expect(copy.sentence).toBe('Vas a actualizar 10 productos de esta página (Productos filtrados).');
     expect(copy.detail).toBe('Son los productos que ves en la lista ahora.');
     expect(copy.rows[0]).toEqual({ label: 'Productos', value: '10 productos de esta página' });
     expect(copy.rows[4]).toEqual({ label: 'Valor', value: '10 %' });
@@ -60,7 +60,7 @@ describe('buildPriceUpdateConfirmation', () => {
       filteredTotal: 120,
     });
 
-    expect(copy.sentence).toBe('Vas a actualizar todos los productos (Todos los productos).');
+    expect(copy.sentence).toBe('Vas a actualizar todos los productos del sistema (Todos los productos).');
     expect(copy.detail).toBe(
       'Entran todos los productos del sistema, también los que no estás viendo. Los filtros del listado no se tienen en cuenta.'
     );
@@ -84,7 +84,7 @@ describe('buildPriceUpdateConfirmation', () => {
       filteredTotal: 1,
     });
 
-    expect(copy.sentence).toBe('Vas a actualizar 1 producto (Productos filtrados).');
+    expect(copy.sentence).toBe('Vas a actualizar 1 producto de esta página (Productos filtrados).');
     expect(copy.rows[0].value).toBe('1 producto de esta página');
     expect(copy.rows[2].value).toBe('Margen');
     expect(copy.rows[3].value).toBe('Porcentaje fijo');

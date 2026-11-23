@@ -86,10 +86,11 @@ export function buildPriceUpdateConfirmation(input: PriceUpdateConfirmationInput
 
 function sentenceCopy(input: PriceUpdateConfirmationInput, scope: string): string {
   if (input.optionUpdate === 'all') {
-    return `Vas a actualizar todos los productos (${scope}).`;
+    return `Vas a actualizar todos los productos del sistema (${scope}).`;
   }
 
-  const products = input.articleCount === 1 ? '1 producto' : `${input.articleCount} productos`;
+  const products =
+    input.articleCount === 1 ? '1 producto de esta página' : `${input.articleCount} productos de esta página`;
   return `Vas a actualizar ${products} (${scope}).`;
 }
 
