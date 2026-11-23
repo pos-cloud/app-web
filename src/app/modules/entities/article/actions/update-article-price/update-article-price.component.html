@@ -152,6 +152,13 @@
   <div class="modal-body price-confirm">
     <p class="price-confirm-sentence">{{ confirmation.sentence }}</p>
 
+    <div class="price-confirm-summary">
+      <div class="price-confirm-row" *ngFor="let row of confirmation.rows">
+        <span class="price-confirm-label">{{ row.label }}</span>
+        <span class="price-confirm-value">{{ row.value }}</span>
+      </div>
+    </div>
+
     <div class="price-confirm-warning">
       <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
       <div>
