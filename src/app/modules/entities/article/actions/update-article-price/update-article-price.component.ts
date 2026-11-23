@@ -9,6 +9,7 @@ import { ApiResponse, Article } from '@types';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PipesModule } from 'app/shared/pipes/pipes.module';
+import { buildPriceUpdateConfirmation, PriceUpdateConfirmation } from './update-article-price.confirmation';
 
 /** Tipo de actualización: 1=Monto Fijo, 2=Monto Incremental, 3=Porcentaje Incremental, 4=Porcentaje Fijo */
 export const UPDATE_TYPE = {
@@ -82,14 +83,19 @@ const TYPE_OPTIONS = {
 @Component({
   selector: 'app-update-article-price',
   templateUrl: './update-article-price.component.html',
+  styleUrls: ['./update-article-price.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, PipesModule, NgbTooltipModule],
 })
 export class UpdateArticlePriceComponent {
   @Input() articles: Article[] = [];
+  /** Total del filtro del datatable. No es el tamaño del catálogo. */
+  @Input() filteredTotal = 0;
 
   form: UntypedFormGroup;
   loading = false;
+  confirming = false;
+  confirmation: PriceUpdateConfirmation | null = null;
   private destroy$ = new Subject<void>();
 
   readonly fieldOptions = FIELD_OPTIONS;
@@ -161,12 +167,43 @@ export class UpdateArticlePriceComponent {
     this.destroy$.complete();
   }
 
+  requestConfirmation(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const { optionUpdate, field, type, decimal, amount } = this.form.value;
+    const articlesCode = this.articlesCodeFor(optionUpdate);
+
+    if (optionUpdate === 'filter' && !articlesCode.length) {
+      this.toastService.showToast(null, 'danger', '', 'No hay productos filtrados para actualizar.');
+      return;
+    }
+
+    const productCount = optionUpdate === 'filter' ? articlesCode.length : this.filteredTotal;
+
+    this.confirmation = buildPriceUpdateConfirmation({
+      optionUpdate,
+      field,
+      type,
+      decimal,
+      amount,
+      productCount,
+    });
+    this.confirming = true;
+  }
+
+  cancelConfirmation(): void {
+    if (this.loading) return;
+    this.confirming = false;
+  }
+
   updatePrice(): void {
     if (this.form.invalid) return;
 
     const { optionUpdate, field, type, decimal, amount } = this.form.value;
-    const articlesCode: string[] =
-      optionUpdate === 'filter' ? (this.articles ?? []).map((article) => article.code).filter((code) => !!code) : [];
+    const articlesCode = this.articlesCodeFor(optionUpdate);
 
     if (optionUpdate === 'filter' && !articlesCode.length) {
       this.toastService.showToast(null, 'danger', '', 'No hay productos filtrados para actualizar.');
@@ -193,5 +230,12 @@ export class UpdateArticlePriceComponent {
           this.loading = false;
         },
       });
+  }
+
+  /** Vacío si el alcance es todo el catálogo; códigos de esta página si es el filtro. */
+  private articlesCodeFor(optionUpdate: string): string[] {
+    if (optionUpdate !== 'filter') return [];
+
+    return (this.articles ?? []).map((article) => article.code).filter((code) => !!code);
   }
 }

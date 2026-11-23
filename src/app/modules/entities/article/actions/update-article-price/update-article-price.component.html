@@ -1,10 +1,10 @@
 <div class="modal-header">
-  <h4 class="modal-title">Actualizar Precios</h4>
+  <h4 class="modal-title">{{ confirming && confirmation ? confirmation.title : 'Actualizar Precios' }}</h4>
   <button type="button" class="close" aria-label="Cerrar" (click)="activeModal.dismiss('close')">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<form [formGroup]="form" (ngSubmit)="updatePrice()" autocomplete="off">
+<form *ngIf="!confirming" [formGroup]="form" (ngSubmit)="$event.preventDefault()" autocomplete="off">
   <section class="container-fluid">
     <div class="modal-body">
       <!-- Productos a actualizar -->
@@ -136,10 +136,42 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="form.invalid || loading"
+        (click)="requestConfirmation()"
+      >
         <i class="fa" [ngClass]="{ 'fa-save': !loading, 'fa-spinner fa-spin': loading }"></i>
         <span class="ml-2">{{ loading ? 'Actualizando...' : 'Actualizar' }}</span>
       </button>
     </div>
   </section>
 </form>
+<section *ngIf="confirming && confirmation" class="container-fluid">
+  <div class="modal-body price-confirm">
+    <p class="price-confirm-sentence">{{ confirmation.sentence }}</p>
+
+    <div class="price-confirm-summary">
+      <div class="price-confirm-row" *ngFor="let row of confirmation.rows">
+        <span class="price-confirm-label">{{ row.label }}</span>
+        <span class="price-confirm-value">{{ row.value }}</span>
+      </div>
+    </div>
+
+    <div class="price-confirm-warning">
+      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+      <div>
+        <div class="font-weight-bold mb-1">{{ confirmation.warningTitle }}</div>
+        <div>{{ confirmation.warningText }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" [disabled]="loading" (click)="cancelConfirmation()">Cancelar</button>
+    <button type="button" class="btn btn-danger" [disabled]="loading" (click)="updatePrice()">
+      <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+      <span [ngClass]="{ 'ml-2': loading }">{{ loading ? 'Actualizando...' : 'Sí, actualizar precios' }}</span>
+    </button>
+  </div>
+</section>
