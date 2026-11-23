@@ -89,6 +89,8 @@ const TYPE_OPTIONS = {
 })
 export class UpdateArticlePriceComponent {
   @Input() articles: Article[] = [];
+  /** Total del filtro del datatable. No es el tamaño del catálogo. */
+  @Input() filteredTotal = 0;
 
   form: UntypedFormGroup;
   loading = false;
@@ -186,6 +188,7 @@ export class UpdateArticlePriceComponent {
       decimal,
       amount,
       articleCount: articlesCode.length,
+      filteredTotal: this.filteredTotal,
     });
     this.confirming = true;
   }
