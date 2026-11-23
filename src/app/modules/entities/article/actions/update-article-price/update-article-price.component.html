@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Actualizar Precios</h4>
+  <h4 class="modal-title">{{ confirming && confirmation ? confirmation.title : 'Actualizar Precios' }}</h4>
   <button type="button" class="close" aria-label="Cerrar" (click)="activeModal.dismiss('close')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -145,9 +145,8 @@
 </form>
 <section *ngIf="confirming && confirmation" class="container-fluid">
   <div class="modal-body price-confirm">
-    <p class="text-muted small mb-1">{{ confirmation.subtitle }}</p>
-    <h5 class="price-confirm-title">{{ confirmation.title }}</h5>
-    <p class="mb-1">{{ confirmation.sentence }}</p>
+    <p class="text-muted small mb-2">{{ confirmation.subtitle }}</p>
+    <p class="price-confirm-sentence">{{ confirmation.sentence }}</p>
     <p class="text-muted mb-3">{{ confirmation.detail }}</p>
 
     <div class="price-confirm-summary">
