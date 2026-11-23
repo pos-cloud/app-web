@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationService } from '@core/services/application.service';
 import { AuthService } from '@core/services/auth.service';
@@ -52,7 +52,7 @@ import { TranslateMePipe } from '../../../shared/pipes/translate-me';
   providers: [TranslateMePipe],
 })
 export class ListApplicationsComponent implements OnInit, OnDestroy {
-  @ViewChild(UploadFileComponent) catalogImage: UploadFileComponent;
+  @ViewChildren(UploadFileComponent) catalogImages: QueryList<UploadFileComponent>;
   public title: string = 'Listado de Aplicaciones';
   public application: Application;
   public integracionesForm: FormGroup;
@@ -668,15 +668,17 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       this.loading = true;
     }
 
+    const pending = (this.catalogImages?.toArray() ?? []).filter((upload) => upload.selectedFiles.length > 0);
+    for (const upload of pending) {
+      await upload.uploadImages();
+    }
+
     const claude = this.application?.claude;
     this.application = this.integracionesForm.value;
     if (claude) {
       this.application.claude = claude;
     }
 
-    if (this.catalogImage) {
-      await this.catalogImage.uploadImages();
-    }
     if (!this.application._id) {
       return this.saveApplication(feArRowIndex);
     }
