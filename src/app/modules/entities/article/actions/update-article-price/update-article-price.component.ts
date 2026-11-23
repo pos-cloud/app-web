@@ -173,7 +173,7 @@ export class UpdateArticlePriceComponent {
       return;
     }
 
-    const { optionUpdate, field, type, decimal, amount } = this.form.value;
+    const { optionUpdate } = this.form.value;
     const articlesCode = this.articlesCodeFor(optionUpdate);
 
     if (optionUpdate === 'filter' && !articlesCode.length) {
@@ -181,14 +181,11 @@ export class UpdateArticlePriceComponent {
       return;
     }
 
+    const productCount = optionUpdate === 'filter' ? articlesCode.length : this.filteredTotal;
+
     this.confirmation = buildPriceUpdateConfirmation({
       optionUpdate,
-      field,
-      type,
-      decimal,
-      amount,
-      articleCount: articlesCode.length,
-      filteredTotal: this.filteredTotal,
+      productCount,
     });
     this.confirming = true;
   }

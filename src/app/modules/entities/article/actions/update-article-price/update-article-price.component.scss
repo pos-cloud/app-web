@@ -2,40 +2,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   line-height: 1.4;
-  margin-bottom: 0.35rem;
-}
-
-.price-confirm-effect {
-  line-height: 1.4;
-  margin-bottom: 0;
-}
-
-.price-confirm-summary {
-  background-color: #f8f9fa;
-  border-radius: 0.25rem;
   margin-bottom: 1rem;
-  padding: 0.25rem 1rem;
-}
-
-.price-confirm-row {
-  align-items: baseline;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  padding: 0.55rem 0;
-}
-
-.price-confirm-row + .price-confirm-row {
-  border-top: 1px solid #e9ecef;
-}
-
-.price-confirm-label {
-  color: #6c757d;
-}
-
-.price-confirm-value {
-  font-weight: 700;
-  text-align: right;
 }
 
 .price-confirm-warning {
