@@ -73,6 +73,7 @@ export interface Application extends Activity {
     imagen: string;
     cover: string;
     nombre: string;
+    titulo: string;
     descripcion: string;
     whatsapp: string;
     instagram: string;
