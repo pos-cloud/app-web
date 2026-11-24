@@ -64,11 +64,7 @@
       <label class="control-label">
         <b>Índice de rotación</b>
       </label>
-      <app-multi-select-dropdown
-        [data]="rotationIndexes"
-        [(ngModel)]="rotationSelect"
-        placeholder="Índice de rotación"
-      >
+      <app-multi-select-dropdown [data]="rotationIndexes" [(ngModel)]="rotationSelect" placeholder="Índice de rotación">
       </app-multi-select-dropdown>
     </div>
 
@@ -124,11 +120,8 @@
     <div class="least-sold-help-scale-title">Índice de rotación</div>
     <div>Según las unidades vendidas.</div>
     <div class="least-sold-help-rows">
-      <span>0 a 1</span><span>Muy baja</span>
-      <span>2 a 5</span><span>Baja</span>
-      <span>6 a 20</span><span>Normal</span>
-      <span>21 a 50</span><span>Alta</span>
-      <span>Más de 50</span><span>Muy alta</span>
+      <span>0 a 1</span><span>Muy baja</span> <span>2 a 5</span><span>Baja</span> <span>6 a 20</span
+      ><span>Normal</span> <span>21 a 50</span><span>Alta</span> <span>Más de 50</span><span>Muy alta</span>
     </div>
   </div>
 </ng-template>

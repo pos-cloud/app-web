@@ -95,7 +95,9 @@
         <tr>
           <td *ngIf="rowButtons && rowButtons.length > 0"></td>
           <td *ngFor="let column of columns; let i = index">
-            <strong *ngIf="column.show !== false && i > 0 && totals?.[column.label] != null && totals?.[column.label] !== ''">
+            <strong
+              *ngIf="column.show !== false && i > 0 && totals?.[column.label] != null && totals?.[column.label] !== ''"
+            >
               {{ totals[column.label] | dynamicFormat: column.dataType }}
             </strong>
           </td>
