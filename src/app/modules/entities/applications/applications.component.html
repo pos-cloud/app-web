@@ -548,19 +548,15 @@
             </ng-template>
             <ng-template ngbPanelContent>
               <div formGroupName="catalogo" class="row">
-                <div class="form-group col-md-3">
-                  <label for="catalogoColor1" class="control-label">Color 1:</label>
-                  <app-color-palette inputId="catalogoColor1" formControlName="color1"></app-color-palette>
+                <div class="form-group col-md-4">
+                  <label for="catalogoPrimaryColor" class="control-label">Color primario (letras y botones):</label>
+                  <app-color-palette inputId="catalogoPrimaryColor" formControlName="primaryColor"></app-color-palette>
                 </div>
-                <div class="form-group col-md-3">
-                  <label for="catalogoColor2" class="control-label">Color 2:</label>
-                  <app-color-palette inputId="catalogoColor2" formControlName="color2"></app-color-palette>
+                <div class="form-group col-md-4">
+                  <label for="catalogoBackgroundColor" class="control-label">Color de fondo:</label>
+                  <app-color-palette inputId="catalogoBackgroundColor" formControlName="backgroundColor"></app-color-palette>
                 </div>
-                <div class="form-group col-md-3">
-                  <label for="catalogoColor3" class="control-label">Color 3:</label>
-                  <app-color-palette inputId="catalogoColor3" formControlName="color3"></app-color-palette>
-                </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                   <label class="control-label">{{ 'transaction-type' | translate | capitalize }}:</label>
                   <app-typeahead-dropdown
                     [control]="integracionesForm.get('catalogo.transactionType')"
@@ -573,27 +569,27 @@
                   ></app-typeahead-dropdown>
                 </div>
                 <div class="form-group col-md-6">
-                  <label class="control-label" for="catalogoNombre">Nombre:</label>
-                  <input id="catalogoNombre" class="form-control" type="text" formControlName="nombre" />
+                  <label class="control-label" for="catalogoName">Nombre del comercio:</label>
+                  <input id="catalogoName" class="form-control" type="text" formControlName="name" />
                 </div>
                 <div class="form-group col-md-6">
-                  <label class="control-label" for="catalogoTitulo">Título:</label>
-                  <input id="catalogoTitulo" class="form-control" type="text" formControlName="titulo" />
+                  <label class="control-label" for="catalogoTitle">Título principal:</label>
+                  <input id="catalogoTitle" class="form-control" type="text" formControlName="title" />
                 </div>
                 <div class="form-group col-md-12">
-                  <label class="control-label" for="catalogoDescripcion">Descripción:</label>
-                  <input id="catalogoDescripcion" class="form-control" type="text" formControlName="descripcion" />
+                  <label class="control-label" for="catalogoDescription">Subtítulo / descripción:</label>
+                  <input id="catalogoDescription" class="form-control" type="text" formControlName="description" />
                 </div>
                 <div class="form-group col-md-6">
-                  <label class="control-label">Imagen:</label>
+                  <label class="control-label">Logo:</label>
                   <app-upload-file
-                    (uploadedUrls)="onCatalogImageUploaded('imagen', $event)"
+                    (uploadedUrls)="onCatalogImageUploaded('logo', $event)"
                     [folder]="'catalog'"
-                    [existingImageUrl]="integracionesForm.get('catalogo.imagen')?.value"
+                    [existingImageUrl]="integracionesForm.get('catalogo.logo')?.value"
                   ></app-upload-file>
                 </div>
                 <div class="form-group col-md-6">
-                  <label class="control-label">Cover:</label>
+                  <label class="control-label">Portada:</label>
                   <app-upload-file
                     (uploadedUrls)="onCatalogImageUploaded('cover', $event)"
                     [folder]="'catalog'"

@@ -106,15 +106,14 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         article: [null],
       }),
       catalogo: this.fb.group({
-        color1: ['#000000'],
-        color2: ['#ffffff'],
-        color3: ['#6c757d'],
+        primaryColor: ['#8F3F22'],
+        backgroundColor: ['#E9EFE3'],
         transactionType: [null],
-        imagen: [''],
+        logo: [''],
         cover: [''],
-        nombre: [''],
-        titulo: [''],
-        descripcion: [''],
+        name: [''],
+        title: [''],
+        description: [''],
         whatsapp: [''],
         instagram: [''],
         facebook: [''],
@@ -323,18 +322,33 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       },
 
       catalogo: {
-        color1: this.application?.catalogo?.color1 || '#000000',
-        color2: this.application?.catalogo?.color2 || '#ffffff',
-        color3: this.application?.catalogo?.color3 || '#6c757d',
+        primaryColor:
+          this.application?.catalogo?.primaryColor ||
+          (this.application?.catalogo as { color1?: string } | undefined)?.color1 ||
+          '#8F3F22',
+        backgroundColor:
+          this.application?.catalogo?.backgroundColor ||
+          (this.application?.catalogo as { color2?: string } | undefined)?.color2 ||
+          '#E9EFE3',
         transactionType: this.application?.catalogo?.transactionType ?? null,
-        imagen:
-          this.application?.catalogo?.imagen ||
+        logo:
+          this.application?.catalogo?.logo ||
+          (this.application?.catalogo as { imagen?: string; picture?: string } | undefined)?.imagen ||
           (this.application?.catalogo as { picture?: string } | undefined)?.picture ||
           '',
         cover: this.application?.catalogo?.cover ?? '',
-        nombre: this.application?.catalogo?.nombre ?? '',
-        titulo: this.application?.catalogo?.titulo ?? '',
-        descripcion: this.application?.catalogo?.descripcion ?? '',
+        name:
+          this.application?.catalogo?.name ||
+          (this.application?.catalogo as { nombre?: string } | undefined)?.nombre ||
+          '',
+        title:
+          this.application?.catalogo?.title ||
+          (this.application?.catalogo as { titulo?: string } | undefined)?.titulo ||
+          '',
+        description:
+          this.application?.catalogo?.description ||
+          (this.application?.catalogo as { descripcion?: string } | undefined)?.descripcion ||
+          '',
         whatsapp: this.application?.catalogo?.whatsapp ?? '',
         instagram: this.application?.catalogo?.instagram ?? '',
         facebook: this.application?.catalogo?.facebook ?? '',
@@ -632,7 +646,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
     );
   }
 
-  public onCatalogImageUploaded(field: 'imagen' | 'cover', urls: string[]): void {
+  public onCatalogImageUploaded(field: 'logo' | 'cover', urls: string[]): void {
     this.integracionesForm.get(`catalogo.${field}`)?.setValue(urls?.length ? urls[0] : '');
   }
 

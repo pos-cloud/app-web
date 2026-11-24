@@ -66,15 +66,14 @@ export interface Application extends Activity {
   };
   feAr?: FeArIntegrationEntry[];
   catalogo?: {
-    color1: string;
-    color2: string;
-    color3: string;
+    primaryColor: string;
+    backgroundColor: string;
     transactionType: TransactionType;
-    imagen: string;
+    logo: string;
     cover: string;
-    nombre: string;
-    titulo: string;
-    descripcion: string;
+    name: string;
+    title: string;
+    description: string;
     whatsapp: string;
     instagram: string;
     facebook: string;
