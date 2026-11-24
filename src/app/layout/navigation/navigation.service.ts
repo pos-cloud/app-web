@@ -483,6 +483,7 @@ export class NavigationService {
                 label: 'Reportes',
                 children: [
                   { label: 'Inventario', link: 'entities/article-stock' },
+                  { label: 'Artículos menos vendidos', link: 'reports/least-sold-articles' },
                   { label: 'Kardex de producto', link: 'reports/article-ledger' },
                   { label: 'Stock Valorizado', link: 'reports/inventory-valued' },
                   { label: 'Inventario por fecha', link: 'reports/inventory-for-date' },

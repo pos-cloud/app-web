@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Deposit } from '@types';
 import { ArticleService } from 'app/core/services/article.service';
@@ -55,6 +55,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     operationType: { $ne: 'D' },
     containsVariants: { $ne: true },
   };
+  private lastOpenedArticle = '';
   constructor(
     private _service: ReportSystemService,
     private _depositService: DepositService,
@@ -63,6 +64,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
     public _fb: UntypedFormBuilder,
     private cdRef: ChangeDetectorRef,
     public _router: Router,
+    private _activatedRoute: ActivatedRoute,
     private _title: Title
   ) {
     this.articleForm = this._fb.group({ article: [null, Validators.required] });
@@ -70,7 +72,27 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this._activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      if (!params.article) {
+        return;
+      }
+      this.articleControl.setValue({
+        _id: params.article,
+        code: params.code || '',
+        description: params.description || '',
+      });
+      this.openLedgerIfReady();
+    });
     this.getDeposits();
+  }
+
+  private openLedgerIfReady(): void {
+    const articleId = this.articleControl?.value?._id;
+    if (!articleId || !this.depositSelectedId || this.lastOpenedArticle === articleId) {
+      return;
+    }
+    this.lastOpenedArticle = articleId;
+    this.getReport();
   }
 
   public ngOnDestroy(): void {
@@ -115,6 +137,7 @@ export class ReportArticleLedgerComponent implements OnInit, OnDestroy {
                 break;
               }
             }
+            this.openLedgerIfReady();
           },
           error: (error) => {
             resolve(null);
