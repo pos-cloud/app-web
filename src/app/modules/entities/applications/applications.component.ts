@@ -322,33 +322,14 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
       },
 
       catalogo: {
-        primaryColor:
-          this.application?.catalogo?.primaryColor ||
-          (this.application?.catalogo as { color1?: string } | undefined)?.color1 ||
-          '#8F3F22',
-        backgroundColor:
-          this.application?.catalogo?.backgroundColor ||
-          (this.application?.catalogo as { color2?: string } | undefined)?.color2 ||
-          '#E9EFE3',
+        primaryColor: this.application?.catalogo?.primaryColor || '#8F3F22',
+        backgroundColor: this.application?.catalogo?.backgroundColor || '#E9EFE3',
         transactionType: this.application?.catalogo?.transactionType ?? null,
-        logo:
-          this.application?.catalogo?.logo ||
-          (this.application?.catalogo as { imagen?: string; picture?: string } | undefined)?.imagen ||
-          (this.application?.catalogo as { picture?: string } | undefined)?.picture ||
-          '',
+        logo: this.application?.catalogo?.logo ?? '',
         cover: this.application?.catalogo?.cover ?? '',
-        name:
-          this.application?.catalogo?.name ||
-          (this.application?.catalogo as { nombre?: string } | undefined)?.nombre ||
-          '',
-        title:
-          this.application?.catalogo?.title ||
-          (this.application?.catalogo as { titulo?: string } | undefined)?.titulo ||
-          '',
-        description:
-          this.application?.catalogo?.description ||
-          (this.application?.catalogo as { descripcion?: string } | undefined)?.descripcion ||
-          '',
+        name: this.application?.catalogo?.name ?? '',
+        title: this.application?.catalogo?.title ?? '',
+        description: this.application?.catalogo?.description ?? '',
         whatsapp: this.application?.catalogo?.whatsapp ?? '',
         instagram: this.application?.catalogo?.instagram ?? '',
         facebook: this.application?.catalogo?.facebook ?? '',
