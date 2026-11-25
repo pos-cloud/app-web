@@ -4,6 +4,7 @@ import { User } from '@types';
 import { AnalyticsService } from 'app/core/services/analytics.service';
 import { AuthService } from 'app/core/services/auth.service';
 import { isPublicExperienceUrl } from 'app/public/public.routes';
+import { environment } from 'environments/environment';
 import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NavLayout, NavNode } from './navigation.types';
@@ -325,7 +326,7 @@ export class NavigationService {
       menu.push({
         label: 'Fondos',
         icon: 'fa fa-money',
-        link: 'pos/mostrador/fondo',
+        link: environment.production ? 'pos/mostrador/fondo' : 'pos/money',
       });
     }
 

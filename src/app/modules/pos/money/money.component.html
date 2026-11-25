@@ -23,7 +23,7 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th [width]="80"></th>
+            <th [width]="120"></th>
             <th (click)="orderBy('type.name')">Tipo</th>
             <th (click)="orderBy('startDate')">Fecha</th>
             <th (click)="orderBy('number')">Número</th>
@@ -70,9 +70,12 @@
             </td>
           </tr>
           <tr *ngFor="let transaction of transactions">
-            <td align="left" width="80">
+            <td align="left" width="120">
               <button type="button" class="btn btn-success" (click)="openView(transaction)" title="Ver">
                 <i class="fa fa-eye"></i>
+              </button>
+              <button type="button" class="btn btn-danger" (click)="deleteTransaction(transaction)" title="Eliminar">
+                <i class="fa fa-trash"></i>
               </button>
             </td>
             <td>{{ transaction.type?.name }}</td>
@@ -104,7 +107,7 @@
           ></ngb-pagination>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="onPageSizeChange()">
             <option [value]="5">Mostrar 5 Registros</option>
             <option [value]="10">Mostrar 10 Registros</option>
             <option [value]="20">Mostrar 20 Registros</option>

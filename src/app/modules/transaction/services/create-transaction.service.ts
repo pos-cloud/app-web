@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ApiResponse, Branch, CashBox, CashBoxState, Company, Deposit, Origin, User, View } from '@types';
+import { ApiResponse, Branch, CashBox, Company, Deposit, Origin, User, View } from '@types';
 
 import { CurrentAccount, StockMovement, TransactionMovement, TransactionType } from '@types';
 import { Config } from 'app/app.config';
@@ -68,11 +68,7 @@ export class CreateTransactionService {
   async create(type: TransactionType, ctx: PosContext): Promise<CreateTransactionResult> {
     try {
       let tx = this.applyTypeDefaults(new Transaction(), type, ctx);
-
-      const cashBox = await this.resolveCashBox(tx, ctx);
-      if (cashBox !== 'ok') {
-        return { status: 'cancelled' };
-      }
+  
 
       if (!(await this.resolveBranch(tx, ctx))) {
         return { status: 'cancelled' };
@@ -113,45 +109,7 @@ export class CreateTransactionService {
     return tx;
   }
 
-  /** Devuelve 'ok' si se puede seguir, o un estado que corta el alta (apertura/cancelado). */
-  private async resolveCashBox(tx: Transaction, ctx: PosContext): Promise<'ok' | 'opening' | 'cancelled'> {
-    const type = tx.type;
 
-    if (type.cashOpening || type.cashClosing) {
-      await this.openCashBox(tx);
-      return 'opening';
-    }
-
-    if (!type.cashBoxImpact) {
-      return 'ok';
-    }
-
-    const match: any = { state: CashBoxState.Open };
-    if (ctx.config?.cashBox?.perUser) {
-      match.creationUser = { $oid: ctx.user._id };
-    } else if (ctx.user?.cashBoxType) {
-      match.type = { $oid: ctx.user.cashBoxType._id };
-    } else {
-      match.type = null;
-    }
-
-    const cashBoxes = await this.getCashBoxes(match);
-    if (cashBoxes && cashBoxes.length > 0) {
-      tx.cashBox = cashBoxes[0];
-      return 'ok';
-    }
-
-    const openingTypes = await this.getTransactionTypes({ cashOpening: true }, ctx.user);
-    if (openingTypes && openingTypes.length > 0) {
-      tx.type = openingTypes[0];
-      await this.openCashBox(tx);
-    } else {
-      this._toastService.showToast({
-        message: 'Debe configurar un tipo de transacción para realizar la apertura de caja.',
-      });
-    }
-    return 'opening';
-  }
 
   private async resolveBranch(tx: Transaction, ctx: PosContext): Promise<boolean> {
     if (!tx.branchDestination || !tx.branchOrigin) {
