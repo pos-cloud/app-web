@@ -2528,11 +2528,13 @@ export class AddSaleOrderComponent {
       }
       // ACTUALIZACIÓN DE STOCK (usa modifyStock del tipo; no depende de la licencia/modules.stock)
       if (this.transaction.type.modifyStock) {
-        if (await this.areValidMovementOfArticle()) {
-          const stockUpdated = await this.updateStockByTransaction();
-          if (!stockUpdated) {
-            throw new Error('No se pudo actualizar el stock. La transacción no se cerró.');
-          }
+        if (!(await this.areValidMovementOfArticle())) {
+          this.loading = false;
+          return;
+        }
+        const stockUpdated = await this.updateStockByTransaction();
+        if (!stockUpdated) {
+          throw new Error('No se pudo actualizar el stock. La transacción no se cerró.');
         }
       }
 
