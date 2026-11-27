@@ -83,7 +83,7 @@ export class CancellationTypeAutomaticComponent implements OnInit {
           this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
           let query = 'where="transaction":"' + this.transaction._id + '"';
           this.movementsOfArticles = await this.getMovementsOfArticles(query);
-          this.movementsOfCashes = await this.getMovementsOfCashes(query);
+          this.movementsOfCashes = await this.getMovementsOfCashes(this.transaction._id);
           this.getCancellationTypes();
         }
         this.loading = false;
@@ -116,24 +116,66 @@ export class CancellationTypeAutomaticComponent implements OnInit {
     });
   }
 
-  public getMovementsOfCashes(query: string): Promise<MovementOfCash[]> {
-    return new Promise<MovementOfCash[]>((resolve, reject) => {
+  public getMovementsOfCashes(transactionId: string): Promise<MovementOfCash[]> {
+    return new Promise<MovementOfCash[]>((resolve) => {
       this.loading = true;
 
-      this._movementOfCashService.getMovementsOfCashes(query).subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.movementsOfCashes) {
-            resolve(null);
-          } else {
-            resolve(result.movementsOfCashes);
+      this._movementOfCashService
+        .getAll({
+          project: {
+            _id: 1,
+            date: 1,
+            expirationDate: 1,
+            statusCheck: 1,
+            discount: 1,
+            surcharge: 1,
+            commissionAmount: 1,
+            administrativeExpenseAmount: 1,
+            otherExpenseAmount: 1,
+            quota: 1,
+            capital: 1,
+            interestPercentage: 1,
+            interestAmount: 1,
+            taxPercentage: 1,
+            taxAmount: 1,
+            amountPaid: 1,
+            amountDiscount: 1,
+            balanceCanceled: 1,
+            cancelingTransaction: 1,
+            observation: 1,
+            type: 1,
+            transaction: 1,
+            cashBox: 1,
+            receiver: 1,
+            number: 1,
+            bank: 1,
+            titular: 1,
+            CUIT: 1,
+            deliveredBy: 1,
+            paymentChange: 1,
+            currencyValues: 1,
+            status: 1,
+            transactionEndDate: 1,
+            company: 1,
+            movement: 1,
+            transactionType: 1,
+            operationType: 1,
+          },
+          match: {
+            transaction: { $oid: transactionId },
+            operationType: { $ne: 'D' },
+          },
+        })
+        .subscribe(
+          (result) => {
+            this.loading = false;
+            resolve(Array.isArray(result?.result) ? result.result : []);
+          },
+          () => {
+            this.loading = false;
+            resolve([]);
           }
-        },
-        (error) => {
-          this.loading = false;
-          resolve(null);
-        }
-      );
+        );
     });
   }
 

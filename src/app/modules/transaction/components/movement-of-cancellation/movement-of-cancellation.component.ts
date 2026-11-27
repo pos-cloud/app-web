@@ -407,7 +407,6 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
       const result: ApiResponse = await firstValueFrom(
         this._movementOfCashService.getAll({
           project: {
-            _id: 1,
             'type.allowToFinance': 1,
             operationType: 1,
             transaction: 1,
@@ -718,6 +717,10 @@ export class MovementOfCancellationComponent implements OnInit, AfterViewInit, O
             'type._id': 1,
             'type.name': 1,
             amountPaid: 1,
+            amountDiscount: 1,
+            paymentChange: 1,
+            surcharge: 1,
+            movement: 1,
             transaction: 1,
             operationType: 1,
             balanceCanceled: 1,

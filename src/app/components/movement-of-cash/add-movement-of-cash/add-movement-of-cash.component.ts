@@ -703,68 +703,67 @@ export class AddMovementOfCashComponent implements OnInit {
       } else {
         this.loading = true;
 
-        let query = 'where="transaction":"' + this.transaction._id + '"';
+        const movementsOfCashes = await this.getMovementsOfCashes(
+          {
+            transaction: { $oid: this.transaction._id },
+            operationType: { $ne: 'D' },
+          },
+          this.projectMovementsByTransaction()
+        );
 
-        this._movementOfCashService.getMovementsOfCashes(query).subscribe(
-          async (result) => {
-            if (!result.movementsOfCashes) {
-              this.movementsOfCashes = new Array();
-              this.amountToPay = this.transactionAmount;
-              this.movementOfCash.amountPaid = this.transactionAmount;
-              this.paymentChange = '0.00';
-              this.amountPaid = 0;
-              this.updateAmounts('init');
-              if (this.fastPayment) {
-                // Usar setTimeout para evitar ExpressionChangedAfterItHasBeenCheckedError
-                setTimeout(() => {
-                  this.addMovementOfCash();
-                }, 0);
-              }
-              this.loading = false;
-            } else {
-              let op;
+        if (!movementsOfCashes.length) {
+          this.movementsOfCashes = new Array();
+          this.amountToPay = this.transactionAmount;
+          this.movementOfCash.amountPaid = this.transactionAmount;
+          this.paymentChange = '0.00';
+          this.amountPaid = 0;
+          this.updateAmounts('init');
+          if (this.fastPayment) {
+            // Usar setTimeout para evitar ExpressionChangedAfterItHasBeenCheckedError
+            setTimeout(() => {
+              this.addMovementOfCash();
+            }, 0);
+          }
+          this.loading = false;
+        } else {
+          let op;
 
-              if (!this.movementsOfCashes || this.movementsOfCashes.length === 0) op = 'init';
-              this.movementsOfCashes = result.movementsOfCashes;
-              if (this.isChargedFinished()) {
-                if (await this.areValidAmounts()) {
-                  if (this.transaction.totalPrice !== 0) {
-                    if (
-                      this.transaction.commissionAmount > 0 ||
-                      this.transaction.administrativeExpenseAmount > 0 ||
-                      this.transaction.otherExpenseAmount > 0
-                    ) {
-                      let amountPaid = 0;
+          if (!this.movementsOfCashes || this.movementsOfCashes.length === 0) op = 'init';
+          this.movementsOfCashes = movementsOfCashes;
+          if (this.isChargedFinished()) {
+            if (await this.areValidAmounts()) {
+              if (this.transaction.totalPrice !== 0) {
+                if (
+                  this.transaction.commissionAmount > 0 ||
+                  this.transaction.administrativeExpenseAmount > 0 ||
+                  this.transaction.otherExpenseAmount > 0
+                ) {
+                  let amountPaid = 0;
 
-                      if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
-                        for (let movement of this.movementsOfCashes) {
-                          amountPaid += this.roundNumber.transform(movement.amountPaid);
-                        }
-                      }
-                      this.transaction.totalPrice = this.roundNumber.transform(
-                        amountPaid -
-                          this.transaction.commissionAmount -
-                          this.transaction.administrativeExpenseAmount -
-                          this.transaction.otherExpenseAmount
-                      );
-                      await this.updateTransaction();
+                  if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+                    for (let movement of this.movementsOfCashes) {
+                      amountPaid += this.roundNumber.transform(movement.amountPaid);
                     }
                   }
-                  this.closeModal();
-                } else {
-                  this.fastPayment = null;
+                  this.transaction.totalPrice = this.roundNumber.transform(
+                    amountPaid -
+                      this.transaction.commissionAmount -
+                      this.transaction.administrativeExpenseAmount -
+                      this.transaction.otherExpenseAmount
+                  );
+                  await this.updateTransaction();
                 }
-              } else {
-                this.cleanForm();
-                this.updateAmounts(op);
               }
-              this.loading = false;
+              this.closeModal();
+            } else {
+              this.fastPayment = null;
             }
-          },
-          (error) => {
-            throw error;
+          } else {
+            this.cleanForm();
+            this.updateAmounts(op);
           }
-        );
+          this.loading = false;
+        }
       }
     } catch (error) {
       this._toastService.showToast(error);
@@ -838,12 +837,27 @@ export class AddMovementOfCashComponent implements OnInit {
                 }
                 this.transaction = await this.updateTransaction();
                 if (movement.type.checkDetail) {
-                  let query = `where="number":"${movement.number}","type":"${movement.type._id}"`;
-                  let movementsOfCashes: MovementOfCash[] = await this.getMovementsOfCashes(query);
+                  const typeId = movement.type?._id || movement.type;
+                  let movementsOfCashes: MovementOfCash[] = await this.getMovementsOfCashes(
+                    {
+                      number: movement.number,
+                      type: { $oid: typeId },
+                      operationType: { $ne: 'D' },
+                    },
+                    {
+                      _id: 1,
+                      number: 1,
+                      type: 1,
+                      operationType: 1,
+                    }
+                  );
 
                   if (movementsOfCashes && movementsOfCashes.length > 0) {
-                    movementsOfCashes[0].statusCheck = StatusCheck.Available;
-                    await this.updateMovementOfCash(movementsOfCashes[0]);
+                    const walletCheck = await this.getMovementOfCashById(movementsOfCashes[0]._id);
+                    if (walletCheck) {
+                      walletCheck.statusCheck = StatusCheck.Available;
+                      await this.updateMovementOfCash(walletCheck);
+                    }
                   }
                   this.getMovementOfCashesByTransaction('delete');
                 }
@@ -1005,22 +1019,71 @@ export class AddMovementOfCashComponent implements OnInit {
     }
   }
 
-  getMovementsOfCashes(query?: string): Promise<MovementOfCash[]> {
-    return new Promise<MovementOfCash[]>((resolve, reject) => {
-      this._movementOfCashService.getMovementsOfCashes(query).subscribe(
-        async (result) => {
-          if (result && result.movementsOfCashes) {
-            resolve(result.movementsOfCashes);
-          } else {
-            resolve(null);
-          }
+  getMovementOfCashById(id: string): Promise<MovementOfCash> {
+    return new Promise<MovementOfCash>((resolve) => {
+      this._movementOfCashService
+        .getAll({
+          project: {
+            _id: 1,
+            amountPaid: 1,
+            statusCheck: 1,
+            operationType: 1,
+            paymentChange: 1,
+            surcharge: 1,
+            amountDiscount: 1,
+            movement: 1,
+            number: 1,
+            'type._id': 1,
+            'transaction._id': 1,
+          },
+          match: {
+            _id: { $oid: id },
+            operationType: { $ne: 'D' },
+          },
+        })
+        .subscribe(
+          (result) => {
+            resolve(Array.isArray(result?.result) ? result.result[0] : null);
+          },
+          () => resolve(null)
+        );
+    });
+  }
+
+  getMovementsOfCashes(match: {}, project: {}): Promise<MovementOfCash[]> {
+    return new Promise<MovementOfCash[]>((resolve) => {
+      this._movementOfCashService.getAll({ project, match, sort: {}, group: {}, limit: 0, skip: 0 }).subscribe(
+        (result) => {
+          resolve(Array.isArray(result?.result) ? result.result : []);
         },
         (error) => {
           this._toastService.showToast(error);
-          resolve(null);
+          resolve([]);
         }
       );
     });
+  }
+
+  private projectMovementsByTransaction() {
+    return {
+      _id: 1,
+      expirationDate: 1,
+      discount: 1,
+      surcharge: 1,
+      commissionAmount: 1,
+      administrativeExpenseAmount: 1,
+      otherExpenseAmount: 1,
+      quota: 1,
+      amountPaid: 1,
+      balanceCanceled: 1,
+      'type._id': 1,
+      'type.name': 1,
+      'type.currency': 1,
+      'type.checkDetail': 1,
+      number: 1,
+      transaction: 1,
+      operationType: 1,
+    };
   }
 
   updateMovementOfCash(movementOfCash: MovementOfCash): Promise<MovementOfCash> {
@@ -1273,9 +1336,20 @@ export class AddMovementOfCashComponent implements OnInit {
         }
 
         if (this.paymentMethodSelected.checkDetail && !isCopy) {
-          let query = `where="number":"${this.movementOfCashForm.value.number}","type":"${this.paymentMethodSelected._id}","statusCheck":"Disponible"`;
-
-          await this.getMovementsOfCashes(query).then((movementsOfCashes) => {
+          await this.getMovementsOfCashes(
+            {
+              number: this.movementOfCashForm.value.number,
+              type: { $oid: this.paymentMethodSelected._id },
+              statusCheck: StatusCheck.Available,
+              operationType: { $ne: 'D' },
+            },
+            {
+              number: 1,
+              type: 1,
+              statusCheck: 1,
+              operationType: 1,
+            }
+          ).then((movementsOfCashes) => {
             if (movementsOfCashes && movementsOfCashes.length > 0) {
               throw new Error(
                 `El ${this.paymentMethodSelected.name} número ${this.movementOfCashForm.value.number} ya existe`

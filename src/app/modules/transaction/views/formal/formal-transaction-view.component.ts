@@ -525,6 +525,7 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
     this.beginLoading();
     const data = {
       project: {
+        _id: 1,
         transaction: 1,
         number: 1,
         expirationDate: 1,
@@ -532,10 +533,18 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
         CUIT: 1,
         'type.name': 1,
         'type._id': 1,
+        'type.checkDetail': 1,
+        'type.inputAndOuput': 1,
         'bank.name': 1,
         'bank._id': 1,
         operationType: 1,
         amountPaid: 1,
+        amountDiscount: 1,
+        paymentChange: 1,
+        surcharge: 1,
+        movement: 1,
+        quota: 1,
+        balanceCanceled: 1,
         date: 1,
       },
       match: { transaction: { $oid: this.transactionId }, operationType: { $ne: 'D' } },
@@ -1722,13 +1731,31 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const query = `where="number":"${movement.number}","type":"${typeId}"`;
     this.movementOfCashService
-      .getMovementsOfCashes(query)
+      .getAll({
+        project: {
+          _id: 1,
+          number: 1,
+          type: 1,
+          transaction: 1,
+          amountPaid: 1,
+          amountDiscount: 1,
+          paymentChange: 1,
+          surcharge: 1,
+          movement: 1,
+          statusCheck: 1,
+          operationType: 1,
+        },
+        match: {
+          number: movement.number,
+          type: { $oid: typeId },
+          operationType: { $ne: 'D' },
+        },
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          const walletChecks = result?.movementsOfCashes;
+          const walletChecks = Array.isArray(result?.result) ? result.result : [];
           if (walletChecks?.length) {
             const walletCheck = { ...walletChecks[0], statusCheck: StatusCheck.Available };
             this.movementOfCashService.update(walletCheck).subscribe({

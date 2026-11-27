@@ -137,9 +137,12 @@ export class SelectChecksComponent implements OnInit {
         },
       },
       'transaction._id': 1,
+      'transaction.endDate': 1,
+      'transaction.cashBox.number': 1,
       'transaction.state': 1,
       'transaction.type.name': 1,
       'transaction.type.transactionMovement': 1,
+      discount: 1,
       date: 1,
       statusCheck: 1,
       titular: 1,
@@ -305,21 +308,53 @@ export class SelectChecksComponent implements OnInit {
   }
 
   public getMovementOfCashById(id: string): Promise<MovementOfCash> {
-    return new Promise<MovementOfCash>((resolve, reject) => {
-      this._movementOfCashService.getMovementOfCash(id).subscribe(
-        async (result) => {
-          if (!result.movementOfCash) {
-            this.showMessage(result.message, 'danger', false);
+    return new Promise<MovementOfCash>((resolve) => {
+      this._movementOfCashService
+        .getAll({
+          project: {
+            _id: 1,
+            amountPaid: 1,
+            expirationDate: 1,
+            observation: 1,
+            deliveredBy: 1,
+            CUIT: 1,
+            titular: 1,
+            quota: 1,
+            number: 1,
+            receiver: 1,
+            statusCheck: 1,
+            operationType: 1,
+            paymentChange: 1,
+            surcharge: 1,
+            amountDiscount: 1,
+            movement: 1,
+            'bank._id': 1,
+            'bank.name': 1,
+            'type._id': 1,
+            'transaction._id': 1,
+          },
+          match: {
+            _id: { $oid: id },
+            operationType: { $ne: 'D' },
+          },
+        })
+        .subscribe(
+          (result) => {
+            const movementOfCash = Array.isArray(result?.result) ? result.result[0] : null;
+            if (!movementOfCash) {
+              if (result?.message) {
+                this.showMessage(result.message, 'danger', false);
+              }
+              resolve(null);
+            } else {
+              resolve(movementOfCash);
+            }
+          },
+          (error) => {
+            this.showMessage(error._body, 'danger', false);
             resolve(null);
-          } else {
-            resolve(result.movementOfCash);
           }
-        },
-        (error) => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
+        );
     });
   }
 

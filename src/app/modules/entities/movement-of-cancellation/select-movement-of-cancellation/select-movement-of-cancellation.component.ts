@@ -445,8 +445,7 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
       if (this.transactions.length > 0) {
         for (const transaction of this.transactions) {
           if (!transaction.type.requestArticles && transaction.type.requestPaymentMethods) {
-            const query = 'where="transaction":"' + transaction._id + '"';
-            const movementsOfCashes = await this.getMovementsOfCashes(query);
+            const movementsOfCashes = await this.getMovementsOfCashes(transaction._id);
             if (movementsOfCashes?.some((mov) => mov.type.allowToFinance)) {
               transaction.isFinanced = true;
             }
@@ -492,23 +491,31 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
     }
   }
 
-  getMovementsOfCashes(query: string): Promise<MovementOfCash[]> {
-    return new Promise<MovementOfCash[]>((resolve, reject) => {
+  getMovementsOfCashes(transactionId: string): Promise<MovementOfCash[]> {
+    return new Promise<MovementOfCash[]>((resolve) => {
       this.loading = true;
-      this._movementOfCashService.getMovementsOfCashes(query).subscribe(
-        (result) => {
-          this.loading = false;
-          if (!result.movementsOfCashes) {
-            resolve(null);
-          } else {
-            resolve(result.movementsOfCashes);
+      this._movementOfCashService
+        .getAll({
+          project: {
+            'type.allowToFinance': 1,
+            operationType: 1,
+            transaction: 1,
+          },
+          match: {
+            transaction: { $oid: transactionId },
+            operationType: { $ne: 'D' },
+          },
+        })
+        .subscribe(
+          (result) => {
+            this.loading = false;
+            resolve(Array.isArray(result?.result) ? result.result : []);
+          },
+          () => {
+            this.loading = false;
+            resolve([]);
           }
-        },
-        (error) => {
-          this.loading = false;
-          resolve(null);
-        }
-      );
+        );
     });
   }
 
@@ -820,6 +827,10 @@ export class SelectMovementOfCancellationComponent implements OnInit, AfterViewI
         'type._id': 1,
         'type.name': 1,
         amountPaid: 1,
+        amountDiscount: 1,
+        paymentChange: 1,
+        surcharge: 1,
+        movement: 1,
         transaction: 1,
         operationType: 1,
         balanceCanceled: 1,
