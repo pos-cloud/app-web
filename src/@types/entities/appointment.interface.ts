@@ -1,7 +1,11 @@
 import { Activity, Company } from '@types';
 
 /** Valores sugeridos para el estado del turno (validables en el front). */
-export type AppointmentStatus = 'scheduled' | 'cancelled' | 'completed' | 'no_show';
+/** `pending`: pedido online desde appointments.poscloud.ar que el negocio todavía no confirmó. */
+export type AppointmentStatus = 'pending' | 'scheduled' | 'cancelled' | 'completed' | 'no_show';
+
+/** Franja que eligió el cliente al pedir turno online. */
+export type AppointmentPeriod = 'morning' | 'afternoon' | 'night';
 
 /**
  * Frecuencia base de la serie. La API expande a partir de `startDate`/`endDate` (primera ocurrencia).
@@ -74,7 +78,8 @@ export interface AppointmentCreatePayload {
  * Documento persistido. Campos de serie opcionales: la API los agrega cuando aplica recurrencia.
  */
 export interface Appointment extends Activity {
-  company: Company | string;
+  /** Los pedidos online llegan sin cliente cargado (solo nombre y celular). */
+  company?: Company | string;
   /**
    * Nombre del paciente/cliente para UI si la API lo denormaliza (evita depender solo del populate de `company`).
    */
@@ -94,4 +99,12 @@ export interface Appointment extends Activity {
    * Regla con la que se generó la serie (opcional; puede vivir solo en la primera ocurrencia o en ninguna).
    */
   recurrenceRule?: AppointmentRecurrenceRule;
+  /** `online` si lo pidió el cliente desde appointments.poscloud.ar. */
+  source?: 'backoffice' | 'online';
+  period?: AppointmentPeriod;
+  customerName?: string;
+  /** Celular para WhatsApp: 549 + área + número. */
+  customerPhone?: string;
+  /** Identificador de la página pública del turno. */
+  publicToken?: string;
 }

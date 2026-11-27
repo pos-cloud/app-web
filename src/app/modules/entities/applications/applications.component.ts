@@ -28,6 +28,15 @@ import { ShipmentMethodService } from '../../../core/services/shipment-method.se
 import { TransactionTypeService } from '../../../core/services/transaction-type.service';
 import { TranslateMePipe } from '../../../shared/pipes/translate-me';
 
+/** Franjas que ofrece la reserva online, con sus horarios por defecto. */
+const BOOKING_PERIODS = [
+  { id: 'morning', label: 'Mañana', from: '08:00', to: '12:00' },
+  { id: 'afternoon', label: 'Tarde', from: '13:00', to: '18:00' },
+  { id: 'night', label: 'Noche', from: '18:00', to: '22:00' },
+] as const;
+
+const DEFAULT_BOOKING_DAYS = [1, 2, 3, 4, 5, 6];
+
 @Component({
   selector: 'app-applications',
   templateUrl: './applications.component.html',
@@ -118,6 +127,18 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         instagram: [''],
         facebook: [''],
       }),
+      turnos: this.fb.group({
+        enabled: [false],
+        name: [''],
+        address: [''],
+        days: [[...DEFAULT_BOOKING_DAYS]],
+        maxDaysAhead: [60],
+        periods: this.fb.array(
+          BOOKING_PERIODS.map((p) =>
+            this.fb.group({ id: [p.id], from: [p.from], to: [p.to], enabled: [true] })
+          )
+        ),
+      }),
       menu: this.fb.group({
         portain: [''],
         background: [''],
@@ -161,6 +182,34 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         }),
       ]),
     });
+  }
+
+  /** Días para la reserva online, de lunes a domingo (0 = domingo). */
+  protected readonly bookingDays = [
+    { value: 1, label: 'Lun' },
+    { value: 2, label: 'Mar' },
+    { value: 3, label: 'Mié' },
+    { value: 4, label: 'Jue' },
+    { value: 5, label: 'Vie' },
+    { value: 6, label: 'Sáb' },
+    { value: 0, label: 'Dom' },
+  ];
+  protected readonly bookingPeriods = BOOKING_PERIODS;
+  protected readonly bookingLink = `https://appointments.poscloud.ar/${localStorage.getItem('company') || ''}`;
+
+  protected get bookingPeriodsArray(): FormArray {
+    return this.integracionesForm.get('turnos.periods') as FormArray;
+  }
+
+  protected isBookingDay(day: number): boolean {
+    const days: number[] = this.integracionesForm.get('turnos.days')?.value ?? [];
+    return days.includes(day);
+  }
+
+  protected toggleBookingDay(day: number): void {
+    const control = this.integracionesForm.get('turnos.days');
+    const days: number[] = control?.value ?? [];
+    control?.setValue(days.includes(day) ? days.filter((d) => d !== day) : [...days, day].sort());
   }
 
   ngOnInit() {
@@ -333,6 +382,18 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         whatsapp: this.application?.catalogo?.whatsapp ?? '',
         instagram: this.application?.catalogo?.instagram ?? '',
         facebook: this.application?.catalogo?.facebook ?? '',
+      },
+
+      turnos: {
+        enabled: this.application?.turnos?.enabled ?? false,
+        name: this.application?.turnos?.name ?? '',
+        address: this.application?.turnos?.address ?? '',
+        days: this.application?.turnos?.days?.length ? this.application.turnos.days : [...DEFAULT_BOOKING_DAYS],
+        maxDaysAhead: this.application?.turnos?.maxDaysAhead ?? 60,
+        periods: BOOKING_PERIODS.map((p) => {
+          const own = this.application?.turnos?.periods?.find((x) => x.id === p.id);
+          return { id: p.id, from: own?.from || p.from, to: own?.to || p.to, enabled: own?.enabled ?? true };
+        }),
       },
 
       menu: {

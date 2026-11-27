@@ -1,0 +1,56 @@
+<div class="modal-header">
+  <h5 class="modal-title">Pedido de turno online</h5>
+  <button type="button" class="close" aria-label="Cerrar" (click)="activeModal.dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+  <dl class="row mb-0">
+    <dt class="col-sm-3">Cliente</dt>
+    <dd class="col-sm-9">{{ appointment.customerName || 'Sin nombre' }}</dd>
+    <dt class="col-sm-3">Celular</dt>
+    <dd class="col-sm-9">
+      <i class="fa fa-whatsapp mr-1" aria-hidden="true"></i>{{ phoneLabel }}
+    </dd>
+    <dt class="col-sm-3">Pidió</dt>
+    <dd class="col-sm-9">{{ requestedLabel }}</dd>
+    <ng-container *ngIf="appointment.description">
+      <dt class="col-sm-3">Nota</dt>
+      <dd class="col-sm-9">{{ appointment.description }}</dd>
+    </ng-container>
+  </dl>
+
+  <hr />
+
+  <p class="mb-2 font-weight-bold">Hora del turno</p>
+  <div class="form-row">
+    <div class="form-group col-sm-4">
+      <label for="onlineRequestDay">Día</label>
+      <input id="onlineRequestDay" type="date" class="form-control" [(ngModel)]="day" />
+    </div>
+    <div class="form-group col-sm-4">
+      <label for="onlineRequestTime">Hora</label>
+      <input id="onlineRequestTime" type="time" step="300" class="form-control" [(ngModel)]="time" />
+    </div>
+    <div class="form-group col-sm-4">
+      <label for="onlineRequestMinutes">Duración</label>
+      <select id="onlineRequestMinutes" class="form-control" [(ngModel)]="minutes">
+        <option *ngFor="let m of durations" [ngValue]="m">{{ m }} minutos</option>
+      </select>
+    </div>
+  </div>
+  <p class="small text-muted mb-0">
+    Al confirmar se abre WhatsApp con el mensaje para el cliente y el link para agregar el turno a su calendario. Solo tenés que tocar Enviar.
+  </p>
+</div>
+
+<div class="modal-footer justify-content-between">
+  <button type="button" class="btn btn-outline-danger" [disabled]="saving" (click)="reject()">
+    Rechazar
+  </button>
+  <button type="button" class="btn btn-primary" [disabled]="saving" (click)="confirm()">
+    <i class="fa fa-whatsapp mr-1" aria-hidden="true"></i>
+    Confirmar y avisar por WhatsApp
+  </button>
+</div>

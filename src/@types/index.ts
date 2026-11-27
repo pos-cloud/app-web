@@ -12,6 +12,7 @@ export {
   AppointmentRecurrenceRule,
   AppointmentStatus,
   AppointmentWeekday,
+  AppointmentPeriod,
 } from './entities/appointment.interface';
 export { Article, ArticlePrintIn, Type } from './entities/article.interface';
 export { ArticleStock } from './entities/article-stock.interface';

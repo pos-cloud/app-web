@@ -621,6 +621,81 @@
             </ng-template>
           </ngb-panel>
 
+          <ngb-panel id="Turnos">
+            <ng-template ngbPanelTitle>
+              <div class="row align-items-center">
+                <div class="col-auto pr-0">
+                  <i class="fa fa-calendar-check-o text-dark" style="font-size: 1.5rem" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <p class="mb-0 h5 text-dark">Turnos online</p>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div formGroupName="turnos">
+                <div class="custom-control custom-switch mb-3">
+                  <input type="checkbox" class="custom-control-input" id="turnosEnabled" formControlName="enabled" />
+                  <label class="custom-control-label" for="turnosEnabled">
+                    Recibir pedidos de turno en
+                    <a [href]="bookingLink" target="_blank" rel="noopener noreferrer">{{ bookingLink }}</a>
+                  </label>
+                </div>
+                <p class="small text-muted">
+                  El cliente elige el día y la franja (mañana, tarde o noche). Vos confirmás la hora desde Turnos y le llega por WhatsApp con el
+                  recordatorio para su calendario. El nombre, el logo, los colores y el WhatsApp salen de la configuración del Catálogo.
+                </p>
+
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label class="control-label" for="turnosName">Nombre que ve el cliente:</label>
+                    <input id="turnosName" class="form-control" type="text" formControlName="name" placeholder="Si lo dejás vacío, usa el del catálogo" />
+                  </div>
+                  <div class="form-group col-md-5">
+                    <label class="control-label" for="turnosAddress">Dirección (va en el recordatorio):</label>
+                    <input id="turnosAddress" class="form-control" type="text" formControlName="address" />
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label class="control-label" for="turnosMaxDays">Días hacia adelante:</label>
+                    <input id="turnosMaxDays" class="form-control" type="number" min="1" max="365" formControlName="maxDaysAhead" />
+                  </div>
+                </div>
+
+                <label class="control-label d-block">Días que atendés:</label>
+                <div class="btn-group btn-group-sm flex-wrap mb-3" role="group" aria-label="Días que atendés">
+                  <button
+                    type="button"
+                    class="btn"
+                    *ngFor="let day of bookingDays"
+                    [ngClass]="isBookingDay(day.value) ? 'btn-primary' : 'btn-outline-secondary'"
+                    [attr.aria-pressed]="isBookingDay(day.value)"
+                    (click)="toggleBookingDay(day.value)"
+                  >
+                    {{ day.label }}
+                  </button>
+                </div>
+
+                <label class="control-label d-block">Franjas:</label>
+                <div formArrayName="periods">
+                  <div class="form-row align-items-center mb-2" *ngFor="let period of bookingPeriodsArray.controls; let i = index" [formGroupName]="i">
+                    <div class="col-4 col-md-2">
+                      <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" [id]="'turnosPeriod' + i" formControlName="enabled" />
+                        <label class="custom-control-label" [for]="'turnosPeriod' + i">{{ bookingPeriods[i].label }}</label>
+                      </div>
+                    </div>
+                    <div class="col-4 col-md-2">
+                      <input type="time" class="form-control form-control-sm" formControlName="from" [attr.aria-label]="bookingPeriods[i].label + ' desde'" />
+                    </div>
+                    <div class="col-4 col-md-2">
+                      <input type="time" class="form-control form-control-sm" formControlName="to" [attr.aria-label]="bookingPeriods[i].label + ' hasta'" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel>
+
           <ngb-panel id="FeAr">
             <ng-template ngbPanelTitle>
               <div class="row align-items-center">

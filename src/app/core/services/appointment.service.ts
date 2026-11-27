@@ -45,6 +45,11 @@ export class AppointmentService extends ModelService {
       patientName: 1,
       recurrenceSeriesId: 1,
       recurrenceRule: 1,
+      source: 1,
+      period: 1,
+      customerName: 1,
+      customerPhone: 1,
+      publicToken: 1,
       'company._id': 1,
       'company.name': 1,
       'company.fantasyName': 1,
@@ -55,6 +60,35 @@ export class AppointmentService extends ModelService {
       match,
       sort: { startDate: 1 },
       limit: 5000,
+      skip: 0,
+    });
+  }
+
+  /** Pedidos online sin confirmar que todavía no pasaron, del más próximo al más lejano. */
+  getPendingOnline(): Observable<any> {
+    return this.getAll({
+      project: {
+        _id: 1,
+        operationType: 1,
+        startDate: 1,
+        endDate: 1,
+        status: 1,
+        title: 1,
+        description: 1,
+        source: 1,
+        period: 1,
+        customerName: 1,
+        customerPhone: 1,
+        publicToken: 1,
+      },
+      match: {
+        operationType: { $ne: 'D' },
+        source: 'online',
+        status: 'pending',
+        endDate: { $gt: { $date: new Date().toISOString() } },
+      },
+      sort: { startDate: 1 },
+      limit: 200,
       skip: 0,
     });
   }

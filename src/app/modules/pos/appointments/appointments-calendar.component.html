@@ -64,6 +64,24 @@
       </div>
     </div>
 
+    <div class="online-requests" *ngIf="pendingRequests.length">
+      <p class="online-requests__title">
+        <i class="fa fa-globe mr-1" aria-hidden="true"></i>
+        Pedidos online sin confirmar
+        <span class="badge badge-pill online-requests__count">{{ pendingRequests.length }}</span>
+      </p>
+      <ul class="online-requests__list">
+        <li *ngFor="let apt of pendingRequests">
+          <button type="button" class="online-requests__item" (click)="openOnlineRequest(apt, $event)">
+            <span class="online-requests__name">{{ apt.customerName || 'Sin nombre' }}</span>
+            <span class="online-requests__when">{{ onlineRequestLabel(apt) }}</span>
+            <span class="online-requests__phone"><i class="fa fa-whatsapp mr-1" aria-hidden="true"></i>{{ phoneLabel(apt) }}</span>
+            <span class="online-requests__action">Confirmar <i class="fa fa-chevron-right ml-1" aria-hidden="true"></i></span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
     <div class="card-body p-0">
       <!-- Vista mes -->
       <div class="calendar-grid" *ngIf="viewMode === 'month'">

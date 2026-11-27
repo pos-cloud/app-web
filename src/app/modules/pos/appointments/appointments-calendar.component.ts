@@ -29,6 +29,8 @@ import {
   WeekEventLayout,
 } from './appointments-calendar.helpers';
 import { AppointmentFormModalComponent } from './components/appointment-form-modal/appointment-form-modal.component';
+import { OnlineRequestModalComponent } from './components/online-request-modal/online-request-modal.component';
+import { argentinaParts, formatPhone, longDay, PERIOD_LABELS } from './components/online-request-modal/online-request.helpers';
 
 @Component({
   selector: 'app-pos-appointments-calendar',
@@ -54,6 +56,9 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
   protected appointments: Appointment[] = [];
   protected loadingAppointments = false;
 
+  /** Pedidos online sin confirmar (appointments.poscloud.ar). */
+  protected pendingRequests: Appointment[] = [];
+
   private readonly today = stripTime(new Date());
   private destroy$ = new Subject<void>();
 
@@ -65,6 +70,7 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.hourSlots = createHourSlots(WEEK_VIEW_START_HOUR, WEEK_VIEW_END_HOUR);
     this.rebuildView();
+    this.loadPendingRequests();
   }
 
   ngOnDestroy(): void {
@@ -129,6 +135,33 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
   /** Recarga turnos del período visible sin cambiar fecha ni vista. */
   protected refreshAppointments(): void {
     this.loadAppointments();
+    this.loadPendingRequests();
+  }
+
+  protected openOnlineRequest(apt: Appointment, ev?: Event): void {
+    ev?.stopPropagation();
+    const ref = this._modal.open(OnlineRequestModalComponent, { size: 'lg', backdrop: 'static' });
+    ref.componentInstance.appointment = apt;
+    ref.result.then(
+      (done) => {
+        if (done === true) {
+          this.refreshAppointments();
+        }
+      },
+      () => {}
+    );
+  }
+
+  /** "Viernes 27 de noviembre · Tarde (13:00 a 18:00)" */
+  protected onlineRequestLabel(apt: Appointment): string {
+    const day = longDay(apt.startDate);
+    const period = apt.period ? PERIOD_LABELS[apt.period] : '';
+    const range = `${argentinaParts(apt.startDate).time} a ${argentinaParts(apt.endDate).time}`;
+    return `${day.charAt(0).toUpperCase()}${day.slice(1)} · ${period ? `${period} ` : ''}(${range})`;
+  }
+
+  protected phoneLabel(apt: Appointment): string {
+    return formatPhone(apt.customerPhone);
   }
 
   protected isTodayCell(cell: MonthCell): boolean {
@@ -162,7 +195,7 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
 
   /** Texto principal del bloque: paciente/cliente; si no hay datos, el título del turno. */
   protected appointmentCalendarLabel(apt: Appointment): string {
-    const fromPatient = apt.patientName?.trim();
+    const fromPatient = apt.patientName?.trim() || apt.customerName?.trim();
     if (fromPatient) {
       return fromPatient;
     }
@@ -187,6 +220,8 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
   /** Color / estado del bloque en vista semana (estilo Google Calendar). */
   protected weekEventModifierClass(apt: Appointment): string {
     switch (apt.status) {
+      case 'pending':
+        return 'week-view__event--pending';
       case 'cancelled':
         return 'week-view__event--cancelled';
       case 'completed':
@@ -214,6 +249,10 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
 
   protected openEditAppointment(apt: Appointment, ev?: Event): void {
     ev?.stopPropagation();
+    if (apt.status === 'pending' && apt.source === 'online') {
+      this.openOnlineRequest(apt);
+      return;
+    }
     this.openModal(apt);
   }
 
@@ -285,6 +324,21 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
       this.weekDayHeaders = buildWeekDayHeaders(ws, new Date());
     }
     this.loadAppointments();
+  }
+
+  private loadPendingRequests(): void {
+    this._appointmentService
+      .getPendingOnline()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: { status: number; result: unknown }) => {
+          const result = res?.result as { items?: Appointment[] } | Appointment[] | undefined;
+          this.pendingRequests = res?.status === 200 ? (Array.isArray(result) ? result : result?.items ?? []) : [];
+        },
+        error: () => {
+          this.pendingRequests = [];
+        },
+      });
   }
 
   private loadAppointments(): void {

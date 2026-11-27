@@ -78,6 +78,16 @@ export interface Application extends Activity {
     instagram: string;
     facebook: string;
   };
+  /** Turnos online en appointments.poscloud.ar/{base}. La marca (nombre, logo, colores, WhatsApp) sale de `catalogo`. */
+  turnos?: {
+    enabled: boolean;
+    name?: string;
+    address?: string;
+    /** 0 domingo … 6 sábado */
+    days?: number[];
+    maxDaysAhead?: number;
+    periods?: { id: 'morning' | 'afternoon' | 'night'; from: string; to: string; enabled: boolean }[];
+  };
   claude?: {
     token: string;
     database: string;

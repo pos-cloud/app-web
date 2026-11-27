@@ -356,6 +356,13 @@
       background: #e8f0fe;
     }
 
+    /* Pedido online sin confirmar: rayado para que se distinga de un turno firme. */
+    &--pending {
+      border-left-color: #f59e0b;
+      border-left-style: dashed;
+      background: repeating-linear-gradient(-45deg, #fff7e6, #fff7e6 6px, #fdecc8 6px, #fdecc8 12px);
+    }
+
     &--cancelled {
       border-left-color: #ea4335;
       background: #fce8e6;
@@ -392,4 +399,69 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+/* Pedidos online pendientes de confirmar */
+.online-requests {
+  border-bottom: 1px solid #e9ecef;
+  background: #fffaf0;
+  padding: 0.75rem 1rem;
+}
+
+.online-requests__title {
+  display: flex;
+  align-items: center;
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.online-requests__count {
+  margin-left: 0.5rem;
+  background: #f59e0b;
+  color: #fff;
+}
+
+.online-requests__list {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.online-requests__item {
+  display: grid;
+  gap: 0.15rem;
+  width: 100%;
+  border: 1px solid #fcd9a0;
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover,
+  &:focus-visible {
+    border-color: #f59e0b;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+  }
+}
+
+.online-requests__name {
+  font-weight: 600;
+}
+
+.online-requests__when,
+.online-requests__phone {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.online-requests__action {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0275d8;
 }
