@@ -204,6 +204,9 @@
   /* —— Vista semana —— */
   $time-col: 52px;
   $hour-h: 3rem;
+  /* Encabezado y grilla comparten ancho mínimo y columnas para quedar alineados. */
+  $week-min-w: 640px;
+  $day-cols: repeat(7, minmax(0, 1fr));
 
   .week-view {
     border-top: 1px solid rgba(0, 0, 0, 0.08);
@@ -216,7 +219,8 @@
 
   .week-view__header {
     display: grid;
-    grid-template-columns: $time-col repeat(7, minmax(72px, 1fr));
+    grid-template-columns: $time-col $day-cols;
+    min-width: $week-min-w;
     position: sticky;
     top: 0;
     z-index: 2;
@@ -225,6 +229,10 @@
   }
 
   .week-view__corner {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: #f8f9fa;
     border-right: 1px solid rgba(0, 0, 0, 0.08);
   }
 
@@ -271,14 +279,17 @@
   }
 
   .week-view__grid {
-    display: flex;
-    min-width: 640px;
+    display: grid;
+    grid-template-columns: $time-col minmax(0, 1fr);
+    min-width: $week-min-w;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
 
+  /* Fija a la izquierda para no perder la hora al scrollear de costado en mobile. */
   .week-view__times-col {
-    width: $time-col;
-    flex-shrink: 0;
+    position: sticky;
+    left: 0;
+    z-index: 1;
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     background: #fafafa;
   }
@@ -293,14 +304,12 @@
   }
 
   .week-view__columns {
-    flex: 1;
-    display: flex;
-    min-width: 0;
+    display: grid;
+    grid-template-columns: $day-cols;
   }
 
   .week-view__day-column {
-    flex: 1;
-    min-width: 72px;
+    min-width: 0;
     border-right: 1px solid rgba(0, 0, 0, 0.06);
     background: #fff;
 
