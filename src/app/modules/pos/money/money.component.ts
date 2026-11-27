@@ -194,7 +194,7 @@ export class MoneyComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (type?.abbreviation === 'EGR' || type?.abbreviation === 'ING') {
+    if (type?.movement === Movements.Inflows || type?.movement === Movements.Outflows) {
       this.openIncomeOrExpense(result.transaction);
       return;
     }
@@ -203,14 +203,11 @@ export class MoneyComponent implements OnInit, OnDestroy {
   }
 
   private isCashBoxType(type: TransactionType): boolean {
-    return !!type?.cashOpening || !!type?.cashClosing || type?.abbreviation === 'A.C' || type?.abbreviation === 'C.C';
+    return !!type?.cashOpening || !!type?.cashClosing;
   }
 
   private isCashTransferType(type: TransactionType): boolean {
-    return (
-      type?.abbreviation === 'T.C' ||
-      (type?.movement === Movements.Transfer && type?.transactionMovement === TransactionMovement.Money)
-    );
+    return type?.movement === Movements.Transfer && type?.transactionMovement === TransactionMovement.Money;
   }
 
   private openCashBox(type: TransactionType): void {
