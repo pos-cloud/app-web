@@ -30,7 +30,12 @@ import {
 } from './appointments-calendar.helpers';
 import { AppointmentFormModalComponent } from './components/appointment-form-modal/appointment-form-modal.component';
 import { OnlineRequestModalComponent } from './components/online-request-modal/online-request-modal.component';
-import { argentinaParts, formatPhone, longDay, PERIOD_LABELS } from './components/online-request-modal/online-request.helpers';
+import {
+  argentinaParts,
+  formatPhone,
+  longDay,
+  PERIOD_LABELS,
+} from './components/online-request-modal/online-request.helpers';
 
 @Component({
   selector: 'app-pos-appointments-calendar',
@@ -333,7 +338,7 @@ export class AppointmentsCalendarComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: { status: number; result: unknown }) => {
           const result = res?.result as { items?: Appointment[] } | Appointment[] | undefined;
-          this.pendingRequests = res?.status === 200 ? (Array.isArray(result) ? result : result?.items ?? []) : [];
+          this.pendingRequests = res?.status === 200 ? (Array.isArray(result) ? result : (result?.items ?? [])) : [];
         },
         error: () => {
           this.pendingRequests = [];

@@ -10,9 +10,7 @@
     <dt class="col-sm-3">Cliente</dt>
     <dd class="col-sm-9">{{ appointment.customerName || 'Sin nombre' }}</dd>
     <dt class="col-sm-3">Celular</dt>
-    <dd class="col-sm-9">
-      <i class="fa fa-whatsapp mr-1" aria-hidden="true"></i>{{ phoneLabel }}
-    </dd>
+    <dd class="col-sm-9"><i class="fa fa-whatsapp mr-1" aria-hidden="true"></i>{{ phoneLabel }}</dd>
     <dt class="col-sm-3">Pidió</dt>
     <dd class="col-sm-9">{{ requestedLabel }}</dd>
     <ng-container *ngIf="appointment.description">
@@ -41,14 +39,13 @@
     </div>
   </div>
   <p class="small text-muted mb-0">
-    Al confirmar se abre WhatsApp con el mensaje para el cliente y el link para agregar el turno a su calendario. Solo tenés que tocar Enviar.
+    Al confirmar se abre WhatsApp con el mensaje para el cliente y el link para agregar el turno a su calendario. Solo
+    tenés que tocar Enviar.
   </p>
 </div>
 
 <div class="modal-footer justify-content-between">
-  <button type="button" class="btn btn-outline-danger" [disabled]="saving" (click)="reject()">
-    Rechazar
-  </button>
+  <button type="button" class="btn btn-outline-danger" [disabled]="saving" (click)="reject()">Rechazar</button>
   <button type="button" class="btn btn-primary" [disabled]="saving" (click)="confirm()">
     <i class="fa fa-whatsapp mr-1" aria-hidden="true"></i>
     Confirmar y avisar por WhatsApp

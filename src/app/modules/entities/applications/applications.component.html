@@ -642,14 +642,21 @@
                   </label>
                 </div>
                 <p class="small text-muted">
-                  El cliente elige el día y la franja (mañana, tarde o noche). Vos confirmás la hora desde Turnos y le llega por WhatsApp con el
-                  recordatorio para su calendario. El nombre, el logo, los colores y el WhatsApp salen de la configuración del Catálogo.
+                  El cliente elige el día y la franja (mañana, tarde o noche). Vos confirmás la hora desde Turnos y le
+                  llega por WhatsApp con el recordatorio para su calendario. El nombre, el logo, los colores y el
+                  WhatsApp salen de la configuración del Catálogo.
                 </p>
 
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label class="control-label" for="turnosName">Nombre que ve el cliente:</label>
-                    <input id="turnosName" class="form-control" type="text" formControlName="name" placeholder="Si lo dejás vacío, usa el del catálogo" />
+                    <input
+                      id="turnosName"
+                      class="form-control"
+                      type="text"
+                      formControlName="name"
+                      placeholder="Si lo dejás vacío, usa el del catálogo"
+                    />
                   </div>
                   <div class="form-group col-md-5">
                     <label class="control-label" for="turnosAddress">Dirección (va en el recordatorio):</label>
@@ -657,7 +664,14 @@
                   </div>
                   <div class="form-group col-md-3">
                     <label class="control-label" for="turnosMaxDays">Días hacia adelante:</label>
-                    <input id="turnosMaxDays" class="form-control" type="number" min="1" max="365" formControlName="maxDaysAhead" />
+                    <input
+                      id="turnosMaxDays"
+                      class="form-control"
+                      type="number"
+                      min="1"
+                      max="365"
+                      formControlName="maxDaysAhead"
+                    />
                   </div>
                 </div>
 
@@ -677,18 +691,39 @@
 
                 <label class="control-label d-block">Franjas:</label>
                 <div formArrayName="periods">
-                  <div class="form-row align-items-center mb-2" *ngFor="let period of bookingPeriodsArray.controls; let i = index" [formGroupName]="i">
+                  <div
+                    class="form-row align-items-center mb-2"
+                    *ngFor="let period of bookingPeriodsArray.controls; let i = index"
+                    [formGroupName]="i"
+                  >
                     <div class="col-4 col-md-2">
                       <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" [id]="'turnosPeriod' + i" formControlName="enabled" />
-                        <label class="custom-control-label" [for]="'turnosPeriod' + i">{{ bookingPeriods[i].label }}</label>
+                        <input
+                          type="checkbox"
+                          class="custom-control-input"
+                          [id]="'turnosPeriod' + i"
+                          formControlName="enabled"
+                        />
+                        <label class="custom-control-label" [for]="'turnosPeriod' + i">{{
+                          bookingPeriods[i].label
+                        }}</label>
                       </div>
                     </div>
                     <div class="col-4 col-md-2">
-                      <input type="time" class="form-control form-control-sm" formControlName="from" [attr.aria-label]="bookingPeriods[i].label + ' desde'" />
+                      <input
+                        type="time"
+                        class="form-control form-control-sm"
+                        formControlName="from"
+                        [attr.aria-label]="bookingPeriods[i].label + ' desde'"
+                      />
                     </div>
                     <div class="col-4 col-md-2">
-                      <input type="time" class="form-control form-control-sm" formControlName="to" [attr.aria-label]="bookingPeriods[i].label + ' hasta'" />
+                      <input
+                        type="time"
+                        class="form-control form-control-sm"
+                        formControlName="to"
+                        [attr.aria-label]="bookingPeriods[i].label + ' hasta'"
+                      />
                     </div>
                   </div>
                 </div>

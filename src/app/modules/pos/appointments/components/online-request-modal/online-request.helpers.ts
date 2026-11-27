@@ -1,6 +1,9 @@
 import { Appointment, AppointmentPeriod } from '@types';
 
-import { argentinaWallTimeToUtc, toArgentinaDatetimeLocal } from '../appointment-form-modal/appointment-argentina-datetime';
+import {
+  argentinaWallTimeToUtc,
+  toArgentinaDatetimeLocal,
+} from '../appointment-form-modal/appointment-argentina-datetime';
 
 /** Sitio público donde el cliente pide turno y ve el turno confirmado. */
 export const APPOINTMENTS_SITE = 'https://appointments.poscloud.ar';
@@ -20,7 +23,11 @@ export function argentinaParts(iso: string): { day: string; time: string } {
 }
 
 /** Inicio y fin del turno confirmado, a partir del día pedido y la hora elegida en Argentina. */
-export function confirmedRange(day: string, time: string, minutes: number): { startDate: string; endDate: string } | null {
+export function confirmedRange(
+  day: string,
+  time: string,
+  minutes: number
+): { startDate: string; endDate: string } | null {
   const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day);
   const t = /^(\d{2}):(\d{2})$/.exec(time);
   if (!d || !t || !(minutes > 0)) return null;

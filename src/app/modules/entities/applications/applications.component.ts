@@ -134,9 +134,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         days: [[...DEFAULT_BOOKING_DAYS]],
         maxDaysAhead: [60],
         periods: this.fb.array(
-          BOOKING_PERIODS.map((p) =>
-            this.fb.group({ id: [p.id], from: [p.from], to: [p.to], enabled: [true] })
-          )
+          BOOKING_PERIODS.map((p) => this.fb.group({ id: [p.id], from: [p.from], to: [p.to], enabled: [true] }))
         ),
       }),
       menu: this.fb.group({
