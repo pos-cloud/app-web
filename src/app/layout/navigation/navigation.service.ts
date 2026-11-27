@@ -11,6 +11,8 @@ import { NavLayout, NavNode } from './navigation.types';
 
 const SIDEBAR_COLLAPSED_KEY = 'nav.sidebarCollapsed';
 const NAV_LAYOUT_KEY = 'nav.layout';
+/** Mismo corte que usa el sidebar para pasar a modo mobile. */
+const MOBILE_QUERY = '(max-width: 991.98px)';
 const TRACKED_MODULES = new Set(['Ventas', 'Compras', 'Turnos', 'Suscripciones', 'Stock', 'Fondos', 'Producción']);
 
 @Injectable({
@@ -188,7 +190,15 @@ export class NavigationService {
     this.mobileOpenSubject.next(false);
   }
 
+  /** En mobile solo existe el menú lateral: el horizontal no entra en pantalla. */
+  get isMobile(): boolean {
+    return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia(MOBILE_QUERY).matches;
+  }
+
   private readLayout(): NavLayout {
+    if (this.isMobile) {
+      return 'sidebar';
+    }
     const saved = localStorage.getItem(NAV_LAYOUT_KEY);
     return saved === 'horizontal' ? 'horizontal' : 'sidebar';
   }
