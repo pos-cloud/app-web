@@ -254,17 +254,9 @@ export class MoneyComponent implements OnInit, OnDestroy {
           this.refresh();
           return;
         }
-        if (saved.type?.requestArticles) {
-          this._router.navigate(['/pos/mostrador/editar-transaccion'], {
-            queryParams: { transactionId: saved._id, returnURL: this._router.url },
-          });
-          return;
-        }
-        if (saved.type?.requestPaymentMethods) {
-          this.openCharge(saved);
-          return;
-        }
-        this.closeTransaction(saved);
+
+        this.openCharge(saved);
+        return;
       },
       () => this.refresh()
     );
