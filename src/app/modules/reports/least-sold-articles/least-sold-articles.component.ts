@@ -184,6 +184,7 @@ export class ReportLeastSoldArticlesComponent {
           name: 1,
           branch: 1,
           modifyStock: 1,
+          stockMovement: 1,
         },
         match: {
           transactionMovement: 'Venta',
