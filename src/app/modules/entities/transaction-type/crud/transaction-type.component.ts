@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { ApplicationService } from '@core/services/application.service';
+import { AuthService } from '@core/services/auth.service';
 import { BranchService } from '@core/services/branch.service';
 import { CashBoxTypeService } from '@core/services/cash-box-type.service';
 import { CompanyService } from '@core/services/company.service';
@@ -30,6 +31,7 @@ import {
   TransactionMovement,
   TransactionState,
   TransactionType,
+  User,
   View,
 } from '@types';
 import { ToastService } from 'app/shared/components/toast/toast.service';
@@ -65,6 +67,7 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
   public transactionType: TransactionType;
   public transactionTypeForm: UntypedFormGroup;
   public loading: boolean = false;
+  public canEditAbbreviation = false;
   public focusEvent = new EventEmitter<boolean>();
   private destroy$ = new Subject<void>();
 
@@ -111,7 +114,8 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
     public _useOfCFDIService: UseOfCFDIService,
     private _fb: UntypedFormBuilder,
     private _router: Router,
-    private _toastService: ToastService
+    private _toastService: ToastService,
+    private _authService: AuthService
   ) {
     this.buildForm();
   }
@@ -122,6 +126,11 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
     this.transactionTypeId = pathUrl[4];
 
     if (this.operation === 'view' || this.operation === 'delete') this.transactionTypeForm.disable();
+
+    this._authService.getIdentity.pipe(takeUntil(this.destroy$)).subscribe((user: User | null) => {
+      this.canEditAbbreviation = user?.name?.toLowerCase() === 'soporte';
+      this.applyAbbreviationAccess();
+    });
 
     this.loadPaymentMethods();
 
@@ -351,6 +360,20 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
     });
 
     this.setCodesForm(tt?.codes ?? []);
+    this.applyAbbreviationAccess();
+  }
+
+  private applyAbbreviationAccess(): void {
+    if (this.operation === 'view' || this.operation === 'delete') return;
+
+    const control = this.transactionTypeForm.get('abbreviation');
+    if (!control) return;
+
+    if (this.canEditAbbreviation) {
+      control.enable({ emitEvent: false });
+    } else {
+      control.disable({ emitEvent: false });
+    }
   }
 
   private setCodesForm(codes: { letter: string; code: number }[]): void {
@@ -379,6 +402,10 @@ export class TransactionTypeComponent implements OnInit, OnDestroy {
 
   private buildPayload(): TransactionType {
     const value = { ...this.transactionTypeForm.value };
+
+    if (!this.canEditAbbreviation) {
+      value.abbreviation = this.transactionType?.abbreviation ?? '';
+    }
 
     // Build AFIP codes array from the per-letter controls
     value.codes = this.codeLetters
