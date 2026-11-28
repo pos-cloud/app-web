@@ -124,7 +124,6 @@ export class PermissionComponent implements OnInit {
       allowDiscount: [true],
       allowPayment: [true],
       changeStates: [[]],
-      aiChat: [false],
     });
   }
 
@@ -256,7 +255,6 @@ export class PermissionComponent implements OnInit {
       allowDiscount: this.permission.allowDiscount ?? true,
       allowPayment: this.permission.allowPayment ?? true,
       changeStates: this.permission.changeStates ?? [],
-      aiChat: this.permission.aiChat === true,
     });
 
     // Solo manejar transactionTypes si ya están cargados
@@ -311,7 +309,6 @@ export class PermissionComponent implements OnInit {
     this.permission = {
       ...this.permission,
       ...formValues,
-      aiChat: formValues.aiChat === true,
     };
 
     switch (this.operation) {

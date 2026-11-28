@@ -77,16 +77,6 @@ export class ListPermissionComponent {
       required: false,
     },
     {
-      name: 'aiChat',
-      visible: false,
-      disabled: false,
-      filter: true,
-      datatype: 'boolean',
-      project: null,
-      align: 'left',
-      required: false,
-    },
-    {
       name: 'allowDiscount',
       visible: false,
       disabled: false,

@@ -59,7 +59,6 @@ import { NotificationBellComponent } from './modules/notifications/components/no
 
 import { RestoTablesComponent } from './modules/pos/resto/resto-tables.component';
 import { HeaderTransactionComponent } from './modules/transaction/views/fast/components/header-transaction/header-transaction.component';
-import { AiChatWidgetComponent } from './shared/components/ai-chat-widget/ai-chat-widget.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { UserBranchSelectComponent } from './shared/components/user-branch-select/user-branch-select.component';
 import { FocusDirective } from './shared/directives/focus.directive';
@@ -123,7 +122,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ExportExcelModule,
     NgMultiSelectDropDownModule.forRoot(),
     NotificationBellComponent,
-    AiChatWidgetComponent,
     UserBranchSelectComponent,
     RestoTablesComponent,
     FocusDirective,

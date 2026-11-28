@@ -4,7 +4,6 @@ import { NgbActiveModal, NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-boots
 import { TranslateService } from '@ngx-translate/core';
 import { merge as observableMerge, of as observableOf } from 'rxjs';
 
-import { User } from '@types';
 import { Config } from './app.config';
 import { AnalyticsService } from './core/services/analytics.service';
 import { AuthService } from './core/services/auth.service';
@@ -26,10 +25,7 @@ export class AppComponent {
   public isVerifyNotification: boolean = false;
   public readedNotification: boolean = false;
   public showHeader: boolean = true;
-  public showChatWidget: boolean = false;
   public isSidebarLayout = true;
-  private isLoggedIn = false;
-  private currentUser: User | null = null;
 
   constructor(
     public _configService: ConfigService,
@@ -63,15 +59,11 @@ export class AppComponent {
       } else {
         this.config$ = observableMerge(observableOf(true));
       }
-      this.isLoggedIn = !!identity;
-      this.currentUser = identity;
-      this.updateChatWidgetVisibility(this._router.url, this.isLoggedIn);
     });
 
     this._router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.applyPublicShell(event.url);
-        this.updateChatWidgetVisibility(event.url, this.isLoggedIn);
       }
     });
   }
@@ -132,18 +124,5 @@ export class AppComponent {
       currentUrl.includes('/login') ||
       currentUrl.includes('/register')
     );
-  }
-
-  private updateChatWidgetVisibility(url: string, isLoggedIn: boolean): void {
-    const isPublicRoute =
-      isPublicExperienceUrl(url) ||
-      url.includes('/login') ||
-      url.includes('/register') ||
-      url.includes('politicas-de-privacidad') ||
-      url.includes('galleries/view');
-
-    const hasAiChatPermission = this.currentUser?.permission?.aiChat === true;
-
-    this.showChatWidget = isLoggedIn && !isPublicRoute && hasAiChatPermission;
   }
 }
