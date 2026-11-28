@@ -127,10 +127,13 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         instagram: [''],
         facebook: [''],
       }),
-      turnos: this.fb.group({
+      appointments: this.fb.group({
         enabled: [false],
         name: [''],
         address: [''],
+        logo: [''],
+        primaryColor: ['#0275d8'],
+        whatsapp: [''],
         days: [[...DEFAULT_BOOKING_DAYS]],
         maxDaysAhead: [60],
         periods: this.fb.array(
@@ -196,16 +199,16 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
   protected readonly bookingLink = `https://appointments.poscloud.ar/${localStorage.getItem('company') || ''}`;
 
   protected get bookingPeriodsArray(): FormArray {
-    return this.integracionesForm.get('turnos.periods') as FormArray;
+    return this.integracionesForm.get('appointments.periods') as FormArray;
   }
 
   protected isBookingDay(day: number): boolean {
-    const days: number[] = this.integracionesForm.get('turnos.days')?.value ?? [];
+    const days: number[] = this.integracionesForm.get('appointments.days')?.value ?? [];
     return days.includes(day);
   }
 
   protected toggleBookingDay(day: number): void {
-    const control = this.integracionesForm.get('turnos.days');
+    const control = this.integracionesForm.get('appointments.days');
     const days: number[] = control?.value ?? [];
     control?.setValue(days.includes(day) ? days.filter((d) => d !== day) : [...days, day].sort());
   }
@@ -382,14 +385,19 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         facebook: this.application?.catalogo?.facebook ?? '',
       },
 
-      turnos: {
-        enabled: this.application?.turnos?.enabled ?? false,
-        name: this.application?.turnos?.name ?? '',
-        address: this.application?.turnos?.address ?? '',
-        days: this.application?.turnos?.days?.length ? this.application.turnos.days : [...DEFAULT_BOOKING_DAYS],
-        maxDaysAhead: this.application?.turnos?.maxDaysAhead ?? 60,
+      appointments: {
+        enabled: this.application?.appointments?.enabled ?? false,
+        name: this.application?.appointments?.name ?? '',
+        address: this.application?.appointments?.address ?? '',
+        logo: this.application?.appointments?.logo ?? '',
+        primaryColor: this.application?.appointments?.primaryColor || '#0275d8',
+        whatsapp: this.application?.appointments?.whatsapp ?? '',
+        days: this.application?.appointments?.days?.length
+          ? this.application.appointments.days
+          : [...DEFAULT_BOOKING_DAYS],
+        maxDaysAhead: this.application?.appointments?.maxDaysAhead ?? 60,
         periods: BOOKING_PERIODS.map((p) => {
-          const own = this.application?.turnos?.periods?.find((x) => x.id === p.id);
+          const own = this.application?.appointments?.periods?.find((x) => x.id === p.id);
           return { id: p.id, from: own?.from || p.from, to: own?.to || p.to, enabled: own?.enabled ?? true };
         }),
       },
@@ -684,6 +692,10 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         this._toastService.showToast({ message: error, type: 'warning' });
       }
     );
+  }
+
+  public onBookingLogoUploaded(urls: string[]): void {
+    this.integracionesForm.get('appointments.logo')?.setValue(urls?.length ? urls[0] : '');
   }
 
   public onCatalogImageUploaded(field: 'logo' | 'cover', urls: string[]): void {

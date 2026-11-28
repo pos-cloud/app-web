@@ -79,10 +79,14 @@ export interface Application extends Activity {
     facebook: string;
   };
   /** Turnos online en appointments.poscloud.ar/{base}. La marca (nombre, logo, colores, WhatsApp) sale de `catalogo`. */
-  turnos?: {
+  appointments?: {
     enabled: boolean;
     name?: string;
     address?: string;
+    /** Marca propia de turnos (independiente del catálogo). */
+    logo?: string;
+    primaryColor?: string;
+    whatsapp?: string;
     /** 0 domingo … 6 sábado */
     days?: number[];
     maxDaysAhead?: number;

@@ -633,45 +633,72 @@
               </div>
             </ng-template>
             <ng-template ngbPanelContent>
-              <div formGroupName="turnos">
+              <div formGroupName="appointments">
                 <div class="custom-control custom-switch mb-3">
-                  <input type="checkbox" class="custom-control-input" id="turnosEnabled" formControlName="enabled" />
-                  <label class="custom-control-label" for="turnosEnabled">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="appointmentsEnabled"
+                    formControlName="enabled"
+                  />
+                  <label class="custom-control-label" for="appointmentsEnabled">
                     Recibir pedidos de turno en
                     <a [href]="bookingLink" target="_blank" rel="noopener noreferrer">{{ bookingLink }}</a>
                   </label>
                 </div>
                 <p class="small text-muted">
                   El cliente elige el día y la franja (mañana, tarde o noche). Vos confirmás la hora desde Turnos y le
-                  llega por WhatsApp con el recordatorio para su calendario. El nombre, el logo, los colores y el
-                  WhatsApp salen de la configuración del Catálogo.
+                  llega por WhatsApp con el recordatorio para su calendario. El nombre, el logo, el color y el WhatsApp
+                  de turnos son propios: no dependen del catálogo.
                 </p>
 
                 <div class="row">
                   <div class="form-group col-md-4">
-                    <label class="control-label" for="turnosName">Nombre que ve el cliente:</label>
-                    <input
-                      id="turnosName"
-                      class="form-control"
-                      type="text"
-                      formControlName="name"
-                      placeholder="Si lo dejás vacío, usa el del catálogo"
-                    />
+                    <label class="control-label" for="appointmentsName">Nombre que ve el cliente:</label>
+                    <input id="appointmentsName" class="form-control" type="text" formControlName="name" />
                   </div>
                   <div class="form-group col-md-5">
-                    <label class="control-label" for="turnosAddress">Dirección (va en el recordatorio):</label>
-                    <input id="turnosAddress" class="form-control" type="text" formControlName="address" />
+                    <label class="control-label" for="appointmentsAddress">Dirección (va en el recordatorio):</label>
+                    <input id="appointmentsAddress" class="form-control" type="text" formControlName="address" />
                   </div>
                   <div class="form-group col-md-3">
-                    <label class="control-label" for="turnosMaxDays">Días hacia adelante:</label>
+                    <label class="control-label" for="appointmentsMaxDays">Días hacia adelante:</label>
                     <input
-                      id="turnosMaxDays"
+                      id="appointmentsMaxDays"
                       class="form-control"
                       type="number"
                       min="1"
                       max="365"
                       formControlName="maxDaysAhead"
                     />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label class="control-label" for="appointmentsWhatsapp">WhatsApp del negocio:</label>
+                    <input
+                      id="appointmentsWhatsapp"
+                      class="form-control"
+                      type="tel"
+                      formControlName="whatsapp"
+                      placeholder="Ej: 5493564123456"
+                    />
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="appointmentsPrimaryColor" class="control-label">Color de la página:</label>
+                    <app-color-palette
+                      inputId="appointmentsPrimaryColor"
+                      formControlName="primaryColor"
+                    ></app-color-palette>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label class="control-label">Logo:</label>
+                    <app-upload-file
+                      (uploadedUrls)="onBookingLogoUploaded($event)"
+                      [folder]="'appointments'"
+                      [existingImageUrl]="integracionesForm.get('appointments.logo')?.value"
+                    ></app-upload-file>
                   </div>
                 </div>
 
@@ -701,10 +728,10 @@
                         <input
                           type="checkbox"
                           class="custom-control-input"
-                          [id]="'turnosPeriod' + i"
+                          [id]="'appointmentsPeriod' + i"
                           formControlName="enabled"
                         />
-                        <label class="custom-control-label" [for]="'turnosPeriod' + i">{{
+                        <label class="custom-control-label" [for]="'appointmentsPeriod' + i">{{
                           bookingPeriods[i].label
                         }}</label>
                       </div>
