@@ -1035,6 +1035,7 @@ export class AddMovementOfCashComponent implements OnInit {
             number: 1,
             'type._id': 1,
             'transaction._id': 1,
+            cashBox: 1,
           },
           match: {
             _id: { $oid: id },

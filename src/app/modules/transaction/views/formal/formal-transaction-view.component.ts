@@ -1744,6 +1744,7 @@ export class FormalTransactionViewComponent implements OnInit, OnDestroy {
           surcharge: 1,
           movement: 1,
           statusCheck: 1,
+          cashBox: 1,
           operationType: 1,
         },
         match: {

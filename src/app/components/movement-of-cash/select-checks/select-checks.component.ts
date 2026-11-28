@@ -332,6 +332,7 @@ export class SelectChecksComponent implements OnInit {
             'bank.name': 1,
             'type._id': 1,
             'transaction._id': 1,
+            cashBox: 1,
           },
           match: {
             _id: { $oid: id },
