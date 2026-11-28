@@ -114,7 +114,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         company: [null],
         article: [null],
       }),
-      catalogo: this.fb.group({
+      catalog: this.fb.group({
         primaryColor: ['#8F3F22'],
         backgroundColor: ['#E9EFE3'],
         transactionType: [null],
@@ -347,6 +347,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
   setValuesForm() {
     const tiendaNube = this.application?.tiendaNube;
     const wooCommerce = this.application?.wooCommerce;
+    const catalog = this.application?.catalog;
     let values = {
       _id: this.application?._id ?? '',
       tiendaNube: {
@@ -371,18 +372,18 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         article: wooCommerce?.article ?? null,
       },
 
-      catalogo: {
-        primaryColor: this.application?.catalogo?.primaryColor || '#8F3F22',
-        backgroundColor: this.application?.catalogo?.backgroundColor || '#E9EFE3',
-        transactionType: this.application?.catalogo?.transactionType ?? null,
-        logo: this.application?.catalogo?.logo ?? '',
-        cover: this.application?.catalogo?.cover ?? '',
-        name: this.application?.catalogo?.name ?? '',
-        title: this.application?.catalogo?.title ?? '',
-        description: this.application?.catalogo?.description ?? '',
-        whatsapp: this.application?.catalogo?.whatsapp ?? '',
-        instagram: this.application?.catalogo?.instagram ?? '',
-        facebook: this.application?.catalogo?.facebook ?? '',
+      catalog: {
+        primaryColor: catalog?.primaryColor || '#8F3F22',
+        backgroundColor: catalog?.backgroundColor || '#E9EFE3',
+        transactionType: catalog?.transactionType ?? null,
+        logo: catalog?.logo ?? '',
+        cover: catalog?.cover ?? '',
+        name: catalog?.name ?? '',
+        title: catalog?.title ?? '',
+        description: catalog?.description ?? '',
+        whatsapp: catalog?.whatsapp ?? '',
+        instagram: catalog?.instagram ?? '',
+        facebook: catalog?.facebook ?? '',
       },
 
       appointments: {
@@ -699,7 +700,7 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
   }
 
   public onCatalogImageUploaded(field: 'logo' | 'cover', urls: string[]): void {
-    this.integracionesForm.get(`catalogo.${field}`)?.setValue(urls?.length ? urls[0] : '');
+    this.integracionesForm.get(`catalog.${field}`)?.setValue(urls?.length ? urls[0] : '');
   }
 
   public feArCrtFileChange(event: Event, index: number) {

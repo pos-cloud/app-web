@@ -65,7 +65,7 @@ export interface Application extends Activity {
     authToken: string;
   };
   feAr?: FeArIntegrationEntry[];
-  catalogo?: {
+  catalog?: {
     primaryColor: string;
     backgroundColor: string;
     transactionType: TransactionType;
@@ -78,7 +78,7 @@ export interface Application extends Activity {
     instagram: string;
     facebook: string;
   };
-  /** Turnos online en appointments.poscloud.ar/{base}. La marca (nombre, logo, colores, WhatsApp) sale de `catalogo`. */
+  /** Turnos online en appointments.poscloud.ar/{base}, con marca propia (independiente del catálogo). */
   appointments?: {
     enabled: boolean;
     name?: string;

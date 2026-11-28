@@ -547,48 +547,48 @@
               </div>
             </ng-template>
             <ng-template ngbPanelContent>
-              <div formGroupName="catalogo" class="row">
+              <div formGroupName="catalog" class="row">
                 <div class="form-group col-md-4">
-                  <label for="catalogoPrimaryColor" class="control-label">Color primario (letras y botones):</label>
-                  <app-color-palette inputId="catalogoPrimaryColor" formControlName="primaryColor"></app-color-palette>
+                  <label for="catalogPrimaryColor" class="control-label">Color primario (letras y botones):</label>
+                  <app-color-palette inputId="catalogPrimaryColor" formControlName="primaryColor"></app-color-palette>
                 </div>
                 <div class="form-group col-md-4">
-                  <label for="catalogoBackgroundColor" class="control-label">Color de fondo:</label>
+                  <label for="catalogBackgroundColor" class="control-label">Color de fondo:</label>
                   <app-color-palette
-                    inputId="catalogoBackgroundColor"
+                    inputId="catalogBackgroundColor"
                     formControlName="backgroundColor"
                   ></app-color-palette>
                 </div>
                 <div class="form-group col-md-4">
                   <label class="control-label">{{ 'transaction-type' | translate | capitalize }}:</label>
                   <app-typeahead-dropdown
-                    [control]="integracionesForm.get('catalogo.transactionType')"
+                    [control]="integracionesForm.get('catalog.transactionType')"
                     [service]="_transactionTypeService"
                     [keyField]="'_id'"
                     [displayField]="'name'"
                     [match]="{ operationType: { $ne: 'D' }, transactionMovement: 'Venta' }"
                     container="body"
-                    popupClass="catalogo-typeahead-menu"
+                    popupClass="catalog-typeahead-menu"
                   ></app-typeahead-dropdown>
                 </div>
                 <div class="form-group col-md-6">
-                  <label class="control-label" for="catalogoName">Nombre del comercio:</label>
-                  <input id="catalogoName" class="form-control" type="text" formControlName="name" />
+                  <label class="control-label" for="catalogName">Nombre del comercio:</label>
+                  <input id="catalogName" class="form-control" type="text" formControlName="name" />
                 </div>
                 <div class="form-group col-md-6">
-                  <label class="control-label" for="catalogoTitle">Título principal:</label>
-                  <input id="catalogoTitle" class="form-control" type="text" formControlName="title" />
+                  <label class="control-label" for="catalogTitle">Título principal:</label>
+                  <input id="catalogTitle" class="form-control" type="text" formControlName="title" />
                 </div>
                 <div class="form-group col-md-12">
-                  <label class="control-label" for="catalogoDescription">Subtítulo / descripción:</label>
-                  <input id="catalogoDescription" class="form-control" type="text" formControlName="description" />
+                  <label class="control-label" for="catalogDescription">Subtítulo / descripción:</label>
+                  <input id="catalogDescription" class="form-control" type="text" formControlName="description" />
                 </div>
                 <div class="form-group col-md-6">
                   <label class="control-label">Logo:</label>
                   <app-upload-file
                     (uploadedUrls)="onCatalogImageUploaded('logo', $event)"
                     [folder]="'catalog'"
-                    [existingImageUrl]="integracionesForm.get('catalogo.logo')?.value"
+                    [existingImageUrl]="integracionesForm.get('catalog.logo')?.value"
                   ></app-upload-file>
                 </div>
                 <div class="form-group col-md-6">
@@ -596,26 +596,26 @@
                   <app-upload-file
                     (uploadedUrls)="onCatalogImageUploaded('cover', $event)"
                     [folder]="'catalog'"
-                    [existingImageUrl]="integracionesForm.get('catalogo.cover')?.value"
+                    [existingImageUrl]="integracionesForm.get('catalog.cover')?.value"
                   ></app-upload-file>
                 </div>
                 <div class="form-group col-md-4">
-                  <label class="control-label" for="catalogoWhatsapp">
+                  <label class="control-label" for="catalogWhatsapp">
                     <i class="fa fa-whatsapp" aria-hidden="true"></i> WhatsApp
                   </label>
-                  <input id="catalogoWhatsapp" class="form-control" type="text" formControlName="whatsapp" />
+                  <input id="catalogWhatsapp" class="form-control" type="text" formControlName="whatsapp" />
                 </div>
                 <div class="form-group col-md-4">
-                  <label class="control-label" for="catalogoInstagram">
+                  <label class="control-label" for="catalogInstagram">
                     <i class="fa fa-instagram" aria-hidden="true"></i> Instagram
                   </label>
-                  <input id="catalogoInstagram" class="form-control" type="text" formControlName="instagram" />
+                  <input id="catalogInstagram" class="form-control" type="text" formControlName="instagram" />
                 </div>
                 <div class="form-group col-md-4">
-                  <label class="control-label" for="catalogoFacebook">
+                  <label class="control-label" for="catalogFacebook">
                     <i class="fa fa-facebook" aria-hidden="true"></i> Facebook
                   </label>
-                  <input id="catalogoFacebook" class="form-control" type="text" formControlName="facebook" />
+                  <input id="catalogFacebook" class="form-control" type="text" formControlName="facebook" />
                 </div>
               </div>
             </ng-template>
