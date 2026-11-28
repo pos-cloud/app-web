@@ -1282,6 +1282,31 @@
             </div>
             <div class="row">
               <div class="form-group col-md-4">
+                <label class="control-label" for="articleAppointmentsEnabled">Habilitado para turnos online</label>
+                <select class="form-control" id="articleAppointmentsEnabled" formControlName="appointmentsEnabled">
+                  <option [ngValue]="true" [disabled]="readonly">
+                    {{ 'true' | translate | capitalize }}
+                  </option>
+                  <option [ngValue]="false" [disabled]="readonly">
+                    {{ 'false' | translate | capitalize }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label" for="articleTime">Tiempo (ej: 30m)</label>
+                <input
+                  class="form-control"
+                  id="articleTime"
+                  type="text"
+                  maxlength="30"
+                  formControlName="time"
+                  [readonly]="readonly"
+                  placeholder="Ej: 45m"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4">
                 <label class="control-label">{{ 'posKitchen' | translate | capitalize }}</label>
                 <select class="form-control" formControlName="posKitchen">
                   <option [ngValue]="true" [disabled]="readonly">

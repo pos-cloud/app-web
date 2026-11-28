@@ -66,6 +66,10 @@ export interface Article extends Activity {
   allowSaleWithoutStock: boolean;
   allowMeasure: boolean;
   ecommerceEnabled: boolean;
+  /** Se puede pedir en la reserva de turnos online. */
+  appointmentsEnabled?: boolean;
+  /** Duración del servicio como texto, ej. "30m". */
+  time?: string;
   favourite: boolean;
   isWeigth: boolean;
   forShipping: boolean;
