@@ -653,6 +653,52 @@
                 </p>
 
                 <div class="row">
+                  <div class="form-group col-md-6">
+                    <label class="control-label" for="appointmentsMode">Cómo piden turno:</label>
+                    <select id="appointmentsMode" class="form-control" formControlName="mode">
+                      <option value="period">Eligen la franja y vos confirmás</option>
+                      <option value="exact">Eligen la hora exacta y se confirma solo</option>
+                    </select>
+                  </div>
+                  <div
+                    class="form-group col-md-3"
+                    *ngIf="integracionesForm.get('appointments.mode')?.value === 'exact'"
+                  >
+                    <label class="control-label" for="appointmentsSlotStep">Horarios cada:</label>
+                    <select id="appointmentsSlotStep" class="form-control" formControlName="slotStep">
+                      <option [ngValue]="15">15 minutos</option>
+                      <option [ngValue]="30">30 minutos</option>
+                      <option [ngValue]="60">1 hora</option>
+                    </select>
+                  </div>
+                  <div
+                    class="form-group col-md-3"
+                    *ngIf="integracionesForm.get('appointments.mode')?.value === 'exact'"
+                  >
+                    <label class="control-label" for="appointmentsDefaultDuration">Duración sin tiempo:</label>
+                    <select id="appointmentsDefaultDuration" class="form-control" formControlName="defaultDuration">
+                      <option [ngValue]="15">15 min</option>
+                      <option [ngValue]="30">30 min</option>
+                      <option [ngValue]="45">45 min</option>
+                      <option [ngValue]="60">1 h</option>
+                      <option [ngValue]="90">1 h 30</option>
+                      <option [ngValue]="120">2 h</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="custom-control custom-switch mb-3">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="appointmentsReminderEmail"
+                    formControlName="reminderEmail"
+                  />
+                  <label class="custom-control-label" for="appointmentsReminderEmail">
+                    Mandar un recordatorio por email al cliente el día anterior
+                  </label>
+                </div>
+
+                <div class="row">
                   <div class="form-group col-md-4">
                     <label class="control-label" for="appointmentsName">Nombre que ve el cliente:</label>
                     <input id="appointmentsName" class="form-control" type="text" formControlName="name" />

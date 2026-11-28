@@ -134,6 +134,10 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         logo: [''],
         primaryColor: ['#0275d8'],
         whatsapp: [''],
+        mode: ['period'],
+        slotStep: [30],
+        defaultDuration: [30],
+        reminderEmail: [true],
         days: [[...DEFAULT_BOOKING_DAYS]],
         maxDaysAhead: [60],
         periods: this.fb.array(
@@ -393,6 +397,10 @@ export class ListApplicationsComponent implements OnInit, OnDestroy {
         logo: this.application?.appointments?.logo ?? '',
         primaryColor: this.application?.appointments?.primaryColor || '#0275d8',
         whatsapp: this.application?.appointments?.whatsapp ?? '',
+        mode: this.application?.appointments?.mode === 'exact' ? 'exact' : 'period',
+        slotStep: this.application?.appointments?.slotStep || 30,
+        defaultDuration: this.application?.appointments?.defaultDuration || 30,
+        reminderEmail: this.application?.appointments?.reminderEmail !== false,
         days: this.application?.appointments?.days?.length
           ? this.application.appointments.days
           : [...DEFAULT_BOOKING_DAYS],

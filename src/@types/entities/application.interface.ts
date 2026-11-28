@@ -87,6 +87,12 @@ export interface Application extends Activity {
     logo?: string;
     primaryColor?: string;
     whatsapp?: string;
+    /** period: franja y confirma el negocio. exact: hora exacta y se confirma solo. */
+    mode?: 'period' | 'exact';
+    slotStep?: number;
+    defaultDuration?: number;
+    /** Recordatorio por email el día anterior. */
+    reminderEmail?: boolean;
     /** 0 domingo … 6 sábado */
     days?: number[];
     maxDaysAhead?: number;
